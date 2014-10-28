@@ -13,14 +13,13 @@
     <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
 
     <!-- UI Settings -->
-    <UIRef Id="WixUI_Minimal"/>
+    <UIRef Id="WixUI_InstallDir"/>
 
     <!-- Properties -->
     <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
     <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
     <Property Id="COMPANYNAME" Value="T-Shooter" />
     <Property Id="ShortProductName" Value="TfsCmdlets" />
-    <!--<Property Id="DISABLEADVTSHORTCUTS" Value="1" />-->
     <WixVariable Id="WixUISupportPerUser" Value="0" />
 
     <!-- Directories -->
@@ -31,25 +30,23 @@
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="StartMenuFolder" Name="!(bind.property.ShortProductName)"/>
+        <Directory Id="ShortcutsFolder" Name="!(bind.property.COMPANYNAME)"/>
       </Directory>
     </Directory>
 
     <DirectoryRef Id="APPLICATIONFOLDER">
-      <Component Id="PowerShellModule" Guid="{BB2C9623-4B80-43E9-8D77-8F856EDB415A}">
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" />
-        <RemoveFile Id="RemovePowerShellModuleFile" Name="TfsCmdlets.psm1" On="uninstall"/>
-        <RemoveFolder Id="RemoveApplicationFolder" On="uninstall"/>
+      <Component Id="PowerShellModule" Guid="{CC97272C-92F7-46A5-AB61-5A4588C8D924}">
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" KeyPath="yes" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
       </Component>
     </DirectoryRef>
 
-    <DirectoryRef Id="StartMenuFolder">
-      <Component Id="ShellIconComponent" Guid="{3B6FF2C2-A6D7-47EB-85BF-D5BB591C8ACD}">
-        <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[APPLICATIONFOLDER]TfsCmdlets.ps1" />
-        <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall"/>
-        <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
-      </Component>
-    </DirectoryRef>
+    <Component Id="ShellIconComponent" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}" Directory="ShortcutsFolder">
+      <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[SystemFolder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
+                Arguments="-noexit -command &quot;. '[#Startup.ps1]&quot;'"/>
+      <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder"/>
+      <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
 
     <!-- Features -->
     <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">

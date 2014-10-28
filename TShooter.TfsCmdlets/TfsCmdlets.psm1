@@ -8,41 +8,41 @@ Add-Type -AssemblyName 'Microsoft.TeamFoundation.WorkItemTracking.Client, Versio
 
 Function New-TfsTeam
 {
-param
-(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $ProjectName,
+		[Parameter(Mandatory=$true)] [string] 
+		$ProjectName,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Name,
     
-    [Parameter()] [string] 
-    $Description,
+		[Parameter()] [string] 
+		$Description,
     
-    [Parameter()] [switch] 
-    $UseDefaultCredentials,
+		[Parameter()] [switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-	# Get TFS collection
-	$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	process
+	{
+		# Get TFS collection
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-	# Get Team Project
-	$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")
-	$teamProject = $cssService.GetProjectFromName($ProjectName)
+		# Get Team Project
+		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")
+		$teamProject = $cssService.GetProjectFromName($ProjectName)
 
-	# Create Team
-	$teamService = $tpc.GetService([type]"Microsoft.TeamFoundation.Client.TfsTeamService")
+		# Create Team
+		$teamService = $tpc.GetService([type]"Microsoft.TeamFoundation.Client.TfsTeamService")
 
-	$teamService.CreateTeam($teamProject.Uri, $Name, $Description, $null)
-}
+		$teamService.CreateTeam($teamProject.Uri, $Name, $Description, $null)
+	}
 }
 
 #=============================
@@ -51,42 +51,42 @@ process
 
 Function New-TfsGitRepository
 {
-param
-(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $ProjectName,
+		[Parameter(Mandatory=$true)] [string] 
+		$ProjectName,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Name,
     
-    [Parameter()] [switch] 
-    $UseDefaultCredentials,
+		[Parameter()] [switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
+	process
+	{
+		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
 
-    $project = Get-TfsTeamProjectInformation -CollectionUrl $CollectionUrl -Name $ProjectName -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
-    $id = $project.id
-	$apiUrl = _GetUrl $CollectionUrl "_apis/git/repositories?api-version=1.0"
-	$body = "{`"name`": `"${Name}`", `"project`": { `"id`": `"${id}`" } }"
+		$project = Get-TfsTeamProjectInformation -CollectionUrl $CollectionUrl -Name $ProjectName -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$id = $project.id
+		$apiUrl = _GetUrl $CollectionUrl "_apis/git/repositories?api-version=1.0"
+		$body = "{`"name`": `"${Name}`", `"project`": { `"id`": `"${id}`" } }"
 	
-    if ($UseDefaultCredentials.IsPresent)
-    {
-        Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "POST" -Body $body -ContentType "application/json"
-    }
-    else
-    {
-        Invoke-RestMethod -Uri $apiUrl -Credential $Credential -Method "POST" -Body $body -ContentType "application/json"
-    }
-}
+		if ($UseDefaultCredentials.IsPresent)
+		{
+			Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "POST" -Body $body -ContentType "application/json"
+		}
+		else
+		{
+			Invoke-RestMethod -Uri $apiUrl -Credential $Credential -Method "POST" -Body $body -ContentType "application/json"
+		}
+	}
 }
 
 #=================================
@@ -95,38 +95,38 @@ process
 
 Function Get-TfsTeamProjectInformation
 {
-param
-(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true)] [string] 
+		$Name,
     
-    [Parameter()] [switch] 
-    $UseDefaultCredentials,
+		[Parameter()] [switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
+	process
+	{
+		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
 
-	$apiUrl = _GetUrl $CollectionUrl "_apis/projects/${Name}?api-version=1.0&includeCapabilities=true"
+		$apiUrl = _GetUrl $CollectionUrl "_apis/projects/${Name}?api-version=1.0&includeCapabilities=true"
 	
-    if ($UseDefaultCredentials.IsPresent)
-    {
-        $json = Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "GET"
-    }
-    else
-    {
-        $json = Invoke-RestMethod -Uri $apiUrl -Credential $Credential -Method "GET"
-    }
+		if ($UseDefaultCredentials.IsPresent)
+		{
+			$json = Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "GET"
+		}
+		else
+		{
+			$json = Invoke-RestMethod -Uri $apiUrl -Credential $Credential -Method "GET"
+		}
 
-    return $json
-}
+		return $json
+	}
 }
 
 #============================
@@ -135,115 +135,118 @@ process
 
 Function New-TfsArea
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $ProjectName,
+		[Parameter(Mandatory=$true)] [string] 
+		$ProjectName,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Path,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Path,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-	$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
-    $areaPath = ("\" + $ProjectName + "\Area\" + $Path).Replace("\\", "\")
+	process
+	{
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$areaPath = ("\" + $ProjectName + "\Area\" + $Path).Replace("\\", "\")
     
-    _NewCssNode -TeamProjectCollection $tpc -Path $areaPath
-}
+		_NewCssNode -TeamProjectCollection $tpc -Path $areaPath
+	}
 }
 
 Function New-TfsIteration
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $ProjectName,
+		[Parameter(Mandatory=$true)] [string] 
+		$ProjectName,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Path,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Path,
 
-    [Parameter()] [DateTime]
-    $StartDate,
+		[Parameter()] [DateTime]
+		$StartDate,
     
-    [Parameter()] [DateTime]
-    $EndDate,
+		[Parameter()] [DateTime]
+		$EndDate,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-	$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
-    $iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
+	process
+	{
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
     
-    $iterationNode = _NewCssNode -TeamProjectCollection $tpc -Path $iterationPath
+		$iterationNode = _NewCssNode -TeamProjectCollection $tpc -Path $iterationPath
 
-    if ($StartDate)
-    {
-        $iterationNode = Set-TfsIterationDates @PSBoundParameters
-    }
+		if ($StartDate)
+		{
+			$iterationNode = Set-TfsIterationDates @PSBoundParameters
+		}
 
-    return $iterationNode
-}
+		return $iterationNode
+	}
 }
 
 Function Set-TfsIterationDates
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $ProjectName,
+		[Parameter(Mandatory=$true)] [string] 
+		$ProjectName,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Path,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Path,
 
-    [Parameter(Mandatory=$true)] [Nullable[DateTime]]
-    $StartDate,
+		[Parameter(Mandatory=$true)] [Nullable[DateTime]]
+		$StartDate,
     
-    [Parameter(Mandatory=$true)] [Nullable[DateTime]]
-    $EndDate,
+		[Parameter(Mandatory=$true)] [Nullable[DateTime]]
+		$EndDate,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-	$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
-    $cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService4")
+	process
+	{
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService4")
 
-    $iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
-    $iterationNode = _GetCssNode -TeamProjectCollection $tpc -Path $iterationPath
+		$iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
+		$iterationNode = _GetCssNode -TeamProjectCollection $tpc -Path $iterationPath
 
-    if (!$iterationNode)
-    {
-        throw "Invalid iteration path: $Path"
-    }
+		if (!$iterationNode)
+		{
+			throw "Invalid iteration path: $Path"
+		}
 
-    [void]$cssService.SetIterationDates($iterationNode.Uri, $StartDate, $EndDate)
+		[void]$cssService.SetIterationDates($iterationNode.Uri, $StartDate, $EndDate)
 
-    return _GetCssNode -TeamProjectCollection $tpc -Path $iterationPath
-}
+		return _GetCssNode -TeamProjectCollection $tpc -Path $iterationPath
+	}
 }
 
 #=========================
@@ -252,169 +255,168 @@ process
 
 function New-TfsGlobalList
 {
-[CmdletBinding()]
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true)] [string] 
+		$Name,
     
-    [Parameter(Mandatory=$true)] [string[]] 
-    $Items,
+		[Parameter(Mandatory=$true)] [string[]] 
+		$Items,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    [xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	process
+	{
+		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-    # Creates the new list XML element
-    $listElement = $xml.CreateElement("GLOBALLIST")
-    $listElement.SetAttribute("name", $Name)
+		# Creates the new list XML element
+		$listElement = $xml.CreateElement("GLOBALLIST")
+		$listElement.SetAttribute("name", $Name)
 
-    # Adds the item elements to the list
-    foreach($item in $Items)
-    {
-        $itemElement = $xml.CreateElement("LISTITEM")
-        $itemElement.SetAttribute("value", $item)
-        [void]$listElement.AppendChild($itemElement)
-    }
+		# Adds the item elements to the list
+		foreach($item in $Items)
+		{
+			$itemElement = $xml.CreateElement("LISTITEM")
+			$itemElement.SetAttribute("value", $item)
+			[void]$listElement.AppendChild($itemElement)
+		}
 
-    # Appends the new list to the XML obj
-    [void] $xml.DocumentElement.AppendChild($listElement)
+		# Appends the new list to the XML obj
+		[void] $xml.DocumentElement.AppendChild($listElement)
 
-    # Saves the list back to TFS
-    Import-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
+		# Saves the list back to TFS
+		Import-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
 
-    return $listElement
-}
-
+		return $listElement
+	}
 }
 
 function Add-TfsGlobalListItem
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true)] [string] 
+		$Name,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
-    $Item,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		$Item,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    [xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	process
+	{
+		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-    # Creates the new list item XML element
-    $itemXml = $xml.CreateElement("LISTITEM")
-    $itemXml.SetAttribute("value", $Item)
+		# Creates the new list item XML element
+		$itemXml = $xml.CreateElement("LISTITEM")
+		$itemXml.SetAttribute("value", $Item)
 
-    # Appends the new item to the list
-    $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-    [void]$list.AppendChild($itemXml)
+		# Appends the new item to the list
+		$list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+		[void]$list.AppendChild($itemXml)
 
-    $xml | Format-List * -Force
+		$xml | Format-List * -Force
 
-    # Saves the list back to TFS
-    Import-TfsGlobalLists  -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
-}
+		# Saves the list back to TFS
+		Import-TfsGlobalLists  -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
+	}
 }
 
 function Get-TfsGlobalList
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true)] [string] 
-    $Name,
+		[Parameter(Mandatory=$true)] [string] 
+		$Name,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    [xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	process
+	{
+		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-    return $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-}
+		return $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+	}
 }
 
 function Import-TfsGlobalLists
 {
-[CmdletBinding()]
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter(Mandatory=$true, ValueFromPipeline=$true)] [xml] 
-    $Xml,
+		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [xml] 
+		$Xml,
 
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
+	process
+	{
 
-    $tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-    $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-    $store.ImportGlobalLists($Xml.OuterXml)
-}
-
+		$store.ImportGlobalLists($Xml.OuterXml)
+	}
 }
 
 function Export-TfsGlobalLists
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    $tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	process
+	{
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
-    $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-    [xml]$xml = $store.ExportGlobalLists()
+		[xml]$xml = $store.ExportGlobalLists()
 
-    $procInstr = $xml.CreateProcessingInstruction("xml", 'version="1.0"')
-    [void] $xml.InsertBefore($procInstr, $xml.DocumentElement)
+		$procInstr = $xml.CreateProcessingInstruction("xml", 'version="1.0"')
+		[void] $xml.InsertBefore($procInstr, $xml.DocumentElement)
 
-    return $xml
-}
-
+		return $xml
+	}
 }
 
 #===========================
@@ -423,51 +425,53 @@ process
 
 function Get-TfsTeamProjectCollection
 {
-param(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [switch] 
-    $UseDefaultCredentials,
+		[switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
+	process
+	{
+		if ($UseDefaultCredentials.IsPresent)
+		{
+			$cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
+		}
+		else
+		{
+			if ($Credential -eq [System.Management.Automation.PSCredential]::Empty) { $Credential = Get-Credential }
+			$cred = $Credential.GetNetworkCredential()
+		}
 
-if ($UseDefaultCredentials.IsPresent)
-{
-    $cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
-}
-else
-{
-    if ($Credential -eq [System.Management.Automation.PSCredential]::Empty) { $Credential = Get-Credential }
-    $cred = $Credential.GetNetworkCredential()
-}
-
-New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
-
+		New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
+	}
 }
 
 Function Connect-TfsTeamProjectCollection
 {
-param
-(
-    [Parameter(Mandatory=$true)] [string] 
-    $CollectionUrl,
+	param
+	(
+		[Parameter(Mandatory=$true)] [string] 
+		$CollectionUrl,
     
-    [Parameter()] [switch] 
-    $UseDefaultCredentials,
+		[Parameter()] [switch] 
+		$UseDefaultCredentials,
     
-    [Parameter()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-    $Credential = [System.Management.Automation.PSCredential]::Empty
-)
+		[Parameter()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 
-process
-{
-    if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
-	$global:TfsConnection = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
-}
+	process
+	{
+		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
+		$global:TfsConnection = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+	}
 }
 
 # =================
