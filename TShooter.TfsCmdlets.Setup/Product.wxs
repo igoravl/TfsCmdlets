@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+    Id="*"
+    Name="Team Foundation Server Cmdlets (TfsCmdlets)"
+    Language="1033"
+    Version="1.0.0.0"
+    Manufacturer="Igor Abade V. Leite (T-Shooter)"
+    UpgradeCode="66e39e8c-5e29-47ca-b2c0-142978831346">
+
+    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
+
+    <!-- UI Settings -->
+    <UIRef Id="WixUI_Minimal"/>
+
+    <!-- Properties -->
+    <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
+    <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
+    <Property Id="COMPANYNAME" Value="T-Shooter" />
+    <Property Id="ShortProductName" Value="TfsCmdlets" />
+    <!--<Property Id="DISABLEADVTSHORTCUTS" Value="1" />-->
+    <WixVariable Id="WixUISupportPerUser" Value="0" />
+
+    <!-- Directories -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="COMPANYFOLDER" Name="!(bind.property.COMPANYNAME)">
+          <Directory Id="APPLICATIONFOLDER" Name="!(bind.property.ShortProductName)" />
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="StartMenuFolder" Name="!(bind.property.ShortProductName)"/>
+      </Directory>
+    </Directory>
+
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Component Id="PowerShellModule" Guid="{BB2C9623-4B80-43E9-8D77-8F856EDB415A}">
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" />
+        <RemoveFile Id="RemovePowerShellModuleFile" Name="TfsCmdlets.psm1" On="uninstall"/>
+        <RemoveFolder Id="RemoveApplicationFolder" On="uninstall"/>
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="StartMenuFolder">
+      <Component Id="ShellIconComponent" Guid="{3B6FF2C2-A6D7-47EB-85BF-D5BB591C8ACD}">
+        <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[APPLICATIONFOLDER]TfsCmdlets.ps1" />
+        <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">
+      <ComponentRef Id="PowerShellModule" />
+      <ComponentRef Id="ShellIconComponent" />
+    </Feature>
+
+  </Product>
+
+</Wix>
