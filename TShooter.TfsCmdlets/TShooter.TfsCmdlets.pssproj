@@ -9,10 +9,11 @@
     <AssemblyName>MyApplication</AssemblyName>
     <Name>Lambda3.TfsCmdlets</Name>
     <ManifestFileName>TfsCmdlets.psd1</ManifestFileName>
-    <AliasesToExport>*tfs*</AliasesToExport>
-    <Author />
+    <AliasesToExport>
+    </AliasesToExport>
+    <Author>Igor Abade V. Leite (T-Shooter)</Author>
     <ClrVersion />
-    <CmdletsToExport />
+    <CmdletsToExport>*tfs*</CmdletsToExport>
     <CompanyName />
     <Copyright />
     <Description />
@@ -49,6 +50,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Readme.txt" />
+    <Content Include="License.txt" />
+    <Content Include="Acknowledgements.txt" />
     <Content Include="TfsCmdlets-Test.ps1" />
     <Content Include="TfsCmdlets.psm1" />
   </ItemGroup>
