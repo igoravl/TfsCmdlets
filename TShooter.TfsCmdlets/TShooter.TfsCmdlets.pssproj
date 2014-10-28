@@ -53,7 +53,6 @@
     <Content Include="Readme.txt" />
     <Content Include="License.txt" />
     <Content Include="Acknowledgements.txt" />
-    <Content Include="Startup.ps1" />
     <Content Include="TfsCmdlets-Test.ps1" />
     <Content Include="TfsCmdlets.psm1" />
   </ItemGroup>
