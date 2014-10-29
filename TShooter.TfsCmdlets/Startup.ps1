@@ -1,3 +1,13 @@
+Function Set-ConsoleColors
+{
+	Process
+	{
+		$Host.UI.RawUI.BackgroundColor = "DarkMagenta"
+		$Host.UI.RawUI.ForegroundColor = "White"
+		Clear-Host
+	}
+}
+
 Function Import_TfsCmdlets
 {
 	Process
@@ -82,6 +92,7 @@ Function Prompt
 
 #Script main body
 
+Set-ConsoleColors
 Import_TfsCmdlets
 Import_TfsPowerTools
 Import_TfsStandardTools
