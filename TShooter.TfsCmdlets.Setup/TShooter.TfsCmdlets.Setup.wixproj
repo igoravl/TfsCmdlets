@@ -6,7 +6,7 @@
     <ProductVersion>3.8</ProductVersion>
     <ProjectGuid>1720339c-6a86-4e51-856a-1873cf029e04</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>Setup</OutputName>
+    <OutputName>TShooter_TfsCmdlets_v1.0.0</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
