@@ -10,29 +10,37 @@ Function New-Team
 {
 	param
 	(
-		[Parameter(Mandatory=$true)] [string] 
-		$CollectionUrl,
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true)]
+		[string] 
+		$CollectionUrl = $null,
     
-		[Parameter(Mandatory=$true)] [string] 
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true)]
+		[Parameter(ParameterSetName="Connected",Mandatory=$true)]
+		[string] 
 		$ProjectName,
     
-		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true, ValueFromPipeline=$true)]
+		[Parameter(ParameterSetName="Connected",Mandatory=$true, ValueFromPipeline=$true)]
+		[string] 
 		$Name,
     
-		[Parameter()] [string] 
+		[Parameter(ParameterSetName="Not connected")]
+		[Parameter(ParameterSetName="Connected")]
+		[string] 
 		$Description,
     
-		[Parameter()] [switch] 
+		[Parameter(ParameterSetName="Not connected")]
+		[switch] 
 		$UseDefaultCredentials,
     
-		[Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
+		[Parameter(ParameterSetName="Not connected")]
+		[System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 
 	Process
 	{
-		# Get TFS collection
-		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = _GetConnection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -ParameterSetName $pscmdlet.ParameterSetName
 
 		# Get Team Project
 		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")
@@ -53,32 +61,39 @@ Function New-GitRepository
 {
 	param
 	(
-		[Parameter(Mandatory=$true)] [string] 
-		$CollectionUrl,
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true)]
+		[string] 
+		$CollectionUrl = $null,
     
-		[Parameter(Mandatory=$true)] [string] 
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true)]
+		[Parameter(ParameterSetName="Connected",Mandatory=$true)]
+		[string] 
 		$ProjectName,
     
-		[Parameter(Mandatory=$true, ValueFromPipeline=$true)] [string] 
+		[Parameter(ParameterSetName="Not connected",Mandatory=$true, ValueFromPipeline=$true)]
+		[Parameter(ParameterSetName="Connected",Mandatory=$true, ValueFromPipeline=$true)]
+		[string] 
 		$Name,
     
-		[Parameter()] [switch] 
+		[Parameter(ParameterSetName="Not connected")]
+		[switch] 
 		$UseDefaultCredentials,
     
-		[Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
+		[Parameter(ParameterSetName="Not connected")]
+		[System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 
 	Process
 	{
-		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
+		$connection = _GetRestConnection  -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -ParameterSetName $PSCmdlet.ParameterSetName
+		$project = Get-TeamProjectInformation -CollectionUrl $connection.Url -Name $ProjectName -UseDefaultCredentials:$connection.UseDefaultCredentials -Credential $connection.Credential
 
-		$project = Get-TeamProjectInformation -CollectionUrl $CollectionUrl -Name $ProjectName -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 		$id = $project.id
 		$apiUrl = _GetUrl $CollectionUrl "_apis/git/repositories?api-version=1.0"
 		$body = "{`"name`": `"${Name}`", `"project`": { `"id`": `"${id}`" } }"
 	
-		if ($UseDefaultCredentials.IsPresent)
+		if ($connection.UseDefaultCredentials)
 		{
 			Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "POST" -Body $body -ContentType "application/json"
 		}
@@ -525,6 +540,9 @@ Function Connect-TeamProjectCollection
 	Process
 	{
 		$Global:TfsConnection = Get-TeamProjectCollection @PSBoundParameters
+		$Global:TfsConnectionUrl = $CollectionUrl
+		$Global:TfsConnectionCredential = $cred
+		$Global:TfsConnectionUseDefaultCredentials = $UseDefaultCredentials.IsPresent
 	}
 }
 
@@ -756,6 +774,99 @@ Function _InvokeGenericMethod
 
 		## Return an error if we couldn't find that method
 		throw "Could not find method $methodName"
+	}
+}
+
+Function _GetConnection
+{
+	param
+	(
+		[Parameter()]  
+		[string]
+		$CollectionUrl,
+    
+		[Parameter()] 
+		[switch] 
+		$UseDefaultCredentials,
+    
+		[Parameter()] 
+		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential,
+
+		[Parameter(Mandatory=$true)]  
+		[string]
+		$ParameterSetName
+	)
+
+	Process
+	{
+		if (($ParameterSetName -eq "Connected") -and (!$Global:TfsConnection))
+		{
+			throw "You are trying to run a TFS cmdlet without connection information. Either use Connect-TfsTeamProjectCollection or the parameters -CollectionUrl, -Credential and/or -UseDefaultCredentials"
+		}
+
+		if ($Global:TfsConnection)
+		{
+			return $Global:TfsConnection
+		}
+		else
+		{
+			if ($UseDefaultCredentials.IsPresent)
+			{
+				return Get-TeamProjectCollection $CollectionUrl -UseDefaultCredentials 
+			}
+			else
+			{
+				return Get-TeamProjectCollection $CollectionUrl -Credential $Credential
+			}
+		}
+	}
+}
+
+Function _GetRestConnection
+{
+	param
+	(
+		[Parameter()]  
+		[string]
+		$CollectionUrl,
+    
+		[Parameter()] 
+		[switch] 
+		$UseDefaultCredentials,
+    
+		[Parameter()] 
+		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential,
+
+		[Parameter(Mandatory=$true)]  
+		[string]
+		$ParameterSetName
+	)
+
+	Process
+	{
+		if (($ParameterSetName -eq "Connected") -and (!$Global:TfsConnection))
+		{
+			throw "You are trying to run a TFS cmdlet without connection information. Either use Connect-TfsTeamProjectCollection or the parameters -CollectionUrl, -Credential and/or -UseDefaultCredentials"
+		}
+
+		if ($Global:TfsConnectionUrl)
+		{
+			$connection = New-Object -TypeName PSObject
+			$connection | Add-Member -Name "Url" -Value $Global:TfsConnectionUrl -MemberType NoteProperty
+			$connection | Add-Member -Name "Credential" -Value $Global:TfsConnectionCredential -MemberType NoteProperty
+			$connection | Add-Member -Name "UseDefaultCredentials" -Value $Global:TfsConnectionUseDefaultCredentials -MemberType NoteProperty
+		}
+		else
+		{
+			$connection = New-Object -TypeName PSObject
+			$connection | Add-Member -Name "Url" -Value $CollectionUrl -MemberType NoteProperty
+			$connection | Add-Member -Name "Credential" -Value $Credential -MemberType NoteProperty
+			$connection | Add-Member -Name "UseDefaultCredentials" -Value $UseDefaultCredentials -MemberType NoteProperty
+		}
+
+		return $connection
 	}
 }
 
