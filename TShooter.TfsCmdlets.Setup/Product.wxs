@@ -37,6 +37,7 @@
     <DirectoryRef Id="APPLICATIONFOLDER">
       <Component Id="PowerShellModule" Guid="{CC97272C-92F7-46A5-AB61-5A4588C8D924}">
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" KeyPath="yes" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psd1" Name="TfsCmdlets.psd1" KeyPath="yes" />
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
       </Component>
     </DirectoryRef>
