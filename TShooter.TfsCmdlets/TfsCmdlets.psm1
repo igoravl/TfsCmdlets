@@ -6,7 +6,7 @@ Add-Type -AssemblyName 'Microsoft.TeamFoundation.WorkItemTracking.Client, Versio
 # Team cmdlets
 #=====================
 
-Function New-TfsTeam
+Function New-Team
 {
 	param
 	(
@@ -32,7 +32,7 @@ Function New-TfsTeam
 	Process
 	{
 		# Get TFS collection
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		# Get Team Project
 		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")
@@ -49,7 +49,7 @@ Function New-TfsTeam
 # Git cmdlets
 #=============================
 
-Function New-TfsGitRepository
+Function New-GitRepository
 {
 	param
 	(
@@ -73,7 +73,7 @@ Function New-TfsGitRepository
 	{
 		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
 
-		$project = Get-TfsTeamProjectInformation -CollectionUrl $CollectionUrl -Name $ProjectName -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$project = Get-TeamProjectInformation -CollectionUrl $CollectionUrl -Name $ProjectName -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 		$id = $project.id
 		$apiUrl = _GetUrl $CollectionUrl "_apis/git/repositories?api-version=1.0"
 		$body = "{`"name`": `"${Name}`", `"project`": { `"id`": `"${id}`" } }"
@@ -93,7 +93,7 @@ Function New-TfsGitRepository
 # Team Project cmdlets
 #=================================
 
-Function Get-TfsTeamProjectInformation
+Function Get-TeamProjectInformation
 {
 	param
 	(
@@ -133,7 +133,7 @@ Function Get-TfsTeamProjectInformation
 # Area & Iteration cmdlets
 #============================
 
-Function New-TfsArea
+Function New-Area
 {
 	param
 	(
@@ -155,14 +155,14 @@ Function New-TfsArea
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 		$areaPath = ("\" + $ProjectName + "\Area\" + $Path).Replace("\\", "\")
     
 		_NewCssNode -TeamProjectCollection $tpc -Path $areaPath
 	}
 }
 
-Function New-TfsIteration
+Function New-Iteration
 {
 	param
 	(
@@ -190,21 +190,21 @@ Function New-TfsIteration
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 		$iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
     
 		$iterationNode = _NewCssNode -TeamProjectCollection $tpc -Path $iterationPath
 
 		if ($StartDate)
 		{
-			$iterationNode = Set-TfsIterationDates @PSBoundParameters
+			$iterationNode = Set-IterationDates @PSBoundParameters
 		}
 
 		return $iterationNode
 	}
 }
 
-Function Set-TfsIterationDates
+Function Set-IterationDates
 {
 	param
 	(
@@ -232,7 +232,7 @@ Function Set-TfsIterationDates
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService4")
 
 		$iterationPath = ("\" + $ProjectName + "\Iteration\" + $Path).Replace("\\", "\")
@@ -253,7 +253,7 @@ Function Set-TfsIterationDates
 # Global List cmdlets
 #=========================
 
-Function New-TfsGlobalList
+Function New-GlobalList
 {
 	param
 	(
@@ -275,7 +275,7 @@ Function New-TfsGlobalList
 
 	Process
 	{
-		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		[xml] $xml = Export-GlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		# Creates the new list XML element
 		$listElement = $xml.CreateElement("GLOBALLIST")
@@ -293,13 +293,13 @@ Function New-TfsGlobalList
 		[void] $xml.DocumentElement.AppendChild($listElement)
 
 		# Saves the list back to TFS
-		Import-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
+		Import-GlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
 
 		return $listElement
 	}
 }
 
-Function Add-TfsGlobalListItem
+Function Add-GlobalListItem
 {
 	param
 	(
@@ -321,7 +321,7 @@ Function Add-TfsGlobalListItem
 
 	Process
 	{
-		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		[xml] $xml = Export-GlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		# Creates the new list item XML element
 		$itemXml = $xml.CreateElement("LISTITEM")
@@ -334,11 +334,11 @@ Function Add-TfsGlobalListItem
 		$xml | Format-List * -Force
 
 		# Saves the list back to TFS
-		Import-TfsGlobalLists  -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
+		Import-GlobalLists  -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -Xml $xml
 	}
 }
 
-Function Get-TfsGlobalList
+Function Get-GlobalList
 {
 	param
 	(
@@ -357,13 +357,13 @@ Function Get-TfsGlobalList
 
 	Process
 	{
-		[xml] $xml = Export-TfsGlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		[xml] $xml = Export-GlobalLists -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		return $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
 	}
 }
 
-Function Import-TfsGlobalLists
+Function Import-GlobalLists
 {
 	param
 	(
@@ -383,7 +383,7 @@ Function Import-TfsGlobalLists
 	Process
 	{
 
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
@@ -391,7 +391,7 @@ Function Import-TfsGlobalLists
 	}
 }
 
-Function Export-TfsGlobalLists
+Function Export-GlobalLists
 {
 	param(
 		[Parameter(Mandatory=$true)] [string] 
@@ -406,7 +406,7 @@ Function Export-TfsGlobalLists
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
@@ -423,7 +423,7 @@ Function Export-TfsGlobalLists
 # Work Item Type cmdlets
 #===================================
 
-Function Get-TfsWorkItemTypeDefinition
+Function Get-WorkItemTypeDefinition
 {
 	param
 	(
@@ -448,7 +448,7 @@ Function Get-TfsWorkItemTypeDefinition
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
@@ -468,7 +468,7 @@ Function Get-TfsWorkItemTypeDefinition
 # Connection cmdlets
 #===========================
 
-Function Get-TfsTeamProjectCollection
+Function Get-TeamProjectCollection
 {
 	param
 	(
@@ -498,7 +498,7 @@ Function Get-TfsTeamProjectCollection
 	}
 }
 
-Function Connect-TfsTeamProjectCollection
+Function Connect-TeamProjectCollection
 {
 	param
 	(
@@ -515,7 +515,7 @@ Function Connect-TfsTeamProjectCollection
 	Process
 	{
 		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
-		$global:TfsConnection = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$global:TfsConnection = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 	}
 }
 
@@ -751,5 +751,3 @@ Function _InvokeGenericMethod
 }
 
 Set-Alias ?: _InvokeTernary
-
-Export-ModuleMember *-Tfs*
