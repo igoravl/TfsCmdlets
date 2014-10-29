@@ -11,6 +11,8 @@
     <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
+    <Icon Id="ProductIcon" SourceFile="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
 
     <!-- UI Settings -->
     <UIRef Id="WixUI_InstallDir"/>
@@ -40,11 +42,14 @@
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psd1" Name="TfsCmdlets.psd1" />
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
       </Component>
+      <Component Id="ProductIcon" Guid="{E0AB5C96-503E-4491-9DE6-545E85A724F4}">
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico" Name="TfsCmdletsShell.ico" KeyPath="yes" />
+      </Component>
     </DirectoryRef>
 
     <Component Id="ShellIconComponent" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}" Directory="ShortcutsFolder">
       <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
-                Arguments="-noexit -command &quot;. '[#Startup.ps1]&quot;'"/>
+                Arguments="-noexit -command &quot;. '[#Startup.ps1]&quot;'" Icon="ProductIcon"/>
       <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder"/>
       <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
     </Component>
@@ -53,6 +58,7 @@
     <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">
       <ComponentRef Id="PowerShellModule" />
       <ComponentRef Id="ShellIconComponent" />
+      <ComponentRef Id="ProductIcon" />
     </Feature>
 
   </Product>
