@@ -55,7 +55,14 @@
     <Content Include="Acknowledgements.txt" />
     <Content Include="Startup.ps1" />
     <Content Include="TfsCmdlets-Test.ps1" />
+    <Content Include="TfsCmdlets_Connection.psm1" />
+    <Content Include="TfsCmdlets_Css.psm1" />
+    <Content Include="TfsCmdlets_Git.psm1" />
     <Content Include="TfsCmdlets.psm1" />
+    <Content Include="TfsCmdlets_GlobalList.psm1" />
+    <Content Include="TfsCmdlets_Team.psm1" />
+    <Content Include="TfsCmdlets_TeamProject.psm1" />
+    <Content Include="TfsCmdlets_WorkItem.psm1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TfsCmdlets.psd1" />
