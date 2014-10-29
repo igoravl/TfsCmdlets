@@ -472,29 +472,35 @@ Function Get-TeamProjectCollection
 {
 	param
 	(
-		[Parameter(Mandatory=$true)] [string] 
+		[Parameter(ParameterSetName="Windows Integrated Credential", Position=0, Mandatory=$true)] 
+		[Parameter(ParameterSetName="Custom Credential", Position=0, Mandatory=$true)]  
+		[string]
 		$CollectionUrl,
     
+		[Parameter(ParameterSetName="Windows Integrated Credential", Position=1, Mandatory=$true)] 
 		[switch] 
 		$UseDefaultCredentials,
     
-		[Parameter()] [ValidateNotNull()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		[Parameter(ParameterSetName="Custom Credential", Position=1, Mandatory=$true)] 
+		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential
 	)
 
 	Process
 	{
-		if ($UseDefaultCredentials.IsPresent)
+		switch($PSCmdlet.ParameterSetName)
 		{
-			$cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
-		}
-		else
-		{
-			if ($Credential -eq [System.Management.Automation.PSCredential]::Empty) { $Credential = Get-Credential }
-			$cred = $Credential.GetNetworkCredential()
+			"Windows Integrated Credential"
+			{
+				$cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
+			}
+			"Custom Credential"
+			{
+				$cred = $Credential.GetNetworkCredential()
+			}
 		}
 
-		New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
+		return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
 	}
 }
 
@@ -502,20 +508,23 @@ Function Connect-TeamProjectCollection
 {
 	param
 	(
-		[Parameter(Mandatory=$true)] [string] 
+		[Parameter(ParameterSetName="Windows Integrated Credential", Position=0, Mandatory=$true)] 
+		[Parameter(ParameterSetName="Custom Credential", Position=0, Mandatory=$true)]  
+		[string]
 		$CollectionUrl,
     
-		[Parameter()] [switch] 
+		[Parameter(ParameterSetName="Windows Integrated Credential", Position=1, Mandatory=$true)] 
+		[switch] 
 		$UseDefaultCredentials,
     
-		[Parameter()] [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		[Parameter(ParameterSetName="Custom Credential", Position=1, Mandatory=$true)] 
+		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		$Credential
 	)
 
 	Process
 	{
-		if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
-		$global:TfsConnection = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$Global:TfsConnection = Get-TeamProjectCollection @PSBoundParameters
 	}
 }
 
