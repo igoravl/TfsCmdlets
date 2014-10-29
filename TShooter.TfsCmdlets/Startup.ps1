@@ -86,7 +86,11 @@ Function Prompt
 {
 	Process
 	{
-		"[TFS] $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+		if (Test-Path variable:global:TfsConnection)
+		{
+			$tfsConnectionText = "@$($Global:TfsConnection.Uri.Host)/$($Global:TfsConnection.Uri.Segments[$Global:TfsConnection.Uri.Segments.Length-1])"
+		}
+		"[TFS${tfsConnectionText}] $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
 	}
 }
 
