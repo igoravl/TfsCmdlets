@@ -12,12 +12,12 @@
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
     <Icon Id="ProductIcon" SourceFile="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico"/>
-    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
 
     <!-- UI Settings -->
     <UIRef Id="WixUI_InstallDir"/>
 
     <!-- Properties -->
+    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
     <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
     <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
     <Property Id="COMPANYNAME" Value="T-Shooter" />
@@ -32,7 +32,7 @@
         </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ShortcutsFolder" Name="!(bind.property.COMPANYNAME)"/>
+        <Directory Id="ShortcutsFolder" Name="!(bind.property.ProductName)"/>
       </Directory>
     </Directory>
 
