@@ -1,4 +1,4 @@
-Function Set-ConsoleColors
+Function _SetConsoleColors
 {
 	Process
 	{
@@ -8,27 +8,28 @@ Function Set-ConsoleColors
 	}
 }
 
-Function Import_TfsCmdlets
+Function _ImportTfsCmdlets
 {
 	Process
 	{
 		Write-Host "Importing TfsCmdlets module... " -NoNewline 
-		Import-Module "$(Get-ScriptDirectory)\TfsCmdlets.psd1"
+		Import-Module "$(_GetScriptDirectory)\TfsCmdlets.psd1"
 		Write-Host "DONE."
 	}
 }
 
-Function Import_TfsPowerTools
+Function _ImportTfsPowerTools
 {
 	Process
 	{
 		Write-Host "Importing TFS Power Tools snap-in... " -NoNewline 
+
 		try
 		{
 			$snapInName = "Microsoft.TeamFoundation.PowerShell"
 			if ((Get-PSSnapin | ? { $_.Name -eq $snapInName }) -eq $null)
 			{
-				Add-PSSnapin $snapInName #2>&1 | Out-Null
+				Add-PSSnapin $snapInName 2>&1 | Out-Null
 			}
 			Write-Host "DONE."
 		}
@@ -39,19 +40,19 @@ Function Import_TfsPowerTools
 	}
 }
 
-Function Import_TfsStandardTools
+Function _ImportTfsStandardTools
 {
 	Process
 	{
 		Write-Host "Importing TFS standard tools... " -NoNewline 
 		$vsToolsPath = $env:VS120COMNTOOLS
 		$devEnvDir = [System.IO.Path]::GetFullPath($(Join-Path $vsToolsPath "..\IDE"))
-		$env:env:Path += $devEnvDir
+		$env:Path += ";$devEnvDir"
 		Write-Host "DONE."
 	}
 }
 
-Function Show_Banner
+Function _ShowBanner
 {
 	Process
 	{
@@ -62,7 +63,7 @@ Function Show_Banner
 	}
 }
 
-Function Get-ScriptDirectory
+Function _GetScriptDirectory
 {
 	Process
 	{
@@ -96,9 +97,8 @@ Function Prompt
 
 #Script main body
 
-Set-ConsoleColors
-Import_TfsCmdlets
-Import_TfsPowerTools
-Import_TfsStandardTools
-Show_Banner
-
+_SetConsoleColors
+_ImportTfsCmdlets
+_ImportTfsPowerTools
+_ImportTfsStandardTools
+_ShowBanner

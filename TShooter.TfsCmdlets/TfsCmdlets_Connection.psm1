@@ -64,3 +64,46 @@ Function Connect-TeamProjectCollection
         $Global:TfsConnectionUseDefaultCredentials = $UseDefaultCredentials.IsPresent
     }
 }
+
+Function Disconnect-TeamProjectCollection
+{
+	Process
+	{
+        Remove-Variable -Name TfsConnection -Scope Global
+        Remove-Variable -Name TfsConnectionUrl -Scope Global
+        Remove-Variable -Name TfsConnectionCredential -Scope Global
+        Remove-Variable -Name TfsConnectionUseDefaultCredentials -Scope Global
+	}
+}
+
+Function _GetConnection
+{
+    Process
+    {
+        if (!$Global:TfsConnection)
+        {
+            throw "You are trying to run a TFS cmdlet without connection information. Use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
+        }
+
+        return $Global:TfsConnection
+    }
+}
+
+Function _GetRestConnection
+{
+    Process
+    {
+        if (!$Global:TfsConnection)
+        {
+            throw "You are trying to run a TFS cmdlet without connection information. Use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
+        }
+
+        $connection = [PSObject] @{
+			"Url" = $Global:TfsConnectionUrl;
+			"Credential" = $Global:TfsConnectionCredential;
+			"UseDefaultCredentials" = $Global:TfsConnectionUseDefaultCredentials
+		}
+
+        return $connection
+    }
+}
