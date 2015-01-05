@@ -34,7 +34,10 @@ Function Get-TeamProjectCollection
             }
         }
 
-        return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
+        $tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
+        [void] $tpc.EnsureAuthenticated()
+
+        return $tpc
     }
 }
 
@@ -67,13 +70,13 @@ Function Connect-TeamProjectCollection
 
 Function Disconnect-TeamProjectCollection
 {
-	Process
-	{
+    Process
+    {
         Remove-Variable -Name TfsConnection -Scope Global
         Remove-Variable -Name TfsConnectionUrl -Scope Global
         Remove-Variable -Name TfsConnectionCredential -Scope Global
         Remove-Variable -Name TfsConnectionUseDefaultCredentials -Scope Global
-	}
+    }
 }
 
 Function _GetConnection
@@ -99,10 +102,10 @@ Function _GetRestConnection
         }
 
         $connection = [PSObject] @{
-			"Url" = $Global:TfsConnectionUrl;
-			"Credential" = $Global:TfsConnectionCredential;
-			"UseDefaultCredentials" = $Global:TfsConnectionUseDefaultCredentials
-		}
+            "Url" = $Global:TfsConnectionUrl;
+            "Credential" = $Global:TfsConnectionCredential;
+            "UseDefaultCredentials" = $Global:TfsConnectionUseDefaultCredentials
+        }
 
         return $connection
     }
