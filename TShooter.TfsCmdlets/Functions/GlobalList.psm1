@@ -12,32 +12,51 @@ Function New-GlobalList
     
         [Parameter(Mandatory=$true)] 
 		[string[]] 
-        $Items
+        $Items,
+
+		[switch]
+		$Force
     )
 
     Process
     {
         [xml] $xml = Export-GlobalLists
 
-        # Creates the new list XML element
-        $listElement = $xml.CreateElement("GLOBALLIST")
-        $listElement.SetAttribute("name", $Name)
+		# Checks whether the global list already exists
+        $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+
+		if ($list -eq $null)
+		{
+			# Creates the new list XML element
+			$list = $xml.CreateElement("GLOBALLIST")
+			$list.SetAttribute("name", $Name)
+		}
+		else
+		{
+			if ($Force.IsPresent)
+			{
+			}
+			else
+			{
+			}
+		}
+
 
         # Adds the item elements to the list
         foreach($item in $Items)
         {
             $itemElement = $xml.CreateElement("LISTITEM")
             $itemElement.SetAttribute("value", $item)
-            [void]$listElement.AppendChild($itemElement)
+            [void]$list.AppendChild($itemElement)
         }
 
         # Appends the new list to the XML obj
-        [void] $xml.DocumentElement.AppendChild($listElement)
+        [void] $xml.DocumentElement.AppendChild($list)
 
         # Saves the list back to TFS
         Import-GlobalLists -Xml $xml
 
-        return $listElement
+        return $list
     }
 }
 
