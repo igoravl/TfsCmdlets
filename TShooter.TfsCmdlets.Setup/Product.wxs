@@ -39,13 +39,13 @@
     <DirectoryRef Id="APPLICATIONFOLDER">
       <Component Id="PowerShellModule" Guid="{CC97272C-92F7-46A5-AB61-5A4588C8D924}">
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" KeyPath="yes" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_Connection.psm1" Name="TfsCmdlets_Connection.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_Css.psm1" Name="TfsCmdlets_Css.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_Git.psm1" Name="TfsCmdlets_Git.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_GlobalList.psm1" Name="TfsCmdlets_GlobalList.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_Team.psm1" Name="TfsCmdlets_Team.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_TeamProject.psm1" Name="TfsCmdlets_TeamProject.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets_WorkItem.psm1" Name="TfsCmdlets_WorkItem.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Connection.psm1" Name="TfsCmdlets_Connection.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Css.psm1" Name="TfsCmdlets_Css.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Git.psm1" Name="TfsCmdlets_Git.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\GlobalList.psm1" Name="TfsCmdlets_GlobalList.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Team.psm1" Name="TfsCmdlets_Team.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\TeamProject.psm1" Name="TfsCmdlets_TeamProject.psm1" />
+        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\WorkItem.psm1" Name="TfsCmdlets_WorkItem.psm1" />
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psd1" Name="TfsCmdlets.psd1" />
         <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
       </Component>
