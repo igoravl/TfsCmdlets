@@ -1,13 +1,14 @@
 $projectPath = (Split-Path -Parent $MyInvocation.MyCommand.Path).Replace(".UnitTests", "")
 $rootModulePath = $projectPath + "\TfsCmdlets.psd1"
 
-Import-Module $rootModulePath
+Get-module TfsCmdlets | remove-module
+Import-Module $rootModulePath 
 
 InModuleScope TfsCmdlets {
 
 	Describe "New-GlobalList" {
 
-		Mock Import-GlobalLists { }
+		Mock Import-GlobalLists { } -ModuleName GlobalList
 
 		Context "When the list does not exist" {
 
@@ -20,7 +21,7 @@ InModuleScope TfsCmdlets {
 			<LISTITEM value="List item 1" />
 		</GLOBALLIST>
 		</GLOBALLISTS>'
-			}
+			} -ModuleName GlobalList
 
 			It "Creates a new list" {
 				[xml]$result = New-GlobalList -Name "New List" -Items "Item 1"
