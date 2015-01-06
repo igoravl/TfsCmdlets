@@ -1,5 +1,0 @@
-http://www.hanselman.com/blog/AwesomeVisualStudioCommandPromptAndPowerShellIconsWithOverlays.aspx
-
-Icon - http://flaticons.net
-
-Get-ScriptDirectory: http://stackoverflow.com/questions/8343767/how-to-get-the-current-directory-of-the-cmdlet-being-executed
