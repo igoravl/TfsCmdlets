@@ -14,6 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "TShooter.TfsCmdlets.UnitTests", "TShooter.TfsCmdlets.UnitTests\TShooter.TfsCmdlets.UnitTests.pssproj", "{BA7EE4EB-02E4-4BDB-8344-A355365C69E8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1478CF90-033C-49FB-B3CB-D94D600A1E26}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
