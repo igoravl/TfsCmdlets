@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GlobalList.Tests.ps1" />
+    <Content Include="_TestSetup.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
