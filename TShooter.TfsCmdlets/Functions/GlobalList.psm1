@@ -60,7 +60,7 @@ Function New-GlobalList
         return [PSCustomObject] @{
             Name = $Name;
             Items = $Items;
-            Overwritten = $overwritten
+            IsOverwritten = $overwritten
         }
     }
 }
@@ -87,7 +87,8 @@ Function Add-GlobalListItem
 
         # Retrieves the list
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-        
+        $newList = $false
+
         if ($list -eq $null)
         {
             if (-not $Force.IsPresent)
@@ -99,11 +100,19 @@ Function Add-GlobalListItem
             $list = $xml.CreateElement("GLOBALLIST")
             [void] $list.SetAttribute("name", $Name)
             [void] $xml.DocumentElement.AppendChild($list)
+            $newList = $true
         }
 
         # Adds the item elements to the list
         foreach($item in $Items)
         {
+            if (-not $newList)
+            {
+                # Checks if the element exists (prevents duplicates)
+                $existingItem = $list.SelectSingleNode("//GLOBALLIST[@name='$Name']/LISTITEM[@value='$item']")
+                if ($existingItem -ne $null) { continue }
+            }
+
             $itemElement = $xml.CreateElement("LISTITEM")
             [void] $itemElement.SetAttribute("value", $item)
             [void]$list.AppendChild($itemElement)
@@ -112,7 +121,15 @@ Function Add-GlobalListItem
         # Saves the list back to TFS
         Import-GlobalLists -Xml $xml
 
-        return $xml
+        $return = [PSCustomObject] @{
+            Name = $Name;
+            Items = @()
+            IsNewList = $newList
+        }
+
+        $list.SelectNodes("//GLOBALLIST[@name='$Name']/LISTITEM/@value") | foreach { $return.Items += $_.Value };
+
+        return $return
     }
 }
 
