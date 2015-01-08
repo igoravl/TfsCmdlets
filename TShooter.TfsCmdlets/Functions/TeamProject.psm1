@@ -2,14 +2,14 @@
 # Team Project cmdlets
 #=================================
 
-Function Get-TeamProjectInformation
+Function Get-TfsTeamProject
 {
     param
     (
         [Parameter(Mandatory=$true)] [string] 
         $CollectionUrl,
     
-        [Parameter(Mandatory=$true)] [string] 
+        [Parameter()] [string] 
         $Name,
     
         [Parameter()] [switch] 

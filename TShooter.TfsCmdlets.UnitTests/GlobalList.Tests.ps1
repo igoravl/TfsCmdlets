@@ -2,9 +2,9 @@ Get-Content "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\_TestSetup.ps1" 
 
 InModuleScope TfsCmdlets {
 
-    Describe "New-GlobalList" {
-        Mock Import-GlobalLists { } -ModuleName GlobalList
-        Mock Export-GlobalLists {
+    Describe "New-TfsGlobalList" {
+        Mock Import-TfsGlobalLists { } -ModuleName GlobalList
+        Mock Export-TfsGlobalLists {
         return [xml]'<GLOBALLISTS>
 <GLOBALLIST name="List1">
     <LISTITEM value="Item 1" />
@@ -18,14 +18,14 @@ InModuleScope TfsCmdlets {
         Context "When the list does not exist" {
 
             It "Creates a new list" {
-                $result = New-GlobalList -Name "New List" -Items "Item 1"
+                $result = New-TfsGlobalList -Name "New List" -Items "Item 1"
                 $result.Name | Should Be "New List"
                 $result.Items.Length | Should Be 1
                 $result.IsOverwritten | Should Be $false
             }
 
             It "Creates a new list with many items" {
-                $result = New-GlobalList -Name "New List" -Items "Item 1", "Item 2"
+                $result = New-TfsGlobalList -Name "New List" -Items "Item 1", "Item 2"
 
                 $result.Name | Should Be "New List"
                 $result.Items.Length | Should Be 2
@@ -38,14 +38,14 @@ InModuleScope TfsCmdlets {
         Context "When the list exists" {
 
             It "Creates a new list with -Force" {
-                $result = New-GlobalList -Name "List1" -Items "Item 1" -Force
+                $result = New-TfsGlobalList -Name "List1" -Items "Item 1" -Force
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 1
                 $result.IsOverwritten | Should Be $true
             }
 
             It "Creates a new list with many items with -Force" {
-                $result = New-GlobalList -Name "List1" -Items "Item 1", "Item 2" -Force
+                $result = New-TfsGlobalList -Name "List1" -Items "Item 1", "Item 2" -Force
 
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 2
@@ -55,14 +55,14 @@ InModuleScope TfsCmdlets {
             }
 
             It "Throws without -Force" {
-                { New-GlobalList -Name "List1" -Items "Item 1" } | Should Throw
+                { New-TfsGlobalList -Name "List1" -Items "Item 1" } | Should Throw
             }
         }
     }
 
-    Describe "Add-GlobalListItem" {
-        Mock Import-GlobalLists { } -ModuleName GlobalList
-        Mock Export-GlobalLists {
+    Describe "Add-TfsGlobalListItem" {
+        Mock Import-TfsGlobalLists { } -ModuleName GlobalList
+        Mock Export-TfsGlobalLists {
         return [xml]'<GLOBALLISTS>
 <GLOBALLIST name="List1">
     <LISTITEM value="Item 1" />
@@ -76,7 +76,7 @@ InModuleScope TfsCmdlets {
         Context "When the list doesn't exist" {
 
             It "Creates the list and the item with -Force" {
-                $result = Add-GlobalListItem -Name "New List" -Items "Item 1" -Force
+                $result = Add-TfsGlobalListItem -Name "New List" -Items "Item 1" -Force
 
                 $result.Name | Should Be "New List"
                 $result.Items.Length | Should Be 1
@@ -85,14 +85,14 @@ InModuleScope TfsCmdlets {
             }
 
             It "Throws without -Force" {
-                { Add-GlobalListItem -Name "New List" -Item "Item 1" } | Should Throw
+                { Add-TfsGlobalListItem -Name "New List" -Item "Item 1" } | Should Throw
             }
         }
 
         Context "When the list exists" {
         	
             It "Adds a new item" {
-                $result = Add-GlobalListItem -Name "List1" -Items "Item 2"
+                $result = Add-TfsGlobalListItem -Name "List1" -Items "Item 2"
 
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 2
@@ -100,7 +100,7 @@ InModuleScope TfsCmdlets {
             }
 
             It "Adds many items" {
-                $result = Add-GlobalListItem -Name "List1" -Items "Item 2", "Item 3"
+                $result = Add-TfsGlobalListItem -Name "List1" -Items "Item 2", "Item 3"
 
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 3
@@ -110,7 +110,7 @@ InModuleScope TfsCmdlets {
             }
 
             It "Ignores an existing item" {
-                $result = Add-GlobalListItem -Name "List1" -Items "Item 1"
+                $result = Add-TfsGlobalListItem -Name "List1" -Items "Item 1"
 
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 1
@@ -119,7 +119,7 @@ InModuleScope TfsCmdlets {
             }
 
             It "Adds many items but ignores an existing item" {
-                $result = Add-GlobalListItem -Name "List1" -Items "Item 1", "Item 2"
+                $result = Add-TfsGlobalListItem -Name "List1" -Items "Item 1", "Item 2"
 
                 $result.Name | Should Be "List1"
                 $result.Items.Length | Should Be 2
