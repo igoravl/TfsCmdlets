@@ -6,35 +6,113 @@ Function Get-TfsTeamProject
 {
     param
     (
-        [Parameter(Mandatory=$true)] [string] 
-        $CollectionUrl,
-    
-        [Parameter()] [string] 
-        $Name,
-    
-        [Parameter()] [switch] 
-        $UseDefaultCredentials,
-    
-        [Parameter()] [ValidateNotNull()] [System.Management.Automation.PSCredential] [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]] 
+        $Name = '*',
+
+        [Parameter()]
+        [switch]
+        $All,
+
+        [Parameter()]
+        [switch]
+        $Extended
+    )
+
+    Begin
+    {
+        $tpc = Get-TfsTeamProjectCollection -Current
+        $projects = _GetAllProjects $tpc $All
+    }
+
+    Process
+    {
+        foreach($project in $projects)
+        {
+            foreach($pattern in $Name)
+            {
+                if ($project.Name -like $pattern)
+                {
+                    $return = [ordered] @{
+                        Name = $project.Name;
+                        Uri = $project.Uri;
+                        Status = $project.Status
+                    }
+
+                    if ($Extended.IsPresent)
+                    {
+                        $return += _GetExtendedInfo $project.Uri
+                    }
+
+                    [PSCustomObject] $return
+                } 
+            }
+        }
+    }
+}
+
+Function _GetAllProjects
+{
+    param
+    (
+        $tpc,
+
+        $All
     )
 
     Process
     {
-        if ((!$UseDefaultCredentials.IsPresent) -and ($Credential -eq [System.Management.Automation.PSCredential]::Empty)) { $Credential = Get-Credential }
+        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
 
-        $apiUrl = _GetUrl $CollectionUrl "_apis/projects/${Name}?api-version=1.0&includeCapabilities=true"
-    
-        if ($UseDefaultCredentials.IsPresent)
+        if ($All.IsPresent)
         {
-            $json = Invoke-RestMethod -Uri $apiUrl -UseDefaultCredentials -Method "GET"
+            return $css.ListAllProjects()
         }
         else
         {
-            $json = Invoke-RestMethod -Uri $apiUrl -Credential $Credential -Method "GET"
+            return $css.ListProjects()
         }
-
-        return $json
     }
 }
 
+Function _GetExtendedInfo
+{
+    param
+    (
+        $uri
+    )
+
+    Process
+    {
+        $projectName = $null
+        $projectState = $null
+        $templateId = $null
+        $projectProperties = $null
+
+        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
+        $css.GetProjectProperties($uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
+        $projectProperties = _FormatProjectProperties $projectProperties
+
+        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+        $id = $store.Projects[$projectName].Id
+
+        return [ordered] @{
+            Id = $id;
+            ProcessTemplate = $projectProperties["Process Template"];
+            Properties = $projectProperties
+        }
+    }
+}
+
+Function _FormatProjectProperties
+{
+    param
+    (
+        $projectProperties
+    )
+
+    $return = [ordered] @{}
+    $projectProperties | foreach { $return.Add($_.Name, $_.Value) }
+
+    return $return
+}
