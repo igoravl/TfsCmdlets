@@ -7,46 +7,47 @@ Function New-GlobalList
     param
     (
         [Parameter(Mandatory=$true)]
-		[string] 
+        [string] 
         $Name,
     
         [Parameter(Mandatory=$true)] 
-		[string[]] 
+        [string[]] 
         $Items,
 
-		[switch]
-		$Force
+        [switch]
+        $Force
     )
 
     Process
     {
         [xml] $xml = Export-GlobalLists
 
-		# Checks whether the global list already exists
+        # Checks whether the global list already exists
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+        $overwritten = $false
 
-		if ($list -eq $null)
-		{
-			# Creates the new list XML element
-			$list = $xml.CreateElement("GLOBALLIST")
-			$list.SetAttribute("name", $Name)
-		}
-		else
-		{
-			if ($Force.IsPresent)
-			{
-			}
-			else
-			{
-			}
-		}
+        if ($list -ne $null)
+        {
+            if ($Force.IsPresent)
+            {
+                [void] $list.ParentNode.RemoveChild($list)
+                $overwritten = $true
+            }
+            else
+            {
+                Throw "Global List $Name already exists. To overwrite an existing list, use the -Force switch."
+            }
+        }
 
+        # Creates the new list XML element
+        $list = $xml.CreateElement("GLOBALLIST")
+        $list.SetAttribute("name", $Name)
 
         # Adds the item elements to the list
         foreach($item in $Items)
         {
             $itemElement = $xml.CreateElement("LISTITEM")
-            $itemElement.SetAttribute("value", $item)
+            [void] $itemElement.SetAttribute("value", $item)
             [void]$list.AppendChild($itemElement)
         }
 
@@ -56,7 +57,11 @@ Function New-GlobalList
         # Saves the list back to TFS
         Import-GlobalLists -Xml $xml
 
-        return $list
+        return [PSCustomObject] @{
+            Name = $Name;
+            Items = $Items;
+            Overwritten = $overwritten
+        }
     }
 }
 
@@ -65,28 +70,49 @@ Function Add-GlobalListItem
     param
     (
         [Parameter(Mandatory=$true)]
-		[string] 
+        [string] 
         $Name,
     
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-		[string] 
-        $Item
+        [string[]] 
+        $Items,
+
+        [switch]
+        $Force
     )
 
     Process
     {
         [xml] $xml = Export-GlobalLists
 
-        # Creates the new list item XML element
-        $itemXml = $xml.CreateElement("LISTITEM")
-        $itemXml.SetAttribute("value", $Item)
-
-        # Appends the new item to the list
+        # Retrieves the list
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-        [void]$list.AppendChild($itemXml)
+        
+        if ($list -eq $null)
+        {
+            if (-not $Force.IsPresent)
+            { 
+                throw "Global list name $Name is invalid or nonexistent"
+            }
+            
+            # Creates the new list XML element
+            $list = $xml.CreateElement("GLOBALLIST")
+            [void] $list.SetAttribute("name", $Name)
+            [void] $xml.DocumentElement.AppendChild($list)
+        }
 
+        # Adds the item elements to the list
+        foreach($item in $Items)
+        {
+            $itemElement = $xml.CreateElement("LISTITEM")
+            [void] $itemElement.SetAttribute("value", $item)
+            [void]$list.AppendChild($itemElement)
+        }
+        
         # Saves the list back to TFS
         Import-GlobalLists -Xml $xml
+
+        return $xml
     }
 }
 
@@ -95,7 +121,7 @@ Function Get-GlobalList
     param
     (
         [Parameter(Mandatory=$true)]
-		[string] 
+        [string] 
         $Name
     )
 
@@ -112,15 +138,15 @@ Function Import-GlobalLists
     param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-		[xml] 
+        [xml] 
         $Xml
     )
 
-	Begin
-	{
+    Begin
+    {
         $tpc = _GetConnection
         $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-	}
+    }
 
     Process
     {
@@ -131,14 +157,14 @@ Function Import-GlobalLists
 Function Export-GlobalLists
 {
     param
-	(
+    (
     )
 
-	Begin
-	{
+    Begin
+    {
         $tpc = _GetConnection
         $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-	}
+    }
 
     Process
     {
