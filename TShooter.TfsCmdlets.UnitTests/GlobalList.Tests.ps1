@@ -1,4 +1,4 @@
-. .\_TestSetup.ps1
+Get-Content "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\_TestSetup.ps1" | iex
 
 InModuleScope TfsCmdlets {
 
@@ -19,8 +19,9 @@ InModuleScope TfsCmdlets {
 
 			It "Creates a new list" {
 				$result = New-GlobalList -Name "New List" -Items "Item 1"
-				$attrValue = $result.SelectSingleNode("//GLOBALLIST[@name='New List']/@name")
-				$attrValue.Value | Should Be "New List"
+				$result.Name | Should Be "New List"
+                $result.Items.Length | Should Be 1
+                $result.Overwritten | Should Be $false
 			}
 		}
 
@@ -28,8 +29,9 @@ InModuleScope TfsCmdlets {
 
 			It "Creates a new list with -Force" {
 				$result = New-GlobalList -Name "List1" -Items "Item 1" -Force
-				$attrValue = $result.SelectSingleNode("//GLOBALLIST[@name='List1']/@name")
-				$attrValue.Value | Should Be "List1"
+				$result.Name | Should Be "List1"
+                $result.Items.Length | Should Be 1
+                $result.Overwritten | Should Be $true
 			}
 
 			It "Throws without -Force" {
