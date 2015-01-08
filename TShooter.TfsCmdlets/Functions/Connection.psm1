@@ -2,7 +2,7 @@
 # Connection cmdlets
 #===========================
 
-Function Get-TeamProjectCollection
+Function Get-TfsTeamProjectCollection
 {
     param
     (
@@ -17,7 +17,11 @@ Function Get-TeamProjectCollection
     
         [Parameter(ParameterSetName="Custom Credential", Position=1, Mandatory=$true)] 
         [System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-        $Credential
+        $Credential,
+    
+        [Parameter(ParameterSetName="Current Connection", Position=0, Mandatory=$true)] 
+        [switch] 
+        $Current
     )
 
     Process
@@ -32,6 +36,14 @@ Function Get-TeamProjectCollection
             {
                 $cred = $Credential.GetNetworkCredential()
             }
+            "Current Connection"
+            {
+                if ($Global:TfsConnection -and $Global:TfsConnection -ne $null)
+                {
+                    return $Global:TfsConnection
+                }
+                throw "No TFS connection information available. Use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
+            }
         }
 
         $tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $CollectionUrl), $cred
@@ -41,7 +53,7 @@ Function Get-TeamProjectCollection
     }
 }
 
-Function Connect-TeamProjectCollection
+Function Connect-TfsTeamProjectCollection
 {
     param
     (
@@ -61,14 +73,14 @@ Function Connect-TeamProjectCollection
 
     Process
     {
-        $Global:TfsConnection = Get-TeamProjectCollection @PSBoundParameters
+        $Global:TfsConnection = Get-TfsTeamProjectCollection @PSBoundParameters
         $Global:TfsConnectionUrl = $CollectionUrl
         $Global:TfsConnectionCredential = $cred
         $Global:TfsConnectionUseDefaultCredentials = $UseDefaultCredentials.IsPresent
     }
 }
 
-Function Disconnect-TeamProjectCollection
+Function Disconnect-TfsTeamProjectCollection
 {
     Process
     {

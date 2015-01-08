@@ -2,7 +2,7 @@
 # Global List cmdlets
 #=========================
 
-Function New-GlobalList
+Function New-TfsGlobalList
 {
     param
     (
@@ -20,7 +20,7 @@ Function New-GlobalList
 
     Process
     {
-        [xml] $xml = Export-GlobalLists
+        [xml] $xml = Export-TfsGlobalLists
 
         # Checks whether the global list already exists
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
@@ -55,7 +55,7 @@ Function New-GlobalList
         [void] $xml.DocumentElement.AppendChild($list)
 
         # Saves the list back to TFS
-        Import-GlobalLists -Xml $xml
+        Import-TfsGlobalLists -Xml $xml
 
         return [PSCustomObject] @{
             Name = $Name;
@@ -65,7 +65,7 @@ Function New-GlobalList
     }
 }
 
-Function Add-GlobalListItem
+Function Add-TfsGlobalListItem
 {
     param
     (
@@ -83,7 +83,7 @@ Function Add-GlobalListItem
 
     Process
     {
-        [xml] $xml = Export-GlobalLists
+        [xml] $xml = Export-TfsGlobalLists
 
         # Retrieves the list
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
@@ -119,7 +119,7 @@ Function Add-GlobalListItem
         }
         
         # Saves the list back to TFS
-        Import-GlobalLists -Xml $xml
+        Import-TfsGlobalLists -Xml $xml
 
         $return = [PSCustomObject] @{
             Name = $Name;
@@ -133,7 +133,7 @@ Function Add-GlobalListItem
     }
 }
 
-Function Get-GlobalList
+Function Get-TfsGlobalList
 {
     param
     (
@@ -144,13 +144,13 @@ Function Get-GlobalList
 
     Process
     {
-        [xml] $xml = Export-GlobalLists
+        [xml] $xml = Export-TfsGlobalLists
 
         return $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
     }
 }
 
-Function Import-GlobalLists
+Function Import-TfsGlobalLists
 {
     param
     (
@@ -161,7 +161,7 @@ Function Import-GlobalLists
 
     Begin
     {
-        $tpc = _GetConnection
+        $tpc = Get-TfsTeamProjectCollection -Current
         $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
     }
 
@@ -171,7 +171,7 @@ Function Import-GlobalLists
     }
 }
 
-Function Export-GlobalLists
+Function Export-TfsGlobalLists
 {
     param
     (
@@ -179,7 +179,7 @@ Function Export-GlobalLists
 
     Begin
     {
-        $tpc = _GetConnection
+        $tpc = Get-TfsTeamProjectCollection -Current
         $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
     }
 

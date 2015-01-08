@@ -2,7 +2,7 @@
 # Work Item Type cmdlets
 #===================================
 
-Function Get-WorkItemTypeDefinition
+Function Get-TfsWorkItemTypeDefinition
 {
 	param
 	(
@@ -27,7 +27,7 @@ Function Get-WorkItemTypeDefinition
 
 	Process
 	{
-		$tpc = Get-TeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
+		$tpc = Get-TfsTeamProjectCollection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential
 
 		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 

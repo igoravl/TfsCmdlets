@@ -2,7 +2,7 @@
 # Team cmdlets
 #=====================
 
-Function New-Team
+Function New-TfsTeam
 {
 	param
 	(
@@ -36,7 +36,7 @@ Function New-Team
 
 	Process
 	{
-		$tpc = _GetConnection -CollectionUrl $CollectionUrl -UseDefaultCredentials:$UseDefaultCredentials.IsPresent -Credential $Credential -ParameterSetName $pscmdlet.ParameterSetName
+		$tpc = Get-TfsTeamProjectCollection -Current
 
 		# Get Team Project
 		$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")

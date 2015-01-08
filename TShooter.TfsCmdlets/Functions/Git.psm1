@@ -2,7 +2,7 @@
 # Git cmdlets
 #=============================
 
-Function New-GitRepository
+Function New-TfsGitRepository
 {
     param
     (
@@ -17,12 +17,13 @@ Function New-GitRepository
 
 	Begin
 	{
-        $connection = _GetRestConnection
+        #TO-DO: Fix this call (convert to Get-...)
+        $connection = _GetRestConnection 
 	}
 
     Process
     {
-        $project = Get-TeamProjectInformation -Name $ProjectName
+        $project = Get-TfsTeamProjectInformation -Name $ProjectName
         $id = $project.id
         $apiUrl = _GetUrl $CollectionUrl "_apis/git/repositories?api-version=1.0"
         $body = "{`"name`": `"${Name}`", `"project`": { `"id`": `"${id}`" } }"
