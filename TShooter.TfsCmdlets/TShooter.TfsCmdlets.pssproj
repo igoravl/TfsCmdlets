@@ -51,6 +51,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Functions\Build.psm1" />
     <Content Include="Readme.txt" />
     <Content Include="Startup.ps1" />
     <Content Include="Functions\Connection.psm1" />
