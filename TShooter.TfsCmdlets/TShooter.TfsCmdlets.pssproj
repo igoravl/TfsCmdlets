@@ -54,9 +54,10 @@
     <Content Include="Functions\Build.psm1" />
     <Content Include="Readme.txt" />
     <Content Include="Startup.ps1" />
-    <Content Include="Functions\Connection.psm1" />
+    <Content Include="Functions\Collection.psm1" />
     <Content Include="Functions\Css.psm1" />
     <Content Include="Functions\Git.psm1" />
+    <Content Include="TfsCmdlets.Format.ps1xml" />
     <Content Include="TfsCmdlets.psm1" />
     <Content Include="Functions\GlobalList.psm1" />
     <Content Include="Functions\Team.psm1" />
@@ -64,11 +65,34 @@
     <Content Include="Functions\WorkItem.psm1" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Functions\ConfigServer.psm1" />
     <Compile Include="TfsCmdlets.psd1" />
     <Compile Include="TfsCmdletsShell.ico" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Functions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.TeamFoundation.Build.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>Microsoft.TeamFoundation.Build.Client</Name>
+      <AssemblyName>Microsoft.TeamFoundation.Build.Client.dll</AssemblyName>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Build.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>Microsoft.TeamFoundation.Client</Name>
+      <AssemblyName>Microsoft.TeamFoundation.Client.dll</AssemblyName>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.VersionControl.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>Microsoft.TeamFoundation.VersionControl.Client</Name>
+      <AssemblyName>Microsoft.TeamFoundation.VersionControl.Client.dll</AssemblyName>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.VersionControl.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.TeamFoundation.WorkItemTracking.Client, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <Name>Microsoft.TeamFoundation.WorkItemTracking.Client</Name>
+      <AssemblyName>Microsoft.TeamFoundation.WorkItemTracking.Client.dll</AssemblyName>
+      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\ReferenceAssemblies\v2.0\Microsoft.TeamFoundation.WorkItemTracking.Client.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
