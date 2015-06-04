@@ -6,13 +6,13 @@ Function New-TfsTeam
 {
     param
     (
-        [Parameter(Mandatory=$true)]
-        [string] 
-        $ProjectName,
-    
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [string] 
         $Name,
+    
+        [Parameter(Mandatory=$true)]
+        [string] 
+        $Project,
     
         [Parameter()]
         [string] 
@@ -30,6 +30,10 @@ Function New-TfsTeam
         [switch] 
         $ShowBugsInBacklog,
     
+		[Parameter()] 
+		[Microsoft.TeamFoundation.Client.TfsTeamProjectCollection] 
+		$Collection,
+
         [Parameter()]
         [switch] 
         $Default
@@ -37,13 +41,12 @@ Function New-TfsTeam
 
     Process
     {
-        $tpc = Get-TfsTeamProjectCollection -Current
+        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
 
-        $teamProject = _GetTeamProject $ProjectName
+        $teamProject = _GetTeamProject $Project
         $team = _CreateTeam $teamProject $Name $Description
 
-        
-
+		return $team
     }
 }
 

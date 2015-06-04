@@ -4,115 +4,37 @@
 
 Function Get-TfsTeamProject
 {
-    param
+    [CmdletBinding()]
+    Param
     (
-        [Parameter(ValueFromPipeline=$true)]
-        [string[]] 
+        [Parameter(Position=0)]
+        [string] 
         $Name = '*',
 
-        [Parameter()]
-        [switch]
-        $All,
-
-        [Parameter()]
-        [switch]
-        $Extended
+        [Parameter(ValueFromPipeline=$true)]
+        [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection]
+        $Collection
     )
-
-    Begin
-    {
-        $tpc = Get-TfsTeamProjectCollection -Current
-        $projects = _GetAllProjects $tpc $All
-    }
 
     Process
     {
+        $tpc = Get-TfsTeamProjectCollection $Collection
+        $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+
+        $projects = _GetAllProjects $tpc | ? Name -Like $Name
+
         foreach($project in $projects)
         {
-            foreach($pattern in $Name)
-            {
-                if ($project.Name -like $pattern)
-                {
-                    $return = [ordered] @{
-                        Name = $project.Name;
-                        Uri = $project.Uri;
-                        Status = $project.Status
-                    }
-
-                    if ($Extended.IsPresent)
-                    {
-                        $return += _GetExtendedInfo $project.Uri
-                    }
-
-                    [PSCustomObject] $return
-                } 
-            }
+            $wiStore.Projects[$project.Name]
         }
     }
 }
 
 Function _GetAllProjects
 {
-    param
-    (
-        $tpc,
+    param ($tpc)
 
-        $All
-    )
+    $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
 
-    Process
-    {
-        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-
-        if ($All.IsPresent)
-        {
-            return $css.ListAllProjects()
-        }
-        else
-        {
-            return $css.ListProjects()
-        }
-    }
-}
-
-Function _GetExtendedInfo
-{
-    param
-    (
-        $uri
-    )
-
-    Process
-    {
-        $projectName = $null
-        $projectState = $null
-        $templateId = $null
-        $projectProperties = $null
-
-        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-        $css.GetProjectProperties($uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
-        $projectProperties = _FormatProjectProperties $projectProperties
-
-        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-        $id = $store.Projects[$projectName].Id
-
-        return [ordered] @{
-            Id = $id;
-            ProcessTemplate = $projectProperties["Process Template"];
-            Properties = $projectProperties
-        }
-    }
-}
-
-Function _FormatProjectProperties
-{
-    param
-    (
-        $projectProperties
-    )
-
-    $return = [ordered] @{}
-    $projectProperties | foreach { $return.Add($_.Name, $_.Value) }
-
-    return $return
+    return $css.ListAllProjects() | ? Status -eq WellFormed
 }

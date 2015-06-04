@@ -1,73 +1,81 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product
-    Id="*"
-    Name="Team Foundation Server Cmdlets (TfsCmdlets)"
-    Language="1033"
-    Version="1.0.0.0"
-    Manufacturer="Igor Abade V. Leite (T-Shooter)"
-    UpgradeCode="66e39e8c-5e29-47ca-b2c0-142978831346">
+    <Product
+      Id="*"
+      Name="Team Foundation Server Cmdlets (TfsCmdlets)"
+      Language="1033"
+      Version="1.0.0.0"
+      Manufacturer="Igor Abade V. Leite (T-Shooter)"
+      UpgradeCode="66e39e8c-5e29-47ca-b2c0-142978831346">
 
-    <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-    <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
-    <Icon Id="ProductIcon" SourceFile="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico"/>
+        <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
+        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+        <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
+        <Icon Id="ProductIcon" SourceFile="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico"/>
 
-    <!-- UI Settings -->
-    <UIRef Id="WixUI_InstallDir"/>
+        <!-- UI Settings -->
+        <UIRef Id="WixUI_InstallDir"/>
 
-    <!-- Properties -->
-    <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
-    <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
-    <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
-    <Property Id="COMPANYNAME" Value="T-Shooter" />
-    <Property Id="ShortProductName" Value="TfsCmdlets" />
-    <WixVariable Id="WixUISupportPerUser" Value="0" />
+        <!-- Properties -->
+        <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
+        <Property Id="WIXUI_INSTALLDIR" Value="APPLICATIONFOLDER" />
+        <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
+        <Property Id="COMPANYNAME" Value="T-Shooter" />
+        <Property Id="ShortProductName" Value="TfsCmdlets" />
+        <WixVariable Id="WixUISupportPerUser" Value="0" />
 
-    <!-- Directories -->
-    <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder">
-        <Directory Id="COMPANYFOLDER" Name="!(bind.property.COMPANYNAME)">
-          <Directory Id="APPLICATIONFOLDER" Name="!(bind.property.ShortProductName)" />
+        <!-- Directories -->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="COMPANYFOLDER" Name="!(bind.property.COMPANYNAME)">
+                    <Directory Id="APPLICATIONFOLDER" Name="!(bind.property.ShortProductName)">
+                        <Directory Id="FunctionsFolder" Name="Functions" />
+                    </Directory>
+                    <Directory Id="ProgramMenuFolder">
+                        <Directory Id="ShortcutsFolder" Name="!(bind.property.ProductName)"/>
+                    </Directory>
+                </Directory>
+            </Directory>
         </Directory>
-      </Directory>
-      <Directory Id="ProgramMenuFolder">
-        <Directory Id="ShortcutsFolder" Name="!(bind.property.ProductName)"/>
-      </Directory>
-    </Directory>
 
-    <DirectoryRef Id="APPLICATIONFOLDER">
-      <Component Id="PowerShellModule" Guid="{CC97272C-92F7-46A5-AB61-5A4588C8D924}">
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" KeyPath="yes" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Connection.psm1" Name="TfsCmdlets_Connection.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Css.psm1" Name="TfsCmdlets_Css.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Git.psm1" Name="TfsCmdlets_Git.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\GlobalList.psm1" Name="TfsCmdlets_GlobalList.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Team.psm1" Name="TfsCmdlets_Team.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\TeamProject.psm1" Name="TfsCmdlets_TeamProject.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\WorkItem.psm1" Name="TfsCmdlets_WorkItem.psm1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psd1" Name="TfsCmdlets.psd1" />
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
-      </Component>
-      <Component Id="ProductIcon" Guid="{E0AB5C96-503E-4491-9DE6-545E85A724F4}">
-        <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico" Name="TfsCmdletsShell.ico" KeyPath="yes" />
-      </Component>
-    </DirectoryRef>
+        <DirectoryRef Id="APPLICATIONFOLDER">
+            <Component Id="PowerShellModule" Guid="{CC97272C-92F7-46A5-AB61-5A4588C8D924}">
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psm1" Name="TfsCmdlets.psm1" KeyPath="yes" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdlets.psd1" Name="TfsCmdlets.psd1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Startup.ps1" Name="Startup.ps1" />
+            </Component>
+            <Component Id="ProductIcon" Guid="{E0AB5C96-503E-4491-9DE6-545E85A724F4}">
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\TfsCmdletsShell.ico" Name="TfsCmdletsShell.ico" KeyPath="yes" />
+            </Component>
+        </DirectoryRef>
 
-    <Component Id="ShellIconComponent" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}" Directory="ShortcutsFolder">
-      <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
-                Arguments="-noexit -command &quot;. '[#Startup.ps1]&quot;'" Icon="ProductIcon"/>
-      <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder"/>
-      <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
-    </Component>
+        <DirectoryRef Id="FunctionsFolder">
+            <Component Id="cmpFunctions" Guid="{C744D308-0B12-4ADD-8F25-475E4420787E}">
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Connection.psm1" Name="Connection.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Css.psm1" Name="Css.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Git.psm1" Name="Git.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\GlobalList.psm1" Name="GlobalList.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\Team.psm1" Name="Team.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\TeamProject.psm1" Name="TeamProject.psm1" />
+                <File Source="$(var.TShooter.TfsCmdlets.ProjectDir)\Functions\WorkItem.psm1" Name="WorkItem.psm1" />
+            </Component>
+        </DirectoryRef>
 
-    <!-- Features -->
-    <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">
-      <ComponentRef Id="PowerShellModule" />
-      <ComponentRef Id="ShellIconComponent" />
-      <ComponentRef Id="ProductIcon" />
-    </Feature>
+        <Component Id="ShellIconComponent" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}" Directory="ShortcutsFolder">
+            <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
+                      Arguments="-noexit -command &quot;. '[#Startup.ps1]&quot;'" Icon="ProductIcon"/>
+            <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder"/>
+            <RegistryValue Root="HKCU" Key="Software\T-Shooter\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+        </Component>
 
-  </Product>
+        <!-- Features -->
+        <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">
+            <ComponentRef Id="PowerShellModule" />
+            <ComponentRef Id="cmpFunctions" />
+            <ComponentRef Id="ShellIconComponent" />
+            <ComponentRef Id="ProductIcon" />
+        </Feature>
+
+    </Product>
 
 </Wix>
