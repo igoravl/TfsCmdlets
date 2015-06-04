@@ -1,10 +1,6 @@
-#=========================
-# Global List cmdlets
-#=========================
-
 Function New-TfsGlobalList
 {
-    param
+    Param
     (
         [Parameter(Mandatory=$true)]
         [string] 
@@ -14,17 +10,21 @@ Function New-TfsGlobalList
         [string[]] 
         $Items,
 
+        [Parameter()]
         [switch]
-        $Force
+        $Force,
+
+        [Parameter()]
+        [object]
+        $Collection
     )
 
     Process
     {
-        [xml] $xml = Export-TfsGlobalLists
+        [xml] $xml = Export-TfsGlobalList -Collection $Collection
 
         # Checks whether the global list already exists
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-        $overwritten = $false
 
         if ($list -ne $null)
         {
@@ -55,45 +55,53 @@ Function New-TfsGlobalList
         [void] $xml.DocumentElement.AppendChild($list)
 
         # Saves the list back to TFS
-        Import-TfsGlobalLists -Xml $xml
+        Import-TfsGlobalList -Xml $xml -Collection $Collection
 
-        return [PSCustomObject] @{
-            Name = $Name;
-            Items = $Items;
-            IsOverwritten = $overwritten
-        }
+        return Get-TfsGlobalList -Name $Name -Collection $Collection
     }
 }
 
-Function Add-TfsGlobalListItem
+Function Set-TfsGlobalList
 {
-    param
+    Param
     (
         [Parameter(Mandatory=$true)]
         [string] 
         $Name,
     
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
+		[Parameter(ParameterSetName="Edit list items")]
         [string[]] 
-        $Items,
+        $Add,
 
-        [switch]
-        $Force
+		[Parameter(ParameterSetName="Edit list items")]
+        [string[]] 
+        $Remove,
+
+		[Parameter(ParameterSetName="Rename list", Mandatory=$true)]
+        [string] 
+        $NewName,
+
+		[Parameter(ParameterSetName="Edit list items")]
+        [switch] 
+        $Force,
+
+        [object]
+        $Collection
     )
 
     Process
     {
-        [xml] $xml = Export-TfsGlobalLists
+        [xml] $xml = Export-TfsGlobalList -Name $Name -Collection $Collection
 
         # Retrieves the list
-        $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+        $list = $xml.SelectSingleNode("//GLOBALLIST")
         $newList = $false
 
         if ($list -eq $null)
         {
             if (-not $Force.IsPresent)
             { 
-                throw "Global list name $Name is invalid or nonexistent"
+                throw "Global list name $Name is invalid or non-existent. Either check the name or use -Force to create a new list."
             }
             
             # Creates the new list XML element
@@ -103,13 +111,23 @@ Function Add-TfsGlobalListItem
             $newList = $true
         }
 
-        # Adds the item elements to the list
-        foreach($item in $Items)
+		if ($PSCmdlet.ParameterSetName -eq "Rename list")
+		{
+			$list.SetAttribute("name", $NewName)
+			Import-TfsGlobalList -Xml $xml -Collection $Collection
+
+			Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
+
+			return Get-TfsGlobalList -Name $NewName -Collection $Collection
+		}
+
+
+        foreach($item in $Add)
         {
             if (-not $newList)
             {
                 # Checks if the element exists (prevents duplicates)
-                $existingItem = $list.SelectSingleNode("//GLOBALLIST[@name='$Name']/LISTITEM[@value='$item']")
+                $existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
                 if ($existingItem -ne $null) { continue }
             }
 
@@ -118,80 +136,171 @@ Function Add-TfsGlobalListItem
             [void]$list.AppendChild($itemElement)
         }
         
+        if (-not $newList)
+        {
+			foreach($item in $Remove)
+			{
+				$existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
+				
+				if ($existingItem)
+				{
+					[void]$list.RemoveChild($existingItem)
+				}
+			}
+		}
+		        
         # Saves the list back to TFS
-        Import-TfsGlobalLists -Xml $xml
+        Import-TfsGlobalList -Xml $xml -Collection $Collection
 
-        $return = [PSCustomObject] @{
-            Name = $Name;
-            Items = @()
-            IsNewList = $newList
-        }
-
-        $list.SelectNodes("//GLOBALLIST[@name='$Name']/LISTITEM/@value") | foreach { $return.Items += $_.Value };
-
-        return $return
+        return Get-TfsGlobalList -Name $Name -Collection $Collection
     }
 }
 
 Function Get-TfsGlobalList
 {
-    param
+	[CmdletBinding()]
+    Param
+    (
+        [Parameter()]
+        [string] 
+        $Name = "*",
+    
+        [Parameter()]
+        [object]
+        $Collection
+    )
+
+    Process
+    {
+        $xml = Export-TfsGlobalList @PSBoundParameters
+
+        foreach($listNode in $xml.SelectNodes("//GLOBALLIST"))
+		{
+			$list = [PSCustomObject] [ordered] @{
+				Name = $listNode.GetAttribute("name")
+				Items = @()
+			}
+
+			foreach($itemNode in $listNode.SelectNodes("LISTITEM"))
+			{
+				$list.Items += $itemNode.GetAttribute("value")
+			}
+
+			$list
+		}
+    }
+}
+
+Function Remove-TfsGlobalList
+{
+	[CmdletBinding(ConfirmImpact="High", SupportsShouldProcess=$true)]
+    Param
+    (
+        [Parameter(ValueFromPipelineByPropertyName="Name")]
+        [string] 
+        $Name = "*",
+    
+        [Parameter()]
+        [object]
+        $Collection
+    )
+
+	Process
+	{
+		$tpc = Get-TfsTeamProjectCollection $Collection
+		$store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+
+		$lists = Get-TfsGlobalList -Name $Name -Collection $Collection
+		$listsToRemove = @()
+
+		foreach($list in $lists)
+		{
+			if ($PSCmdlet.ShouldProcess($list.Name, "Remove global list"))
+			{
+				$listsToRemove += $list
+			}
+		}
+
+		if ($listsToRemove.Length -eq 0)
+		{
+			return
+		}
+
+		$xml = [xml] "<Package />"
+
+		foreach($list in $listsToRemove)
+		{
+			$elem = $xml.CreateElement("DestroyGlobalList");
+			$elem.SetAttribute("ListName", "*" + $list.Name);
+			$elem.SetAttribute("ForceDelete", "true");
+			[void]$xml.DocumentElement.AppendChild($elem);
+		}
+
+		$returnElem = $null
+
+		$store.SendUpdatePackage($xml.DocumentElement, [ref] $returnElem, $false)
+	}
+}
+
+Function Import-TfsGlobalList
+{
+	[CmdletBinding()]
+    Param
     (
         [Parameter(Mandatory=$true)]
-        [string] 
-        $Name
-    )
-
-    Process
-    {
-        [xml] $xml = Export-TfsGlobalLists
-
-        return $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
-    }
-}
-
-Function Import-TfsGlobalLists
-{
-    param
-    (
-        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [xml] 
-        $Xml
+        $Xml,
+    
+        [Parameter()]
+        [object]
+        $Collection
     )
-
-    Begin
-    {
-        $tpc = Get-TfsTeamProjectCollection -Current
-        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-    }
 
     Process
     {
-        $store.ImportGlobalLists($Xml.OuterXml)
+        $tpc = Get-TfsTeamProjectCollection $Collection
+        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+
+        [void] $store.ImportGlobalLists($Xml.OuterXml)
     }
 }
 
-Function Export-TfsGlobalLists
+Function Export-TfsGlobalList
 {
-    param
+	[CmdletBinding()]
+	[OutputType([xml])]
+    Param
     (
+        [Parameter()]
+        [string] 
+        $Name = "*",
+    
+        [Parameter()]
+        [object]
+        $Collection
     )
-
-    Begin
-    {
-        $tpc = Get-TfsTeamProjectCollection -Current
-        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-    }
 
     Process
     {
-        [xml]$xml = $store.ExportGlobalLists()
+        $tpc = Get-TfsTeamProjectCollection $Collection
+        $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+
+        $xml = [xml] $store.ExportGlobalLists()
 
         $procInstr = $xml.CreateProcessingInstruction("xml", 'version="1.0"')
 
         [void] $xml.InsertBefore($procInstr, $xml.DocumentElement)
 
+        $nodesToRemove = $xml.SelectNodes("//GLOBALLIST") #| ? ([System.Xml.XmlElement]$_).GetAttribute("name") -NotLike $Name
+
+        foreach($node in $nodesToRemove)
+        {
+			if (([System.Xml.XmlElement]$node).GetAttribute("name") -notlike $Name)
+			{
+				[void]$xml.DocumentElement.RemoveChild($node)
+			}
+        }
+
         return $xml
     }
 }
-

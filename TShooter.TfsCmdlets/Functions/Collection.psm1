@@ -1,41 +1,30 @@
 Function Connect-TfsTeamProjectCollection
 {
-	param
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
+	Param
 	(
-		[Parameter(ParameterSetName="Collection from URL", ValueFromPipeline=$true, Mandatory=$true, Position=0)]
-		[string]
-		$Url,
+		[Parameter(Mandatory=$true, Position=0)]
+		[object] 
+		$Collection,
 	
-		[Parameter(ParameterSetName="Collection from URL")]  
-		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-		$Credential,
-
-		[Parameter(ParameterSetName="Collection from Configuration Server", ValueFromPipeline=$true, Mandatory=$true)]  
-		[string]
-		$Name,
-
-		[Parameter(ParameterSetName="Collection from configuration server")] 
-		[Microsoft.TeamFoundation.Client.TfsConfigurationServer] 
+		[Parameter(ValueFromPipeline=$true)]
+		[object] 
 		$Server,
-
-		[Parameter(ParameterSetName="Preexisting connection")]
-		[Microsoft.TeamFoundation.Client.TfsTeamProjectCollection] 
-		$Collection
+	
+		[Parameter()]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
+		$Credential
 	)
 
 	Process
 	{
-		if ($Collection)
-		{
-			$tpc = $Collection
-		}
-		else
-		{
-			$tpc = Get-TfsTeamProjectCollection @PSBoundParameters
-		}
+		$tpc = (Get-TfsTeamProjectCollection @PSBoundParameters | Select -First 1)
+		$tpc.EnsureAuthenticated()
 
 		$Global:TfsTpcConnection = $tpc
-		$Global:TfsTpcConnectionCredential = $cred
+		$Global:TfsTpcConnectionCredential = $Credential
 
 		return $tpc
 	}
@@ -55,67 +44,76 @@ Function Disconnect-TfsTeamProjectCollection
 Function Get-TfsTeamProjectCollection
 {
 	[CmdletBinding()]
-	param
+	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
+	Param
 	(
-		[Parameter(ParameterSetName="Ad-hoc connection", Mandatory=$true)]  
-		[string]
-		$Url,
+		[Parameter(Position=0)]
+		[object] 
+		$Collection = "*",
 	
-		[Parameter(ParameterSetName="Ad-hoc connection")] 
-		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-		$Credential,
-
-		[Parameter(ParameterSetName="Collection from configuration server", Position=0)]  
-		[string]
-		$Name = "*",
-
-		[Parameter(ParameterSetName="Collection from configuration server", ValueFromPipeline=$true)] 
-		[Microsoft.TeamFoundation.Client.TfsConfigurationServer] 
+		[Parameter(ValueFromPipeline=$true)]
+		[object] 
 		$Server,
-
-		[Parameter(ParameterSetName="Current connection", Mandatory=$true)]
-		[switch]
-		$Current,
-
-		[Parameter(ParameterSetName="Current connection",DontShow=$True)]
-		[Microsoft.TeamFoundation.Client.TfsTeamProjectCollection]
-		$Collection
+	
+		[Parameter()]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
+		$Credential
 	)
 
 	Process
 	{
-		switch($PSCmdlet.ParameterSetName)
+		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])
 		{
-			"Ad-hoc connection"
+			return $Collection
+		}
+
+		if ($Collection -is [Uri])
+		{
+			return _GetCollectionFromUrl $Collection $Credential
+		}
+
+		if ($Collection -is [string])
+		{
+			if ([Uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute))
 			{
-				Write-Verbose "Get-TfsTeamProjectCollection: Ad-hoc connection using URL $Url"
-				if ($Credential)
-				{
-					Write-Verbose "Get-TfsTeamProjectCollection: Credentials retrieved from \$Credential.GetNetworkCredential()"
-					$cred = $Credential.GetNetworkCredential()
-				}
-				else
-				{
-					Write-Verbose "Get-TfsTeamProjectCollection: Credentials retrieved from System.Net.CredentialCache.DefaultNetworkCredentials"
-					$cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
-				}
-				$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection ([Uri] $Url), $cred
-				[void] $tpc.EnsureAuthenticated()
+				return _GetCollectionFromUrl ([Uri] $Collection) $Server $Credential
 			}
-			"Collection from configuration server"
+
+			if (-not [string]::IsNullOrWhiteSpace($Collection))
 			{
-				Write-Verbose "Get-TfsTeamProjectCollection: Retrieving all collections with name like '$Name' from configuration server"
-				$tpc = _GetCollectionByName $Name $Server
+				return _GetCollectionFromName $Collection $Server $Credential
 			}
-			"Current Connection"
+
+			$Collection = $null
+		}
+
+		if ($Collection -eq $null)
+		{
+			if ($Global:TfsTpcConnection)
 			{
-				Write-Verbose "Get-TfsTeamProjectCollection: Retrieving currently connected connection"
-				Write-Verbose "Get-TfsTeamProjectCollection: Global connection: $($Global:TfsTpcConnection); -Collection argument: $($Collection)"
-				$tpc = _GetCollection $Collection
+				return $Global:TfsTpcConnection
 			}
 		}
 
-		return $tpc
+		throw "No TFS connection information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
+	}
+}
+
+Function Get-TfsRegisteredTeamProjectCollection
+{
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]])]
+	Param
+	(
+		[Parameter(Position=0, ValueFromPipeline=$true)]
+		[string]
+		$Name = "*"
+	)
+
+	Process
+	{
+		return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | ? DisplayName -Like $Name
 	}
 }
 
@@ -123,37 +121,58 @@ Function Get-TfsTeamProjectCollection
 # Helper Functions
 # =================
 
-Function _GetCollection
+Function _GetCollectionFromUrl
 {
-	Param ($Collection)
+	Param ($Url, $Cred)
 	
-	if ($Collection)
+	if ($Cred)
 	{
-		return $Collection
-	}	
-
-	if ($Global:TfsTpcConnection)
+		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTfsTeamProjectCollection([Uri] $Url, (_GetCredential $cred))
+	}
+	else
 	{
-		return $Global:TfsTpcConnection
+		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTfsTeamProjectCollection([Uri] $Url)
 	}
 
-	throw "No TFS connection information available. Either supply -Collection argument or use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
+	return $tpc
 }
 
-Function _GetCollectionByName
+
+Function _GetCollectionFromName
 {
 	Param
 	(
-		$Name, $Server
+		$Name, $Server, $Cred
 	)
 	Process
 	{
-		$configServer = _GetConfigServer $Server
-		$filter = New-Object 'System.Collections.Generic.List[System.Guid]'
-		[void] $filter.Add([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
+		if (-not $Server)
+		{
+			$registeredCollections = Get-TfsRegisteredTeamProjectCollection $Name
+
+			foreach ($registeredTpc in $registeredCollections)
+			{
+				if ($Cred)
+				{
+					$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $registeredTpc.Uri, ([System.Net.NetworkCredential] $cred)
+				}
+				else
+				{
+					$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection($registeredTpc)
+				}
+
+				$tpc.EnsureAuthenticated()
+				$tpc
+			}
+
+			return
+		}
+		
+		$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
+		$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
 		
 		$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
-		$collections = $collections | Select -ExpandProperty Resource | ? -Property DisplayName -like $Name
+		$collections = $collections | Select -ExpandProperty Resource | ? DisplayName -like $Name
 
 		if ($collections.Count -eq 0)
 		{
@@ -163,30 +182,23 @@ Function _GetCollectionByName
 		foreach($tpc in $collections)
 		{
 			$collectionId = $tpc.Properties["InstanceId"]
-			return $configServer.GetTeamProjectCollection($collectionId)
+			$tpc = $configServer.GetTeamProjectCollection($collectionId)
+			$tpc.EnsureAuthenticated()
+
+			$tpc
 		}
 
 	}
 }
 
-Function _GetConfigServer
+Function _GetCredential
 {
-	Param ($Server)
+	Param ($Cred)
 
-	if ($Server)
+	if ($Cred)
 	{
-		return $Server
+		return [System.Net.NetworkCredential] $Cred
 	}
 	
-	if ($Global:TfsServerConnection)
-	{
-		return $Global:TfsServerConnection
-	}
-
-	if ($Global:TfsTpcConnection)
-	{
-		return $Global:TfsTpcConnection.ConfigurationServer
-	}
-
-	throw "No TFS connection information available. Either supply -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."
+	return [System.Net.CredentialCache]::DefaultNetworkCredentials
 }

@@ -12,7 +12,7 @@ Function _ImportTfsCmdlets
 {
 	Process
 	{
-		Write-Host "Importing TfsCmdlets module... " -NoNewline 
+		Write-Host "Importing TfsCmdlets module from $(_GetScriptDirectory)... " -NoNewline 
 		Import-Module "$(_GetScriptDirectory)\TfsCmdlets.psd1"
 		Write-Host "DONE."
 	}
@@ -98,7 +98,7 @@ Function Prompt
 #Script main body
 
 _SetConsoleColors
-_ImportTfsCmdlets
-_ImportTfsPowerTools
-_ImportTfsStandardTools
-_ShowBanner
+#_ImportTfsCmdlets
+#_ImportTfsPowerTools
+#_ImportTfsStandardTools
+#_ShowBanner

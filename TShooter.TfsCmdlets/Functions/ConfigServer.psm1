@@ -21,31 +21,23 @@ https://msdn.microsoft.com/en-us/library/vstudio/microsoft.teamfoundation.client
 #>
 Function Connect-TfsConfigurationServer
 {
-	param
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
+	Param
 	(
-		[Parameter(ParameterSetName="Server from URL", ValueFromPipeline=$true, Mandatory=$true, Position=0)]
-		[string]
-		$Url,
+		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[object] 
+		$Server,
 	
-		[Parameter(ParameterSetName="Server from URL")] 
-		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
-		$Credential,
-
-		[Parameter(ParameterSetName="Preexisting connection")]
-		[Microsoft.TeamFoundation.Client.TfsConfigurationServer] 
-		$Server
+		[Parameter(Position=1)]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
+		$Credential
 	)
 
 	Process
 	{
-		if ($Server)
-		{
-			$configServer = $Server
-		}
-		else
-		{
-			$configServer = Get-TfsConfigurationServer @PSBoundParameters
-		}
+		$configServer = (Get-TfsConfigurationServer @PSBoundParameters | Select -First 1)
 
 		$Global:TfsServerConnection = $configServer
 		$Global:TfsServerConnectionCredential = $Credential
@@ -67,40 +59,78 @@ Function Disconnect-TfsConfigurationServer
 
 Function Get-TfsConfigurationServer
 {
-	param
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
+	Param
 	(
-		[Parameter(Position=0)]  
-		[string]
-		$Url,
+		[Parameter(Position=0)]
+		[object] 
+		$Server,
 	
-		[Parameter()] 
-		[System.Management.Automation.Credential()] [System.Management.Automation.PSCredential]
+		[Parameter(Position=1)]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
 		$Credential
 	)
 
 	Process
 	{
-		if (-not $Url)
+		if ($Server -is [Microsoft.TeamFoundation.Client.TfsConfigurationServer])
+		{
+			return $Server
+		}
+
+		if ($Server -is [Uri])
+		{
+			return _GetConfigServerFromUrl $Server $Credential
+		}
+
+		if ($Server -is [string])
+		{
+			if ([Uri]::IsWellFormedUriString($Server, [UriKind]::Absolute))
+			{
+				return _GetConfigServerFromUrl ([Uri] $Server) $Credential
+			}
+
+			if (-not [string]::IsNullOrWhiteSpace($Server))
+			{
+				return _GetConfigServerFromName $Server $Credential
+			}
+
+			$Server = $null
+		}
+
+		if ($Server -eq $null)
 		{
 			if ($Global:TfsServerConnection)
 			{
 				return $Global:TfsServerConnection
 			}
-			throw "No TFS connection information available. Either supply -Url argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."
-		}
-		
-		if ($Credential)
-		{
-			$cred = $Credential.GetNetworkCredential()
-		}
-		else
-		{
-			$cred = [System.Net.CredentialCache]::DefaultNetworkCredentials
 		}
 
-		$configServer = _NewConfigServer $Url $cred
+		throw "No TFS connection information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."
+	}
+}
 
-		return $configServer
+Function Get-TfsRegisteredConfigurationServer
+{
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.Client.RegisteredConfigurationServer[]])]
+	Param
+	(
+		[Parameter(Position=0, ValueFromPipeline=$true)]
+		[string]
+		$Name = "*"
+	)
+
+	Process
+	{
+		if(($Name -eq "localhost") -or ($Name -eq "."))
+		{
+			$Name = $env:COMPUTERNAME
+		}
+
+		return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetConfigurationServers() | ? Name -Like $Name
 	}
 }
 
@@ -108,12 +138,42 @@ Function Get-TfsConfigurationServer
 # Helper Functions
 # =================
 
-Function _NewConfigServer
+Function _GetConfigServerFromUrl
 {
 	Param ($Url, $Cred)
 	
-	$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer ([Uri] $Url), $cred
-	[void] $configServer.EnsureAuthenticated()
+	if ($Cred)
+	{
+		$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Url), ([System.Net.NetworkCredential] $cred)
+	}
+	else
+	{
+		$configServer = [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer([Uri] $Url)
+	}
 
+
+	$configServer.EnsureAuthenticated()
 	return $configServer
+}
+
+Function _GetConfigServerFromName
+{
+	Param ($Name, $Cred)
+
+	$Servers = Get-TfsRegisteredConfigurationServer $Name
+	
+	foreach($Server in $Servers)
+	{
+		if ($Cred)
+		{
+			$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ($Server.Uri), ([System.Net.NetworkCredential] $cred)
+		}
+		else
+		{
+			$configServer = [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer($Server)
+		}
+
+		$configServer.EnsureAuthenticated()
+		$configServer
+	}
 }

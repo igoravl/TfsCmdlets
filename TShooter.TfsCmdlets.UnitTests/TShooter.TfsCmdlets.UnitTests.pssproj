@@ -37,6 +37,10 @@
     <Content Include="GlobalList.Tests.ps1" />
     <Content Include="_TestSetup.ps1" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ConfigServer.Tests.ps1" />
+    <Compile Include="Connection.Tests.ps1" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
 </Project>

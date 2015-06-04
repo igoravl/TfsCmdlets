@@ -57,6 +57,7 @@
     <Content Include="Functions\Collection.psm1" />
     <Content Include="Functions\Css.psm1" />
     <Content Include="Functions\Git.psm1" />
+    <Content Include="TfsCmdlets.Types.ps1xml" />
     <Content Include="TfsCmdlets.Format.ps1xml" />
     <Content Include="TfsCmdlets.psm1" />
     <Content Include="Functions\GlobalList.psm1" />
@@ -66,6 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Functions\ConfigServer.psm1" />
+    <Compile Include="Functions\ProcessTemplate.psm1" />
     <Compile Include="TfsCmdlets.psd1" />
     <Compile Include="TfsCmdletsShell.ico" />
   </ItemGroup>
