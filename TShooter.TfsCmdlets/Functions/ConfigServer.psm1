@@ -32,17 +32,29 @@ Function Connect-TfsConfigurationServer
 		[Parameter(Position=1)]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential
+		$Credential,
+
+		[Parameter()]
+		[switch]
+		$Passthru
 	)
 
 	Process
 	{
-		$configServer = (Get-TfsConfigurationServer @PSBoundParameters | Select -First 1)
+		$configServer = (Get-TfsConfigurationServer -Server $Server -Credential $Credential | Select -First 1)
+
+		if (-not $configServer)
+		{
+			throw "Error connecting to TFS"
+		}
 
 		$Global:TfsServerConnection = $configServer
 		$Global:TfsServerConnectionCredential = $Credential
 
-		return $configServer
+		if ($Passthru)
+		{
+			return $configServer
+		}
 	}
 }
 
