@@ -1,3 +1,63 @@
 <?xml version="1.0"?>
 <Types>
+    <Type>
+        <Name>Microsoft.TeamFoundation.Client.TfsConfigurationServer</Name>
+        <Members>
+            <ScriptProperty>
+                <Name>Name</Name>
+                <GetScriptBlock>$this.Uri.Host</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+    <Type>
+        <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.Project</Name>
+        <Members>
+            <ScriptProperty>
+                <Name>ProcessTemplate</Name>
+                <GetScriptBlock>
+                    try
+                    {
+                        $projectName = $null
+                        $projectState = $null
+                        $templateId = $null
+                        $projectProperties = $null
+
+                        $tpc = $this.Store.TeamProjectCollection
+                        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
+                        $css.GetProjectProperties($this.Uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
+
+                        $processTemplate = $projectProperties | ? Name -eq "Process Template" | select -ExpandProperty Value
+
+                        if([string]::IsNullOrEmpty($processTemplate))
+                        {
+                            $processTemplate = "(Unknown)"
+                        }
+
+                        return $processTemplate
+                    }
+                    catch
+                    {
+                        return "(Error)"
+                    }
+                </GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>Collection</Name>
+                <GetScriptBlock>$this.Store.TeamProjectCollection.DisplayName</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+    <Type>
+        <Name>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</Name>
+        <Members>
+            <ScriptProperty>
+                <Name>Name</Name>
+                <GetScriptBlock>$this.CatalogNode.Resource.DisplayName</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>InstanceId</Name>
+                <GetScriptBlock>$this.CatalogNode.Resource.Properties["InstanceId"]</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
 </Types>
