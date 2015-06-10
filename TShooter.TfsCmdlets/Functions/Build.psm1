@@ -85,6 +85,126 @@ Function New-TfsBuildService
     }
 }
 
+Function Start-TfsBuild
+{
+	Param
+	(
+		[Parameter(Mandatory=$true, Position=0)]
+		[object] 
+		$BuildDefinition,
+
+		[Parameter(ValueFromPipeline=$true, Mandatory=$true)]
+		[object]
+		[ValidateNotNull()]
+		[ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])})] 
+		$Project,
+
+		[Parameter()]
+        [object]
+        $Collection,
+
+		[Parameter()]
+		[string]
+		[ValidateSet("LatestOnQueue", "LatestOnBuild", "Custom")]
+		$GetOption = "LatestOnBuild",
+
+		[Parameter()]
+		[string]
+		$GetVersion,
+
+		[Parameter()]
+		[string]
+		$DropLocation,
+
+		[Parameter()]
+        [hashtable]
+        $Parameters
+	)
+
+	Process
+	{
+
+		$tp = _GetTeamProject $Project $Collection
+		$tpc = $tp.Store.TeamProjectCollection
+
+		$buildServer = $tpc.GetService([type]"Microsoft.TeamFoundation.Build.Client.IBuildServer")
+
+		if ($BuildDefinition -is [Microsoft.TeamFoundation.Build.Client.IBuildDefinition])
+		{
+			$buildDef = $BuildDefinition
+		}
+		else
+		{
+			$buildDef = $buildServer.GetBuildDefinition($tp.Name, $BuildDefinition);
+		}
+
+		$req = $buildDef.CreateBuildRequest()
+        $req.GetOption = [Microsoft.TeamFoundation.Build.Client.GetOption] $GetOption;
+
+		if ($GetOption -eq "Custom")
+		{
+	        $req.CustomGetVersion = $GetVersion
+		}
+
+		if ($DropLocation)
+		{
+			$req.DropLocation = $DropLocation
+		}
+
+        $buildServer.QueueBuild($req)
+	}
+}
+
+Function Get-TfsBuildQueue
+{
+	Param
+	(
+		[Parameter(Position=0)]
+		[object] 
+		$BuildDefinition = "*",
+
+		[Parameter(ValueFromPipeline=$true)]
+		[object]
+		[ValidateNotNull()]
+		[ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])})] 
+		$Project,
+
+		[Parameter()]
+        [object]
+        $Collection
+	)
+
+	Process
+	{
+		if ($Project)
+		{
+			$tp = _GetTeamProject $Project $Collection
+			$tpc = $tp.Store.TeamProjectCollection
+			$tpName = $tp.Name
+		}
+		else
+		{
+			$tpName = "*"
+			$tpc = Get-TfsTeamProjectCollection $Collection
+		}
+
+		$buildServer = $tpc.GetService([type]"Microsoft.TeamFoundation.Build.Client.IBuildServer")
+
+		if ($BuildDefinition -is [Microsoft.TeamFoundation.Build.Client.IBuildDefinition])
+		{
+			$BuildDefinition = $BuildDefinition.Name
+		}
+		else
+		{
+			$buildDef = $buildServer.GetBuildDefinition($tpName, $BuildDefinition);
+		}
+
+		$query = $buildServer.CreateBuildQueueSpec($tpName, $BuildDefinition)
+		
+		$buildServer.QueryQueuedBuilds($query).QueuedBuilds
+ 	}
+}
+
 #======================
 # Helper methods
 #======================
@@ -210,4 +330,17 @@ Function _GetRegValue
 
         return $Value
     }
+}
+
+Function _GetTeamProject
+{
+	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+	Param ($Project, $Collection)
+
+	if ($Project -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])
+	{
+		return $Project
+	}
+
+	return Get-TfsTeamProject -Name $Project -Collection $Collection
 }

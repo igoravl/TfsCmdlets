@@ -9,7 +9,7 @@
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
-                        <Width>40</Width>
+                        <Width>20</Width>
                         <Label>Name</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
@@ -20,9 +20,7 @@
                     <TableRowEntry>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <ScriptBlock>
-                                    $_.CatalogNode.Resource.DisplayName
-                                </ScriptBlock>
+                                <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Uri</PropertyName>
@@ -44,7 +42,7 @@
                         <Label>Name</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>40</Width>
+                        <Width>38</Width>
                         <Label>InstanceId</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
@@ -56,14 +54,10 @@
                         <Wrap/>
                         <TableColumnItems>
                             <TableColumnItem>
-                                <ScriptBlock>
-                                    $_.CatalogNode.Resource.DisplayName
-                                </ScriptBlock>
+                                <PropertyName>Name</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <ScriptBlock>
-                                    $_.CatalogNode.Resource.Properties["InstanceId"]
-                                </ScriptBlock>
+                                <PropertyName>InstanceId</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Uri</PropertyName>
@@ -80,9 +74,7 @@
             </ViewSelectedBy>
             <GroupBy>
                 <Label>Collection</Label>
-                <ScriptBlock>
-                    $_.Store.TeamProjectCollection.DisplayName
-                </ScriptBlock>
+                <PropertyName>Collection</PropertyName>
             </GroupBy>
             <TableControl>
                 <TableHeaders>
@@ -116,32 +108,7 @@
                                 <PropertyName>Uri</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <ScriptBlock>
-                                    try
-                                    {
-                                        $projectName = $null
-                                        $projectState = $null
-                                        $templateId = $null
-                                        $projectProperties = $null
-
-                                        $tpc = $_.Store.TeamProjectCollection
-                                        $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-                                        $css.GetProjectProperties($_.Uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
-
-                                        $processTemplate = $projectProperties | ? Name -eq "Process Template" | select -ExpandProperty Value
-
-                                        if([string]::IsNullOrEmpty($processTemplate))
-                                        {
-                                            $processTemplate = "(Unknown)"
-                                        }
-
-                                        return $processTemplate
-                                    }
-                                    catch
-                                    {
-                                        return "(Unknown)"
-                                    }
-                                </ScriptBlock>
+                                <PropertyName>ProcessTemplate</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
@@ -153,6 +120,10 @@
             <ViewSelectedBy>
                 <TypeName>Microsoft.TeamFoundation.Server.TemplateHeader</TypeName>
             </ViewSelectedBy>
+            <GroupBy>
+                <Label>Collection</Label>
+                <PropertyName>Collection</PropertyName>
+            </GroupBy>
             <TableControl>
                 <TableHeaders>
                     <TableColumnHeader>
@@ -191,6 +162,32 @@
                     </TableRowEntry>
                 </TableRowEntries>
             </TableControl>
+            <!--<ListControl>
+                <ListEntries>
+                    <ListEntry>
+                        <ListItems>
+                            <ListItem>
+                                <PropertyName>Name</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>State</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>TemplateId</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>Description</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>State</PropertyName>
+                            </ListItem>
+                            <ListItem>
+                                <PropertyName>Rank</PropertyName>
+                            </ListItem>
+                        </ListItems>
+                    </ListEntry>
+                </ListEntries>
+            </ListControl>-->
         </View>
         <View>
             <Name>Work Item Types</Name>
@@ -219,6 +216,58 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Description</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Queued Builds</Name>
+            <ViewSelectedBy>
+                <TypeName>Microsoft.TeamFoundation.Build.Client.QueuedBuild</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                        <Label>Build Definition</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Build Name</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Status</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Priority</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Date Queued</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>Requested By</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.BuildDefinition.Name</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.Build.BuildNumber</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.Status</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.Priority</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.QueueTime</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.RequestedBy</ScriptBlock>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>
