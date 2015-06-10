@@ -15,18 +15,31 @@ Function Connect-TfsTeamProjectCollection
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential
+		$Credential,
+
+		[Parameter()]
+		[switch]
+		$Passthru
 	)
 
 	Process
 	{
-		$tpc = (Get-TfsTeamProjectCollection @PSBoundParameters | Select -First 1)
+		$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select -First 1)
+
+		if (-not $tpc)
+		{
+			throw "Error connecting to TFS"
+		}
+
 		$tpc.EnsureAuthenticated()
 
 		$Global:TfsTpcConnection = $tpc
 		$Global:TfsTpcConnectionCredential = $Credential
 
-		return $tpc
+		if ($Passthru)
+		{
+			return $tpc
+		}
 	}
 }
 
@@ -127,11 +140,11 @@ Function _GetCollectionFromUrl
 	
 	if ($Cred)
 	{
-		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTfsTeamProjectCollection([Uri] $Url, (_GetCredential $cred))
+		$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, (_GetCredential $cred)
 	}
 	else
 	{
-		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTfsTeamProjectCollection([Uri] $Url)
+		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection([Uri] $Url)
 	}
 
 	return $tpc
@@ -146,28 +159,6 @@ Function _GetCollectionFromName
 	)
 	Process
 	{
-		if (-not $Server)
-		{
-			$registeredCollections = Get-TfsRegisteredTeamProjectCollection $Name
-
-			foreach ($registeredTpc in $registeredCollections)
-			{
-				if ($Cred)
-				{
-					$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $registeredTpc.Uri, ([System.Net.NetworkCredential] $cred)
-				}
-				else
-				{
-					$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection($registeredTpc)
-				}
-
-				$tpc.EnsureAuthenticated()
-				$tpc
-			}
-
-			return
-		}
-		
 		$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
 		$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
 		
