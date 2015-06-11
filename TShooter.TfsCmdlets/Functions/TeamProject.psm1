@@ -1,32 +1,48 @@
-#=================================
-# Team Project cmdlets
-#=================================
-
 Function Get-TfsTeamProject
 {
     [CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
     Param
     (
         [Parameter(Position=0)]
-        [string] 
-        $Name = '*',
+		[ValidateNotNull()]
+        [object] 
+        $Project = '*',
 
-        [Parameter(ValueFromPipeline=$true)]
-        [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection]
-        $Collection
+        [Parameter(ValueFromPipeline=$true, Position=1)]
+        [object]
+        $Collection,
+
+		[Parameter()]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
+		$Credential
     )
 
     Process
     {
-        $tpc = Get-TfsTeamProjectCollection $Collection
-        $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+		if ($Project -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])
+		{
+			return $Project
+		}
 
-        $projects = _GetAllProjects $tpc | ? Name -Like $Name
+		if ($Project -is [string])
+		{
+			$tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
+        
+			$wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-        foreach($project in $projects)
-        {
-            $wiStore.Projects[$project.Name]
-        }
+			$projects = _GetAllProjects $tpc | ? Name -Like $Name
+
+			foreach($project in $projects)
+			{
+				$wiStore.Projects[$project.Name]
+			}
+
+			return
+		}
+
+		throw "Invalid argument Project: $Project"
     }
 }
 

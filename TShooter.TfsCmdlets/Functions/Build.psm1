@@ -144,7 +144,7 @@ Function Start-TfsBuild
 	Process
 	{
 
-		$tp = _GetTeamProject $Project $Collection
+		$tp = Get-TfsTeamProject $Project $Collection
 		$tpc = $tp.Store.TeamProjectCollection
 
 		$buildServer = $tpc.GetService([type]"Microsoft.TeamFoundation.Build.Client.IBuildServer")
@@ -223,7 +223,7 @@ Function Get-TfsBuildQueue
 	{
 		if ($Project)
 		{
-			$tp = _GetTeamProject $Project $Collection
+			$tp = Get-TfsTeamProject $Project $Collection
 			$tpc = $tp.Store.TeamProjectCollection
 			$tpName = $tp.Name
 		}
@@ -375,17 +375,4 @@ Function _GetRegValue
 
         return $Value
     }
-}
-
-Function _GetTeamProject
-{
-	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
-	Param ($Project, $Collection)
-
-	if ($Project -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])
-	{
-		return $Project
-	}
-
-	return Get-TfsTeamProject -Name $Project -Collection $Collection
 }
