@@ -174,13 +174,14 @@ Function Start-TfsBuild
         $buildServer.QueueBuild($req)
 	}
 }
+
 <#
 .SYNOPSIS
-Get all queued builds
+	Gets all queued builds
 
 .PARAMETER BuildDefinition
 	Uses this parameter to filter for an specific Build Defintion.
-	If suppress, cmdlet will de shown all queue builds.
+	If suppress, cmdlet will show all queue builds.
 
 .PARAMETER Collection
 	Specifies either a URL or the name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object.
@@ -191,12 +192,12 @@ Get all queued builds
 	For more details, see the -Project argument in the Get-TfsTeamProject cmdlet. 
 
 .EXAMPLE
-Get-TfsBuildQueue -BuildDefinition "My Build Definition" -Project "My Team Project"
-Get all queued builds given a definition name and a team project name
+	Get-TfsBuildQueue -BuildDefinition "My Build Definition" -Project "My Team Project"
+	Get all queued builds given a definition name and a team project name
 
 .EXAMPLE
-Get-TfsBuildQueue
-Get all queued builds, regardless of definition name or team project name
+	Get-TfsBuildQueue
+	Get all queued builds, regardless of definition name or team project name
 
 #>
 Function Get-TfsBuildQueue
