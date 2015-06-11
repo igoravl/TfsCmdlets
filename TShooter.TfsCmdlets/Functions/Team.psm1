@@ -43,7 +43,7 @@ Function New-TfsTeam
     {
         $tpc = Get-TfsTeamProjectCollection -Collection $Collection
 
-        $teamProject = _GetTeamProject $Project
+        $teamProject = Get-TfsTeamProject $Project
         $team = _CreateTeam $teamProject $Name $Description
 
 		return $team
@@ -146,22 +146,6 @@ Function Remove-TfsTeamFieldValue
 # Helper Functions
 # =================
 
-Function _GetTeamProject
-{
-    param
-    (
-        [Parameter()]
-        [string] 
-        $ProjectName
-    )
-
-    Process
-    {
-        $cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService3")
-        return $cssService.GetProjectFromName($projectName)
-    }
-}
-
 Function _GetTeam
 {
     param
@@ -183,7 +167,7 @@ Function _GetTeam
 
     Process
     {
-        $teamProject = _GetTeamProject $projectName
+        $teamProject = Get-TfsTeamProject $projectName
         $team = ($teamService.QueryTeams($teamProject.Uri) | where Name -eq $name)
 
         return $team
