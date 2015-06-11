@@ -32,17 +32,18 @@ Function Get-TfsTeamProject
         
 			$wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-			$projects = _GetAllProjects $tpc | ? Name -Like $Name
+			$projects = _GetAllProjects $tpc | ? Name -Like $Project
 
 			foreach($project in $projects)
 			{
 				$wiStore.Projects[$project.Name]
 			}
 
-			return
 		}
-
-		throw "Invalid argument Project: $Project"
+		else
+		{
+			throw "Invalid argument Project: $Project"
+		}
     }
 }
 
