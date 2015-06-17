@@ -238,6 +238,10 @@
                         <Label>Rev</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
+                        <Width>20</Width>
+                        <Label>Type</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
                         <Width>15</Width>
                         <Label>State</Label>
                     </TableColumnHeader>
@@ -262,6 +266,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Revision</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>WorkItemType</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>State</PropertyName>

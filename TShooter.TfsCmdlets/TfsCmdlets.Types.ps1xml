@@ -67,6 +67,10 @@
                 </SetScriptBlock>
             </ScriptProperty>
             <ScriptProperty>
+                <Name>WorkItemType</Name>
+                <GetScriptBlock>$this.Type.Name</GetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
                 <Name>Collection</Name>
                 <GetScriptBlock>$this.Store.TeamProjectCollection.DisplayName</GetScriptBlock>
             </ScriptProperty>

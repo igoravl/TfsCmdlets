@@ -150,6 +150,10 @@ Function New-TfsWorkItem
 	}
 }
 
+<#
+.SYNOPSIS
+    Gets one or more work items
+#>
 Function Get-TfsWorkItem
 {
 	[CmdletBinding(SupportsPaging=$true)]
