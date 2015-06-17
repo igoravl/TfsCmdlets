@@ -240,8 +240,6 @@ Function Get-TfsWorkItem
 
 				$wiql = "SELECT * FROM WorkItems WHERE $([string]::Join(" AND ", $tokens))"
 
-				Write-Output $wiql
-
 				return _GetWorkItemByWiql $wiql $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
 			}
 
