@@ -152,7 +152,7 @@ Function New-TfsWorkItem
 
 Function Get-TfsWorkItem
 {
-	[CmdletBinding()]
+	[CmdletBinding(SupportsPaging=$true)]
 	Param
 	(
 		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by revision")]
@@ -217,7 +217,7 @@ Function Get-TfsWorkItem
 			}
 
 			"Query by WIQL" {
-
+				return _GetWorkItemByWiql $Query $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
 			}
 
 			"Query by saved query" {
@@ -309,6 +309,27 @@ Function _GetWorkItemByDate($WorkItem, $AsOf, $store)
 	    {
 		    $store.GetWorkItem($id, $AsOf)
 	    }
+	}
+}
+
+Function _GetWorkItemByWiql($Query, $Macros, $store, $First=0, $Skip=0, $IncludeTotalCount=$false)
+{
+	if ($Macros)
+	{
+		$wis = $store.Query($Query, $Macros)
+	}
+	else
+	{
+		$wis = $store.Query($Query)
+	}
+
+	if ($First -gt 0)
+	{
+		$wis | Select -First $First -Skip $Skip 
+	}
+	else
+	{
+		$wis | Select -Skip $Skip
 	}
 }
 
