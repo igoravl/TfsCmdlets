@@ -48,6 +48,31 @@
         </Members>
     </Type>
     <Type>
+        <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem</Name>
+        <Members>
+            <ScriptProperty>
+                <Name>AssignedTo</Name>
+                <GetScriptBlock>
+                    try
+                    {
+                        return $this.Fields["System.AssignedTo"].Value
+                    }
+                    catch
+                    {
+                        return "(Error)"
+                    }
+                </GetScriptBlock>
+                <SetScriptBlock>
+                    $this.Fields["System.AssignedTo"].Value = $args[0]
+                </SetScriptBlock>
+            </ScriptProperty>
+            <ScriptProperty>
+                <Name>Collection</Name>
+                <GetScriptBlock>$this.Store.TeamProjectCollection.DisplayName</GetScriptBlock>
+            </ScriptProperty>
+        </Members>
+    </Type>
+    <Type>
         <Name>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</Name>
         <Members>
             <ScriptProperty>
