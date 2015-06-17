@@ -156,7 +156,7 @@ Function New-TfsWorkItem
 #>
 Function Get-TfsWorkItem
 {
-	[CmdletBinding(SupportsPaging=$true)]
+	[CmdletBinding()]
 	Param
 	(
 		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by revision")]
@@ -202,7 +202,7 @@ Function Get-TfsWorkItem
 		[hashtable]
 		$Macros,
 
-		[Parameter()]
+		[Parameter(ValueFromPipeline=$true)]
         [object]
         $Collection
 	)
@@ -240,21 +240,79 @@ Function Get-TfsWorkItem
 
 				$wiql = "SELECT * FROM WorkItems WHERE $([string]::Join(" AND ", $tokens))"
 
-				return _GetWorkItemByWiql $wiql $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
+				return _GetWorkItemByWiql $wiql $Macros $store 
 			}
 
 			"Query by Text" {
 				$EscapedText = $FreeText.Replace("'", "''")
 				$Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS '$EscapedText' OR [System.Description] CONTAINS '$EscapedText'"
-				return _GetWorkItemByWiql $Wiql $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
+				return _GetWorkItemByWiql $Wiql $Macros $store 
 			}
 
 			"Query by WIQL" {
-				return _GetWorkItemByWiql $Query $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
+				return _GetWorkItemByWiql $Query $Macros $store 
 			}
 
 			"Query by saved query" {
 
+			}
+		}
+	}
+}
+
+Function Remove-TfsWorkItem
+{
+	[CmdletBinding(ConfirmImpact="High", SupportsShouldProcess=$true)]
+	Param
+	(
+		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+		[Alias("id")]
+		[ValidateNotNull()]
+		[object]
+		$WorkItem,
+
+		[Parameter()]
+        [object]
+        $Collection
+	)
+
+	Process
+	{
+		$ids = @()
+
+		foreach($wi in $WorkItem)
+		{
+			if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
+			{
+				$id = $WorkItem.Id
+			}
+			elseif ($WorkItem -is [int])
+			{
+				$id = $WorkItem
+			}
+			else
+			{
+				throw "Invalid work item ""$WorkItem"". Supply either a WorkItem object or one or more integer ID numbers"
+			}
+
+			if ($PSCmdlet.ShouldProcess("ID: $id", "Destroy workitem"))
+			{
+				$ids += $id
+			}
+		}
+
+		if ($ids.Count -gt 0)
+		{
+			$tpc = Get-TfsTeamProjectCollection $Collection
+			$store = $tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
+
+			$errors = $store.DestroyWorkItems([int[]] $ids)
+		
+			if ($errors -and ($errors.Count -gt 0))
+			{
+				$errors | Write-Error "Error $($_.Id): $($_.Exception.Message)"
+
+				throw "Error destroying one or more work items"
 			}
 		}
 	}
@@ -345,7 +403,7 @@ Function _GetWorkItemByDate($WorkItem, $AsOf, $store)
 	}
 }
 
-Function _GetWorkItemByWiql($Query, $Macros, $store, $First=0, $Skip=0, $IncludeTotalCount=$false)
+Function _GetWorkItemByWiql($Query, $Macros, $store)
 {
 	if ($Macros)
 	{
@@ -356,18 +414,9 @@ Function _GetWorkItemByWiql($Query, $Macros, $store, $First=0, $Skip=0, $Include
 		$wis = $store.Query($Query)
 	}
 
-	if ($IncludeTotalCount)
+	foreach($wi in $wis)
 	{
-		$wis.Count
-	}
-
-	if ($First -gt 0)
-	{
-		$wis | Select -First $First -Skip $Skip 
-	}
-	else
-	{
-		$wis | Select -Skip $Skip
+		$wi
 	}
 }
 
