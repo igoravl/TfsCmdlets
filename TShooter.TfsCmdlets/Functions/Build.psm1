@@ -1,7 +1,10 @@
 <#
 .Synopsis
+
    Sets up an additional build service in the current computer
+
 .DESCRIPTION
+
    In Team Foundation Server, the Build Service is a Windows Service that is associated with a particular TFS Team Project Collection (since 2010). 
    
    Each Build Service support zero to one (0..1) Build Controllers and zero to n (0..n) Build Agents. 
@@ -14,7 +17,9 @@
 
    This script allows you work around that limitation, setting up more than one build service in the same machine.
 
-   IMPORTANT: This is not supported and should not be used in production environments.
+.NOTES
+	
+	This is not supported and should not be used in production environments.
 #>
 Function New-TfsBuildService
 {
