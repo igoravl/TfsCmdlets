@@ -246,7 +246,7 @@
                         <Label>Changed</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
-                        <Width>15</Width>
+                        <Width>25</Width>
                         <Label>Assigned To</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
