@@ -183,6 +183,12 @@ Function Get-TfsWorkItem
 		[string]
 		$FreeText,
 
+		[Parameter(Mandatory=$true, ParameterSetName="Query by fields")]
+		[ValidateNotNull()]
+		[ValidateScript({ $_.Count -gt 0 })]
+		[string[]]
+		$Where,
+
 		[Parameter()]
 		[object]
 		[ValidateScript({($_ -eq $null) -or ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])})] 
@@ -218,6 +224,21 @@ Function Get-TfsWorkItem
 
 			"Query by date" {
 				return _GetWorkItemByDate $WorkItem $AsOf $store
+			}
+
+			"Query by fields" {
+				$tokens = [string[]]@()
+
+				for($i = 0; $i -lt $Where.Count; $i++)
+				{
+                    $tokens += "($($Where[$i]))"
+				}
+
+				$wiql = "SELECT * FROM WorkItems WHERE $([string]::Join(" AND ", $tokens))"
+
+				Write-Output $wiql
+
+				return _GetWorkItemByWiql $wiql $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
 			}
 
 			"Query by Text" {
