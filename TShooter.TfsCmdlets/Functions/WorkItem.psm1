@@ -179,6 +179,10 @@ Function Get-TfsWorkItem
 		[string]
 		$QueryName,
 
+		[Parameter(Mandatory=$true, ParameterSetName="Query by text")]
+		[string]
+		$FreeText,
+
 		[Parameter()]
 		[object]
 		[ValidateScript({($_ -eq $null) -or ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])})] 
@@ -214,6 +218,12 @@ Function Get-TfsWorkItem
 
 			"Query by date" {
 				return _GetWorkItemByDate $WorkItem $AsOf $store
+			}
+
+			"Query by Text" {
+				$EscapedText = $FreeText.Replace("'", "''")
+				$Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS '$EscapedText' OR [System.Description] CONTAINS '$EscapedText'"
+				return _GetWorkItemByWiql $Wiql $Macros $store $PSCmdlet.PagingParameters.First $PSCmdlet.PagingParameters.Skip $PSCmdlet.PagingParameters.IncludeTotalCount
 			}
 
 			"Query by WIQL" {
