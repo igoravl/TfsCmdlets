@@ -323,6 +323,11 @@ Function _GetWorkItemByWiql($Query, $Macros, $store, $First=0, $Skip=0, $Include
 		$wis = $store.Query($Query)
 	}
 
+	if ($IncludeTotalCount)
+	{
+		$wis.Count
+	}
+
 	if ($First -gt 0)
 	{
 		$wis | Select -First $First -Skip $Skip 
