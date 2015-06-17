@@ -150,6 +150,168 @@ Function New-TfsWorkItem
 	}
 }
 
+Function Get-TfsWorkItem
+{
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by revision")]
+		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by date")]
+		[Alias("id")]
+		[ValidateNotNull()]
+		[object]
+		$WorkItem,
+
+		[Parameter(ParameterSetName="Query by revision")]
+		[Alias("rev")]
+		[int]
+		$Revision,
+
+		[Parameter(Mandatory=$true, ParameterSetName="Query by date")]
+		[datetime]
+		$AsOf,
+
+		[Parameter(Mandatory=$true, ParameterSetName="Query by WIQL")]
+		[string]
+		$Query,
+
+		[Parameter(Mandatory=$true, ParameterSetName="Query by saved query")]
+		[string]
+		$QueryName,
+
+		[Parameter()]
+		[object]
+		[ValidateScript({($_ -eq $null) -or ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])})] 
+		$Project,
+
+		[Parameter()]
+		[hashtable]
+		$Macros,
+
+		[Parameter()]
+        [object]
+        $Collection
+	)
+
+	Process
+	{
+		$tpc = Get-TfsTeamProjectCollection $Collection
+		$store = $tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
+
+		if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
+		{
+			if ((-Not $Revision) -and (-Not $AsOf))
+			{
+				return $WorkItem
+			}
+		}
+
+		switch($PSCmdlet.ParameterSetName)
+		{
+			"Query by revision" {
+				return _GetWorkItemByRevision $WorkItem $Revision $store
+			}
+
+			"Query by date" {
+				return _GetWorkItemByDate $WorkItem $AsOf $store
+			}
+
+			"Query by WIQL" {
+
+			}
+
+			"Query by saved query" {
+
+			}
+		}
+	}
+}
+
+Function _GetWorkItemByRevision($WorkItem, $Revision, $store)
+{
+	if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
+	{
+		$ids = @($WorkItem.Id)
+	}
+	elseif ($WorkItem -is [int])
+	{
+		$ids = @($WorkItem)
+	}
+	elseif ($WorkItem -is [int[]])
+	{
+		$ids = $WorkItem
+	}
+	else
+	{
+		throw "Invalid work item ""$WorkItem"". Supply either a WorkItem object or one or more integer ID numbers"
+	}
+
+	if ($Revision -is [int] -and $Revision -gt 0)
+	{
+	    foreach($id in $ids)
+	    {
+		    $store.GetWorkItem($id, $Revision)
+	    }
+	}
+	elseif ($Revision -is [int[]])
+	{
+		if ($ids.Count -ne $Revision.Count)
+		{
+			throw "When supplying a list of IDs and Revisions, both must have the same number of elements"
+		}
+		for($i = 0; $i -le $ids.Count-1; $i++)
+		{
+			$store.GetWorkItem($ids[$i], $Revision[$i])
+		}
+	}
+	else
+	{
+	    foreach($id in $ids)
+	    {
+		    $store.GetWorkItem($id)
+	    }
+	}
+}
+
+Function _GetWorkItemByDate($WorkItem, $AsOf, $store)
+{
+	if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
+	{
+		$ids = @($WorkItem.Id)
+	}
+	elseif ($WorkItem -is [int])
+	{
+		$ids = @($WorkItem)
+	}
+	elseif ($WorkItem -is [int[]])
+	{
+		$ids = $WorkItem
+	}
+	else
+	{
+		throw "Invalid work item ""$WorkItem"". Supply either a WorkItem object or one or more integer ID numbers"
+	}
+
+	if ($AsOf -is [datetime[]])
+	{
+		if ($ids.Count -ne $AsOf.Count)
+		{
+			throw "When supplying a list of IDs and Changed Dates (AsOf), both must have the same number of elements"
+		}
+		for($i = 0; $i -le $ids.Count-1; $i++)
+		{
+			$store.GetWorkItem($ids[$i], $AsOf[$i])
+		}
+	}
+	else
+	{
+	    foreach($id in $ids)
+	    {
+		    $store.GetWorkItem($id, $AsOf)
+	    }
+	}
+}
+
 Function _GetWorkItemType
 {
 	Param ($Type, $Project, $Collection)

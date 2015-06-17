@@ -242,6 +242,10 @@
                         <Label>State</Label>
                     </TableColumnHeader>
                     <TableColumnHeader>
+                        <Width>20</Width>
+                        <Label>Changed</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
                         <Width>15</Width>
                         <Label>Assigned To</Label>
                     </TableColumnHeader>
@@ -261,6 +265,9 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>State</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ChangedDate</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>AssignedTo</PropertyName>
