@@ -211,6 +211,11 @@ Function Get-TfsWorkItem
 	{
 		$tpc = Get-TfsTeamProjectCollection $Collection
 		$store = $tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
+		
+		if ($Project)
+		{
+			$Project = Get-TfsTeamProject $Project
+		}
 
 		if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
 		{
@@ -250,11 +255,11 @@ Function Get-TfsWorkItem
 			}
 
 			"Query by WIQL" {
-				return _GetWorkItemByWiql $Query $Macros $store 
+				return _GetWorkItemByWiql $Query $Macros $Project $store 
 			}
 
 			"Query by saved query" {
-
+				return _GetWorkItemBySavedQuery $QueryName $Macros $Project $store 
 			}
 		}
 	}
@@ -403,7 +408,38 @@ Function _GetWorkItemByDate($WorkItem, $AsOf, $store)
 	}
 }
 
-Function _GetWorkItemByWiql($Query, $Macros, $store)
+Function _GetWorkItemByWiql($Query, $Macros, $Project, $store)
+{
+	if (-not $Macros)
+	{
+		$Macros = @{}
+	}
+
+	if (($Query -match "@project") -and $Project)
+	{
+
+		if (-not $Macros.ContainsKey("Project"))
+		{
+			$Macros["Project"] = $Project.Name
+		}
+	}
+
+    if ($Query -match "@me")
+    {
+        $user = $null
+        $store.TeamProjectCollection.GetAuthenticatedIdentity([ref] $user)
+        $Macros["Me"] = $user.DisplayName
+    }
+
+	$wis = $store.Query($Query, $Macros)
+
+	foreach($wi in $wis)
+	{
+		$wi
+	}
+}
+
+Function _GetWorkItemBySavedQuery($QueryName, $Macros, $Project, $store)
 {
 	if ($Macros)
 	{
@@ -420,10 +456,8 @@ Function _GetWorkItemByWiql($Query, $Macros, $store)
 	}
 }
 
-Function _GetWorkItemType
+Function _GetWorkItemType($Type, $Project, $Collection)
 {
-	Param ($Type, $Project, $Collection)
-
 	if ($Type -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType])
 	{
 		return $Type
