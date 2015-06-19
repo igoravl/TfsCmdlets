@@ -25,7 +25,16 @@ Copyright = '(c) 2014 Igor Abade V. Leite. All rights reserved.'
 PowerShellVersion = '3.0'
 
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-NestedModules = 'Functions\Build.psm1', 'Functions\Collection.psm1', 'Functions\ConfigServer.psm1', 'Functions\Css.psm1', 'Functions\GlobalList.psm1', 'Functions\ProcessTemplate.psm1', 'Functions\Team.psm1', 'Functions\TeamProject.psm1', 'Functions\WorkItem.psm1'
+NestedModules = @(
+	'Functions\Build.psm1', 
+	'Functions\Collection.psm1', 
+	'Functions\ConfigServer.psm1', 
+	'Functions\Css.psm1', 
+	'Functions\GlobalList.psm1', 
+	'Functions\ProcessTemplate.psm1', 
+	'Functions\Team.psm1', 
+	'Functions\TeamProject.psm1', 
+	'Functions\WorkItem.psm1' )
 
 # Functions to export from this module
 FunctionsToExport = '*-Tfs*'

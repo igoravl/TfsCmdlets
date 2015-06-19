@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>Lambda3.TfsCmdlets</Name>
+    <Name>TShooter.TfsCmdlets</Name>
     <ManifestFileName>TfsCmdlets.psd1</ManifestFileName>
     <AliasesToExport>
     </AliasesToExport>
