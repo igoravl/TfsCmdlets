@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <UsingTask TaskName="ReplaceTokensInFile" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v12.0.dll" >
+        <ParameterGroup>
+            <Inputs ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+            <Tokens ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="false" />
+            <Destination ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System.IO" />
+            <Using Namespace="System.Text" />
+            <Using Namespace="System.Collections.Generic" />
+            <Code Type="Fragment" Language="cs">
+            <![CDATA[ 
+var outputPath = Destination.GetMetadata("FullPath");
+var outputDir = Path.GetDirectoryName(outputPath);
+
+if (!Directory.Exists(outputDir))
+{
+    Directory.CreateDirectory(outputDir);
+}
+
+var output = new StringBuilder();
+
+Log.LogMessageFromText("Generating file " + outputPath, MessageImportance.Normal);
+
+foreach(var file in Inputs)
+{
+    var fileContents = new StringBuilder(File.ReadAllText(file.GetMetadata("FullPath")));
+    
+    if(Tokens != null) 
+    {
+        foreach(var token in Tokens)
+        {
+            var tokenValue = "${" + token.GetMetadata("Identity") + "}";
+            var replacementValue = token.GetMetadata("ReplacementValue");
+            fileContents.Replace(tokenValue, replacementValue);
+        }
+    }
+    
+    output.Append(fileContents);
+}
+
+File.WriteAllText(outputPath, output.ToString());
+            ]]></Code>
+        </Task>
+    </UsingTask>
+</Project>

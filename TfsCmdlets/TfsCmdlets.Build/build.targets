@@ -1,0 +1,100 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+
+    <Import Project="..\TfsCmdlets\TfsCmdlets.pssproj" />
+    <Import Project="ReplaceTokensInFile.Task.targets" />
+
+    <PropertyGroup>
+        <SourceDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\TfsCmdlets'))</SourceDir>
+        <SolutionDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..'))</SolutionDir>
+        <OutDir>$(SourceDir)\$(OutputPath)</OutDir>
+        <NugetExePath>$(SolutionDir).nuget\nuget.exe</NugetExePath>
+        <NugetPackagesDir>$(SolutionDir)packages</NugetPackagesDir>
+        <ModuleAuthor Condition="'$(ModuleAuthor)' == ''">Igor Abade V. Leite</ModuleAuthor>
+        <ModuleName Condition="'$(ModuleName)' == ''">TfsCmdlets</ModuleName>
+        <ModuleDescription Condition="'$(ModuleDescription)' == ''">PowerShell Cmdlets for TFS and VSO</ModuleDescription>
+        <BranchName Condition="'$(BranchName)' == ''">local-branch</BranchName>
+        <Commit Condition="'$(Commit)' == ''">local-commit</Commit>
+        <PreRelease Condition="'$(PreRelease)' == ''">localpre</PreRelease>
+        <BuildName Condition="'$(BuildName)' == ''">1.0.0-localpre+1</BuildName>
+        <Version Condition="'$(Version)' == ''">1.0.0.1</Version>
+    </PropertyGroup>
+    
+    <Import Project="..\TfsCmdlets\Tokens.targets" />
+
+    <ItemGroup>
+        <ScriptFragment Include="@(Compile->'$(SourceDir)\%(Identity)')">
+            <ModuleName>$([System.Text.RegularExpressions.Regex]::Match(%(RelativeDir), '(?&lt;name&gt;[^\\]*)\\$').Groups['name'].Value)</ModuleName>
+            <OutputFile>$(OutDir)TfsCmdlets\%(ModuleName)\%(ModuleName).psm1</OutputFile>
+        </ScriptFragment>
+    </ItemGroup>
+
+    <Target Name="Rebuild" DependsOnTargets="Clean Build"/>
+
+    <Target Name="Clean Build" DependsOnTargets="Clean;Build"/>
+
+    <Target Name="Build" DependsOnTargets="CreateOutputDirectory;CopyBinaries;CopyContent;CopyResources;GenerateModules;ProcessManifest" />
+
+    <Target Name="CreateOutputDirectory">
+        <MakeDir Directories="$(OutDir)" />
+    </Target>
+
+    <Target Name="CopyContent" Inputs="@(Content)" Outputs="@(Content->'$(OutDir)TfsCmdlets\%(Identity)')">
+        <ItemGroup>
+            <Token Include="TfsOmNugetVersion">
+                <ReplacementValue>$(TfsOmNugetVersion)</ReplacementValue>        
+            </Token>
+        </ItemGroup>
+        <ReplaceTokensInFile Inputs="$(SourceDir)\%(Content.Identity)" Destination="$(OutDir)TfsCmdlets\%(Content.Identity)" Tokens="@(Token)"/>
+    </Target>
+
+    <Target Name="CopyResources" Inputs="@(Resource)" Outputs="@(Resource->'$(OutDir)TfsCmdlets\%(Identity)')">
+        <Copy SourceFiles="@(Resource->'$(SourceDir)\%(Identity)')" DestinationFiles="@(Resource->'$(OutDir)TfsCmdlets\%(Identity)')" />
+    </Target>
+
+    <Target Name="CopyBinaries" DependsOnTargets="RestoreNugetPackages">
+        <ItemGroup>
+            <Reference Include="$(NugetPackagesDir)\*\lib\net45\*.dll" />
+            <Reference Include="$(NugetPackagesDir)\*\lib\native\*\*.dll" />
+        </ItemGroup>
+        <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)TfsCmdlets\lib" />
+    </Target>
+
+    <Target Name="RestoreNugetPackages">
+        <Message Text="Downloading TFS Client Object Model packages from Nuget. Please wait, it may take a while..." Importance="High" />
+        <Exec Command="$(NugetExePath) install Microsoft.TeamFoundationServer.ExtendedClient -OutputDirectory &quot;$(NugetPackagesDir)&quot; -ExcludeVersion" />
+        <Exec Command="$(NugetExePath) list -Source $(SolutionDir)packages\Microsoft.TeamFoundationServer.ExtendedClient" ConsoleToMSBuild="true">
+            <Output TaskParameter="ConsoleOutput" ItemName="NugetConsole" />
+        </Exec>
+        <CreateProperty Value="@(NugetConsole)">
+            <Output TaskParameter="Value" PropertyName="TfsOmNugetVersion"/>
+        </CreateProperty>
+        <Message Text="$(TfsOmNugetVersion)" />
+    </Target>
+
+    <Target Name="GenerateModules" Inputs="@(ScriptFragment)" Outputs="%(OutputFile)">
+        <ReplaceTokensInFile Inputs="@(ScriptFragment)" Destination="%(ScriptFragment.OutputFile)" Tokens="@(Token)"/>
+    </Target>
+
+    <Target Name="ProcessManifest" DependsOnTargets="GenerateModules">
+        <ItemGroup>
+            <NestedModule Include="$(OutDir)TfsCmdlets\*\*.psm1" />
+            <FileList Include="$(OutDir)TfsCmdlets\**\*.*" />
+            <ManifestFile Include="$(OutDir)TfsCmdlets\TfsCmdlets.psd1" />
+            <Token Include="NestedModules">
+                <ReplacementValue>'@(NestedModule->'%(RecursiveDir)%(Filename).psm1', '%27,%0d%0a        %27')'</ReplacementValue>
+            </Token>
+            <Token Include="FileList">
+                <ReplacementValue>'@(FileList->'%(RecursiveDir)%(Filename)%(Extension)', '%27,%0d%0a        %27')'</ReplacementValue>
+            </Token>
+        </ItemGroup>
+        <ReplaceTokensInFile Inputs="@(ManifestFile)" Destination="%(ManifestFile.FullPath)" Tokens="@(Token)" />
+    </Target>
+
+    <Target Name="Clean">
+        <RemoveDir Directories="$(OutDir)" />
+    </Target>
+
+    <Target Name="BeforeBuild" BeforeTargets="Build" />
+    <Target Name="AfterBuild" AfterTargets="Build" />
+
+</Project>

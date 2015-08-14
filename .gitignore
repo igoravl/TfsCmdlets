@@ -10,13 +10,7 @@
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
-<<<<<<< HEAD
-x64/
-=======
 [Rr]eleases/
-x64/
-x86/
->>>>>>> 0329d12672445b0641fc5d68ef66e544e1c74e78
 build/
 bld/
 [Bb]in/
@@ -129,7 +123,7 @@ publish/
 # Publish Web Output
 *.[Pp]ublish.xml
 *.azurePubxml
-<<<<<<< HEAD
+
 ## TODO: Comment the next line if you want to checkin your
 ## web deploy settings but do note that will include unencrypted
 ## passwords
@@ -146,7 +140,7 @@ packages/*
 # This line needs to be after the ignore of the build folder
 # (and the packages folder if the line above has been uncommented)
 !packages/build/
-=======
+
 # TODO: Comment the next line if you want to checkin your web deploy settings 
 # but database connection strings (with potential passwords) will be unencrypted
 *.pubxml
@@ -154,13 +148,15 @@ packages/*
 
 # NuGet Packages
 *.nupkg
+
 # The packages folder can be ignored because of Package Restore
 **/packages/*
+
 # except build/, which is used as an MSBuild target.
 !**/packages/build/
+
 # If using the old MSBuild-Integrated Package Restore, uncomment this:
 #!**/packages/repositories.config
->>>>>>> 0329d12672445b0641fc5d68ef66e544e1c74e78
 
 # Windows Azure Build Output
 csx/
@@ -204,11 +200,8 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
-<<<<<<< HEAD
 
 # LightSwitch generated files
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-=======
->>>>>>> 0329d12672445b0641fc5d68ef66e544e1c74e78
