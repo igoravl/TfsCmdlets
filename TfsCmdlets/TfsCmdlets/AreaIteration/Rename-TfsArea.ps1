@@ -1,15 +1,16 @@
 <#
 
 .PARAMETER Area
-    Specifies the name, URI or path of an Area. Wildcards are supported. If omitted, all Areas in the given Team Project are returned.
-    To supply a path, use a backslash ("\") between the path segments. Leading and trailing backslashes are optional.
-    To supply a URI instead, use URIs in the form of "vstfs:///Classification/Node/<GUID>" (where <GUID> is the unique identifier of the given node)
+    ${HelpParam_Area}
+
+.PARAMETER NewName
+    Specifies the new name of the area. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the Area parameter, Rename-TfsArea generates an error. To rename and move an item, use the Move-TfsArea cmdlet.
 
 .PARAMETER Project
-	${Help_Project_Parameter}
+	${HelpParam_Project}
 
 .PARAMETER Collection
-	${Help_Collection_Parameter}
+	${HelpParam_Collection}
 
 #>
 Function Rename-TfsArea

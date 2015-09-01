@@ -1,4 +1,16 @@
 <#
+.SYNOPSIS
+    Deletes one or more Iterations.
+
+.PARAMETER Area
+    ${HelpParam_Iteration}
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Remove-TfsIteration
 {

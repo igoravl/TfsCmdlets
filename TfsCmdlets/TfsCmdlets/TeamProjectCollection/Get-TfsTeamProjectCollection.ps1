@@ -7,7 +7,7 @@
 	Team Project Collection objects can either be obtained by providing a fully-qualified URL to the collection or by collection name (in which case a TFS Configuration Server object is required).
 
 .PARAMETER Collection
-	${Help_Collection_Parameter}
+	${HelpParam_Collection}
 
 .PARAMETER Server
 	Specifies either a URL/name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.

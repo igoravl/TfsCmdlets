@@ -1,4 +1,19 @@
 <#
+.SYNOPSIS
+    Renames an Iteration.
+
+.PARAMETER Iteration
+    ${HelpParam_Iteration}
+
+.PARAMETER NewName
+    Specifies the new name of the iteration. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the Iteration parameter, Rename-TfsIteration generates an error. To rename and move an item, use the Move-TfsIteration cmdlet.
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Rename-TfsIteration
 {

@@ -8,10 +8,10 @@
     To supply a URI instead, use URIs in the form of "vstfs:///Classification/Node/<GUID>" (where <GUID> is the unique identifier of the given node)
 
 .PARAMETER Project
-	${Help_Project_Parameter}
+	${HelpParam_Project}
 
 .PARAMETER Collection
-	${Help_Collection_Parameter}
+	${HelpParam_Collection}
 
 #>
 Function New-TfsArea
