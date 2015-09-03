@@ -6,7 +6,7 @@ foreach($a in Get-ChildItem $binDir)
      $assemblyList += "{""$($a.BaseName)"", @""$($a.FullName)""},`r`n"
 }
 
-Add-Type -Language CSharpVersion3 -TypeDefinition @"
+Add-Type -Language CSharp -TypeDefinition @"
 using System;
 using System.Collections.Generic;
 using System.Reflection;
