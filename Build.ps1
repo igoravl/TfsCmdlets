@@ -1,7 +1,7 @@
 Param
 (
     $SolutionDir = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) 'TfsCmdlets'),
-    $Configuration = 'Release',
+    $Configuration = '',
     $BranchName = 'local-build',
     $Commit = '00000000',
     $BuildName = '1.0.0-alpha+1',
