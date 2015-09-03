@@ -1,7 +1,7 @@
 Param
 (
     $SolutionDir = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) 'TfsCmdlets'),
-    $Configuration = '',
+    $Configuration = 'Release',
     $BranchName = 'local-build',
     $Commit = '00000000',
     $BuildName = '1.0.0-alpha+1',
@@ -14,6 +14,8 @@ Param
 if ($env:APPVEYOR)
 {
     #Log AppVeyor environment information
+
+    $Commit = "$($(git log -1 --pretty=%B).Trim()) ($($env:APPVEYOR_REPO_COMMIT.Substring(0, 8)))"
 
     Write-Host @"
     Parameters:
