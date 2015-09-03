@@ -15,7 +15,7 @@ if ($env:APPVEYOR)
 {
     #Log AppVeyor environment information
 
-    $Commit = "$($(git log -1 --pretty=%B).Trim()) ($($env:APPVEYOR_REPO_COMMIT.Substring(0, 8)))"
+    $Commit = "$($env:APPVEYOR_REPO_COMMIT.Substring(0, 8)) (`"$env:APPVEYOR_REPO_COMMIT_MESSAGE`")"
 
     Write-Host @"
     Parameters:

@@ -39,7 +39,7 @@ Properties {
         "/p:ModuleAuthor=`"$ModuleAuthor`" " + `
         "/p:ModuleName=$ModuleName " + `
         "/p:ModuleDescription=`"$ModuleDescription`" " + `
-        "/p:Commit=$Commit " + `
+        "/p:Commit=`"$Commit`" " + `
         "/p:PreRelease=$PreRelease " + `
         "/p:BuildName=$BuildName " + `
         "/p:Version=$Version " + `
