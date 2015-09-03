@@ -15,6 +15,8 @@ if ($env:APPVEYOR)
 {
     #Log AppVeyor environment information
 
+    $Commit = "$($env:APPVEYOR_REPO_COMMIT.Substring(0, 8)) (`"$env:APPVEYOR_REPO_COMMIT_MESSAGE`")"
+
     Write-Host @"
     Parameters:
     ===========

@@ -41,7 +41,7 @@ Function Connect-TfsConfigurationServer
 
 	Process
 	{
-		$configServer = (Get-TfsConfigurationServer -Server $Server -Credential $Credential | Select -First 1)
+		$configServer = Get-TfsConfigurationServer -Server $Server -Credential $Credential
 
 		if (-not $configServer)
 		{

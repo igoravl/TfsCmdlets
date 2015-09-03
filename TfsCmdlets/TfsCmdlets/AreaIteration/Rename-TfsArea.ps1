@@ -1,4 +1,17 @@
 <#
+
+.PARAMETER Area
+    ${HelpParam_Area}
+
+.PARAMETER NewName
+    Specifies the new name of the area. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the Area parameter, Rename-TfsArea generates an error. To rename and move an item, use the Move-TfsArea cmdlet.
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Rename-TfsArea
 {

@@ -1,17 +1,16 @@
 <#
 .SYNOPSIS
-	Get an specific Iteration of one Team Project.
+	Gets one or more Iterations ("Iteration Paths") from a given Team Project.
 
-.PARAMETER Collection
-	Specifies either a URL or the name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object.
-	For more details, see the -Collection argument in the Get-TfsTeamProjectCollection cmdlet.
+.PARAMETER Iteration
+    ${HelpParam_Iteration}
 
 .PARAMETER Project
-	Specifies either the name of the Team Project or a previously initialized Microsoft.TeamFoundation.WorkItemTracking.Client.Project object to connect to. 
-	For more details, see the -Project argument in the Get-TfsTeamProject cmdlet. 
+	${HelpParam_Project}
 
-.EXAMPLE
-	xxxx.
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Get-TfsIteration
 {
@@ -22,6 +21,7 @@ Function Get-TfsIteration
 		[Parameter(Position=0)]
 		[Alias("Path")]
 		[ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [SupportsWildcards()]
 		[object]
 		$Iteration = '\**',
 

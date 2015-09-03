@@ -1,4 +1,16 @@
 <#
+.SYNOPSIS
+    Deletes one or more Areas ("Area Path").
+
+.PARAMETER Area
+    ${HelpParam_Area}
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Remove-TfsArea
 {

@@ -1,4 +1,16 @@
 <#
+.SYNOPSIS
+	Moves an Iteration from one parent iteration to another in the same Team Project.
+
+.PARAMETER Iteration
+    ${HelpParam_Iteration}
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Move-TfsIteration
 {

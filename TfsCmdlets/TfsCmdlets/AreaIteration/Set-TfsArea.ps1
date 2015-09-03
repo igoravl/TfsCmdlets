@@ -1,4 +1,16 @@
 <#
+.SYNOPSIS
+    Changes the value of a property of an Area.
+
+.PARAMETER Area
+    ${HelpParam_Area}
+
+.PARAMETER Project
+	${HelpParam_Project}
+
+.PARAMETER Collection
+	${HelpParam_Collection}
+
 #>
 Function Set-TfsArea
 {

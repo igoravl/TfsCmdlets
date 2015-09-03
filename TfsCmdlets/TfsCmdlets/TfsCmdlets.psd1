@@ -26,7 +26,7 @@
         LicenseUri = 'https://github.com/igoravl/tfscmdlets/wiki/License'
         ProjectUri = 'https://github.com/igoravl/tfscmdlets/'
         IconUri = 'https://raw.githubusercontent.com/igoravl/tfscmdlets/master/TShooter.TfsCmdlets/TfsCmdletsShell.ico'
-        ReleaseNotes = '${ReleaseNotes}' 
+        ReleaseNotes = 'See https://github.com/igoravl/tfscmdlets/wiki/ReleaseNotes' 
         TfsClientVersion = '${TfsOmNugetVersion}'
     }
 }

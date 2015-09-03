@@ -2,6 +2,11 @@
 
 Properties {
 
+    Function Get-EscapedMSBuildArgument($arg)
+    {
+        return '"' + $arg.Replace('"', '\"') + '"'
+    }
+
     # Source information
     $SourceDir = Join-Path $SolutionDir "TfsCmdlets\Bin\$Configuration\"
 
@@ -39,7 +44,7 @@ Properties {
         "/p:ModuleAuthor=`"$ModuleAuthor`" " + `
         "/p:ModuleName=$ModuleName " + `
         "/p:ModuleDescription=`"$ModuleDescription`" " + `
-        "/p:Commit=$Commit " + `
+        "/p:Commit=$(Get-EscapedMSBuildArgument $Commit) " + `
         "/p:PreRelease=$PreRelease " + `
         "/p:BuildName=$BuildName " + `
         "/p:Version=$Version " + `
@@ -64,6 +69,7 @@ Task CopyModule -Depends Clean, MSBuild {
 
 Task MSBuild {
 
+    Write-Output "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
     exec { MSBuild.exe '--%' $MSBuildArgs }
 }
 

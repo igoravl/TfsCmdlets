@@ -1,90 +1,101 @@
 <#
 .SYNOPSIS
-	Set Iteration Dates of an specific Iteration of one Team Project.
+    Changes the value of a property of an Iteration.
 
-.PARAMETER Collection
-	Specifies either a URL or the name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object.
-	For more details, see the -Collection argument in the Get-TfsTeamProjectCollection cmdlet.
+.PARAMETER Iteration
+    ${HelpParam_Iteration}
+
+.PARAMETER NewName
+    Specifies the new name of the iteration. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the Iteration parameter, Rename-TfsIteration generates an error. To rename and move an item, use the Move-TfsIteration cmdlet.
+
+.PARAMETER MoveBy
+    Reorders an iteration by moving it either up or down inside its parent. A positive value moves an iteration down, whereas a negative one moves it up.
+
+.PARAMETER StartDate
+    Sets the start date of the iteration. To clear the start date, set it to $null. Note that when clearing a date, both must be cleared at the same time (i.e. setting both StartDate and FinishDate to $null)
+
+.PARAMETER FinishDate
+    Sets the finish date of the iteration. To clear the finish date, set it to $null. Note that when clearing a date, both must be cleared at the same time (i.e. setting both StartDate and FinishDate to $null)
 
 .PARAMETER Project
-	Specifies either the name of the Team Project or a previously initialized Microsoft.TeamFoundation.WorkItemTracking.Client.Project object to connect to. 
-	For more details, see the -Project argument in the Get-TfsTeamProject cmdlet. 
+    ${HelpParam_Project}
 
-.EXAMPLE
-	xxxx.
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
 #>
 Function Set-TfsIteration
 {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param
     (
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
-		[Alias("Path")]
-		[ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
-		[object]
-		$Iteration = '\**',
-
-		[Parameter()]
-		[string]
-		$NewName,
-
-		[Parameter()]
-		[int]
-		$MoveBy,
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [Alias("Path")]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [object]
+        $Iteration = '\**',
 
         [Parameter()]
-		[Nullable[DateTime]]
+        [string]
+        $NewName,
+
+        [Parameter()]
+        [int]
+        $MoveBy,
+
+        [Parameter()]
+        [Nullable[DateTime]]
         $StartDate,
     
         [Parameter()]
-		[Nullable[DateTime]]
+        [Nullable[DateTime]]
         $FinishDate,
 
-		[Parameter()]
-		[object]
-		$Project,
+        [Parameter()]
+        [object]
+        $Project,
 
-		[Parameter()]
-		[object]
-		$Collection
+        [Parameter()]
+        [object]
+        $Collection
     )
 
     Process
     {
-		$node = Get-TfsIteration -Iteration $Iteration -Project $Project -Collection $Collection
+        $node = Get-TfsIteration -Iteration $Iteration -Project $Project -Collection $Collection
 
-		if (-not $node)
-		{
-			throw "Invalid or non-existent iteration $Iteration"
-		}
+        if (-not $node)
+        {
+            throw "Invalid or non-existent iteration $Iteration"
+        }
 
-		$cssService = _GetCssService -Project $Project -Collection $Collection
-		$cssService4 = _GetCssService -Project $Project -Collection $Collection -Version 4
+        $cssService = _GetCssService -Project $Project -Collection $Collection
+        $cssService4 = _GetCssService -Project $Project -Collection $Collection -Version 4
 
-		if ($NewName)
-		{
-			$cssService.RenameNode($node.Uri, $NewName)
-		}
+        if ($NewName)
+        {
+            $cssService.RenameNode($node.Uri, $NewName)
+        }
 
-		if ($MoveBy)
-		{
-			$cssService.ReorderNode($node.Uri, $MoveBy)
-		}
+        if ($MoveBy)
+        {
+            $cssService.ReorderNode($node.Uri, $MoveBy)
+        }
 
-		if ($StartDate -or $FinishDate)
-		{
-			if (-not $PSBoundParameters.ContainsKey("StartDate"))
-			{
-				$StartDate = $node.StartDate
-			}
+        if ($StartDate -or $FinishDate)
+        {
+            if (-not $PSBoundParameters.ContainsKey("StartDate"))
+            {
+                $StartDate = $node.StartDate
+            }
 
-			if (-not $PSBoundParameters.ContainsKey("FinishDate"))
-			{
-				$FinishDate = $node.FinishDate
-			}
+            if (-not $PSBoundParameters.ContainsKey("FinishDate"))
+            {
+                $FinishDate = $node.FinishDate
+            }
 
-			[void]$cssService4.SetIterationDates($node.Uri, $StartDate, $FinishDate)
-		}
+            [void]$cssService4.SetIterationDates($node.Uri, $StartDate, $FinishDate)
+        }
 
         return $cssService.GetNode($node.Uri)
     }

@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		..\ACKNOWLEDGEMENTS.md = ..\ACKNOWLEDGEMENTS.md
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
+		RELEASENOTES.md = RELEASENOTES.md
 	EndProjectSection
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "TfsCmdlets.UnitTests", "TfsCmdlets.UnitTests\TfsCmdlets.UnitTests.pssproj", "{BA7EE4EB-02E4-4BDB-8344-A355365C69E8}"

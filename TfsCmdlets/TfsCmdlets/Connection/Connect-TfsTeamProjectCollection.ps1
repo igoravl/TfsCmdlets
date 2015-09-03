@@ -13,6 +13,8 @@
 
 	Specifies either a URL/name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object. 
 
+    Finally, if a TfsTeamProjectCollection object is provided via this argument, it will be used as the new default connection. This may be especially useful if you e.g. received a pre-initialized connection to a TFS collection via a call to an external library or API.
+
 	For more details, see the -Collection argument in the Get-TfsTeamProjectCollection cmdlet.
 
 .PARAMETER Server

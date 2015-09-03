@@ -1,33 +1,48 @@
-$global:TfsPrivateAssemblies = @{}
-
-# InitializePrivateAssemblyPath
-
 $binDir = (Join-Path $PSScriptRoot 'lib')
-$assemblies = Get-ChildItem $binDir
+$assemblyList = ''
 
-foreach($a in $assemblies)
+foreach($a in Get-ChildItem $binDir)
 {
-    $global:TfsPrivateAssemblies.Add($a.BaseName, $a.FullName)
+     $assemblyList += "{""$($a.BaseName)"", @""$($a.FullName)""},`r`n"
 }
 
-# InitializeAssemblyResolver
+Add-Type -Language CSharpVersion3 -TypeDefinition @"
+using System;
+using System.Collections.Generic;
+using System.Reflection;
 
-$OnAssemblyResolve = [System.ResolveEventHandler] {
-    param($sender, $e)
-    try {      
-        if ($global:TfsPrivateAssemblies.ContainsKey($e.Name))
+namespace TfsCmdlets
+{
+    public class AssemblyResolver
+    {
+        private static readonly Dictionary<string, string> _PrivateAssemblies = new Dictionary<string, string>
         {
-            return [System.Reflection.Assembly]::LoadFrom($global:TfsPrivateAssemblies[$e.Name])
+            $assemblyList
+        };
+
+        public static void Register()
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
+            {
+                try
+                {
+                    return _PrivateAssemblies.ContainsKey(e.Name)
+                        ? Assembly.LoadFrom(_PrivateAssemblies[e.Name])
+                        : null;
+                }
+                catch
+                {
+                    return null;
+                }
+            };
         }
     }
-    catch {}
-
-    return $null
 }
+"@
 
-[System.AppDomain]::CurrentDomain.add_AssemblyResolve($OnAssemblyResolve)
+[TfsCmdlets.AssemblyResolver]::Register()
 
-# InitializeShell
+# Initialize Shell
 
 if ($Host.UI.RawUI.WindowTitle -eq "Team Foundation Server Shell")
 {
@@ -47,17 +62,38 @@ Function Prompt
 {
     Process
     {
-        if (Test-Path variable:global:TfsTpcConnection)
+        $tfsPrompt = ''
+
+        if ($global:TfsServerConnection)
         {
-            $tfsConnectionText = "[TFS@$($Global:TfsTpcConnection.Uri.Host)/$($Global:TfsTpcConnection.Uri.Segments[$Global:TfsTpcConnection.Uri.Segments.Length-1])]`r`n"
+            $tfsPrompt = $global:TfsServerConnection.Name
+
+            if ($global:TfsTpcConnection)
+            {
+                $tfsPrompt += "/$($global:TfsTpcConnection.Name)"
+            }
+
+            if ($global:TfsProjectConnection)
+            {
+                $tfsPrompt += "/$($global:TfsProjectConnection.Name)"
+            }
+
+            if ($global:TfsTeamConnection)
+            {
+                $tfsPrompt += "/$($global:TfsTeamConnection.Name)"
+            }
+
+            $tfsPrompt = "[$tfsPrompt] "
         }
-        "${tfsConnectionText}$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+
+        "TFS ${tfsPrompt}$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
     }
 }
-'@ | iex
+'@ | Invoke-Expression
 
 }
 
+# Load basic TFS client assemblies
 Add-Type -AssemblyName 'Microsoft.TeamFoundation.Common'
 Add-Type -AssemblyName 'Microsoft.TeamFoundation.Client'
 Add-Type -AssemblyName 'Microsoft.TeamFoundation.WorkItemTracking.Client'
