@@ -38,7 +38,7 @@ Function Get-TfsWorkItem
 
 		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by text")]
 		[string]
-		$FreeText,
+		$Text,
 
 		[Parameter()]
 		[hashtable]
@@ -86,7 +86,7 @@ Function Get-TfsWorkItem
 			}
 
 			"Query by text" {
-                $localMacros = @{TfsQueryText=$FreeText}
+                $localMacros = @{TfsQueryText=$Text}
 				$Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS @TfsQueryText OR [System.Description] CONTAINS @TfsQueryText"
 				return _GetWorkItemByWiql $Wiql $localMacros $tp $store 
 			}
