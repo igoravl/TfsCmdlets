@@ -29,8 +29,10 @@ Function Get-TfsWorkItemType
 	Param
 	(
 		[Parameter(Position=0)]
+        [SupportsWildcards()]
+        [Alias("Name")]
 		[string] 
-		$Name = "*",
+		$Type = "*",
 
 		[Parameter(ValueFromPipeline=$true)]
 		[object]
@@ -43,7 +45,13 @@ Function Get-TfsWorkItemType
 
 	Process
 	{
-		$tp = Get-TfsTeamProject $Project $Collection
+        if ($Type -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType])
+        {
+            return $Type
+        }
+
+		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+
 		return $tp.WorkItemTypes | ? Name -Like $Name
 	}
 }
