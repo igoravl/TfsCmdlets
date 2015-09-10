@@ -58,7 +58,11 @@ Function New-TfsWorkItem
 		$wit = Get-TfsWorkItemType -Type $Type -Project $Project -Collection $Collection
 
 		$wi = $wit.NewWorkItem()
-		$wi.Title = $Title
+
+        if ($Title)
+        {
+		    $wi.Title = $Title
+        }
 
 		foreach($field in $Fields)
 		{
