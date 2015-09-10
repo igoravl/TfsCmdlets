@@ -31,9 +31,9 @@ Function Connect-TfsTeamProject
 			throw "Error connecting to team project $Project"
 		}
 
-		$Global:TfsProjectConnection = $tp
-
 		Connect-TfsTeamProjectCollection -Collection $tp.Store.TeamProjectCollection
+
+		$Global:TfsProjectConnection = $tp
 
 		if ($Passthru)
 		{

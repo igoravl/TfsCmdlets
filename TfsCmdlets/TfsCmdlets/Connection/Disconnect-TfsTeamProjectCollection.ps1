@@ -18,9 +18,11 @@ Function Disconnect-TfsTeamProjectCollection
 {
 	Process
 	{
-		Remove-Variable -Name TfsTpcConnection -Scope Global
-		Remove-Variable -Name TfsTpcConnectionUrl -Scope Global
-		Remove-Variable -Name TfsTpcConnectionCredential -Scope Global
-		Remove-Variable -Name TfsTpcConnectionUseDefaultCredentials -Scope Global
+        if ($Global:TfsTpcConnection)
+        {
+		    Remove-Variable -Name TfsTpcConnection -Scope Global
+		}
+
+        Disconnect-TfsTeamProject
 	}
 }

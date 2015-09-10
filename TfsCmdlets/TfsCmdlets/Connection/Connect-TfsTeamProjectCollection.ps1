@@ -87,10 +87,12 @@ Function Connect-TfsTeamProjectCollection
 
 		$tpc.EnsureAuthenticated()
 
-		$Global:TfsTpcConnection = $tpc
-		$Global:TfsTpcConnectionCredential = $Credential
+        Disconnect-TfsTeamProject
 
 		Connect-TfsConfigurationServer -Server $tpc.ConfigurationServer
+
+		$Global:TfsTpcConnection = $tpc
+		$Global:TfsTpcConnectionCredential = $Credential
 
 		if ($Passthru)
 		{

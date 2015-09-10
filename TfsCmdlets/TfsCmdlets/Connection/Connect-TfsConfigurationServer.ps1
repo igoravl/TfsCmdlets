@@ -49,7 +49,6 @@ Function Connect-TfsConfigurationServer
 		}
 
 		$Global:TfsServerConnection = $configServer
-		$Global:TfsServerConnectionCredential = $Credential
 
 		if ($Passthru)
 		{
