@@ -21,6 +21,11 @@ Function Get-TfsConfigurationServer
 
 	Process
 	{
+		if ($Current)
+		{
+			return $Global:TfsServerConnection
+        }
+
 		if ($Server -is [Microsoft.TeamFoundation.Client.TfsConfigurationServer])
 		{
 			return $Server
@@ -44,14 +49,6 @@ Function Get-TfsConfigurationServer
 			}
 
 			$Server = $null
-		}
-
-		if ($Server -eq $null)
-		{
-			if ($Global:TfsServerConnection)
-			{
-				return $Global:TfsServerConnection
-			}
 		}
 
 		throw "No TFS connection information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."
