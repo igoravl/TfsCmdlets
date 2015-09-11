@@ -16,28 +16,3 @@ artifacts:
   name: Portable
 - path: TfsCmdlets\Build\Chocolatey\*.nupkg
   name: Chocolatey
-deploy:
-- provider: NuGet
-  server: https://chocolatey.org/
-  api_key:
-    secure: DMnO6KT9hUZOkLBTKNBmb3xSwe0+S/AcpxpZceqvFPtiG++11bFCP8JYODSrYnt4
-  skip_symbols: true
-  artifact: Chocolatey
-  on:
-    branch: master
-    appveyor_repo_tag: true
-- provider: NuGet
-  api_key:
-    secure: LX+8vlGL+T6JgpdvTkWrJycEda124j5q1bFn5kOLxorvfO+DXnSvFAzPmvZbffoS
-  skip_symbols: true
-  artifact: Nuget
-  on:
-    branch: master
-    appveyor_repo_tag: true
-- provider: GitHub
-  auth_token:
-    secure: nDX02PtnGYiD8ZZ4omXtxioLY6LZrrdVlWvwM8lF6WooTvq9r0CgN+nDCQzR8WnA
-  artifact: MSI
-  on:
-    branch: master
-    appveyor_repo_tag: true
