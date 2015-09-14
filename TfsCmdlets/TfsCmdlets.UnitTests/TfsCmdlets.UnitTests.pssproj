@@ -35,6 +35,13 @@
     <Compile Include="Connection.Tests.ps1" />
     <Compile Include="Correctness.Tests.ps1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TfsCmdlets.Build\TfsCmdlets.Build.csproj">
+      <Name>TfsCmdlets.Build</Name>
+      <Project>{ec40acb0-a6b9-4776-9078-b1d72d244787}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
 </Project>

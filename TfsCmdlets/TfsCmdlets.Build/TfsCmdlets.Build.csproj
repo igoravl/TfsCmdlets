@@ -24,6 +24,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
+  <Target Name="GetTargetPath" />
   <Import Project="$(MSBuildProjectDirectory)\build.props" />
   <Import Project="$(MSBuildProjectDirectory)\build.targets" />
 </Project>

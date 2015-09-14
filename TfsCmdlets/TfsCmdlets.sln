@@ -5,9 +5,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "TfsCmdlets", "TfsCmdlets\TfsCmdlets.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "TfsCmdlets.Setup", "TfsCmdlets.Setup\TfsCmdlets.Setup.wixproj", "{1720339C-6A86-4E51-856A-1873CF029E04}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EC40ACB0-A6B9-4776-9078-B1D72D244787} = {EC40ACB0-A6B9-4776-9078-B1D72D244787}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{867CBAC3-47AF-4D4E-8090-6A19459D7DF0}"
 	ProjectSection(SolutionItems) = preProject
@@ -18,9 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 	EndProjectSection
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "TfsCmdlets.UnitTests", "TfsCmdlets.UnitTests\TfsCmdlets.UnitTests.pssproj", "{BA7EE4EB-02E4-4BDB-8344-A355365C69E8}"
-	ProjectSection(ProjectDependencies) = postProject
-		{EC40ACB0-A6B9-4776-9078-B1D72D244787} = {EC40ACB0-A6B9-4776-9078-B1D72D244787}
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1478CF90-033C-49FB-B3CB-D94D600A1E26}"
 	ProjectSection(SolutionItems) = preProject

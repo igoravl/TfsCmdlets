@@ -72,6 +72,19 @@ if ($env:APPVEYOR)
 
 try
 {
+    if ($env:VS140COMNTOOLS)
+    {
+        $VisualStudioVersion = '14'
+    }
+    elseif ($env:VS120COMNTOOLS)
+    {
+        $VisualStudioVersion = '12'
+    }
+    else
+    {
+        throw "Visual Studio environment variables not found. It likely means a supported VS version (2013, 2015) is not currently installed."
+    }
+
 	Push-Location $SolutionDir
 
 	$NugetExePath = Join-Path $SolutionDir '.nuget\nuget.exe'
@@ -96,7 +109,8 @@ try
 	    Version = "$Version.$BuildNumber";
 	    PreRelease = $PreRelease;
 	    BuildName = "$($BuildName -replace '\+.+', '')+$BuildTimestamp.$BuildNumber";
-	    BuildNumber = $BuildNumber
+	    BuildNumber = $BuildNumber;
+        VisualStudioVersion = $VisualStudioVersion
 	}
 }
 finally
