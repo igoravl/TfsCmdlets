@@ -32,12 +32,14 @@ Properties {
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
-	$WixVersion = "$Version"
+    $WixVersion = "$Version"
     $WixOutputPath = Join-Path $SolutionDir "TfsCmdlets.Setup\bin\$Configuration"
 
     # MSBuild-related properties
     $SolutionPath = Join-Path $SolutionDir 'TfsCmdlets.sln'
     $MSBuildArgs = "`"$SolutionPath`" " + `
+        "/tv:$VisualStudioVersion.0 " +
+        "/Verbosity:Detailed " +
         "/p:Configuration=$Configuration " + `
         "/p:Platform=`"Any CPU`" " + `
         "/p:BranchName=$BranchName " + `
@@ -58,7 +60,7 @@ Properties {
 
 }
 
-Task Build -Depends CopyModule, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Build -Depends DetectDependencies, CopyModule, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -71,6 +73,30 @@ Task MSBuild {
 
     Write-Output "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
     exec { MSBuild.exe '--%' $MSBuildArgs }
+}
+
+Task DetectDependencies {
+
+    if (-not $env:APPVEYOR)
+    {
+        if (-not (Test-Path "HKCU:\SOFTWARE\Microsoft\VisualStudio\$VisualStudioVersion.0_Config\Projects\{f5034706-568f-408a-b7b3-4d38c6db8a32}"))
+        {
+            Write-Warning "PowerShell Tools for Visual Studio (PoShTools) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download PoShTools from https://visualstudiogallery.msdn.microsoft.com/f65f845b-9430-4f72-a182-ae2a7b8999d7 (VS 2013) or https://visualstudiogallery.msdn.microsoft.com/c9eb3ba8-0c59-4944-9a62-6eee37294597 (VS 2015) and install it in the corresponding Visual Studio version."
+        }
+    }
+
+    if (-not $env:WIX)
+    {
+        Write-Error "WiX Toolset is not installed. Download WiX from http://www.wixtoolset.org prior to building TfsCmdlets."
+        throw "Missing dependency. Breaking build."
+    }
+
+    if (-not $env:ChocolateyInstall)
+    {
+        Write-Error "Chocolatey is not installed. Download Chocolatey from http://www.chocolatey.org prior to building TfsCmdlets."
+        throw "Missing dependency. Breaking build."
+    }
+
 }
 
 Task Clean {

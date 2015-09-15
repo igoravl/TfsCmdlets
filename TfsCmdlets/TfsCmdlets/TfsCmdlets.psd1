@@ -20,7 +20,9 @@
     PrivateData = @{ 
         Tags = @('TfsCmdlets', 'TFS', 'PowerShell')
         Branch = '${BranchName}'
-        Commit = '${Commit}'
+        Commit = @'
+${Commit}
+'@
         Build = '${BuildName}'
         PreRelease = '${PreRelease}'
         LicenseUri = 'https://github.com/igoravl/tfscmdlets/wiki/License'
