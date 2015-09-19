@@ -3,6 +3,9 @@
 .SYNOPSIS
     Connects to a team project.
 
+.PARAMETER Passthru
+    ${HelpParam_Passthru}
+
 #>
 Function Connect-TfsTeamProject
 {

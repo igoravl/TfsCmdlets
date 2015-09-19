@@ -3,6 +3,9 @@
 .SYNOPSIS
     Connects to a configuration server.
 
+.PARAMETER Passthru
+    ${HelpParam_Passthru}
+
 .DESCRIPTION
     The Connect-TfsConfigurationServer function connects to a TFS configuration server. Functions that operate on a server level (as opposed to those operation on a team project collection level) will use by default a connection opened by this function.
 

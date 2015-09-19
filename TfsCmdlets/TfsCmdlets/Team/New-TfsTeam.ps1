@@ -9,6 +9,9 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.PARAMETER Passthru
+    ${HelpParam_Passthru}
+
 #>
 Function New-TfsTeam
 {
