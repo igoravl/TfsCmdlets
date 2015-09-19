@@ -1,35 +1,44 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsTeam
 {
     [CmdletBinding(DefaultParameterSetName="Get by name")]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (
-		[Parameter(Position=0, ParameterSetName="Get by name")]
-		[Alias("Name")]
-		[ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])})] 
-		[SupportsWildcards()]
-		[object]
-		$Team = '*',
+        [Parameter(Position=0, ParameterSetName="Get by name")]
+        [Alias("Name")]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])})] 
+        [SupportsWildcards()]
+        [object]
+        $Team = '*',
 
-		[Parameter(Position=0, ParameterSetName="Get default team")]
+        [Parameter(Position=0, ParameterSetName="Get default team")]
         [switch]
         $Default,
 
-		[Parameter()]
+        [Parameter()]
         [switch]
         $IncludeMembers,
 
-		[Parameter()]
+        [Parameter()]
         [Microsoft.TeamFoundation.Framework.Common.MembershipQuery]
         $QueryMembership = [Microsoft.TeamFoundation.Framework.Common.MembershipQuery]::Direct,
 
-		[Parameter(ValueFromPipeline=$true)]
-		[object]
-		$Project,
+        [Parameter(ValueFromPipeline=$true)]
+        [object]
+        $Project,
 
-		[Parameter()]
-		[object]
-		$Collection
+        [Parameter()]
+        [object]
+        $Collection
     )
 
     Process

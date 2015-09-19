@@ -1,3 +1,5 @@
+<#
+#>
 Function Get-TfsConfigurationServerConnectionString
 {
 	[CmdletBinding()]

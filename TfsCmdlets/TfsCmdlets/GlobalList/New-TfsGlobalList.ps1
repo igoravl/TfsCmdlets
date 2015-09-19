@@ -1,3 +1,9 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function New-TfsGlobalList
 {
     Param

@@ -1,3 +1,9 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsHttpClient
 {
     Param
@@ -6,14 +12,14 @@ Function Get-TfsHttpClient
         [string]
         $Type,
 
-		[Parameter()]
-		[object] 
-		$Collection
+        [Parameter()]
+        [object] 
+        $Collection
     )
 
     Process
     {
-		$tpc = Get-TfsTeamProjectCollection -Collection $Collection
+        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
 
         return Invoke-GenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
     }

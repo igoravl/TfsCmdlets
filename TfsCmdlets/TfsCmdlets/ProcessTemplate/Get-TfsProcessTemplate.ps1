@@ -1,8 +1,15 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsProcessTemplate
 {
     Param
     (
         [Parameter(Position=0)]
+        [SupportsWildcards()]
         [string]
         $Name = "*",
 

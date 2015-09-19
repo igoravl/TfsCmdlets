@@ -1,6 +1,14 @@
 <#
+
 .SYNOPSIS
     Gets one or more work items
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
 #>
 Function Get-TfsWorkItem
 {

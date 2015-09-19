@@ -1,3 +1,5 @@
+<#
+#>
 Function Get-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName='Get by server')]

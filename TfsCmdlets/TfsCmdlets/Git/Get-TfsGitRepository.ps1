@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsGitRepository
 {
     [CmdletBinding()]
@@ -9,19 +18,19 @@ Function Get-TfsGitRepository
         [string] 
         $Name = '*',
 
-		[Parameter(ValueFromPipeline=$true)]
-		[object]
-		$Project,
+        [Parameter(ValueFromPipeline=$true)]
+        [object]
+        $Project,
 
-		[Parameter()]
+        [Parameter()]
         [object]
         $Collection
     )
 
     Process
     {
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		$tpc = $tp.Store.TeamProjectCollection
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+        $tpc = $tp.Store.TeamProjectCollection
         $id = $tp.Guid
 
         $gitService = $tpc.GetService([type]'Microsoft.TeamFoundation.Git.Client.GitRepositoryService')

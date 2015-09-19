@@ -1,9 +1,16 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsGlobalList
 {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param
     (
         [Parameter()]
+        [SupportsWildcards()]
         [string] 
         $Name = "*",
     
@@ -17,18 +24,18 @@ Function Get-TfsGlobalList
         $xml = Export-TfsGlobalList @PSBoundParameters
 
         foreach($listNode in $xml.SelectNodes("//GLOBALLIST"))
-		{
-			$list = [PSCustomObject] [ordered] @{
-				Name = $listNode.GetAttribute("name")
-				Items = @()
-			}
+        {
+            $list = [PSCustomObject] [ordered] @{
+                Name = $listNode.GetAttribute("name")
+                Items = @()
+            }
 
-			foreach($itemNode in $listNode.SelectNodes("LISTITEM"))
-			{
-				$list.Items += $itemNode.GetAttribute("value")
-			}
+            foreach($itemNode in $listNode.SelectNodes("LISTITEM"))
+            {
+                $list.Items += $itemNode.GetAttribute("value")
+            }
 
-			$list
-		}
+            $list
+        }
     }
 }

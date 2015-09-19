@@ -1,8 +1,15 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Export-TfsProcessTemplate
 {
     Param
     (
         [Parameter(Position=0)]
+        [SupportsWildcards()]
         [object]
         $Process = "*",
 

@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Set-TfsTeam
 {
     [CmdletBinding(DefaultParameterSetName="Get by name")]

@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Rename-TfsTeam
 {
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]

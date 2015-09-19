@@ -1,10 +1,17 @@
+<#
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Export-TfsGlobalList
 {
-	[CmdletBinding()]
-	[OutputType([xml])]
+    [CmdletBinding()]
+    [OutputType([xml])]
     Param
     (
         [Parameter()]
+        [SupportsWildcards()]
         [string] 
         $Name = "*",
     
@@ -28,10 +35,10 @@ Function Export-TfsGlobalList
 
         foreach($node in $nodesToRemove)
         {
-			if (([System.Xml.XmlElement]$node).GetAttribute("name") -notlike $Name)
-			{
-				[void]$xml.DocumentElement.RemoveChild($node)
-			}
+            if (([System.Xml.XmlElement]$node).GetAttribute("name") -notlike $Name)
+            {
+                [void]$xml.DocumentElement.RemoveChild($node)
+            }
         }
 
         return $xml

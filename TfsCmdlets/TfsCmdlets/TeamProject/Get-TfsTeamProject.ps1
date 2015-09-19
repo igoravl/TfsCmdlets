@@ -12,10 +12,7 @@
 	Specifies the name of a Team Project. Wildcards are supported.
 
 .PARAMETER Collection
-
-	Specifies either a URL or the name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object. 
-
-	For more details, see the -Collection argument in the Get-TfsTeamProjectCollection cmdlet.
+    ${HelpParam_Collection}
 
 .PARAMETER Server
 

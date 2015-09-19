@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Remove-TfsGitRepository
 {
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
@@ -9,11 +18,11 @@ Function Remove-TfsGitRepository
         [object] 
         $Repository = '*',
 
-		[Parameter()]
-		[object]
-		$Project,
+        [Parameter()]
+        [object]
+        $Project,
 
-		[Parameter()]
+        [Parameter()]
         [object]
         $Collection
     )
@@ -31,8 +40,8 @@ Function Remove-TfsGitRepository
             $Project = $Repository.ProjectReference.Name
         }
 
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		$tpc = $tp.Store.TeamProjectCollection
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+        $tpc = $tp.Store.TeamProjectCollection
 
         $gitClient = Get-TfsClientObject -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
 

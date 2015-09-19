@@ -14,17 +14,18 @@
 #>
 Function Get-TfsRegisteredTeamProjectCollection
 {
-	[CmdletBinding()]
-	[OutputType([Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]])]
-	Param
-	(
-		[Parameter(Position=0, ValueFromPipeline=$true)]
-		[string]
-		$Name = "*"
-	)
+    [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]])]
+    Param
+    (
+        [Parameter(Position=0, ValueFromPipeline=$true)]
+        [SupportsWildcards()]
+        [string]
+        $Name = "*"
+    )
 
-	Process
-	{
-		return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | ? DisplayName -Like $Name
-	}
+    Process
+    {
+        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | ? DisplayName -Like $Name
+    }
 }

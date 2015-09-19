@@ -1,9 +1,12 @@
 <#
-    .SYNOPSIS
-        Gets the history of changes of a work item
+.SYNOPSIS
+    Gets the history of changes of a work item
 
-    .EXAMPLE
-        Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+.EXAMPLE
+    Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
 #>
 Function Get-TfsWorkItemHistory
 {

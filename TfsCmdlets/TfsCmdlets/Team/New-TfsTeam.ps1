@@ -1,3 +1,12 @@
+<#
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function New-TfsTeam
 {
     [CmdletBinding()]
@@ -13,13 +22,13 @@ Function New-TfsTeam
         [string] 
         $Description,
     
-		[Parameter(ValueFromPipeline=$true)]
-		[object]
-		$Project,
+        [Parameter(ValueFromPipeline=$true)]
+        [object]
+        $Project,
 
-		[Parameter()]
-		[object]
-		$Collection,
+        [Parameter()]
+        [object]
+        $Collection,
 
         [Parameter()]
         [switch]
@@ -36,7 +45,7 @@ Function New-TfsTeam
 
         if ($Passthru)
         {
-		    return $team
+            return $team
         }
     }
 }
