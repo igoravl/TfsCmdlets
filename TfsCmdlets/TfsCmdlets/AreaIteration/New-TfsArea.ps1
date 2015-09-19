@@ -1,40 +1,39 @@
 <#
 .SYNOPSIS
-	Create a new Area on the given Team Project.
+    Create a new Area ("Area Path") in the given Team Project.
 
 .PARAMETER Area
-    Specifies the name, URI or path of an Area. Wildcards are supported. If omitted, all Areas in the given Team Project are returned.
-    To supply a path, use a backslash ("\") between the path segments. Leading and trailing backslashes are optional.
-    To supply a URI instead, use URIs in the form of "vstfs:///Classification/Node/<GUID>" (where <GUID> is the unique identifier of the given node)
+    Specifies the path of the new Area.
+    When supplying a path, use a backslash ("\") between the path segments. Leading and trailing backslashes are optional.  The last segment in the path will be the area name.
 
 .PARAMETER Project
-	${HelpParam_Project}
+    ${HelpParam_Project}
 
 .PARAMETER Collection
-	${HelpParam_Collection}
+    ${HelpParam_Collection}
 
 #>
 Function New-TfsArea
 {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param
     (
-		[Parameter(Mandatory=$true, Position=0)]
-		[Alias("Path")]
-		[string]
-		$Area,
+        [Parameter(Mandatory=$true, Position=0)]
+        [Alias("Path")]
+        [string]
+        $Area,
 
-		[Parameter()]
-		[object]
-		$Project,
+        [Parameter()]
+        [object]
+        $Project,
 
-		[Parameter()]
-		[object]
-		$Collection
-	)
+        [Parameter()]
+        [object]
+        $Collection
+    )
 
     Process
     {
-		return _NewCssNode -Path $Area -Scope Area -Project $Project -Collection $Collection
+        return _NewCssNode -Path $Area -Scope Area -Project $Project -Collection $Collection
     }
 }

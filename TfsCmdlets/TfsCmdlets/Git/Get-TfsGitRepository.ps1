@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets information from one or more Git repositories in a team project.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

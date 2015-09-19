@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Deletes a team.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

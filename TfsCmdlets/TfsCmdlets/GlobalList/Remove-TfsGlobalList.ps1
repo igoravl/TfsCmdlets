@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Deletes one or more Global Lists.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Renames a team.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

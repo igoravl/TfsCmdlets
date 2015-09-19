@@ -1,15 +1,7 @@
 <#
+
 .SYNOPSIS
-
-.DESCRIPTION
-
-.PARAMETER computername
-
-.PARAMETER filePath
-
-.EXAMPLE
-
-.EXAMPLE
+    Gets one or more Team Project Collection addresses registered in the current computer.
 
 #>
 Function Get-TfsRegisteredTeamProjectCollection

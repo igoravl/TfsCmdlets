@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Imports a process template definition from disk.
+    
 .PARAMETER Collection
     ${HelpParam_Collection}
 

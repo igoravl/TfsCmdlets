@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets information from one or more process templates.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

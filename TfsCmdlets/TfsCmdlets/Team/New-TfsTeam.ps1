@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Creates a new team.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

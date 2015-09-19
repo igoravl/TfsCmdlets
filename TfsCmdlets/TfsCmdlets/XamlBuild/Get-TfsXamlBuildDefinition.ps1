@@ -1,6 +1,7 @@
 <#
+
 .SYNOPSIS
-    Gets all queued builds
+    Gets one or more XAML Build definitions.
 
 .PARAMETER BuildDefinition
     Uses this parameter to filter for an specific Build Defintion.

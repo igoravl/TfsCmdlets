@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Gets a TFS Team Project Collection.
+    Gets information about one or more team project collections.
 
 .DESCRIPTION
     The Get-TfsTeamProject cmdlets gets one or more Team Project Collection objects (an instance of Microsoft.TeamFoundation.Client.TfsTeamProjectCollection) from a TFS instance. 

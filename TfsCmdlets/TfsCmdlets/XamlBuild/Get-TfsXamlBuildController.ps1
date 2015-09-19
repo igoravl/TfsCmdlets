@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets information about one or more XAML Build controllers.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

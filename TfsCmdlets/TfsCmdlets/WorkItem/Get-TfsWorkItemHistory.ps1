@@ -1,6 +1,7 @@
 <#
+
 .SYNOPSIS
-    Gets the history of changes of a work item
+    Gets the history of changes of a work item.
 
 .PARAMETER Collection
     ${HelpParam_Collection}
@@ -10,23 +11,23 @@
 #>
 Function Get-TfsWorkItemHistory
 {
-	[CmdletBinding()]
-	Param
-	(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
-		[Alias("id")]
-		[ValidateNotNull()]
-		[object]
-		$WorkItem,
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [Alias("id")]
+        [ValidateNotNull()]
+        [object]
+        $WorkItem,
 
-		[Parameter()]
+        [Parameter()]
         [object]
         $Collection
-	)
+    )
 
-	Process
-	{
-		$wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
+    Process
+    {
+        $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
         $latestRev = $wi.Revisions.Count - 1
 
         0..$latestRev | % {

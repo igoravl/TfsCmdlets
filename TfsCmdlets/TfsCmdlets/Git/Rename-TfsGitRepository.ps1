@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Renames a Git repository in a team project.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

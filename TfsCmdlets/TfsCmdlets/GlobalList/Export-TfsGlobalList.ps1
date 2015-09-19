@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Exports the contents of one or more Global Lists to XML.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

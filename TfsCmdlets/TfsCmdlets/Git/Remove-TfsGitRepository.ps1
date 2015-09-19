@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Deletes one or more Git repositories from a team project.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

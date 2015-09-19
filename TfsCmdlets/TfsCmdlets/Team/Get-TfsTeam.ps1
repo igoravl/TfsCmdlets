@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets information about one or more teams.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

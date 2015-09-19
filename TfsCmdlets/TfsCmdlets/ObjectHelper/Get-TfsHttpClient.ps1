@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets an Team Foundation Server REST API client object.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

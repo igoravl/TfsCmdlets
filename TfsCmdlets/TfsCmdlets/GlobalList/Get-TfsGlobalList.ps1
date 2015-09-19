@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Gets the contents of one or more Global Lists.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

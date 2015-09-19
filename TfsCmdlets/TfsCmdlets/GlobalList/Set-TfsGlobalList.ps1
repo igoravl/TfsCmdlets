@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Changes the name or the contents of a Global List.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

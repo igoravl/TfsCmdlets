@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Creates a new Git repository in a team project.
+
 .PARAMETER Project
     ${HelpParam_Project}
 

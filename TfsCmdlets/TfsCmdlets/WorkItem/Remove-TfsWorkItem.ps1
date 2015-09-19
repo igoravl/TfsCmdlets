@@ -1,5 +1,8 @@
 <#
 
+.SYNOPSIS
+    Deletes a work item from a team project collection.
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 

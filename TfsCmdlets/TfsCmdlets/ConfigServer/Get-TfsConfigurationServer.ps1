@@ -1,4 +1,7 @@
 <#
+
+.SYNOPSIS
+    Gets information about a configuration server.
 #>
 Function Get-TfsConfigurationServer
 {
