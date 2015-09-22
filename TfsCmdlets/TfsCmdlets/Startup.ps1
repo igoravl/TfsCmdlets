@@ -6,39 +6,42 @@ foreach($a in Get-ChildItem $binDir)
      $assemblyList += "{""$($a.BaseName)"", @""$($a.FullName)""},`r`n"
 }
 
-Add-Type -Language CSharp -TypeDefinition @"
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-
-namespace TfsCmdlets
+if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver').Type)
 {
-    public class AssemblyResolver
-    {
-        private static readonly Dictionary<string, string> _PrivateAssemblies = new Dictionary<string, string>
-        {
-            $assemblyList
-        };
+    Add-Type -ErrorAction SilentlyContinue -Language CSharp -TypeDefinition @"
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
 
-        public static void Register()
+    namespace TfsCmdlets
+    {
+        public class AssemblyResolver
         {
-            AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
+            private static readonly Dictionary<string, string> _PrivateAssemblies = new Dictionary<string, string>
             {
-                try
-                {
-                    return _PrivateAssemblies.ContainsKey(e.Name)
-                        ? Assembly.LoadFrom(_PrivateAssemblies[e.Name])
-                        : null;
-                }
-                catch
-                {
-                    return null;
-                }
+                $assemblyList
             };
+
+            public static void Register()
+            {
+                AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
+                {
+                    try
+                    {
+                        return _PrivateAssemblies.ContainsKey(e.Name)
+                            ? Assembly.LoadFrom(_PrivateAssemblies[e.Name])
+                            : null;
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                };
+            }
         }
     }
-}
 "@
+}
 
 [TfsCmdlets.AssemblyResolver]::Register()
 
