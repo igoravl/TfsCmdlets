@@ -138,21 +138,16 @@ Task PackageMSI {
     Copy-Item -Path "$WixOutputPath\*.msi" -Destination $MSIDir
 }
 
-Task PackageDocs -Depends CopyModule, GenerateDocs {
+Task PackageDocs -Depends GenerateDocs {
 
     #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetPackageVersion.zip") 
 }
 
-Task GenerateDocs {
+Task GenerateDocs -Depends CopyModule {
 
-    #Get-Module TfsCmdlets | Remove-Module
-    #
-    #New-Item $DocsDir -ItemType Directory | Out-Null
-    #
-    #Get-Module HelpGenerator | Remove-Module
-    #Import-Module .\HelpGenerator.psm1 -Scope Local
-    #
-    #Export-MDHelpDocumentation -ModuleManifest $ModuleManifestPath -Destination $DocsDir
+    New-Item $DocsDir -ItemType Directory | Out-Null
+
+    .\BuildDoc.ps1 -SourceDir (Join-Path $ModuleDir 'TfsCmdlets') -OutputDir $DocsDir
 }
 
 Task GenerateNuspec {
