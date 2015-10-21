@@ -20,7 +20,7 @@ Function Remove-TfsTeamProjectCollection
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential
+		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 
 	Process

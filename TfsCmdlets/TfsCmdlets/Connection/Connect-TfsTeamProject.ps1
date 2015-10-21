@@ -15,7 +15,7 @@ Function Connect-TfsTeamProject
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential,
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[Parameter()]
 		[switch]

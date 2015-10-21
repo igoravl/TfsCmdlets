@@ -32,7 +32,7 @@ Function Connect-TfsConfigurationServer
 		[Parameter(Position=1)]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential,
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[Parameter()]
 		[switch]

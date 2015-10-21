@@ -48,7 +48,7 @@ Function Get-TfsTeamProjectCollection
 		[Parameter(ParameterSetName="Get by collection")]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential
+		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 
 	Process
@@ -103,16 +103,12 @@ Function _GetCollectionFromUrl
 {
 	Param ($Url, $Cred)
 	
-	if ($Cred)
+	if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
 	{
-		$tpc = New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, (_GetCredential $cred)
-	}
-	else
-	{
-		$tpc = [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection([Uri] $Url)
+		return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, (_GetCredential $cred)
 	}
 
-	return $tpc
+	return [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection([Uri] $Url)
 }
 
 
@@ -139,7 +135,6 @@ Function _GetCollectionFromName
 		{
 			$collectionId = $tpc.Properties["InstanceId"]
 			$tpc = $configServer.GetTeamProjectCollection($collectionId)
-			$tpc.EnsureAuthenticated()
 
 			$tpc
 		}
@@ -151,7 +146,7 @@ Function _GetCredential
 {
 	Param ($Cred)
 
-	if ($Cred)
+	if (($Cred -ne $null) -and ($Cred -ne [System.Management.Automation.PSCredential]::Empty))
 	{
 		return [System.Net.NetworkCredential] $Cred
 	}
