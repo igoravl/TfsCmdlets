@@ -11,7 +11,7 @@ By using TfsCmdlets, TFS administrators (even power users) can create scripts to
 
 TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Team Foundation Server Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
 
-![Team Foundation Server Shell](TfsCmdlets/Resources/TfsShell.png)
+![Team Foundation Server Shell](TfsCmdlets/resources/TfsShell.png)
 
 ## Quick start guide 
 
