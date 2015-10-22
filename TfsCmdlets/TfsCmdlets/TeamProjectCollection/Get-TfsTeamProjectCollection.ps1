@@ -73,7 +73,7 @@ Function Get-TfsTeamProjectCollection
 		{
 			if ([Uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute))
 			{
-				return _GetCollectionFromUrl ([Uri] $Collection) $Server $Credential
+				return _GetCollectionFromUrl ([Uri] $Collection) $Credential
 			}
 
 			if (-not [string]::IsNullOrWhiteSpace($Collection))
@@ -100,9 +100,8 @@ Function Get-TfsTeamProjectCollection
 # Helper Functions
 # =================
 
-Function _GetCollectionFromUrl
+Function _GetCollectionFromUrl($Url, $Cred)
 {
-	Param ($Url, $Cred)
 	
 	if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
 	{
@@ -113,12 +112,8 @@ Function _GetCollectionFromUrl
 }
 
 
-Function _GetCollectionFromName
+Function _GetCollectionFromName($Name, $Server, $Cred)
 {
-	Param
-	(
-		$Name, $Server, $Cred
-	)
 	Process
 	{
 		$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
