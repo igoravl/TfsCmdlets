@@ -115,7 +115,7 @@ The portable installer is a zip file containing all the required the module file
 - Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing);
 - Extract the contents of the zip file to the ```Modules``` folder.
 
-You must end up with a folder structure similar to ```[Documents]\WindowsPowerShell\Modules\TfsCmdlets```. Files such as ````TfsCmdlets.psd1``` must be located in the TfsCmdlets folder.
+You must end up with a folder structure similar to ```[Documents]\WindowsPowerShell\Modules\TfsCmdlets```. Files such as ```TfsCmdlets.psd1``` must be located in the TfsCmdlets folder.
 
 To test the installation, open a new PowerShell window and type:
 
@@ -137,4 +137,4 @@ Coming soon.
 - [Release Notes](https://github.com/igoravl/tfscmdlets/wiki/RELEASENOTES)
 - [Online Documentation](https://github.com/igoravl/tfscmdlets/wiki/docindex)
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pdfbjvgpwb4t4ck7?svg=true)](https://ci.appveyor.com/project/igoravl/tfscmdlets)
+[![Build status](https://ci.appveyor.com/api/projects/status/pdfbjvgpwb4t4ck7?svg=true)](https://ci.appveyor.com/project/igoravl/tfscmdlets) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg)](http://chocolatey.org/packages/tfscmdlets) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Twitter](https://img.shields.io/twitter/url/https/github.com/igoravl/tfscmdlets.svg?style=social)](https://twitter.com/intent/tweet?text=Wow:&url=%5Bobject%20Object%5D)
