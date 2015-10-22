@@ -16,7 +16,7 @@ Function Get-TfsConfigurationServer
 		[Parameter(Position=1, ParameterSetName='Get by server')]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential
+		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 
 	Process
@@ -63,18 +63,12 @@ Function _GetConfigServerFromUrl
 {
 	Param ($Url, $Cred)
 	
-	if ($Cred)
+	if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
 	{
-		$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Url), ([System.Net.NetworkCredential] $cred)
+		return New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Url), (_GetCredential $cred)
 	}
-	else
-	{
-		$configServer = [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer([Uri] $Url)
-	}
-
-
-	$configServer.EnsureAuthenticated()
-	return $configServer
+	
+	return [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer([Uri] $Url)
 }
 
 Function _GetConfigServerFromName
@@ -85,9 +79,9 @@ Function _GetConfigServerFromName
 	
 	foreach($Server in $Servers)
 	{
-		if ($Cred)
+		if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
 		{
-			$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ($Server.Uri), ([System.Net.NetworkCredential] $cred)
+			$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList $Server.Uri, (_GetCredential $cred)
 		}
 		else
 		{
@@ -97,4 +91,16 @@ Function _GetConfigServerFromName
 		$configServer.EnsureAuthenticated()
 		$configServer
 	}
+}
+
+Function _GetCredential
+{
+	Param ($Cred)
+
+	if ($Cred)
+	{
+		return [System.Net.NetworkCredential] $Cred
+	}
+	
+	return [System.Net.CredentialCache]::DefaultNetworkCredentials
 }
