@@ -9,44 +9,46 @@
 #>
 Function Connect-TfsTeamProject
 {
-    [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
-    Param
-    (
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
-        [object] 
-        $Project,
-    
-        [Parameter()]
-        [object] 
-        $Collection,
-    
-        [Parameter()]
-        [System.Management.Automation.Credential()]
-        [System.Management.Automation.PSCredential]
-        $Credential,
+	[CmdletBinding()]
+	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+	Param
+	(
+		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[ValidateNotNull()]
+		[object] 
+		$Project,
+	
+		[Parameter()]
+		[object] 
+		$Collection,
+	
+		[Parameter()]
+		[System.Management.Automation.Credential()]
+		[System.Management.Automation.PSCredential]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
-        [Parameter()]
-        [switch]
-        $Passthru
-    )
+		[Parameter()]
+		[switch]
+		$Passthru
+	)
 
-    Process
-    {
-        $tp = (Get-TfsTeamProject -Project $Project -Collection $Collection -Credential $Credential | Select -First 1)
+	Process
+	{
+		$tp = (Get-TfsTeamProject -Project $Project -Collection $Collection -Credential $Credential | Select -First 1)
 
-        if (-not $tp)
-        {
-            throw "Error connecting to team project $Project"
-        }
+		if (-not $tp)
+		{
+			throw "Error connecting to team project $Project"
+		}
 
-        Connect-TfsTeamProjectCollection -Collection $tp.Store.TeamProjectCollection
+		$Global:TfsTeamConnection = $null
+		$Global:TfsProjectConnection = $tp
+		$Global:TfsTpcConnection = $tp.Store.TeamProjectCollection
+		$Global:TfsServerConnection = $Global:TfsTpcConnection.ConfigurationServer
 
-        $Global:TfsProjectConnection = $tp
-
-        if ($Passthru)
-        {
-            return $tp
-        }
-    }
+		if ($Passthru)
+		{
+			return $tp
+		}
+	}
 }
