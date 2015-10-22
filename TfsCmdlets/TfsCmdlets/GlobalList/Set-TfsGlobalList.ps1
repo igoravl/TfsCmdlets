@@ -1,3 +1,12 @@
+<#
+
+.SYNOPSIS
+    Changes the name or the contents of a Global List.
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Set-TfsGlobalList
 {
     Param
@@ -6,19 +15,19 @@ Function Set-TfsGlobalList
         [string] 
         $Name,
     
-		[Parameter(ParameterSetName="Edit list items")]
+        [Parameter(ParameterSetName="Edit list items")]
         [string[]] 
         $Add,
 
-		[Parameter(ParameterSetName="Edit list items")]
+        [Parameter(ParameterSetName="Edit list items")]
         [string[]] 
         $Remove,
 
-		[Parameter(ParameterSetName="Rename list", Mandatory=$true)]
+        [Parameter(ParameterSetName="Rename list", Mandatory=$true)]
         [string] 
         $NewName,
 
-		[Parameter(ParameterSetName="Edit list items")]
+        [Parameter(ParameterSetName="Edit list items")]
         [switch] 
         $Force,
 
@@ -48,15 +57,15 @@ Function Set-TfsGlobalList
             $newList = $true
         }
 
-		if ($PSCmdlet.ParameterSetName -eq "Rename list")
-		{
-			$list.SetAttribute("name", $NewName)
-			Import-TfsGlobalList -Xml $xml -Collection $Collection
+        if ($PSCmdlet.ParameterSetName -eq "Rename list")
+        {
+            $list.SetAttribute("name", $NewName)
+            Import-TfsGlobalList -Xml $xml -Collection $Collection
 
-			Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
+            Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
 
-			return Get-TfsGlobalList -Name $NewName -Collection $Collection
-		}
+            return Get-TfsGlobalList -Name $NewName -Collection $Collection
+        }
 
 
         foreach($item in $Add)
@@ -75,17 +84,17 @@ Function Set-TfsGlobalList
         
         if (-not $newList)
         {
-			foreach($item in $Remove)
-			{
-				$existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
-				
-				if ($existingItem)
-				{
-					[void]$list.RemoveChild($existingItem)
-				}
-			}
-		}
-		        
+            foreach($item in $Remove)
+            {
+                $existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
+                
+                if ($existingItem)
+                {
+                    [void]$list.RemoveChild($existingItem)
+                }
+            }
+        }
+                
         # Saves the list back to TFS
         Import-TfsGlobalList -Xml $xml -Collection $Collection
 

@@ -1,3 +1,8 @@
+<#
+
+.SYNOPSIS
+    Gets the configuration server database connection string.
+#>
 Function Get-TfsConfigurationServerConnectionString
 {
 	[CmdletBinding()]

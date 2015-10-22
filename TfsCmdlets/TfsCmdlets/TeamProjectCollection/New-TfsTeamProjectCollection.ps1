@@ -1,4 +1,8 @@
 <#
+
+.SYNOPSIS
+    Creates a new team project collection.
+
 #>
 Function New-TfsTeamProjectCollection
 {

@@ -1,4 +1,7 @@
 <#
+
+.SYNOPSIS
+    Attaches a team project collection database to a Team Foundation Server installation.
 #>
 Function Mount-TfsTeamProjectCollection
 {

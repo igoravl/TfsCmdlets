@@ -1,6 +1,15 @@
+<#
+
+.SYNOPSIS
+    Imports one or more Global Lists from XML.
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Import-TfsGlobalList
 {
-	[CmdletBinding()]
+    [CmdletBinding()]
     Param
     (
         [Parameter(Mandatory=$true)]

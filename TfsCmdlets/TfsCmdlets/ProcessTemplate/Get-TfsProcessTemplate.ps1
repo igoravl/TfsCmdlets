@@ -1,8 +1,18 @@
+<#
+
+.SYNOPSIS
+    Gets information from one or more process templates.
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function Get-TfsProcessTemplate
 {
     Param
     (
         [Parameter(Position=0)]
+        [SupportsWildcards()]
         [string]
         $Name = "*",
 

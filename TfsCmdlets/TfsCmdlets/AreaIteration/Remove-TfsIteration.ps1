@@ -1,54 +1,54 @@
 <#
 .SYNOPSIS
-    Deletes one or more Iterations.
+    Deletes one or more Iterations ("Iteration Paths").
 
 .PARAMETER Area
     ${HelpParam_Iteration}
 
 .PARAMETER Project
-	${HelpParam_Project}
+    ${HelpParam_Project}
 
 .PARAMETER Collection
-	${HelpParam_Collection}
+    ${HelpParam_Collection}
 
 #>
 Function Remove-TfsIteration
 {
-	[CmdletBinding(ConfirmImpact='High', SupportsShouldProcess=$true)]
-	Param
-	(
-		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
-		[Alias("Path")]
-		[ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
-		[object]
-		$Iteration,
+    [CmdletBinding(ConfirmImpact='High', SupportsShouldProcess=$true)]
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Alias("Path")]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [object]
+        $Iteration,
 
-		[Parameter(Position=1)]
-		[Alias("NewPath")]
-		[ValidateScript({ ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo]) })] 
-		[object]
-		$MoveTo = '\',
+        [Parameter(Position=1)]
+        [Alias("NewPath")]
+        [ValidateScript({ ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo]) })] 
+        [object]
+        $MoveTo = '\',
 
-		[Parameter()]
-		[object]
-		$Project,
+        [Parameter()]
+        [object]
+        $Project,
 
-		[Parameter()]
-		[object]
-		$Collection
-	)
+        [Parameter()]
+        [object]
+        $Collection
+    )
 
-	Process
-	{
-		$iterations = Get-TfsIteration -Iteration $Iteration -Project $Project -Collection $Collection | Sort -Property Path -Descending
+    Process
+    {
+        $iterations = Get-TfsIteration -Iteration $Iteration -Project $Project -Collection $Collection | Sort -Property Path -Descending
 
-		foreach($i in $iterations)
-		{
-			if ($PSCmdlet.ShouldProcess($i.RelativePath, "Delete Iteration"))
-			{
-				$projectName = $i.Path.Split("\")[1]
-				_DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Iteration -Project $Project -Collection $Collection
-			}
-		}
-	}
+        foreach($i in $iterations)
+        {
+            if ($PSCmdlet.ShouldProcess($i.RelativePath, "Delete Iteration"))
+            {
+                $projectName = $i.Path.Split("\")[1]
+                _DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Iteration -Project $Project -Collection $Collection
+            }
+        }
+    }
 }
