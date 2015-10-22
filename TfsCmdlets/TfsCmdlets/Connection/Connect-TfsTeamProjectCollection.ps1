@@ -59,6 +59,7 @@ Function Connect-TfsTeamProjectCollection
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[ValidateNotNull()]
 		[object] 
 		$Collection,
 	
@@ -69,7 +70,7 @@ Function Connect-TfsTeamProjectCollection
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential,
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[Parameter()]
 		[switch]
@@ -78,21 +79,22 @@ Function Connect-TfsTeamProjectCollection
 
 	Process
 	{
-		$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select -First 1)
+		$tpc = $null
 
-		if (-not $tpc)
+		try
 		{
-			throw "Error connecting to team project collection $Collection"
+			$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select -First 1)
+			$tpc.EnsureAuthenticated()
+		}
+		catch
+		{
+			throw "Error connecting to team project collection $Collection ($_)"
 		}
 
-		$tpc.EnsureAuthenticated()
-
-        Disconnect-TfsTeamProject
-
-		Connect-TfsConfigurationServer -Server $tpc.ConfigurationServer
-
+		$Global:TfsTeamConnection = $null
+		$Global:TfsProjectConnection = $null
 		$Global:TfsTpcConnection = $tpc
-		$Global:TfsTpcConnectionCredential = $Credential
+		$Global:TfsServerConnection = $tpc.ConfigurationServer
 
 		if ($Passthru)
 		{

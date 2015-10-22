@@ -26,6 +26,7 @@ Function Connect-TfsConfigurationServer
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[ValidateNotNull()]
 		[object] 
 		$Server,
 	
@@ -48,6 +49,9 @@ Function Connect-TfsConfigurationServer
 			throw "Error connecting to TFS"
 		}
 
+		$Global:TfsTeamConnection = $null
+		$Global:TfsProjectConnection = $null
+		$Global:TfsTpcConnection = $null
 		$Global:TfsServerConnection = $configServer
 
 		if ($Passthru)

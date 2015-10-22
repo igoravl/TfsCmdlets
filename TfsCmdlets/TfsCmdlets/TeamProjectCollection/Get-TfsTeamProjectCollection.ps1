@@ -121,6 +121,7 @@ Function _GetCollectionFromName
 	Process
 	{
 		$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
+
 		$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
 		
 		$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
