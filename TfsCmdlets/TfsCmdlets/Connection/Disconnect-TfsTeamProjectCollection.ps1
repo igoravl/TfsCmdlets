@@ -18,11 +18,11 @@ Function Disconnect-TfsTeamProjectCollection
 {
 	Process
 	{
+        Disconnect-TfsTeamProject
+
         if ($Global:TfsTpcConnection)
         {
 		    Remove-Variable -Name TfsTpcConnection -Scope Global
 		}
-
-        Disconnect-TfsTeamProject
 	}
 }

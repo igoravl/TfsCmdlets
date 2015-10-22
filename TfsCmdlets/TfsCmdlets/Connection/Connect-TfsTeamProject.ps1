@@ -5,6 +5,7 @@ Function Connect-TfsTeamProject
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[ValidateNotNull()]
 		[object] 
 		$Project,
 	
@@ -31,9 +32,10 @@ Function Connect-TfsTeamProject
 			throw "Error connecting to team project $Project"
 		}
 
-		Connect-TfsTeamProjectCollection -Collection $tp.Store.TeamProjectCollection
-
+		$Global:TfsTeamConnection = $null
 		$Global:TfsProjectConnection = $tp
+		$Global:TfsTpcConnection = $tp.Store.TeamProjectCollection
+		$Global:TfsServerConnection = $Global:TfsTpcConnection.ConfigurationServer
 
 		if ($Passthru)
 		{

@@ -21,7 +21,7 @@ Function Get-TfsConfigurationServer
 
 	Process
 	{
-		if ($Current)
+		if (($Current) -or (($Server -eq $null) -and ($Global:TfsServerConnection -ne $null)))
 		{
 			return $Global:TfsServerConnection
         }
