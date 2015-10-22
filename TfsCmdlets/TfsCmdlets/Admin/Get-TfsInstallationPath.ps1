@@ -1,3 +1,9 @@
+<#
+
+.SYNOPSIS
+    Gets the installation path of a given Team Foundation Server component.
+
+#>
 Function Get-TfsInstallationPath
 {
 	[CmdletBinding()]

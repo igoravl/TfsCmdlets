@@ -46,6 +46,13 @@
 ]]>
             </ReplacementValue>
         </Token>
+        <Token Include="HelpParam_Passthru">
+            <ReplacementValue>
+                <![CDATA[
+    Returns the results of the command. By default, this cmdlet does not generate any output.
+]]>
+            </ReplacementValue>
+        </Token>
     </ItemGroup>
     <ItemGroup>
         <Token Include="ModuleName">

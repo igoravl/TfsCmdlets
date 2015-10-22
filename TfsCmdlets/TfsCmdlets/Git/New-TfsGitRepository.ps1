@@ -1,3 +1,18 @@
+<#
+
+.SYNOPSIS
+    Creates a new Git repository in a team project.
+
+.PARAMETER Project
+    ${HelpParam_Project}
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+.PARAMETER Passthru
+    ${HelpParam_Passthru}
+
+#>
 Function New-TfsGitRepository
 {
     Param
@@ -6,17 +21,17 @@ Function New-TfsGitRepository
         [string] 
         $Name,
 
-		[Parameter(ValueFromPipeline=$true)]
-		[object]
-		$Project,
+        [Parameter(ValueFromPipeline=$true)]
+        [object]
+        $Project,
 
-		[Parameter()]
+        [Parameter()]
         [object]
         $Collection,
 
-		[Parameter()]
-		[switch]
-		$Passthru
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
@@ -27,8 +42,8 @@ Function New-TfsGitRepository
 
     Process
     {
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		$tpc = $tp.Store.TeamProjectCollection
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+        $tpc = $tp.Store.TeamProjectCollection
 
         $gitClient = Get-TfsClientObject -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
         $tpRef = [Microsoft.TeamFoundation.Common.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}

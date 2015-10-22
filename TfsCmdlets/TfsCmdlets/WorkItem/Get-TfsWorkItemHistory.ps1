@@ -1,29 +1,33 @@
 <#
-    .SYNOPSIS
-        Gets the history of changes of a work item
 
-    .EXAMPLE
-        Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
+.SYNOPSIS
+    Gets the history of changes of a work item.
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+.EXAMPLE
+    Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
 #>
 Function Get-TfsWorkItemHistory
 {
-	[CmdletBinding()]
-	Param
-	(
-		[Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
-		[Alias("id")]
-		[ValidateNotNull()]
-		[object]
-		$WorkItem,
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
+        [Alias("id")]
+        [ValidateNotNull()]
+        [object]
+        $WorkItem,
 
-		[Parameter()]
+        [Parameter()]
         [object]
         $Collection
-	)
+    )
 
-	Process
-	{
-		$wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
+    Process
+    {
+        $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
         $latestRev = $wi.Revisions.Count - 1
 
         0..$latestRev | % {

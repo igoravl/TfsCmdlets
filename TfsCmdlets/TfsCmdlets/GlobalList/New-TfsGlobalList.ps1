@@ -1,3 +1,12 @@
+<#
+
+.SYNOPSIS
+    Creates a new Global List.
+
+.PARAMETER Collection
+    ${HelpParam_Collection}
+
+#>
 Function New-TfsGlobalList
 {
     Param

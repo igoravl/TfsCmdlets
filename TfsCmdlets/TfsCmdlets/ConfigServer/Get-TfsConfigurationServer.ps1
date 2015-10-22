@@ -1,3 +1,8 @@
+<#
+
+.SYNOPSIS
+    Gets information about a configuration server.
+#>
 Function Get-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName='Get by server')]
@@ -21,7 +26,7 @@ Function Get-TfsConfigurationServer
 
 	Process
 	{
-		if (($Current) -or (($Server -eq $null) -and ($Global:TfsServerConnection -ne $null)))
+		if ($Current)
 		{
 			return $Global:TfsServerConnection
         }
@@ -47,8 +52,14 @@ Function Get-TfsConfigurationServer
 			{
 				return _GetConfigServerFromName $Server $Credential
 			}
+		}
 
-			$Server = $null
+		if ($Server -eq $null)
+		{
+			if ($Global:TfsServerConnection)
+			{
+				return $Global:TfsServerConnection
+			}
 		}
 
 		throw "No TFS connection information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."

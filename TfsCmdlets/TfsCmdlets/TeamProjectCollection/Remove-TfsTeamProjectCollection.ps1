@@ -1,4 +1,8 @@
 <#
+
+.SYNOPSIS
+    Deletes a team project collection
+
 #>
 Function Remove-TfsTeamProjectCollection
 {

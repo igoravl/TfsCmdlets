@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Moves an Area from one parent area to another in the same Team Project.
+    Moves an Area from its parent area to another one in the same Team Project.
 
 .PARAMETER Area
     ${HelpParam_Area}
