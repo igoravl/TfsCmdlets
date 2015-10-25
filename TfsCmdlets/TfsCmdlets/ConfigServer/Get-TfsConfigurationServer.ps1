@@ -2,6 +2,10 @@
 
 .SYNOPSIS
     Gets information about a configuration server.
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 #>
 Function Get-TfsConfigurationServer
 {

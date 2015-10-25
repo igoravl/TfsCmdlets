@@ -3,6 +3,9 @@
 .SYNOPSIS
     Deletes a team project collection
 
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 #>
 Function Remove-TfsTeamProjectCollection
 {

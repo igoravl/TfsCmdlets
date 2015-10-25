@@ -1,4 +1,8 @@
 <#
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 #>
 Function Stop-TfsTeamProjectCollection
 {

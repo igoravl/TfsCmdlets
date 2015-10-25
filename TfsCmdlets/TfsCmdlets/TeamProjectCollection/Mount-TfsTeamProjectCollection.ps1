@@ -2,6 +2,10 @@
 
 .SYNOPSIS
     Attaches a team project collection database to a Team Foundation Server installation.
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 #>
 Function Mount-TfsTeamProjectCollection
 {

@@ -3,6 +3,9 @@
 .SYNOPSIS
     Creates a new team project collection.
 
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 #>
 Function New-TfsTeamProjectCollection
 {

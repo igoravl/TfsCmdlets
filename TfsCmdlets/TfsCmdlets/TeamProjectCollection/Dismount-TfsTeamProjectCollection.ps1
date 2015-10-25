@@ -3,6 +3,9 @@
 .SYNOPSIS
     Detaches a team project collection database from a Team Foundation Server installation.
 
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 
