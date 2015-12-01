@@ -74,6 +74,7 @@
     <Compile Include="ProcessTemplate\Import-TfsProcessTemplate.ps1" />
     <Compile Include="TeamProjectCollection\Stop-TfsTeamProjectCollection.ps1" />
     <Compile Include="Team\Rename-TfsTeam.ps1" />
+    <Compile Include="WorkItem\Copy-TfsWorkItem.ps1" />
     <Compile Include="WorkItem\Get-TfsWorkItemHistory.ps1" />
     <Compile Include="XamlBuild\Get-TfsXamlBuildAgent.ps1" />
     <Compile Include="XamlBuild\Get-TfsXamlBuildController.ps1" />

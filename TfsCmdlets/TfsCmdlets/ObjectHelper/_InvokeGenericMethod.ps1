@@ -481,7 +481,9 @@ function Get-Type($object)
     return $object.GetType()
 }
 
-Add-Type -ErrorAction Stop -TypeDefinition @'
+if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvoker').Type)
+{
+	Add-Type -ErrorAction SilentlyContinue -TypeDefinition @'
     namespace PSGenericMethods
     {
         using System;
@@ -533,3 +535,4 @@ Add-Type -ErrorAction Stop -TypeDefinition @'
         }
     }
 '@
+}

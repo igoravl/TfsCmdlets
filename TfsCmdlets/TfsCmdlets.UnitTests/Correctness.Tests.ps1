@@ -2,15 +2,15 @@
 
 InModuleScope TfsCmdlets {
 
-	Describe "Correctness Tests: Parameters" {
+    Describe "Correctness Tests: Parameters" {
 
-		Context "Parameters with wildcards" {
+        Context "Parameters with wildcards" {
 
-			It "Has SupportsWildcards attribute" {
-			}
+            It "Has SupportsWildcards attribute" {
+            }
 
-		}
-	}
+        }
+    }
 
     Describe "Correctness Tests: Functions" {
 
@@ -22,17 +22,39 @@ InModuleScope TfsCmdlets {
                 foreach($f in $functions)
                 {
                     "Testing $f.Name"
-                    $f.CmdletBinding | Should Be $true
+                    $f.CmdletBinding | Should Be $false
                 }
             }
 
         }
 
-        Context "Remove-* functions" {
+        Context 'Get-* functions' {
 
-            $functions = Get-Command -Verb Remove -Module TfsCmdlets
+            $functions = Get-Command -Verb Get -Module TfsCmdlets | ? OutputType -ne $null
 
-            It "Has the SupportsShouldProcess attribute" {
+            It 'Have OutputType set' {
+                $functions.Length | Should Be 0
+            }
+        }
+
+        Context 'State-changing functions' {
+
+            $functions = Get-Command -Verb Dismount, Import, Mount, Move, Rename, Set, Start -Module TfsCmdlets
+
+            It 'Have ConfirmImpact set at least to Medium' {
+
+            }
+        }
+
+        Context 'Destructive functions' {
+
+            $functions = Get-Command -Verb Dismount, Remove, Stop -Module TfsCmdlets
+
+            It 'Have ConfirmImpact attribute set to High' {
+
+            }
+
+            It "Have the SupportsShouldProcess attribute" {
                 foreach($f in $functions)
                 {
                     "Testing $f.Name"
