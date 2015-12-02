@@ -24,7 +24,7 @@
 Function Get-TfsWorkItemType
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType[]])]
+    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType])]
     Param
     (
         [Parameter(Position=0)]
