@@ -30,7 +30,7 @@ Function Get-TfsWorkItemType
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        [string] 
+        [object] 
         $Type = "*",
 
         [Parameter(ValueFromPipeline=$true)]
