@@ -18,7 +18,8 @@ Function New-TfsArea
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
         [Alias("Path")]
         [string]
         $Area,
