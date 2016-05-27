@@ -36,6 +36,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Build", "TfsCmdlets.Build\TfsCmdlets.Build.csproj", "{EC40ACB0-A6B9-4776-9078-B1D72D244787}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{F80692E2-C383-4BF1-BA5E-3F3A11E1A763}"
+	ProjectSection(SolutionItems) = preProject
+		resources\TfsCmdlets_Icon_128.png = resources\TfsCmdlets_Icon_128.png
+		resources\TfsCmdlets_Icon_16.png = resources\TfsCmdlets_Icon_16.png
+		resources\TfsCmdlets_Icon_256.png = resources\TfsCmdlets_Icon_256.png
+		resources\TfsCmdlets_Icon_32.png = resources\TfsCmdlets_Icon_32.png
+		resources\TfsCmdlets_Icon_64.png = resources\TfsCmdlets_Icon_64.png
+		resources\TfsShell.png = resources\TfsShell.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
