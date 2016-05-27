@@ -24,11 +24,13 @@ Properties {
 
     # Nuget packaging
     $NugetExePath = Join-Path $SolutionDir '.nuget\nuget.exe'
+    $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
     $NugetPackageVersion = $BuildName -replace '\+.+', '' # remove SemVer 2.0 build metadata; not supported by NuGet 2.x
 
     # Chocolatey packaging
+    $ChocolateyInstallDir = Join-Path $NugetPackagesDir 'Chocolatey'
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
