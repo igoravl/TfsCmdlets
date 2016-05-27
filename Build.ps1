@@ -7,7 +7,7 @@ Param
     $BuildName = '1.0.0-alpha+1',
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
-    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSO',
+    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
     $EnableFusionLog = $false
 )
 

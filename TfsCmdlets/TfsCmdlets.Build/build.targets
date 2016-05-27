@@ -11,7 +11,7 @@
     <NugetPackagesDir>$(SolutionDir)packages</NugetPackagesDir>
     <ModuleAuthor Condition="'$(ModuleAuthor)' == ''">Igor Abade V. Leite</ModuleAuthor>
     <ModuleName Condition="'$(ModuleName)' == ''">TfsCmdlets</ModuleName>
-    <ModuleDescription Condition="'$(ModuleDescription)' == ''">PowerShell Cmdlets for TFS and VSO</ModuleDescription>
+    <ModuleDescription Condition="'$(ModuleDescription)' == ''">PowerShell Cmdlets for TFS and VSTS</ModuleDescription>
     <BranchName Condition="'$(BranchName)' == ''">local-branch</BranchName>
     <Commit Condition="'$(Commit)' == ''">local-commit</Commit>
     <PreRelease Condition="'$(PreRelease)' == ''">localpre</PreRelease>
