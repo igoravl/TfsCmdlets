@@ -4,7 +4,7 @@ Param
     $Configuration = 'Release',
     $BranchName = 'local-build',
     $Commit = '00000000',
-    $BuildName = '1.0.0-alpha+1',
+    $BuildName = '1.0.0.1-alpha1+20010101',
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
@@ -18,13 +18,11 @@ if($BuildName -match '-')
 {
     $Version = $BuildNameTokens[0]
     $PreRelease = $BuildNameTokens[1]
-    $BuildNumber = $BuildNameTokens[2]
 }
 else
 {
     $Version = $BuildNameTokens[0]
     $PreRelease = ''
-    $BuildNumber = $BuildNameTokens[1]
 }
 
 try
@@ -63,10 +61,9 @@ try
 	    ModuleAuthor = $ModuleAuthor;
 	    ModuleDescription = $ModuleDescription;
 	    Commit = $Commit;
-	    Version = "$Version.$BuildNumber";
+	    Version = $Version;
 	    PreRelease = $PreRelease;
-	    BuildName = "$($BuildName -replace '\+.+', '')+$BuildTimestamp.$BuildNumber";
-	    BuildNumber = $BuildNumber;
+	    BuildName = "$($BuildName -replace '\+.+', '')+$BuildTimestamp";
         VisualStudioVersion = $VisualStudioVersion
 	}
 }
