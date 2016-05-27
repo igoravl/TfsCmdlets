@@ -61,7 +61,8 @@
 
     <Target Name="RestoreNugetPackages">
         <Message Text="Downloading TFS Client Object Model packages from Nuget. Please wait, it may take a while..." Importance="High" />
-        <Exec Command="$(NugetExePath) install Microsoft.TeamFoundationServer.ExtendedClient -OutputDirectory &quot;$(NugetPackagesDir)&quot; -ExcludeVersion" />
+      <Exec Command="$(NugetExePath) install Microsoft.TeamFoundationServer.ExtendedClient -OutputDirectory &quot;$(NugetPackagesDir)&quot; -ExcludeVersion" />
+      <Exec Command="$(NugetExePath) install Chocolatey -pre -OutputDirectory &quot;$(NugetPackagesDir)&quot; -ExcludeVersion" />
         <Exec Command="$(NugetExePath) list -Source $(SolutionDir)packages\Microsoft.TeamFoundationServer.ExtendedClient" ConsoleToMSBuild="true">
             <Output TaskParameter="ConsoleOutput" ItemName="NugetConsole" />
         </Exec>
