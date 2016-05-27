@@ -30,7 +30,8 @@ Properties {
     $NugetPackageVersion = $BuildName -replace '\+.+', '' # remove SemVer 2.0 build metadata; not supported by NuGet 2.x
 
     # Chocolatey packaging
-    $ChocolateyInstallDir = Join-Path $NugetPackagesDir 'Chocolatey'
+    $ChocolateyInstallDir = Join-Path $NugetPackagesDir 'Chocolatey\tools\chocolateyInstall'
+    $ChocolateyPath = Join-Path $ChocolateyInstallDir 'choco.exe'
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
@@ -121,7 +122,7 @@ Task PackageChocolatey -Depends CopyModule {
 
     Copy-Item $NugetDir $ChocolateyDir -Recurse
     Push-Location $ChocolateyDir
-    choco @('Pack', $ChocolateySpecPath)
+    & $ChocolateyPath @('Pack', $ChocolateySpecPath)
     Pop-Location
 }
 
