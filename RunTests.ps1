@@ -14,9 +14,3 @@ Get-Module pester | Remove-Module
 Import-Module $pesterModulePath
 
 Invoke-Pester -Path (Join-Path $solutionDir "TfsCmdlets.UnitTests") -OutputFile Results.xml -OutputFormat NUnitXml
-
-if ($env:APPVEYOR)
-{
-    $wc = New-Object 'System.Net.WebClient'
-    $wc.UploadFile("https://ci.appveyor.com/api/testresults/nunit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\Results.xml))
-}

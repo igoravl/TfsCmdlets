@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "TfsCmdlets", "TfsCmdlets\TfsCmdlets.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
@@ -27,7 +27,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{EDA4B0D5-7620-4705-BE8C-EA3CF8C97D82}"
 	ProjectSection(SolutionItems) = preProject
 		7za.exe = 7za.exe
-		..\appveyor.yml = ..\appveyor.yml
 		..\Build.ps1 = ..\Build.ps1
 		BuildDoc.ps1 = BuildDoc.ps1
 		psake-default.ps1 = psake-default.ps1
@@ -37,6 +36,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Build", "TfsCmdlets.Build\TfsCmdlets.Build.csproj", "{EC40ACB0-A6B9-4776-9078-B1D72D244787}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{F80692E2-C383-4BF1-BA5E-3F3A11E1A763}"
+	ProjectSection(SolutionItems) = preProject
+		resources\TfsCmdlets_Icon_128.png = resources\TfsCmdlets_Icon_128.png
+		resources\TfsCmdlets_Icon_16.png = resources\TfsCmdlets_Icon_16.png
+		resources\TfsCmdlets_Icon_256.png = resources\TfsCmdlets_Icon_256.png
+		resources\TfsCmdlets_Icon_32.png = resources\TfsCmdlets_Icon_32.png
+		resources\TfsCmdlets_Icon_64.png = resources\TfsCmdlets_Icon_64.png
+		resources\TfsShell.png = resources\TfsShell.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
