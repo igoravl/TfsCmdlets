@@ -50,6 +50,7 @@ Properties {
         "/p:ModuleDescription=`"$ModuleDescription`" " + `
         "/p:Commit=$(Get-EscapedMSBuildArgument $Commit) " + `
         "/p:PreRelease=$PreRelease " + `
+        "/p:SuppressValidation=true " + `
         "/p:BuildName=$BuildName " + `
         "/p:Version=$Version " + `
         "/p:WixProductName=`"$ModuleDescription ($ModuleName)`" " + `
