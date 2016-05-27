@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\WiX.3.10.2\build\wix.props" Condition="Exists('..\packages\WiX.3.10.2\build\wix.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -20,6 +21,8 @@
     <IncludeSearchPaths>..\TfsCmdlets\</IncludeSearchPaths>
     <HarvestDirectoryVerboseOutput>true</HarvestDirectoryVerboseOutput>
     <HarvestDirectorySuppressRootDirectory>true</HarvestDirectorySuppressRootDirectory>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
@@ -54,6 +57,9 @@
       <RefTargetDir>INSTALLFOLDER</RefTargetDir>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(WixTargetsPath)" />
   <Target Name="BeforeBuild">
     <ItemGroup>
@@ -68,5 +74,11 @@
       </HarvestDirectory>
     </ItemGroup>
     <!--<Exec Command='"$(WixToolPath)\Heat.exe" dir @(HeatDir) -cg %(HeatDir.ComponentGroupName) -dr %(HarvestDirectory.DirectoryRefId) -scom -sreg -srd -var %(HarvestDirectory.PreprocessorVariable) -ag -out $(IntermediateOutputPath)_ModuleComponent_dir' />-->
+  </Target>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WiX.3.10.2\build\wix.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WiX.3.10.2\build\wix.props'))" />
   </Target>
 </Project>
