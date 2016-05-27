@@ -27,7 +27,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{EDA4B0D5-7620-4705-BE8C-EA3CF8C97D82}"
 	ProjectSection(SolutionItems) = preProject
 		7za.exe = 7za.exe
-		..\appveyor.yml = ..\appveyor.yml
 		..\Build.ps1 = ..\Build.ps1
 		BuildDoc.ps1 = BuildDoc.ps1
 		psake-default.ps1 = psake-default.ps1
