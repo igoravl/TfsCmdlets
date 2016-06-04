@@ -205,5 +205,4 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-/TfsCmdlets/.vs/config/applicationhost.config
-/TfsCmdlets/.vs
+/TfsCmdlets/.vs/
