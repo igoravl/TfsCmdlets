@@ -1,38 +1,18 @@
-What's new in 1.0.0.13-alpha8 (_04/Jun/2016_)
+What's new in 1.0.0-alpha7 (_22/Oct/2015_)
 ------------------------------------------
 
-Whoa, that really took longer than expected! :-)
+### Improvements
+  - Added essential help comments to all cmdlets. Future versions will improve the documentation quality and depth.
 
-Right now we're in the middle of a migration from AppVeyor to VSTS. With that, we plan on leveraging VSTS's Release Management feature to simplify managing versions and releases.
+### Bug Fixes
+  - Fix Nuget and Chocolatey package icons
+  - Fix bug in Get-TfsWorkItemType that would not return any WITDs
 
-By the end of it, we expect our releases to be easier, faster and thus more frequent. Let's see how it goes! 
-
-On a brighter note: Now we have the first incarnation of Set-TfsWorkItem. Give it a spin!
-
-### Improvements and Changes
-  - **NEW**: Set-TfsWorkItem
-  - Rename all mentions of VSO to VSTS
-
-### Bug fixes
-  - N/A
-
-### Known issues
+### Known Issues
   - N/A
 
 Previous Versions
 -----------------
-
-### 1.0.0-alpha7 (_22/Oct/2015_)
-
-#### Improvements
-  - Added essential help comments to all cmdlets. Future versions will improve the documentation quality and depth.
-
-#### Bug Fixes
-  - Fix Nuget and Chocolatey package icons
-  - Fix bug in Get-TfsWorkItemType that would not return any WITDs
-
-#### Known Issues
-  - N/A
 
 ### 1.0.0-alpha6 (_22/Oct/2015_)
 
