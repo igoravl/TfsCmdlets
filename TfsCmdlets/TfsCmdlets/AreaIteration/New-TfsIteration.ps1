@@ -19,7 +19,7 @@ Function New-TfsIteration
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
         [Alias("Path")]
         [object]

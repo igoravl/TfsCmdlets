@@ -40,29 +40,28 @@ Function Set-TfsWorkItem
 
     Process
     {
-        if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
-        {
-            $tpc = $WorkItem.Store.TeamProjectCollection
-            $id = $WorkItem.Id
-        }
-        else
-        {
-            $tpc = Get-TfsTeamProjectCollection -Collection $Collection
-            $id = (Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection).Id
-        }
-
         if ($BypassRules)
         {
-            $store = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore' -ArgumentList $tpc, [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags]::BypassRules
+            if ($WorkItem -is [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])
+            {
+                Write-Warning "An actual WorkItem object was provided with -BypassRules. A new object will be opened since it is not possible to bypass rules on a previously opened work item."
+                $tpc = $WorkItem.Store.TeamProjectCollection
+            }
+            else
+            {
+                $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+            }
+
+            $store = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore' -ArgumentList @($tpc, [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags]::BypassRules)
+            $id = (Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection).Id
+            $wi = $store.GetWorkItem($id)
         }
         else
         {
-            $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+            $wi = (Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection)
         }
 
-        $wi = $store.GetWorkItem($id)
-
-		$Fields = _FixAreaIterationValues -Fields $Fields -ProjectName $wi.Project.Name
+        $Fields = _FixAreaIterationValues -Fields $Fields -ProjectName $wi.Project.Name
 
         foreach($fldName in $Fields.Keys)
         {
