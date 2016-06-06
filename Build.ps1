@@ -7,8 +7,9 @@ Param
     $BuildName = '1.0.0-alpha+1',
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
-    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSO',
-    $EnableFusionLog = $false
+    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
+    $EnableFusionLog = $false,
+    $Targets = "Build"
 )
 
 if ($env:APPVEYOR)
@@ -98,7 +99,7 @@ try
 
 	Import-Module $psakeModulePath
 
-	Invoke-Psake -BuildFile (Resolve-Path 'psake-default.ps1') -TaskList Build -Parameters @{
+	Invoke-Psake -BuildFile (Resolve-Path 'psake-default.ps1') -TaskList $Targets -Parameters @{
 	    SolutionDir = $SolutionDir; 
 	    Configuration = $Configuration;
 	    BranchName = $BranchName;
