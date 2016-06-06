@@ -141,6 +141,7 @@ Task PackageMSI {
 Task PackageDocs -Depends GenerateDocs {
 
     #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetPackageVersion.zip") 
+    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir
 }
 
 Task GenerateDocs -Depends CopyModule {
