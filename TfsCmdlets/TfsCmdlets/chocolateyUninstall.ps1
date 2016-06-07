@@ -1,7 +1,19 @@
 $InstallPath = Join-Path $($env:ChocolateyInstall) 'lib\TfsCmdlets'
 $ToolsDir = Join-Path $InstallPath 'Tools'
 
-if ($env:PSModulePath -contains $ToolsDir)
+if ($env:PSModulePath -like "*$ToolsDir*")
 {
-    [Environment]::SetEnvironmentVariable("PSModulePath", ($env:PSModulePath -replace ";$ToolDir",''), 'Machine')
+    Write-Output "TfsCmdlets: Removing installation directory from PSModulePath environment variable"
+    $NewModulePath = $Env:PSModulePath.Replace($ToolsDir, '').Replace(';;', ';')
+    SETX @('PSModulePath', $NewModulePath, '/M')
+}
+
+$ShortcutTargetDir = "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs"
+$ShortcutName = 'Team Foundation Server Shell'
+$ShortcutFilePath = "$ShortcutTargetDir\$ShortcutName.lnk"
+
+if (Test-Path $ShortcutFilePath)
+{
+    Write-Output "TfsCmdlets: Removing Start Menu shortcut file"
+    Remove-Item $ShortcutFilePath
 }

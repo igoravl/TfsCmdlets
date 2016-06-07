@@ -1,4 +1,17 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
-    <PropertyGroup>
-    </PropertyGroup>
+  <PropertyGroup>
+    <SourceDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..\TfsCmdlets'))</SourceDir>
+    <SolutionDir>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..'))</SolutionDir>
+    <OutDir>$(SourceDir)\$(OutputPath)</OutDir>
+    <NugetExePath>$(SolutionDir).nuget\nuget.exe</NugetExePath>
+    <NugetPackagesDir>$(SolutionDir)packages</NugetPackagesDir>
+    <ModuleAuthor Condition="'$(ModuleAuthor)' == ''">Igor Abade V. Leite</ModuleAuthor>
+    <ModuleName Condition="'$(ModuleName)' == ''">TfsCmdlets</ModuleName>
+    <ModuleDescription Condition="'$(ModuleDescription)' == ''">PowerShell Cmdlets for TFS and VSTS</ModuleDescription>
+    <BranchName Condition="'$(BranchName)' == ''">local-branch</BranchName>
+    <Commit Condition="'$(Commit)' == ''">local-commit</Commit>
+    <PreRelease Condition="'$(PreRelease)' == ''">localpre</PreRelease>
+    <BuildName Condition="'$(BuildName)' == ''">1.0.0-localpre+1</BuildName>
+    <Version Condition="'$(Version)' == ''">1.0.0.1</Version>
+  </PropertyGroup>
 </Project>

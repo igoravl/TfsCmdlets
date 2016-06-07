@@ -24,11 +24,14 @@ Properties {
 
     # Nuget packaging
     $NugetExePath = Join-Path $SolutionDir '.nuget\nuget.exe'
+    $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
     $NugetPackageVersion = $BuildName -replace '\+.+', '' # remove SemVer 2.0 build metadata; not supported by NuGet 2.x
 
     # Chocolatey packaging
+    $ChocolateyInstallDir = Join-Path $NugetPackagesDir 'Chocolatey\tools\chocolateyInstall'
+    $ChocolateyPath = Join-Path $ChocolateyInstallDir 'choco.exe'
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
@@ -48,6 +51,7 @@ Properties {
         "/p:ModuleDescription=`"$ModuleDescription`" " + `
         "/p:Commit=$(Get-EscapedMSBuildArgument $Commit) " + `
         "/p:PreRelease=$PreRelease " + `
+        "/p:SuppressValidation=true " + `
         "/p:BuildName=$BuildName " + `
         "/p:Version=$Version " + `
         "/p:WixProductName=`"$ModuleDescription ($ModuleName)`" " + `
@@ -77,24 +81,14 @@ Task MSBuild {
 
 Task DetectDependencies {
 
-    if (-not $env:APPVEYOR)
+    if (-not (Test-Path "HKCU:\SOFTWARE\Microsoft\VisualStudio\$VisualStudioVersion.0_Config\Projects\{f5034706-568f-408a-b7b3-4d38c6db8a32}"))
     {
-        if (-not (Test-Path "HKCU:\SOFTWARE\Microsoft\VisualStudio\$VisualStudioVersion.0_Config\Projects\{f5034706-568f-408a-b7b3-4d38c6db8a32}"))
-        {
-            Write-Warning "PowerShell Tools for Visual Studio (PoShTools) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download PoShTools from https://visualstudiogallery.msdn.microsoft.com/f65f845b-9430-4f72-a182-ae2a7b8999d7 (VS 2013) or https://visualstudiogallery.msdn.microsoft.com/c9eb3ba8-0c59-4944-9a62-6eee37294597 (VS 2015) and install it in the corresponding Visual Studio version."
-        }
+        Write-Warning "PowerShell Tools for Visual Studio (PoshTools) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download PoshTools from https://visualstudiogallery.msdn.microsoft.com/f65f845b-9430-4f72-a182-ae2a7b8999d7 (VS 2013) or https://visualstudiogallery.msdn.microsoft.com/c9eb3ba8-0c59-4944-9a62-6eee37294597 (VS 2015) and install it in the corresponding Visual Studio version."
     }
 
     if (-not $env:WIX)
     {
-        Write-Error "WiX Toolset is not installed. Download WiX from http://www.wixtoolset.org prior to building TfsCmdlets."
-        throw "Missing dependency. Breaking build."
-    }
-
-    if (-not $env:ChocolateyInstall)
-    {
-        Write-Error "Chocolatey is not installed. Download Chocolatey from http://www.chocolatey.org prior to building TfsCmdlets."
-        throw "Missing dependency. Breaking build."
+        Write-Warning "Windows Installer XML (WiX) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download and install the latest WiX version from http://www.wixtoolset.org."
     }
 
 }
@@ -128,7 +122,7 @@ Task PackageChocolatey -Depends CopyModule {
 
     Copy-Item $NugetDir $ChocolateyDir -Recurse
     Push-Location $ChocolateyDir
-    choco @('Pack', $ChocolateySpecPath)
+    & $ChocolateyPath @('Pack', $ChocolateySpecPath)
     Pop-Location
 }
 
