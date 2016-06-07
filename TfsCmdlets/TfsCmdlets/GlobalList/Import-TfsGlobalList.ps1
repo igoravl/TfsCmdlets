@@ -6,13 +6,15 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.Xml.XmlDocument
 #>
 Function Import-TfsGlobalList
 {
     [CmdletBinding()]
     Param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
         [xml] 
         $Xml,
     

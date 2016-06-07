@@ -24,6 +24,10 @@
 .EXAMPLE
     New-TfsWorkItem -Type Task -Title "Task 1" -Project "MyTeamProject"
     This example creates a new Work Item on Team Project "MyTeamProject".
+
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType
+    System.String    
 #>
 Function New-TfsWorkItem
 {

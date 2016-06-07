@@ -1,5 +1,4 @@
 <#
-
 .SYNOPSIS
     Changes the value of a property of an Iteration.
 
@@ -24,10 +23,14 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function Set-TfsIteration
 {
     [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]

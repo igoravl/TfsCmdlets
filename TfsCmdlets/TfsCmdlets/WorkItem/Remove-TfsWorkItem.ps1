@@ -6,6 +6,9 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
+    System.Int32
 #>
 Function Remove-TfsWorkItem
 {

@@ -1,14 +1,18 @@
 <#
-
 .SYNOPSIS
     Exports a process template definition to disk.
 
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Export-TfsProcessTemplate
 {
+    [CmdletBinding()]
     Param
     (
         [Parameter(Position=0)]
@@ -31,7 +35,7 @@ Function Export-TfsProcessTemplate
         $NewDescription,
 
         [Parameter(ValueFromPipeline=$true)]
-        [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection]
+        [object]
         $Collection
     )
 

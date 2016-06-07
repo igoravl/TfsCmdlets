@@ -3,12 +3,17 @@
 .PARAMETER Credential
     ${HelpParam_Credential}
 
+
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Stop-TfsTeamProjectCollection
 {
 	Param
 	(
-		[Parameter(Mandatory=$true, Position=0)]
+		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
 		[object] 
 		$Collection,
 
@@ -16,7 +21,7 @@ Function Stop-TfsTeamProjectCollection
 		[string]
 		$Reason,
 	
-		[Parameter(ValueFromPipeline=$true)]
+		[Parameter()]
 		[object] 
 		$Server,
 	

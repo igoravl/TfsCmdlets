@@ -32,6 +32,10 @@
 .LINK
 	https://msdn.microsoft.com/en-us/library/microsoft.teamfoundation.client.tfsteamprojectcollection.aspx
 
+.INPUTS
+    Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Connect-TfsTeamProjectCollection
 {

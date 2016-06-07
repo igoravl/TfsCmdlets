@@ -6,12 +6,14 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.String
 #>
 Function Import-TfsProcessTemplate
 {
     Param
     (
-        [Parameter(Position=0, Mandatory=$true)]
+        [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
         [ValidateScript({Test-Path $_  -PathType Container})]
         [string]
         $SourcePath,
@@ -21,8 +23,8 @@ Function Import-TfsProcessTemplate
         [string]
         $State = "Visible",
 
-        [Parameter(ValueFromPipeline=$true)]
-        [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection]
+        [Parameter()]
+        [object]
         $Collection
     )
 

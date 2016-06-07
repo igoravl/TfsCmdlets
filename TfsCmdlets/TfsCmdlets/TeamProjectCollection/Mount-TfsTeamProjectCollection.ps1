@@ -6,6 +6,10 @@
 .PARAMETER Credential
     ${HelpParam_Credential}
 
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsConfigurationServer
+    System.String
+    System.Uri
 #>
 Function Mount-TfsTeamProjectCollection
 {

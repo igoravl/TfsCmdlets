@@ -6,12 +6,14 @@
 .PARAMETER Credential
     ${HelpParam_Credential}
 
+.INPUTS
+    System.String
 #>
 Function New-TfsTeamProjectCollection
 {
 	Param
 	(
-		[Parameter(Mandatory=$true, Position=0)]
+		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
 		[string]
 		$Name,
 
@@ -52,7 +54,7 @@ Function New-TfsTeamProjectCollection
 		[timespan]
 		$Timeout = [timespan]::MaxValue,
 
-		[Parameter(ValueFromPipeline=$true)]
+		[Parameter()]
 		[object] 
 		$Server,
 	

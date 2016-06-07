@@ -8,6 +8,10 @@
 
 .EXAMPLE
     Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
+
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
+    System.Int32
 #>
 Function Get-TfsWorkItemHistory
 {

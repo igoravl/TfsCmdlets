@@ -6,6 +6,10 @@
 .PARAMETER Credential
     ${HelpParam_Credential}
 
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Remove-TfsTeamProjectCollection
 {

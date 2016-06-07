@@ -9,6 +9,8 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.Xml.XmlDocument
 #>
 Function Import-TfsWorkItemType
 {
@@ -16,11 +18,11 @@ Function Import-TfsWorkItemType
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType[]])]
     Param
     (
-        [Parameter(Position=0)]
+        [Parameter(Position=0, ValueFromPipeline=$true)]
         [xml] 
         $Xml,
 
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter()]
         [object]
         $Project,
 

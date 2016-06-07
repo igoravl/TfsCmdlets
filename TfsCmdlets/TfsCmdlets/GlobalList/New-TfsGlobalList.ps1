@@ -6,16 +6,18 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.String / System.String[]
 #>
 Function New-TfsGlobalList
 {
     Param
     (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]
         [string] 
         $Name,
     
-        [Parameter(Mandatory=$true)] 
+        [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Items')] 
         [string[]] 
         $Items,
 
