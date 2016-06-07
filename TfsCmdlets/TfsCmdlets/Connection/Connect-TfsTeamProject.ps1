@@ -3,6 +3,9 @@
 .SYNOPSIS
     Connects to a team project.
 
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 .PARAMETER Passthru
     ${HelpParam_Passthru}
 

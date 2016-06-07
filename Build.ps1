@@ -8,7 +8,8 @@ Param
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
-    $EnableFusionLog = $false
+    $EnableFusionLog = $false,
+    $Targets = "Build"
 )
 
 $BuildNameTokens = ($BuildName -split {$_ -in @('-','+')})
@@ -53,7 +54,7 @@ try
 
 	Import-Module $psakeModulePath
 
-	Invoke-Psake -BuildFile (Resolve-Path 'psake-default.ps1') -TaskList Build -Parameters @{
+	Invoke-Psake -BuildFile (Resolve-Path 'psake-default.ps1') -TaskList $Targets -Parameters @{
 	    SolutionDir = $SolutionDir; 
 	    Configuration = $Configuration;
 	    BranchName = $BranchName;

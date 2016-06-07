@@ -6,9 +6,15 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Get-TfsProcessTemplate
 {
+    [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Server.TemplateHeader])]
     Param
     (
         [Parameter(Position=0)]

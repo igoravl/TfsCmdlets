@@ -9,6 +9,9 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.Client.TeamFoundationTeam
+    System.String
 #>
 Function Remove-TfsTeam
 {

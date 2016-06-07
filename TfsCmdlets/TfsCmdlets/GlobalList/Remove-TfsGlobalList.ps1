@@ -6,13 +6,15 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.String
 #>
 Function Remove-TfsGlobalList
 {
     [CmdletBinding(ConfirmImpact="High", SupportsShouldProcess=$true)]
     Param
     (
-        [Parameter(ValueFromPipelineByPropertyName="Name")]
+        [Parameter(ValueFromPipelineByPropertyName='Name')]
         [SupportsWildcards()]
         [string] 
         $Name = "*",

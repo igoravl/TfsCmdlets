@@ -1,14 +1,22 @@
 <#
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Start-TfsTeamProjectCollection
 {
 	Param
 	(
-		[Parameter(Mandatory=$true, Position=0)]
+		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
 		[object] 
 		$Collection,
 
-		[Parameter(ValueFromPipeline=$true)]
+		[Parameter()]
 		[object] 
 		$Server,
 	

@@ -6,6 +6,10 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+    System.String
+    System.Uri
 #>
 Function Export-TfsGlobalList
 {
@@ -18,7 +22,7 @@ Function Export-TfsGlobalList
         [string] 
         $Name = "*",
     
-        [Parameter()]
+        [Parameter(ValueFromPipeline=$true)]
         [object]
         $Collection
     )

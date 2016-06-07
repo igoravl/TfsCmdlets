@@ -1,11 +1,11 @@
 TfsCmdlets
 ==========
 
-PowerShell Cmdlets for Team Foundation Server and Visual Studio Online
+PowerShell Cmdlets for Team Foundation Server and Visual Studio Team Services
 
 ## Whats is TfsCmdlets?
 
-TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server and Visual Studio Online. 
+TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server and Visual Studio Team Services. 
 
 By using TfsCmdlets, TFS administrators (even power users) can create scripts to automate many different tasks, ranging from retrieving work items to create new team project collections.
 

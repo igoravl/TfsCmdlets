@@ -304,6 +304,8 @@ function ConvertCommandHelp($help, $cmdList) {
     $cmdName = $help.Name
     $Description = if ($help.description) { ($help.description | Select -ExpandProperty Text) -join "`r`n`r`n" }
     $Notes = if ($help.alertSet) { ($help.alertSet.alert  | Select -ExpandProperty Text) -join "`r`n`r`n" }
+    $InputTypes = if ($help.inputTypes) { '* ' + ($help.inputTypes.inputType.type.name -replace  "`n", "`r`n* ") }
+    $OutputTypes = if ($cmd.OutputType) { '* ' + ($cmd.OutputType | Select -ExpandProperty Name) -join "`r`n* " }
     $Aliases = (Get-Alias | ? ResolvedCommandName -eq $cmdName | Select -ExpandProperty Name)
 
     if ($help.examples) {
@@ -346,7 +348,7 @@ $(GenerateSyntax $help $cmd)
 
 ### Index
 
-[Detailed Description](#Description) | [Parameters](#Parameters) | [Inputs](#Inputs) | [Outputs](#Outputs)$(if ($Notes) { ' | [Notes](#Notes)'})$(if ($Examples) { ' | [Examples](#Examples)'}) | [Related Topics](#RelatedTopics)
+[Detailed Description](#Description) | [Parameters](#Parameters)$(if($InputTypes){' | [Inputs](#Inputs)'})$(if($OutputTypes){' | [Outputs](#Outputs)'})$(if($Notes) { ' | [Notes](#Notes)'})$(if ($Examples) { ' | [Examples](#Examples)'}) | [Related Topics](#RelatedTopics)
 
 <a id=`"Description`"></a>
 ### Detailed Description 
@@ -362,21 +364,26 @@ $(GenerateParameters $cmd)
 
 [Go to top](#top)
 
-<a id="Inputs"></a>
+$(if ($InputTypes) { @"
+<a id=`"Inputs`"></a>
 ### Inputs
 The input type is the type of the objects that you can pipe to the cmdlet.
 
-* System.Object
-  You can pipe bla to $cmdName
+$InputTypes
 
 [Go to top](#Top)
 
-<a id="Outputs"></a>
+"@ })
+$(if ($InputTypes) { @"
+<a id=`"Outputs`"></a>
 ### Outputs
 The output type is the type of the objects that the cmdlet emits.
 
+$OutputTypes
+
 [Go to top](#Top)
 
+"@ })
 $(if ($Notes) { @"
 <a id="Notes"></a>
 ### Notes

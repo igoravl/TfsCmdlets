@@ -11,10 +11,15 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.Server.NodeInfo
+    System.String
+    System.Uri
 #>
 Function Move-TfsIteration
 {
     [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

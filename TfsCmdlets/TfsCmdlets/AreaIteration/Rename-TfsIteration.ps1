@@ -14,6 +14,9 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function Rename-TfsIteration
 {

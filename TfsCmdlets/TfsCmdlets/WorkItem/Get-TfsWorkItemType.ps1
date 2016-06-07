@@ -20,6 +20,10 @@
 .EXAMPLE
     Get-TfsWorkItemType -Project "My Team Project"
     Get all Work Item Types of a team project name "My Team Project"
+
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function Get-TfsWorkItemType
 {

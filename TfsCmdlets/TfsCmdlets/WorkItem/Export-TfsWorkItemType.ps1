@@ -16,11 +16,14 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function Export-TfsWorkItemType
 {
     [CmdletBinding()]
-    [OutputType([xml[]])]
+    [OutputType([Xml])]
     Param
     (
         [Parameter()]

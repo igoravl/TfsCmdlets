@@ -9,10 +9,14 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function Get-TfsWorkItem
 {
     [CmdletBinding(DefaultParameterSetName="Query by text")]
+    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by revision")]

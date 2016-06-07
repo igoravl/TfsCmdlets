@@ -2,6 +2,14 @@
 
 .SYNOPSIS
     Gets information about a configuration server.
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
+.INPUTS
+    Microsoft.TeamFoundation.Client.TfsConfigurationServer
+    System.String
+    System.Uri
 #>
 Function Get-TfsConfigurationServer
 {
@@ -9,7 +17,7 @@ Function Get-TfsConfigurationServer
 	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
 	Param
 	(
-		[Parameter(Position=0, ParameterSetName='Get by server', Mandatory=$true)]
+		[Parameter(Position=0, ParameterSetName='Get by server', Mandatory=$true, ValueFromPipeline=$true)]
         [AllowNull()]
 		[object] 
 		$Server,

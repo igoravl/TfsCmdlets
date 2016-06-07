@@ -3,9 +3,16 @@
 .SYNOPSIS
     Detaches a team project collection database from a Team Foundation Server installation.
 
+.PARAMETER Credential
+    ${HelpParam_Credential}
+
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+	Microsoft.TeamFoundation.Client.TfsConfigurationServer
+    System.String
+    System.Uri
 #>
 Function Dismount-TfsTeamProjectCollection
 {

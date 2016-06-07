@@ -12,6 +12,8 @@
 .PARAMETER Passthru
     ${HelpParam_Passthru}
 
+.INPUTS
+    System.String
 #>
 Function New-TfsTeam
 {
@@ -28,7 +30,7 @@ Function New-TfsTeam
         [string] 
         $Description,
     
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter()]
         [object]
         $Project,
 

@@ -3,11 +3,13 @@
 .SYNOPSIS
     Gets one or more Team Foundation Server addresses registered in the current computer.
 
+.INPUTS
+    System.String
 #>
 Function Get-TfsRegisteredConfigurationServer
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Client.RegisteredConfigurationServer[]])]
+    [OutputType([Microsoft.TeamFoundation.Client.RegisteredConfigurationServer])]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
