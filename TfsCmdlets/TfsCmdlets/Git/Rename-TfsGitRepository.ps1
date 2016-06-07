@@ -12,6 +12,9 @@
 .PARAMETER Passthru
     ${HelpParam_Passthru}
 
+.INPUTS
+    Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
+    System.String
 #>
 Function Rename-TfsGitRepository
 {
@@ -56,7 +59,7 @@ Function Rename-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = Get-TfsClientObject -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+        $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
 
         if ($Repository -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])
         {

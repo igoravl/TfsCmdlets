@@ -9,6 +9,9 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
+    System.String
 #>
 Function Remove-TfsGitRepository
 {
@@ -46,7 +49,7 @@ Function Remove-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = Get-TfsClientObject -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+        $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
 
         if ($Repository -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])
         {

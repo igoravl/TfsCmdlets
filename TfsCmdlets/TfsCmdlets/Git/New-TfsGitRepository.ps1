@@ -12,6 +12,9 @@
 .PARAMETER Passthru
     ${HelpParam_Passthru}
 
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+    System.String
 #>
 Function New-TfsGitRepository
 {
@@ -45,7 +48,7 @@ Function New-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = Get-TfsClientObject -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+        $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
         $tpRef = [Microsoft.TeamFoundation.Common.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
         $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
         $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)
