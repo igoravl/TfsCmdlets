@@ -13,16 +13,19 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+
+.INPUTS
+    System.String
 #>
 Function New-TfsIteration
 {
     [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [Alias("Path")]
-        [object]
+        [string]
         $Iteration,
 
         [Parameter()]

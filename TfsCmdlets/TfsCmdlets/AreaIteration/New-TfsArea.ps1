@@ -12,13 +12,16 @@
 .PARAMETER Collection
     ${HelpParam_Collection}
 
+.INPUTS
+    System.String
 #>
 Function New-TfsArea
 {
     [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [Alias("Path")]
         [string]
         $Area,
