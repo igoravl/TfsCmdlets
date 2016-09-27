@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{EDA4B0D5
 		7za.exe = 7za.exe
 		..\Build.ps1 = ..\Build.ps1
 		BuildDoc.ps1 = BuildDoc.ps1
+		commands.json = commands.json
 		psake-default.ps1 = psake-default.ps1
 		..\RunTests.ps1 = ..\RunTests.ps1
 	EndProjectSection
