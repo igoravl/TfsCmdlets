@@ -12,4 +12,3 @@ Function _FixAreaIterationValues([hashtable] $Fields, $ProjectName)
 	
 	return $Fields
 }
-
