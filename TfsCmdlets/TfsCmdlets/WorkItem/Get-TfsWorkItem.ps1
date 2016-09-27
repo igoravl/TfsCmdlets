@@ -37,12 +37,11 @@ Function Get-TfsWorkItem
 
         [Parameter(Mandatory=$true, ParameterSetName="Query by WIQL")]
         [Alias('WIQL')]
+        [Alias('QueryText')]
+        [Alias('SavedQuery')]
+        [Alias('QueryPath')]
         [string]
-        $QueryText,
-
-        [Parameter(Mandatory=$true, ParameterSetName="Query by saved query")]
-        [string]
-        $StoredQueryPath,
+        $Query,
 
         [Parameter(Mandatory=$true, ParameterSetName="Query by filter")]
         [string]
@@ -109,7 +108,8 @@ Function Get-TfsWorkItem
             }
 
             "Query by WIQL" {
-                return _GetWorkItemByWiql $QueryText $Macros $tp $store 
+				Write-Verbose "Get-TfsWorkItem: Running query by WIQL. Query: $Query"
+                return _GetWorkItemByWiql $Query $Macros $tp $store 
             }
 
             "Query by saved query" {
@@ -208,13 +208,34 @@ Function _GetWorkItemByDate($WorkItem, $AsOf, $store)
 
 Function _GetWorkItemByWiql($QueryText, $Macros, $Project, $store)
 {
-    if (-not $Macros)
+	if ($QueryText -notlike 'select*')
+	{
+		$q = Get-TfsWorkItemQuery -Query $QueryText -Project $Project
+
+		if (-not $q)
+		{
+			throw "Work item query '$QueryText' is invalid or non-existent."
+		}
+
+		if ($q.Count -gt 1)
+		{
+			throw "Ambiguous query name '$QueryText'. $($q.Count) queries were found matching the specified name/pattern:`n`n - " + ($q -join "`n - ")
+		}
+
+		$QueryText = $q.QueryText
+	}
+
+    if (-not $Macros -and (($QueryText -match "@project") -or ($QueryText -match "@me")))
     {
         $Macros = @{}
     }
 
-    if (($QueryText -match "@project") -and $Project)
+    if ($QueryText -match "@project")
     {
+		if (-not $Project)
+		{
+			$Project = Get-TfsTeamProject -Current
+		}
 
         if (-not $Macros.ContainsKey("Project"))
         {
@@ -229,15 +250,12 @@ Function _GetWorkItemByWiql($QueryText, $Macros, $Project, $store)
         $Macros["Me"] = $user.DisplayName
     }
 
+	Write-Verbose "Get-TfsWorkItem: Running query $QueryText"
+
     $wis = $store.Query($QueryText, $Macros)
 
     foreach($wi in $wis)
     {
         $wi
     }
-}
-
-Function _GetWorkItemBySavedQuery($StoredQueryPath, $Macros, $Project, $store)
-{
-    throw New-Object 'System.NotImplementedException'
 }
