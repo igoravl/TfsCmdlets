@@ -150,4 +150,15 @@
             </ScriptProperty>
         </Members>
     </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>FolderPath</Name>
+        <GetScriptBlock>
+            $this.Parent.Path
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
 </Types>
