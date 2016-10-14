@@ -115,6 +115,7 @@
     <Compile Include="WorkItemQuery\_Helpers.ps1" />
     <Compile Include="WorkItem\Copy-TfsWorkItem.ps1" />
     <Compile Include="WorkItem\Export-TfsWorkItemType.ps1" />
+    <Compile Include="WorkItem\Get-TfsWorkItemLink.ps1" />
     <Compile Include="WorkItem\Get-TfsWorkItem.ps1" />
     <Compile Include="WorkItem\Get-TfsWorkItemHistory.ps1" />
     <Compile Include="WorkItem\Get-TfsWorkItemType.ps1" />
