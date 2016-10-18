@@ -42,7 +42,7 @@ Function Import-TfsProcessTemplate
         $zipFile = "$tempFile.zip"
         Rename-Item $tempFile -NewName (Split-Path $zipFile -Leaf)
 
-        Compress-Archive -Path $SourcePath -DestinationPath $zipFile -Force
+        Compress-Archive -Path "$SourcePath/**" -DestinationPath $zipFile -Force
 
         $ptFile = (Join-Path $SourcePath "ProcessTemplate.xml")
         $ptXml = [xml] (Get-Content $ptFile)
