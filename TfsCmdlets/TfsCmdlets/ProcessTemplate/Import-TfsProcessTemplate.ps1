@@ -51,7 +51,7 @@ Function Import-TfsProcessTemplate
         $description = $ptXml.ProcessTemplate.metadata.description
         $metadata = $ptXml.ProcessTemplate.metadata.OuterXml
 
-        $processTemplateSvc.AddUpdateTemplate($name, $description, $metadata, $State, $tempFile);
+        $processTemplateSvc.AddUpdateTemplate($name, $description, $metadata, $State, $zipFile);
 
         Remove-Item $zipFile
     }
