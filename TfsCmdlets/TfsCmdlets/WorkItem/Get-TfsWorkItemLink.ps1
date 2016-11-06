@@ -26,16 +26,12 @@ Function Get-TfsWorkItemLink
 
         [Parameter()]
         [object]
-        $Project,
-
-        [Parameter()]
-        [object]
         $Collection
     )
 
     Process
     {
-        $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection -Project $Project
+        $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
 
         if ($wi)
         {
