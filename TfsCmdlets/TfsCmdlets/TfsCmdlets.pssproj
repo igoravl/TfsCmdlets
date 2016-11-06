@@ -98,6 +98,7 @@
     <Compile Include="TeamProjectCollection\New-TfsTeamProjectCollection.ps1" />
     <Compile Include="TeamProjectCollection\Remove-TfsTeamProjectCollection.ps1" />
     <Compile Include="TeamProjectCollection\Stop-TfsTeamProjectCollection.ps1" />
+    <Compile Include="TeamProject\New-TfsTeamProject.ps1" />
     <Compile Include="TeamProject\Get-TfsTeamProject.ps1" />
     <Compile Include="Team\Get-TfsTeam.ps1" />
     <Compile Include="Team\New-TfsTeam.ps1" />
