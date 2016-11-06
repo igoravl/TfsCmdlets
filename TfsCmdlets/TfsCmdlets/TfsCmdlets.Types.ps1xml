@@ -197,11 +197,24 @@
           return $type
           }
 
+          function _GetTestManagementArtifactKind($type, $id)
+          {
+          if ($type -like 'TcmResultAttachment*')
+          {
+          return 'Test Result Attachment'
+          }
+          if ($type -like 'TcmResult*')
+          {
+          return 'Test Result'
+          }
+          return $type
+          }
+
           function _GetVersionControlArtifactKind($type, $id)
           {
           if ($type -ne 'Changeset')
           {
-            return 'Versioned Item'
+          return 'Versioned Item'
           }
           return 'Changeset'
           }
@@ -238,55 +251,60 @@
         <GetScriptBlock>
           function _GetOwner($link)
           {
-            $field = $link.GetType().GetField('m_item', [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Instance)
-            if ($field)
-            {
-              return $field.GetValue($link)
-            }
-            throw 'm_item private field not found in link $($link.GetType().FullName)'
+          $field = $link.GetType().GetField('m_item', [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Instance)
+          if ($field)
+          {
+          return $field.GetValue($link)
+          }
+          throw 'm_item private field not found in link $($link.GetType().FullName)'
           }
 
           function _GetTpc($link)
           {
-            $wi = _GetOwner $link
-            return $wi.Store.TeamProjectCollection
+          $wi = _GetOwner $link
+          return $wi.Store.TeamProjectCollection
           }
 
           function _GetBuildArtifactTarget($type, $id)
           {
-            return $id
+          return $id
           }
 
           function _GetRequirementsArtifactTarget($type, $id)
           {
-            return [System.Net.WebUtility]::UrlDecode($id)
+          return [System.Net.WebUtility]::UrlDecode($id)
           }
 
           function _GetGitArtifactTarget($type, $id)
           {
-            $pathSegments = $id -split '%2F'
+          $pathSegments = $id -split '%2F'
 
-            if ($pathSegments.Count -ne 3)
-            {
-              return $id
-            }
+          if ($pathSegments.Count -ne 3)
+          {
+          return $id
+          }
 
-            $id = $pathSegments[2]
+          $id = $pathSegments[2]
 
-            if ($pathSegments[2].StartsWith('GB') -or $pathSegments[2].StartsWith('GT'))
-            {
-              $id = $pathSegments[2].Substring(2)
-            }
+          if ($pathSegments[2].StartsWith('GB') -or $pathSegments[2].StartsWith('GT'))
+          {
+          $id = $pathSegments[2].Substring(2)
+          }
 
-            return $id
+          return $id
+          }
+
+          function _GetTestManagementArtifactTarget($type, $id, $link)
+          {
+            return $link.LinkedArtifactUri
           }
 
           function _GetVersionControlArtifactTarget($type, $id, $link)
           {
-            if ($type -eq 'VersionedItem')
-            {
-              (0..2) | % { $id = [System.Net.WebUtility]::UrlDecode($id) }
-              $id = $id -split '&amp;'
+          if ($type -eq 'VersionedItem')
+          {
+          (0..2) | % { $id = [System.Net.WebUtility]::UrlDecode($id) }
+          $id = $id -split '&amp;'
               return "`$/$($id[0]) ($($id[1]), $($id[2]))"
             }
 
