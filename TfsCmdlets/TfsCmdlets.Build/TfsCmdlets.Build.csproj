@@ -10,6 +10,8 @@
     <RootNamespace>TfsCmdlets.Build</RootNamespace>
     <AssemblyName>TfsCmdlets.Build</AssemblyName>
     <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <OutputPath>bin\Release\</OutputPath>
@@ -20,9 +22,14 @@
     <None Include="build.targets">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
     <None Include="ReplaceTokensInFile.Task.targets">
       <SubType>Designer</SubType>
     </None>
+    <ScriptFragment Include="@(Compile->'$(SourceDir)\%(Identity)')">
+      <ModuleName>$([System.Text.RegularExpressions.Regex]::Match(%(RelativeDir), '(?&lt;name&gt;[^\\]*)\\$').Groups['name'].Value)</ModuleName>
+      <OutputFile>$(OutDir)TfsCmdlets\%(ModuleName)\%(ModuleName).psm1</OutputFile>
+    </ScriptFragment>
   </ItemGroup>
   <Target Name="GetTargetPath" />
   <Import Project="$(MSBuildProjectDirectory)\build.props" />
