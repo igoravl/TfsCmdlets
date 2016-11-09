@@ -19,6 +19,17 @@
     </Members>
   </Type>
   <Type>
+    <Name>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>WorkItemStore</Name>
+        <GetScriptBlock>
+          return $this.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
     <Name>Microsoft.TeamFoundation.Client.TeamFoundationTeam</Name>
     <Members>
       <ScriptProperty>
@@ -236,6 +247,7 @@
           switch($this.BaseType)
           {
           'RelatedLink'  { $this.LinkTypeEnd.Name }
+          'WorkItemLink'  { $this.LinkTypeEnd.Name }
           'ExternalLink' { _GetExternalLinkTypeName $this }
           default { $this.BaseType }
           }
@@ -347,6 +359,17 @@
           {
           $_.Exception.ToString()
           }
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>OppositeEndName</Name>
+        <GetScriptBlock>
+          return $this.OppositeEnd.Name
         </GetScriptBlock>
       </ScriptProperty>
     </Members>
