@@ -31,8 +31,14 @@ Function Add-TfsWorkItemLink
         $TargetWorkItem,
 
         [Parameter(Position=2, Mandatory=$true)]
+        [Alias("LinkType")]
+        [Alias("Type")]
         [object]
-        $TargetLinkType,
+        $EndLinkType,
+
+        [Parameter()]
+        [string]
+        $Comment,
 
         [switch]
         $SkipSave,
@@ -48,24 +54,28 @@ Function Add-TfsWorkItemLink
         $targetWi = Get-TfsWorkItem -WorkItem $TargetWorkItem -Collection $Collection -Project $Project
 
         
-        if ($TargetLinkType -isnot [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd])
+        if ($EndLinkType -isnot [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd])
         {
             try
             {
-                $TargetLinkType = $sourceWi.Store.WorkItemLinkTypes.LinkTypeEnds[$TargetLinkType]
+                $EndLinkType = $sourceWi.Store.WorkItemLinkTypes.LinkTypeEnds[$EndLinkType]
             }
             catch
             {
-                throw "Error retrieving work item link type $TargetLinkType`: $_"
+                throw "Error retrieving work item link type $EndLinkType`: $_"
             }
         }
 
-        $link = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLink' -ArgumentList $TargetLinkType, $targetWi.Id
-        [void] $sourceWi.WorkItemLinks.Add($link)
+        $link = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLink' -ArgumentList $EndLinkType, $targetWi.Id
+        $link.Comment = $Comment
+
+        $i = $sourceWi.WorkItemLinks.Add($link)
 
         if (-not $SkipSave)
         {
             $sourceWi.Save()
         }
+
+        return $sourceWi.WorkItemLinks[$i]        
     }
 }
