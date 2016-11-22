@@ -1,7 +1,7 @@
 [CmdletBinding()]
 Param
 (
-    $SolutionDir = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) 'TfsCmdlets'),
+    $SolutionDir = (Join-Path $PSScriptRoot 'TfsCmdlets'),
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
