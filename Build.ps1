@@ -59,6 +59,13 @@ try
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
 
+    # Set VSTS build name
+
+    if ($env:BUILD_BUILDURI)
+    {
+        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.InformationalVersion)"
+    }
+
     # Restore/install Psake
 
     Write-Verbose "Restoring Psake (if needed)"
