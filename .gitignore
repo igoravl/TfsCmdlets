@@ -206,3 +206,5 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /TfsCmdlets/.vs/
+/TfsCmdlets/_Output
+/TfsCmdlets/nuget.exe
