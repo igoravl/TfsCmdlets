@@ -145,6 +145,11 @@ Task PackageNuget -Depends GenerateModule, GenerateNuspec {
 
 Task PackageChocolatey -Depends GenerateModule {
 
+    if (-not (Test-Path $ChocolateyPath))
+    {
+        & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages | Write-Verbose
+    }
+
     Copy-Item $ModuleDir $ChocolateyToolsDir -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
     & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
