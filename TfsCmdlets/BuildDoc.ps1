@@ -444,9 +444,11 @@ $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
 
 foreach($cmd in $cmds)
 {
-    Write-Progress -Activity "Generating help files" -Status "Generating help for $($cmd.Name)..." -PercentComplete ($id++ * 100 / $cmdCount)
+    $i++ 
 
-    $Host.UI.RawUI.BufferSize = $expandedBufSize
+    Write-Verbose "Generating help for $($cmd.Name) ($i of $cmdCount)"
+
+    # $Host.UI.RawUI.BufferSize = $expandedBufSize
 
     # Generate the readme
     $readme = "{% $($cmd.Name) %}" | foreach { $re.Replace($_, $callback) }
@@ -456,8 +458,8 @@ foreach($cmd in $cmds)
     $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
     [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
 
-    $Host.UI.RawUI.BufferSize = $origBufSize
+    # $Host.UI.RawUI.BufferSize = $origBufSize
 
 }
 
-Write-Progress -Activity "Generating help files" -Completed
+Get-Module TfsCmdlets | Remove-Module

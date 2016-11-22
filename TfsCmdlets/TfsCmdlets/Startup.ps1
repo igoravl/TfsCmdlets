@@ -89,7 +89,7 @@ Function Prompt
             $tfsPrompt = "[$tfsPrompt] "
         }
 
-        "TFS ${tfsPrompt}$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
+        "TFS $($tfsPrompt)$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "
     }
 }
 '@ | Invoke-Expression

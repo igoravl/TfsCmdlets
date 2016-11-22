@@ -8,10 +8,10 @@ Properties {
     }
 
     # Source information
-    $SourceDir = Join-Path $SolutionDir "TfsCmdlets\Bin\$Configuration\"
+    $ProjectDir = Join-Path $SolutionDir 'TfsCmdlets'
 
     # Output destination
-    $OutDir = Join-Path $SolutionDir 'Build'
+    $OutDir = Join-Path $SolutionDir '_Output'
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
@@ -20,16 +20,17 @@ Properties {
     $ModuleBinDir = (Join-Path $ModuleDir 'bin')
 
     # Module generation
-    $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets\TfsCmdlets.psd1'
+    $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
 
     # Nuget packaging
-    $NugetExePath = Join-Path $SolutionDir '.nuget\nuget.exe'
+    $NugetExePath = Join-Path $SolutionDir 'nuget.exe'
     $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
-    $NugetPackageVersion = $BuildName -replace '\+.+', '' # remove SemVer 2.0 build metadata; not supported by NuGet 2.x
+    $NugetPackageVersion = $VersionMetadata.LegacySemVer
 
     # Chocolatey packaging
+    $ChocolateyToolsDir = Join-Path $ChocolateyDir 'tools'
     $ChocolateyInstallDir = Join-Path $NugetPackagesDir 'Chocolatey\tools\chocolateyInstall'
     $ChocolateyPath = Join-Path $ChocolateyInstallDir 'choco.exe'
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
@@ -38,45 +39,75 @@ Properties {
     $WixVersion = "$Version"
     $WixOutputPath = Join-Path $SolutionDir "TfsCmdlets.Setup\bin\$Configuration"
 
-    # MSBuild-related properties
-    $SolutionPath = Join-Path $SolutionDir 'TfsCmdlets.sln'
-    $MSBuildArgs = "`"$SolutionPath`" " + `
-        "/tv:$VisualStudioVersion.0 " +
-        "/Verbosity:Detailed " +
-        "/p:Configuration=$Configuration " + `
-        "/p:Platform=`"Any CPU`" " + `
-        "/p:BranchName=$BranchName " + `
-        "/p:ModuleAuthor=`"$ModuleAuthor`" " + `
-        "/p:ModuleName=$ModuleName " + `
-        "/p:ModuleDescription=`"$ModuleDescription`" " + `
-        "/p:Commit=$(Get-EscapedMSBuildArgument $Commit) " + `
-        "/p:PreRelease=$PreRelease " + `
-        "/p:SuppressValidation=true " + `
-        "/p:BuildName=$BuildName " + `
-        "/p:Version=$Version " + `
-        "/p:WixProductName=`"$ModuleDescription ($ModuleName)`" " + `
-        "/p:WixProductVersion=$WixVersion " + `
-        "/p:WixFileVersion=$NugetPackageVersion " + `
-        "/p:WixAuthor=`"$ModuleAuthor`""
-
     #7zip
     $7zipExepath = Join-Path $SolutionDir '7za.exe'
 
 }
 
-Task Build -Depends DetectDependencies, CopyModule, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Rebuild -Depends Clean, Build {
 
 }
 
-Task CopyModule -Depends Clean, MSBuild {
+Task Build -Depends DetectDependencies, GenerateModule, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
-    Copy-Item -Path $SourceDir -Destination $ModuleDir -Recurse 
 }
 
-Task MSBuild {
+Task GenerateModule -Depends DownloadTfsNugetPackage {
 
-    Write-Output "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
-    exec { MSBuild.exe '--%' $MSBuildArgs }
+    if (-not (Test-Path $ModuleDir -PathType Container)) { New-Item $ModuleDir -ItemType Directory -Force | Out-Null }
+
+    $NestedModules = (Get-ChildItem $ProjectDir -Directory | % { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
+    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | % { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
+    $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
+
+    # Copy root files to output dir
+    foreach($f in (Get-ChildItem $ProjectDir\*.ps* -Exclude *.pssproj))
+    {
+        $f | Get-Content | Out-String | Replace-Token | Out-File (Join-Path $ModuleDir $f.Name) -Encoding Default
+    }
+
+    Copy-Item $ProjectDir\*.* -Destination $ModuleDir -Exclude *.pssproj, *.ps* 
+   
+    # Create sub-modules
+    foreach($d in (Get-ChildItem $ProjectDir -Directory -Exclude bin))
+    {
+        $subModuleName = $d.Name
+        $subModuleSrcDir = Join-Path $ProjectDir $subModuleName
+        $subModuleOutDir = Join-Path $ModuleDir $subModuleName
+        $subModuleOutFile = Join-Path $subModuleOutDir "$subModuleName.psm1"
+
+        if (-not (Test-Path $subModuleOutDir -PathType Container)) { New-Item $subModuleOutDir -ItemType Directory -Force | Out-Null }
+
+        Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+    }
+}
+
+Task DownloadTfsNugetPackage {
+
+    & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages | Write-Verbose
+
+    $TargetDir = (Join-Path $ModuleDir 'Lib\')
+   
+    if (-not (Test-Path $TargetDir -PathType Container)) { New-Item $TargetDir -ItemType Directory -Force | Out-Null }
+    
+    foreach($d in (Get-ChildItem net45 -Directory -Recurse))
+    {
+        try
+        { 
+            foreach ($f in (Get-ChildItem $d\*.dll))
+            {
+                $SrcPath = $f.FullName
+                $DstPath = Join-Path $TargetDir $f.Name
+
+                if (-not (Test-Path $DstPath))
+                {
+                    Copy-Item $SrcPath $DstPath
+                }
+            }
+        } 
+        finally 
+        {}
+    }
 }
 
 Task DetectDependencies {
@@ -97,39 +128,48 @@ Task Clean {
 
     if (Test-Path $OutDir -PathType Container)
     {
-        Remove-Item $OutDir -Recurse -Force
+        Remove-Item $OutDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+} 
 
-    if (Test-Path $SourceDir -PathType Container)
-    {
-        Remove-Item $SourceDir -Recurse -Force
-    }
+Task PackageModule -Depends GenerateModule {
 
-    New-Item $OutDir -ItemType Directory | Out-Null
-}
-
-Task PackageModule -Depends CopyModule {
     & $7zipExePath a (Join-Path $ModuleDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") $ModuleDir\TfsCmdlets
 }
 
-Task PackageNuget -Depends CopyModule, GenerateNuspec {
+Task PackageNuget -Depends GenerateModule, GenerateNuspec {
 
-    Copy-Item $ModuleDir $NugetToolsDir -Recurse 
+    Copy-Item $ModuleDir $NugetToolsDir -Recurse -Exclude *.ps1 -Force
     & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Quiet', '-NonInteractive')
 }
 
-Task PackageChocolatey -Depends CopyModule {
+Task PackageChocolatey -Depends GenerateModule {
 
-    Copy-Item $NugetDir $ChocolateyDir -Recurse
-    Push-Location $ChocolateyDir
-    & $ChocolateyPath @('Pack', $ChocolateySpecPath)
-    Pop-Location
+    Copy-Item $ModuleDir $ChocolateyToolsDir -Recurse -Force
+    Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
+    & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
 }
 
-Task PackageMSI {
+Task BuildMSI {
 
-    New-Item $MSIDir -ItemType Directory | Out-Null
-    Copy-Item -Path "$WixOutputPath\*.msi" -Destination $MSIDir
+    $WixProjectPath = Join-Path $SolutionDir 'TfsCmdlets.Setup\TfsCmdlets.Setup.wixproj'
+    $WixPackagesConfigFile = Join-Path $SolutionDir 'TfsCmdlets.Setup\packages.config'
+    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor='$ModuleAuthor"" /tv:$VisualStudioVersion.0"
+
+    Write-Verbose "Restoring WiX Nuget package"
+
+    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir
+
+    Write-Verbose "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
+
+    exec { MSBuild.exe '--%' $MSBuildArgs } | Write-Verbose
+}
+
+Task PackageMSI -Depends BuildMSI {
+
+    if(-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
+
+    Copy-Item "$WixOutputPath\*.msi" -Destination $MSIDir -Force
 }
 
 Task PackageDocs -Depends GenerateDocs {
@@ -138,16 +178,16 @@ Task PackageDocs -Depends GenerateDocs {
     & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir
 }
 
-Task GenerateDocs -Depends CopyModule {
+Task GenerateDocs -Depends GenerateModule {
 
-    New-Item $DocsDir -ItemType Directory | Out-Null
+    if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
-    .\BuildDoc.ps1 -SourceDir (Join-Path $ModuleDir 'TfsCmdlets') -OutputDir $DocsDir
+    .\BuildDoc.ps1 -SourceDir $ModuleDir -OutputDir $DocsDir
 }
 
 Task GenerateNuspec {
 
-    New-Item $NugetDir -ItemType Directory | Out-Null
+    if(-not (Test-Path $NugetDir)) { New-Item $NugetDir -ItemType Directory | Out-Null }
 
     $SourceManifest = Test-ModuleManifest -Path $ModuleManifestPath
 
@@ -173,4 +213,55 @@ Task GenerateNuspec {
 "@
 
     Set-Content -Path $NugetSpecPath -Value $nuspec
+}
+
+Function Replace-Token
+{
+    [CmdletBinding()]
+    Param
+    (
+        [Parameter(ValueFromPipeline=$true)]
+        [string]
+        $InputObject
+    )
+
+    Begin
+    {
+        $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens
+    }
+
+    Process
+    {
+        $m = $InputObject | Select-String -Pattern '\${(?<VarName>.+?)}' -AllMatches
+
+        if (-not $m)
+        {
+            return $InputObject
+        }
+
+        $foundTokens = $m.Matches | % { $_.Groups[1].Value }
+        $result = $InputObject
+
+        foreach($t in $foundTokens)
+        {
+            if ($Tokens.$t)
+            {
+                $result = $result.Replace("$`{$t}", $Tokens.$t)
+            }
+            elseif ($VersionMetadata.$t)
+            {
+                $result = $result.Replace("`${$t}", $VersionMetadata.$t)
+            }
+            elseif (Get-Variable -Name $t)
+            {
+                $result = $result.Replace("`${$t}", (Get-Variable $t).Value)
+            }
+            else
+            {
+                throw "Invalid token ${$t}"
+            }
+        }
+
+        return $result
+    }
 }

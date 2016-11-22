@@ -22,7 +22,7 @@
         <!--UI Settings-->
 
         <UIRef Id="WixUI_InstallDir"/>
-        <Icon Id="ProductIcon" SourceFile="$(var.SolutionDir)\TfsCmdlets\bin\$(var.Configuration)\TfsCmdlets\TfsCmdletsShell.ico"/>
+        <Icon Id="ProductIcon" SourceFile="$(var.SolutionDir)\_Output\Module\TfsCmdletsShell.ico"/>
 
         <!--Dependency detection-->
 
@@ -47,7 +47,7 @@
 
         <!--Components-->
 
-        <DirectoryRef Id="INSTALLDIR" FileSource="$(var.SolutionDir)\TfsCmdlets\bin\$(var.Configuration)\">
+        <DirectoryRef Id="INSTALLDIR" FileSource="$(var.SolutionDir)\_Output\Module\">
             <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}" KeyPath="yes">
                 <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last" Separator=";" System="yes" Permanent="no" Value="[INSTALLDIR]"/>
             </Component>
