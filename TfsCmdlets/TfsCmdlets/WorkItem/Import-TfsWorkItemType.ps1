@@ -34,6 +34,6 @@ Function Import-TfsWorkItemType
     Process
     {
         $tp = Get-TfsTeamProject $Project $Collection
-        return $tp.WorkItemTypes | ? Name -Like $Name
+        $tp.WorkItemTypes.Import($Xml.OuterXml)
     }
 }
