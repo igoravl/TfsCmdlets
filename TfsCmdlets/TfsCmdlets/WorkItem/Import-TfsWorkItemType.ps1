@@ -15,7 +15,6 @@
 Function Import-TfsWorkItemType
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType[]])]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
