@@ -21,7 +21,7 @@ Function New-TfsTeamProject
         $Description,
 
         [string]
-        [ValidateSet('Git, TFVC')]
+        [ValidateSet('Git', 'TFVC')]
         $SourceControl,
 
         [object]
