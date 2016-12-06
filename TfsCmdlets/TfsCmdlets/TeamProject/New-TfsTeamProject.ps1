@@ -75,6 +75,11 @@ Function New-TfsTeamProject
             throw "Error creating team project $Project"
         }
 
+        # Force a metadata cache refresh prior to retrieving the newly created project
+
+        $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+        $wiStore.RefreshCache()
+
         return Get-TfsTeamProject -Project $Project -Collection $Collection
     }
 }
