@@ -7,7 +7,7 @@ Param
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
-    $Targets = "Build"
+    $Targets = "Package"
 )
 
 try

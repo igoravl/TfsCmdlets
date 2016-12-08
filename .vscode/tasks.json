@@ -1,0 +1,27 @@
+{
+    "version": "0.1.0",
+    "command": "powershell",
+    "args": [   
+        "-ExecutionPolicy",
+        "Unrestricted",
+        "-NoProfile",
+        "-File",
+        "${workspaceRoot}/build.ps1",
+        "-SolutionDir",
+        "${workspaceRoot}\\TfsCmdlets",
+        "-Targets",
+        "Build"
+    ],
+    "windows": {
+        "command": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
+    },
+    "showOutput": "always",
+    "suppressTaskName": true,
+    "tasks": [
+        {
+            "taskName": "build",
+            "showOutput": "always",
+            "isBuildCommand": true
+        }
+    ]
+}

@@ -17,6 +17,7 @@ Properties {
     $NugetDir = Join-Path $OutDir 'nuget'
     $DocsDir = Join-Path $OutDir 'docs'
     $ModuleDir = Join-Path $OutDir 'Module'
+    $PortableDir = Join-Path $OutDir 'Portable'
     $ModuleBinDir = (Join-Path $ModuleDir 'bin')
 
     # Module generation
@@ -48,7 +49,11 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Build -Depends DetectDependencies, GenerateModule, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Build -Depends DetectDependencies, GenerateModule {
+    
+}
+
+Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -134,7 +139,9 @@ Task Clean {
 
 Task PackageModule -Depends GenerateModule {
 
-    & $7zipExePath a (Join-Path $ModuleDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") $ModuleDir\TfsCmdlets
+    if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
+
+    & $7zipExePath a (Join-Path $ModuleDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") $PortableDir | Write-Verbose
 }
 
 Task PackageNuget -Depends GenerateModule, GenerateNuspec {
@@ -180,7 +187,7 @@ Task PackageMSI -Depends BuildMSI {
 Task PackageDocs -Depends GenerateDocs {
 
     #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetPackageVersion.zip") 
-    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir
+    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir | Write-Verbose
 }
 
 Task GenerateDocs -Depends GenerateModule {
