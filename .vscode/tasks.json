@@ -10,7 +10,9 @@
         "-SolutionDir",
         "${workspaceRoot}\\src",
         "-Targets",
-        "Build"
+        "Build",
+        "-Configuration",
+        "Debug"
     ],
     "windows": {
         "command": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
