@@ -8,7 +8,7 @@
         "-File",
         "${workspaceRoot}/build.ps1",
         "-SolutionDir",
-        "${workspaceRoot}\\TfsCmdlets",
+        "${workspaceRoot}\\src",
         "-Targets",
         "Build"
     ],

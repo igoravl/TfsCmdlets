@@ -1,7 +1,7 @@
 [CmdletBinding()]
 Param
 (
-    $SolutionDir = (Join-Path $PSScriptRoot 'TfsCmdlets'),
+    $SolutionDir = (Join-Path $PSScriptRoot 'src'),
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
@@ -14,7 +14,7 @@ try
 {
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
 
-    Write-Output "Restoring dependencies...`n"
+    Write-Verbose "Module being built from $SolutionDir"
 
     if ($env:VS140COMNTOOLS)
     {
@@ -39,9 +39,13 @@ try
 
     $PackagesDir = Join-Path $SolutionDir 'packages'
     $NugetExePath = Join-Path $SolutionDir 'nuget.exe'
+
+    Write-Verbose "PackagesDir: $PackagesDir"
+    Write-Verbose "NugetExePath: $NugetExePath"
     
     if (-not (Test-Path $PackagesDir -PathType Container))
     {
+        Write-Verbose "Folder $PackagesDir not found. Creating folder."
         md $PackagesDir -Force | Write-Verbose
     }
 
@@ -55,7 +59,7 @@ try
 
     Write-Verbose "Restoring GitVersion client (if needed)"
 
-    & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory packages | Write-Verbose
+    & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory Packages | Write-Verbose
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
 
@@ -79,7 +83,7 @@ try
 
     Write-Host "Running Psake script`n" -ForegroundColor Cyan
 
-    Invoke-Psake -BuildFile (Resolve-Path 'psake-default.ps1') -TaskList $Targets -Verbose:([bool] ($PSBoundParameters['Verbose'].IsPresent)) `
+    Invoke-Psake -BuildFile (Resolve-Path 'psake.ps1') -TaskList $Targets -Verbose:([bool] ($PSBoundParameters['Verbose'].IsPresent)) `
       -Parameters @{
         SolutionDir = $SolutionDir; 
         Configuration = $Configuration;

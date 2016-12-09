@@ -8,10 +8,10 @@ Properties {
     }
 
     # Source information
-    $ProjectDir = Join-Path $SolutionDir 'TfsCmdlets'
+    $ProjectDir = Join-Path $SolutionDir 'PS'
 
     # Output destination
-    $OutDir = Join-Path $SolutionDir '_Output'
+    $OutDir = Join-Path (Split-Path $SolutionDir -Parent) 'out'
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
@@ -38,19 +38,19 @@ Properties {
 
     # Wix packaging
     $WixVersion = "$Version"
-    $WixOutputPath = Join-Path $SolutionDir "TfsCmdlets.Setup\bin\$Configuration"
+    $WixOutputPath = Join-Path $SolutionDir "Setup\bin\$Configuration"
 
     #7zip
     $7zipExepath = Join-Path $SolutionDir '7za.exe'
 
 }
 
-Task Rebuild -Depends Clean, Build {
-
+Task Build -Depends GenerateModule {
+    
 }
 
-Task Build -Depends DetectDependencies, GenerateModule {
-    
+Task Rebuild -Depends Clean, Build {
+
 }
 
 Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
@@ -83,13 +83,23 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
 
         if (-not (Test-Path $subModuleOutDir -PathType Container)) { New-Item $subModuleOutDir -ItemType Directory -Force | Out-Null }
 
-        Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+        if ($Configuration -eq 'Release')
+        {
+            # Merge individual files in a single module file
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+        }
+        else
+        {
+            # Dot-source individual files in the module file
+            Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
+        }
     }
 }
 
 Task DownloadTfsNugetPackage {
 
-    & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages | Write-Verbose
+    & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
 
     $TargetDir = (Join-Path $ModuleDir 'Lib\')
    
@@ -115,20 +125,6 @@ Task DownloadTfsNugetPackage {
     }
 }
 
-Task DetectDependencies {
-
-    if (-not (Test-Path "HKCU:\SOFTWARE\Microsoft\VisualStudio\$VisualStudioVersion.0_Config\Projects\{f5034706-568f-408a-b7b3-4d38c6db8a32}"))
-    {
-        Write-Warning "PowerShell Tools for Visual Studio (PoshTools) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download PoshTools from https://visualstudiogallery.msdn.microsoft.com/f65f845b-9430-4f72-a182-ae2a7b8999d7 (VS 2013) or https://visualstudiogallery.msdn.microsoft.com/c9eb3ba8-0c59-4944-9a62-6eee37294597 (VS 2015) and install it in the corresponding Visual Studio version."
-    }
-
-    if (-not $env:WIX)
-    {
-        Write-Warning "Windows Installer XML (WiX) not found. Although not needed for build, it is required to open the solution in Visual Studio. Download and install the latest WiX version from http://www.wixtoolset.org."
-    }
-
-}
-
 Task Clean {
 
     if (Test-Path $OutDir -PathType Container)
@@ -141,20 +137,20 @@ Task PackageModule -Depends GenerateModule {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    & $7zipExePath a (Join-Path $ModuleDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") $PortableDir | Write-Verbose
+    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
 }
 
 Task PackageNuget -Depends GenerateModule, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir -Recurse -Exclude *.ps1 -Force
-    & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Quiet', '-NonInteractive')
+    & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') | Write-Verbose
 }
 
 Task PackageChocolatey -Depends GenerateModule {
 
     if (-not (Test-Path $ChocolateyPath))
     {
-        & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages | Write-Verbose
+        & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
     }
 
     Copy-Item $ModuleDir $ChocolateyToolsDir -Recurse -Force
@@ -164,9 +160,9 @@ Task PackageChocolatey -Depends GenerateModule {
 
 Task BuildMSI {
 
-    $WixProjectPath = Join-Path $SolutionDir 'TfsCmdlets.Setup\TfsCmdlets.Setup.wixproj'
-    $WixPackagesConfigFile = Join-Path $SolutionDir 'TfsCmdlets.Setup\packages.config'
-    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor='$ModuleAuthor"" /tv:$VisualStudioVersion.0"
+    $WixProjectPath = Join-Path $SolutionDir 'Setup\TfsCmdlets.Setup.wixproj'
+    $WixPackagesConfigFile = Join-Path $SolutionDir 'Setup\packages.config'
+    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor='$ModuleAuthor"" /p:SourceDir=$ModuleDir\ /tv:$VisualStudioVersion.0"
 
     Write-Verbose "Restoring WiX Nuget package"
 
@@ -194,7 +190,7 @@ Task GenerateDocs -Depends GenerateModule {
 
     if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
-    .\BuildDoc.ps1 -SourceDir $ModuleDir -OutputDir $DocsDir
+    ..\BuildDoc.ps1 -SourceDir $ModuleDir -OutputDir $DocsDir
 }
 
 Task GenerateNuspec {

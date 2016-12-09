@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PowerShell",
+            "type": "PowerShell",
+            "request": "launch",
+            "program": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile"
+            ],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}
