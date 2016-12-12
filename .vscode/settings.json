@@ -1,0 +1,10 @@
+{
+    // The following will hide the js and map files in the editor
+    "files.exclude": {
+        "out/**/*": true,
+        "src/.vs/**/*": true,
+        "src/packages/**/*": true,
+        "src/Setup/bin/**/*": true,
+        "src/Setup/obj/**/*": true
+    }
+}
