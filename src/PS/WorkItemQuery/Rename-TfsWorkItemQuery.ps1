@@ -19,7 +19,7 @@
     Microsoft.TeamFoundation.WorkItemTracking.Client.Project
     System.String
 #>
-Function Set-TfsWorkItemQuery
+Function Rename-TfsWorkItemQuery
 {
     [CmdletBinding()]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]

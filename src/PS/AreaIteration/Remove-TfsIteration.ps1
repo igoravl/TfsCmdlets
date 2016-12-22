@@ -1,9 +1,12 @@
 <#
 .SYNOPSIS
-    Deletes one or more Iterations ("Iteration Paths").
+    Deletes one or more Work Item Iterations.
 
-.PARAMETER Area
+.PARAMETER Iteration
     ${HelpParam_Iteration}
+
+.PARAMETER MoveTo
+    Specifies the new iteration path for the work items currently assigned to the iteration being deleted, if any. When omitted, defaults to the root iteration
 
 .PARAMETER Project
     ${HelpParam_Project}

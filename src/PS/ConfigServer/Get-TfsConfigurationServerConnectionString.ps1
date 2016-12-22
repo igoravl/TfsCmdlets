@@ -1,7 +1,15 @@
 <#
-
 .SYNOPSIS
     Gets the configuration server database connection string.
+
+.PARAMETER Computer
+    Specifies the name of a Team Foundation Server application tier from which to retrieve the connection string
+
+.PARAMETER Version
+    Specifies the version of the Team Foundation Server being queried. Valid values are '12.0' (TFS 2013), '14.0' (TFS 2015), '15.0' (TFS 2017)
+
+.PARAMETER Credential
+    ${HelpParam_Credential}
 #>
 Function Get-TfsConfigurationServerConnectionString
 {
@@ -15,8 +23,9 @@ Function Get-TfsConfigurationServerConnectionString
 		$Computer,
 
 		[Parameter()]
+		[ValidateSet('12.0', '14.0', '15.0')]
 		[string]
-		$Version = '12.0',
+		$Version,
 
 		[Parameter()]
 		[System.Management.Automation.Credential()]

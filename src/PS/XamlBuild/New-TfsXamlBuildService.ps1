@@ -8,9 +8,9 @@
    
    Each Build Service support zero to one (0..1) Build Controllers and zero to n (0..n) Build Agents. 
    
-   Each Build Agent is associated to a specific Build Controller but an Agent and its corresponding Controller don’t need to be on the same machine. 
+   Each Build Agent is associated to a specific Build Controller but an Agent and its corresponding Controller donï¿½t need to be on the same machine. 
    
-   This topology lets you configure a continuous integration build that queues its builds on the Build Controller you’ve specified which then farms out the heavy lifting to any of the n agents it manages. This gives you an easy way to load balance your builds across a set of machines.
+   This topology lets you configure a continuous integration build that queues its builds on the Build Controller youï¿½ve specified which then farms out the heavy lifting to any of the n agents it manages. This gives you an easy way to load balance your builds across a set of machines.
    
    There is a potential down-side, however, in that each build service can only service one particular project collection and you cannot install more than one build service in any given computer.
 
@@ -20,7 +20,7 @@
 	
 	This is not supported and should not be used in production environments.
 #>
-Function New-TfsBuildService
+Function New-TfsXamlBuildService
 {
     Param
     (

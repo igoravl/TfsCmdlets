@@ -1,7 +1,12 @@
 <#
-
 .SYNOPSIS
     Gets information about a configuration server.
+
+.PARAMETER Server
+    ${HelpParam_Server}
+
+.PARAMETER Current
+    Returns the configuration server specified in the last call to Connect-TfsConfigurationServer (i.e. the "current" configuration server)
 
 .PARAMETER Credential
     ${HelpParam_Credential}

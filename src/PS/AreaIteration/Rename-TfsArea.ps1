@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Renames an Area ("Area Path")
+    Renames a Work Item Area.
 
 .PARAMETER Area
     ${HelpParam_Area}

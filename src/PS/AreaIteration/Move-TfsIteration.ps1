@@ -1,9 +1,12 @@
 <#
 .SYNOPSIS
-    Moves an Iteration from its parent iteration to another one in the same Team Project.
+    Moves a Work Item Iteration from its parent iteration to another one in the same Team Project.
 
 .PARAMETER Iteration
     ${HelpParam_Iteration}
+
+.PARAMETER Destination
+    Specifies the name, URI or path of an Iteration Path that will become the new parent of the given source iteration
 
 .PARAMETER Project
     ${HelpParam_Project}
@@ -24,12 +27,12 @@ Function Move-TfsIteration
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [object]
         $Iteration,
 
         [Parameter(Position=1)]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [object]
         $Destination,
 

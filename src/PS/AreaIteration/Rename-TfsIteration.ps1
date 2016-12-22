@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Renames an Iteration ("Iteration Path").
+    Renames a Work Item Iteration.
 
 .PARAMETER Iteration
     ${HelpParam_Iteration}

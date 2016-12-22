@@ -1,9 +1,12 @@
 <#
 .SYNOPSIS
-    Deletes one or more Areas ("Area Path").
+    Deletes one or more Work Item Areas.
 
 .PARAMETER Area
     ${HelpParam_Area}
+
+.PARAMETER MoveTo
+    Specifies the new area path for the work items currently assigned to the area being deleted, if any. When omitted, defaults to the root area
 
 .PARAMETER Project
     ${HelpParam_Project}

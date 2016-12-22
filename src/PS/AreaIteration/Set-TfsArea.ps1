@@ -1,7 +1,6 @@
 <#
-
 .SYNOPSIS
-    Changes the value of a property of an Area.
+    Modifies the name and/or the position of a Work Item Area.
 
 .PARAMETER Area
     ${HelpParam_Area}

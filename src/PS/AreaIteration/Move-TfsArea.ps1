@@ -1,9 +1,12 @@
 <#
 .SYNOPSIS
-    Moves an Area from its parent area to another one in the same Team Project.
+    Moves a Work Item Area from its parent area to another one in the same Team Project.
 
 .PARAMETER Area
     ${HelpParam_Area}
+
+.PARAMETER Destination
+    Specifies the name, URI or path of an Area Path that will become the new parent of the given source area
 
 .PARAMETER Project
     ${HelpParam_Project}
@@ -24,12 +27,12 @@ Function Move-TfsArea
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [object]
         $Area,
 
         [Parameter(Position=1l)]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [object]
         $Destination,
 

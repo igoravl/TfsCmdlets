@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Changes the value of a property of an Iteration.
+    Modifies the name, position and/or the dates of a Work Item Iteration.
 
 .PARAMETER Iteration
     ${HelpParam_Iteration}

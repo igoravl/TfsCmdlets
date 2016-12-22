@@ -1,8 +1,12 @@
 <#
-
 .SYNOPSIS
     Gets one or more Team Project Collection addresses registered in the current computer.
 
+.PARAMETER Name
+    Specifies the name of a registered collection. When omitted, all registered collections are returned. Wildcards are permitted.
+
+.INPUTS
+    System.String
 #>
 Function Get-TfsRegisteredTeamProjectCollection
 {

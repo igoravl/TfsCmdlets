@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Gets one or more Areas ("Area Paths") from a given Team Project.
+    Gets one or more Work Item Areas from a given Team Project.
 
 .PARAMETER Area
     ${HelpParam_Area}
@@ -23,7 +23,7 @@ Function Get-TfsArea
     (
         [Parameter(Position=0)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [SupportsWildcards()]
         [object]
         $Area = '\**',

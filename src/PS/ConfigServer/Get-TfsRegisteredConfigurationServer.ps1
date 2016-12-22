@@ -1,7 +1,9 @@
 <#
-
 .SYNOPSIS
     Gets one or more Team Foundation Server addresses registered in the current computer.
+
+.PARAMETER Name
+    Specifies the name of a registered server. When omitted, all registered servers are returned. Wildcards are permitted.
 
 .INPUTS
     System.String
