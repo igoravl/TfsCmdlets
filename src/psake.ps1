@@ -16,8 +16,8 @@ Properties {
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
     $DocsDir = Join-Path $OutDir 'docs'
-    $ModuleDir = Join-Path $OutDir 'Module'
-    $PortableDir = Join-Path $OutDir 'Portable'
+    $ModuleDir = Join-Path $OutDir 'module'
+    $PortableDir = Join-Path $OutDir 'portable'
     $ModuleBinDir = (Join-Path $ModuleDir 'bin')
 
     # Module generation
@@ -92,7 +92,7 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
         {
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
         }
     }
 }
