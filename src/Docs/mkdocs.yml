@@ -1,0 +1,6 @@
+site_name: TfsCmdlets
+theme: readthedocs
+docs_dir: doc
+pages:
+    - Home: Index.md
+    - Command reference: Commands.md

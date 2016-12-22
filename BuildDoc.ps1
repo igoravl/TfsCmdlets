@@ -422,6 +422,9 @@ $Examples
 Get-Module TfsCmdlets | Remove-Module
 Import-Module (Join-Path $SourceDir 'TfsCmdlets.psd1' -Resolve) -Force -Scope Local
 
+$subModules = Get-ChildItem $SourceDir -Directory | Select -ExpandProperty Name
+$docsDir = Join-Path $OutputDir 'doc'
+
 # Magic callback that does the munging
 $callback = {
     if ($args[0].Groups[0].Value.StartsWith('\')) {
@@ -442,24 +445,38 @@ $i = 0
 $origBufSize = $Host.UI.RawUI.BufferSize
 $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
 
-foreach($cmd in $cmds)
+foreach($m in $subModules)
 {
-    $i++ 
+    $subModuleCommands = Get-ChildItem (Join-Path $SourceDir $m) -Filter '*-Tfs*.ps1' | Select -ExpandProperty BaseName
+    $subModuleOutputDir = Join-Path $OutputDir "doc\$m"
 
-    Write-Verbose "Generating help for $($cmd.Name) ($i of $cmdCount)"
+    if (-not (Test-Path $subModuleOutputDir -PathType Container))
+    {
+        md $subModuleOutputDir | Out-Null
+    }
 
-    # $Host.UI.RawUI.BufferSize = $expandedBufSize
+    foreach($c in $subModuleCommands)
+    {
+        $i++ 
 
-    # Generate the readme
-    $readme = "{% $($cmd.Name) %}" | foreach { $re.Replace($_, $callback) }
+        $cmd = Get-Command $c -Module TfsCmdlets
 
-    # Output to the appropriate stream
-    $OutputFile = Join-Path (Resolve-Path $OutputDir) "$($cmd.Name).md" 
-    $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-    [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
+        Write-Verbose "Generating help for $m/$($cmd.Name) ($i of $cmdCount)"
 
-    # $Host.UI.RawUI.BufferSize = $origBufSize
+        # $Host.UI.RawUI.BufferSize = $expandedBufSize
 
+        # Generate the readme
+        $readme = "{% $($cmd.Name) %}" | foreach { $re.Replace($_, $callback) }
+
+        # Output to the appropriate stream
+        $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
+        $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
+        [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
+
+        Write-Verbose "Writing $OutputFile"
+
+        # $Host.UI.RawUI.BufferSize = $origBufSize
+    }
 }
 
 Get-Module TfsCmdlets | Remove-Module
