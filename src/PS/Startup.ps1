@@ -10,6 +10,7 @@ if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver'
 {
     Add-Type -ErrorAction SilentlyContinue -Language CSharp -TypeDefinition @"
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.Reflection;
 
@@ -17,10 +18,15 @@ if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver'
     {
         public class AssemblyResolver
         {
-            private static readonly Dictionary<string, string> _PrivateAssemblies = new Dictionary<string, string>
+            private static bool IsVerbose = ("$VerbosePreference" == "Continue");
+
+            public static readonly Dictionary<string, string> PrivateAssemblies = new Dictionary<string, string>
             {
                 $assemblyList
             };
+
+            public static readonly Dictionary<string, Assembly> LoadedAssemblies = new Dictionary<string, Assembly>();
+            public static readonly Dictionary<string, object> LogEntries = new Dictionary<string, object>();
 
             public static void Register()
             {
@@ -28,15 +34,42 @@ if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver'
                 {
                     try
                     {
-                        return _PrivateAssemblies.ContainsKey(e.Name)
-                            ? Assembly.LoadFrom(_PrivateAssemblies[e.Name])
+                        var assemblyName = e.Name.Split(',')[0];
+                        var isInternal = PrivateAssemblies.ContainsKey(assemblyName);
+
+                        if (IsVerbose) Log("[INFO ] [" + (isInternal? "Internal": "External") + "] " + assemblyName, e);
+
+                        return PrivateAssemblies.ContainsKey(assemblyName)
+                            ? LoadAssembly(assemblyName)
                             : null;
                     }
-                    catch
+                    catch(Exception ex)
                     {
+                        LogError(ex);
                         return null;
                     }
                 };
+            }
+
+            private static Assembly LoadAssembly(string assemblyName)
+            {
+                var assembly = Assembly.LoadFrom(PrivateAssemblies[assemblyName]);
+
+                LoadedAssemblies.Add(assemblyName, assembly);
+
+                return assembly;
+            }
+
+            private static void Log(string message, object data)
+            {
+                message = "[" + (LogEntries.Count+1).ToString("00000") + "] [" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
+
+                LogEntries.Add(message, data);
+            }
+
+            private static void LogError(Exception ex)
+            {
+                Log("[ERROR] " + ex.Message, ex);
             }
         }
     }
@@ -97,12 +130,12 @@ Function Prompt
 }
 
 # Load basic TFS client assemblies
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.Common'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.Client'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.WorkItemTracking.Client'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.Build.Client'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.Git.Client'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.VersionControl.Client'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.Core.WebApi'
-Add-Type -AssemblyName 'Microsoft.TeamFoundation.SourceControl.WebApi'
-Add-Type -AssemblyName 'Microsoft.VisualStudio.Services.WebApi'
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Common.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Client.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.WorkItemTracking.Client.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Build.Client.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Git.Client.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.VersionControl.Client.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Core.WebApi.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.SourceControl.WebApi.dll')
+Add-Type -Path (Join-Path $BinDir 'Microsoft.VisualStudio.Services.WebApi.dll')

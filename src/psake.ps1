@@ -105,11 +105,11 @@ Task DownloadTfsNugetPackage {
    
     if (-not (Test-Path $TargetDir -PathType Container)) { New-Item $TargetDir -ItemType Directory -Force | Out-Null }
     
-    foreach($d in (Get-ChildItem net45 -Directory -Recurse))
+    foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
     {
         try
         { 
-            foreach ($f in (Get-ChildItem $d\*.dll))
+            foreach ($f in (Get-ChildItem $d\*.dll -Recurse -Exclude *.resources.dll))
             {
                 $SrcPath = $f.FullName
                 $DstPath = Join-Path $TargetDir $f.Name
