@@ -166,7 +166,7 @@ Task BuildMSI {
 
     Write-Verbose "Restoring WiX Nuget package"
 
-    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir
+    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir | Write-Verbose
 
     Write-Verbose "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
 

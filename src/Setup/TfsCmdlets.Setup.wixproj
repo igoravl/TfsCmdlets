@@ -23,8 +23,7 @@
     <IncludeSearchPaths>..\TfsCmdlets\</IncludeSearchPaths>
     <HarvestDirectoryVerboseOutput>true</HarvestDirectoryVerboseOutput>
     <HarvestDirectorySuppressRootDirectory>true</HarvestDirectorySuppressRootDirectory>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <SuppressValidation>true</SuppressValidation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
