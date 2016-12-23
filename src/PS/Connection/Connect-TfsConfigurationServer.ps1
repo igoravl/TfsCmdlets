@@ -4,7 +4,7 @@
     Connects to a configuration server.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .PARAMETER Passthru
     ${HelpParam_Passthru}
@@ -32,9 +32,8 @@ Function Connect-TfsConfigurationServer
 		$Server,
 	
 		[Parameter(Position=1)]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		[object]
+		$Credential,
 
 		[Parameter()]
 		[switch]

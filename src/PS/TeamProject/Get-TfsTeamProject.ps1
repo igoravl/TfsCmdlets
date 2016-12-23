@@ -16,7 +16,7 @@
 	For more details, see the -Server argument in the Get-TfsTeamProjectCollection cmdlet.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .INPUTS
 	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
@@ -46,9 +46,8 @@ Function Get-TfsTeamProject
         $Current,
 
 		[Parameter()]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		[objectl]
+		$Credential
     )
 
     Process

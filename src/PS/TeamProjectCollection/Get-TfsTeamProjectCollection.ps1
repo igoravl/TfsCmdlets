@@ -13,7 +13,7 @@
 	Specifies either a URL/name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .EXAMPLE
 	Get-TfsTeamProjectCollection http://
@@ -44,9 +44,8 @@ Function Get-TfsTeamProjectCollection
         $Current,
 
 		[Parameter(ParameterSetName="Get by collection")]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		[object]
+		$Credential
 	)
 
 	Process
@@ -97,53 +96,35 @@ Function Get-TfsTeamProjectCollection
 # Helper Functions
 # =================
 
-Function _GetCollectionFromUrl($Url, $Cred)
+Function _GetCollectionFromUrl([uri] $Url, $Credential)
 {
-	
-	if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
-	{
-		return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, (_GetCredential $cred)
-	}
+	$cred = Get-TfsCredential -Credential $Credential
 
-	return [Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory]::GetTeamProjectCollection([Uri] $Url)
+	return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, $cred
 }
 
 
-Function _GetCollectionFromName($Name, $Server, $Cred)
+Function _GetCollectionFromName($Name, $Server, $Credential)
 {
-	Process
-	{
-		$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
+	$cred = Get-TfsCredential -Credential $Credential
 
-		$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
-		
-		$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
-		$collections = $collections | Select -ExpandProperty Resource | ? DisplayName -like $Name
+	$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
 
-		if ($collections.Count -eq 0)
-		{
-			throw "Invalid or non-existent Team Project Collection(s): $Name"
-		}
-
-		foreach($tpc in $collections)
-		{
-			$collectionId = $tpc.Properties["InstanceId"]
-			$tpc = $configServer.GetTeamProjectCollection($collectionId)
-
-			$tpc
-		}
-
-	}
-}
-
-Function _GetCredential
-{
-	Param ($Cred)
-
-	if (($Cred -ne $null) -and ($Cred -ne [System.Management.Automation.PSCredential]::Empty))
-	{
-		return [System.Net.NetworkCredential] $Cred
-	}
+	$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
 	
-	return [System.Net.CredentialCache]::DefaultNetworkCredentials
+	$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
+	$collections = $collections | Select -ExpandProperty Resource | ? DisplayName -like $Name
+
+	if ($collections.Count -eq 0)
+	{
+		throw "Invalid or non-existent Team Project Collection(s): $Name"
+	}
+
+	foreach($tpc in $collections)
+	{
+		$collectionId = $tpc.Properties["InstanceId"]
+		$tpc = $configServer.GetTeamProjectCollection($collectionId)
+
+		$tpc
+	}
 }

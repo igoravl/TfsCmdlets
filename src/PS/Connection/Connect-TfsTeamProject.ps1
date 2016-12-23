@@ -4,7 +4,7 @@
     Connects to a team project.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .PARAMETER Passthru
     ${HelpParam_Passthru}
@@ -26,9 +26,8 @@ Function Connect-TfsTeamProject
 		$Collection,
 	
 		[Parameter()]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		[object]
+		$Credential,
 
 		[Parameter()]
 		[switch]

@@ -9,7 +9,7 @@
     Returns the configuration server specified in the last call to Connect-TfsConfigurationServer (i.e. the "current" configuration server)
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .INPUTS
     Microsoft.TeamFoundation.Client.TfsConfigurationServer
@@ -32,9 +32,8 @@ Function Get-TfsConfigurationServer
         $Current,
 
 		[Parameter(Position=1, ParameterSetName='Get by server')]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		[object]
+		$Credential
 	)
 
 	Process
@@ -83,48 +82,24 @@ Function Get-TfsConfigurationServer
 # Helper Functions
 # =================
 
-Function _GetConfigServerFromUrl
+Function _GetConfigServerFromUrl([uri] $Url, $Credential)
 {
-	Param ($Url, $Cred)
-	
-	if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
-	{
-		return New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Url), (_GetCredential $cred)
-	}
-	
-	return [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer([Uri] $Url)
+	$cred = Get-TfsCredential -Credential $Credential
+
+	return New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Url), $cred
 }
 
-Function _GetConfigServerFromName
+Function _GetConfigServerFromName($Name, $Credential)
 {
-	Param ($Name, $Cred)
-
 	$Servers = Get-TfsRegisteredConfigurationServer $Name
 	
 	foreach($Server in $Servers)
 	{
-		if ($Cred -ne [System.Management.Automation.PSCredential]::Empty)
-		{
-			$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList $Server.Uri, (_GetCredential $cred)
-		}
-		else
-		{
-			$configServer = [Microsoft.TeamFoundation.Client.TfsConfigurationServerFactory]::GetConfigurationServer($Server)
-		}
-
+		$Url = $Server.Uri
+		$cred = Get-TfsCredential -Credential $Credential
+		$configServer = New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList $Url,  $cred
 		$configServer.EnsureAuthenticated()
-		$configServer
-	}
-}
 
-Function _GetCredential
-{
-	Param ($Cred)
-
-	if ($Cred)
-	{
-		return [System.Net.NetworkCredential] $Cred
+		Write-Output $configServer
 	}
-	
-	return [System.Net.CredentialCache]::DefaultNetworkCredentials
 }

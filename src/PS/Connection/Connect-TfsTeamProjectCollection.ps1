@@ -17,7 +17,7 @@
 	For more details, see the -Server argument in the Get-TfsConfigurationServer cmdlet.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+    ${HelpParam_TfsCredential}
 
 .PARAMETER Passthru
     ${HelpParam_Passthru}
@@ -53,9 +53,8 @@ Function Connect-TfsTeamProjectCollection
 		$Server,
 	
 		[Parameter()]
-		[System.Management.Automation.Credential()]
-		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		[object]
+		$Credential,
 
 		[Parameter()]
 		[switch]
