@@ -15,7 +15,6 @@
 Function Import-TfsWorkItemType
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType[]])]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
@@ -34,6 +33,6 @@ Function Import-TfsWorkItemType
     Process
     {
         $tp = Get-TfsTeamProject $Project $Collection
-        return $tp.WorkItemTypes | ? Name -Like $Name
+        $tp.WorkItemTypes.Import($Xml.OuterXml)
     }
 }
