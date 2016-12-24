@@ -46,7 +46,7 @@ Function Get-TfsTeamProject
         $Current,
 
 		[Parameter()]
-		[objectl]
+		[object]
 		$Credential
     )
 

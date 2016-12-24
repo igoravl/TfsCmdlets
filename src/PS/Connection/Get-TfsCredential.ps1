@@ -93,7 +93,7 @@ Function Get-TfsCredential
                 $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $netCred
             }
 
-            'Interactive' {
+            'Prompt for credential' {
                 $fedCred = New-Object 'Microsoft.TeamFoundation.Client.CookieCredential' -ArgumentList $false
                 $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $false
                 $allowInteractive = $true
