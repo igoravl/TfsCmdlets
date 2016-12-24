@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+        "out/**/*": true,
+        "src/.vs/**/*": true,
+        "src/Packages/**/*": true,
+        "src/Setup/bin/**/*": true,
+        "src/Setup/obj/**/*": true
+    }
+}

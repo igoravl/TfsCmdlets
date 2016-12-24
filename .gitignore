@@ -205,4 +205,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
-/TfsCmdlets/.vs/
+/src/.vs
+/out
+/src/nuget.exe
