@@ -142,7 +142,7 @@ Task PackageModule -Depends GenerateModule {
 
 Task PackageNuget -Depends GenerateModule, GenerateNuspec {
 
-    Copy-Item $ModuleDir $NugetToolsDir -Recurse -Exclude *.ps1 -Force
+    Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
     & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') | Write-Verbose
 }
 
@@ -153,7 +153,7 @@ Task PackageChocolatey -Depends GenerateModule {
         & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
     }
 
-    Copy-Item $ModuleDir $ChocolateyToolsDir -Recurse -Force
+    Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
     & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
 }
