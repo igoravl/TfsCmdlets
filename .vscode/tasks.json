@@ -8,22 +8,45 @@
         "-File",
         "${workspaceRoot}/build.ps1",
         "-SolutionDir",
-        "${workspaceRoot}\\src",
-        "-Targets",
-        "Build",
-        "-Configuration",
-        "Debug"
+        "${workspaceRoot}\\src"
     ],
     "windows": {
         "command": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
     },
     "showOutput": "always",
     "suppressTaskName": true,
+    "echoCommand": true,
     "tasks": [
         {
             "taskName": "build",
             "showOutput": "always",
+            "args": [
+                "-Targets",
+                "Build",
+                "-Configuration",
+                "Debug"
+            ],
             "isBuildCommand": true
+        },
+        {
+            "taskName": "package",
+            "showOutput": "always",
+            "args": [
+                "-Targets",
+                "Package",
+                "-Configuration",
+                "Release"
+            ]
+        },
+        {
+            "taskName": "test",
+            "showOutput": "always",
+            "args": [
+                "-Targets",
+                "Test",
+                "-Configuration",
+                "Release"
+            ]
         }
     ]
 }

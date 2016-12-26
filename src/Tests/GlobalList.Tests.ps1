@@ -3,8 +3,11 @@
 InModuleScope TfsCmdlets {
 
     Describe "New-TfsGlobalList" {
-        Mock Import-TfsGlobalLists { } -ModuleName GlobalList
-        Mock Export-TfsGlobalLists {
+        Mock Import-TfsGlobalList { 
+
+        } -ModuleName GlobalList
+        
+        Mock Export-TfsGlobalList {
         return [xml]'<GLOBALLISTS>
 <GLOBALLIST name="List1">
     <LISTITEM value="Item 1" />
@@ -61,8 +64,8 @@ InModuleScope TfsCmdlets {
     }
 
     Describe "Add-TfsGlobalListItem" {
-        Mock Import-TfsGlobalLists { } -ModuleName GlobalList
-        Mock Export-TfsGlobalLists {
+        Mock Import-TfsGlobalList { } -ModuleName GlobalList
+        Mock Export-TfsGlobalList {
         return [xml]'<GLOBALLISTS>
 <GLOBALLIST name="List1">
     <LISTITEM value="Item 1" />

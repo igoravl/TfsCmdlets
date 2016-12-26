@@ -7,7 +7,8 @@
     ${HelpParam_Collection}
 
 .INPUTS
-    System.String / System.String[]
+    System.String
+    System.String[]
 #>
 Function New-TfsGlobalList
 {

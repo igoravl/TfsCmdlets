@@ -45,6 +45,8 @@ Properties {
 
 }
 
+# Entry-point tasks
+
 Task Build -Depends GenerateModule {
     
 }
@@ -56,6 +58,12 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
+
+Task Test -Depends Build, RunTests {
+
+}
+
+# Actual tasks
 
 Task GenerateModule -Depends DownloadTfsNugetPackage {
 
@@ -221,6 +229,22 @@ Task GenerateNuspec {
 "@
 
     Set-Content -Path $NugetSpecPath -Value $nuspec
+}
+
+Task RunTests -Depends Build {
+
+    if (-not (Test-Path (Join-Path $packagesDir 'pester')))
+    {
+        & $NugetExePath Install pester -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
+    }
+
+    $pesterModulePath = Join-Path $NugetPackagesDir "pester\tools\pester.psm1"
+
+    Get-Module pester | Remove-Module
+    Import-Module $pesterModulePath
+
+    exec { Invoke-Pester -Path (Join-Path $solutionDir "Tests") -OutputFile Results.xml -OutputFormat NUnitXml -EnableExit }
+
 }
 
 Function Replace-Token
