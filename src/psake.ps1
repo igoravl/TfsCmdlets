@@ -162,7 +162,7 @@ Task BuildMSI {
 
     $WixProjectPath = Join-Path $SolutionDir 'Setup\TfsCmdlets.Setup.wixproj'
     $WixPackagesConfigFile = Join-Path $SolutionDir 'Setup\packages.config'
-    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor='$ModuleAuthor"" /p:SourceDir=$ModuleDir\ /tv:$VisualStudioVersion.0"
+    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor='$ModuleAuthor"" /p:SourceDir=$ModuleDir\ /p:VisualStudioVersion=$VisualStudioVersion.0"
 
     Write-Verbose "Restoring WiX Nuget package"
 
