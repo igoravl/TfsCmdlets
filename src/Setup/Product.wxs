@@ -34,10 +34,8 @@
 
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="ProgramFilesFolder">
-                <Directory Id="COMPANYFOLDER" Name="$(var.AUTHOR)">
-                    <Directory Id="INSTALLDIR" Name="$(var.PRODUCTNAME)">
-                        <Directory Id="ModuleFolder" Name="TfsCmdlets" />
-                    </Directory>
+                <Directory Id="INSTALLDIR" Name="$(var.PRODUCTNAME)">
+                    <Directory Id="ModuleFolder" Name="TfsCmdlets" />
                 </Directory>
             </Directory>
             <Directory Id="ProgramMenuFolder">

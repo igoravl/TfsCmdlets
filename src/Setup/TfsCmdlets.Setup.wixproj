@@ -56,7 +56,7 @@
     <ItemGroup>
       <HarvestDirectory Include="$(SourceDir)">
         <ComponentGroupName>ModuleComponent</ComponentGroupName>
-        <DirectoryRefId>INSTALLDIR</DirectoryRefId>
+        <DirectoryRefId>ModuleFolder</DirectoryRefId>
         <KeepEmptyDirectories>false</KeepEmptyDirectories>
         <PreprocessorVariable>var.SourceDir</PreprocessorVariable>
         <SuppressRootDirectory>true</SuppressRootDirectory>

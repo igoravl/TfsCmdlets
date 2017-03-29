@@ -41,6 +41,7 @@ Function New-TfsGitRepository
     {
         Add-Type -AssemblyName 'Microsoft.TeamFoundation.Core.WebApi'
         Add-Type -AssemblyName 'Microsoft.TeamFoundation.SourceControl.WebApi'
+        Add-Type -AssemblyName 'Microsoft.TeamFoundation.Common'
     }
 
     Process
@@ -49,15 +50,15 @@ Function New-TfsGitRepository
         $tpc = $tp.Store.TeamProjectCollection
 
         $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
-        $tpRef = [Microsoft.TeamFoundation.Common.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
+        $tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
         $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
         $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)
 
-        $task.Wait()
+        $result = $task.Result
         
         if ($Passthru)
         {
-            return $task.Result
+            return $result
         }
     }
 }

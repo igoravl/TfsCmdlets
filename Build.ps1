@@ -16,21 +16,6 @@ try
 
     Write-Verbose "Module being built from $SolutionDir"
 
-    if ($env:VS140COMNTOOLS)
-    {
-        Write-Verbose "Found VS140COMNTOOLS. Setting Visual Studio version to 2015"
-        $VisualStudioVersion = '14'
-    }
-    elseif ($env:VS120COMNTOOLS)
-    {
-        Write-Verbose "Found VS120COMNTOOLS. Setting Visual Studio version to 2013"
-        $VisualStudioVersion = '12'
-    }
-    else
-    {
-        throw "Visual Studio environment variables not found. It likely means a supported VS version (2013, 2015) is not currently installed."
-    }
-
     Push-Location $SolutionDir
 
     # Restore/install Nuget
@@ -79,6 +64,22 @@ try
     Get-Module psake | Remove-Module
     Import-Module $psakeModulePath
 
+    # Restore/install vswhere
+
+    Write-Verbose "Restoring vswhere (if needed)"
+
+    & $NugetExePath Install vswhere -ExcludeVersion -OutputDirectory packages | Write-Verbose
+    $vswherePath = Join-Path $SolutionDir 'packages\vswhere\tools\vswhere.exe'
+
+    # Detect installed Visual Studio version
+
+    $vsVersion = & $vswherePath -latest -legacy -property installationVersion -format value -version [12.0
+
+    if (-not $vsVersion)
+    {
+        throw "Visual Studio installation not found. It usually means a supported VS version (2013 and newer) is not currently installed."
+    }
+
     # Run Psake
 
     Write-Host "Running Psake script`n" -ForegroundColor Cyan
@@ -95,7 +96,7 @@ try
         Version = $VersionMetadata.MajorMinorPatch;
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
         BuildName = "$($VersionMetadata.FullSemver).$($VersionMetadata.BranchName)";
-        VisualStudioVersion = $VisualStudioVersion;
+        VisualStudioVersion = ([version]$vsVersion).Major;
         SemVer = $VersionMetadata.LegacySemVer
         VersionMetadata = $VersionMetadata
     }
