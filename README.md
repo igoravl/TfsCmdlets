@@ -112,8 +112,8 @@ The portable installer is a zip file containing all the required the module file
 
 - Download the zip file from the [Releases](https://github.com/igoravl/tfscmdlets/releases) page;
 - Open your Documents folder in Windows, then open the ```WindowsPowerShell``` folder in it;
-- Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing);
-- Extract the contents of the zip file to the ```Modules``` folder.
+- Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing) and then create a new folder called ```TfsCmdlets``` in ```Modules```;
+- Extract the contents of the zip file to the ```TfsCmdlets``` folder.
 
 You must end up with a folder structure similar to ```[Documents]\WindowsPowerShell\Modules\TfsCmdlets```. Files such as ```TfsCmdlets.psd1``` must be located in the TfsCmdlets folder.
 
