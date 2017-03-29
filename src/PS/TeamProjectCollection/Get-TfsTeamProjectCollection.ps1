@@ -74,6 +74,10 @@ Function Get-TfsTeamProjectCollection
 
 			if (-not [string]::IsNullOrWhiteSpace($Collection))
 			{
+				if ($Collection -like '*.visualstudio.com')
+				{
+					return  _GetCollectionFromUrl ([Uri] "https://$Collection/DefaultCollection") $Credential
+				}
 				return _GetCollectionFromName $Collection $Server $Credential
 			}
 
