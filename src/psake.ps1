@@ -69,14 +69,14 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
 
     if (-not (Test-Path $ModuleDir -PathType Container)) { New-Item $ModuleDir -ItemType Directory -Force | Out-Null }
 
-    $NestedModules = (Get-ChildItem $ProjectDir -Directory | % { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
-    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | % { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
+    $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
+    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
     $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
 
     # Copy root files to output dir
     foreach($f in (Get-ChildItem $ProjectDir\*.ps* -Exclude *.pssproj))
     {
-        $f | Get-Content | Out-String | Replace-Token | Out-File (Join-Path $ModuleDir $f.Name) -Encoding Default
+        $f | Get-Content | Out-String | Convert-Token | Out-File (Join-Path $ModuleDir $f.Name) -Encoding Default
     }
 
     Copy-Item $ProjectDir\*.* -Destination $ModuleDir -Exclude *.pssproj, *.ps* 
@@ -94,13 +94,13 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
         if ($Configuration -eq 'Release')
         {
             # Merge individual files in a single module file
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Convert-Token | Out-File $subModuleOutFile -Encoding Default
         }
         else
         {
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
         }
     }
 }
@@ -247,7 +247,7 @@ Task RunTests -Depends Build {
 
 }
 
-Function Replace-Token
+Function Convert-Token
 {
     [CmdletBinding()]
     Param
@@ -271,7 +271,7 @@ Function Replace-Token
             return $InputObject
         }
 
-        $foundTokens = $m.Matches | % { $_.Groups[1].Value }
+        $foundTokens = $m.Matches | ForEach-Object { $_.Groups[1].Value }
         $result = $InputObject
 
         foreach($t in $foundTokens)
