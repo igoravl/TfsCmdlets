@@ -52,7 +52,7 @@ try
 
     if ($env:BUILD_BUILDURI)
     {
-        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.InformationalVersion)"
+        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.FullSemver)"
     }
 
     # Restore/install Psake

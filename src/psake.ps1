@@ -8,6 +8,7 @@ Properties {
     }
 
     # Source information
+    $RepoCreation = Get-Date '2014-10-24'
     $ProjectDir = Join-Path $SolutionDir 'PS'
 
     # Output destination
@@ -92,7 +93,7 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
         {
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
     }
 }
@@ -235,7 +236,7 @@ Function Replace-Token
 
     Begin
     {
-        $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens
+        $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens[0]
     }
 
     Process
