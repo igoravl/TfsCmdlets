@@ -95,15 +95,7 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
         {
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
-<<<<<<< HEAD
-<<<<<<< HEAD
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
-=======
             Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
->>>>>>> master
-=======
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
->>>>>>> master
         }
     }
 }
