@@ -8,8 +8,10 @@ Properties {
     }
 
     # Source information
-    $RepoCreation = Get-Date '2014-10-24'
+    $RepoCreationDate = Get-Date '2014-10-24'
     $ProjectDir = Join-Path $SolutionDir 'PS'
+    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+    $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
     $OutDir = Join-Path (Split-Path $SolutionDir -Parent) 'out'
@@ -29,7 +31,7 @@ Properties {
     $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
-    $NugetPackageVersion = $VersionMetadata.LegacySemVer
+    $NugetPackageVersion = $VersionMetadata.LegacySemVer.Replace('-', ".$ProjectBuildNumber-")
 
     # Chocolatey packaging
     $ChocolateyToolsDir = Join-Path $ChocolateyDir 'tools'
@@ -62,8 +64,8 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
 
     if (-not (Test-Path $ModuleDir -PathType Container)) { New-Item $ModuleDir -ItemType Directory -Force | Out-Null }
 
-    $NestedModules = (Get-ChildItem $ProjectDir -Directory | % { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
-    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | % { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
+    $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
+    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
     $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
 
     # Copy root files to output dir
@@ -87,13 +89,13 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
         if ($Configuration -eq 'Release')
         {
             # Merge individual files in a single module file
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
         else
         {
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort | % { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
     }
 }

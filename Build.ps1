@@ -7,7 +7,8 @@ Param
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
-    $Targets = "Package"
+    $Targets = "Package",
+    $RepoCreationDate = (Get-Date '2014-10-24')
 )
 
 try
@@ -47,12 +48,14 @@ try
     & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory Packages | Write-Verbose
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
+    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+    $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Set VSTS build name
 
     if ($env:BUILD_BUILDURI)
     {
-        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.FullSemver)"
+        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.BranchName).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
     }
 
     # Restore/install Psake
@@ -93,9 +96,9 @@ try
         ModuleAuthor = $ModuleAuthor;
         ModuleDescription = $ModuleDescription;
         Commit = $VersionMetadata.Sha;
-        Version = $VersionMetadata.MajorMinorPatch;
+        Version = "$($VersionMetadata.MajorMinorPatch).$($ProjectBuildNumber)";
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
-        BuildName = "$($VersionMetadata.FullSemver).$($VersionMetadata.BranchName)";
+        BuildName = "$($VersionMetadata.LegacySemver)+$ProjectMetadataInfo";
         VisualStudioVersion = ([version]$vsVersion).Major;
         SemVer = $VersionMetadata.LegacySemVer
         VersionMetadata = $VersionMetadata
