@@ -14,15 +14,12 @@
     ScriptsToProcess = 'Startup.ps1'
 
     NestedModules = @(${NestedModules})
-
     FileList = @(${FileList})
 
     PrivateData = @{ 
-        Tags = @('TfsCmdlets', 'TFS', 'PowerShell')
+        Tags = @('TfsCmdlets', 'TFS', 'VSTS', 'PowerShell')
         Branch = '${BranchName}'
-        Commit = @'
-${Commit}
-'@
+        Commit = '${Commit}'
         Build = '${BuildName}'
         PreRelease = '${PreRelease}'
         LicenseUri = 'https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md'
