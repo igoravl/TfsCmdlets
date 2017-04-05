@@ -15,7 +15,7 @@ TfsCmdlets is available in many formats. The full (MSI-based) installer also inc
 
 ## Quick start guide 
 
-Firstly, download and configure the 2013 version of the [Visual Studio Team Foundation Server Virtual Machine](http://aka.ms/vs13almvm) (a.k.a "_Brian Keller VM_") in your computer in order to have a sandbox to play with. 
+Firstly, download and configure the latest version of the [Visual Studio ALM Virtual Machine](http://aka.ms/almvm) (a.k.a "_Brian Keller VM_") in your computer in order to have a sandbox to play with. 
 
 Next, install TfsCmdlets inside the virtual machine (see section "_How to install_", below), open a PowerShell window and try the following commands:
 
@@ -112,8 +112,8 @@ The portable installer is a zip file containing all the required the module file
 
 - Download the zip file from the [Releases](https://github.com/igoravl/tfscmdlets/releases) page;
 - Open your Documents folder in Windows, then open the ```WindowsPowerShell``` folder in it;
-- Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing);
-- Extract the contents of the zip file to the ```Modules``` folder.
+- Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing) and then create a new folder called ```TfsCmdlets``` in ```Modules```;
+- Extract the contents of the zip file to the ```TfsCmdlets``` folder.
 
 You must end up with a folder structure similar to ```[Documents]\WindowsPowerShell\Modules\TfsCmdlets```. Files such as ```TfsCmdlets.psd1``` must be located in the TfsCmdlets folder.
 
