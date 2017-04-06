@@ -4,7 +4,6 @@
     Copyright = '(c) 2014 ${ModuleAuthor}. All rights reserved.'
     Description = '${ModuleDescription}'
     RootModule = 'TfsCmdlets.psm1'
-    FunctionsToExport = '*-Tfs*'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     HelpInfoURI = 'https://github.com/igoravl/tfscmdlets/wiki/'
     ModuleVersion = '${Version}'
