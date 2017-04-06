@@ -63,8 +63,8 @@ try
 
     # Set build name
 
-    $BuildName = "$($VersionMetadata.BranchName.Replace('/', '_')).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
-    Write-Host "- Version: $BuildName`n" -ForegroundColor Cyan
+    $BuildName = "$($VersionMetadata.BranchName.Replace('/', '_')).$($VersionMetadata.LegacySemver).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
+    Write-Host "- Version $($VersionMetadata.LegacySemver)+$ProjectMetadataInfo, build $BuildName`n" -ForegroundColor Cyan
 
     if ($env:BUILD_BUILDURI)
     {
@@ -131,7 +131,7 @@ try
         Commit = $VersionMetadata.Sha;
         Version = "$($VersionMetadata.MajorMinorPatch).$($ProjectBuildNumber)";
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
-        BuildName = "$($VersionMetadata.LegacySemver)+$ProjectMetadataInfo";
+        BuildName = "$BuildName";
         VisualStudioVersion = ([version]$vsVersion).Major;
         SemVer = $VersionMetadata.LegacySemVer
         VersionMetadata = $VersionMetadata 
