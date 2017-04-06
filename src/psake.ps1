@@ -48,10 +48,6 @@ Properties {
 
 }
 
-Task Build -Depends GenerateModule {
-    Write-Verbose "Build finished. TfsCmdlets module generated successfully."
-}
-
 Task Rebuild -Depends Clean, Build {
 
 }
@@ -60,7 +56,7 @@ Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, Packag
 
 }
 
-Task GenerateModule -Depends DownloadTfsNugetPackage {
+Task Build -Depends DownloadTfsNugetPackage {
 
     if (Test-Path $ModuleDir -PathType Container) { Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null }
 
@@ -118,6 +114,8 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
     }
 
     # Build function list for export
+
+    Write-Verbose 'Build function list for Export-ModuleMember'
 
     $rootModule = Join-Path $ModuleDir 'TfsCmdlets.psm1'
     $moduleMetadata = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -186,20 +184,20 @@ Task Clean {
     }
 } 
 
-Task PackageModule -Depends GenerateModule {
+Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
     & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
 }
 
-Task PackageNuget -Depends GenerateModule, GenerateNuspec {
+Task PackageNuget -Depends Build, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
     & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') *>&1 | Write-Verbose
 }
 
-Task PackageChocolatey -Depends GenerateModule {
+Task PackageChocolatey -Depends Build {
 
     if (-not (Test-Path $ChocolateyPath))
     {
@@ -211,7 +209,7 @@ Task PackageChocolatey -Depends GenerateModule {
     & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
 }
 
-Task BuildMSI {
+Task PackageMsi -Depends Build {
 
     $WixProjectPath = Join-Path $SolutionDir 'Setup\TfsCmdlets.Setup.wixproj'
     $WixPackagesConfigFile = Join-Path $SolutionDir 'Setup\packages.config'
@@ -224,9 +222,6 @@ Task BuildMSI {
     Write-Verbose "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
 
     exec { MSBuild.exe '--%' $MSBuildArgs } | Write-Verbose
-}
-
-Task PackageMSI -Depends BuildMSI {
 
     if(-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
@@ -239,7 +234,7 @@ Task PackageDocs -Depends GenerateDocs {
     & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir | Write-Verbose
 }
 
-Task GenerateDocs -Depends GenerateModule {
+Task GenerateDocs -Depends Build {
 
     if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
