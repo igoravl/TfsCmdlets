@@ -45,25 +45,48 @@ try
 
     Write-Verbose "Restoring GitVersion client (if needed)"
 
-    & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory Packages | Write-Verbose
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
+
+    if (-not (Test-Path $GitVersionPath -PathType Leaf))
+    {
+        Write-Verbose "GitVersion.exe not found. Downloading from Nuget.org"
+        & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory Packages *>&1 | Write-Verbose
+    }
+    else
+    {
+        Write-Verbose "FOUND! Skipping..."    
+    }
+
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
-    # Set VSTS build name
+    # Set build name
+
+    $BuildName = "$($VersionMetadata.BranchName.Replace('/', '_')).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
+    Write-Host "- Version: $BuildName`n" -ForegroundColor Cyan
 
     if ($env:BUILD_BUILDURI)
     {
-        Write-Output "##vso[build.updatebuildnumber]$($VersionMetadata.BranchName).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
+        Write-Output "##vso[build.updatebuildnumber]$BuildName"
     }
 
     # Restore/install Psake
 
     Write-Verbose "Restoring Psake (if needed)"
 
-    & $NugetExePath Install psake -ExcludeVersion -OutputDirectory packages | Write-Verbose
     $psakeModulePath = Join-Path $SolutionDir 'packages\psake\tools\psake.psm1'
+
+    if (-not (Test-Path $psakeModulePath -PathType Leaf))
+    {
+        Write-Verbose "psake.psm1 not found. Downloading from Nuget.org"
+        & $NugetExePath Install psake -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
+    }
+    else
+    {
+        Write-Verbose "FOUND! Skipping..."    
+    }
+
     Get-Module psake | Remove-Module
     Import-Module $psakeModulePath
 
@@ -71,8 +94,16 @@ try
 
     Write-Verbose "Restoring vswhere (if needed)"
 
-    & $NugetExePath Install vswhere -ExcludeVersion -OutputDirectory packages | Write-Verbose
     $vswherePath = Join-Path $SolutionDir 'packages\vswhere\tools\vswhere.exe'
+
+    if (-not (Test-Path $vswherePath -PathType Leaf))
+    {
+        & $NugetExePath Install vswhere -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
+    }
+    else
+    {
+        Write-Verbose "FOUND! Skipping..."    
+    }
 
     # Detect installed Visual Studio version
 
@@ -83,11 +114,13 @@ try
         throw "Visual Studio installation not found. It usually means a supported VS version (2013 and newer) is not currently installed."
     }
 
+    Write-Verbose "Found Visual Studio $vsVersion"
+
     # Run Psake
 
-    Write-Host "Running Psake script`n" -ForegroundColor Cyan
+    $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent)
 
-    Invoke-Psake -BuildFile (Resolve-Path 'psake.ps1') -TaskList $Targets -Verbose:([bool] ($PSBoundParameters['Verbose'].IsPresent)) `
+    Invoke-Psake -Nologo -BuildFile (Resolve-Path 'psake.ps1') -TaskList $Targets -Verbose:$IsVerbose `
       -Parameters @{
         SolutionDir = $SolutionDir; 
         Configuration = $Configuration;
@@ -101,7 +134,7 @@ try
         BuildName = "$($VersionMetadata.LegacySemver)+$ProjectMetadataInfo";
         VisualStudioVersion = ([version]$vsVersion).Major;
         SemVer = $VersionMetadata.LegacySemVer
-        VersionMetadata = $VersionMetadata
+        VersionMetadata = $VersionMetadata 
     }
 }
 finally
