@@ -109,6 +109,18 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
             Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
     }
+
+    # Build function list for export
+
+    $rootModule = Join-Path $ModuleDir 'TfsCmdlets.psm1'
+    $moduleMetadata = Join-Path $ModuleDir 'TfsCmdlets.psd1'
+
+    Get-Module TfsCmdlets | Remove-Module
+    Import-Module $moduleMetadata 
+    $functionList = [string] ((Get-Command '*-Tfs*' -Module TfsCmdlets | ForEach-Object {"'$_'"}) -join ',')
+    Get-Module TfsCmdlets | Remove-Module
+
+    "Export-ModuleMember -Function @($functionList)" | Out-File $rootModule -Append -Encoding default
 }
 
 Task DownloadTfsNugetPackage {
