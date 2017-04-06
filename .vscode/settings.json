@@ -2,8 +2,8 @@
     "files.exclude": {
         "out/**/*": true,
         "src/.vs/**/*": true,
-        "src/Packages/**/*": true,
-        "src/Setup/bin/**/*": true,
-        "src/Setup/obj/**/*": true
+        "src/[Pp]ackages/**/*": true,
+        "src/[Ss]etup/bin/**/*": true,
+        "src/[Ss]etup/obj/**/*": true
     }
 }
