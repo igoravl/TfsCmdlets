@@ -62,7 +62,9 @@ Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, Packag
 
 Task GenerateModule -Depends DownloadTfsNugetPackage {
 
-    if (-not (Test-Path $ModuleDir -PathType Container)) { New-Item $ModuleDir -ItemType Directory -Force | Out-Null }
+    if (Test-Path $ModuleDir -PathType Container) { Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null }
+
+    New-Item $ModuleDir -ItemType Directory -Force | Out-Null
 
     $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
     $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
@@ -105,7 +107,12 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
             Write-Verbose "Dot-sourcing files from the $subModuleName folder and copying individual files"
 
             # Dot-source individual files in the module file
-            Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | ForEach-Object {
+                $inputFile = $_
+                $outputFile = Join-Path $subModuleOutDir (Split-Path $_ -Leaf)
+                Get-Content -Path $inputFile | Out-String | Replace-Token | Out-File $outputFile -Encoding Default
+            }
+
             Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
     }
@@ -293,7 +300,7 @@ Function Replace-Token
             return $InputObject
         }
 
-        $foundTokens = $m.Matches | % { $_.Groups[1].Value }
+        $foundTokens = $m.Matches | ForEach-Object { $_.Groups[1].Value } | Select -Unique
         $result = $InputObject
 
         foreach($t in $foundTokens)
