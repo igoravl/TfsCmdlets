@@ -49,7 +49,7 @@ Properties {
 }
 
 Task Build -Depends GenerateModule {
-    
+    Write-Verbose "Build finished. TfsCmdlets module generated successfully."
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -68,13 +68,20 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
     $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
     $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
 
+    Write-Verbose "Copying root module files (*.ps*) to the output folder"
+
     # Copy root files to output dir
     foreach($f in (Get-ChildItem $ProjectDir\*.ps* -Exclude *.pssproj))
     {
+        Write-Verbose "$(Join-Path $ModuleDir $f.Name)"
         $f | Get-Content | Out-String | Replace-Token | Out-File (Join-Path $ModuleDir $f.Name) -Encoding Default
     }
 
-    Copy-Item $ProjectDir\*.* -Destination $ModuleDir -Exclude *.pssproj, *.ps* 
+    Write-Verbose "Copying binary files (images etc.) to the output folder"
+
+    Copy-Item $ProjectDir\*.* -Destination $ModuleDir -Exclude *.pssproj, *.ps* -PassThru | Write-Verbose
+   
+    Write-Verbose "Copying sub-module files to the output folder"
    
     # Create sub-modules
     foreach($d in (Get-ChildItem $ProjectDir -Directory -Exclude bin))
@@ -88,11 +95,15 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
 
         if ($Configuration -eq 'Release')
         {
+            Write-Verbose "Merging all files from the $subModuleName folder in a single file ($subModuleName.psm1)"
+            
             # Merge individual files in a single module file
             Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
         }
         else
         {
+            Write-Verbose "Dot-sourcing files from the $subModuleName folder and copying individual files"
+
             # Dot-source individual files in the module file
             Copy-Item $subModuleSrcDir\*.ps1 -Destination $subModuleOutDir -Container
             Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
@@ -102,11 +113,23 @@ Task GenerateModule -Depends DownloadTfsNugetPackage {
 
 Task DownloadTfsNugetPackage {
 
-    & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
+    Write-Verbose "Restoring Microsoft.TeamFoundationServer.ExtendedClient Nuget package (if needed)"
+
+    if (-not (Test-Path (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient') -PathType Container))
+    {
+        Write-Verbose "Microsoft.TeamFoundationServer.ExtendedClient not found. Downloading from Nuget.org"
+        & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
+    }
+    else
+    {
+        Write-Verbose "FOUND! Skipping..."
+    }
 
     $TargetDir = (Join-Path $ModuleDir 'Lib\')
    
     if (-not (Test-Path $TargetDir -PathType Container)) { New-Item $TargetDir -ItemType Directory -Force | Out-Null }
+    
+    Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
     
     foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
     {
@@ -119,6 +142,7 @@ Task DownloadTfsNugetPackage {
 
                 if (-not (Test-Path $DstPath))
                 {
+                    Write-Verbose $DstPath
                     Copy-Item $SrcPath $DstPath
                 }
             }
@@ -132,7 +156,14 @@ Task Clean {
 
     if (Test-Path $OutDir -PathType Container)
     {
+        Write-Verbose "Removing $OutDir..."
         Remove-Item $OutDir -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    if (Test-Path $NugetPackagesDir -PathType Container)
+    {
+        Write-Verbose "Removing $NugetPackagesDir..."
+        Remove-Item $NugetPackagesDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 } 
 
@@ -146,14 +177,14 @@ Task PackageModule -Depends GenerateModule {
 Task PackageNuget -Depends GenerateModule, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
-    & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') | Write-Verbose
+    & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') *>&1 | Write-Verbose
 }
 
 Task PackageChocolatey -Depends GenerateModule {
 
     if (-not (Test-Path $ChocolateyPath))
     {
-        & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages -Verbosity Detailed | Write-Verbose
+        & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
     }
 
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
@@ -169,7 +200,7 @@ Task BuildMSI {
 
     Write-Verbose "Restoring WiX Nuget package"
 
-    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir | Write-Verbose
+    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir -Verbosity Detailed *>&1 | Write-Verbose
 
     Write-Verbose "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
 
