@@ -32,6 +32,11 @@ Function New-TfsWorkItemQuery
         $Folder,
 
         [Parameter()]
+        [ValidateSet('Personal', 'Shared')]
+        [string]
+        $Scope = 'Personal',
+
+        [Parameter()]
         [string]
         $Definition,
 
@@ -44,23 +49,37 @@ Function New-TfsWorkItemQuery
         $Collection
     )
 
+    Begin
+    {
+        _RegisterQueryFinder
+    }
+
     Process
     {
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
         $store = $tp.Store
 
-		$Query = _NormalizeQueryPath "$Folder/$Query" $tp.Name
-		$folderPath = (Split-Path $Query -Parent) -replace ('\\', '/')
-		$queryName = (Split-Path $Query -Leaf)
+        if ($Scope -eq 'Shared')
+        {
+            $rootFolder = 'Shared Queries'
+        }
+        else
+        {
+            $rootFolder = 'My Queries'
+        }
 
-		Write-Verbose "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$folderPath'"
+		$normalizedPath = _NormalizeQueryPath -Path "$Folder/$Query" -RootFolder $rootFolder -ProjectName $tp.Name
+		$queryPath = (Split-Path $normalizedPath -Parent).Replace('\', '/')
+		$queryName = Split-Path $normalizedPath -Leaf
 
-		$folder = (_FindQueryFolder $folderPath $tp.QueryHierarchy $true)
+		Write-Verbose "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$queryPath'"
 
-		if (-not $folder)
+		$queryFolder = [TfsCmdlets.QueryFinder]::GetQueryFolderFromPath($tp.QueryHierarchy, $queryPath)
+
+		if (-not $queryFolder)
 		{
-			throw "Invalid or non-existent work item query folder $folderPath."
+			throw "Invalid or non-existent work item query folder $queryPath."
 		}
 
         if ($Definition -match "select \*")
@@ -69,7 +88,7 @@ Function New-TfsWorkItemQuery
         }
 
 		$q = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition' -ArgumentList $queryName, $Definition
-		$folder.Values[0].Add($q)
+		$queryFolder.Add($q)
 
 		$tp.QueryHierarchy.Save()
 
