@@ -56,11 +56,7 @@ Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, Packag
 
 }
 
-Task Build -Depends DownloadTfsNugetPackage {
-
-    if (Test-Path $ModuleDir -PathType Container) { Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null }
-
-    New-Item $ModuleDir -ItemType Directory -Force | Out-Null
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
 
     $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
     $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
@@ -128,6 +124,13 @@ Task Build -Depends DownloadTfsNugetPackage {
     "Export-ModuleMember -Function @($functionList)" | Out-File $rootModule -Append -Encoding default
 }
 
+Task CleanOutputDir {
+
+    if (Test-Path $ModuleDir -PathType Container) { Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null }
+
+    New-Item $ModuleDir -ItemType Directory -Force | Out-Null
+}
+
 Task DownloadTfsNugetPackage {
 
     Write-Verbose "Restoring Microsoft.TeamFoundationServer.ExtendedClient Nuget package (if needed)"
@@ -142,10 +145,14 @@ Task DownloadTfsNugetPackage {
         Write-Verbose "FOUND! Skipping..."
     }
 
-    $TargetDir = (Join-Path $ModuleDir 'Lib\')
-   
-    if (-not (Test-Path $TargetDir -PathType Container)) { New-Item $TargetDir -ItemType Directory -Force | Out-Null }
-    
+    $TargetDir = (Join-Path $ModuleDir 'Lib')
+
+    if (-not (Test-Path $TargetDir -PathType Container)) 
+    {
+        Write-Verbose "Creating folder $TargetDir"
+        New-Item $TargetDir -ItemType Directory | Out-Null
+    }
+
     Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
     
     foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
@@ -159,8 +166,7 @@ Task DownloadTfsNugetPackage {
 
                 if (-not (Test-Path $DstPath))
                 {
-                    Write-Verbose $DstPath
-                    Copy-Item $SrcPath $DstPath
+                    Copy-Item $SrcPath $DstPath -Force 
                 }
             }
         } 
@@ -307,6 +313,11 @@ Function Replace-Token
             elseif ($VersionMetadata.$t)
             {
                 $result = $result.Replace("`${$t}", $VersionMetadata.$t)
+            }
+            elseif ($t -like 'File:*')
+            {
+                $fileContents = (Get-Content -Path (Join-Path $SolutionDir $t.SubString($t.IndexOf(':')+1)) -Raw) | Replace-Token
+                $result = $result.Replace("`${$t}", $fileContents)
             }
             elseif (Get-Variable -Name $t)
             {
