@@ -5,6 +5,7 @@
             "name": "PowerShell",
             "type": "PowerShell",
             "request": "launch",
+            "preLaunchTask": "build",
             "program": "${workspaceRoot}/DebugTest.ps1",
             "args": [],
             "cwd": "${file}"
