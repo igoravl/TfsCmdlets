@@ -57,6 +57,12 @@
           }
         </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Id</Name>
+        <GetScriptBlock>
+          $this.Identity.TeamFoundationId
+        </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
   <Type>
