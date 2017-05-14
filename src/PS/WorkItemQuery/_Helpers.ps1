@@ -23,9 +23,9 @@ Function _NormalizeQueryPath($Path, $RootFolder, $ProjectName)
     return "$ProjectName/$RootFolder/$($match.Groups[$match.Groups.Count-1])"
 }
 
-Function _RegisterQueryFinder()
+Function _RegisterQueryHelper()
 {
-    if (([System.Management.Automation.PSTypeName]'TfsCmdlets.QueryFinder').Type)
+    if (([System.Management.Automation.PSTypeName]'TfsCmdlets.QueryHelper').Type)
     {
         return
     }
@@ -35,3 +35,4 @@ Function _RegisterQueryFinder()
 ${File:CSharp\QueryHelper.cs}
 '@
 }
+
