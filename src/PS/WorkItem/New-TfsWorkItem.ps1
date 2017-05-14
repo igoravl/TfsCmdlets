@@ -53,7 +53,11 @@ Function New-TfsWorkItem
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
@@ -74,6 +78,9 @@ Function New-TfsWorkItem
 
         $wi.Save()
 
-        return $wi
+        if ($Passthru)
+        {
+            return $wi
+        }
     }
 }
