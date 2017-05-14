@@ -147,7 +147,7 @@ Task Test -Depends Build {
     $quiet = ($VerbosePreference -ne 'Continue')
     
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Quiet:$quiet -EnableExit}
+        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict}
 }
 
 Task CleanOutputDir {

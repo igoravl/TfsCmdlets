@@ -12,11 +12,11 @@ $cmdletBindingRegex = [regex] $cmdletBindingRegexExpr
 
 $verbs = (Get-Verb | Select -ExpandProperty Verb -Unique | Sort)
 
-    Describe 'Correctness Tests' {
+    $allFunctions | % {
 
-        $allFunctions | % {
+        Describe "$_" {
 
-            Context "$_" {
+            Context 'Correctness Tests' {
 
                 $cmd = $_
                 $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
