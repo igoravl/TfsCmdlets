@@ -53,12 +53,7 @@ Function Get-TfsWorkItemQuery
 
         if ($Folder)
         {
-            if (($Folder -is [string]) -and ($Folder -notlike "$($tp.Name)/*"))
-            {
-                $Folder = _NormalizeQueryPath $Folder $tp.Name
-            }
-			
-            Write-Verbose "Get-TfsWorkItemQuery: Limiting search to folder $Folder"
+            Write-Verbose "Get-TfsWorkItemQuery: Limiting search to folder(s) $Folder"
             
             $folders = (_FindQueryFolder $Folder $tp.QueryHierarchy)
 

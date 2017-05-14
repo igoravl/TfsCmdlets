@@ -4,7 +4,7 @@
 
 .PARAMETER Query
     Specifies the path of the new work item query.
-    When supplying a path, use a slash ("/") between the path segments. Leading and trailing backslashes are optional.  The last segment in the path will be the area name.
+    When supplying a path, use a slash ("/") between the path segments. Leading and trailing backslashes are optional.  The last segment in the path will be the query name.
 
 .PARAMETER Project
     ${HelpParam_Project}
@@ -46,12 +46,20 @@ Function New-TfsWorkItemQuery
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Force,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
     {
-        _RegisterQueryFinder
+        _RegisterQueryHelper
     }
 
     Process
@@ -59,14 +67,15 @@ Function New-TfsWorkItemQuery
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
         $store = $tp.Store
+        $hierarchy = $tp.QueryHierarchy
 
         if ($Scope -eq 'Shared')
         {
-            $rootFolder = 'Shared Queries'
+            $rootFolder = $hierarchy[1].Name
         }
         else
         {
-            $rootFolder = 'My Queries'
+            $rootFolder = $hierarchy[0].Name
         }
 
 		$normalizedPath = _NormalizeQueryPath -Path "$Folder/$Query" -RootFolder $rootFolder -ProjectName $tp.Name
@@ -75,11 +84,18 @@ Function New-TfsWorkItemQuery
 
 		Write-Verbose "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$queryPath'"
 
-		$queryFolder = [TfsCmdlets.QueryFinder]::GetQueryFolderFromPath($tp.QueryHierarchy, $queryPath)
+		$queryFolder = [TfsCmdlets.QueryHelper]::GetQueryFolderFromPath($tp.QueryHierarchy, $queryPath)
 
 		if (-not $queryFolder)
 		{
-			throw "Invalid or non-existent work item query folder $queryPath."
+            if ($Force)
+            {
+                $queryFolder = New-TfsWorkItemQueryFolder -Path $queryPath -Project $tp.Name -Passthru
+            }
+            else
+            {
+    			throw "Invalid or non-existent work item query folder $queryPath."
+            }
 		}
 
         if ($Definition -match "select \*")
@@ -92,6 +108,9 @@ Function New-TfsWorkItemQuery
 
 		$tp.QueryHierarchy.Save()
 
-		return $q
+        if ($Passthru)
+        {
+		    return $q
+        }
     }
 }

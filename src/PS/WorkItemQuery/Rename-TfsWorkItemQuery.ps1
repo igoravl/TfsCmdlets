@@ -21,7 +21,7 @@
 #>
 Function Rename-TfsWorkItemQuery
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
     Param
     (
@@ -45,11 +45,20 @@ Function Rename-TfsWorkItemQuery
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
     {
-        Set-TfsWorkItemQuery -Query $Query -NewName $NewName -Project $Project -Collection $Collection
+        $result = Set-TfsWorkItemQuery -Query $Query -NewName $NewName -Project $Project -Collection $Collection -Passthru:$Passthru.IsPresent
+
+        if ($Passthru)
+        {
+            return $result
+        }
     }
 }

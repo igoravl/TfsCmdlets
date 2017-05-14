@@ -21,7 +21,7 @@
 #>
 Function Set-TfsWorkItemQuery
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
     Param
     (
