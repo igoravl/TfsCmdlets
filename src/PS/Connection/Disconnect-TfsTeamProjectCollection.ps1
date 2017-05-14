@@ -13,6 +13,10 @@
 #>
 Function Disconnect-TfsTeamProjectCollection
 {
+    [CmdletBinding()]
+    Param
+    (
+    )
 	Process
 	{
         Disconnect-TfsTeamProject

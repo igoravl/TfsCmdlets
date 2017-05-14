@@ -18,7 +18,7 @@
 #>
 Function Rename-TfsGitRepository
 {
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])]
     Param
     (

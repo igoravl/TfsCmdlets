@@ -11,6 +11,8 @@
 #>
 Function New-TfsGlobalList
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
+    [OutputType([PSCustomObject])]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]
@@ -27,7 +29,11 @@ Function New-TfsGlobalList
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
@@ -68,6 +74,11 @@ Function New-TfsGlobalList
         # Saves the list back to TFS
         Import-TfsGlobalList -Xml $xml -Collection $Collection
 
-        return Get-TfsGlobalList -Name $Name -Collection $Collection
+        $list =  Get-TfsGlobalList -Name $Name -Collection $Collection
+
+        if ($Passthru)
+        {
+            return $list
+        }        
     }
 }

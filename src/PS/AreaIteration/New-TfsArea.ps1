@@ -16,7 +16,7 @@
 #>
 Function New-TfsArea
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
@@ -31,11 +31,20 @@ Function New-TfsArea
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
     {
-        return _NewCssNode -Path $Area -Scope Area -Project $Project -Collection $Collection
+        $node = _NewCssNode -Path $Area -Scope Area -Project $Project -Collection $Collection
+
+        if ($Passthru)
+        {
+            return $node
+        }
     }
 }

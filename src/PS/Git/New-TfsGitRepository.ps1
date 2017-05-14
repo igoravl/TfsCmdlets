@@ -18,6 +18,8 @@
 #>
 Function New-TfsGitRepository
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
+    [OutputType([Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])]
     Param
     (
         [Parameter(Mandatory=$true)]

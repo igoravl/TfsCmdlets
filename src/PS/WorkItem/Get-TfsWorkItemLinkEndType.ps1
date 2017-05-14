@@ -12,6 +12,7 @@
 #>
 Function Get-TfsWorkItemLinkEndType
 {
+    [CmdletBinding()]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd])]
     Param
     (

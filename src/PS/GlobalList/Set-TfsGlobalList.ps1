@@ -11,6 +11,7 @@
 #>
 Function Set-TfsGlobalList
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]

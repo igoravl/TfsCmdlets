@@ -13,6 +13,10 @@
 #>
 Function Disconnect-TfsTeamProject
 {
+    [CmdletBinding()]
+    Param
+    (
+    )
     Process
     {
         if ($Global:TfsProjectConnection)

@@ -20,7 +20,8 @@
 #>
 Function Rename-TfsIteration
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
+    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
@@ -39,11 +40,20 @@ Function Rename-TfsIteration
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
     {
-        Set-TfsIteration -Iteration $Iteration -NewName $NewName -Project $Project -Collection $Collection
+        $result = Set-TfsIteration -Iteration $Iteration -NewName $NewName -Project $Project -Collection $Collection
+
+        if ($Passthru)
+        {
+            return $result
+        }
     }
 }

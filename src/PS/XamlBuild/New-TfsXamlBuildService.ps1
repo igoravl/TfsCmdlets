@@ -22,6 +22,8 @@
 #>
 Function New-TfsXamlBuildService
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
+    [OutputType([PSCustomObject])]
     Param
     (
         [Parameter(Mandatory=$true)]

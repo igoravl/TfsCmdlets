@@ -5,7 +5,7 @@
 #>
 Function New-TfsTeamProject
 {
-    [CmdletBinding(DefaultParameterSetName='Get by project')]
+    [CmdletBinding(DefaultParameterSetName='Get by project',ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
     Param
     (
@@ -25,7 +25,11 @@ Function New-TfsTeamProject
         $SourceControl,
 
         [object]
-        $ProcessTemplate
+        $ProcessTemplate,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
@@ -80,6 +84,11 @@ Function New-TfsTeamProject
         $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
         $wiStore.RefreshCache()
 
-        return Get-TfsTeamProject -Project $Project -Collection $Collection
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+
+        if ($Passthru)
+        {
+            return $tp
+        }
     }
 }

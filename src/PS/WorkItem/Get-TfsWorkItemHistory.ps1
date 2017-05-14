@@ -16,6 +16,7 @@
 Function Get-TfsWorkItemHistory
 {
     [CmdletBinding()]
+    [OutputType([PSCustomObject])]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]

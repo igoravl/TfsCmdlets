@@ -31,7 +31,7 @@
 #>
 Function New-TfsWorkItem
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
     Param
     (

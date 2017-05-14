@@ -13,6 +13,7 @@
 #>
 Function Mount-TfsTeamProjectCollection
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0)]

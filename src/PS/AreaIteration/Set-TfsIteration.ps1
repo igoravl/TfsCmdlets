@@ -29,7 +29,7 @@
 #>
 Function Set-TfsIteration
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (

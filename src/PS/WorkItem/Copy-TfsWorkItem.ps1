@@ -10,6 +10,7 @@
 Function Copy-TfsWorkItem
 {
     [CmdletBinding()]
+    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
     Param
     (
         [Parameter(ValueFromPipeline=$true)]

@@ -11,6 +11,8 @@
 #>
 Function New-TfsTeamProjectCollection
 {
+	[CmdletBinding(ConfirmImpact='Medium')]
+	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
@@ -61,7 +63,11 @@ Function New-TfsTeamProjectCollection
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
+		[Parameter()]
+		[switch]
+		$Passthru
 	)
 
 	Process
@@ -123,7 +129,12 @@ Function New-TfsTeamProjectCollection
 						throw "Error creating team project collection $Name : "
 					}
 				
-					return Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+					$tpc = Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+
+					if ($Passthru)
+					{
+						return $tpc
+					}
 				}
 			}
 		}

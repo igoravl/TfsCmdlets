@@ -15,7 +15,7 @@
 #>
 Function Set-TfsTeam
 {
-    [CmdletBinding(DefaultParameterSetName="Get by name")]
+    [CmdletBinding(DefaultParameterSetName="Get by name",ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (

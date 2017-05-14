@@ -15,6 +15,7 @@
 #>
 Function Rename-TfsTeam
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (
@@ -35,11 +36,20 @@ Function Rename-TfsTeam
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
     {
-        Set-TfsTeam -Team $Team -NewName $NewName -Project $Project -Collection $Collection
+        $result = Set-TfsTeam -Team $Team -NewName $NewName -Project $Project -Collection $Collection
+
+        if ($Passthru)
+        {
+            return $result
+        }
     }
 }

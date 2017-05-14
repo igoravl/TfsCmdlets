@@ -17,7 +17,7 @@
 #>
 Function New-TfsTeam
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (

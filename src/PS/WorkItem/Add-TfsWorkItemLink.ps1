@@ -15,6 +15,7 @@
 #>
 Function Add-TfsWorkItemLink
 {
+    [CmdletBinding()]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]

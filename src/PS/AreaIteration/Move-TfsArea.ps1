@@ -21,7 +21,7 @@
 #>
 Function Move-TfsArea
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
@@ -42,7 +42,11 @@ Function Move-TfsArea
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
@@ -62,9 +66,12 @@ Function Move-TfsArea
         }
 
         $cssService = _GetCssService -Project $Project -Collection $Collection
-
         $cssService.MoveBranch($node.Uri, $destinationNode.Uri)
+        $node = $cssService.GetNode($node.Uri)
 
-        return $cssService.GetNode($node.Uri)
+        if ($Passthru)
+        {
+            return $node
+        }
     }
 }

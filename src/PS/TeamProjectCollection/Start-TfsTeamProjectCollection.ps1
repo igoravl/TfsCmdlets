@@ -10,6 +10,7 @@
 #>
 Function Start-TfsTeamProjectCollection
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

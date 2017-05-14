@@ -11,6 +11,7 @@
 #>
 Function Import-TfsProcessTemplate
 {
+    [CmdletBinding(ConfirmImpact='Medium')]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]

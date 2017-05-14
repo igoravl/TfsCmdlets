@@ -15,6 +15,7 @@
 #>
 Function Get-TfsWorkItemLink
 {
+    [CmdletBinding()]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Link])]
     Param
     (

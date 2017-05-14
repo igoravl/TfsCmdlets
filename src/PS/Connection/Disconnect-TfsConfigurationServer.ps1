@@ -13,6 +13,10 @@
 #>
 Function Disconnect-TfsConfigurationServer
 {
+    [CmdletBinding()]
+    Param
+    (
+    )
 	Process
 	{
         Disconnect-TfsTeamProjectCollection

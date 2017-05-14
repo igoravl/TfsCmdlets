@@ -22,7 +22,7 @@
 #>
 Function New-TfsIteration
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
@@ -45,11 +45,20 @@ Function New-TfsIteration
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Process
     {
-        return _NewCssNode -Path $Iteration -Scope Iteration -Project $Project -Collection $Collection -StartDate $StartDate -FinishDate $FinishDate
+        $node = _NewCssNode -Path $Iteration -Scope Iteration -Project $Project -Collection $Collection -StartDate $StartDate -FinishDate $FinishDate
+
+        if ($Passthru)
+        {
+            return $node
+        }
     }
 }

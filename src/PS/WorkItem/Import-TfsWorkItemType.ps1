@@ -14,7 +14,7 @@
 #>
 Function Import-TfsWorkItemType
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]

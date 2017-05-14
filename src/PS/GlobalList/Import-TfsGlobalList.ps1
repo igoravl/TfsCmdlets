@@ -11,7 +11,7 @@
 #>
 Function Import-TfsGlobalList
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]

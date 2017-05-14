@@ -12,7 +12,7 @@
 #>
 Function Set-TfsWorkItem
 {
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium')]
     Param
     (
         [Parameter(ValueFromPipeline=$true, Position=0)]
