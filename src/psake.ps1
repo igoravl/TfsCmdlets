@@ -53,7 +53,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -143,8 +143,11 @@ Task Test -Depends Build {
     {
         Write-Verbose "FOUND! Skipping..."
     }
+
+    $quiet = ($VerbosePreference -ne 'Continue')
     
-    Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir Results.xml) -OutputFormat NUnitXml
+    exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
+        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Quiet:$quiet -EnableExit}
 }
 
 Task CleanOutputDir {
