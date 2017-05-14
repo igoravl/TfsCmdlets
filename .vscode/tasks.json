@@ -9,21 +9,26 @@
         "${workspaceRoot}/build.ps1",
         "-SolutionDir",
         "${workspaceRoot}\\src",
-        "-Targets",
-        "Build",
         "-Configuration",
-        "Debug"
+        "Debug",
+        "-Targets",
     ],
     "windows": {
         "command": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
     },
     "showOutput": "always",
-    "suppressTaskName": true,
     "tasks": [
         {
-            "taskName": "build",
+            "taskName": "Build",
             "showOutput": "always",
-            "isBuildCommand": true
+            "isBuildCommand": true,
+            "suppressTaskName": false
+        },
+        {
+            "taskName": "Test",
+            "showOutput": "always",
+            "isTestCommand": true,
+            "suppressTaskName": false
         }
     ]
 }

@@ -10,6 +10,7 @@ Properties {
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
     $ProjectDir = Join-Path $SolutionDir 'PS'
+    $TestsDir = Join-Path $SolutionDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
@@ -122,6 +123,28 @@ Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
     Get-Module TfsCmdlets | Remove-Module
 
     "Export-ModuleMember -Function @($functionList)" | Out-File $rootModule -Append -Encoding default
+}
+
+Task Test -Depends Build {
+
+    Write-Verbose "Restoring Pester Nuget package (if needed)"
+
+    $m = Get-Module Pester
+
+    if ((-not $m) -and (-not (Test-Path (Join-Path $NugetPackagesDir 'Pester') -PathType Container)))
+    {
+        Write-Verbose "Pester not found. Downloading from Nuget.org"
+        & $NugetExePath Install Pester -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
+        $pesterPath = (Join-Path $NugetPackagesDir 'Pester\Tools\Pester.psm1')
+
+        Import-Module $pesterPath -Force
+    }
+    else
+    {
+        Write-Verbose "FOUND! Skipping..."
+    }
+    
+    Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir Results.xml) -OutputFormat NUnitXml
 }
 
 Task CleanOutputDir {

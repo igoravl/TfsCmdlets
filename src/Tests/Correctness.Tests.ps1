@@ -1,66 +1,59 @@
 . "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\_TestSetup.ps1"
 
-InModuleScope TfsCmdlets {
+$allFunctions = Get-Command -Module TfsCmdlets
 
-    Describe "Correctness Tests: Parameters" {
+$topLevelFunctions = $allFunctions | Where-Object Name -Like '*-Tfs*'
+$destructiveVerbs = 'Dismount|Remove|Stop'
+$stateChangingVerbs = 'Import|Mount|Move|New|Rename|Set|Start'
+$passthruVerbs = '^Connect|Copy|^Move|New|Rename'
+$valueReturningVerbs = "Get|$passthruVerbs"
+$cmdletBindingRegexExpr = '\[CmdletBinding.+\]'
+$cmdletBindingRegex = [regex] $cmdletBindingRegexExpr
 
-        Context "Parameters with wildcards" {
 
-            It "Has SupportsWildcards attribute" {
-            }
+    Describe 'Correctness Tests' {
 
-        }
-    }
+        $allFunctions | % {
 
-    Describe "Correctness Tests: Functions" {
+            Context "$_" {
 
-        Context "All functions" {
-            
-            $functions = Get-Command -Module TfsCmdlets
+                $cmd = $_
+                $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
 
-            It "Have CmdletBinding attribute" {
-                foreach($f in $functions)
-                {
-                    "Testing $f.Name"
-                    $f.CmdletBinding | Should Be $false
+                It 'Has [CmdletBinding()] annotation' {
+                    $cmdletBindingDefinition | Should Match $cmdletBindingRegexExpr
                 }
-            }
 
-        }
-
-        Context 'Get-* functions' {
-
-            $functions = Get-Command -Verb Get -Module TfsCmdlets | ? OutputType -ne $null
-
-            It 'Have OutputType set' {
-                $functions.Length | Should Be 0
-            }
-        }
-
-        Context 'State-changing functions' {
-
-            $functions = Get-Command -Verb Dismount, Import, Mount, Move, Rename, Set, Start -Module TfsCmdlets
-
-            It 'Have ConfirmImpact set at least to Medium' {
-
-            }
-        }
-
-        Context 'Destructive functions' {
-
-            $functions = Get-Command -Verb Dismount, Remove, Stop -Module TfsCmdlets
-
-            It 'Have ConfirmImpact attribute set to High' {
-
-            }
-
-            It "Have the SupportsShouldProcess attribute" {
-                foreach($f in $functions)
+                if ($cmd.Verb -match $valueReturningVerbs)
                 {
-                    "Testing $f.Name"
-                    $f.CmdletBinding | Should Be $true
+                    It 'Has [OutputType] set' {
+                        $cmd.OutputType.Count | Should BeGreaterThan 0
+                    }
+                }
+
+                if ($cmd.Verb -match $stateChangingVerbs)
+                {
+                    It 'Has ConfirmImpact set to at least Medium' {
+                        $cmdletBindingDefinition | Should Match 'ConfirmImpact=.*(Medium|High)'
+                    }
+                }
+
+                if ($cmd.Verb -match $destructiveVerbs)
+                {
+                    It 'Has ConfirmImpact set to High' {
+                        $cmdletBindingDefinition | Should Match 'ConfirmImpact=[''"]High[''"]'
+                    }
+                }
+
+                if ($cmd.Verb -match $passthruVerbs)
+                {
+                    It 'Has -Passthru argument' {
+                        $cmd.Parameters.Keys.Contains('Passthru') | Should Be $true
+                    }
+                    It 'Checks $Passthru in code' {
+                        $cmd.Definition -match 'if\s? \(\$Passthru\)'
+                    }
                 }
             }
         }
     }
-}
