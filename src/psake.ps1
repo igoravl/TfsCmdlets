@@ -148,6 +148,7 @@ Task Test -Depends Build {
 
     if (-not (Get-Module PSScriptAnalyzer -ListAvailable))
     {
+        Install-PackageProvider Nuget -Force
         Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
     }
 
