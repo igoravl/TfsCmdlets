@@ -148,7 +148,7 @@ Task Test -Depends Build {
 
     if (-not (Get-Module PSScriptAnalyzer -ListAvailable))
     {
-        Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
+        Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
     }
 
     $quiet = ($VerbosePreference -ne 'Continue')
