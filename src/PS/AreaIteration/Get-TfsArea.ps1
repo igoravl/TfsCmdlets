@@ -1,19 +1,31 @@
 <#
 .SYNOPSIS
-    Gets one or more Work Item Areas from a given Team Project.
+Gets one or more Work Item Areas from a given Team Project.
 
 .PARAMETER Area
-    ${HelpParam_Area}
+${HelpParam_Area}
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
+
+.EXAMPLE
+Get-TfsArea
+Returns all area paths in the currently connected Team Project (as defined by a previous call to Connect-TfsTeamProject)
+
+.EXAMPLE
+Get-TfsArea 'Fabrikam Web Team' -Project 'Fabrikam Fiber'
+Returns information on an area path called 'Fabrikam Web Team' in a team project called 'Fabrikam Fiber'
+
+.EXAMPLE
+Get-TfsArea '\**\Support' -Project Tailspin
+Performs a recursive search and returns all area paths named 'Support' that may exist in a team project called Tailspin
 #>
 Function Get-TfsArea
 {
