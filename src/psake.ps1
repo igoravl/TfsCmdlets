@@ -137,7 +137,7 @@ Task Test -Depends Build {
         & $NugetExePath Install Pester -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
         $pesterPath = (Join-Path $NugetPackagesDir 'Pester\Tools\Pester.psm1')
 
-        Import-Module $pesterPath -Force
+        Import-Module $pesterPath -Force -Global
     }
     else
     {
