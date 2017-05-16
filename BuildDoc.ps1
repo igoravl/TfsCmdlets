@@ -208,7 +208,7 @@ Function AutoLink
 
     # Process links between TfsCmdlets functions
 
-    $cmdList = Get-Command -Module TfsCmdlets | ? Name -ne $cmdName | Select -ExpandProperty Name
+    $cmdList = Get-Command -Module TfsCmdlets | Where-Object Name -ne $cmdName | Select -ExpandProperty Name
 
     foreach($cmd in $cmdList)
     {
@@ -252,7 +252,7 @@ Function GenerateParameters($cmd)
             HeaderCell "Description"
         }
 
-        foreach ($cmdParam in $cmd.Parameters.Values | ? Name -NotIn $commonParameters) {
+        foreach ($cmdParam in $cmd.Parameters.Values | Where-Object Name -NotIn $commonParameters) {
 
             $paramName = ($cmdParam.Name | Out-String).Trim()
 
@@ -306,7 +306,7 @@ function ConvertCommandHelp($help, $cmdList) {
     $Notes = if ($help.alertSet) { ($help.alertSet.alert  | Select -ExpandProperty Text) -join "`r`n`r`n" }
     $InputTypes = if ($help.inputTypes) { '* ' + ($help.inputTypes.inputType.type.name -replace  "`n", "`r`n* ") }
     $OutputTypes = if ($cmd.OutputType) { '* ' + ($cmd.OutputType | Select -ExpandProperty Name) -join "`r`n* " }
-    $Aliases = (Get-Alias | ? ResolvedCommandName -eq $cmdName | Select -ExpandProperty Name)
+    $Aliases = (Get-Alias | Where-Object ResolvedCommandName -eq $cmdName | Select -ExpandProperty Name)
 
     if ($help.examples) {
         $Examples = ''
@@ -335,7 +335,7 @@ $(if ($Aliases) { @"
 ### Aliases
 The following abbreviations are aliases for this cmdlet:
 
-$($Aliases | % {"* $_"} )
+$($Aliases | Foreach-Object {"* $_"} )
 "@
 })
 
@@ -437,7 +437,7 @@ $callback = {
 }
 $re = [Regex]"\\?{%\s*(.*?)\s*%}"
 
-$cmds = Get-Command -Module TfsCmdlets #| ? Name -eq 'Get-TfsTeamProject'
+$cmds = Get-Command -Module TfsCmdlets #| Where-Object Name -eq 'Get-TfsTeamProject'
 $cmdList = $cmds | Select -ExpandProperty Name
 $cmdCount = $cmds.Count
 $i = 0

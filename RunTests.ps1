@@ -15,7 +15,7 @@ $buildScriptPath = Join-Path $scriptPath 'Build.ps1'
 # & $NugetExePath Restore "$solutionDir\TfsCmdlets.sln"
 
 # $packagesDir = Join-Path $solutionDir 'packages'
-# $pesterDir = Get-ChildItem "$packagesDir\pester*.*" | sort -Descending | select -First 1 -ExpandProperty FullName
+# $pesterDir = Get-ChildItem "$packagesDir\pester*.*" | Sort-Object-Descending | select -First 1 -ExpandProperty FullName
 # $pesterModulePath = Join-Path $pesterDir 'tools\pester.psm1'
 
 # Get-Module pester | Remove-Module
