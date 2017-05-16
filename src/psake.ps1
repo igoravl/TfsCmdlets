@@ -144,6 +144,13 @@ Task Test -Depends Build {
         Write-Verbose "FOUND! Skipping..."
     }
 
+    Write-Verbose "Installing module PSScriptAnalyzer (if needed)"
+
+    if (-not (Get-Module PSScriptAnalyzer -ListAvailable))
+    {
+        Install-Module PSScriptAnalyzer -Scope CurrentUser -Force -SkipPublisherCheck
+    }
+
     $quiet = ($VerbosePreference -ne 'Continue')
     
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
