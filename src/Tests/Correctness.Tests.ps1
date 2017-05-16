@@ -43,7 +43,7 @@ $allFunctions | Foreach-Object {
                 $verbs.Contains($cmd.Verb) | Should Be $true
             }
 
-            It 'Has the 'Tfs' standard prefix' {
+            It 'Has the "Tfs" standard prefix' {
                 $cmd.Noun.Substring(0, 3) | Should Be 'Tfs'
             }
 
