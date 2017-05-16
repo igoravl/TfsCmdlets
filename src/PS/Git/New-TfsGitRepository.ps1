@@ -1,24 +1,23 @@
 <#
-
 .SYNOPSIS
-    Creates a new Git repository in a team project.
+Creates a new Git repository in a team project.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .PARAMETER Passthru
-    ${HelpParam_Passthru}
+${HelpParam_Passthru}
 
 .INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
 #>
 Function New-TfsGitRepository
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])]
     Param
     (
@@ -48,20 +47,22 @@ Function New-TfsGitRepository
 
     Process
     {
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
-
-        $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
-        $tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
-        $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
-        $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)
-
-        $result = $task.Result
-        
-        if ($Passthru)
+        if($PSCmdlet.ShouldProcess($Name, 'Create Git repository'))
         {
-            return $result
+            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+            #$tpc = $tp.Store.TeamProjectCollection
+
+            $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+            $tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
+            $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
+            $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)
+
+            $result = $task.Result
+            
+            if ($Passthru)
+            {
+                return $result
+            }
         }
     }
 }
-

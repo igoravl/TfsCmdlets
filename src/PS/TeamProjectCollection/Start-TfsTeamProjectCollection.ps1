@@ -10,7 +10,7 @@
 #>
 Function Start-TfsTeamProjectCollection
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
@@ -29,6 +29,9 @@ Function Start-TfsTeamProjectCollection
 
 	Process
 	{
-		throw "Not implemented"
+		if($PSCmdlet.ShouldProcess($Collection, 'Start team project collection'))
+		{
+			throw "Not implemented"
+		}
 	}
 }

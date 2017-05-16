@@ -7,7 +7,7 @@
     ${HelpParam_Collection}
 
 .EXAMPLE
-    Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | % { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
+    Get-TfsWorkItem -Filter '[System.WorkItemType] = "Task"' | Foreach-Object { Write-Output "WI $($_.Id): $($_.Title)"; Get-TfsWorkItemHistory -WorkItem $_ } 
 
 .INPUTS
     Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
@@ -35,7 +35,7 @@ Function Get-TfsWorkItemHistory
         $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
         $latestRev = $wi.Revisions.Count - 1
 
-        0..$latestRev | % {
+        0..$latestRev | Foreach-Object {
             $rev = $wi.Revisions[$_]
 
             [PSCustomObject] @{
@@ -52,7 +52,7 @@ Function _GetChangedFields([Microsoft.TeamFoundation.WorkItemTracking.Client.Wor
 {
     $result = @{}
 
-    $wi.Revisions[$rev].Fields | ? IsChangedInRevision -eq $true | % {
+    $wi.Revisions[$rev].Fields | Where-Object IsChangedInRevision -eq $true | Foreach-Object {
         $result[$_.ReferenceName] =  [PSCustomObject] @{
             NewValue = $_.Value;
             OriginalValue = $_.OriginalValue

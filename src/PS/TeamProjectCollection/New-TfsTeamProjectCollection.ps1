@@ -1,17 +1,16 @@
 <#
-
 .SYNOPSIS
-    Creates a new team project collection.
+Creates a new team project collection.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+${HelpParam_Credential}
 
 .INPUTS
-    System.String
+System.String
 #>
 Function New-TfsTeamProjectCollection
 {
-	[CmdletBinding(ConfirmImpact='Medium')]
+	[CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
 	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
 	Param
 	(
@@ -72,77 +71,78 @@ Function New-TfsTeamProjectCollection
 
 	Process
 	{
-		$configServer = Get-TfsConfigurationServer $Server -Credential $Credential
-		$tpcService = $configServer.GetService([type] 'Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService')
-
-		$servicingTokens = New-Object 'System.Collections.Generic.Dictionary[string,string]'
-
-		$servicingTokens["SharePointAction"] = "None"
-		$servicingTokens["ReportingAction"] = "None"
-
-		if ($DatabaseName)
+		if($PSCmdlet.ShouldProcess($Name, 'Create team project collection'))
 		{
-			$servicingTokens["CollectionDatabaseName"] = $DatabaseName
-		}
+			$configServer = Get-TfsConfigurationServer $Server -Credential $Credential
+			$tpcService = $configServer.GetService([type] 'Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService')
+			$servicingTokens = New-Object 'System.Collections.Generic.Dictionary[string,string]'
+			$servicingTokens["SharePointAction"] = "None"
+			$servicingTokens["ReportingAction"] = "None"
 
-		if ($UseExistingDatabase)
-		{
-			$servicingTokens["UseExistingDatabase"] = $UseExistingDatabase.ToBool()
-		}
-
-		if ($PSCmdlet.ParameterSetName -eq "Use database server")
-		{
-			$ConnectionString = "Data source=$DatabaseServer; Integrated Security=true"
-		}
-
-		try
-		{
-			Write-Progress -Id 1 -Activity "Create team project collection" -Status "Creating team project collection $Name" -PercentComplete 0
-
-			$start = Get-Date
-
-			$tpcJob = $tpcService.QueueCreateCollection(
-				$Name,
-				$Description, 
-				$Default.ToBool(),
-				"~/$Name/",
-				[Microsoft.TeamFoundation.Framework.Common.TeamFoundationServiceHostStatus] $InitialState,
-				$servicingTokens,
-				$ConnectionString,
-				$null,  # Default connection string
-				$null)  # Default category connection strings
-
-			while((Get-Date).Subtract($start) -le $Timeout)
+			if ($DatabaseName)
 			{
-				Start-Sleep -Seconds $PollingInterval
+				$servicingTokens["CollectionDatabaseName"] = $DatabaseName
+			}
 
-				$collectionInfo = $tpcService.GetCollection($tpcJob.HostId, [Microsoft.TeamFoundation.Framework.Client.ServiceHostFilterFlags]::IncludeAllServicingDetails)
-				$jobDetail = $collectionInfo.ServicingDetails | ? JobId -eq $tpcJob.JobId
+			if ($UseExistingDatabase)
+			{
+				$servicingTokens["UseExistingDatabase"] = $UseExistingDatabase.ToBool()
+			}
 
-				if (($jobDetail -eq $null) -or 
-					(($jobDetail.JobStatus -ne [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Queued) -and 
-					 ($jobDetail.JobStatus -ne [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Running)))
+			if ($PSCmdlet.ParameterSetName -eq "Use database server")
+			{
+				$ConnectionString = "Data source=$DatabaseServer; Integrated Security=true"
+			}
+
+			try
+			{
+				Write-Progress -Id 1 -Activity "Create team project collection" -Status "Creating team project collection $Name" -PercentComplete 0
+
+				$start = Get-Date
+
+				$tpcJob = $tpcService.QueueCreateCollection(
+					$Name,
+					$Description, 
+					$Default.ToBool(),
+					"~/$Name/",
+					[Microsoft.TeamFoundation.Framework.Common.TeamFoundationServiceHostStatus] $InitialState,
+					$servicingTokens,
+					$ConnectionString,
+					$null,  # Default connection string
+					$null)  # Default category connection strings
+
+				while((Get-Date).Subtract($start) -le $Timeout)
 				{
-					if ($jobDetail.Result -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobResult]::Failed -or 
-						$jobDetail.JobStatus -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Failed)
-					{
-						throw "Error creating team project collection $Name : "
-					}
-				
-					$tpc = Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+					Start-Sleep -Seconds $PollingInterval
 
-					if ($Passthru)
+					$collectionInfo = $tpcService.GetCollection($tpcJob.HostId, [Microsoft.TeamFoundation.Framework.Client.ServiceHostFilterFlags]::IncludeAllServicingDetails)
+					$jobDetail = $collectionInfo.ServicingDetails | Where-Object JobId -eq $tpcJob.JobId
+
+					if (($null -eq $jobDetail) -or 
+						(($jobDetail.JobStatus -ne [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Queued) -and 
+						($jobDetail.JobStatus -ne [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Running)))
 					{
-						return $tpc
+						if ($jobDetail.Result -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobResult]::Failed -or 
+							$jobDetail.JobStatus -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Failed)
+						{
+							throw "Error creating team project collection $Name : "
+						}
+					
+						$tpc = Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+
+						if ($Passthru)
+						{
+							return $tpc
+						}
 					}
 				}
 			}
-		}
-		finally
-		{
-				Write-Progress -Id 1 -Activity "Create team project collection" -Completed
-		}
+			finally
+			{
+					Write-Progress -Id 1 -Activity "Create team project collection" -Completed
+			}
 
-		throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Name")
+			throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Name")
+		}
 	}
 }

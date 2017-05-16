@@ -26,6 +26,6 @@ Function Get-TfsRegisteredConfigurationServer
             $Name = $env:COMPUTERNAME
         }
 
-        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetConfigurationServers() | ? Name -Like $Name
+        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetConfigurationServers() | Where-Object Name -Like $Name
     }
 }

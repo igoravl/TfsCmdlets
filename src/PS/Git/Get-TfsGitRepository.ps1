@@ -37,11 +37,11 @@ Function Get-TfsGitRepository
     {
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         $tpc = $tp.Store.TeamProjectCollection
-        $id = $tp.Guid
+        #$id = $tp.Guid
 
         $gitService = $tpc.GetService([type]'Microsoft.TeamFoundation.Git.Client.GitRepositoryService')
 
-        return $gitService.QueryRepositories($tp.Name) | ? Name -Like $Name
+        return $gitService.QueryRepositories($tp.Name) | Where-Object Name -Like $Name
     }
 }
 

@@ -1,14 +1,14 @@
 <#
 .SYNOPSIS
-    Exports a process template definition to disk.
+Exports a process template definition to disk.
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
-    System.String
-    System.Uri
+Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+System.String
+System.Uri
 #>
 Function Export-TfsProcessTemplate
 {
@@ -55,7 +55,7 @@ Function Export-TfsProcessTemplate
 
         if ($NewName -or $NewDescription)
         {
-            $templates = $templates | select -First 1
+            $templates = $templates | Select-Object -First 1
         }
 
         foreach($template in $templates)

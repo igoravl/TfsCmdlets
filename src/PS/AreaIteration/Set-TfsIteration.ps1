@@ -29,15 +29,16 @@
 #>
 Function Set-TfsIteration
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ValueFromPipeline=$true)]
         [Alias("Path")]
         [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
+        [SupportsWildcards()]
         [object]
-        $Iteration = '\**',
+        $Iteration,
 
         [Parameter()]
         [string]
@@ -78,12 +79,18 @@ Function Set-TfsIteration
 
         if ($NewName)
         {
-            $cssService.RenameNode($node.Uri, $NewName)
+            if ($PSCmdlet.ShouldProcess($Iteration, "Rename iteration to $NewName"))
+            {
+                $cssService.RenameNode($node.Uri, $NewName)
+            }
         }
 
         if ($MoveBy)
         {
-            $cssService.ReorderNode($node.Uri, $MoveBy)
+            if ($PSCmdlet.ShouldProcess($Area, "Reorder iteration by moving it $MoveBy positions (negative is up, positive is down)"))
+            {
+                $cssService.ReorderNode($node.Uri, $MoveBy)
+            }
         }
 
         if ($StartDate -or $FinishDate)
@@ -98,7 +105,10 @@ Function Set-TfsIteration
                 $FinishDate = $node.FinishDate
             }
 
-            [void]$cssService4.SetIterationDates($node.Uri, $StartDate, $FinishDate)
+            if ($PSCmdlet.ShouldProcess($Area, "Set iteration start and finish dates to $StartDate and $FinishDate, respectively"))
+            {
+                [void]$cssService4.SetIterationDates($node.Uri, $StartDate, $FinishDate)
+            }
         }
 
         return $cssService.GetNode($node.Uri)

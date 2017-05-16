@@ -1,20 +1,19 @@
 <#
-
 .SYNOPSIS
-    Renames a Git repository in a team project.
+Renames a Git repository in a team project.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .PARAMETER Passthru
-    ${HelpParam_Passthru}
+${HelpParam_Passthru}
 
 .INPUTS
-    Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
-    System.String
+Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
+System.String
 #>
 Function Rename-TfsGitRepository
 {
@@ -57,7 +56,7 @@ Function Rename-TfsGitRepository
         }
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
+        #$tpc = $tp.Store.TeamProjectCollection
 
         $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
 

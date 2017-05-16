@@ -1,21 +1,20 @@
 <#
-
 .SYNOPSIS
-    Changes the details of a team.
+Changes the details of a team.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    Microsoft.TeamFoundation.Client.TeamFoundationTeam
-    System.String
+Microsoft.TeamFoundation.Client.TeamFoundationTeam
+System.String
 #>
 Function Set-TfsTeam
 {
-    [CmdletBinding(DefaultParameterSetName="Get by name",ConfirmImpact='Medium')]
+    [CmdletBinding(DefaultParameterSetName="Get by name", ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (
@@ -63,23 +62,28 @@ Function Set-TfsTeam
 
         $teamService = $tpc.GetService([type]'Microsoft.TeamFoundation.Client.TfsTeamService')
 
-        if ($NewName)
+        if ($NewName -and $PSCmdlet.ShouldProcess($Team, "Rename team to '$NewName'"))
         {
+            $isDirty = $true
             $t.Name = $NewName
         }
 
-        if ($PSBoundParameters.ContainsKey('Description'))
+        if ($PSBoundParameters.ContainsKey('Description') -and $PSCmdlet.ShouldProcess($Team, "Set team's description to '$Description'"))
         {
+            $isDirty = $true
             $t.Description = $Description
         }
 
-        if ($Default)
+        if ($Default -and $PSCmdlet.ShouldProcess($Team, "Set team to project's default team"))
         {
             $teamService.SetDefaultTeam($t)
         }
 
-        $teamService.UpdateTeam($t)
-
+        if($isDirty)
+        {
+            $teamService.UpdateTeam($t)
+        }
+        
         return $t
     }
 }

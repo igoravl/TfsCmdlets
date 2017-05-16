@@ -1,17 +1,16 @@
 <#
-
 .PARAMETER Credential
-    ${HelpParam_Credential}
+${HelpParam_Credential}
 
 
 .INPUTS
-	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
-    System.String
-    System.Uri
+Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+System.String
+System.Uri
 #>
 Function Stop-TfsTeamProjectCollection
 {
-    [CmdletBinding(ConfirmImpact='High')]
+    [CmdletBinding(ConfirmImpact='High', SupportsShouldProcess=$true)]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
@@ -34,6 +33,9 @@ Function Stop-TfsTeamProjectCollection
 
 	Process
 	{
-		throw "Not implemented"
+		if($PSCmdlet.ShouldProcess($Collection, 'Stop team project collection'))
+		{
+			throw "Not implemented"
+		}
 	}
 }

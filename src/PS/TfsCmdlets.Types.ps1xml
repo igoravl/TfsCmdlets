@@ -46,7 +46,7 @@
           }
           else
           {
-          $tpc = Get-TfsTeamProjectCollection | ? InstanceId -eq $tpcId
+          $tpc = Get-TfsTeamProjectCollection | Where-Object InstanceId -eq $tpcId
           }
           $teamService = $tpc.GetService([type]'Microsoft.TeamFoundation.Client.TfsTeamService')
           return ($teamService.GetDefaultTeamId("$tpId") -eq $this.Identity.TeamFoundationId)
@@ -82,7 +82,7 @@
           $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
           $css.GetProjectProperties($this.Uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
 
-          $processTemplate = $projectProperties | ? Name -eq "Process Template" | select -ExpandProperty Value
+          $processTemplate = $projectProperties | Where-Object Name -eq "Process Template" | select -ExpandProperty Value
 
           if([string]::IsNullOrEmpty($processTemplate))
           {
@@ -321,7 +321,7 @@
           {
           if ($type -eq 'VersionedItem')
           {
-          (0..2) | % { $id = [System.Net.WebUtility]::UrlDecode($id) }
+          (0..2) | Foreach-Object { $id = [System.Net.WebUtility]::UrlDecode($id) }
           $id = $id -split '&amp;'
               return "`$/$($id[0]) ($($id[1]), $($id[2]))"
             }

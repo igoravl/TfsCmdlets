@@ -80,7 +80,7 @@ Function Export-TfsWorkItemQuery
 
                 if (-not (Test-Path $filePath -PathType Container))
                 {
-                    md $filePath -Force | Out-Null
+                    New-Item $filePath -ItemType Directory -Force | Out-Null
                 }
 
 			    $xml.Save($fileName)

@@ -1,36 +1,39 @@
 <#
 .SYNOPSIS
-    Gets information about one or more team projects. 
+Gets information about one or more team projects. 
 
 .DESCRIPTION
-	The Get-TfsTeamProject cmdlets gets one or more Team Project objects (an instance of Microsoft.TeamFoundation.WorkItemTracking.Client.Project) from the supplied Team Project Collection.
+The Get-TfsTeamProject cmdlets gets one or more Team Project objects (an instance of Microsoft.TeamFoundation.WorkItemTracking.Client.Project) from the supplied Team Project Collection.
 
 .PARAMETER Project
-	Specifies the name of a Team Project. Wildcards are supported.
+Specifies the name of a Team Project. Wildcards are supported.
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .PARAMETER Server
-	Specifies either a URL or the name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.
-	For more details, see the -Server argument in the Get-TfsTeamProjectCollection cmdlet.
+Specifies either a URL or the name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.
+For more details, see the -Server argument in the Get-TfsTeamProjectCollection cmdlet.
 
 .PARAMETER Credential
-    ${HelpParam_TfsCredential}
+${HelpParam_TfsCredential}
 
 .INPUTS
-	Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
-    System.String
-    System.Uri
+Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+System.String
+System.Uri
 
 .NOTES
-	As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamProjectCollection object to be provided via the -Collection argument. If absent, it will default to the connection opened by Connect-TfsTeamProjectCollection.
+As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamProjectCollection object to be provided via the -Collection argument. If absent, it will default to the connection opened by Connect-TfsTeamProjectCollection.
 
 #>
 Function Get-TfsTeamProject
 {
     [CmdletBinding(DefaultParameterSetName='Get by project')]
 	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
     Param
     (
         [Parameter(Position=0, ParameterSetName='Get by project')]
@@ -76,10 +79,10 @@ Function Get-TfsTeamProject
 			$tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
 			$wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-			return _GetAllProjects $tpc | ? Name -Like $Project | % { $wiStore.Projects[$_.Name] }
+			return _GetAllProjects $tpc | Where-Object Name -Like $Project | Foreach-Object { $wiStore.Projects[$_.Name] }
 		}
 
-		if ($Project -eq $null)
+		if ($null -eq $Project)
 		{
 			if ($global:TfsProjectConnection)
 			{
@@ -97,5 +100,5 @@ Function _GetAllProjects
 
     $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
 
-    return $css.ListAllProjects() | ? Status -eq WellFormed
+    return $css.ListAllProjects() | Where-Object Status -eq WellFormed
 }

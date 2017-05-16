@@ -33,6 +33,9 @@ Function Get-TfsTeamProjectCollection
 {
 	[CmdletBinding(DefaultParameterSetName='Get by collection')]
 	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param
 	(
 		[Parameter(Position=0, ParameterSetName="Get by collection")]
@@ -65,27 +68,41 @@ Function Get-TfsTeamProjectCollection
 			return $Collection
 		}
 
+		$cred = Get-TfsCredential -Credential $Credential
+
 		if ($Collection -is [Uri])
 		{
-			return _GetCollectionFromUrl $Collection $Credential
+			return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList ([uri]$Collection), $cred
 		}
 
 		if ($Collection -is [string])
 		{
 			if ([Uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute))
 			{
-				return _GetCollectionFromUrl ([Uri] $Collection) $Credential
+				return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList ([uri]$Collection), $cred
 			}
 
 			if (-not [string]::IsNullOrWhiteSpace($Collection))
 			{
-				return _GetCollectionFromName $Collection $Server $Credential
-			}
+				$configServer = Get-TfsConfigurationServer $Server -Credential $cred
+				$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
+				$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
+				$collections = $collections | Select-Object -ExpandProperty Resource | Where-Object DisplayName -like $Name
 
-			$Collection = $null
+				if ($collections.Count -eq 0)
+				{
+					throw "Invalid or non-existent Team Project Collection(s): $Name"
+				}
+
+				foreach($tpc in $collections)
+				{
+					$collectionId = $tpc.Properties["InstanceId"]
+					Write-Output $configServer.GetTeamProjectCollection($collectionId)
+				}
+			}
 		}
 
-		if ($Collection -eq $null)
+		if ($null -eq $Collection)
 		{
 			if ($Global:TfsTpcConnection)
 			{
@@ -94,42 +111,5 @@ Function Get-TfsTeamProjectCollection
 		}
 
 		throw "No TFS connection information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection prior to invoking this cmdlet."
-	}
-}
-
-# =================
-# Helper Functions
-# =================
-
-Function _GetCollectionFromUrl([uri] $Url, $Credential)
-{
-	$cred = Get-TfsCredential -Credential $Credential
-
-	return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList $Url, $cred
-}
-
-
-Function _GetCollectionFromName($Name, $Server, $Credential)
-{
-	$cred = Get-TfsCredential -Credential $Credential
-
-	$configServer = Get-TfsConfigurationServer $Server -Credential $Cred
-
-	$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
-	
-	$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::IncludeParents) 
-	$collections = $collections | Select -ExpandProperty Resource | ? DisplayName -like $Name
-
-	if ($collections.Count -eq 0)
-	{
-		throw "Invalid or non-existent Team Project Collection(s): $Name"
-	}
-
-	foreach($tpc in $collections)
-	{
-		$collectionId = $tpc.Properties["InstanceId"]
-		$tpc = $configServer.GetTeamProjectCollection($collectionId)
-
-		$tpc
 	}
 }

@@ -55,6 +55,6 @@ Function Get-TfsWorkItemType
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
 
-        return $tp.WorkItemTypes | ? Name -Like $Type
+        return $tp.WorkItemTypes | Where-Object Name -Like $Type
     }
 }

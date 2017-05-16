@@ -17,14 +17,14 @@
 #>
 Function New-TfsTeam
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
     param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [Alias("Name")]
+        [Alias("Team")]
         [string] 
-        $Team,
+        $Name,
     
         [Parameter()]
         [string] 
@@ -45,15 +45,18 @@ Function New-TfsTeam
 
     Process
     {
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
-        $teamService = $tpc.GetService([type]"Microsoft.TeamFoundation.Client.TfsTeamService")
-
-        $newTeam = $teamService.CreateTeam($tp.Uri, $Team, $Description, $null)
-
-        if ($Passthru)
+        if ($PSCmdlet.ShouldProcess($Name, 'Create team'))
         {
-            return $team
+            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+            $tpc = $tp.Store.TeamProjectCollection
+            $teamService = $tpc.GetService([type]"Microsoft.TeamFoundation.Client.TfsTeamService")
+
+            $team = $teamService.CreateTeam($tp.Uri, $Name, $Description, $null)
+
+            if ($Passthru)
+            {
+                return $team
+            }
         }
     }
 }

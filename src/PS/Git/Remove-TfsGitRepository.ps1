@@ -1,17 +1,16 @@
 <#
-
 .SYNOPSIS
-    Deletes one or more Git repositories from a team project.
+Deletes one or more Git repositories from a team project.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
-    System.String
+Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
+System.String
 #>
 Function Remove-TfsGitRepository
 {
@@ -22,7 +21,7 @@ Function Remove-TfsGitRepository
         [SupportsWildcards()]
         [Alias('Name')]
         [object] 
-        $Repository = '*',
+        $Repository,
 
         [Parameter()]
         [object]
@@ -47,7 +46,7 @@ Function Remove-TfsGitRepository
         }
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
+        #$tpc = $tp.Store.TeamProjectCollection
 
         $gitClient = Get-TfsHttpClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
 

@@ -1,20 +1,19 @@
 <#
-
 .SYNOPSIS
-    Gets the definition of one or more work item saved queries.
+Gets the definition of one or more work item saved queries.
 
 .PARAMETER Query
-	Specifies the path of a saved query. Wildcards are supported.
+Specifies the path of a saved query. Wildcards are supported.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
 #>
 Function Get-TfsWorkItemQueryFolder
 {
@@ -46,7 +45,7 @@ Function Get-TfsWorkItemQueryFolder
         }
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
+        #$tpc = $tp.Store.TeamProjectCollection
 
         if ($Folder -match '\*')
         {

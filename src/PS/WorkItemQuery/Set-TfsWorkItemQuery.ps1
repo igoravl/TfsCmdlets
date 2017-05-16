@@ -21,7 +21,7 @@
 #>
 Function Set-TfsWorkItemQuery
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
     Param
     (
@@ -62,17 +62,22 @@ Function Set-TfsWorkItemQuery
 			throw "Ambiguous query name '$Query'. $($q.Count) queries were found matching the specified name/pattern:`n`n - " + ($q -join "`n - ")
 		}
 
-        if ($NewName)
+        if ($NewName -and $PSCmdlet.ShouldProcess($Name, "Rename work item query to '$NewName'"))
         {
+            isDirty = $true
             $q.Name = $NewName
         }
 
-        if ($Definition)
+        if ($Definition -and $PSCmdlet.ShouldProcess($Name, "Change work item query definition to '$Definition'"))
         {
+            isDirty = $true
             $q.QueryText = $Definition
         }
 
-        $q.Project.QueryHierarchy.Save()
+        if ($isDirty)
+        {
+            $q.Project.QueryHierarchy.Save()
+        }
 
 		return $q
     }

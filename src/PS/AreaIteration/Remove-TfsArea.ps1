@@ -46,7 +46,7 @@ Function Remove-TfsArea
 
     Process
     {
-        $Areas = Get-TfsArea -Area $Area -Project $Project -Collection $Collection | Sort -Property Path -Descending
+        $Areas = Get-TfsArea -Area $Area -Project $Project -Collection $Collection | Sort-Object -Property Path -Descending
 
         foreach($i in $Areas)
         {

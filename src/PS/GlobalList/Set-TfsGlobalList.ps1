@@ -1,17 +1,16 @@
 <#
-
 .SYNOPSIS
-    Changes the name or the contents of a Global List.
+Changes the name or the contents of a Global List.
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    System.String
+System.String
 #>
 Function Set-TfsGlobalList
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]
@@ -46,7 +45,7 @@ Function Set-TfsGlobalList
         $list = $xml.SelectSingleNode("//GLOBALLIST")
         $newList = $false
 
-        if ($list -eq $null)
+        if ($null -eq $list)
         {
             if (-not $Force.IsPresent)
             { 
@@ -62,11 +61,12 @@ Function Set-TfsGlobalList
 
         if ($PSCmdlet.ParameterSetName -eq "Rename list")
         {
-            $list.SetAttribute("name", $NewName)
-            Import-TfsGlobalList -Xml $xml -Collection $Collection
-
-            Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
-
+            if($PSCmdlet.ShouldProcess($Name, "Rename global list to $NewName"))
+            {
+                $list.SetAttribute("name", $NewName)
+                Import-TfsGlobalList -Xml $xml -Collection $Collection
+                Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
+            }
             return Get-TfsGlobalList -Name $NewName -Collection $Collection
         }
 
@@ -77,12 +77,16 @@ Function Set-TfsGlobalList
             {
                 # Checks if the element exists (prevents duplicates)
                 $existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
-                if ($existingItem -ne $null) { continue }
+                if ($null -ne $existingItem) { continue }
             }
 
-            $itemElement = $xml.CreateElement("LISTITEM")
-            [void] $itemElement.SetAttribute("value", $item)
-            [void]$list.AppendChild($itemElement)
+            if($PSCmdlet.ShouldProcess($Name, "Add item '$item' to global list"))
+            {
+                $isDirty = $true
+                $itemElement = $xml.CreateElement("LISTITEM")
+                [void] $itemElement.SetAttribute("value", $item)
+                [void]$list.AppendChild($itemElement)
+            }
         }
         
         if (-not $newList)
@@ -91,15 +95,19 @@ Function Set-TfsGlobalList
             {
                 $existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
                 
-                if ($existingItem)
+                if ($existingItem -and $PSCmdlet.ShouldProcess($Name, "Remove item '$item' from global list"))
                 {
+                    $isDirty = $true
                     [void]$list.RemoveChild($existingItem)
                 }
             }
         }
                 
         # Saves the list back to TFS
-        Import-TfsGlobalList -Xml $xml -Collection $Collection
+        if($isDirty)
+        {
+            Import-TfsGlobalList -Xml $xml -Collection $Collection
+        }
 
         return Get-TfsGlobalList -Name $Name -Collection $Collection
     }

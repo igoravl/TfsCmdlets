@@ -11,7 +11,7 @@
 #>
 Function New-TfsGlobalList
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([PSCustomObject])]
     Param
     (
@@ -43,12 +43,14 @@ Function New-TfsGlobalList
         # Checks whether the global list already exists
         $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
 
-        if ($list -ne $null)
+        if ($null -ne $list)
         {
             if ($Force.IsPresent)
             {
-                [void] $list.ParentNode.RemoveChild($list)
-                $overwritten = $true
+                if ($PSCmdlet.ShouldProcess($Name, 'Overwrite existing global list'))
+                {
+                    [void] $list.ParentNode.RemoveChild($list)
+                }
             }
             else
             {
@@ -56,29 +58,30 @@ Function New-TfsGlobalList
             }
         }
 
-        # Creates the new list XML element
-        $list = $xml.CreateElement("GLOBALLIST")
-        $list.SetAttribute("name", $Name)
-
-        # Adds the item elements to the list
-        foreach($item in $Items)
+        if($PSCmdlet.ShouldProcess($Name, 'Create global list'))
         {
-            $itemElement = $xml.CreateElement("LISTITEM")
-            [void] $itemElement.SetAttribute("value", $item)
-            [void]$list.AppendChild($itemElement)
-        }
+            # Creates the new list XML element
+            $list = $xml.CreateElement("GLOBALLIST")
+            $list.SetAttribute("name", $Name)
 
-        # Appends the new list to the XML obj
-        [void] $xml.DocumentElement.AppendChild($list)
+            # Adds the item elements to the list
+            foreach($item in $Items)
+            {
+                $itemElement = $xml.CreateElement("LISTITEM")
+                [void] $itemElement.SetAttribute("value", $item)
+                [void]$list.AppendChild($itemElement)
+            }
 
-        # Saves the list back to TFS
-        Import-TfsGlobalList -Xml $xml -Collection $Collection
+            # Appends the new list to the XML obj
+            [void] $xml.DocumentElement.AppendChild($list)
 
-        $list =  Get-TfsGlobalList -Name $Name -Collection $Collection
+            Import-TfsGlobalList -Xml $xml -Collection $Collection
+            $list =  Get-TfsGlobalList -Name $Name -Collection $Collection
 
-        if ($Passthru)
-        {
-            return $list
+            if ($Passthru)
+            {
+                return $list
+            }
         }        
     }
 }

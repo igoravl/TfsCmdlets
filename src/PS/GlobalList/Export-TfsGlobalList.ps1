@@ -38,7 +38,7 @@ Function Export-TfsGlobalList
 
         [void] $xml.InsertBefore($procInstr, $xml.DocumentElement)
 
-        $nodesToRemove = $xml.SelectNodes("//GLOBALLIST") #| ? ([System.Xml.XmlElement]$_).GetAttribute("name") -NotLike $Name
+        $nodesToRemove = $xml.SelectNodes("//GLOBALLIST") #| Where-Object ([System.Xml.XmlElement]$_).GetAttribute("name") -NotLike $Name
 
         foreach($node in $nodesToRemove)
         {

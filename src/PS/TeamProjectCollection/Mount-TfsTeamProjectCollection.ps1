@@ -1,15 +1,14 @@
 <#
-
 .SYNOPSIS
-    Attaches a team project collection database to a Team Foundation Server installation.
+Attaches a team project collection database to a Team Foundation Server installation.
 
 .PARAMETER Credential
-    ${HelpParam_Credential}
+${HelpParam_Credential}
 
 .INPUTS
-	Microsoft.TeamFoundation.Client.TfsConfigurationServer
-    System.String
-    System.Uri
+Microsoft.TeamFoundation.Client.TfsConfigurationServer
+System.String
+System.Uri
 #>
 Function Mount-TfsTeamProjectCollection
 {
@@ -83,7 +82,7 @@ Function Mount-TfsTeamProjectCollection
 		{
 			Write-Progress -Id 1 -Activity "Attach team project collection" -Status "Attaching team project collection $Name" -PercentComplete 0
 
-			$start = Get-Date
+			#$start = Get-Date
 
 			# string databaseConnectionString, IDictionary<string, string> servicingTokens, bool cloneCollection, string name, string description, string virtualDirectory)
 

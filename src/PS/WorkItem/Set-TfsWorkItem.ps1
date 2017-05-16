@@ -1,18 +1,16 @@
 <#
-
 .SYNOPSIS
-    Sets the contents of one or more work items.
+Sets the contents of one or more work items.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
-
+${HelpParam_Collection}
 #>
 Function Set-TfsWorkItem
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     Param
     (
         [Parameter(ValueFromPipeline=$true, Position=0)]
@@ -62,18 +60,21 @@ Function Set-TfsWorkItem
 
         $wi = $store.GetWorkItem($id)
 
-		$Fields = _FixAreaIterationValues -Fields $Fields -ProjectName $wi.Project.Name
+        $Fields = _FixAreaIterationValues -Fields $Fields -ProjectName $wi.Project.Name
 
-        foreach($fldName in $Fields.Keys)
+        if($PSCmdlet.ShouldProcess("Set work item fields $($Fields.Keys -join ', ') to $($Fields.Values -join ', '), respectively"))
         {
-            $wi.Fields[$fldName].Value = $Fields[$fldName]
-        }
+            foreach($fldName in $Fields.Keys)
+            {
+                $wi.Fields[$fldName].Value = $Fields[$fldName]
+            }
 
-        if(-not $SkipSave)
-        {
-            $wi.Save()
+            if(-not $SkipSave)
+            {
+                $wi.Save()
+            }
         }
-
+        
         return $wi
     }
 }

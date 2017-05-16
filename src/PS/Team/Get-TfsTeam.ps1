@@ -64,7 +64,7 @@ Function Get-TfsTeam
         }
         else
         {
-            $teams = $teamService.QueryTeams([string]$tp.Uri) | ? Name -like $Team
+            $teams = $teamService.QueryTeams([string]$tp.Uri) | Where-Object Name -like $Team
         }
 
         foreach($t in $teams)

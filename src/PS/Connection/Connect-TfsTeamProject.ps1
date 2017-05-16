@@ -1,22 +1,25 @@
 <#
-
 .SYNOPSIS
-    Connects to a team project.
+Connects to a team project.
 
 .PARAMETER Credential
-    ${HelpParam_TfsCredential}
+${HelpParam_TfsCredential}
 
 .PARAMETER Interactive
-	Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
+Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
 
 .PARAMETER Passthru
-    ${HelpParam_Passthru}
+${HelpParam_Passthru}
 
 #>
 Function Connect-TfsTeamProject
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
 	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
@@ -48,7 +51,7 @@ Function Connect-TfsTeamProject
 			$Credential = (Get-TfsCredential -Interactive)
 		}
 
-		$tp = (Get-TfsTeamProject -Project $Project -Collection $Collection -Credential $Credential | Select -First 1)
+		$tp = (Get-TfsTeamProject -Project $Project -Collection $Collection -Credential $Credential | Select-Object -First 1)
 
 		if (-not $tp)
 		{

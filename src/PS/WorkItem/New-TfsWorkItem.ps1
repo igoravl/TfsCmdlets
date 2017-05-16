@@ -31,7 +31,7 @@
 #>
 Function New-TfsWorkItem
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
     Param
     (
@@ -62,25 +62,28 @@ Function New-TfsWorkItem
 
     Process
     {
-        $wit = Get-TfsWorkItemType -Type $Type -Project $Project -Collection $Collection
-
-        $wi = $wit.NewWorkItem()
-
-        if ($Title)
+        if($PSCmdlet.ShouldProcess($Type, 'Create work item of specified type'))
         {
-            $wi.Title = $Title
-        }
+            $wit = Get-TfsWorkItemType -Type $Type -Project $Project -Collection $Collection
 
-        foreach($field in $Fields)
-        {
-            $wi.Fields[$field.Key] = $field.Value
-        }
+            $wi = $wit.NewWorkItem()
 
-        $wi.Save()
+            if ($Title)
+            {
+                $wi.Title = $Title
+            }
 
-        if ($Passthru)
-        {
-            return $wi
+            foreach($field in $Fields)
+            {
+                $wi.Fields[$field.Key] = $field.Value
+            }
+
+            $wi.Save()
+
+            if ($Passthru)
+            {
+                return $wi
+            }
         }
     }
 }

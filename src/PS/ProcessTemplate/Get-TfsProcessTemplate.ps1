@@ -31,7 +31,7 @@ Function Get-TfsProcessTemplate
     {
         $tpc = Get-TfsTeamProjectCollection $Collection
         $processTemplateSvc = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.IProcessTemplates")
-        $templateHeaders = $processTemplateSvc.TemplateHeaders() | ? Name -Like $Name
+        $templateHeaders = $processTemplateSvc.TemplateHeaders() | Where-Object Name -Like $Name
 
         foreach($templateHeader in $templateHeaders)
         {

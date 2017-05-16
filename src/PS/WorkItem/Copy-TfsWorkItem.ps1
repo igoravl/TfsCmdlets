@@ -52,7 +52,7 @@ Function Copy-TfsWorkItem
     Process
     {
 		$wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
-		$store = $wi.Store
+		#$store = $wi.Store
 
 		if($Type)
 		{

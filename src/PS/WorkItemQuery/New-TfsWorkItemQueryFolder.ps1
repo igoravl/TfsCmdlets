@@ -15,14 +15,15 @@
 .INPUTS
     System.String
 #>
-Function New-TfsWorkItemQuery
+Function New-TfsWorkItemQueryFolder
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [string]
+        [Alias("Name")]
         [Alias("Path")]
         $Folder,
 
@@ -50,28 +51,31 @@ Function New-TfsWorkItemQuery
 
     Process
     {
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
-        $store = $tp.Store
-
-        if ($Scope -eq 'Shared')
+        if($PSCmdlet.ShouldProcess($Folder, 'Create work item query folder'))
         {
-            $rootFolder = 'Shared Queries'
-        }
-        else
-        {
-            $rootFolder = 'My Queries'
-        }
+            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+            #$tpc = $tp.Store.TeamProjectCollection
+            #$store = $tp.Store
 
-		$normalizedPath = _NormalizeQueryPath -Path $Folder -RootFolder $rootFolder -ProjectName $tp.Name
+            if ($Scope -eq 'Shared')
+            {
+                $rootFolder = 'Shared Queries'
+            }
+            else
+            {
+                $rootFolder = 'My Queries'
+            }
 
-		Write-Verbose "New-TfsWorkItemQueryFolder: Creating folder '$Folder'"
+            $normalizedPath = _NormalizeQueryPath -Path $Folder -RootFolder $rootFolder -ProjectName $tp.Name
 
-		$queryFolder = [TfsCmdlets.QueryHelper]::CreateFolder($tp.QueryHierarchy, $queryPath)
+            Write-Verbose "New-TfsWorkItemQueryFolder: Creating folder '$Folder'"
 
-        if ($Passthru)
-        {
-		    return $queryFolder
+            $queryFolder = [TfsCmdlets.QueryHelper]::CreateFolder($tp.QueryHierarchy, $normalizedPath)
+
+            if ($Passthru)
+            {
+                return $queryFolder
+            }
         }
     }
 }

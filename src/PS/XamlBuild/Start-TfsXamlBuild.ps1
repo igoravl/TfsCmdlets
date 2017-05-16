@@ -1,25 +1,23 @@
 <#
-
 .SYNOPSIS
-    Queues a XAML Build.
+Queues a XAML Build.
 
 .PARAMETER BuildDefinition
-    Build Definition Name that you want to queue.
+Build Definition Name that you want to queue.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .EXAMPLE
-    Start-TfsBuild -BuildDefinition "My Build Definition" -Project "MyTeamProject"
-    This example queue a Build Definition "My Build Definition" of Team Project "MyTeamProject".
-
+Start-TfsBuild -BuildDefinition "My Build Definition" -Project "MyTeamProject"
+This example queue a Build Definition "My Build Definition" of Team Project "MyTeamProject".
 #>
 Function Start-TfsXamlBuild
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     Param
     (
         [Parameter(Mandatory=$true, Position=0)]
@@ -56,34 +54,36 @@ Function Start-TfsXamlBuild
 
     Process
     {
-
-        $tp = Get-TfsTeamProject $Project $Collection
-        $tpc = $tp.Store.TeamProjectCollection
-
-        $buildServer = $tpc.GetService([type]"Microsoft.TeamFoundation.Build.Client.IBuildServer")
-
-        if ($BuildDefinition -is [Microsoft.TeamFoundation.Build.Client.IBuildDefinition])
+        if($PSCmdlet.ShouldProcess($BuildDefinition, 'Queue new build'))
         {
-            $buildDef = $BuildDefinition
-        }
-        else
-        {
-            $buildDef = $buildServer.GetBuildDefinition($tp.Name, $BuildDefinition);
-        }
+            $tp = Get-TfsTeamProject $Project $Collection
+            $tpc = $tp.Store.TeamProjectCollection
 
-        $req = $buildDef.CreateBuildRequest()
-        $req.GetOption = [Microsoft.TeamFoundation.Build.Client.GetOption] $GetOption;
+            $buildServer = $tpc.GetService([type]"Microsoft.TeamFoundation.Build.Client.IBuildServer")
 
-        if ($GetOption -eq "Custom")
-        {
-            $req.CustomGetVersion = $GetVersion
+            if ($BuildDefinition -is [Microsoft.TeamFoundation.Build.Client.IBuildDefinition])
+            {
+                $buildDef = $BuildDefinition
+            }
+            else
+            {
+                $buildDef = $buildServer.GetBuildDefinition($tp.Name, $BuildDefinition);
+            }
+
+            $req = $buildDef.CreateBuildRequest()
+            $req.GetOption = [Microsoft.TeamFoundation.Build.Client.GetOption] $GetOption;
+
+            if ($GetOption -eq "Custom")
+            {
+                $req.CustomGetVersion = $GetVersion
+            }
+
+            if ($DropLocation)
+            {
+                $req.DropLocation = $DropLocation
+            }
+
+            $buildServer.QueueBuild($req)
         }
-
-        if ($DropLocation)
-        {
-            $req.DropLocation = $DropLocation
-        }
-
-        $buildServer.QueueBuild($req)
     }
 }

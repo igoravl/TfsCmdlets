@@ -22,6 +22,6 @@ Function Get-TfsRegisteredTeamProjectCollection
 
     Process
     {
-        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | ? DisplayName -Like $Name
+        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | Where-Object DisplayName -Like $Name
     }
 }

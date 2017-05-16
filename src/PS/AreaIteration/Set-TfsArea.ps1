@@ -1,29 +1,29 @@
 <#
 .SYNOPSIS
-    Modifies the name and/or the position of a Work Item Area.
+Modifies the name and/or the position of a Work Item Area.
 
 .PARAMETER Area
-    ${HelpParam_Area}
+${HelpParam_Area}
 
 .PARAMETER NewName
-    Specifies the new name of the area. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the area parameter, Rename-Tfsarea generates an error. To rename and move an item, use the Move-Tfsarea cmdlet.
+Specifies the new name of the area. Enter only a name, not a path and name. If you enter a path that is different from the path that is specified in the area parameter, Rename-Tfsarea generates an error. To rename and move an item, use the Move-Tfsarea cmdlet.
 
 .PARAMETER MoveBy
-    Reorders an area by moving it either up or down inside its parent. A positive value moves an area down, whereas a negative one moves it up.
+Reorders an area by moving it either up or down inside its parent. A positive value moves an area down, whereas a negative one moves it up.
 
 .PARAMETER Project
-    ${HelpParam_Project}
+${HelpParam_Project}
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 .INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
 #>
 Function Set-TfsArea
 {
-    [CmdletBinding(ConfirmImpact='Medium')]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
     Param
     (
@@ -63,12 +63,18 @@ Function Set-TfsArea
 
         if ($NewName)
         {
-            $cssService.RenameNode($node.Uri, $NewName)
+            if ($PSCmdlet.ShouldProcess($Area, "Rename area to $NewName"))
+            {
+                $cssService.RenameNode($node.Uri, $NewName)
+            }
         }
 
         if ($MoveBy)
         {
-            $cssService.ReorderNode($node.Uri, $MoveBy)
+            if ($PSCmdlet.ShouldProcess($Area, "Reorder area by moving it $MoveBy positions (negative is up, positive is down)"))
+            {
+                $cssService.ReorderNode($node.Uri, $MoveBy)
+            }
         }
 
         return $cssService.GetNode($node.Uri)
