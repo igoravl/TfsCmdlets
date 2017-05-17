@@ -3,7 +3,7 @@
 Creates a copy of a work item, optionally changing its type
 
 .DESCRIPTION
-Use this cmdlet to create a copy of a work instance (using its latest saved state/revision data) that is of the specified work item type. By default, the copy retains the same type of the original work item, unless the Type argument is specified
+Use this cmdlet to create a copy of a work item (using its latest saved state/revision data) that is of the specified work item type. By default, the copy retains the same type of the original work item, unless the Type argument is specified
 
 .PARAMETER WorkItem
 Specifies the work item to be copied. Can be either a work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
