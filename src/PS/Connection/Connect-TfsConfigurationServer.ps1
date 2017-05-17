@@ -9,7 +9,7 @@ ${HelpParam_Server}
 ${HelpParam_TfsCredential}
 
 .PARAMETER Interactive
-Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
+${HelpParam_Interactive}
 
 .PARAMETER Passthru
 ${HelpParam_Passthru}

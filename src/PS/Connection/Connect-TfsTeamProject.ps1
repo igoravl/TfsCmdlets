@@ -2,15 +2,36 @@
 .SYNOPSIS
 Connects to a team project.
 
+.DESCRIPTION
+The Connect-TfsTeamProject cmdlet "connects" (initializes a Microsoft.TeamFoundation.WorkItemTracking.Client.Project object) to a TFS Team Project. That connection is subsequently kept in a global variable to be later reused until it's closed by a call to Disconnect-TfsTeamProject.
+Cmdlets in the TfsCmdlets module that require a team project object to be provided via their -Project argument in order to access a TFS project will use the connection opened by this cmdlet as their "default project". In other words, TFS cmdlets (e.g. New-TfsArea) that have a -Project argument will use the connection provided by Connect-TfsTeamProject by default.
+
+.PARAMETER Project
+${HelpParam_Project}
+
+.PARAMETER Collection
+${HelpParam_Collection}
+
 .PARAMETER Credential
 ${HelpParam_TfsCredential}
 
 .PARAMETER Interactive
-Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
+${HelpParam_Interactive}
 
 .PARAMETER Passthru
 ${HelpParam_Passthru}
 
+.INPUTS
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
+
+.EXAMPLE
+Connect-TfsTeamProject -Project FabrikamFiber
+Connects to a project called FabrikamFiber in the current team project collection (as specified in a previous call to Connect-TfsTeamProjectCollection)
+
+.EXAMPLE
+Connect-TfsTeamProject -Project FabrikamFiber -Collection http://vsalm:8080/tfs/FabrikamFiberCollection
+Connects to a project called FabrikamFiber in the team project collection specified in the given URL
 #>
 Function Connect-TfsTeamProject
 {

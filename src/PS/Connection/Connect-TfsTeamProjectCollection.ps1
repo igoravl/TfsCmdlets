@@ -7,19 +7,16 @@ The Connect-TfsTeamProjectCollection cmdlet "connects" (initializes a Microsoft.
 Most cmdlets in the TfsCmdlets module require a TfsTeamProjectCollection object to be provided via their -Collection argument in order to access a TFS instance. Those cmdlets will use the connection opened by Connect-TfsTeamProjectCollection as their "default connection". In other words, TFS cmdlets (e.g. New-TfsWorkItem) that have a -Collection argument will use the connection provided by Connect-TfsTeamProjectCollection by default.
 
 .PARAMETER Collection
-Specifies either a URL/name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object.
-When a TfsTeamProjectCollection object is provided via this argument, it will be used as the new default connection. This may be especially useful if you e.g. received a pre-initialized connection to a TFS collection via a call to an external library or API.
-For more details, see the -Collection argument in the Get-TfsTeamProjectCollection cmdlet.
+${HelpParam_Collection}
 
 .PARAMETER Server
-Specifies either a URL or the name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.
-For more details, see the -Server argument in the Get-TfsConfigurationServer cmdlet.
+${HelpParam_Server}
 
 .PARAMETER Credential
 ${HelpParam_TfsCredential}
 
 .PARAMETER Interactive
-Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
+${HelpParam_Interactive}
 
 .PARAMETER Passthru
 ${HelpParam_Passthru}
