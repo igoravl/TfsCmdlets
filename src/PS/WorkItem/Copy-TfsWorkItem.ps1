@@ -1,10 +1,12 @@
 <#
-
 .SYNOPSIS
-    Creates a copy of a work item, optionally changing its type
+Creates a copy of a work item, optionally changing its type
+
+.PARAMETER SkipSave
+Leaves the new work item in a "dirty" (unsaved) state, by not calling its Save() method. It is useful for when subsequents changes need to be made to the work item object before saving it. In that case, it is up to the user to later invoke the Save() method on the new work item object to persist the copy.
 
 .PARAMETER Collection
-    ${HelpParam_Collection}
+${HelpParam_Collection}
 
 #>
 Function Copy-TfsWorkItem

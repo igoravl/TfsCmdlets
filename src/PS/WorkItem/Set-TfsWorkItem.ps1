@@ -2,6 +2,9 @@
 .SYNOPSIS
 Sets the contents of one or more work items.
 
+.PARAMETER SkipSave
+Leaves the work item in a "dirty" (unsaved) state, by not calling its Save() method. It is useful for when subsequents changes need to be made to the work item object before saving it. In that case, it is up to the user to later invoke the Save() method on the work item object to persist the changes.
+
 .PARAMETER Project
 ${HelpParam_Project}
 

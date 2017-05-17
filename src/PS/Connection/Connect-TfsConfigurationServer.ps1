@@ -2,8 +2,14 @@
 .SYNOPSIS
 Connects to a configuration server.
 
+.PARAMETER Server
+${HelpParam_Server}
+
 .PARAMETER Credential
 ${HelpParam_TfsCredential}
+
+.PARAMETER Interactive
+Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
 
 .PARAMETER Passthru
 ${HelpParam_Passthru}
@@ -14,13 +20,24 @@ The Connect-TfsConfigurationServer function connects to a TFS configuration serv
 .NOTES
 A TFS Configuration Server represents the server that is running Team Foundation Server. On a database level, it is represented by the Tfs_Configuration database. Operations that should be performed on a server level (such as setting server-level permissions) require a connection to a TFS configuration server. Internally, this connection is represented by an instance of the Microsoft.TeamFoundation.Client.TfsConfigurationServer class and is kept in a PowerShell global variable caled TfsServerConnection.
 
-.PARAMETER Interactive
-Prompts for user credentials. Can be used for both TFS and VSTS accounts - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build).
+.EXAMPLE
+Connect-TfsConfigurationServer -Server http://vsalm:8080/tfs
+Connects to the TFS server specified by the URL in the Server argument
+
+.EXAMPLE
+Connect-TfsConfigurationServer -Server vsalm
+Connects to a previously registered TFS server by its user-defined name "vsalm". For more information, see Get-TfsRegisteredConfigurationServer
 
 .INPUTS
 Microsoft.TeamFoundation.Client.TfsConfigurationServer
 System.String
 System.Uri
+
+.LINK
+Microsoft.TeamFoundation.Client.TfsConfigurationServer
+
+.LINK
+https://blogs.msdn.microsoft.com/taylaf/2010/02/23/introducing-the-tfsconnection-tfsconfigurationserver-and-tfsteamprojectcollection-classes/
 #>
 Function Connect-TfsConfigurationServer
 {
