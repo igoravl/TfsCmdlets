@@ -276,64 +276,64 @@ Task PackageDocs -Depends GenerateDocs {
 
 Task GenerateDocs -Depends Build {
 
-    # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
+    # # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
 
-    if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
+    # if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
-    $subModules = Get-ChildItem $ModuleDir -Directory | Select-Object -ExpandProperty Name
+    # $subModules = Get-ChildItem $ModuleDir -Directory | Select-Object -ExpandProperty Name
 
-    # Magic callback that does the munging
-    $callback = {
-        if ($args[0].Groups[0].Value.StartsWith('\')) {
-            # Escaped tag; strip escape character and return
-            $args[0].Groups[0].Value.Remove(0, 1)
-        } else {
-            # Look up the help and generate the Markdown
-            ConvertCommandHelp (Get-Help $args[0].Groups[1].Value) $cmdList
-        }
-    }
+    # # Magic callback that does the munging
+    # $callback = {
+    #     if ($args[0].Groups[0].Value.StartsWith('\')) {
+    #         # Escaped tag; strip escape character and return
+    #         $args[0].Groups[0].Value.Remove(0, 1)
+    #     } else {
+    #         # Look up the help and generate the Markdown
+    #         ConvertCommandHelp (Get-Help $args[0].Groups[1].Value) $cmdList
+    #     }
+    # }
 
-    $i = 0
-    $re = [Regex]"\\?{%\s*(.*?)\s*%}"
-    $cmds = Get-Command -Module TfsCmdlets
-    $cmdList = $cmds | Select-Object -ExpandProperty Name
-    $cmdCount = $cmds.Count
-    $origBufSize = $Host.UI.RawUI.BufferSize
-    $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
+    # $i = 0
+    # $re = [Regex]"\\?{%\s*(.*?)\s*%}"
+    # $cmds = Get-Command -Module TfsCmdlets
+    # $cmdList = $cmds | Select-Object -ExpandProperty Name
+    # $cmdCount = $cmds.Count
+    # $origBufSize = $Host.UI.RawUI.BufferSize
+    # $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
 
-    foreach($m in $subModules)
-    {
-        if (-not (Test-Path $subModuleOutputDir -PathType Container))
-        {
-            New-Item $subModuleOutputDir -ItemType Directory | Out-Null
-        }
+    # foreach($m in $subModules)
+    # {
+    #     if (-not (Test-Path $subModuleOutputDir -PathType Container))
+    #     {
+    #         New-Item $subModuleOutputDir -ItemType Directory | Out-Null
+    #     }
 
-        $subModuleCommands = Get-ChildItem (Join-Path $ModuleDir $m) -Filter '*-Tfs*.ps1' | Select-Object -ExpandProperty BaseName
-        $subModuleOutputDir = Join-Path $DocsDir "doc\$m"
+    #     $subModuleCommands = Get-ChildItem (Join-Path $ModuleDir $m) -Filter '*-Tfs*.ps1' | Select-Object -ExpandProperty BaseName
+    #     $subModuleOutputDir = Join-Path $DocsDir "doc\$m"
 
-        foreach($c in $subModuleCommands)
-        {
-            $i++ 
+    #     foreach($c in $subModuleCommands)
+    #     {
+    #         $i++ 
 
-            $cmd = Get-Command $c -Module TfsCmdlets
+    #         $cmd = Get-Command $c -Module TfsCmdlets
 
-            Write-Verbose "Generating help for $m/$($cmd.Name) ($i of $cmdCount)"
+    #         Write-Verbose "Generating help for $m/$($cmd.Name) ($i of $cmdCount)"
 
-            # $Host.UI.RawUI.BufferSize = $expandedBufSize
+    #         # $Host.UI.RawUI.BufferSize = $expandedBufSize
 
-            # Generate the readme
-            $readme = "{% $($cmd.Name) %}" | ForEach-Object { $re.Replace($_, $callback) }
+    #         # Generate the readme
+    #         $readme = "{% $($cmd.Name) %}" | ForEach-Object { $re.Replace($_, $callback) }
 
-            # Output to the appropriate stream
-            $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
-            $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-            [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
+    #         # Output to the appropriate stream
+    #         $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
+    #         $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
+    #         [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
 
-            Write-Verbose "Writing $OutputFile"
+    #         Write-Verbose "Writing $OutputFile"
 
-            # $Host.UI.RawUI.BufferSize = $origBufSize
-        }
-    }
+    #         # $Host.UI.RawUI.BufferSize = $origBufSize
+    #     }
+    # }
 }
 
 Task GenerateNuspec {
