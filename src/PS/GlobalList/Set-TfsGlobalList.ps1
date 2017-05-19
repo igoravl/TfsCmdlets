@@ -39,7 +39,7 @@ Function Set-TfsGlobalList
 
     Process
     {
-        [xml] $xml = Export-TfsGlobalList -Name $Name -Collection $Collection
+        $xml = [xml] (Export-TfsGlobalList -Name $Name -Collection $Collection)
 
         # Retrieves the list
         $list = $xml.SelectSingleNode("//GLOBALLIST")
@@ -69,7 +69,6 @@ Function Set-TfsGlobalList
             }
             return Get-TfsGlobalList -Name $NewName -Collection $Collection
         }
-
 
         foreach($item in $Add)
         {
@@ -106,7 +105,7 @@ Function Set-TfsGlobalList
         # Saves the list back to TFS
         if($isDirty)
         {
-            Import-TfsGlobalList -Xml $xml -Collection $Collection
+            Import-TfsGlobalList -Xml $xml -Collection $Collection -Force
         }
 
         return Get-TfsGlobalList -Name $Name -Collection $Collection

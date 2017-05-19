@@ -29,7 +29,7 @@ Function Get-TfsGlobalList
 
     Process
     {
-        $xml = Export-TfsGlobalList @PSBoundParameters
+        $xml = [xml](Export-TfsGlobalList @PSBoundParameters)
 
         foreach($listNode in $xml.SelectNodes("//GLOBALLIST"))
         {
