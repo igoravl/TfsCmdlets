@@ -1,4 +1,5 @@
-param(
+Param
+(
     [Parameter()]
     [String]
     $SourceDir,
@@ -314,7 +315,7 @@ function ConvertCommandHelp($help, $cmdList) {
             $example = $help.examples.example[$i]
 
             $Examples += "`r`n"
-            $Examples += "### Example $($i + 1)`r`n"
+            $Examples += "#### Example $($i + 1)`r`n"
             $Examples += '```' + "`r`n"
             $Examples += ($example.code | Out-String).Trim() + "`r`n"
             $Examples += '```' + "`r`n"
@@ -415,68 +416,3 @@ $Examples
 
     return $doc
 }
-
-
-## Actual documentation generator ----------------------------------------------
-
-Get-Module TfsCmdlets | Remove-Module
-Import-Module (Join-Path $SourceDir 'TfsCmdlets.psd1' -Resolve) -Force -Scope Local
-
-$subModules = Get-ChildItem $SourceDir -Directory | Select -ExpandProperty Name
-$docsDir = Join-Path $OutputDir 'doc'
-
-# Magic callback that does the munging
-$callback = {
-    if ($args[0].Groups[0].Value.StartsWith('\')) {
-        # Escaped tag; strip escape character and return
-        $args[0].Groups[0].Value.Remove(0, 1)
-    } else {
-        # Look up the help and generate the Markdown
-        ConvertCommandHelp (Get-Help $args[0].Groups[1].Value) $cmdList
-    }
-}
-$re = [Regex]"\\?{%\s*(.*?)\s*%}"
-
-$cmds = Get-Command -Module TfsCmdlets #| Where-Object Name -eq 'Get-TfsTeamProject'
-$cmdList = $cmds | Select -ExpandProperty Name
-$cmdCount = $cmds.Count
-$i = 0
-
-$origBufSize = $Host.UI.RawUI.BufferSize
-$expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
-
-foreach($m in $subModules)
-{
-    $subModuleCommands = Get-ChildItem (Join-Path $SourceDir $m) -Filter '*-Tfs*.ps1' | Select -ExpandProperty BaseName
-    $subModuleOutputDir = Join-Path $OutputDir "doc\$m"
-
-    if (-not (Test-Path $subModuleOutputDir -PathType Container))
-    {
-        md $subModuleOutputDir | Out-Null
-    }
-
-    foreach($c in $subModuleCommands)
-    {
-        $i++ 
-
-        $cmd = Get-Command $c -Module TfsCmdlets
-
-        Write-Verbose "Generating help for $m/$($cmd.Name) ($i of $cmdCount)"
-
-        # $Host.UI.RawUI.BufferSize = $expandedBufSize
-
-        # Generate the readme
-        $readme = "{% $($cmd.Name) %}" | foreach { $re.Replace($_, $callback) }
-
-        # Output to the appropriate stream
-        $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
-        $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-        [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
-
-        Write-Verbose "Writing $OutputFile"
-
-        # $Host.UI.RawUI.BufferSize = $origBufSize
-    }
-}
-
-Get-Module TfsCmdlets | Remove-Module
