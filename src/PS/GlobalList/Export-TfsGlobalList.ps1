@@ -38,10 +38,6 @@ Function Export-TfsGlobalList
         [string] 
         $Name = "*",
 
-        [Parameter(Position=1)]
-        [string]
-        $DestinationPath,
-    
         [Parameter(ValueFromPipeline=$true)]
         [object]
         $Collection

@@ -2,6 +2,18 @@
 .SYNOPSIS
 Exports a process template definition to disk.
 
+.PARAMETER Process
+Name of the process template to be exported. Wildcards supported.
+
+.PARAMETER DestinationPath
+Name of the target directory where the exported process template (and related files) will be saved.
+
+.PARAMETER NewName
+Saves the exported process template with a new name. Useful when exporting a base template which will be used as a basis for a new process template.
+
+.PARAMETER NewDescription
+Saves the exported process template with a new description. Useful when exporting a base template which will be used as a basis for a new process template.
+
 .PARAMETER Collection
 ${HelpParam_Collection}
 
