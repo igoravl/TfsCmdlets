@@ -10,7 +10,7 @@
         "-SolutionDir",
         "${workspaceRoot}\\src",
         "-Configuration",
-        "Debug",
+        "Release",
         "-Targets",
     ],
     "windows": {

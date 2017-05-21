@@ -62,6 +62,8 @@ Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
     $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
     $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
     $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
+    $rootModule = Join-Path $ModuleDir 'TfsCmdlets.psm1'
+    $moduleMetadata = Join-Path $ModuleDir 'TfsCmdlets.psd1'
 
     Write-Verbose "Copying root module files (*.ps*) to the output folder"
 
@@ -86,18 +88,18 @@ Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
         $subModuleOutDir = Join-Path $ModuleDir $subModuleName
         $subModuleOutFile = Join-Path $subModuleOutDir "$subModuleName.psm1"
 
-        if (-not (Test-Path $subModuleOutDir -PathType Container)) { New-Item $subModuleOutDir -ItemType Directory -Force | Out-Null }
-
         if ($Configuration -eq 'Release')
         {
             Write-Verbose "Merging all files from the $subModuleName folder in a single file ($subModuleName.psm1)"
             
             # Merge individual files in a single module file
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Replace-Token | Out-File $subModuleOutFile -Encoding Default
+            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Replace-Token | Out-File $rootModule -Encoding Default -Append
         }
         else
         {
             Write-Verbose "Dot-sourcing files from the $subModuleName folder and copying individual files"
+    
+            if (-not (Test-Path $subModuleOutDir -PathType Container)) { New-Item $subModuleOutDir -ItemType Directory -Force | Out-Null }
 
             # Dot-source individual files in the module file
             Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | ForEach-Object {
@@ -114,13 +116,7 @@ Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
 
     Write-Verbose 'Build function list for Export-ModuleMember'
 
-    $rootModule = Join-Path $ModuleDir 'TfsCmdlets.psm1'
-    $moduleMetadata = Join-Path $ModuleDir 'TfsCmdlets.psd1'
-
-    Get-Module TfsCmdlets | Remove-Module
-    Import-Module $moduleMetadata 
-    $functionList = [string] ((Get-Command '*-Tfs*' -Module TfsCmdlets | ForEach-Object {"'$_'"}) -join ',')
-    Get-Module TfsCmdlets | Remove-Module
+    $functionList = [string] ((Get-ChildItem -Path $ProjectDir -Include '*-Tfs*.ps1' -Recurse | Select -ExpandProperty BaseName | ForEach-Object {"'$_'"}) -join ',')
 
     "Export-ModuleMember -Function @($functionList)" | Out-File $rootModule -Append -Encoding default
 }

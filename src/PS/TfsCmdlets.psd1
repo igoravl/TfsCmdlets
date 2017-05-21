@@ -11,8 +11,6 @@
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
     ScriptsToProcess = 'Startup.ps1'
-
-    NestedModules = @(${NestedModules})
     FileList = @(${FileList})
 
     PrivateData = @{ 
