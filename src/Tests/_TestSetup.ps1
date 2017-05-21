@@ -11,5 +11,4 @@ if (-not $hasBuild)
 }
 
 Get-Module TfsCmdlets | Remove-Module
-
-$module = (Import-Module (Join-Path $modulePath 'TfsCmdlets.psd1') -Force)
+Import-Module (Join-Path $modulePath 'TfsCmdlets.psd1') -Force
