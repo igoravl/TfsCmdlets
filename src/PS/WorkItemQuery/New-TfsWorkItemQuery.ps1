@@ -56,9 +56,9 @@ Function New-TfsWorkItemQuery
 
 		Write-Verbose "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$folderPath'"
 
-		$folder = (_FindQueryFolder $folderPath $tp.QueryHierarchy $true)
+		$folderHt = (_FindQueryFolder $folderPath $tp.QueryHierarchy $true)
 
-		if (-not $folder)
+		if (-not $folderHt)
 		{
 			throw "Invalid or non-existent work item query folder $folderPath."
 		}
@@ -69,7 +69,7 @@ Function New-TfsWorkItemQuery
         }
 
 		$q = New-Object 'Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition' -ArgumentList $queryName, $Definition
-		$folder.Values[0].Add($q)
+		$folderHt.Values[0].Add($q)
 
 		$tp.QueryHierarchy.Save()
 
