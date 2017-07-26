@@ -2,11 +2,14 @@
 .SYNOPSIS
 Exports a process template definition to disk.
 
+.DESCRIPTION
+This cmdlet offers a functional replacement to the "Export Process Template" feature found in Team Explorer. All files pertaining to the specified process template (work item defininitons, reports, saved queries, process configuration and so on) are downloaded from the given Team Project Collection and saved in a local directory, preserving the directory structure required to later re-import it. This is specially handy to do small changes to a process template or to create a new process template based on an existing one.
+
 .PARAMETER Process
 Name of the process template to be exported. Wildcards supported.
 
 .PARAMETER DestinationPath
-Name of the target directory where the exported process template (and related files) will be saved.
+Path to the target directory where the exported process template (and related files) will be saved.
 
 .PARAMETER NewName
 Saves the exported process template with a new name. Useful when exporting a base template which will be used as a basis for a new process template.
@@ -16,6 +19,15 @@ Saves the exported process template with a new description. Useful when exportin
 
 .PARAMETER Collection
 ${HelpParam_Collection}
+
+.EXAMPLE
+Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\PT -Collection http://vsalm:8080/tfs/DefaultCollection
+Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\PT\Scrum directory in the local computer.
+
+.EXAMPLE
+Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\PT -Collection http://vsalm:8080/tfs/DefaultCollection -NewName 'MyScrum' -NewDescription 'A customized version of the Scrum process template'
+Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\PT\MyScrum directory in the local computer. Notice that the process template is being renamed from Scrum to MyScrum, so that it can be later reimported as a new process template instead of overwriting the original one.
+
 
 .INPUTS
 Microsoft.TeamFoundation.Client.TfsTeamProjectCollection

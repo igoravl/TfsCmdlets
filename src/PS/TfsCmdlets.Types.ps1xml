@@ -167,13 +167,92 @@
       </ScriptProperty>
     </Members>
   </Type>
+
   <Type>
     <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition</Name>
     <Members>
       <ScriptProperty>
-        <Name>FolderPath</Name>
+        <Name>ParentPath</Name>
         <GetScriptBlock>
           $this.Parent.Path
+        </GetScriptBlock>
+      </ScriptProperty> 
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/')+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.Length - $this.Name.Length - 1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.Length - $this.Name.Length - 1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/')+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ScopeName</Name>
+        <GetScriptBlock>
+          ($this.Path -split '/')[1]
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Parent.Path
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/', $this.QueryHierarchy.Name.Length+2)+1)
         </GetScriptBlock>
       </ScriptProperty>
     </Members>

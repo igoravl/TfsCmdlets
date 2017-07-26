@@ -26,7 +26,16 @@ Function Get-TfsWorkItemQueryFolder
         [SupportsWildcards()]
         [Alias("Path")]
         [object]
-        $Folder,
+        $Folder = '**/*',
+
+        [Parameter()]
+        [ValidateSet('Personal', 'Shared', 'Both')]
+        [string]
+        $Scope = 'Both',
+
+        [Parameter()]
+        [timespan]
+        $Timeout = '00:00:10',
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -39,20 +48,20 @@ Function Get-TfsWorkItemQueryFolder
 
     Process
     {
-        if($Folder -is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder])
+        if($Folder -is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2])
         {
             return $Folder
         }
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        #$tpc = $tp.Store.TeamProjectCollection
+        $qh = $tp.GetQueryHierarchy2($false)
+        $qh.GetChildrenAsync().Wait()
 
-        if ($Folder -match '\*')
-        {
-            # To do a pattern-based search, needs to retrieve *all* folders and then filter them
-            return [TfsCmdlets.QueryHelper]::GetQueryFolderFromPath($tp.QueryHierarchy, $null) | Where-Object Path -like $Folder
-        }
+        $qh = $tp.GetQueryHierarchy2($true)
+        $qh.GetChildrenAsync().Wait()
 
-        return [TfsCmdlets.QueryHelper]::GetQueryFolderFromPath($tp.QueryHierarchy, $Folder)
+        $rootFolders = ($qh.GetChildren() | Where-Object {$Scope -eq 'Both' -or $_.IsPersonal -eq ($Scope -eq 'Personal')})
+        
+        $rootFolders | _GetQueryFoldersRecursively | Where-Object {($_.Path -like $Folder) -or ($_.Name -like $Folder)} | Sort-Object ParentPath, Name
     }
 }

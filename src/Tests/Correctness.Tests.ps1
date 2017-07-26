@@ -98,7 +98,7 @@ $allFunctions | Foreach-Object {
             $parameterDocs = $cmdDocs.Parameters.parameter
 
             It "Parameters should have a description" {
-                $paramsWithoutDesc = ($parameterDocs | Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
+                $paramsWithoutDesc = ($parameterDocs | Where-Object Name -NotIn @('WhatIf', 'Confirm') |  Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
                 $paramsWithoutDesc | Should BeNullOrEmpty
             }
 

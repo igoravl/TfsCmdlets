@@ -26,10 +26,12 @@ Function Get-TfsWorkItemQuery
         [SupportsWildcards()]
         [Alias("Path")]
         [object]
-        $Query = '*',
+        $Query = '**/*',
 
         [Parameter()]
-        $Folder,
+        [ValidateSet('Personal', 'Shared', 'Both')]
+        [string]
+        $Scope = 'Both',
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -42,33 +44,18 @@ Function Get-TfsWorkItemQuery
 
     Process
     {
-        if($Query -is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])
+        if($Query -is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2])
         {
             return $Query
         }
 
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        #$tpc = $tp.Store.TeamProjectCollection
+        $qh = $tp.GetQueryHierarchy2($true)
+        $qh.GetChildrenAsync().Wait()
 
-        if ($Folder)
-        {
-            Write-Verbose "Get-TfsWorkItemQuery: Limiting search to folder(s) $Folder"
-            
-            $folders = (_FindQueryFolder $Folder $tp.QueryHierarchy)
+        $rootFolders = ($qh.GetChildren() | Where-Object {$Scope -eq 'Both' -or $_.IsPersonal -eq ($Scope -eq 'Personal')})
+        
+        $rootFolders | _GetQueriesRecursively | Where-Object {($_.Path -like $Query) -or ($_.Name -like $Query) -or ($_.RelativePath -like $Query)} | Sort-Object ParentPath, Name
 
-            if (-not $folders)
-            {
-                throw "Query folder $Folder is invalid or missing. Be sure you provided the full path (e.g. 'Shared Queries/Current Iteration') instead of just the folder name ('Current Iteration')"
-            }
-
-            $root = $folders.Values[0]
-        }
-        else
-        {
-			Write-Verbose "Get-TfsWorkItemQuery: -Folder argument missing. Searching entire team project"
-            $root = $tp.QueryHierarchy
-        }
-
-        return _FindQuery $Query $root
     }
 }

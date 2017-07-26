@@ -36,3 +36,49 @@ ${File:CSharp\QueryHelper.cs}
 '@
 }
 
+Function _GetQueryFoldersRecursively
+{
+    Param
+    (
+        [Parameter(ValueFromPipeline=$true)]
+        [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2]
+        $Folder
+    )
+    
+    Process
+    {
+        $Folder.GetChildrenAsync().Wait()
+
+        $Folder.GetChildren() | Where-Object {$_ -Is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2]} | ForEach-Object {
+            Write-Output $_
+            _GetQueryFoldersRecursively $_
+        }
+    }
+}
+
+Function _GetQueriesRecursively
+{
+    Param
+    (
+        [Parameter(ValueFromPipeline=$true)]
+        [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2]
+        $Folder
+    )
+    
+    Process
+    {
+        $Folder.GetChildrenAsync().Wait()
+
+        foreach($i in $Folder.GetChildren())
+        {
+            if ($i -is [Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2])
+            {
+                _GetQueriesRecursively $i
+            }
+            else
+            {
+                Write-Output $i
+            }
+        }
+    }
+}

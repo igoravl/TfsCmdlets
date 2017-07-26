@@ -9,11 +9,21 @@ namespace TfsCmdlets
         {
             return folder.Select<QueryItem, QueryDefinition>(item =>
             {
-                return item.Path == path ?
-                    item as QueryDefinition : item is QueryFolder ?
-                    GetQueryDefinitionFromPath(item as QueryFolder, path) : null;
+                return (path == null) || (item.Path == path) ?
+                    item as QueryDefinition : 
+                    item is QueryFolder ? GetQueryDefinitionFromPath(item as QueryFolder, path) : null;
             })
             .FirstOrDefault(item => item != null);
+        }
+
+        public static QueryFolder GetPersonalFolder(QueryHierarchy root)
+        {
+            return root.OfType<QueryFolder>().FirstOrDefault(item => item.IsPersonal);
+        }
+
+        public static QueryFolder GetSharedFolder(QueryHierarchy root)
+        {
+            return root.OfType<QueryFolder>().FirstOrDefault(item => !item.IsPersonal);
         }
 
         public static QueryFolder GetQueryFolderFromPath(QueryFolder folder, string path)
