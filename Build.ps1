@@ -63,7 +63,7 @@ try
 
     # Set build name
 
-    $BuildName = "$($VersionMetadata.BranchName.Replace('/', '_')).$($VersionMetadata.LegacySemver).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
+    $BuildName = "$($VersionMetadata.LegacySemver).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8)).branch_$($VersionMetadata.BranchName.Replace('/', '-'))"
     Write-Host "- Version $($VersionMetadata.LegacySemver)+$ProjectMetadataInfo, build $BuildName`n" -ForegroundColor Cyan
 
     if ($env:BUILD_BUILDURI)
