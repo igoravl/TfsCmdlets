@@ -247,18 +247,88 @@ Task PackageChocolatey -Depends Build {
 
 Task PackageMsi -Depends Build {
 
-    $WixProjectPath = Join-Path $SolutionDir 'Setup\TfsCmdlets.Setup.wixproj'
-    $WixPackagesConfigFile = Join-Path $SolutionDir 'Setup\packages.config'
-    $MSBuildArgs = """$WixProjectPath"" /p:WixProductVersion=$Version /p:WixFileVersion=$SemVer ""/p:WixProductName=$ModuleName - $ModuleDescription"" ""/p:WixAuthor=$ModuleAuthor"" /p:SourceDir=$ModuleDir\ /p:VisualStudioVersion=$VisualStudioVersion.0"
+    $WixProjectName = 'TfsCmdlets.Setup'
+    $WixProjectFileName = "$WixProjectName.wixproj"
+    $WixProjectDir = Join-Path $SolutionDir 'Setup'
+    $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
+    $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
+    $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
+    $WixSuppressedWarnings = '1076'
 
     Write-Verbose "Restoring WiX Nuget package"
 
-    & $NugetExePath Restore $WixPackagesConfigFile -PackagesDirectory $NugetPackagesDir -Verbosity Detailed *>&1 | Write-Verbose
+    if (-not (Test-Path $WixToolsDir))
+    {
+        & $NugetExePath Install Wix -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
+    }
 
-    Write-Verbose "Running MSBuild.exe with arguments [ $MSBuildArgs ]"
+    if(-not (Test-Path $WixObjDir)) { New-Item $WixObjDir -ItemType Directory | Write-Verbose }
+    if(-not (Test-Path $WixBinDir)) { New-Item $WixBinDir -ItemType Directory | Write-Verbose }
+    
+    $HeatArgs = @(
+        'dir', $ModuleDir,
+        "-cg", "ModuleComponent",
+        "-dr", "ModuleFolder",
+        "-scom",
+        "-sreg",
+        "-srd",
+        "-var", "var.SourceDir",
+        "-v",
+        "-ag",
+        "-sfrag",
+        "-sw$WixSuppressedWarnings",
+        "-out", "$WixObjDir\_ModuleComponent_dir.wxs"
+    )
+    Write-Verbose "Heat.exe $($HeatArgs -join ' ')"
+    & (Join-Path $WixToolsDir 'Heat.exe') $HeatArgs *>&1 | Write-Verbose
 
-    exec { MSBuild.exe '--%' $MSBuildArgs } | Write-Verbose
+    $CandleArgs = @(
+        "-sw$WixSuppressedWarnings",
+        "-dPRODUCTVERSION=$WixVersion",
+        "-d`"PRODUCTNAME=$ModuleName - $ModuleDescription`"",
+        "-d`"AUTHOR=$ModuleAuthor`"",
+        "-dSourceDir=$ModuleDir\",
+        "-dSolutionDir=$SolutionDir\",
+        "-dConfiguration=$Configuration"
+        "-dOutDir=$WixBinDir\"
+        "-dPlatform=x86",
+        "-dProjectDir=$WixProjectDir\",
+        "-dProjectExt=.wixproj",
+        "-dProjectFileName=$WixProjectFileName",
+        "-dProjectName=$WixProjectName"
+        "-dProjectPath=$WixProjectDir\$WixProjectFileName",
+        "-dTargetDir=$WixBinDir\",
+        "-dTargetExt=.msi"
+        "-dTargetFileName=$ModuleName-$NugetPackageVersion.msi",
+        "-dTargetName=$ModuleName-$NugetPackageVersion",
+        "-dTargetPath=$WixBinDir\$ModuleName-$NugetPackageVersion.msi",
+        "-I$WixProjectDir",
+        "-out", "$WixObjDir\",
+        "-arch", "x86",
+        "-ext", "$WixToolsDir\WixUtilExtension.dll",
+        "-ext", "$WixToolsDir\WixUIExtension.dll",
+        "$WixProjectDir\Product.wxs",
+        "$WixObjDir\_ModuleComponent_dir.wxs"
+    ) 
+    Write-Verbose "Candle.exe $($CandleArgs -join ' ')"
+    & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose
 
+    $LightArgs = @(
+        "-out", "$WixBinDir\$ModuleName-$NugetPackageVersion.msi",
+        "-pdbout", "$WixBinDir\$ModuleName-$NugetPackageVersion.wixpdb",
+        "-sw1076",
+        "-cultures:null", 
+        "-ext", "$WixToolsDir\WixUtilExtension.dll",
+        "-ext", "$WixToolsDir\WixUIExtension.dll",
+        "-sval"
+        "-contentsfile", "$WixObjDir\$WixProjectFileName.BindContentsFileListnull.txt",
+        "-outputsfile", "$WixObjDir\$WixProjectFileName.BindOutputsFileListnull.txt"
+        "-builtoutputsfile", "$WixObjDir\$WixProjectFileName.BindBuiltOutputsFileListnull.txt"
+        "-wixprojectfile", "$WixProjectDir$WixProjectFileName", "$WixObjDir\Product.wixobj", "$WixObjDir\_ModuleComponent_dir.wixobj"
+    )
+    Write-Verbose "Light.exe $($LightArgs -join ' ')"
+    & (Join-Path $WixToolsDir 'Light.exe') $LightArgs *>&1 | Write-Verbose
+    
     if(-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
     Copy-Item "$WixOutputPath\*.msi" -Destination $MSIDir -Force

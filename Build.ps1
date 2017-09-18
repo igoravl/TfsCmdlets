@@ -90,32 +90,6 @@ try
     Get-Module psake | Remove-Module
     Import-Module $psakeModulePath
 
-    # Restore/install vswhere
-
-    Write-Verbose "Restoring vswhere (if needed)"
-
-    $vswherePath = Join-Path $SolutionDir 'packages\vswhere\tools\vswhere.exe'
-
-    if (-not (Test-Path $vswherePath -PathType Leaf))
-    {
-        & $NugetExePath Install vswhere -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
-    }
-    else
-    {
-        Write-Verbose "FOUND! Skipping..."    
-    }
-
-    # Detect installed Visual Studio version
-
-    $vsVersion = & $vswherePath -latest -legacy -property installationVersion -format value -version [12.0
-
-    if (-not $vsVersion)
-    {
-        throw "Visual Studio installation not found. It usually means a supported VS version (2013 and newer) is not currently installed."
-    }
-
-    Write-Verbose "Found Visual Studio $vsVersion"
-
     # Run Psake
 
     $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent)
@@ -132,7 +106,6 @@ try
         Version = "$($VersionMetadata.MajorMinorPatch).$($ProjectBuildNumber)";
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
         BuildName = "$BuildName";
-        VisualStudioVersion = ([version]$vsVersion).Major;
         SemVer = $VersionMetadata.LegacySemVer
         VersionMetadata = $VersionMetadata 
     }
