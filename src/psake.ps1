@@ -163,24 +163,32 @@ Task CleanOutputDir {
 
 Task DownloadTfsNugetPackage {
 
-    Write-Verbose "Restoring Microsoft.TeamFoundationServer.ExtendedClient Nuget package (if needed)"
+    $TfsPackageNames = @(
+        'Microsoft.TeamFoundationServer.ExtendedClient',
+        'Microsoft.VisualStudio.Services.ServiceHooks.WebApi'
+    )
 
-    if (-not (Test-Path (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient') -PathType Container))
+    foreach($package in $TfsPackageNames) 
     {
-        Write-Verbose "Microsoft.TeamFoundationServer.ExtendedClient not found. Downloading from Nuget.org"
-        & $NugetExePath Install Microsoft.TeamFoundationServer.ExtendedClient -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
-    }
-    else
-    {
-        Write-Verbose "FOUND! Skipping..."
-    }
+        Write-Verbose "Restoring $package Nuget package (if needed)"
 
-    $TargetDir = (Join-Path $ModuleDir 'Lib')
+        if (-not (Test-Path (Join-Path $NugetPackagesDir $package) -PathType Container))
+        {
+            Write-Verbose "$package not found. Downloading from Nuget.org"
+            & $NugetExePath Install $package -ExcludeVersion -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
+        }
+        else
+        {
+            Write-Verbose "FOUND! Skipping..."
+        }
 
-    if (-not (Test-Path $TargetDir -PathType Container)) 
-    {
-        Write-Verbose "Creating folder $TargetDir"
-        New-Item $TargetDir -ItemType Directory | Out-Null
+        $TargetDir = (Join-Path $ModuleDir 'Lib')
+
+        if (-not (Test-Path $TargetDir -PathType Container)) 
+        {
+            Write-Verbose "Creating folder $TargetDir"
+            New-Item $TargetDir -ItemType Directory | Out-Null
+        }
     }
 
     Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
