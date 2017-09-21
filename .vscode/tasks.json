@@ -14,7 +14,7 @@
         "-Targets",
     ],
     "windows": {
-        "command": "c:\\windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe"
+        "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe"
     },
     "showOutput": "always",
     "tasks": [
