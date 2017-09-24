@@ -1,4 +1,4 @@
-Function Get-TfsServiceHookNotification
+Function Get-TfsServiceHookNotificationHistory
 {
     Param
     (
