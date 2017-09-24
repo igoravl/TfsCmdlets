@@ -25,6 +25,11 @@
             "suppressTaskName": false
         },
         {
+            "taskName": "Package",
+            "showOutput": "always",
+            "suppressTaskName": false
+        },
+        {
             "taskName": "Test",
             "showOutput": "always",
             "isTestCommand": true,
