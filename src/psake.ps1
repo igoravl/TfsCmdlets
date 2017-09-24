@@ -125,7 +125,7 @@ Task Test -Depends Build {
 
     Write-Verbose "Restoring Pester Nuget package (if needed)"
 
-    $m = Get-Module Pester
+    $m = Get-Module Pester -ListAvailable
 
     if ((-not $m) -and (-not (Test-Path (Join-Path $NugetPackagesDir 'Pester') -PathType Container)))
     {
