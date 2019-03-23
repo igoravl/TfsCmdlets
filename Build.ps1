@@ -6,7 +6,7 @@ Param
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
-    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
+    $ModuleDescription = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server',
     $Targets = "Package",
     $RepoCreationDate = (Get-Date '2014-10-24')
 )
@@ -15,13 +15,11 @@ try
 {
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
 
-    Write-Verbose "Module being built from $SolutionDir"
+    Write-Verbose "SolutionDir: $SolutionDir"
 
     Push-Location $SolutionDir
 
     # Restore/install Nuget
-
-    Write-Verbose "Restoring Nuget client (if needed)"
 
     $PackagesDir = Join-Path $SolutionDir 'packages'
     $NugetExePath = Join-Path $SolutionDir 'nuget.exe'
@@ -29,6 +27,8 @@ try
     Write-Verbose "PackagesDir: $PackagesDir"
     Write-Verbose "NugetExePath: $NugetExePath"
     
+    Write-Verbose "Restoring Nuget client (if needed)"
+
     if (-not (Test-Path $PackagesDir -PathType Container))
     {
         Write-Verbose "Folder $PackagesDir not found. Creating folder."

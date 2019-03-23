@@ -5,30 +5,30 @@ Function Prompt
         $tfsPrompt = ''
         $promptPrefix = 'TFS'
 
-        if ($global:TfsServerConnection)
+        if ($script:TfsServerConnection)
         {
-            $tfsPrompt = $global:TfsServerConnection.Name
+            $tfsPrompt = $script:TfsServerConnection.Name
 
-            if ($tfsPrompt -like '*.visualstudio.com')
+            if (($tfsPrompt -like '*.visualstudio.com') -or ($tfsPrompt -like 'dev.azure.com/*'))
             {
-                $promptPrefix = 'VSTS'
+                $promptPrefix = 'AzDev'
                 $tfsPrompt = $tfsPrompt.SubString(0, $tfsPrompt.IndexOf('.'))
             }
             else
             {
-                if ($global:TfsTpcConnection)
+                if ($script:TfsTpcConnection)
                 {
-                    $tfsPrompt += "/$($global:TfsTpcConnection.Name)"
+                    $tfsPrompt += "/$($script:TfsTpcConnection.Name)"
                 }
 
-                if ($global:TfsProjectConnection)
+                if ($script:TfsProjectConnection)
                 {
-                    $tfsPrompt += "/$($global:TfsProjectConnection.Name)"
+                    $tfsPrompt += "/$($script:TfsProjectConnection.Name)"
                 }
 
-                if ($global:TfsTeamConnection)
+                if ($script:TfsTeamConnection)
                 {
-                    $tfsPrompt += "/$($global:TfsTeamConnection.Name)"
+                    $tfsPrompt += "/$($script:TfsTeamConnection.Name)"
                 }
             }
 
