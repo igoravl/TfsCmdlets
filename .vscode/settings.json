@@ -1,9 +1,9 @@
 {
     "files.exclude": {
-        "out/**/*": true,
-        "src/.vs/**/*": true,
-        "src/[Pp]ackages/**/*": true,
-        "src/[Ss]etup/bin/**/*": true,
-        "src/[Ss]etup/obj/**/*": true
+        "out": true,
+        "src/.vs": true,
+        "src/[Pp]ackages": true,
+        "src/[Ss]etup/bin": true,
+        "src/[Ss]etup/obj": true
     }
 }
