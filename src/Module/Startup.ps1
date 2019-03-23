@@ -43,16 +43,3 @@ if (-not [type]::GetType('TfsCmdlets.AssemblyResolver'))
     Write-Verbose 'Calling AssemblyResolver.Register()'
     [TfsCmdlets.AssemblyResolver]::Register($assemblies, ($VerbosePreference -eq 'Continue'))
 }
-
-# Load basic TFS client assemblies
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Common.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Client.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.WorkItemTracking.Client.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Build.Client.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Git.Client.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.VersionControl.Client.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Core.WebApi.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.SourceControl.WebApi.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.ProjectManagement.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.VisualStudio.Services.WebApi.dll')
-# Add-Type -Path (Join-Path $BinDir 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.dll')
