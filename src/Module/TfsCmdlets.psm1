@@ -578,3 +578,53 @@ if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvok
     }
 '@
 }
+
+Function Import-RequiredAssembly($assemblyName)
+{
+    Write-Verbose "Loading required assembly $assemblyName"
+
+    if (Test-LoadedAssembly $assemblyName)
+    {
+        Write-Verbose "Assembly $assemblyName already loaded; skipping"
+        return
+    }
+
+    Add-Type -Path (Join-Path $PSScriptRoot "lib/$($assemblyName).dll")
+}
+
+Function Test-LoadedAssembly($assemblyName)
+{
+    try
+    {
+        $asm = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object FullName -like "$assemblyName,*"
+
+        return $asm -is [System.Reflection.Assembly]
+    }
+    catch
+    {
+        return $false
+    }
+}
+
+Function Get-RestClient
+{
+    [CmdletBinding()]
+    [OutputType('Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase')]
+    Param
+    (
+        [Parameter(Mandatory=$true, Position=0)]
+        [string]
+        $Type,
+
+        [Parameter()]
+        [object] 
+        $Collection
+    )
+
+    Process
+    {
+        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+
+        return Invoke-GenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
+    }
+}

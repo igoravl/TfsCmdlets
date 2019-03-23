@@ -7,7 +7,7 @@
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     HelpInfoURI = 'https://github.com/igoravl/tfscmdlets/wiki/'
     ModuleVersion = '1.0.0.0' #${Version}
-    PowerShellVersion = '3.0'
+    PowerShellVersion = '5.1'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
     ScriptsToProcess = 'Startup.ps1'

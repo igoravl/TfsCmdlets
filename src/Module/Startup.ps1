@@ -1,12 +1,4 @@
-$binDir = (Join-Path $PSScriptRoot 'lib')
-$assemblyList = ''
-
-# foreach($a in Get-ChildItem $binDir)
-# {
-#      $assemblyList += "{""$($a.BaseName)"", @""$($a.FullName)""},`r`n"
-# }
-
-#uh][';/443# Initialize Shell
+# Initialize Shell
 
 if ($Host.UI.RawUI.WindowTitle -like "Team Foundation Server Shell*")
 {
@@ -24,6 +16,34 @@ if ($Host.UI.RawUI.WindowTitle -like "Team Foundation Server Shell*")
     . (Join-Path $PSScriptRoot 'Prompt.ps1')
 }
 
+# Configure assembly resolver
+
+Write-Verbose 'Registering custom Assembly Resolver'
+
+if (-not [type]::GetType('TfsCmdlets.AssemblyResolver'))
+{
+    Write-Verbose "Compiling $PSEdition version of the assembly resolver"
+
+    $sourcePath = (Join-Path $PSScriptRoot "_cs/$($PSEdition)AssemblyResolver.cs")
+    $sourceText = (Get-Content $sourcePath -Raw)
+
+    Add-Type -TypeDefinition $sourceText -Language CSharp
+
+    $libPath = (Join-Path $PSScriptRoot 'Lib')
+    $assemblies = [System.Collections.Generic.Dictionary[string,string]]::new()
+
+    Write-Verbose "Enumeration assemblies from $libPath"
+
+    foreach($f in (Get-ChildItem $libPath -Filter '*.dll'))
+    {
+        Write-Verbose "Adding $f to list of private assemblies"
+        $assemblies.Add($f.BaseName, $f.FullPath)
+    }
+
+    Write-Verbose 'Calling AssemblyResolver.Register()'
+    [TfsCmdlets.AssemblyResolver]::Register($assemblies, ($VerbosePreference -eq 'Continue'))
+}
+
 # Load basic TFS client assemblies
 # Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Common.dll')
 # Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.Client.dll')
@@ -36,9 +56,3 @@ if ($Host.UI.RawUI.WindowTitle -like "Team Foundation Server Shell*")
 # Add-Type -Path (Join-Path $BinDir 'Microsoft.TeamFoundation.ProjectManagement.dll')
 # Add-Type -Path (Join-Path $BinDir 'Microsoft.VisualStudio.Services.WebApi.dll')
 # Add-Type -Path (Join-Path $BinDir 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.dll')
-
-Set-Alias tfsrv Connect-TfsConfigurationServer
-Set-Alias tftpc Connect-TfsTeamProjectCollection
-Set-Alias tftp  Connect-TfsTeamProject
-Set-Alias gtftpc Get-TfsTeamProjectCollection
-Set-Alias gtftp  Get-TfsTeamProject
