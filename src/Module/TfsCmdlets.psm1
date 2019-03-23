@@ -1,47 +1,89 @@
-#
-# _InvokeGenericMethod.ps1
-#
+# Shared Functions
+
+Function New-ScriptBlock($EntryPoint, [string[]]$Dependency)
+{
+	$entryPoint = (Get-Item "function:$EntryPoint").Definition.Trim()
+	$paramSection = $entryPoint.Substring(0, $entryPoint.IndexOf("`n"))
+	$bodySection = $entryPoint.Substring($paramSection.Length) + "`n`n"
+	
+	$body = $paramSection
+
+	foreach($depFn in $Dependency)
+	{
+		$f = Get-Item "function:$depFn"
+
+		$body += "Function $f `n{`n"
+		$body += $f.Definition 
+		$body += "`n}`n`n"
+	}
+
+	$body += $bodySection
+
+	return [scriptblock]::Create($body)
+}
+
+Function Invoke-ScriptBlock($ScriptBlock, $Computer, $Credentials, $ArgumentList)
+{
+	if (-not $Computer)
+	{
+		return Invoke-Command -ScriptBlock $scriptBlock -ArgumentList $ArgumentList
+	}
+	elseif ($Computer -is [System.Management.Automation.Runspaces.PSSession])
+	{
+		return Invoke-Command -ScriptBlock $scriptBlock -Session $Computer -ArgumentList $ArgumentList
+	}
+
+	return Invoke-Command -ScriptBlock $scriptBlock -ComputerName $Computer -Credential $Credential -ArgumentList $ArgumentList
+}
+
+Function Test-RegistryValue
+{
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		$Path,
+
+		[Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		$Value
+	)
+
+	Process
+	{
+		try
+		{
+			Get-RegistryValue -Path $Path -Value $Value | Out-Null
+			return $true
+		}
+		catch {}
+
+		return $false
+
+	}
+}
+
+Function Get-RegistryValue
+{
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		$Path,
+
+		[Parameter(Mandatory=$true)]
+		[ValidateNotNullOrEmpty()]
+		$Value
+	)
+
+	Process
+	{
+		return Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value
+	}
+}
 
 function Invoke-GenericMethod
 {
-    <#
-    .Synopsis
-       Invokes Generic methods on .NET Framework types
-    .DESCRIPTION
-       Allows the caller to invoke a Generic method on a .NET object or class with a single function call.  Invoke-GenericMethod handles identifying the proper method overload, parameters with default values, and to some extent, the same type conversion behavior you expect when calling a normal .NET Framework method from PowerShell.
-    .PARAMETER InputObject
-       The object on which to invoke an instance generic method.
-    .PARAMETER Type
-       The .NET class on which to invoke a static generic method.
-    .PARAMETER MethodName
-       The name of the generic method to be invoked.
-    .PARAMETER GenericType
-       One or more types which are specified when calling the generic method.  For example, if a method's signature is "string MethodName<T>();", and you want T to be a String, then you would pass "string" or ([string]) to the Type parameter of Invoke-GenericMethod.
-    .PARAMETER ArgumentList
-       The arguments to be passed on to the generic method when it is invoked.  The order of the arguments must match that of the .NET method's signature; named parameters are not currently supported.
-    .EXAMPLE
-       Invoke-GenericMethod -InputObject $someObject -MethodName SomeMethodName -GenericType string -ArgumentList $arg1,$arg2,$arg3
-
-       Invokes a generic method on an object.  The signature of this method would be something like this (containing 3 arguments and a single Generic type argument):  object SomeMethodName<T>(object arg1, object arg2, object arg3);
-    .EXAMPLE
-       $someObject | Invoke-GenericMethod -MethodName SomeMethodName -GenericType string -ArgumentList $arg1,$arg2,$arg3
-
-       Same as example 1, except $someObject is passed to the function via the pipeline.
-    .EXAMPLE
-       Invoke-GenericMethod -Type SomeClass -MethodName SomeMethodName -GenericType string,int -ArgumentList $arg1,$arg2,$arg3
-
-       Invokes a static generic method on a class.  The signature of this method would be something like this (containing 3 arguments and two Generic type arguments):  static object SomeMethodName<T1,T2> (object arg1, object arg2, object arg3);
-    .INPUTS
-       System.Object
-    .OUTPUTS
-       System.Object
-    .NOTES
-       Known issues:
-
-       Ref / Out parameters and [PSReference] objects are currently not working properly, and I don't think there's a way to fix that from within PowerShell.  I'll have to expand on the
-       PSGenericTypes.MethodInvoker.InvokeMethod() C# code to account for that.
-    #>
-
     [CmdletBinding(DefaultParameterSetName = 'Instance')]
     param (
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ParameterSetName = 'Instance')]

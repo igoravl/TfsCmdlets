@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -7,18 +6,19 @@ namespace TfsCmdlets
 {
     public class AssemblyResolver
     {
-        private static bool IsVerbose = ("$VerbosePreference" == "Continue");
+        private static bool IsVerbose {get;set;}
 
-        public static readonly Dictionary<string, string> PrivateAssemblies = new Dictionary<string, string>
-        {
-            $assemblyList
-        };
+        public static Dictionary<string, string> PrivateAssemblies {get;set;}
 
         public static readonly Dictionary<string, Assembly> LoadedAssemblies = new Dictionary<string, Assembly>();
+
         public static readonly Dictionary<string, object> LogEntries = new Dictionary<string, object>();
 
-        public static void Register()
+        public static void Register(Dictionary<string, string> privateAssemblies, bool verbose = false)
         {
+            PrivateAssemblies = privateAssemblies;
+            IsVerbose = verbose;
+
             AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
             {
                 try

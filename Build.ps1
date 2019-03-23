@@ -75,7 +75,7 @@ try
 
     Write-Verbose "Restoring Psake (if needed)"
 
-    $psakeModulePath = Join-Path $SolutionDir 'packages\psake\tools\psake.psm1'
+    $psakeModulePath = Join-Path $SolutionDir 'packages\psake\tools\psake\psake.psm1'
 
     if (-not (Test-Path $psakeModulePath -PathType Leaf))
     {

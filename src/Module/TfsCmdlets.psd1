@@ -6,15 +6,20 @@
     RootModule = 'TfsCmdlets.psm1'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     HelpInfoURI = 'https://github.com/igoravl/tfscmdlets/wiki/'
-    ModuleVersion = '${Version}'
+    ModuleVersion = '1.0.0.0' #${Version}
     PowerShellVersion = '3.0'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
     ScriptsToProcess = 'Startup.ps1'
-    FileList = @(${FileList})
+    AliasesToExport = @('tfsrv', 'tftpc', 'tftp', 'gtftpc', 'gtftp')
+    VariablesToExport = @()
+    CmdletsToExport = @()
+    FunctionsToExport = @()
+    FileList = @() 
+    NestedModules = @() 
 
     PrivateData = @{ 
-        Tags = @('TfsCmdlets', 'TFS', 'VSTS', 'PowerShell')
+        Tags = @('TfsCmdlets', 'TFS', 'VSTS', 'PowerShell', 'Azure', 'Azure DevOps', 'DevOps', 'ALM', 'Team Foundation Server')
         Branch = '${BranchName}'
         Commit = '${Commit}'
         Build = '${BuildName}'

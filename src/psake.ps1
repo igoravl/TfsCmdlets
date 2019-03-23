@@ -9,7 +9,7 @@ Properties {
 
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
-    $ProjectDir = Join-Path $SolutionDir 'PS'
+    $ProjectDir = Join-Path $SolutionDir 'Module'
     $TestsDir = Join-Path $SolutionDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
@@ -57,68 +57,77 @@ Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, 
 
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage {
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, CopyFiles, CopyLibraries, UpdateModuleManifest {
 
-    $NestedModules = (Get-ChildItem $ProjectDir -Directory | ForEach-Object { "'$($_.Name)\$($_.Name).psm1'" }) -join ','
-    $FileList = (Get-ChildItem $ProjectDir\*.* -Exclude '*.pssproj' | ForEach-Object { "'$($_.FullName.SubString($ProjectDir.Length+1))'" }) -join ','
-    $TfsOmNugetVersion = (& $NugetExePath list -Source (Join-Path $NugetPackagesDir 'Microsoft.TeamFoundationServer.ExtendedClient'))
-    $rootModule = Join-Path $ModuleDir 'TfsCmdlets.psm1'
-    $moduleMetadata = Join-Path $ModuleDir 'TfsCmdlets.psd1'
+}
 
-    Write-Verbose "Copying root module files (*.ps*) to the output folder"
+Task CleanOutputDir {
 
-    # Copy root files to output dir
-    foreach($f in (Get-ChildItem $ProjectDir\*.ps* -Exclude *.pssproj))
-    {
-        Write-Verbose "$(Join-Path $ModuleDir $f.Name)"
-        $f | Get-Content | Out-String | Replace-Token | Out-File (Join-Path $ModuleDir $f.Name) -Encoding Default
-    }
-
-    Write-Verbose "Copying binary files (images etc.) to the output folder"
-
-    Copy-Item $ProjectDir\*.* -Destination $ModuleDir -Exclude *.pssproj, *.ps* -PassThru | Write-Verbose
-   
-    Write-Verbose "Copying sub-module files to the output folder"
-   
-    # Create sub-modules
-    foreach($d in (Get-ChildItem $ProjectDir -Directory -Exclude bin))
-    {
-        $subModuleName = $d.Name
-        $subModuleSrcDir = Join-Path $ProjectDir $subModuleName
-        $subModuleOutDir = Join-Path $ModuleDir $subModuleName
-        $subModuleOutFile = Join-Path $subModuleOutDir "$subModuleName.psm1"
-
-        if ($Configuration -eq 'Release')
-        {
-            Write-Verbose "Merging all files from the $subModuleName folder in a single file ($subModuleName.psm1)"
-            
-            # Merge individual files in a single module file
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | Get-Content | Out-String | Replace-Token | Out-File $rootModule -Encoding Default -Append
-        }
-        else
-        {
-            Write-Verbose "Dot-sourcing files from the $subModuleName folder and copying individual files"
+    Write-Verbose "Cleaning output path $ModuleDir"
     
-            if (-not (Test-Path $subModuleOutDir -PathType Container)) { New-Item $subModuleOutDir -ItemType Directory -Force | Out-Null }
-
-            # Dot-source individual files in the module file
-            Get-ChildItem $subModuleSrcDir\*.ps1 | Sort-Object | ForEach-Object {
-                $inputFile = $_
-                $outputFile = Join-Path $subModuleOutDir (Split-Path $_ -Leaf)
-                Get-Content -Path $inputFile | Out-String | Replace-Token | Out-File $outputFile -Encoding Default
-            }
-
-            Get-ChildItem $subModuleOutDir\*.ps1 | Sort-Object | ForEach-Object { ". $($_.FullName)`r`n" } | Replace-Token | Out-File $subModuleOutFile -Encoding Default
-        }
+    if (Test-Path $ModuleDir -PathType Container)
+    { 
+        Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null
     }
 
-    # Build function list for export
+    New-Item $ModuleDir -ItemType Directory -Force | Out-Null
+}
 
-    Write-Verbose 'Build function list for Export-ModuleMember'
+Task CopyFiles {
 
-    $functionList = [string] ((Get-ChildItem -Path $ProjectDir -Include '*-Tfs*.ps1' -Recurse | Select -ExpandProperty BaseName | ForEach-Object {"'$_'"}) -join ',')
+    Write-Verbose "Copying root module files to the output folder"
 
-    "Export-ModuleMember -Function @($functionList)" | Out-File $rootModule -Append -Encoding default
+    # Copy module files to output dir
+    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force
+}
+
+Task CopyLibraries {
+
+    Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
+    
+    foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
+    {
+        try
+        { 
+            foreach ($f in (Get-ChildItem $d\*.dll -Recurse -Exclude *.resources.dll))
+            {
+                $SrcPath = $f.FullName
+                $DstPath = Join-Path $TargetDir $f.Name
+
+                if (-not (Test-Path $DstPath))
+                {
+                    Write-Verbose "Copying file $f"
+                    Copy-Item $SrcPath $DstPath -Force 
+                }
+            }
+        } 
+        catch
+        {
+            Write-Warning "Error copying file $f to output folder: $_"
+        }
+        finally 
+        {
+        }
+    }
+}
+
+Task UpdateModuleManifest {
+
+    $fileList = (Get-ChildItem -Path $ProjectDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
+    $functionList = (Get-ChildItem -Path $ProjectDir\**\*-*.ps1 | Select-Object -ExpandProperty BaseName | Sort-Object)
+    $nestedModuleList = (Get-ChildItem -Path $ProjectDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
+    
+    $PrivateData = @{
+        Branch = "${BranchName}"
+        Build = "${BuildName}"
+        Commit = "${Commit}"
+        TfsClientVersion = "${TfsOmNugetVersion}"
+        PreRelease = "${PreRelease}"
+    }
+    
+    Write-Verbose 'Updating module manifest file - setting NestedModules, FileList, FunctionsToExport'
+
+    Update-ModuleManifest -Path $ModuleManifestPath -Author $ModuleAuthor -CompanyName $ModuleAuthor -Copyright "(c) 2014 ${ModuleAuthor}. All rights reserved." -Description $ModuleDescription -NestedModules $nestedModuleList -FileList $fileList -FunctionsToExport $functionList -ModuleVersion $Version -PrivateData $PrivateData
 }
 
 Task Test -Depends Build {
@@ -151,14 +160,7 @@ Task Test -Depends Build {
     $quiet = ($VerbosePreference -ne 'Continue')
     
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict}
-}
-
-Task CleanOutputDir {
-
-    if (Test-Path $ModuleDir -PathType Container) { Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null }
-
-    New-Item $ModuleDir -ItemType Directory -Force | Out-Null
+        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Quiet}
 }
 
 Task DownloadTfsNugetPackage {
@@ -189,27 +191,6 @@ Task DownloadTfsNugetPackage {
             Write-Verbose "Creating folder $TargetDir"
             New-Item $TargetDir -ItemType Directory | Out-Null
         }
-    }
-
-    Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
-    
-    foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
-    {
-        try
-        { 
-            foreach ($f in (Get-ChildItem $d\*.dll -Recurse -Exclude *.resources.dll))
-            {
-                $SrcPath = $f.FullName
-                $DstPath = Join-Path $TargetDir $f.Name
-
-                if (-not (Test-Path $DstPath))
-                {
-                    Copy-Item $SrcPath $DstPath -Force 
-                }
-            }
-        } 
-        finally 
-        {}
     }
 }
 
@@ -440,58 +421,58 @@ Task GenerateNuspec {
     Set-Content -Path $NugetSpecPath -Value $nuspec
 }
 
-Function Replace-Token
-{
-    [CmdletBinding()]
-    Param
-    (
-        [Parameter(ValueFromPipeline=$true)]
-        [string]
-        $InputObject
-    )
+# Function Replace-Token
+# {
+#     [CmdletBinding()]
+#     Param
+#     (
+#         [Parameter(ValueFromPipeline=$true)]
+#         [string]
+#         $InputObject
+#     )
 
-    Begin
-    {
-        $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens[0]
-    }
+#     Begin
+#     {
+#         $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens[0]
+#     }
 
-    Process
-    {
-        $m = $InputObject | Select-String -Pattern '\${(?<VarName>.+?)}' -AllMatches
+#     Process
+#     {
+#         $m = $InputObject | Select-String -Pattern '\${(?<VarName>.+?)}' -AllMatches
 
-        if (-not $m)
-        {
-            return $InputObject
-        }
+#         if (-not $m)
+#         {
+#             return $InputObject
+#         }
 
-        $foundTokens = $m.Matches | ForEach-Object { $_.Groups[1].Value } | Select -Unique
-        $result = $InputObject
+#         $foundTokens = $m.Matches | ForEach-Object { $_.Groups[1].Value } | Select -Unique
+#         $result = $InputObject
 
-        foreach($t in $foundTokens)
-        {
-            if ($Tokens.$t)
-            {
-                $result = $result.Replace("$`{$t}", $Tokens.$t)
-            }
-            elseif ($VersionMetadata.$t)
-            {
-                $result = $result.Replace("`${$t}", $VersionMetadata.$t)
-            }
-            elseif ($t -like 'File:*')
-            {
-                $fileContents = (Get-Content -Path (Join-Path $SolutionDir $t.SubString($t.IndexOf(':')+1)) -Raw) | Replace-Token
-                $result = $result.Replace("`${$t}", $fileContents)
-            }
-            elseif (Get-Variable -Name $t)
-            {
-                $result = $result.Replace("`${$t}", (Get-Variable $t).Value)
-            }
-            else
-            {
-                throw "Invalid token ${$t}"
-            }
-        }
+#         foreach($t in $foundTokens)
+#         {
+#             if ($Tokens.$t)
+#             {
+#                 $result = $result.Replace("$`{$t}", $Tokens.$t)
+#             }
+#             elseif ($VersionMetadata.$t)
+#             {
+#                 $result = $result.Replace("`${$t}", $VersionMetadata.$t)
+#             }
+#             elseif ($t -like 'File:*')
+#             {
+#                 $fileContents = (Get-Content -Path (Join-Path $SolutionDir $t.SubString($t.IndexOf(':')+1)) -Raw) | Replace-Token
+#                 $result = $result.Replace("`${$t}", $fileContents)
+#             }
+#             elseif (Get-Variable -Name $t)
+#             {
+#                 $result = $result.Replace("`${$t}", (Get-Variable $t).Value)
+#             }
+#             else
+#             {
+#                 throw "Invalid token ${$t}"
+#             }
+#         }
 
-        return $result
-    }
-}
+#         return $result
+#     }
+# }
