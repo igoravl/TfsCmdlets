@@ -11,13 +11,19 @@
 Function Get-TfsRegisteredConfigurationServer
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Client.RegisteredConfigurationServer])]
+    [OutputType('Microsoft.TeamFoundation.Client.RegisteredConfigurationServer' )]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
         [string]
         $Name = "*"
     )
+
+    Begin
+    {
+        # Import-RequiredAssembly 'Microsoft.TeamFoundation.Common'
+        Import-RequiredAssembly 'Microsoft.TeamFoundation.Client'
+    }
 
     Process
     {
