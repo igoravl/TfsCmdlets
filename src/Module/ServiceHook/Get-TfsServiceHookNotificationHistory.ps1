@@ -14,7 +14,7 @@ Function Get-TfsServiceHookNotificationHistory
     Process
     {
         $tpc = Get-TfsTeamProjectCollection -Collection $Collection
-        $client = Get-TfsHttpClient -Type 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient' -Collection $tpc
+        $client = Get-RestClient -Type 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient' -Collection $tpc
 
         if ($Subscription -is [Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription])
         {

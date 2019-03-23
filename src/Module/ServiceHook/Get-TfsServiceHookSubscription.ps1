@@ -16,7 +16,7 @@ Function Get-TfsServiceHookSubscription
     Process
     {
         $tpc = Get-TfsTeamProjectCollection -Collection $Collection
-        $client = Get-TfsHttpClient -Type 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient' -Collection $tpc
+        $client = Get-RestClient -Type 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient' -Collection $tpc
 
         $client.QuerySubscriptionsAsync().Result
     }
