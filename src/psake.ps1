@@ -26,7 +26,9 @@ Properties {
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
-
+    $CompatiblePSEditions = @('Core', 'Desktop')
+    $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
+    
     # Nuget packaging
     $NugetExePath = Join-Path $SolutionDir 'nuget.exe'
     $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
@@ -57,7 +59,7 @@ Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, 
 
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, CopyFiles, CopyLibraries, UpdateModuleManifest {
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, CopyFiles, CopyLibraries, PreProcessFiles, UpdateModuleManifest {
 
 }
 
@@ -83,32 +85,44 @@ Task CopyFiles {
 
 Task CopyLibraries {
 
-    Write-Verbose "Copying TFS Client Object Model assemblies to output folder"
-    
+    Write-Verbose "Copying TFS Client Object Model assemblies to output folder $TargetDir"
+
+    $TargetDir = (Join-Path $ModuleDir 'Lib')
+
+    if (-not (Test-Path $TargetDir -PathType Container)) 
+    {
+        Write-Verbose "Creating output folder $TargetDir"
+        New-Item $TargetDir -ItemType Directory | Out-Null
+    }
+
     foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
     {
         try
         { 
-            foreach ($f in (Get-ChildItem $d\*.dll -Recurse -Exclude *.resources.dll))
+            foreach ($f in (Get-ChildItem "$d\*.dll" -Recurse -Exclude *.resources.dll))
             {
                 $SrcPath = $f.FullName
                 $DstPath = Join-Path $TargetDir $f.Name
 
                 if (-not (Test-Path $DstPath))
                 {
-                    Write-Verbose "Copying file $f"
+                    Write-Verbose "Copying file $SrcPath to $DstPath"
                     Copy-Item $SrcPath $DstPath -Force 
                 }
             }
         } 
         catch
         {
-            Write-Warning "Error copying file $f to output folder: $_"
+            Write-Warning "Error copying file $f to output folder $TargetDir : $_"
         }
         finally 
         {
         }
     }
+}
+
+Task PreProcessFiles {
+
 }
 
 Task UpdateModuleManifest {
@@ -117,17 +131,25 @@ Task UpdateModuleManifest {
     $functionList = (Get-ChildItem -Path $ProjectDir\**\*-*.ps1 | Select-Object -ExpandProperty BaseName | Sort-Object)
     $nestedModuleList = (Get-ChildItem -Path $ProjectDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
     
-    $PrivateData = @{
-        Branch = "${BranchName}"
-        Build = "${BuildName}"
-        Commit = "${Commit}"
-        TfsClientVersion = "${TfsOmNugetVersion}"
-        PreRelease = "${PreRelease}"
-    }
-    
-    Write-Verbose 'Updating module manifest file - setting NestedModules, FileList, FunctionsToExport'
+    Write-Verbose "Updating module manifest file $ModuleManifestPath"
 
-    Update-ModuleManifest -Path $ModuleManifestPath -Author $ModuleAuthor -CompanyName $ModuleAuthor -Copyright "(c) 2014 ${ModuleAuthor}. All rights reserved." -Description $ModuleDescription -NestedModules $nestedModuleList -FileList $fileList -FunctionsToExport $functionList -ModuleVersion $Version -PrivateData $PrivateData
+    Update-ModuleManifest -Path $ModuleManifestPath `
+        -Author $ModuleAuthor `
+        -CompanyName $ModuleAuthor `
+        -Copyright $Copyright `
+        -Description $ModuleDescription `
+        -NestedModules $nestedModuleList `
+        -FileList $fileList `
+        -FunctionsToExport $functionList `
+        -ModuleVersion $Version `
+        -CompatiblePSEditions $CompatiblePSEditions `
+        -PrivateData @{
+            Branch = "${BranchName}"
+            Build = "${BuildName}"
+            Commit = "${Commit}"
+            TfsClientVersion = "${TfsOmNugetVersion}"
+            PreRelease = "${PreRelease}"
+        }
 }
 
 Task Test -Depends Build {
@@ -182,14 +204,6 @@ Task DownloadTfsNugetPackage {
         else
         {
             Write-Verbose "FOUND! Skipping..."
-        }
-
-        $TargetDir = (Join-Path $ModuleDir 'Lib')
-
-        if (-not (Test-Path $TargetDir -PathType Container)) 
-        {
-            Write-Verbose "Creating folder $TargetDir"
-            New-Item $TargetDir -ItemType Directory | Out-Null
         }
     }
 }
