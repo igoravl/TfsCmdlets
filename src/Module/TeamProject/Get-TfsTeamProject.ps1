@@ -57,7 +57,7 @@ Function Get-TfsTeamProject
     {
         if ($Current)
         {
-            return $global:TfsProjectConnection
+            return $script:TfsProjectConnection
         }
 
 		if ($Project -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])
@@ -84,9 +84,9 @@ Function Get-TfsTeamProject
 
 		if ($null -eq $Project)
 		{
-			if ($global:TfsProjectConnection)
+			if ($script:TfsProjectConnection)
 			{
-				return $global:TfsProjectConnection
+				return $script:TfsProjectConnection
 			}
 		}
 

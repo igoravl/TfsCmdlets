@@ -81,10 +81,10 @@ Function Connect-TfsConfigurationServer
 			throw "Error connecting to TFS"
 		}
 
-		$Global:TfsTeamConnection = $null
-		$Global:TfsProjectConnection = $null
-		$Global:TfsTpcConnection = $null
-		$Global:TfsServerConnection = $configServer
+		$script:TfsTeamConnection = $null
+		$script:TfsProjectConnection = $null
+		$script:TfsTpcConnection = $null
+		$script:TfsServerConnection = $configServer
 
 		if ($Passthru)
 		{

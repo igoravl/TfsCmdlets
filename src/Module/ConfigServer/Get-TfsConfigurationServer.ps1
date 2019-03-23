@@ -43,7 +43,7 @@ Function Get-TfsConfigurationServer
 	{
 		if ($Current)
 		{
-			return $Global:TfsServerConnection
+			return $script:TfsServerConnection
         }
 
 		if ($Server -is [Microsoft.TeamFoundation.Client.TfsConfigurationServer])
@@ -80,9 +80,9 @@ Function Get-TfsConfigurationServer
 
 		if ($null -eq $Server)
 		{
-			if ($Global:TfsServerConnection)
+			if ($script:TfsServerConnection)
 			{
-				return $Global:TfsServerConnection
+				return $script:TfsServerConnection
 			}
 		}
 

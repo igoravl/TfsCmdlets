@@ -93,10 +93,10 @@ Function Connect-TfsTeamProjectCollection
 			throw "Error connecting to team project collection $Collection ($_)"
 		}
 
-		$Global:TfsTeamConnection = $null
-		$Global:TfsProjectConnection = $null
-		$Global:TfsTpcConnection = $tpc
-		$Global:TfsServerConnection = $tpc.ConfigurationServer
+		$script:TfsTeamConnection = $null
+		$script:TfsProjectConnection = $null
+		$script:TfsTpcConnection = $tpc
+		$script:TfsServerConnection = $tpc.ConfigurationServer
 
 		if ($Passthru)
 		{

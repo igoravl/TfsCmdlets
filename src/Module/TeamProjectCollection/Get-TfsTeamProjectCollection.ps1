@@ -60,7 +60,7 @@ Function Get-TfsTeamProjectCollection
 	{
         if ($Current)
         {
-            return $Global:TfsTpcConnection
+            return $script:TfsTpcConnection
         }
 
 		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])
@@ -104,9 +104,9 @@ Function Get-TfsTeamProjectCollection
 
 		if ($null -eq $Collection)
 		{
-			if ($Global:TfsTpcConnection)
+			if ($script:TfsTpcConnection)
 			{
-				return $Global:TfsTpcConnection
+				return $script:TfsTpcConnection
 			}
 		}
 

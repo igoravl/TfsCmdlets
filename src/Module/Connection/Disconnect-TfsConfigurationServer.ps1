@@ -21,7 +21,7 @@ Function Disconnect-TfsConfigurationServer
 	{
         Disconnect-TfsTeamProjectCollection
 
-		if ($Global:TfsServerConnection)
+		if ($script:TfsServerConnection)
         {
 		    Remove-Variable -Name TfsServerConnection -Scope Global
 		}
