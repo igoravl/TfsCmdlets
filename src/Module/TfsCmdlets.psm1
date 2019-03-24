@@ -1,5 +1,7 @@
 # Shared Functions
 
+Write-Warning '*** PSM1 !!! ***'
+
 Function New-ScriptBlock($EntryPoint, [string[]]$Dependency)
 {
 	$entryPoint = (Get-Item "function:$EntryPoint").Definition.Trim()
