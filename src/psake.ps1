@@ -182,7 +182,7 @@ Task Test -Depends Build {
     $quiet = ($VerbosePreference -ne 'Continue')
     
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Quiet}
+        -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Quiet:$quiet}
 }
 
 Task DownloadTfsNugetPackage {
@@ -420,73 +420,17 @@ Task GenerateNuspec {
         <version>$NugetPackageVersion</version>
         <authors>$($SourceManifest.Author)</authors>
         <owners>$($SourceManifest.Author)</owners>
-        <licenseUrl>$($SourceManifest.PrivateData.LicenseUri)</licenseUrl>
-        <projectUrl>$($SourceManifest.PrivateData.ProjectUri)</projectUrl>
-        <iconUrl>$($SourceManifest.PrivateData.IconUri)</iconUrl>
+        <licenseUrl>$($SourceManifest.LicenseUri)</licenseUrl>
+        <projectUrl>$($SourceManifest.ProjectUri)</projectUrl>
+        <iconUrl>$($SourceManifest.IconUri)</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>$($SourceManifest.Description)</description>
-        <releaseNotes><![CDATA[$($SourceManifest.PrivateData.ReleaseNotes)]]></releaseNotes>
+        <releaseNotes><![CDATA[$($SourceManifest.ReleaseNotes)]]></releaseNotes>
         <copyright>$($SourceManifest.Copyright)</copyright>
-        <tags>$($SourceManifest.PrivateData.Tags -Join ' ')</tags>
+        <tags>$($SourceManifest.Tags -Join ' ')</tags>
     </metadata>
 </package>
 "@
 
     Set-Content -Path $NugetSpecPath -Value $nuspec
 }
-
-# Function Replace-Token
-# {
-#     [CmdletBinding()]
-#     Param
-#     (
-#         [Parameter(ValueFromPipeline=$true)]
-#         [string]
-#         $InputObject
-#     )
-
-#     Begin
-#     {
-#         $Tokens = (Get-Content (Join-Path $SolutionDir 'Tokens.json') | ConvertFrom-Json).Tokens[0]
-#     }
-
-#     Process
-#     {
-#         $m = $InputObject | Select-String -Pattern '\${(?<VarName>.+?)}' -AllMatches
-
-#         if (-not $m)
-#         {
-#             return $InputObject
-#         }
-
-#         $foundTokens = $m.Matches | ForEach-Object { $_.Groups[1].Value } | Select -Unique
-#         $result = $InputObject
-
-#         foreach($t in $foundTokens)
-#         {
-#             if ($Tokens.$t)
-#             {
-#                 $result = $result.Replace("$`{$t}", $Tokens.$t)
-#             }
-#             elseif ($VersionMetadata.$t)
-#             {
-#                 $result = $result.Replace("`${$t}", $VersionMetadata.$t)
-#             }
-#             elseif ($t -like 'File:*')
-#             {
-#                 $fileContents = (Get-Content -Path (Join-Path $SolutionDir $t.SubString($t.IndexOf(':')+1)) -Raw) | Replace-Token
-#                 $result = $result.Replace("`${$t}", $fileContents)
-#             }
-#             elseif (Get-Variable -Name $t)
-#             {
-#                 $result = $result.Replace("`${$t}", (Get-Variable $t).Value)
-#             }
-#             else
-#             {
-#                 throw "Invalid token ${$t}"
-#             }
-#         }
-
-#         return $result
-#     }
-# }
