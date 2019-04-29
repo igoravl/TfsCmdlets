@@ -161,31 +161,6 @@ Task UpdateModuleManifest {
 
 Task Test -Depends Build {
 
-    Write-Verbose "Restoring Pester Nuget package (if needed)"
-
-    $m = Get-Module Pester -ListAvailable
-
-    if ((-not $m) -and (-not (Test-Path (Join-Path $NugetPackagesDir 'Pester') -PathType Container)))
-    {
-        Write-Verbose "Pester not found. Downloading from Nuget.org"
-        & $NugetExePath Install Pester -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
-        $pesterPath = (Join-Path $NugetPackagesDir 'Pester\Tools\Pester.psm1')
-
-        Import-Module $pesterPath -Force -Global
-    }
-    else
-    {
-        Write-Verbose "FOUND! Skipping..."
-    }
-
-    Write-Verbose "Installing module PSScriptAnalyzer (if needed)"
-
-    if (-not (Get-Module PSScriptAnalyzer -ListAvailable))
-    {
-        Install-PackageProvider Nuget -Force -Scope CurrentUser
-        Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
-    }
-
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
         -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict}
 }
