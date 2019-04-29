@@ -43,11 +43,17 @@ Function Install-Nuget
 {
     Write-Verbose "Restoring Nuget client"
 
-    $script:NugetExePath = Join-Path $SolutionDir 'BuildTools/nuget.exe'
+    $BuildToolsDir = Join-Path $SolutionDir 'BuildTools'
+    $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
 
     if (-not (Test-Path $PackagesDir -PathType Container))
     {
         mkdir $PackagesDir -Force | Write-Verbose
+    }
+
+    if (-not (Test-Path $BuildToolsDir -PathType Container))
+    {
+        mkdir $BuildToolsDir -Force | Write-Verbose
     }
 
     if (-not (Test-Path $NugetExePath -PathType Leaf))
