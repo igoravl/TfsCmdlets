@@ -90,7 +90,7 @@ Task CopyFiles {
         $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
         Write-Verbose "Preprocessing $($_.FullName) and copying to $(Split-Path $outputPath -Parent)"
         # -U `"`#`" `"`" `"(`" `",`" `")`" `"(`" `")`" `"`#`" `"\\`" 
-        & $gppExePath --include HelpText.h --include Requires.h -I Include -o `"$outputPath`" +z `"$($_.FullName)`"
+        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z `"$($_.FullName)`"
     }
 }
 
