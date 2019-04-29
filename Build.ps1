@@ -95,10 +95,10 @@ Function Install-PsModule($Module)
         if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue))
         {
             Write-Verbose "Installing required Nuget package provider in order to install modules from PowerShell Gallery"
-            Install-PackageProvider Nuget -Force -Scope CurrentUser
+            Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
         }
 
-        Install-Module $Module -Scope CurrentUser -Force
+        Install-Module $Module -Scope CurrentUser -Force | Write-Verbose
     }
     else
     {
