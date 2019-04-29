@@ -1,9 +1,14 @@
 {
     "files.exclude": {
+        ".gitattributes": true,
+        ".gitignore": true,
         "out": true,
-        "src/.vs": true,
-        "src/[Pp]ackages": true,
-        "src/[Ss]etup/bin": true,
-        "src/[Ss]etup/obj": true
-    }
+        ".vs": true,
+        ".vscode": true,
+        "[Pp]ackages": true,
+        "[Ss]etup/bin": true,
+        "[Ss]etup/obj": true,
+        "[Bb]uild[Tt]ools": true
+    },
+    "search.usePCRE2": true
 }

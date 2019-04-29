@@ -7,10 +7,9 @@
         "-NoProfile",
         "-File",
         "${workspaceRoot}/build.ps1",
-        "-SolutionDir",
-        "${workspaceRoot}\\src",
         "-Configuration",
         "Release",
+        "-Verbose",
         "-Targets",
     ],
     "windows": {
