@@ -1,6 +1,6 @@
 $scriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 $solutionDir = Join-Path $scriptRoot '..' -Resolve
-$outDir = Join-Path $solutionDir '..\out' -Resolve
+$outDir = Join-Path $solutionDir 'out' -Resolve
 $projectDir = Join-Path $solutionDir 'Module' 
 $modulePath = Join-Path $outDir Module
 $hasBuild = Test-Path $modulePath
