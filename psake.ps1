@@ -161,8 +161,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         PreRelease = $PreRelease
     }
 }
-    "@
-
+"@
 
     Update-ModuleManifest -Path $ModuleManifestPath `
         -Author $ModuleAuthor `
