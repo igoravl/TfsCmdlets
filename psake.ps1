@@ -138,10 +138,31 @@ Task UpdateModuleManifest {
     $fileList = (Get-ChildItem -Path $ProjectDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
     $functionList = (Get-ChildItem -Path $ProjectDir\**\*-*.ps1 | Select-Object -ExpandProperty BaseName | Sort-Object)
     $nestedModuleList = (Get-ChildItem -Path $ProjectDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
-    
-    Write-Verbose "Updating module manifest file $ModuleManifestPath"
-
     $tfsOmNugetVersion = ((& $NugetExePath List $TfsPackageNames[0] -PreRelease) -split ' ')[1]
+    
+    Write-Verbose @"
+Updating module manifest file $ModuleManifestPath with the following content:
+
+{
+    -Author $ModuleAuthor
+    -CompanyName $ModuleAuthor 
+    -Copyright $Copyright 
+    -Description $ModuleDescription 
+    -NestedModules $nestedModuleList 
+    -FileList $fileList 
+    -FunctionsToExport $functionList 
+    -ModuleVersion $Version 
+    -CompatiblePSEditions $CompatiblePSEditions 
+    -PrivateData @{
+        Branch = $BranchName
+        Build = $BuildName
+        Commit = $Commit
+        TfsClientVersion = $tfsOmNugetVersion
+        PreRelease = $PreRelease
+    }
+}
+    "@
+
 
     Update-ModuleManifest -Path $ModuleManifestPath `
         -Author $ModuleAuthor `
