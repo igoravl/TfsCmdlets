@@ -43,6 +43,11 @@ Function Export-TfsGlobalList
         $Collection
     )
 
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+    }
+    
     Process
     {
         $tpc = Get-TfsTeamProjectCollection $Collection

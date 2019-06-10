@@ -45,7 +45,7 @@ Function Get-TfsConfigurationServerConnectionString
 Function _GetConnectionString($Version)
 {
 	$path = Get-InstallationPath -Version $Version -Component ApplicationTier
-	$webConfigPath = Join-Path $path 'Web Services\Web.config'
+	$webConfigPath = Join-Path $path 'Web Services/Web.config'
 	$webConfig = [xml] (Get-Content $webConfigPath)
 
 	return (Select-Xml -Xml $webConfig -XPath '/configuration/appSettings/add[@key="applicationDatabase"]/@value').Node.Value

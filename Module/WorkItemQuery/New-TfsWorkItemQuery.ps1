@@ -120,7 +120,7 @@ Function New-TfsWorkItemQuery
             }
         }
 
-        if ($Definition -match "select \*")
+        if ($Definition -match "select \\*")
         {
             Write-Warning "New-TfsWorkItemQuery: Queries containing 'SELECT *' may not work in Visual Studio. Consider replacing * with a list of fields."
         }

@@ -3,7 +3,7 @@
     Creates a new Work Item Area in the given Team Project.
 
 .PARAMETER Area
-    Specifies the path of the new Area. When supplying a path, use a backslash ("\") between the path segments. Leading and trailing backslashes are optional. The last segment in the path will be the area name.
+    Specifies the path of the new Area. When supplying a path, use a backslash ("\\") between the path segments. Leading and trailing backslashes are optional. The last segment in the path will be the area name.
 
 .PARAMETER Project
     HELP_PARAM_PROJECT

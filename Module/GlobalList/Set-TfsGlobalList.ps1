@@ -37,6 +37,11 @@ Function Set-TfsGlobalList
         $Collection
     )
 
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+    }
+    
     Process
     {
         $xml = [xml] (Export-TfsGlobalList -Name $Name -Collection $Collection)

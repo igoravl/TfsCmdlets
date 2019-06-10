@@ -36,6 +36,11 @@ Function New-TfsGlobalList
         $Passthru
     )
 
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+    }
+    
     Process
     {
         [xml] $xml = Export-TfsGlobalList -Collection $Collection

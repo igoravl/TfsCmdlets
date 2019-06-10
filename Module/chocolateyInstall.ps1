@@ -1,4 +1,4 @@
-$InstallPath = Join-Path $($env:ChocolateyInstall) 'lib\TfsCmdlets'
+$InstallPath = Join-Path $($env:ChocolateyInstall) 'lib\\TfsCmdlets'
 $ToolsDir = Join-Path $InstallPath 'Tools'
 
 if ($env:PSModulePath -notlike "*$ToolsDir*")
@@ -7,12 +7,12 @@ if ($env:PSModulePath -notlike "*$ToolsDir*")
     SETX @('PSModulePath', "$env:PSModulePath;$ToolsDir", '/M')
 }
 
-$ShortcutTargetDir = "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs"
+$ShortcutTargetDir = "$Env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"
 $ShortcutName = 'Team Foundation Server Shell'
-$ShortcutFilePath = "$ShortcutTargetDir\$ShortcutName.lnk"
-$ShortcutExecutable = "$Env:SystemRoot\System32\WindowsPowerShell\v1.0\powershell.exe"
+$ShortcutFilePath = "$ShortcutTargetDir\\$ShortcutName.lnk"
+$ShortcutExecutable = "$Env:SystemRoot\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 $ShortcutArguments = '-noexit -command "Import-Module TfsCmdlets"'
-$ShortcutIconLocation = "$ToolsDir\TfsCmdlets\TfsCmdletsShell.ico"
+$ShortcutIconLocation = "$ToolsDir\\TfsCmdlets\\TfsCmdletsShell.ico"
 
 if (-not (Test-Path $ShortcutFilePath))
 {

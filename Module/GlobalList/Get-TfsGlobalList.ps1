@@ -27,6 +27,11 @@ Function Get-TfsGlobalList
         $Collection
     )
 
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+    }
+    
     Process
     {
         $xml = [xml](Export-TfsGlobalList @PSBoundParameters)

@@ -15,14 +15,14 @@ Param
 
 Function Install-Dependencies
 {
+    $NugetPackages = @('GitVersion.CommandLine')
+    $PsModules = @('InvokeBuild', 'PsScriptAnalyzer')
+
     $script:PackagesDir = Join-Path $SolutionDir 'packages'
 
     Write-Verbose "Restoring missing dependencies. Packages directory: $PackagesDir"
 
     Install-Nuget
-
-    $NugetPackages = @('GitVersion.CommandLine')
-    $PsModules = @('Psake', 'PsScriptAnalyzer')
 
     Write-Verbose "Restoring NuGet package(s) ($($NugetPackages -join ', '))"
 

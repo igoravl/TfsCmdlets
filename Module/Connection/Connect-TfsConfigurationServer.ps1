@@ -43,9 +43,7 @@ Function Connect-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
 	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param
 	(
@@ -69,7 +67,7 @@ Function Connect-TfsConfigurationServer
 
 	Process
 	{
-		if ($Interactive.IsPresent)
+		if ($PSCmdlet.ParameterSetName -eq 'Prompt for credentials')
 		{
 			$Credential = (Get-TfsCredential -Interactive)
 		}

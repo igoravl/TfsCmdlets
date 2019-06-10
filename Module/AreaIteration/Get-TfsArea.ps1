@@ -24,7 +24,7 @@ Get-TfsArea 'Fabrikam Web Team' -Project 'Fabrikam Fiber'
 Returns information on an area path called 'Fabrikam Web Team' in a team project called 'Fabrikam Fiber'
 
 .EXAMPLE
-Get-TfsArea '\**\Support' -Project Tailspin
+Get-TfsArea '\\**\\Support' -Project Tailspin
 Performs a recursive search and returns all area paths named 'Support' that may exist in a team project called Tailspin
 #>
 Function Get-TfsArea
@@ -38,7 +38,7 @@ Function Get-TfsArea
         [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [SupportsWildcards()]
         [object]
-        $Area = '\**',
+        $Area = '\\**',
 
         [Parameter(ValueFromPipeline=$true)]
         [object]

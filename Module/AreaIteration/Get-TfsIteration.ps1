@@ -27,7 +27,7 @@ Function Get-TfsIteration
         [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
         [SupportsWildcards()]
         [object]
-        $Iteration = '\**',
+        $Iteration = '\\**',
 
         [Parameter(ValueFromPipeline=$true)]
         [object]

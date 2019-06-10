@@ -21,16 +21,23 @@ namespace TfsCmdlets
 
             AppDomain.CurrentDomain.AssemblyResolve += delegate(object sender, ResolveEventArgs e)
             {
+                var assemblyName = e.Name.Split(',')[0];
+
                 try
                 {
-                    var assemblyName = e.Name.Split(',')[0];
-                    var isInternal = PrivateAssemblies.ContainsKey(assemblyName);
+                    LogInfo("Request for unresolved assembly " + e.Name);
 
-                    if (IsVerbose) Log("[INFO ] [" + (isInternal? "Internal": "External") + "] " + assemblyName, e);
+                    if (!PrivateAssemblies.ContainsKey(assemblyName))
+                    {
+                        LogWarn("Unknown assembly " + e.Name + "; skipping");
+                        return null;
+                    }
 
-                    return PrivateAssemblies.ContainsKey(assemblyName)
-                        ? LoadAssembly(assemblyName)
-                        : null;
+                    var asm = LoadAssembly(assemblyName);
+
+                    LogInfo("'" + assemblyName + "' resolved as '" + asm.FullName + "'");
+
+                    return asm;
                 }
                 catch(Exception ex)
                 {
@@ -51,14 +58,26 @@ namespace TfsCmdlets
 
         private static void Log(string message, object data)
         {
-            message = "[" + (LogEntries.Count+1).ToString("00000") + "] [" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
+            message = "[" + (LogEntries.Count+1).ToString("00000") + " - " + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
 
             LogEntries.Add(message, data);
         }
 
-        private static void LogError(Exception ex)
+        private static void LogInfo(string message)
         {
-            Log("[ERROR] " + ex.Message, ex);
+            if (!IsVerbose) return;
+
+            Log("[INFO ] " + message, string.Empty);
+        }
+
+        private static void LogWarn(string message)
+        {
+            Log("[WARN ] " + message, string.Empty);
+        }
+
+        private static void LogError(Exception ex, string assemblyName = null)
+        {
+            Log("[ERROR] Loading assembly " + (assemblyName?? "(unknown)"), ex);
         }
     }
 }

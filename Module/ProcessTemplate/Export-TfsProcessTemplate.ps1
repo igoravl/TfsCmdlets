@@ -21,12 +21,12 @@ Saves the exported process template with a new description. Useful when exportin
 HELP_PARAM_COLLECTION
 
 .EXAMPLE
-Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\PT -Collection http://vsalm:8080/tfs/DefaultCollection
-Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\PT\Scrum directory in the local computer.
+Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\\PT -Collection http://vsalm:8080/tfs/DefaultCollection
+Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\\PT\\Scrum directory in the local computer.
 
 .EXAMPLE
-Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\PT -Collection http://vsalm:8080/tfs/DefaultCollection -NewName 'MyScrum' -NewDescription 'A customized version of the Scrum process template'
-Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\PT\MyScrum directory in the local computer. Notice that the process template is being renamed from Scrum to MyScrum, so that it can be later reimported as a new process template instead of overwriting the original one.
+Export-TfsProcessTemplate -Process 'Scrum' -DestinationPath C:\\PT -Collection http://vsalm:8080/tfs/DefaultCollection -NewName 'MyScrum' -NewDescription 'A customized version of the Scrum process template'
+Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\\PT\\MyScrum directory in the local computer. Notice that the process template is being renamed from Scrum to MyScrum, so that it can be later reimported as a new process template instead of overwriting the original one.
 
 
 .INPUTS

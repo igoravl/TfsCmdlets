@@ -1,4 +1,4 @@
-$InstallPath = Join-Path $($env:ChocolateyInstall) 'lib\TfsCmdlets'
+$InstallPath = Join-Path $($env:ChocolateyInstall) 'lib\\TfsCmdlets'
 $ToolsDir = Join-Path $InstallPath 'Tools'
 
 if ($env:PSModulePath -like "*$ToolsDir*")
@@ -8,9 +8,9 @@ if ($env:PSModulePath -like "*$ToolsDir*")
     SETX @('PSModulePath', $NewModulePath, '/M')
 }
 
-$ShortcutTargetDir = "$Env:ProgramData\Microsoft\Windows\Start Menu\Programs"
+$ShortcutTargetDir = "$Env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"
 $ShortcutName = 'Team Foundation Server Shell'
-$ShortcutFilePath = "$ShortcutTargetDir\$ShortcutName.lnk"
+$ShortcutFilePath = "$ShortcutTargetDir\\$ShortcutName.lnk"
 
 if (Test-Path $ShortcutFilePath)
 {

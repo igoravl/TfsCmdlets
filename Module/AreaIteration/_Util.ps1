@@ -17,14 +17,14 @@ Function _GetCssNodes($Node, $Scope, $Project, $Collection)
 			return $cssService.GetNode($node)
 		}
 
-		$rootPath = _NormalizePath "$projectName\$Scope"
-		$fullPath = _NormalizePath "$rootPath\$Node"
+		$rootPath = _NormalizePath "$projectName\\$Scope"
+		$fullPath = _NormalizePath "$rootPath\\$Node"
 
 		$rootNodeUri = $cssService.GetNodeFromPath("$rootPath").Uri
 		$rootElement = $cssService.GetNodesXml(@($rootNodeUri), $true)
 		
-		$nodePaths = $rootElement.SelectNodes('//@Path') | Select -ExpandProperty '#text'
-		$matchingPaths = $nodePaths | Where-Object { $_ -like $fullPath }
+		$nodePaths = $rootElement.SelectNodes('//@Path') | Select-Object -ExpandProperty '#text'
+		$matchingPaths = $nodePaths | Where-Object { Write-Verbose $_; $_ -like $fullPath }
 
         return $matchingPaths | Foreach-Object { $cssService.GetNodeFromPath($_) }
     }
@@ -52,7 +52,7 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
 
         try
         {
-			$fullPath = _NormalizePath "$projectName\$Scope\$Path"
+			$fullPath = _NormalizePath "$projectName\\$Scope\\$Path"
 			$parentPath = Split-Path $fullPath -Parent
 			$nodeName = Split-Path $fullPath -Leaf
             $parentNode = $cssService.GetNodeFromPath($parentPath)
@@ -78,22 +78,27 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
 
 Function _NormalizePath($Path)
 {
+	Write-Verbose "Normalizing path $Path"
+
 	if([string]::IsNullOrWhiteSpace($Path))
 	{
+		Write-Verbose "Unable to normalize empty paths"
 		return [string]::Empty
 	}
 
-	$newPath = [System.Text.RegularExpressions.Regex]::Replace($Path, '\\{2,}', '\')
+	$newPath = [System.Text.RegularExpressions.Regex]::Replace($Path, '\\\\{2,}', '\\')
 
-	if (-not $newPath.StartsWith("\"))
+	if (-not $newPath.StartsWith("\\"))
 	{
-		$newPath = "\$newPath"
+		$newPath = "\\$newPath"
 	}
 
-	if ($newPath.EndsWith("\"))
+	if ($newPath.EndsWith("\\"))
 	{
 		$newPath = $newPath.Substring(0, $newPath.Length-1)
 	}
+
+	Write-Verbose "Normalized path: $newPath"
 
 	return $newPath
 }

@@ -627,3 +627,5 @@ Function Get-RestClient
         return Invoke-GenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
     }
 }
+
+Import-RequiredAssembly 'Microsoft.TeamFoundation.Client'

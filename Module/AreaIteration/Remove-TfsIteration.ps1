@@ -33,7 +33,7 @@ Function Remove-TfsIteration
         [Alias("NewPath")]
         [ValidateScript({ ($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo]) })] 
         [object]
-        $MoveTo = '\',
+        $MoveTo = '\\',
 
         [Parameter()]
         [object]
@@ -52,7 +52,7 @@ Function Remove-TfsIteration
         {
             if ($PSCmdlet.ShouldProcess($i.RelativePath, "Delete Iteration"))
             {
-                $projectName = $i.Path.Split("\")[1]
+                $projectName = $i.Path.Split("\\")[1]
                 _DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Iteration -Project $projectName -Collection $Collection
             }
         }

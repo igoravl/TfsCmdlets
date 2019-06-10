@@ -3,7 +3,7 @@
     Creates a new Work Item Iteration in the given Team Project.
 
 .PARAMETER Iteration
-    Specifies the path of the new Iteration. When supplying a path, use a backslash ("\") between the path segments. Leading and trailing backslashes are optional. The last segment in the path will be the iteration name.
+    Specifies the path of the new Iteration. When supplying a path, use a backslash ("\\") between the path segments. Leading and trailing backslashes are optional. The last segment in the path will be the iteration name.
 
 .PARAMETER StartDate
     Specifies the start of a timed iteration, such as a sprint. Enter a string that represents the date and time, such as "12/01/2015" or a DateTime object, such as one from a Get-Date command. When omitted, no start date is set.

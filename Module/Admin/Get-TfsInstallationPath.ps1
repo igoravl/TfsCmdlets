@@ -65,7 +65,7 @@ Function Get-TfsInstallationPath
 
 Function _GetInstallationPath($Version, $Component)
 {
-	$rootKeyPath = "HKLM:\Software\Microsoft\TeamFoundationServer\$Version"
+	$rootKeyPath = "HKLM:\\Software\\Microsoft\\TeamFoundationServer\\$Version"
 
 	if ($Component -eq 'BaseInstallation')
 	{
@@ -73,7 +73,7 @@ Function _GetInstallationPath($Version, $Component)
 	}
 	else
 	{
-		$componentPath = "$rootKeyPath\InstalledComponents\$Component"
+		$componentPath = "$rootKeyPath\\InstalledComponents\\$Component"
 	}
 
 	if (-not (Test-RegistryValue -Path $rootKeyPath -Value 'InstallPath'))

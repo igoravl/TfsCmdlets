@@ -5,7 +5,7 @@ Function _NormalizeQueryPath($Path, $RootFolder, $ProjectName)
         return [string]::Empty
     }
 
-    $newPath = [System.Text.RegularExpressions.Regex]::Replace($Path, '\\+|/{2,}', '/')
+    $newPath = [System.Text.RegularExpressions.Regex]::Replace($Path, '\\\\+|/{2,}', '/')
 
     if ($newPath.StartsWith("/"))
     {
@@ -32,7 +32,7 @@ Function _RegisterQueryHelper()
 
     Add-Type -Language CSharp -ReferencedAssemblies 'Microsoft.TeamFoundation.WorkItemTracking.Client' `
         -TypeDefinition @'
-${File:CSharp\QueryHelper.cs}
+${File:CSharp\\QueryHelper.cs}
 '@
 }
 

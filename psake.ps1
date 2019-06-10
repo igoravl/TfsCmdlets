@@ -27,6 +27,7 @@ Properties {
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
     $CompatiblePSEditions = @('Core', 'Desktop')
+    $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient','Microsoft.VisualStudio.Services.ServiceHooks.WebApi')
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
     # Nuget packaging
@@ -90,7 +91,7 @@ Task CopyFiles {
         $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
         Write-Verbose "Preprocessing $($_.FullName) and copying to $(Split-Path $outputPath -Parent)"
         # -U `"`#`" `"`" `"(`" `",`" `")`" `"(`" `")`" `"`#`" `"\\`" 
-        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z `"$($_.FullName)`"
+        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z -n `"$($_.FullName)`" --% -U "#<" ">" "\B" "|" ">" "<" ">" "#" "\\"
     }
 }
 
@@ -140,6 +141,8 @@ Task UpdateModuleManifest {
     
     Write-Verbose "Updating module manifest file $ModuleManifestPath"
 
+    $tfsOmNugetVersion = ((& $NugetExePath List $TfsPackageNames[0] -PreRelease) -split ' ')[1]
+
     Update-ModuleManifest -Path $ModuleManifestPath `
         -Author $ModuleAuthor `
         -CompanyName $ModuleAuthor `
@@ -151,11 +154,11 @@ Task UpdateModuleManifest {
         -ModuleVersion $Version `
         -CompatiblePSEditions $CompatiblePSEditions `
         -PrivateData @{
-            Branch = "${BranchName}"
-            Build = "${BuildName}"
-            Commit = "${Commit}"
-            TfsClientVersion = "${TfsOmNugetVersion}"
-            PreRelease = "${PreRelease}"
+            Branch = $BranchName
+            Build = $BuildName
+            Commit = $Commit
+            TfsClientVersion = $tfsOmNugetVersion
+            PreRelease = $PreRelease
         }
 }
 
@@ -167,16 +170,13 @@ Task Test -Depends Build {
 
 Task DownloadTfsNugetPackage {
 
-    $TfsPackageNames = @(
-        'Microsoft.TeamFoundationServer.ExtendedClient',
-        'Microsoft.VisualStudio.Services.ServiceHooks.WebApi'
-    )
-
     foreach($package in $TfsPackageNames) 
     {
         Write-Verbose "Restoring $package Nuget package (if needed)"
 
-        if (-not (Test-Path (Join-Path $NugetPackagesDir $package) -PathType Container))
+        $packageDir = (Join-Path $NugetPackagesDir $package)
+
+        if (-not (Test-Path $packageDir -PathType Container))
         {
             Write-Verbose "$package not found. Downloading from Nuget.org"
             & $NugetExePath Install $package -ExcludeVersion -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
