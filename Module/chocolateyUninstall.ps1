@@ -9,7 +9,7 @@ if ($env:PSModulePath -like "*$ToolsDir*")
 }
 
 $ShortcutTargetDir = "$Env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"
-$ShortcutName = 'Team Foundation Server Shell'
+$ShortcutName = 'Azure DevOps Shell'
 $ShortcutFilePath = "$ShortcutTargetDir\\$ShortcutName.lnk"
 
 if (Test-Path $ShortcutFilePath)

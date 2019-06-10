@@ -53,7 +53,7 @@
 
         <DirectoryRef Id="ShortcutsFolder">
             <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}">
-                <Shortcut Id="ShellIconShortcut" Name="Team Foundation Server Shell" Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
+                <Shortcut Id="ShellIconShortcut" Name="Azure DevOps Shell" Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe" Directory="ShortcutsFolder"
                           Arguments='-noexit -command "Import-Module TfsCmdlets"' Icon="ProductIcon"/>
                 <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder"/>
                 <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>

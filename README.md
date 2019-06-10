@@ -1,17 +1,17 @@
 TfsCmdlets
 ==========
 
-PowerShell Cmdlets for Team Foundation Server and Visual Studio Team Services
+PowerShell Cmdlets for Azure DevOps and Team Foundation Server
 
 ## Whats is TfsCmdlets?
 
-TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server and Visual Studio Team Services. 
+TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Azure DevOps (Server 2019+ and Services) and Team Foundation Server (up to 2018). 
 
 By using TfsCmdlets, TFS administrators (even power users) can create scripts to automate many different tasks, ranging from retrieving work items to create new team project collections.
 
-TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Team Foundation Server Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
+TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
 
-![Team Foundation Server Shell](Assets/TfsShell.png)
+![Azure DevOps Shell](Assets/TfsShell.png)
 
 ## Quick start guide 
 
@@ -92,7 +92,7 @@ You can get one of the offline installers listed below from the [GitHub Releases
 
 #### Full installer (MSI-based)
 
-The full installer will install the module files to the Program Files folder in your computer, make the module available to PowerShell and create the **Team Foundation Server Shell** icon in the Start Menu.
+The full installer will install the module files to the Program Files folder in your computer, make the module available to PowerShell and create the **Azure DevOps Shell** icon in the Start Menu.
 
 **To install the full installer**:
 

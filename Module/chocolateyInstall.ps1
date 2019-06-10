@@ -8,7 +8,7 @@ if ($env:PSModulePath -notlike "*$ToolsDir*")
 }
 
 $ShortcutTargetDir = "$Env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs"
-$ShortcutName = 'Team Foundation Server Shell'
+$ShortcutName = 'Azure DevOps Shell'
 $ShortcutFilePath = "$ShortcutTargetDir\\$ShortcutName.lnk"
 $ShortcutExecutable = "$Env:SystemRoot\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 $ShortcutArguments = '-noexit -command "Import-Module TfsCmdlets"'

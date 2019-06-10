@@ -8,7 +8,7 @@ if ($TfsCmdletsDebugStartup)
     Set-Alias Write-Verbose Write-Host -Option Private
 }
 
-if ($Host.UI.RawUI.WindowTitle -match "(Team Foundation Server Shell*)|(Azure DevOps Shell*)")
+if ($Host.UI.RawUI.WindowTitle -match "(Azure DevOps Shell*)|(Azure DevOps Shell*)")
 {
     # SetConsoleColors
     $Host.UI.RawUI.BackgroundColor = "DarkMagenta"
