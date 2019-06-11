@@ -91,7 +91,7 @@ Task CopyFiles {
         $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
         Write-Verbose "Preprocessing $($_.FullName) and copying to $(Split-Path $outputPath -Parent)"
         # -U `"`#`" `"`" `"(`" `",`" `")`" `"(`" `")`" `"`#`" `"\\`" 
-        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z -n `"$($_.FullName)`" --% -U "#<" ">" "\B" "|" ">" "<" ">" "#" "\\"
+        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z -n `"$($_.FullName)`"
     }
 }
 
@@ -144,35 +144,30 @@ Task UpdateModuleManifest {
 Updating module manifest file $ModuleManifestPath with the following content:
 
 {
-    -Author $ModuleAuthor
-    -CompanyName $ModuleAuthor 
-    -Copyright $Copyright 
-    -Description $ModuleDescription 
-    -NestedModules $nestedModuleList 
-    -FileList $fileList 
-    -FunctionsToExport $functionList 
-    -ModuleVersion $Version 
-    -CompatiblePSEditions $CompatiblePSEditions 
+    -Author '$ModuleAuthor'
+    -CompanyName '$ModuleAuthor'
+    -Copyright '$Copyright' 
+    -Description '$ModuleDescription'
+    -NestedModules @($(($nestedModuleList | ForEach-Object { "'$_'" }) -join ',')) 
+    -FileList @($(($fileList | ForEach-Object { "'$_'" }) -join ',')) 
+    -FunctionsToExport @($(($functionList | ForEach-Object { "'$_'" }) -join ',')) 
+    -ModuleVersion '$Version' 
+    -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ',')) 
     -PrivateData @{
-        Branch = $BranchName
-        Build = $BuildName
-        Commit = $Commit
-        TfsClientVersion = $tfsOmNugetVersion
-        PreRelease = $PreRelease
+        Branch = '$BranchName'
+        Build = '$BuildName'
+        Commit = '$Commit'
+        TfsClientVersion = '$tfsOmNugetVersion'
+        PreRelease = '$PreRelease'
     }
 }
 "@
 
     Update-ModuleManifest -Path $ModuleManifestPath `
-        -Author $ModuleAuthor `
-        -CompanyName $ModuleAuthor `
-        -Copyright $Copyright `
-        -Description $ModuleDescription `
         -NestedModules $nestedModuleList `
         -FileList $fileList `
         -FunctionsToExport $functionList `
         -ModuleVersion $Version `
-        -CompatiblePSEditions $CompatiblePSEditions `
         -PrivateData @{
             Branch = $BranchName
             Build = $BuildName
