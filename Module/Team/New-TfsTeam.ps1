@@ -18,7 +18,7 @@
 Function New-TfsTeam
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
+    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]

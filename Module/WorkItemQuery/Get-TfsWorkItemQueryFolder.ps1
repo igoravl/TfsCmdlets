@@ -18,7 +18,7 @@ System.String
 Function Get-TfsWorkItemQueryFolder
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder')]
     Param
     (
         [Parameter(Position=0)]

@@ -47,7 +47,7 @@ https://msdn.microsoft.com/en-us/library/ff738070.aspx
 Function Copy-TfsWorkItem
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem')]
     Param
     (
         [Parameter(ValueFromPipeline=$true)]

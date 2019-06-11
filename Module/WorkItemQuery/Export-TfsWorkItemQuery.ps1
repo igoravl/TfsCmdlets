@@ -39,7 +39,7 @@ For queries made against Team Services, the WIQL length must not exceed 32K char
 Function Export-TfsWorkItemQuery
 {
     [CmdletBinding(DefaultParameterSetName='Export to output stream', SupportsShouldProcess=$true)]
-    [OutputType([xml])]
+    [OutputType('xml')]
     Param
     (
         [Parameter(ValueFromPipeline=$true, Position=0)]

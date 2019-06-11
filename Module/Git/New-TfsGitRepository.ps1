@@ -18,7 +18,7 @@ System.String
 Function New-AzDevGitRepository
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])]
+    [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
     Param
     (
         [Parameter(Mandatory=$true)]

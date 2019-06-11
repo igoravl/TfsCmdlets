@@ -15,7 +15,7 @@ System.String
 Function Set-TfsTeam
 {
     [CmdletBinding(DefaultParameterSetName="Get by name", ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
+    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]

@@ -36,7 +36,7 @@ Connects to a project called FabrikamFiber in the team project collection specif
 Function Connect-TfsTeamProject
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
-	[OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+	[OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.Project')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]

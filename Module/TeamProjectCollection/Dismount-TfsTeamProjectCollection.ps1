@@ -41,7 +41,7 @@ Function Dismount-TfsTeamProjectCollection
 	[CmdletBinding(ConfirmImpact="High", SupportsShouldProcess=$true)]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
-	[OutputType([string])]
+	[OutputType('string')]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0)]

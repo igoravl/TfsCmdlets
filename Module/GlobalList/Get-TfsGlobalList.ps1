@@ -14,7 +14,7 @@
 Function Get-TfsGlobalList
 {
     [CmdletBinding()]
-    [OutputType([PSCustomObject])]
+    [OutputType('PSCustomObject')]
     Param
     (
         [Parameter()]

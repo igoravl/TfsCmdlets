@@ -30,7 +30,7 @@ Performs a recursive search and returns all area paths named 'Support' that may 
 Function Get-TfsArea
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
+    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
     Param
     (
         [Parameter(Position=0)]

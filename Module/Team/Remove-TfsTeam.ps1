@@ -16,7 +16,7 @@
 Function Remove-TfsTeam
 {
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
-    [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
+    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]

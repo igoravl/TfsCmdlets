@@ -14,7 +14,7 @@
 Function Get-TfsConfigurationServerConnectionString
 {
 	[CmdletBinding()]
-	[OutputType([string])]
+	[OutputType('string')]
 	Param
 	(
 		[Parameter()]

@@ -19,7 +19,7 @@
 Function Get-TfsIteration
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
+    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
     Param
     (
         [Parameter(Position=0)]

@@ -30,7 +30,7 @@ To export or list global lists, you must be a member of the Project Collection V
 Function Export-TfsGlobalList
 {
     [CmdletBinding()]
-    [OutputType([string])]
+    [OutputType('string')]
     Param
     (
         [Parameter(Position=0)]

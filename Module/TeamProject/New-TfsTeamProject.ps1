@@ -6,7 +6,7 @@ Creates a new team project.
 Function New-TfsTeamProject
 {
     [CmdletBinding(DefaultParameterSetName='Get by project',ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.Project])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.Project')]
     Param
     (
         [Parameter(Position=0, Mandatory=$true)]

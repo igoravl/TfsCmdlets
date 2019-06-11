@@ -16,7 +16,7 @@
 Function Rename-TfsTeam
 {
     [CmdletBinding(ConfirmImpact='Medium')]
-    [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
+    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]

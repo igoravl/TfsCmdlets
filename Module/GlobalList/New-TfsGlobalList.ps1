@@ -12,7 +12,7 @@
 Function New-TfsGlobalList
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([PSCustomObject])]
+    [OutputType('PSCustomObject')]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]

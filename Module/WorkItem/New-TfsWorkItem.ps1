@@ -32,7 +32,7 @@
 Function New-TfsWorkItem
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem')]
     Param
     (
         [Parameter(ValueFromPipeline=$true, Mandatory=$true, Position=0)]

@@ -18,7 +18,7 @@ System.String
 Function New-TfsWorkItemQuery
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

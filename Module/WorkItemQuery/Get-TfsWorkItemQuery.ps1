@@ -18,7 +18,7 @@ System.String
 Function Get-TfsWorkItemQuery
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition')]
     Param
     (
         [Parameter(Position=0)]

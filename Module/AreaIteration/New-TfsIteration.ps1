@@ -23,7 +23,7 @@
 Function New-TfsIteration
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType([Microsoft.TeamFoundation.Server.NodeInfo])]
+    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

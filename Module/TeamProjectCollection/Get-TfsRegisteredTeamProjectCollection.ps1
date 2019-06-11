@@ -11,7 +11,7 @@
 Function Get-TfsRegisteredTeamProjectCollection
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]])]
+    [OutputType('Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]')]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]

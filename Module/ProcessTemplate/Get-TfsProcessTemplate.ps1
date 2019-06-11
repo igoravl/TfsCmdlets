@@ -14,7 +14,7 @@
 Function Get-TfsProcessTemplate
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.TeamFoundation.Server.TemplateHeader])]
+    [OutputType('Microsoft.TeamFoundation.Server.TemplateHeader')]
     Param
     (
         [Parameter(Position=0)]

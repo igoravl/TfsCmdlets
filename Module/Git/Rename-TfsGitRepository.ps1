@@ -18,7 +18,7 @@ System.String
 Function Rename-AzDevGitRepository
 {
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
-    [OutputType([Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])]
+    [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)]

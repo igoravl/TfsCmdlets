@@ -30,7 +30,7 @@ Gets the location where the SharePoint Extensions have been installed in the rem
 Function Get-TfsInstallationPath
 {
 	[CmdletBinding()]
-	[OutputType([string])]
+	[OutputType('string')]
 	Param
 	(
 		[Parameter()]

@@ -16,7 +16,7 @@
 Function Get-TfsTeam
 {
     [CmdletBinding(DefaultParameterSetName="Get by name")]
-    [OutputType([Microsoft.TeamFoundation.Client.TeamFoundationTeam])]
+    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
         [Parameter(Position=0, ParameterSetName="Get by name")]

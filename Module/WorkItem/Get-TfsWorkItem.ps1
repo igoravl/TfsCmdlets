@@ -16,7 +16,7 @@
 Function Get-TfsWorkItem
 {
     [CmdletBinding(DefaultParameterSetName="Query by text")]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem')]
     Param
     (
         [Parameter(Position=0, Mandatory=$true, ParameterSetName="Query by revision")]

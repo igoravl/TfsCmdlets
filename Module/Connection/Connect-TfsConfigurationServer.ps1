@@ -42,7 +42,7 @@ https://blogs.msdn.microsoft.com/taylaf/2010/02/23/introducing-the-tfsconnection
 Function Connect-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
-	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
+	[OutputType('Microsoft.TeamFoundation.Client.TfsConfigurationServer')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param

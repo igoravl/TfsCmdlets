@@ -12,7 +12,7 @@
 Function Get-TfsCredential
 {
     [CmdletBinding(DefaultParameterSetName="Prompt for credential")]
-    [OutputType([Microsoft.TeamFoundation.Client.TfsClientCredentials])]
+    [OutputType('Microsoft.TeamFoundation.Client.TfsClientCredentials')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
     Param

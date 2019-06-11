@@ -22,7 +22,7 @@
 Function Rename-TfsWorkItemQuery
 {
     [CmdletBinding(ConfirmImpact='Medium')]
-    [OutputType([Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition])]
+    [OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

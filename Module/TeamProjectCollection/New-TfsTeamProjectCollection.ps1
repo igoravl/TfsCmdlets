@@ -11,7 +11,7 @@ System.String
 Function New-TfsTeamProjectCollection
 {
 	[CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-	[OutputType([Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])]
+	[OutputType('Microsoft.TeamFoundation.Client.TfsTeamProjectCollection')]
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]

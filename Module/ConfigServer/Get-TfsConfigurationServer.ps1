@@ -19,7 +19,7 @@ System.Uri
 Function Get-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName='Get by server')]
-	[OutputType([Microsoft.TeamFoundation.Client.TfsConfigurationServer])]
+	[OutputType('Microsoft.TeamFoundation.Client.TfsConfigurationServer')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]

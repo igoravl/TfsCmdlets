@@ -23,7 +23,7 @@
 Function Export-TfsWorkItemType
 {
     [CmdletBinding()]
-    [OutputType([Xml])]
+    [OutputType('Xml')]
     Param
     (
         [Parameter()]
