@@ -57,6 +57,10 @@ Function New-TfsWorkItem
 
         [Parameter()]
         [switch]
+        $SkipSave,
+
+        [Parameter()]
+        [switch]
         $Passthru
     )
 
@@ -78,7 +82,10 @@ Function New-TfsWorkItem
                 $wi.Fields[$field.Key] = $field.Value
             }
 
-            $wi.Save()
+            if (-not $SkipSave.IsPresent)
+            {
+                $wi.Save()
+            }
 
             if ($Passthru)
             {

@@ -12,7 +12,7 @@ HELP_PARAM_COLLECTION
 Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
 System.String
 #>
-Function Remove-AzDevGitRepository
+Function Remove-TfsGitRepository
 {
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
     Param

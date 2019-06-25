@@ -68,7 +68,7 @@ Function New-TfsWorkItemQueryFolder
 
             $normalizedPath = _NormalizeQueryPath -Path $Folder -RootFolder $rootFolder -ProjectName $tp.Name
 
-            Write-Verbose "New-TfsWorkItemQueryFolder: Creating folder '$Folder'"
+            _Log "New-TfsWorkItemQueryFolder: Creating folder '$Folder'"
 
             $queryFolder = [TfsCmdlets.QueryHelper]::CreateFolder($tp.QueryHierarchy, $normalizedPath)
 

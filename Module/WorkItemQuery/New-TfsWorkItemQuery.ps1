@@ -84,7 +84,7 @@ Function New-TfsWorkItemQuery
             return
         }
 
-        Write-Verbose "New-TfsWorkItemQuery: Check if query '$relativeQueryPath' exists"
+        _Log "New-TfsWorkItemQuery: Check if query '$relativeQueryPath' exists"
 
         $existingQuery = Get-TfsWorkItemQuery -Query $relativeQueryPath -Scope $Scope -Project $Project -Collection $Collection
 
@@ -95,23 +95,23 @@ Function New-TfsWorkItemQuery
                 throw "Work item query '$fullPath' already exists. To overwrite an existing query, use the -Force switch"
             }
 
-            Write-Verbose "New-TfsWorkItemQuery: Existing query '$fullPath' will be overwritten"
+            _Log "New-TfsWorkItemQuery: Existing query '$fullPath' will be overwritten"
 
             $existingQuery.Delete()
             $existingQuery.Save()
         }
 
-        Write-Verbose "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$queryPath'"
+        _Log "New-TfsWorkItemQuery: Creating query '$queryName' in folder '$queryPath'"
 
         $queryFolder = Get-TfsWorkItemQueryFolder -Folder $relativeFolderPath -Scope $Scope -Project $Project -Collection $Collection
 
         if (-not $queryFolder)
         {
-            Write-Verbose "New-TfsWorkItemQuery: Destination folder $queryFolder not found"
+            _Log "New-TfsWorkItemQuery: Destination folder $queryFolder not found"
 
             if ($Force)
             {
-                Write-Verbose "New-TfsWorkItemQuery: -Force switch specified. Creating missing folder"
+                _Log "New-TfsWorkItemQuery: -Force switch specified. Creating missing folder"
                 $queryFolder = New-TfsWorkItemQueryFolder -Path $queryPath -Project $tp.Name -Passthru
             }
             else
@@ -133,7 +133,7 @@ Function New-TfsWorkItemQuery
         }
         else
         {
-            Write-Verbose "New-TfsWorkItemQuery: -SkipSave switch specified. Newly created query will not be saved."
+            _Log "New-TfsWorkItemQuery: -SkipSave switch specified. Newly created query will not be saved."
         }
 
         if ($Passthru -or $SkipSave)

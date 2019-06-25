@@ -24,7 +24,7 @@ Function _GetCssNodes($Node, $Scope, $Project, $Collection)
 		$rootElement = $cssService.GetNodesXml(@($rootNodeUri), $true)
 		
 		$nodePaths = $rootElement.SelectNodes('//@Path') | Select-Object -ExpandProperty '#text'
-		$matchingPaths = $nodePaths | Where-Object { Write-Verbose $_; $_ -like $fullPath }
+		$matchingPaths = $nodePaths | Where-Object { _Log $_; $_ -like $fullPath }
 
         return $matchingPaths | Foreach-Object { $cssService.GetNodeFromPath($_) }
     }
@@ -78,11 +78,11 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
 
 Function _NormalizePath($Path)
 {
-	Write-Verbose "Normalizing path $Path"
+	_Log "Normalizing path $Path"
 
 	if([string]::IsNullOrWhiteSpace($Path))
 	{
-		Write-Verbose "Unable to normalize empty paths"
+		_Log "Unable to normalize empty paths"
 		return [string]::Empty
 	}
 
@@ -98,7 +98,7 @@ Function _NormalizePath($Path)
 		$newPath = $newPath.Substring(0, $newPath.Length-1)
 	}
 
-	Write-Verbose "Normalized path: $newPath"
+	_Log "Normalized path: $newPath"
 
 	return $newPath
 }

@@ -61,7 +61,7 @@ Function Connect-TfsTeamProjectCollection
 		[object] 
 		$Server,
 	
-		[Parameter(ParameterSetName="Explicit credentials", Mandatory=$true)]
+		[Parameter(ParameterSetName="Explicit credentials")]
 		[object]
 		$Credential,
 
@@ -84,19 +84,44 @@ Function Connect-TfsTeamProjectCollection
 	{
 		$tpc = $null
 
-		try
+		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])
 		{
-			if ($Interactive.IsPresent)
-			{
-				$Credential = (Get-TfsCredential -Interactive)
-			}
-
-			$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select-Object -First 1)
-			$tpc.EnsureAuthenticated()
+			_Log "Collection argument is of type TfsTeamProjectCollection. Reusing object."
+			$tpc = $Collection
 		}
-		catch
+		else
 		{
-			throw "Error connecting to team project collection $Collection ($_)"
+			try
+			{
+				if ($Interactive.IsPresent)
+				{
+					_Log "Setting credential mode to Interactive Credential Prompt"
+					$Credential = (Get-TfsCredential -Interactive)
+				}
+				elseif (-not $Credential)
+				{
+					_Log "Setting credential mode to Cached Credentials"
+					$Credential = (Get-TfsCredential -Cached)
+				}
+				else
+				{
+					_Log "Setting credential mode to Explicit credentials. Credentials supplied are of type $($Credential.GetType().FullName)"
+				}
+
+				$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select-Object -First 1)
+
+				_Log "Calling TfsTeamProjectCollection.EnsureAuthenticated()"
+				$tpc.EnsureAuthenticated()
+			}
+			catch
+			{
+				throw "Error connecting to team project collection $Collection ($_)"
+			}
+		}
+
+		if (-not $tpc)
+		{
+			throw "Invalid or non-existent team project collection '$Collection'"
 		}
 
 		$script:TfsTeamConnection = $null

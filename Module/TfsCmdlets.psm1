@@ -5,6 +5,26 @@ $script:IsCore = -not $script:IsDesktop
 
 # Shared Functions
 
+Function _Log
+{
+    Param
+    (
+        [Parameter(ValueFromPipeline=$true)]
+        [object]
+        $Message
+    )
+
+    if($VerbosePreference -ne 'Continue')
+    {
+        # No verbose set. Exit now to avoid expensive/unnecessary calls to Get-PSCallStack and Write-Verbose
+        return
+    }
+
+	$caller = (Get-PSCallStack)[1].Command
+
+    Write-Verbose "[$caller] $Message"
+}
+
 Function New-ScriptBlock($EntryPoint, [string[]]$Dependency)
 {
 	$entryPoint = (Get-Item "function:$EntryPoint").Definition.Trim()
@@ -580,15 +600,17 @@ if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvok
 
 Function Import-RequiredAssembly($assemblyName)
 {
-    Write-Verbose "Loading required assembly $assemblyName"
+    _Log "Trying to load assembly $assemblyName"
 
     if (Test-LoadedAssembly $assemblyName)
     {
-        Write-Verbose "Assembly $assemblyName already loaded; skipping"
+        _Log "Assembly $assemblyName already loaded; skipping"
         return
     }
 
     Add-Type -Path (Join-Path $PSScriptRoot "lib/$($assemblyName).dll")
+
+    _Log "Loaded assembly $assemblyName"
 }
 
 Function Test-LoadedAssembly($assemblyName)
@@ -626,6 +648,36 @@ Function Get-RestClient
 
         return Invoke-GenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
     }
+}
+
+Function Get-JsonPatchDocument
+{
+    [CmdletBinding()]
+    [OutputType([Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchDocument])]
+    Param
+    (
+        $operations
+    )
+    
+    $doc = New-Object 'Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchDocument'
+
+    foreach($op in $operations)
+    {
+        if ($op -is [Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchOperation])
+        {
+            $doc.Add($op)
+            continue
+        }
+
+        $jsonOp = New-Object 'Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchOperation'
+        $jsonOp.Operation = $op.Operation
+        $jsonOp.Path = $op.Path
+        $jsonOp.Value = $op.Value
+
+        $doc.Add($jsonOp)
+    }
+
+    Write-Output -NoEnumerate $doc
 }
 
 Import-RequiredAssembly 'Microsoft.TeamFoundation.Client'

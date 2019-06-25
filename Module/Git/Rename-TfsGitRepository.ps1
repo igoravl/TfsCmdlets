@@ -15,7 +15,7 @@ HELP_PARAM_PASSTHRU
 Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
 System.String
 #>
-Function Rename-AzDevGitRepository
+Function Rename-TfsGitRepository
 {
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
     [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]

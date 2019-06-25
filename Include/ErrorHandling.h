@@ -1,0 +1,1 @@
+#define CHECK_TEAM_PROJECT(tp) if(-not tp) { throw "No TFS team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet." }

@@ -565,7 +565,6 @@
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
-            <Width>15</Width>
             <Label>Name</Label>
           </TableColumnHeader>
           <TableColumnHeader>

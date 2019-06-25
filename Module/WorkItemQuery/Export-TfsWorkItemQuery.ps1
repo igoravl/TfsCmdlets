@@ -91,15 +91,15 @@ Function Export-TfsWorkItemQuery
         {
             if (-not (Test-Path $Destination -PathType Container))
             {
-                Write-Verbose "Destination path '$Destination' not found."
+                _Log "Destination path '$Destination' not found."
 
                 if ($Force)
                 {
-                    Write-Verbose "-Force switch specified. Creating output directory."
+                    _Log "-Force switch specified. Creating output directory."
 
                     if($PSCmdlet.ShouldProcess($Destination, 'Create output directory'))
                     {
-                        New-Item $Destination -ItemType Directory | Write-Verbose
+                        New-Item $Destination -ItemType Directory | _Log
                     }
                 }
                 else
@@ -118,7 +118,7 @@ Function Export-TfsWorkItemQuery
 
 		foreach($q in $queries)
 		{
-			$xml = @"
+			$xml = [xml]@"
 <?xml version="1.0" encoding="$Encoding"?>
 <!-- Original Query Path: $($q.Path) -->
 <WorkItemQuery Version="1">
@@ -131,11 +131,11 @@ Function Export-TfsWorkItemQuery
 			{
                 if ($AsXml)
                 {
-    				Write-Output [xml]$xml
+    				Write-Output $xml
                 }
                 else 
                 {
-    				Write-Output $xml
+    				Write-Output $xml.OuterXml
                 }
                 continue
 			}
@@ -149,18 +149,9 @@ Function Export-TfsWorkItemQuery
                 $queryPath = $q.Path.Substring($q.Path.IndexOf('/')+1)
             }
 
-            $fileName = Join-Path $Destination "$queryPath.wiql" 
-            $filePath = Split-Path $fileName -Parent
+            $fileName = _GetAbsolutePath (Join-Path $Destination "$queryPath.wiql")
 
-            Write-Verbose "Exporting query $($q.Name) to path '$fileName'"
-
-            if (-not (Test-Path $filePath -PathType Container))
-            {
-                if($PSCmdlet.ShouldProcess($filePath, "Create folder '$(Split-Path $filePath -Leaf)'"))
-                {
-                    New-Item $filePath -ItemType Directory -Force | Write-Verbose
-                }
-            }
+            _Log "Exporting query $($q.Name) to path '$fileName'"
 
             if((Test-Path $fileName) -and (-not $Force))
             {

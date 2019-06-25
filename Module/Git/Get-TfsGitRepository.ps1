@@ -13,7 +13,7 @@
     Microsoft.TeamFoundation.WorkItemTracking.Client.Project
     System.String
 #>
-Function Get-AzDevGitRepository
+Function Get-TfsGitRepository
 {
     [CmdletBinding()]
     [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
@@ -30,23 +30,25 @@ Function Get-AzDevGitRepository
 
         [Parameter()]
         [object]
-        $Organization
+        $Collection
     )
 
     Begin
     {
-        Import-RequiredAssembly 'Microsoft.TeamFoundation.SourceControl.WebApi'
+        REQUIRES(Microsoft.TeamFoundation.SourceControl.WebApi)
     }
 
     Process
     {
-        $org = Get-AzDevOrganization -Current
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
+        CHECK_TEAM_PROJECT($tp)
+        
+        $tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = $org.GetClient([type]'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
+        $gitClient = Get-RestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
 
-        $repos = $gitClient.GetRepositoriesAsync($Project).Result
+        $repos = $gitClient.GetRepositoriesAsync($tp.Name).Result
         
         return $repos | Where-Object Name -Like $Name
     }
 }
-

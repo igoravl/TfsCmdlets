@@ -64,6 +64,11 @@ Function Get-TfsWorkItem
         $Collection
     )
 
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+    }
+
     Process
     {
         if ($Project)
@@ -108,7 +113,7 @@ Function Get-TfsWorkItem
             }
 
             "Query by WIQL" {
-				Write-Verbose "Get-TfsWorkItem: Running query by WIQL. Query: $Query"
+				_Log "Get-TfsWorkItem: Running query by WIQL. Query: $Query"
                 return _GetWorkItemByWiql $Query $Macros $tp $store 
             }
 
@@ -250,12 +255,21 @@ Function _GetWorkItemByWiql($QueryText, $Macros, $Project, $store)
         $Macros["Me"] = $user.DisplayName
     }
 
-	Write-Verbose "Get-TfsWorkItem: Running query $QueryText"
+	_Log "Get-TfsWorkItem: Running query $QueryText"
 
     $wis = $store.Query($QueryText, $Macros)
 
-    foreach($wi in $wis)
-    {
-        $wi
-    }
+    # foreach($wi in $wis)
+    # {
+    #     if($Fields)
+    #     {
+    #         foreach($f in $Fields)
+    #         {
+    #             $escapedName = $f.Replace('.', '_')
+    #             Add-Member -InputObject $wi -Name $escapedName -TypeName 'System.String' -MemberType ScriptProperty -Value { $f.Value }
+    #         }
+    #     }
+    # }
+
+    return $wis
 }

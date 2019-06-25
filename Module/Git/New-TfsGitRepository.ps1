@@ -15,7 +15,7 @@ HELP_PARAM_PASSTHRU
 Microsoft.TeamFoundation.WorkItemTracking.Client.Project
 System.String
 #>
-Function New-AzDevGitRepository
+Function New-TfsGitRepository
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
