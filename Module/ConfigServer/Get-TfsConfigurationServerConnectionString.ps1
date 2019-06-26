@@ -36,7 +36,7 @@ Function Get-TfsConfigurationServerConnectionString
 	Process
 	{
 
-		$scriptBlock = _NewScriptBlock -EntryPoint '_GetConnectionString' -Dependency 'Get-InstallationPath', '_TestRegistryValue', 'Get-RegistryValue'
+		$scriptBlock = _NewScriptBlock -EntryPoint '_GetConnectionString' -Dependency 'Get-InstallationPath', '_TestRegistryValue', '_GetRegistryValue'
 
 		return _InvokeScriptBlock -ScriptBlock $scriptBlock -Computer $Computer -Credential $Credential -ArgumentList $Version
 	}

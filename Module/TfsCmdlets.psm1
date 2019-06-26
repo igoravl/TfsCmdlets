@@ -6,24 +6,6 @@ $script:IsCore = -not $script:IsDesktop
 # Shared Functions
 
 
-Function Get-RegistryValue
-{
-	Param
-	(
-		[Parameter(Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		$Path,
-
-		[Parameter(Mandatory=$true)]
-		[ValidateNotNullOrEmpty()]
-		$Value
-	)
-
-	Process
-	{
-		return Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value
-	}
-}
 
 function Invoke-GenericMethod
 {

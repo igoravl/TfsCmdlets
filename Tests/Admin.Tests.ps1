@@ -15,7 +15,7 @@ InModuleScope 'TfsCmdlets' {
                 { Get-Installation-Path -Version 15.0 -Component 'Foo' } | Should Throw
             }
             It 'Returns installation path from correct registry keys' {
-                Mock 'Get-RegistryValue' -ParameterFilter { $Component -eq 'BaseInstallation'}
+                Mock '_GetRegistryValue' -ParameterFilter { $Component -eq 'BaseInstallation'}
             }
         }
 

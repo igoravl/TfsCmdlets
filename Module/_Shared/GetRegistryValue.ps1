@@ -1,4 +1,4 @@
-Function _TestRegistryValue
+Function _GetRegistryValue
 {
 	Param
 	(
@@ -13,14 +13,6 @@ Function _TestRegistryValue
 
 	Process
 	{
-		try
-		{
-			_GetRegistryValue -Path $Path -Value $Value | Out-Null
-			return $true
-		}
-		finally {}
-
-		return $false
-
+		return Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value
 	}
 }

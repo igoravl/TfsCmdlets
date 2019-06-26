@@ -21,5 +21,5 @@ Function _GetInstallationPath($Version, $Component)
 		throw "Team Foundation Server component '$Component' is not installed in computer $env:COMPUTERNAME"
 	}
 
-	return Get-RegistryValue -Path $componentPath -Value 'InstallPath'
+	return _GetRegistryValue -Path $componentPath -Value 'InstallPath'
 }
