@@ -5,26 +5,6 @@ $script:IsCore = -not $script:IsDesktop
 
 # Shared Functions
 
-Function _Log
-{
-    Param
-    (
-        [Parameter(ValueFromPipeline=$true)]
-        [object]
-        $Message
-    )
-
-    if($VerbosePreference -ne 'Continue')
-    {
-        # No verbose set. Exit now to avoid expensive/unnecessary calls to Get-PSCallStack and Write-Verbose
-        return
-    }
-
-	$caller = (Get-PSCallStack)[1].Command
-
-    Write-Verbose "[$caller] $Message"
-}
-
 Function New-ScriptBlock($EntryPoint, [string[]]$Dependency)
 {
 	$entryPoint = (Get-Item "function:$EntryPoint").Definition.Trim()
@@ -316,7 +296,7 @@ function Test-GenericMethodParameters
 
     return $true
 
-} # function Test-GenericMethodParameters
+} 
 
 function TryMatchParameter
 {
@@ -397,8 +377,14 @@ function TryMatchArgument
         [Type] $RuntimeType
     )
 
+    Function _GetType($object)
+    {
+        if ($null -eq $object) { return $null }
+        return $object.GetType()
+    }
+
     $argValue = $ArgumentList[$Index.Value]
-    $argType = Get-Type $argValue
+    $argType = _GetType $argValue
 
     $isByRef = $RuntimeType.IsByRef
     if ($isByRef)
@@ -407,7 +393,7 @@ function TryMatchArgument
 
         $RuntimeType = $RuntimeType.GetElementType()
         $argValue = $argValue.Value
-        $argType = Get-Type $argValue
+        $argType = _GetType $argValue
     }
 
     $isNullNullable = $false
@@ -534,12 +520,6 @@ function Resolve-RuntimeType
     {
         return $ParameterType
     }
-}
-
-function Get-Type($object)
-{
-    if ($null -eq $object) { return $null }
-    return $object.GetType()
 }
 
 if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvoker').Type)
