@@ -35,7 +35,7 @@ Properties {
     $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
-    $NugetPackageVersion = $VersionMetadata.LegacySemVer.Replace('-', ".$ProjectBuildNumber-")
+    $NugetPackageVersion = "$($VersionMetadata.Major).$($VersionMetadata.Minor).$ProjectBuildNumber$($VersionMetadata.PreReleaseTagWithDash.Replace('.', ''))"
 
     # Chocolatey packaging
     $ChocolateyToolsDir = Join-Path $ChocolateyDir 'tools'
