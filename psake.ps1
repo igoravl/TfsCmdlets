@@ -83,16 +83,33 @@ Task CopyFiles {
     # Copy other module files to output dir
 
     Write-Verbose "Copying module files to output folder"
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps* 
+    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1 
 
     # Preprocess and copy PowerShell files to output dir
+
     Write-Verbose "Preprocessing and copying PowerShell files to output folder"
-    Get-ChildItem -Path $ProjectDir\* -Include *.ps* -Recurse | ForEach-Object {
+
+    Get-ChildItem -Path $ProjectDir\* -Include *.ps1 -Recurse | ForEach-Object {
+
         $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
-        Write-Verbose "Preprocessing $($_.FullName) and copying to $(Split-Path $outputPath -Parent)"
-        # -U `"`#`" `"`" `"(`" `",`" `")`" `"(`" `")`" `"`#`" `"\\`" 
-        & $gppExePath --include HelpText.h --include Defaults.h -I Include -o `"$outputPath`" +z `"$($_.FullName)`"
+        Write-Verbose "Preprocessing $($_.FullName)"
+        
+        $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($_.FullName)`")
+
+        $dirName = $_.Directory.BaseName
+
+        if(($Configuration -eq 'Release') -and ($dirName -ne 'Module'))
+        {
+            # Merge files (Release)
+            $outputPath = (Join-Path $ModuleDir "$dirName\$dirName.ps1")
+        }
+
+        Write-Verbose "Copying preprocessed contents to $outputPath"
+
+        Add-Content -Path $outputPath -Value $data
     }
+
+
 }
 
 Task CopyLibraries {
@@ -135,9 +152,9 @@ Task CopyLibraries {
 
 Task UpdateModuleManifest {
 
-    $fileList = (Get-ChildItem -Path $ProjectDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
+    $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $functionList = (Get-ChildItem -Path $ProjectDir\**\*-*.ps1 | Select-Object -ExpandProperty BaseName | Sort-Object)
-    $nestedModuleList = (Get-ChildItem -Path $ProjectDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ProjectDir.Length+1))"})
+    $nestedModuleList = (Get-ChildItem -Path $ModuleDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $tfsOmNugetVersion = ((& $NugetExePath List $TfsPackageNames[0] -PreRelease) -split ' ')[1]
     
     Write-Verbose @"
