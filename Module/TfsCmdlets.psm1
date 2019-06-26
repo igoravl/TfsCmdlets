@@ -133,7 +133,7 @@ function Get-GenericMethod
         return Get-GenericMethod @PSBoundParameters -WithCoercion
     }
 
-} # function Get-GenericMethod
+}
 
 function Test-GenericMethodParameters
 {
@@ -498,18 +498,5 @@ if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvok
 '@
 }
 
-Function Test-LoadedAssembly($assemblyName)
-{
-    try
-    {
-        $asm = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object FullName -like "$assemblyName,*"
-
-        return $asm -is [System.Reflection.Assembly]
-    }
-    catch
-    {
-        return $false
-    }
-}
 
 _ImportRequiredAssembly 'Microsoft.TeamFoundation.Client'
