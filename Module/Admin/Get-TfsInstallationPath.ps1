@@ -58,6 +58,6 @@ Function Get-TfsInstallationPath
 	{
 		$scriptBlock = _NewScriptBlock -EntryPoint '_GetInstallationPath' -Dependency 'Test-RegistryValue', 'Get-RegistryValue'
 
-		return Invoke-ScriptBlock -ScriptBlock $scriptBlock -Computer $Computer -Credential $Credential -ArgumentList $Version, $Component
+		return _InvokeScriptBlock -ScriptBlock $scriptBlock -Computer $Computer -Credential $Credential -ArgumentList $Version, $Component
 	}
 }
