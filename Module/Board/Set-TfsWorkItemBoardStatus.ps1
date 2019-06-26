@@ -123,7 +123,7 @@ Function Set-TfsWorkItemBoardStatus
 
         if ($PSCmdlet.ShouldProcess("$($WorkItem.WorkItemType) $id ('$($WorkItem.Title)')", "Set work item board status: $($processMessages -join ', ')"))
         {
-            $patch = Get-JsonPatchDocument $ops
+            $patch = _GetJsonPatchDocument $ops
             $client = Get-RestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
             $wi = $client.UpdateWorkItemAsync($patch, $id).Result
             return $wi

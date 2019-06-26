@@ -81,7 +81,7 @@ Function Move-TfsWorkItem
 
         if ($PSCmdlet.ShouldProcess("$($wi.WorkItemType) $($wi.Id) ('$($wi.Title)')", "Move work item to team project '$($targetTp.Name)' under area path '$($targetArea.RelativePath)' and iteration path '$($targetIteration.RelativePath)'"))
         {
-            $patch = Get-JsonPatchDocument @(
+            $patch = _GetJsonPatchDocument @(
                 @{
                     Operation = 'Add';
                     Path = '/fields/System.TeamProject';
