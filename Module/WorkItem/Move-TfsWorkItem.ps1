@@ -12,15 +12,23 @@ Function Move-TfsWorkItem
 
         [Parameter(Mandatory=$true, Position=1)]
         [object]
-        $DestinationProject,
+        $Destination,
 
         [Parameter()]
         [object]
-        $DestinationArea,
+        $Area,
 
         [Parameter()]
         [object]
-        $DestinationIteration,
+        $Iteration,
+
+        [Parameter()]
+        [object]
+        $State,
+
+        [Parameter()]
+        [object]
+        $History,
 
         [Parameter()]
         [object]
@@ -36,18 +44,18 @@ Function Move-TfsWorkItem
     {
         $wi = Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection
 
-        $targetTp = Get-TfsTeamProject -Project $DestinationProject -Collection $Collection
+        $targetTp = Get-TfsTeamProject -Project $Destination -Collection $Collection
         $tpc = $targetTp.Store.TeamProjectCollection
         
-        if ($DestinationArea)
+        if ($Area)
         {
-            $targetArea = Get-TfsArea $DestinationArea -Project $targetTp
+            $targetArea = Get-TfsArea $Area -Project $targetTp
 
             if (-not $targetArea)
             {
-                if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create area path '$DestinationArea'"))
+                if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create area path '$Area'"))
                 {
-                    $targetArea = New-TfsArea $DestinationArea -Project $targetTp -Passthru
+                    $targetArea = New-TfsArea $Area -Project $targetTp -Passthru
                 }
             }
 
@@ -58,16 +66,16 @@ Function Move-TfsWorkItem
             _Log 'Area not informed. Moving to root iteration.'
             $targetArea = Get-TfsArea '\' -Project $targetTp
         }
-        
-        if ($DestinationIteration)
+
+        if ($Iteration)
         {
-            $targetIteration = Get-TfsIteration $DestinationIteration -Project $targetTp
+            $targetIteration = Get-TfsIteration $Iteration -Project $targetTp
 
             if (-not $targetIteration)
             {
-                if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create iteration path '$DestinationIteration'"))
+                if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create iteration path '$Iteration'"))
                 {
-                    $targetIteration = New-TfsIteration $DestinationIteration -Project $targetTp -Passthru
+                    $targetIteration = New-TfsIteration $Iteration -Project $targetTp -Passthru
                 }
             }
 
@@ -79,32 +87,56 @@ Function Move-TfsWorkItem
             $targetIteration = Get-TfsIteration '\' -Project $targetTp
         }
 
-        if ($PSCmdlet.ShouldProcess("$($wi.WorkItemType) $($wi.Id) ('$($wi.Title)')", "Move work item to team project '$($targetTp.Name)' under area path '$($targetArea.RelativePath)' and iteration path '$($targetIteration.RelativePath)'"))
+        $targetArea = "$($targetTp.Name)$($targetArea.RelativePath)"
+        $targetIteration = "$($targetTp.Name)$($targetIteration.RelativePath)"
+
+        $patch = _GetJsonPatchDocument @(
+            @{
+                Operation = 'Add';
+                Path = '/fields/System.TeamProject';
+                Value = $targetTp.Name
+            },
+            @{
+                Operation = 'Add';
+                Path = "/fields/System.AreaPath";
+                Value = $targetArea
+            },
+            @{
+                Operation = 'Add';
+                Path = "/fields/System.IterationPath";
+                Value = $targetIteration
+            }
+        )
+
+        if ($State)
         {
-            $patch = _GetJsonPatchDocument @(
-                @{
-                    Operation = 'Add';
-                    Path = '/fields/System.TeamProject';
-                    Value = $targetTp.Name
-                },
-                @{
-                    Operation = 'Add';
-                    Path = "/fields/System.AreaPath";
-                    Value = "$($targetTp.Name)$($targetArea.RelativePath)"
-                },
-                @{
-                    Operation = 'Add';
-                    Path = "/fields/System.IterationPath";
-                    Value = "$($targetTp.Name)$($targetIteration.RelativePath)"
-                }
-            )
-    
+            $patch.Add( @{
+                Operation = 'Add';
+                Path = '/fields/System.State';
+                Value = $State
+            })
+        }
+
+        if ($History)
+        {
+            $patch.Add( @{
+                Operation = 'Add';
+                Path = '/fields/System.History';
+                Value = $History
+            })
+        }
+
+        if ($PSCmdlet.ShouldProcess("$($wi.WorkItemType) $($wi.Id) ('$($wi.Title)')", 
+            "Move work item to team project '$($targetTp.Name)' under area path " +
+            "'$($targetArea)' and iteration path '$($targetIteration)'"))
+        {
             $client = _GetRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
-            $resultWi = $client.UpdateWorkItemAsync($patch, $wi.Id).Result
+            $resultTask = $client.UpdateWorkItemAsync($patch, $wi.Id)
+            $resultWi = $resultTask.Result
 
             if (-not $resultWi)
             {
-                throw "Error moving work item."
+                throw "Error moving work item: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
             }
 
             return Get-TfsWorkItem $resultWi.Id -Collection $tpc
