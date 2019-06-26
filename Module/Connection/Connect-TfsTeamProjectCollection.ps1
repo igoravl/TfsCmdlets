@@ -133,6 +133,8 @@ Function Connect-TfsTeamProjectCollection
 		$script:AzDevProjectConnection = $null
 		$script:AzDevOrganizationConnection = [Microsoft.VisualStudio.Services.WebApi.VssConnection]::new($tpc.Uri, $tpc.ClientCredentials)
 
+		_Log "Connected to $($tpc.Uri)"
+
 		if ($Passthru)
 		{
 			return $tpc
