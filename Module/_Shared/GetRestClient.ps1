@@ -17,6 +17,6 @@ Function _GetRestClient
     {
         $tpc = Get-TfsTeamProjectCollection -Collection $Collection
 
-        return Invoke-GenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
+        return _InvokeGenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
     }
 }
