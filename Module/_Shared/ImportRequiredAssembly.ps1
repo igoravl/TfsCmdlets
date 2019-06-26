@@ -8,7 +8,7 @@ Function _ImportRequiredAssembly($assemblyName)
         return
     }
 
-    Add-Type -Path (Join-Path $PSScriptRoot "lib/$($assemblyName).dll")
+    Add-Type -Path (Join-Path $PSScriptRoot "../lib/$($assemblyName).dll" -Resolve)
 
     _Log "Loaded assembly $assemblyName"
 }
