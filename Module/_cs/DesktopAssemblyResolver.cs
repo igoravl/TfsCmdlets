@@ -25,13 +25,13 @@ namespace TfsCmdlets
 
                 try
                 {
-                    LogInfo("Request for unresolved assembly " + e.Name);
-
                     if (!PrivateAssemblies.ContainsKey(assemblyName))
                     {
-                        LogWarn("Unknown assembly " + e.Name + "; skipping");
+                        LogWarn("Request for external assembly " + e.Name + "; skipping");
                         return null;
                     }
+
+                    LogInfo("Request for unresolved assembly " + assemblyName);
 
                     var asm = LoadAssembly(assemblyName);
 
@@ -41,7 +41,7 @@ namespace TfsCmdlets
                 }
                 catch(Exception ex)
                 {
-                    LogError(ex);
+                    LogError(ex, assemblyName);
                     return null;
                 }
             };
@@ -62,7 +62,7 @@ namespace TfsCmdlets
 
         private static void Log(string message, object data)
         {
-            message = "[" + (LogEntries.Count+1).ToString("00000") + " - " + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
+            message = "[" + (LogEntries.Count+1).ToString("00000") + " - " + DateTime.Now.ToString("HH:mm:ss.ffff") + "] " + message;
 
             LogEntries.Add(message, data);
         }

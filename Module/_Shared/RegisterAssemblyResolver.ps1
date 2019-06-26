@@ -10,7 +10,7 @@ Function _RegisterAssemblyResolver
     
     Write-Verbose 'Registering custom Assembly Resolver'
 
-    if (-not [type]::GetType('TfsCmdlets.AssemblyResolver'))
+    if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver').Type)
     {
         Write-Verbose "Compiling $PSEdition version of the assembly resolver"
 

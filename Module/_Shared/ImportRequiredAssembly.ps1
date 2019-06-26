@@ -1,16 +1,13 @@
 Function _ImportRequiredAssembly($assemblyName)
 {
-    _Log "Trying to load assembly $assemblyName"
-
     if (_TestLoadedAssembly $assemblyName)
     {
-        _Log "Assembly $assemblyName already loaded; skipping"
         return
     }
 
-    Add-Type -Path (Join-Path $PSScriptRoot "../lib/$($assemblyName).dll" -Resolve)
+    _Log "Loading assembly $assemblyName"
 
-    _Log "Loaded assembly $assemblyName"
+    Add-Type -Path (Join-Path $PSScriptRoot "../lib/$($assemblyName).dll" -Resolve)
 }
 
 Function _TestLoadedAssembly($assemblyName)
