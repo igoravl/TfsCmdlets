@@ -49,8 +49,12 @@ namespace TfsCmdlets
 
         private static Assembly LoadAssembly(string assemblyName)
         {
-            var assembly = Assembly.LoadFrom(PrivateAssemblies[assemblyName]);
+            if(LoadedAssemblies.ContainsKey(assemblyName))
+            {
+                return LoadedAssemblies[assemblyName];
+            }
 
+            var assembly = Assembly.LoadFrom(PrivateAssemblies[assemblyName]);
             LoadedAssemblies.Add(assemblyName, assembly);
 
             return assembly;
