@@ -44,8 +44,8 @@ Function Rename-TfsGitRepository
 
     Begin
     {
-        Import-RequiredAssembly 'Microsoft.TeamFoundation.Core.WebApi'
-        Import-RequiredAssembly 'Microsoft.TeamFoundation.SourceControl.WebApi'
+        _ImportRequiredAssembly 'Microsoft.TeamFoundation.Core.WebApi'
+        _ImportRequiredAssembly 'Microsoft.TeamFoundation.SourceControl.WebApi'
     }
 
     Process

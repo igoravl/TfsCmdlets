@@ -21,8 +21,8 @@ Function Get-TfsRegisteredConfigurationServer
 
     Begin
     {
-        # Import-RequiredAssembly 'Microsoft.TeamFoundation.Common'
-        Import-RequiredAssembly 'Microsoft.TeamFoundation.Client'
+        # _ImportRequiredAssembly 'Microsoft.TeamFoundation.Common'
+        _ImportRequiredAssembly 'Microsoft.TeamFoundation.Client'
     }
 
     Process

@@ -598,21 +598,6 @@ if (-not ([System.Management.Automation.PSTypeName]'PSGenericMethods.MethodInvok
 '@
 }
 
-Function Import-RequiredAssembly($assemblyName)
-{
-    _Log "Trying to load assembly $assemblyName"
-
-    if (Test-LoadedAssembly $assemblyName)
-    {
-        _Log "Assembly $assemblyName already loaded; skipping"
-        return
-    }
-
-    Add-Type -Path (Join-Path $PSScriptRoot "lib/$($assemblyName).dll")
-
-    _Log "Loaded assembly $assemblyName"
-}
-
 Function Test-LoadedAssembly($assemblyName)
 {
     try
@@ -627,4 +612,4 @@ Function Test-LoadedAssembly($assemblyName)
     }
 }
 
-Import-RequiredAssembly 'Microsoft.TeamFoundation.Client'
+_ImportRequiredAssembly 'Microsoft.TeamFoundation.Client'
