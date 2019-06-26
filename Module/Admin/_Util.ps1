@@ -11,12 +11,12 @@ Function _GetInstallationPath($Version, $Component)
 		$componentPath = "$rootKeyPath\\InstalledComponents\\$Component"
 	}
 
-	if (-not (Test-RegistryValue -Path $rootKeyPath -Value 'InstallPath'))
+	if (-not (_TestRegistryValue -Path $rootKeyPath -Value 'InstallPath'))
 	{
 		throw "Team Foundation Server is not installed in computer $env:COMPUTERNAME"
 	}
 
-	if (-not (Test-RegistryValue -Path $componentPath -Value 'InstallPath'))
+	if (-not (_TestRegistryValue -Path $componentPath -Value 'InstallPath'))
 	{
 		throw "Team Foundation Server component '$Component' is not installed in computer $env:COMPUTERNAME"
 	}
