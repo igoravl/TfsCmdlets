@@ -162,7 +162,7 @@
       <ScriptProperty>
         <Name>RelativePath</Name>
         <GetScriptBlock>
-          $this.Path.SubString($this.Path.IndexOf('\\', $this.Path.IndexOf('\\', 2)+1))
+          $this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
         </GetScriptBlock>
       </ScriptProperty>
     </Members>
