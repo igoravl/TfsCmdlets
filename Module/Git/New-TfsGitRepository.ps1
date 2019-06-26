@@ -52,7 +52,7 @@ Function New-TfsGitRepository
             $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
             #$tpc = $tp.Store.TeamProjectCollection
 
-            $gitClient = Get-RestClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+            $gitClient = _GetRestClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
             $tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
             $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
             $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)

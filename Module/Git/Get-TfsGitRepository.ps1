@@ -45,7 +45,7 @@ Function Get-TfsGitRepository
         
         $tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = Get-RestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
+        $gitClient = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
 
         $repos = $gitClient.GetRepositoriesAsync($tp.Name).Result
         

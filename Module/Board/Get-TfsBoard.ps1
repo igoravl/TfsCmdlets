@@ -53,7 +53,7 @@ Function Get-TfsBoard
         }
 
         $tpc = $tp.Store.TeamProjectCollection
-        $client = Get-RestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
+        $client = _GetRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
         $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList $tp.Name, $t.Name
         $boards = $client.GetBoardsAsync($ctx).Result | Where-Object Name -like $Board
 

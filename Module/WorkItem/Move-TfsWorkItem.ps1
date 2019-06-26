@@ -99,7 +99,7 @@ Function Move-TfsWorkItem
                 }
             )
     
-            $client = Get-RestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
+            $client = _GetRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
             $resultWi = $client.UpdateWorkItemAsync($patch, $wi.Id).Result
 
             if (-not $resultWi)
