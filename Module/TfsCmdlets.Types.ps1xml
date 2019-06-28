@@ -10,6 +10,15 @@
     </Members>
   </Type>
   <Type>
+    <Name>Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>TeamProject</Name>
+        <GetScriptBlock>$this.Project.Name</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
     <Name>Microsoft.TeamFoundation.Client.BuildController</Name>
     <Members>
       <ScriptProperty>

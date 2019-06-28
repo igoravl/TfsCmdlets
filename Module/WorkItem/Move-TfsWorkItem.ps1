@@ -38,6 +38,7 @@ Function Move-TfsWorkItem
     Begin
     {
         REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.WebApi)
     }
 
     Process

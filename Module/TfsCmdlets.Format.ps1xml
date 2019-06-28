@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <Configuration>
   <ViewDefinitions>
+
     <View>
       <Name>Configuration Servers</Name>
       <ViewSelectedBy>
@@ -30,6 +31,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Team Project Collections</Name>
       <ViewSelectedBy>
@@ -67,6 +69,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Team Projects</Name>
       <ViewSelectedBy>
@@ -115,6 +118,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Teams</Name>
       <ViewSelectedBy>
@@ -151,6 +155,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Process Templates</Name>
       <ViewSelectedBy>
@@ -199,6 +204,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Work Item Types</Name>
       <ViewSelectedBy>
@@ -232,6 +238,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Work Items</Name>
       <ViewSelectedBy>
@@ -297,6 +304,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>Queued Builds</Name>
       <ViewSelectedBy>
@@ -349,6 +357,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
     <View>
       <Name>CSS Nodes</Name>
       <ViewSelectedBy>
@@ -403,6 +412,7 @@
         </TableRowEntries>
       </TableControl>
     </View>
+    
     <View>
       <Name>Build Definitions</Name>
       <ViewSelectedBy>
@@ -587,6 +597,58 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>RemoteUrl</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
+      <Name>Test Plans</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <Label>Team Project</Label>
+        <PropertyName>Project.Name</PropertyName>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Owner</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Start Date</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>End Date</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Description</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap/>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$this.Owner.DisplayName</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>StartDate</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>EndDate</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
