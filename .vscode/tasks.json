@@ -1,38 +1,81 @@
 {
-    "version": "0.1.0",
+    "version": "2.0.0",
     "command": "powershell",
-    "args": [   
-        "-ExecutionPolicy",
-        "Unrestricted",
-        "-NoProfile",
-        "-File",
-        "${workspaceRoot}/build.ps1",
-        "-Configuration",
-        "Debug",
-        "-Verbose",
-        "-Targets",
-    ],
-    "windows": {
-        "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe"
-    },
-    "showOutput": "always",
     "tasks": [
         {
-            "taskName": "Build",
-            "showOutput": "always",
-            "isBuildCommand": true,
-            "suppressTaskName": false
+            "label": "build",
+            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${workspaceRoot}/build.ps1",
+                "-Configuration",
+                "Debug",
+                "-Targets",
+                "Build"
+            ]
         },
         {
-            "taskName": "Package",
-            "showOutput": "always",
-            "suppressTaskName": false
+            "label": "package",
+            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${workspaceRoot}/build.ps1",
+                "-Configuration",
+                "Debug",
+                "-Targets",
+                "Package"
+            ]
         },
         {
-            "taskName": "Test",
-            "showOutput": "always",
-            "isTestCommand": true,
-            "suppressTaskName": false
-        }
+            "label": "build",
+            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${workspaceRoot}/build.ps1",
+                "-Configuration",
+                "Debug",
+                "-Targets",
+                "Test"
+            ]
+        },
     ]
 }

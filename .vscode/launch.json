@@ -2,13 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell",
+            "name": "PowerShell Interactive Session",
             "type": "PowerShell",
             "request": "launch",
-            "preLaunchTask": "build",
-            "program": "${workspaceRoot}/DebugTest.ps1",
-            "args": [],
-            "cwd": "${file}"
+            "script": "${workspaceFolder}\\DebugStartup.ps1",
+            "args": [
+                "${command:SpecifyScriptArgs}"
+            ],
+            "preLaunchTask": "build"
+        },
+        {
+            "name": "PowerShell Attach Interactive Session Runspace",
+            "type": "PowerShell",
+            "request": "attach",
+            "processId": "current",
+            "preLaunchTask": "build"
         }
     ]
 }

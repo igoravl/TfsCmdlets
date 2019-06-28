@@ -2,13 +2,13 @@
     "files.exclude": {
         ".gitattributes": true,
         ".gitignore": true,
-        "out": true,
         ".vs": true,
         ".vscode": true,
+        "[Bb]uild[Tt]ools": true,
         "[Pp]ackages": true,
         "[Ss]etup/bin": true,
         "[Ss]etup/obj": true,
-        "[Bb]uild[Tt]ools": true
+        "out": true
     },
     "search.usePCRE2": true
 }
