@@ -36,8 +36,8 @@ $allFunctions | Foreach-Object {
 
             $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
 
-            It 'Functions should have the "Tfs" standard prefix' {
-                $cmd.Noun.Substring(0, 3) | Should Be 'Tfs'
+            It 'Functions should have the "Tfs/AzDev" standard prefix' {
+                $cmd.Noun.Substring(0, 3) | Should Match 'Tfs|AzDev'
             }
 
             It 'Functions should have [CmdletBinding()] annotation' {
