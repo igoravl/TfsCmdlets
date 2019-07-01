@@ -99,7 +99,8 @@ Function Copy-TfsTestPlan
         [switch] 
         $DeepClone,
 
-        [Parameter()]
+		[Parameter()]
+		[Alias("Recurse")]
         [switch] 
         $CopyAllSuites,
 
@@ -113,7 +114,7 @@ Function Copy-TfsTestPlan
 
         [Parameter()]
         [string] 
-        $DestinationWorkItemType = 'Test Plan',
+        $DestinationWorkItemType = 'Test Case',
 
         [Parameter()]
         [int[]] 
@@ -126,7 +127,7 @@ Function Copy-TfsTestPlan
         [Parameter()]
 		[ValidateSet('Original', 'Copy', 'None')]
         [string]
-        $Passthru = 'Copy',
+        $Passthru = 'None',
 
         [Parameter()]
         [object]
@@ -178,6 +179,11 @@ Function Copy-TfsTestPlan
 			$IterationPath = $destTp.Name
 		}
 
+		if ((-not $SuiteIds) -and (-not $CopyAllSuites.IsPresent))
+		{
+			_Throw "Either -SuiteIds or -CopyAllSuites must be specified"
+		}
+
         $tpc = $tp.Store.TeamProjectCollection
 		
 		$client = _GetRestClient "$ns.TestPlanHttpClient" -Collection $tpc
@@ -200,8 +206,7 @@ Function Copy-TfsTestPlan
 				CloneRequirements = $CloneRequirements;
 				OverrideParameters = _NewDictionary @([string],[string]) @{
 					'System.AreaPath' = $AreaPath;
-					'System.IteratioPath' = $IterationPath
-					'projectName' = $destTp.Name
+					'System.IterationPath' = $IterationPath
 				}
 			}
 		}
