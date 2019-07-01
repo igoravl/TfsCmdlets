@@ -23,7 +23,7 @@ HELP_PARAM_PASSTHRU
 
 .EXAMPLE
 Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection
-Connects to a collection called "DefaultCollection" in a TF server called "tfs" using the default credentials of the logged-on user
+Connects to a collection called "DefaultCollection" in a TF server called "tfs" using the cached credentials of the logged-on user
 
 .EXAMPLE
 Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Interactive
@@ -44,7 +44,7 @@ System.Uri
 #>
 Function Connect-TfsTeamProjectCollection
 {
-	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
+	[CmdletBinding(DefaultParameterSetName="Cached credentials")]
 	[OutputType('Microsoft.TeamFoundation.Client.TfsTeamProjectCollection')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
@@ -57,18 +57,36 @@ Function Connect-TfsTeamProjectCollection
 		[object] 
 		$Collection,
 	
+        [Parameter(ParameterSetName="Cached credentials")]
+        [switch]
+        $Cached,
+
+        [Parameter(ParameterSetName="User name and password", Mandatory=$true, Position=1)]
+        [string]
+        $UserName,
+
+        [Parameter(ParameterSetName="User name and password", Position=2)]
+        [securestring]
+        $Password,
+
+        [Parameter(ParameterSetName="Credential object", Mandatory=$true)]
+        [ValidateNotNull]
+		[object]
+        $Credential,
+
+        [Parameter(ParameterSetName="Personal Access Token", Mandatory=$true)]
+        [Alias('Pat')]
+        [string]
+        $PersonalAccessToken,
+
+        [Parameter(ParameterSetName="Prompt for credential", Mandatory=$true)]
+        [switch]
+        $Interactive,
+
 		[Parameter()]
 		[object] 
 		$Server,
 	
-		[Parameter(ParameterSetName="Explicit credentials")]
-		[object]
-		$Credential,
-
-		[Parameter(ParameterSetName="Prompt for credentials", Mandatory=$true)]
-		[switch]
-		$Interactive,
-
 		[Parameter()]
 		[switch]
 		$Passthru
@@ -91,25 +109,22 @@ Function Connect-TfsTeamProjectCollection
 		}
 		else
 		{
+			_Log "Connecting with $($PSCmdlet.ParameterSetName)"
+
+			if ($PSBoundParameters.ContainsKey('Collection')) { [void] $PSBoundParameters.Remove('Collection') }
+			if ($PSBoundParameters.ContainsKey('Server')) { [void] $PSBoundParameters.Remove('Server') }
+			if ($PSBoundParameters.ContainsKey('Passthru')) { [void] $PSBoundParameters.Remove('Passthru') }
+
+			$creds = Get-TfsCredential @PSBoundParameters
+			$tpc = Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Creds
+
+			if (-not $tpc -or ($tpc.Count -ne 1))
+			{
+				throw "Invalid or non-existent team project collection $Collection"
+			}
+
 			try
 			{
-				if ($Interactive.IsPresent)
-				{
-					_Log "Setting credential mode to Interactive Credential Prompt"
-					$Credential = (Get-TfsCredential -Interactive)
-				}
-				elseif (-not $Credential)
-				{
-					_Log "Setting credential mode to Cached Credentials"
-					$Credential = (Get-TfsCredential -Cached)
-				}
-				else
-				{
-					_Log "Setting credential mode to Explicit credentials. Credentials supplied are of type $($Credential.GetType().FullName)"
-				}
-
-				$tpc = (Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential | Select-Object -First 1)
-
 				_Log "Calling TfsTeamProjectCollection.EnsureAuthenticated()"
 				$tpc.EnsureAuthenticated()
 			}
@@ -117,11 +132,6 @@ Function Connect-TfsTeamProjectCollection
 			{
 				throw "Error connecting to team project collection $Collection ($_)"
 			}
-		}
-
-		if (-not $tpc)
-		{
-			throw "Invalid or non-existent team project collection '$Collection'"
 		}
 
 		$script:TfsTeamConnection = $null

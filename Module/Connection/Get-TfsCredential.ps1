@@ -11,13 +11,13 @@
 #>
 Function Get-TfsCredential
 {
-    [CmdletBinding(DefaultParameterSetName="Prompt for credential")]
+    [CmdletBinding(DefaultParameterSetName="Cached credentials")]
     [OutputType('Microsoft.TeamFoundation.Client.TfsClientCredentials')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
     Param
     (
-        [Parameter(ParameterSetName="Cached Credential", Mandatory=$true)]
+        [Parameter(ParameterSetName="Cached credentials")]
         [switch]
         $Cached,
 
@@ -29,15 +29,17 @@ Function Get-TfsCredential
         [securestring]
         $Password,
 
-        [Parameter(ParameterSetName="Credential object")]
-        [object]
+        [Parameter(ParameterSetName="Credential object", Mandatory=$true)]
+        [AllowNull()]
+		[object]
         $Credential,
 
-        [Parameter(ParameterSetName="Personal Access Token")]
+        [Parameter(ParameterSetName="Personal Access Token", Mandatory=$true)]
         [Alias('Pat')]
+        [string]
         $PersonalAccessToken,
 
-        [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Prompt for credential", Mandatory=$true)]
         [switch]
         $Interactive
     )
@@ -48,14 +50,14 @@ Function Get-TfsCredential
         
         if (($parameterSetName -eq 'Credential object') -and (-not $Credential))
         {
-            $parameterSetName = 'Cached Credential'
+            $parameterSetName = 'Cached Credentials'
         }
 
         $allowInteractive = $false
 
         switch($parameterSetName)
         {
-            'Cached Credential' {
+            'Cached Credentials' {
                 $fedCred = New-Object 'Microsoft.TeamFoundation.Client.CookieCredential' -ArgumentList $true
                 $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $true
             }
