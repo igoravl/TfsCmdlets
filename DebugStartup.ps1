@@ -17,7 +17,6 @@
 #
 #   $FunctionBreakpoints = @('Connect-TfsTeamProjectCollection')
 
-
 Get-Module TfsCmdlets | Remove-Module; Import-Module (Join-Path $PSScriptRoot 'out\module\TfsCmdlets.psd1')
 
 $autoRunScripts = @(
@@ -29,8 +28,15 @@ foreach($path in $autoRunScripts)
 {
     if (Test-Path $path)
     {
-        Write-Warning "Loading TfsCmdlets autorun script from $path"
+        Write-Output "Loading TfsCmdlets autorun script from $path"
+        try
+        {
         . $path
+        }
+        catch
+        {
+            Write-Warning "Error loading autorun script ${path}: $_"
+        }
     }
 }
 
@@ -43,7 +49,7 @@ $Args | ForEach-Object { $FunctionBreakpoints += $_ }
 
 foreach($fn in $FunctionBreakpoints)
 {
-    Write-Warning "Setting breakpoint on function $fn"
+    Write-Output "Setting breakpoint on function $fn"
     [void] (Set-PSBreakpoint -Command $fn)
 }
 
