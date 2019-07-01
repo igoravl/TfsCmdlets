@@ -1,3 +1,67 @@
+<#
+.SYNOPSIS
+	Clones a test plan and, optionally, its test suites and test cases
+
+.DESCRIPTION
+	The Copy-TfsTestPlan copies ("clones") a test plan to help duplicate test suites and/or test cases. Cloning is useful if you want to branch your application into two versions: after copying, the tests for the two versions can be changed without affecting each other.
+
+.EXAMPLE
+	Copy-TfsTestPlan -TestPlan 'My test plan' -Project 'SourceProject' -Destination 'TargetProject' -NewName 'My new test plan'
+
+.INPUTS
+	Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan
+
+.OUTPUTS
+	Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan
+
+.NOTES
+	When you clone a test suite, the following objects are copied from the source test plan to the destination test plan: 
+
+    * Test cases (note: Each new test case retains its shared steps. A link is made between the source and new test cases. The new test cases do not have test runs, bugs, test results, and build information);
+    * Shared steps referenced by cloned test cases;
+    * Test suites (note: The following data is retained - Names and hierarchical structure of the test suites; Order of the test cases; Assigned testers; Configurations)
+    * Action Recordings linked from a cloned test case
+    * Links and Attachments
+    * Test configuration
+	
+	The items below are only copied when using -CloneRequirements:
+
+    * Requirements-based suites;
+    * Requirements work items (product backlog items or user stories);
+    * Bug work items, when in a project that uses the Scrum process template or any other project in which the Bug work item type is in the Requirements work item category. In other projects, bugs are not cloned.
+
+.PARAMETER TestPlan
+
+.PARAMETER Project
+	HELP_PARAM_PROJECT
+
+.PARAMETER NewName
+
+.PARAMETER DestinationProject
+
+.PARAMETER AreaPath
+
+.PARAMETER IterationPath
+
+.PARAMETER DeepClone
+
+.PARAMETER CopyAllSuites
+
+.PARAMETER CopyAncestorHierarchy
+
+.PARAMETER DestinationWorkItemType
+
+.PARAMETER SuiteIds
+
+.PARAMETER RelatedLinkComment
+
+.PARAMETER Passthru
+	HELP_PARAM_PASSTHRU
+
+.PARAMETER Collection
+	HELP_PARAM_COLLECTION
+
+#>
 Function Copy-TfsTestPlan
 {
     [CmdletBinding()]
@@ -10,14 +74,18 @@ Function Copy-TfsTestPlan
         [object]
         $TestPlan,
 
-		[Parameter()]
-		[Alias('Destination')]
+        [Parameter()]
         [object] 
-        $DestinationProject,
+        $Project,
 
         [Parameter()]
         [string] 
         $NewName,
+
+		[Parameter()]
+		[Alias('Destination')]
+        [object] 
+        $DestinationProject,
 
         [Parameter()]
         [string] 
@@ -59,10 +127,6 @@ Function Copy-TfsTestPlan
 		[ValidateSet('Original', 'Copy', 'None')]
         [string]
         $Passthru = 'Copy',
-
-        [Parameter()]
-        [object] 
-        $Project,
 
         [Parameter()]
         [object]

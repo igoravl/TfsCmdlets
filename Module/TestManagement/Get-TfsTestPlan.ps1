@@ -1,3 +1,23 @@
+<#
+.SYNOPSIS
+    Gets the contents of one or more test plans
+
+.DESCRIPTION
+
+.EXAMPLE
+    Get-TfsTestPlan 'Release 1 - Sprint*' -Project 'Fabrikam'
+    
+    Returns all test plans from team project 'Fabrikam' whose names start with 'Release 1 - Sprint'
+
+.INPUTS
+    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+
+.OUTPUTS
+    Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan
+
+.NOTES
+    
+#>
 Function Get-TfsTestPlan
 {
     [CmdletBinding()]
@@ -32,7 +52,7 @@ Function Get-TfsTestPlan
         [object]
         $Project,
 
-        # Specifies the collection / oreganization
+        # Specifies the collection / organization
         [Parameter()]
         [Alias("Organization")]
         [object]
