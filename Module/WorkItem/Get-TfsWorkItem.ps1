@@ -1,3 +1,4 @@
+#define DEFAULT_FIELDS [System.Id], [System.Revision], [System.WorkItemType], [System.State], [System.ChangedDate], [System.AssignedTo], [Sustem.Title]
 <#
 
 .SYNOPSIS
@@ -42,6 +43,10 @@ Function Get-TfsWorkItem
         [Alias('QueryPath')]
         [string]
         $Query,
+
+        # [Parameter(Mandatory=$true, ParameterSetName="Query by filter")]
+        # [string[]]
+        # $Fields,
 
         [Parameter(Mandatory=$true, ParameterSetName="Query by filter")]
         [string]
@@ -123,8 +128,6 @@ Function Get-TfsWorkItem
         }
     }
 }
-
-
 
 Function _GetWorkItemByRevision($WorkItem, $Revision, $store)
 {
@@ -265,8 +268,9 @@ Function _GetWorkItemByWiql($QueryText, $Macros, $Project, $store)
     #     {
     #         foreach($f in $Fields)
     #         {
-    #             $escapedName = $f.Replace('.', '_')
-    #             Add-Member -InputObject $wi -Name $escapedName -TypeName 'System.String' -MemberType ScriptProperty -Value { $f.Value }
+    #             $wi | Add-Member -Name (_GetEncodedFieldName $f.ReferenceName) -MemberType ScriptProperty -Value `
+    #                 {$f.Value}.GetNewClosure() `
+    #                 {param($Value) $f.Value = $Value}.GetNewClosure()
     #         }
     #     }
     # }

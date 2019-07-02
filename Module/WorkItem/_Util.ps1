@@ -12,3 +12,25 @@ Function _FixAreaIterationValues([hashtable] $Fields, $ProjectName)
 	
 	return $Fields
 }
+
+Function _GetEscapedFieldName([string] $fieldName)
+{
+	$fieldName = $fieldName.Trim()
+
+	if(-not $fieldName.StartsWith('['))
+	{
+		$fieldName = '[' + $fieldName
+	}
+
+	if(-not $fieldName.EndsWith(']'))
+	{
+		$fieldName += ']'
+	}
+
+	return $fieldName
+}
+
+Function _GetEncodedFieldName([string] $fieldName)
+{
+	return $fieldName.Trim(' ', '[', ']') -replace '[/W]', '_'
+}
