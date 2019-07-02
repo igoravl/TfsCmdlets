@@ -169,9 +169,27 @@
         </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
+        <Name>TeamProject</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(1, $this.Path.IndexOf('\', 2)-1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>FullPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(1, $this.Path.IndexOf('\', 2)-1)+$this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
         <Name>RelativePath</Name>
         <GetScriptBlock>
           $this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Id</Name>
+        <GetScriptBlock>
+          [guid] $this.Uri.Substring($this.Uri.LastIndexOf('/')+1)
         </GetScriptBlock>
       </ScriptProperty>
     </Members>

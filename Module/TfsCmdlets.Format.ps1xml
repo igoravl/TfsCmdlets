@@ -363,6 +363,10 @@
       <ViewSelectedBy>
         <TypeName>Microsoft.TeamFoundation.Server.NodeInfo</TypeName>
       </ViewSelectedBy>
+      <GroupBy>
+        <Label>Team Project</Label>
+        <PropertyName>TeamProject</PropertyName>
+      </GroupBy>
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
