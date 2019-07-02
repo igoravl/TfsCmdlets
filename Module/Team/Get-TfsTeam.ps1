@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.Client.TeamFoundationTeam
 <#
 
 .SYNOPSIS
@@ -16,12 +17,12 @@
 Function Get-TfsTeam
 {
     [CmdletBinding(DefaultParameterSetName="Get by name")]
-    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
+    [OutputType('ITEM_TYPE')]
     param
     (
         [Parameter(Position=0, ParameterSetName="Get by name")]
         [Alias("Name")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [ITEM_TYPE])})] 
         [SupportsWildcards()]
         [object]
         $Team = '*',
@@ -49,13 +50,10 @@ Function Get-TfsTeam
 
     Process
     {
-        if ($Team -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])
-        {
-            return $Team
-        }
+        CHECK_ITEM($Team)
 
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
+        GET_TEAM_PROJECT($tp,$tpc)
+
         $teamService = $tpc.GetService([type]'Microsoft.TeamFoundation.Client.TfsTeamService')
 
         if ($Default)
