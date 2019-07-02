@@ -72,7 +72,7 @@ Task CleanOutputDir {
     
     if (Test-Path $ModuleDir -PathType Container)
     { 
-        Remove-Item $ModuleDir -Recurse -ErrorAction SilentlyContinue | Out-Null
+        Remove-Item $ModuleDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     }
 
     New-Item $ModuleDir -ItemType Directory -Force | Out-Null
@@ -88,6 +88,8 @@ Task CopyFiles {
     # Preprocess and copy PowerShell files to output dir
 
     Write-Verbose "Preprocessing and copying PowerShell files to output folder"
+
+    Remove-Item -Path $ModuleDir\*.ps1 -Recurse -Force
 
     Get-ChildItem -Path $ProjectDir\* -Include *.ps1 -Recurse | ForEach-Object {
 
@@ -106,10 +108,12 @@ Task CopyFiles {
 
         Write-Verbose "Copying preprocessed contents to $outputPath"
 
-        Add-Content -Path $outputPath -Value $data
+        Add-Content -Path $outputPath -Value $data -Force
     }
 
+    # Mark outputted files as read-only to prevent editing and eventual data loss during debugging sessions
 
+    Get-ChildItem -Path $ModuleDir\* -Include *.ps1 -Recurse | ForEach-Object { $_.Attributes = 'ReadOnly'}
 }
 
 Task CopyLibraries {
