@@ -17,14 +17,14 @@ Function _GetCssNodes($Node, $Scope, $Project, $Collection)
 			return $cssService.GetNode($node)
 		}
 
-		$rootPath = _NormalizePath "$projectName\\$Scope"
-		$fullPath = _NormalizePath "$rootPath\\$Node"
-
+		$rootPath = _NormalizeCssNodePath -Project $projectName -Scope $Scope -Path '' -IncludeTeamProject -IncludeScope
 		$rootNodeUri = $cssService.GetNodeFromPath("$rootPath").Uri
 		$rootElement = $cssService.GetNodesXml(@($rootNodeUri), $true)
-		
+
 		$nodePaths = $rootElement.SelectNodes('//@Path') | Select-Object -ExpandProperty '#text'
-		$matchingPaths = $nodePaths | Where-Object { _Log $_; $_ -like $fullPath }
+
+		$fullPath = _NormalizeCssNodePath  -Project $projectName -Scope $Scope -Path $Node -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
+		$matchingPaths = $nodePaths | Where-Object { _Log "Evaluating '$_' against pattern '$fullPath'"; $_ -like $fullPath }
 
         return $matchingPaths | Foreach-Object { $cssService.GetNodeFromPath($_) }
     }
@@ -52,7 +52,7 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
 
         try
         {
-			$fullPath = _NormalizePath "$projectName\\$Scope\\$Path"
+			$fullPath = _NormalizeCssNodePath -Project $projectName -Scope $Scope -Path $Path -IncludeTeamProject -IncludeScope
 			$parentPath = Split-Path $fullPath -Parent
 			$nodeName = Split-Path $fullPath -Leaf
             $parentNode = $cssService.GetNodeFromPath($parentPath)
@@ -76,31 +76,68 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
     }
 }
 
-Function _NormalizePath($Path)
+Function _NormalizeCssNodePath
 {
-	_Log "Normalizing path $Path"
+	Param
+	(
+		[Parameter(Mandatory=$true)]
+		[string]
+		$Project, 
 
-	if([string]::IsNullOrWhiteSpace($Path))
+		[ValidateSet('Area', 'Iteration')]
+		[string]
+		$Scope, 
+
+		[Parameter(Mandatory=$true)]
+		[AllowEmptyString()]
+		[string]
+		$Path, 
+
+		[switch]
+		$IncludeScope,
+
+		[switch]
+		$ExcludePath,
+
+		[switch]
+		$IncludeLeadingBackslash,
+
+		[switch]
+		$IncludeTrailingBackslash,
+
+		[switch]
+		$IncludeTeamProject
+	)
+
+	_Log "Normalizing path '$Path' with arguments $($PSBoundParameters | ConvertTo-Json -Compress)"
+
+	$newPath = ''
+
+	if ($IncludeLeadingBackslash) { $newPath += '\\' }
+	if ($IncludeTeamProject) { $newPath += $Project + '\\' }
+	if ($IncludeScope) { $newPath += $Scope + '\\' }
+
+	if(-not $ExcludePath.IsPresent)
 	{
-		_Log "Unable to normalize empty paths"
-		return [string]::Empty
+		$Path = $Path.Trim(' ', '\\')
+
+		if ($Path -like "$Project\\*")
+		{
+			$Path = $Path.Substring($Path.IndexOf('\\'))
+		}
+		elseif ($Path -eq $Project)
+		{
+			$Path = ''
+		}
+
+		$newPath += $Path
 	}
 
-	$newPath = [System.Text.RegularExpressions.Regex]::Replace($Path, '\\\\{2,}', '\\')
-
-	if (-not $newPath.StartsWith("\\"))
-	{
-		$newPath = "\\$newPath"
-	}
-
-	if ($newPath.EndsWith("\\"))
-	{
-		$newPath = $newPath.Substring(0, $newPath.Length-1)
-	}
+	if ($IncludeTrailingBackslash) { $newPath += $Scope + '\\' }
 
 	_Log "Normalized path: $newPath"
 
-	return $newPath
+	return $newPath -replace '\\\\{2,}', '\\'
 }
 
 Function _GetCssService($Project, $Collection, $Version)

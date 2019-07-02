@@ -14,7 +14,7 @@ System.String
 #>
 Function Set-TfsTeam
 {
-    [CmdletBinding(DefaultParameterSetName="Get by name", ConfirmImpact='Medium', SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="Medium")]
     [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
     param
     (
@@ -38,6 +38,42 @@ Function Set-TfsTeam
         $Description,
 
         [Parameter()]
+        [string]
+        $TeamFieldValue,
+
+        [Parameter()]
+        [hashtable]
+        $AreaPaths,
+
+        [Parameter()]
+        [string]
+        $BacklogIteration,
+
+        [Parameter()]
+        [string]
+        $IterationPaths,
+
+        # Default iteration macro
+        [Parameter()]
+        [string]
+        $DefaultIterationMacro, #= '@CurrentIteration'
+    
+        # Working Days. Defaults to Monday thru Friday
+        [Parameter()]
+        [string[]]
+        $WorkingDays, #= @("monday", "tuesday", "wednesday", "thursday", "friday"),
+
+        # Bugs behavior
+        [Parameter()]
+        [ValidateSet('AsTasks', 'AsRequirements', 'Off')]
+        [string]
+        $BugsBehavior,
+
+        [Parameter()]
+        [hashtable]
+        $BacklogVisibilities,
+
+        [Parameter()]
         [object]
         $Project,
 
@@ -45,6 +81,11 @@ Function Set-TfsTeam
         [object]
         $Collection
     )
+
+    Begin
+    {
+        REQUIRES(Microsoft.TeamFoundation.Work.WebApi)
+    }
 
     Process
     {
@@ -83,7 +124,126 @@ Function Set-TfsTeam
         {
             $teamService.UpdateTeam($t)
         }
-        
+
+        # Prepare for the second stage
+
+        $client = _GetRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
+        $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList @($tp.Name, $t.Name)
+
+        # Set Team Field and Area Path settings
+
+        $patch = New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValuesPatch'
+
+        if($TeamFieldValue -and $PSCmdlet.ShouldProcess($Team, "Set the team's team field value to $TeamFieldValue"))
+        {
+            if($tpc.IsHostedServer)
+            {
+                _Log "Conected to Azure DevOps Server. Treating Team Field Value as Area Path"
+
+                $TeamFieldValue = _NormalizeCssNodePath -Project $tp.Name -Path $TeamFieldValue -IncludeTeamProject
+
+                if(-not $AreaPaths)
+                {
+                    _Log "AreaPaths is empty and TeamFieldValue is an area path. Adding TeamFieldValue to AreaPaths as default value."
+
+                    $AreaPaths = @{ $TeamFieldValue = $true }
+                }
+            }
+
+            _Log "Setting team field to $TeamFieldValue"
+
+            $patch = New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValuesPatch' -Property @{
+                DefaultValue = $TeamFieldValue
+            }
+
+            $values = @()
+
+            foreach($a in $AreaPaths.GetEnumerator())
+            {
+                $values += New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValue' -Property @{
+                    Value = _NormalizeCssNodePath -Project $tp.Name -Path $a.Key -IncludeTeamProject
+                    IncludeChildren = $a.Value
+                }
+            }
+
+            $patch.Values = [Microsoft.TeamFoundation.Work.WebApi.TeamFieldValue[]] $values
+
+            $resultTask = $client.UpdateTeamFieldValuesAsync($patch, $ctx)
+            $result = $resultTask.Result
+
+            if (-not $result)
+            {
+                throw "Error applying team field value and/or area path settings: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
+            }
+        }
+
+        # Set backlog and iteration path settings
+
+        $patch = New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamSettingsPatch'
+        $isDirty = $false
+
+        if ($BacklogIteration -and $PSCmdlet.ShouldProcess($Team, "Set the team's backlog iteration to $BacklogIteration"))
+        {
+            _Log "Setting backlog iteration to $BacklogIteration"
+            $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
+            $patch.BacklogIteration = [guid] $iteration.Id
+            $patch.DefaultIteration = [guid] $iteration.Id
+
+            $isDirty = $true
+        }
+
+        if ($DefaultIteration -and $PSCmdlet.ShouldProcess($Team, "Set the team's default iteration to $DefaultIteration"))
+        {
+            _Log "Setting default iteration to $DefaultIteration"
+            $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
+            $patch.DefaultIteration = [guid] $iteration.Id
+
+            $isDirty = $true
+        }
+
+        if ($BacklogVisibilities -and $PSCmdlet.ShouldProcess($Team, "Set the team's backlog visibilities to $($BacklogVisibilities|ConvertTo-Json -Compress)"))
+        {
+            _Log "Setting backlog iteration to $BacklogVisibilities"
+            $patch.BacklogVisibilities = _NewDictionary @([string], [bool]) $BacklogVisibilities
+
+            $isDirty = $true
+        }
+
+        if ($DefaultIterationMacro -and $PSCmdlet.ShouldProcess($Team, "Set the team's default iteration macro to $DefaultIterationMacro"))
+        {
+            _Log "Setting default iteration macro to $DefaultIterationMacro"
+            $patch.DefaultIterationMacro = $DefaultIterationMacro
+
+            $isDirty = $true
+        }
+
+        if ($WorkingDays -and $PSCmdlet.ShouldProcess($Team, "Set the team's working days to $($WorkingDays|ConvertTo=-Json -Compress)"))
+        {
+            _Log "Setting working days to $($WorkingDays|ConvertTo=-Json -Compress)"
+            $patch.WorkingDays = $WorkingDays
+
+            $isDirty = $true
+        }
+
+        if($BugsBehavior -and $PSCmdlet.ShouldProcess($Team, "Set the team's bugs behavior to $($BugsBehavior|ConvertTo-Json -Compress)"))
+        {
+            _Log "Setting bugs behavior to $($BugsBehavior|ConvertTo-Json -Compress)"
+            $patch.BugsBehavior = $BugsBehavior
+
+            $isDirty = $true
+        }
+
+        if($isDirty)
+        {
+            $resultTask = $client.UpdateTeamSettingsAsync($patch, $ctx)
+            $result = $resultTask.Result
+
+            if (-not $result)
+            {
+                Throw "Error applying iteration settings: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
+            }
+        }
+
         return $t
     }
 }
