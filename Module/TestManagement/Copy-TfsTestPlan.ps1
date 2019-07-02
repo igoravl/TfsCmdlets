@@ -169,6 +169,18 @@ Function Copy-TfsTestPlan
             throw "Invalid or non-existent team project $Project"
 		}
 
+		if (-not $NewName)
+		{
+			if($tp.Name -ne $destTp.Name)
+			{
+				$NewName = $plan.Name
+			}
+			else
+			{
+				$NewName = "$($plan.Name) (cloned $([DateTime]::Now.ToShortDateString()))"
+			}
+		}
+
 		if (-not $AreaPath)
 		{
 			$AreaPath = $destTp.Name
@@ -177,11 +189,6 @@ Function Copy-TfsTestPlan
 		if (-not $IterationPath)
 		{
 			$IterationPath = $destTp.Name
-		}
-
-		if ((-not $SuiteIds) -and (-not $CopyAllSuites.IsPresent))
-		{
-			_Throw "Either -SuiteIds or -CopyAllSuites must be specified"
 		}
 
         $tpc = $tp.Store.TeamProjectCollection
