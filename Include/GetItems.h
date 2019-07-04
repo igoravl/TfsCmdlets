@@ -1,2 +1,3 @@
 #define GET_TEAM_PROJECT(TP,TPC) TP = Get-TfsTeamProject -Project $Project -Collection $Collection; if (-not TP -or (TP.Count -ne 1)) {throw "Invalid or non-existent team project $Project."}; TPC = TP.Store.TeamProjectCollection
+#define GET_TEAM_PROJECT_FROM_ITEM(TP,TPC,ITEM) if(ITEM) {$Project = ITEM}; GET_TEAM_PROJECT(TP,TPC)
 #define CHECK_ITEM(ITEM_NAME) if (ITEM_NAME -is [ITEM_TYPE]) { _Log "Input item '$(ITEM_NAME)' is of type ITEM_TYPE; returning input item immediately, without further processing."; return ITEM_NAME }
