@@ -24,7 +24,7 @@ Function _GetCssNodes($Node, $Scope, $Project, $Collection)
 		$nodePaths = $rootElement.SelectNodes('//@Path') | Select-Object -ExpandProperty '#text'
 
 		$fullPath = _NormalizeCssNodePath  -Project $projectName -Scope $Scope -Path $Node -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
-		$matchingPaths = $nodePaths | Where-Object { _Log "Evaluating '$_' against pattern '$fullPath'"; $_ -like $fullPath }
+		$matchingPaths = $nodePaths | Where-Object { _Log "Evaluating '$_' against pattern '$fullPath'" -Caller (_GetLogCallStack); $_ -like $fullPath }
 
         return $matchingPaths | Foreach-Object { $cssService.GetNodeFromPath($_) }
     }
@@ -109,7 +109,7 @@ Function _NormalizeCssNodePath
 		$IncludeTeamProject
 	)
 
-	_Log "Normalizing path '$Path' with arguments $($PSBoundParameters | ConvertTo-Json -Compress)"
+	_Log "Normalizing path '$Path' with arguments $(_DumpObj $PSBoundParameters)"
 
 	$newPath = ''
 
