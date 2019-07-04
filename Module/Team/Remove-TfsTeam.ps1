@@ -1,5 +1,5 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
 <#
-
 .SYNOPSIS
     Deletes a team.
 
@@ -16,12 +16,12 @@
 Function Remove-TfsTeam
 {
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
-    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
+    [OutputType('ITEM_TYPE')]
     param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
         [Alias("Name")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [ITEM_TYPE])})] 
         [SupportsWildcards()]
         [object]
         $Team = '*',
@@ -37,15 +37,23 @@ Function Remove-TfsTeam
 
     Process
     {
+        GET_TEAM_PROJECT_FROM_ITEM($tpc,$tp,$Team.ProjectName)
         $t = Get-TfsTeam -Team $Team -Project $Project -Collection $Collection
 
-        if ($PSCmdlet.ShouldProcess($t.Name, 'Delete team'))
+        if (-not $PSCmdlet.ShouldProcess($t.Name, 'Delete team'))
         {
-            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-            $tpc = $tp.Store.TeamProjectCollection
-            $identityService = $tpc.GetService([type]'Microsoft.TeamFoundation.Framework.Client.IIdentityManagementService')
-
-            $identityService.DeleteApplicationGroup($t.Identity.Descriptor)
+            return
         }
+
+        $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient'
+        $task = $client.DeleteTeamAsync($tp.Name, $t.Name)
+        $result = $task.Result
+
+        if($task.IsFaulted)
+        {
+            throw "Error deleting team: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
+        }
+        
+        return $result
     }
 }

@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
 <#
 
 .SYNOPSIS
@@ -18,13 +19,13 @@
 Function New-TfsTeam
 {
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
-    [OutputType('Microsoft.TeamFoundation.Client.TeamFoundationTeam')]
+    [OutputType('ITEM_TYPE')]
     param
     (
         [Parameter(Mandatory=$true, ValueFromPipeline=$true)]
-        [Alias("Team")]
+        [Alias("Name")]
         [string] 
-        $Name,
+        $Team,
     
         [Parameter()]
         [string] 
@@ -43,20 +44,30 @@ Function New-TfsTeam
         $Passthru
     )
 
+    Begin
+    {
+
+    }
+
     Process
     {
-        if ($PSCmdlet.ShouldProcess($Name, 'Create team'))
+        if (-not $PSCmdlet.ShouldProcess($Project, "Create team $Team"))
         {
-            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-            $tpc = $tp.Store.TeamProjectCollection
-            $teamService = $tpc.GetService([type]"Microsoft.TeamFoundation.Client.TfsTeamService")
+            return
+        }
 
-            $team = $teamService.CreateTeam($tp.Uri, $Name, $Description, $null)
+        GET_TEAM_PROJECT($tp,$tpc)
 
-            if ($Passthru)
-            {
-                return $team
-            }
+        $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient'
+
+        $result = $client.CreateTeamAsync((New-Object 'ITEM_TYPE' -Property @{
+            Name = $Team
+            Description = $Description
+        }), $tp.Name).Result
+
+        if ($Passthru)
+        {
+            return $result
         }
     }
 }
