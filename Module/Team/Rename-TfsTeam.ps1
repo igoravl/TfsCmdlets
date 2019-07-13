@@ -1,17 +1,16 @@
 <#
-
 .SYNOPSIS
-    Renames a team.
+Renames a team.
 
 .PARAMETER Project
-    HELP_PARAM_PROJECT
+HELP_PARAM_PROJECT
 
 .PARAMETER Collection
-    HELP_PARAM_COLLECTION
+HELP_PARAM_COLLECTION
 
 .INPUTS
-    Microsoft.TeamFoundation.Client.TeamFoundationTeam
-    System.String
+Microsoft.TeamFoundation.Client.TeamFoundationTeam
+System.String
 #>
 Function Rename-TfsTeam
 {
