@@ -83,30 +83,3 @@ Function _GetQueriesRecursively
     }
 }
 
-function _GetAbsolutePath 
-{
-    [CmdletBinding(SupportsShouldProcess=$true)]
-    Param
-    (
-        $Path, 
-        [switch]$CreateFolder
-    )
-
-    Process
-    {
-        $Path = [System.IO.Path]::Combine($pwd.Path, $Path)
-        $Path = [System.IO.Path]::GetFullPath($Path)
-
-        $folder = Split-Path $Path -Parent
-
-        if (-not (Test-Path $folder))
-        {
-            if($PSCmdlet.ShouldProcess($folder, "Create folder '$(Split-Path $folder -Leaf)'"))
-            {
-                New-Item $folder -ItemType Directory -Force | _Log
-            }
-        }
-
-        return $Path;
-    }
-}
