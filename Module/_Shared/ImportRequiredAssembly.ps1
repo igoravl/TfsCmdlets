@@ -1,13 +1,29 @@
 Function _ImportRequiredAssembly($assemblyName)
 {
-    if (_TestLoadedAssembly $assemblyName)
+    $libPath = (Join-Path $PSScriptRoot "../lib" -Resolve)
+
+    if($assemblyName -eq '*')
     {
-        return
+        $assemblies = (Get-ChildItem "$libPath/*.dll" -Exclude 'Microsoft.WitDataStore*.*').BaseName
     }
+    else
+    {
+        $assemblies = (Get-ChildItem "$libPath/$assemblyName.dll").BaseName
+    }
+    
+    foreach($asm in $assemblies)
+    {
+        Write-Verbose "Loading assembly $asm from folder $libPath"
 
-    _Log "Loading assembly $assemblyName"
-
-    Add-Type -Path (Join-Path $PSScriptRoot "../lib/$($assemblyName).dll" -Resolve)
+        try
+        {
+            Add-Type -Path (Join-Path $libPath "$asm.dll")
+        }
+        catch
+        {
+            Write-Error "Error loading assembly '$asm': $($_.Exception)"
+        }
+    }
 }
 
 Function _TestLoadedAssembly($assemblyName)
