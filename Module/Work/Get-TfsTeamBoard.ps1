@@ -1,4 +1,4 @@
-Function Get-TfsBoard
+Function Get-TfsTeamBoard
 {
     [CmdletBinding()]
     [OutputType('Microsoft.TeamFoundation.Work.WebApi.Board')]
