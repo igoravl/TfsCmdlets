@@ -201,7 +201,7 @@ Function Set-TfsTeam
             $isDirty = $true
         }
 
-        if ($BacklogVisibilities -and $PSCmdlet.ShouldProcess($Team, "Set the team's backlog visibilities to $($BacklogVisibilities|ConvertTo-Json -Compress)"))
+        if ($BacklogVisibilities -and $PSCmdlet.ShouldProcess($Team, "Set the team's backlog visibilities to $(_DumpObj $BacklogVisibilities)"))
         {
             _Log "Setting backlog iteration to $BacklogVisibilities"
             $patch.BacklogVisibilities = _NewDictionary @([string], [bool]) $BacklogVisibilities
@@ -217,7 +217,7 @@ Function Set-TfsTeam
             $isDirty = $true
         }
 
-        if ($WorkingDays -and $PSCmdlet.ShouldProcess($Team, "Set the team's working days to $($WorkingDays|ConvertTo=-Json -Compress)"))
+        if ($WorkingDays -and $PSCmdlet.ShouldProcess($Team, "Set the team's working days to $(_DumpObj $WorkingDays)"))
         {
             _Log "Setting working days to $($WorkingDays|ConvertTo=-Json -Compress)"
             $patch.WorkingDays = $WorkingDays
@@ -225,9 +225,9 @@ Function Set-TfsTeam
             $isDirty = $true
         }
 
-        if($BugsBehavior -and $PSCmdlet.ShouldProcess($Team, "Set the team's bugs behavior to $($BugsBehavior|ConvertTo-Json -Compress)"))
+        if($BugsBehavior -and $PSCmdlet.ShouldProcess($Team, "Set the team's bugs behavior to $(_DumpObj $BugsBehavior)"))
         {
-            _Log "Setting bugs behavior to $($BugsBehavior|ConvertTo-Json -Compress)"
+            _Log "Setting bugs behavior to $(_DumpObj $BugsBehavior)"
             $patch.BugsBehavior = $BugsBehavior
 
             $isDirty = $true
