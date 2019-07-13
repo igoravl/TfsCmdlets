@@ -70,21 +70,25 @@ Function Get-TfsTeamProject
 			return $Project
 		}
 
+        $tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
+
         if (($Project -is [uri]) -or ([System.Uri]::IsWellFormedUriString($Project, [System.UriKind]::Absolute)))
         {
-			$tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
             $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-
             $projInfo = $css.GetProject([string] $Project)
             $Project = $projInfo.Name
         }
 
 		if ($Project -is [string])
 		{
-			$tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
-			$wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+            $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+            
+            if($Project.IndexOf('*') -ge 0)
+            {
+                return _GetAllProjects $tpc | Where-Object Name -Like $Project | Foreach-Object { $wiStore.Projects[$_.Name] }
+            }
 
-			return _GetAllProjects $tpc | Where-Object Name -Like $Project | Foreach-Object { $wiStore.Projects[$_.Name] }
+            return $wiStore.Projects[$Project]
 		}
 
 		if ($null -eq $Project)
