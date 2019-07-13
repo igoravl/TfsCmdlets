@@ -137,12 +137,20 @@ Task CopyLibraries {
                 $SrcPath = $f.FullName
                 $DstPath = Join-Path $TargetDir $f.Name
 
-                if (-not (Test-Path $DstPath))
+                if (Test-Path $DstPath)
                 {
-                    Write-Verbose "Copying file $SrcPath to $DstPath"
-                    Copy-Item $SrcPath $DstPath -Force 
+                    $SrcFileInfo = Get-ChildItem $SrcPath
+                    $DstFileInfo = Get-ChildItem $DstPath
+
+                    if($SrcFileInfo.VersionInfo.FileVersion -le $DstFileInfo.VersionInfo.FileVersion)
+                    {
+                        continue
+                    }
                 }
-            }
+
+                Write-Verbose "Copying file $SrcPath to $DstPath"
+                Copy-Item $SrcPath $DstPath -Force 
+        }
         } 
         catch
         {
@@ -206,16 +214,21 @@ Task Test -Depends Build {
 
 Task DownloadTfsNugetPackage {
 
+    Write-Verbose "Restoring Nuget packages"
+
+    $packageDir = (Join-Path $NugetPackagesDir $package)
+    # $packages = @('Newtonsoft.Json','Microsoft.AspNet.WebApi.Core','Microsoft.AspNet.WebApi.Client') + $TfsPackageNames
+
     foreach($package in $TfsPackageNames) 
     {
         Write-Verbose "Restoring $package Nuget package (if needed)"
 
         $packageDir = (Join-Path $NugetPackagesDir $package)
 
-        if (-not (Test-Path $packageDir -PathType Container))
+        if (-not (Test-Path "$packageDir.*" -PathType Container))
         {
             Write-Verbose "$package not found. Downloading from Nuget.org"
-            & $NugetExePath Install $package -ExcludeVersion -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
+            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
         }
         else
         {
