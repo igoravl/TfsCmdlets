@@ -27,15 +27,12 @@ namespace TfsCmdlets
                 {
                     if (!PrivateAssemblies.ContainsKey(assemblyName))
                     {
-                        LogWarn("Request for external assembly " + e.Name + "; skipping");
+                        LogWarn("Skipping unknown assembly " + e.Name);
                         return null;
                     }
 
-                    LogInfo("Request for unresolved assembly " + assemblyName);
-
                     var asm = LoadAssembly(assemblyName);
-
-                    LogInfo("'" + assemblyName + "' resolved as '" + asm.FullName + "'");
+                    LogInfo(assemblyName + " resolved as '" + asm.FullName + "'");
 
                     return asm;
                 }
