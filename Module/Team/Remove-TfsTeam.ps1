@@ -47,13 +47,7 @@ Function Remove-TfsTeam
 
         $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient'
         $task = $client.DeleteTeamAsync($tp.Name, $t.Name)
-        $result = $task.Result
 
-        if($task.IsFaulted)
-        {
-            throw "Error deleting team: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-        }
-        
-        return $result
+        CHECK_ASYNC($task,$result,'Error deleting team')
     }
 }

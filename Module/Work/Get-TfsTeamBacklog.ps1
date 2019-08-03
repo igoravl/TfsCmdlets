@@ -58,23 +58,14 @@ Function Get-TfsTeamBacklog
         {
             _Log "Get backlog '$Backlog'"
             $task = $client.GetBacklogAsync($ctx, $Backlog)
-            $result = $task.Result
 
-            if (-not $result)
-            {
-                throw "Error getting backlogs: $($task.Exception.InnerExceptions | ForEach-Object {$_})"
-            }
+            CHECK_ASYNC($task,$result,"Error getting backlog '$Backlog'")
         }
         else
         {
             _Log "Get all backlogs matching '$Backlog'"
             $task = $client.GetBacklogsAsync($ctx)
-            $result = $task.Result
-
-            if (-not $result)
-            {
-                throw "Error getting backlogs: $($task.Exception.InnerExceptions | ForEach-Object {$_})"
-            }
+            CHECK_ASYNC($task,$result,'Error enumerating backlogs')
             
             $result = $result | Where-Object Name -like $Backlog
         }

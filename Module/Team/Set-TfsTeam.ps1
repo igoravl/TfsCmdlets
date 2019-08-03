@@ -168,13 +168,9 @@ Function Set-TfsTeam
 
             $patch.Values = [Microsoft.TeamFoundation.Work.WebApi.TeamFieldValue[]] $values
 
-            $resultTask = $client.UpdateTeamFieldValuesAsync($patch, $ctx)
-            $result = $resultTask.Result
+            $task = $client.UpdateTeamFieldValuesAsync($patch, $ctx)
 
-            if (-not $result)
-            {
-                throw "Error applying team field value and/or area path settings: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-            }
+            CHECK_ASYNC($task,$result,'Error applying team field value and/or area path settings')
         }
 
         # Set backlog and iteration path settings
@@ -235,13 +231,8 @@ Function Set-TfsTeam
 
         if($isDirty)
         {
-            $resultTask = $client.UpdateTeamSettingsAsync($patch, $ctx)
-            $result = $resultTask.Result
-
-            if (-not $result)
-            {
-                Throw "Error applying iteration settings: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-            }
+            $task = $client.UpdateTeamSettingsAsync($patch, $ctx)
+            CHECK_ASYNC($task,$result,'Error applying iteration settings')
         }
 
         return $t

@@ -218,14 +218,11 @@ Function Copy-TfsTestPlan
 			}
 		}
 		
-		$resultTask = $client.CloneTestPlanAsync($cloneParams, $tp.Name, $DeepClone.IsPresent)
-		$opInfo = $resultTask.Result
+		$task = $client.CloneTestPlanAsync($cloneParams, $tp.Name, $DeepClone.IsPresent)
 
-		if (-not $opInfo)
-		{
-			throw "Error cloning test plan: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-		}
+		CHECK_ASYNC($task,$result,'Error cloning test plan')
 
+		$opInfo = $result
 
 		do
 		{

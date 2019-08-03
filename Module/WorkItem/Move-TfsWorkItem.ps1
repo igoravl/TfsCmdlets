@@ -132,15 +132,11 @@ Function Move-TfsWorkItem
             "'$($targetArea)' and iteration path '$($targetIteration)'"))
         {
             $client = _GetRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
-            $resultTask = $client.UpdateWorkItemAsync($patch, $wi.Id)
-            $resultWi = $resultTask.Result
+            $task = $client.UpdateWorkItemAsync($patch, $wi.Id)
 
-            if (-not $resultWi)
-            {
-                throw "Error moving work item: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-            }
+            CHECK_ASYNC($task,$result,'Error moving work item')
 
-            return Get-TfsWorkItem $resultWi.Id -Collection $tpc
+            return Get-TfsWorkItem $result.Id -Collection $tpc
         }
     }
 }

@@ -11,11 +11,16 @@ _RegisterAssemblyResolver
 
 # Load essential assemblies
 
+_ImportRequiredAssembly "*"
+
 # _ImportRequiredAssembly 'Newtonsoft.Json'
 # _ImportRequiredAssembly 'Microsoft.TeamFoundation.Client'
 # _ImportRequiredAssembly 'Microsoft.VisualStudio.Services.WebApi'
 
-_ImportRequiredAssembly '*'
+# $runspace = [runspacefactory]::CreateRunspace()
+# $pipeline = $runspace.CreatePipeline('_ImportRequiredAssembly "*"')
+# $pipeline.Input.Close()
+# $pipeline.InvokeAsync()
 
 # # Load remaining assemblies asynchronously
 

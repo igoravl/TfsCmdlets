@@ -52,12 +52,8 @@ Function Remove-TfsTestPlan
         if ($PSCmdlet.ShouldProcess("Plan $($plan.Id) ('$($plan.Name)')", "Remove test plan"))
         {
             $task = $client.DeleteTestPlanAsync($tp.Name, $plan.Id)
-            $task.Wait()
 
-            if($task.IsFaulted)
-            {
-                throw "Error deleting test plan: $($resultTask.Exception.InnerExceptions | ForEach-Object {$_.ToString()})"
-            }
+            CHECK_ASYNC($task,$result,'Error deleting test plan')
         }
     }
 }

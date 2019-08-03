@@ -44,11 +44,11 @@ Function Get-TfsTeamProject
         [object]
         $Collection,
 
-		[Parameter(Position=0, ParameterSetName="Get current")]
+		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Get current")]
         [switch]
         $Current,
 
-		[Parameter()]
+		[Parameter(ParameterSetName='Get by project')]
 		[object]
 		$Credential
     )

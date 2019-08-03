@@ -26,9 +26,9 @@ Function Get-TfsTeamBoard
 
     Begin
     {
-        REQUIRES(Microsoft.VisualStudio.Services.WebApi)
-        REQUIRES(Microsoft.TeamFoundation.Core.WebApi)
-        REQUIRES(Microsoft.TeamFoundation.Work.WebApi)
+        _ImportRequiredAssembly -AssemblyName 'Microsoft.VisualStudio.Services.WebApi'
+        _ImportRequiredAssembly -AssemblyName 'Microsoft.TeamFoundation.Core.WebApi'
+        _ImportRequiredAssembly -AssemblyName 'Microsoft.TeamFoundation.Work.WebApi'
     }
 
     Process
@@ -55,7 +55,10 @@ Function Get-TfsTeamBoard
         $tpc = $tp.Store.TeamProjectCollection
         $client = _GetRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
         $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList $tp.Name, $t.Name
-        $boards = $client.GetBoardsAsync($ctx).Result | Where-Object Name -like $Board
+
+        CALL_ASYNC($client.GetBoardsAsync($ctx),'Error retrieving team boards')
+
+        $boards = $result | Where-Object Name -like $Board
 
         foreach($b in $boards)
         {
