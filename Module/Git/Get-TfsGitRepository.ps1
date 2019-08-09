@@ -19,10 +19,11 @@ Function Get-TfsGitRepository
     [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
     Param
     (
-        [Parameter()]
+        [Parameter(Position=0)]
         [SupportsWildcards()]
+        [Alias('Name')]
         [string] 
-        $Name = '*',
+        $Repository = '*',
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -40,15 +41,24 @@ Function Get-TfsGitRepository
 
     Process
     {
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        CHECK_TEAM_PROJECT($tp)
-        
-        $tpc = $tp.Store.TeamProjectCollection
+        $guid = [guid]::Empty
 
-        $gitClient = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
+        if([guid]::TryParse($Repository, [ref] $guid))
+        {
+            $tpc = Get-TfsTeamProjectCollection $Collection
+            $client = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
 
-        $repos = $gitClient.GetRepositoriesAsync($tp.Name).Result
+            CALL_ASYNC($client.GetRepositoryAsync($guid),"Error getting repository with ID $guid")
+
+            return $result
+        }
+
+        GET_TEAM_PROJECT($tp,$tpc)
+
+        $client = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
+
+        CALL_ASYNC($client.GetRepositoriesAsync($tp.Name), "Error getting repository '$Name'")
         
-        return $repos | Where-Object Name -Like $Name
+        return $result | Where-Object Name -Like $Repository
     }
 }
