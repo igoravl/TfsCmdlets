@@ -7,7 +7,7 @@
             "request": "launch",
             "script": "${workspaceFolder}\\DebugStartup.ps1",
             "args": [
-                "${command:SpecifyScriptArgs}"
+                "${fileBasenameNoExtension}"
             ],
             "preLaunchTask": "build"
         },
