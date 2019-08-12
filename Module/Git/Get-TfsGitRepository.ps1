@@ -1,5 +1,5 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
 <#
-
 .SYNOPSIS
     Gets information from one or more Git repositories in a team project.
 
@@ -16,7 +16,7 @@
 Function Get-TfsGitRepository
 {
     [CmdletBinding()]
-    [OutputType('Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository')]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0)]
@@ -41,12 +41,11 @@ Function Get-TfsGitRepository
 
     Process
     {
-        $guid = [guid]::Empty
-
-        if([guid]::TryParse($Repository, [ref] $guid))
+        if(_TestGuid($Repository))
         {
-            $tpc = Get-TfsTeamProjectCollection $Collection
-            $client = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
+            GET_COLLECTION($tpc)
+            
+            GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
 
             CALL_ASYNC($client.GetRepositoryAsync($guid),"Error getting repository with ID $guid")
 
@@ -55,7 +54,7 @@ Function Get-TfsGitRepository
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        $client = _GetRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
+        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
 
         CALL_ASYNC($client.GetRepositoriesAsync($tp.Name), "Error getting repository '$Name'")
         
