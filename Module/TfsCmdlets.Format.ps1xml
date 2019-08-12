@@ -640,7 +640,7 @@
                 <PropertyName>Name</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <ScriptBlock>$this.Owner.DisplayName</ScriptBlock>
+                <ScriptBlock>$_.Owner.DisplayName</ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>StartDate</PropertyName>
@@ -955,9 +955,65 @@
         </TableRowEntries>
       </TableControl>
     </View>
+
+    <View>
+      <Name>Git Branch</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.TeamFoundation.SourceControl.WebApi.GitBranchStats</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <ScriptBlock>$_.Project + '/' + $_.Repository</ScriptBlock>
+        <CustomControlName>TeamProjects-Repositories</CustomControlName>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Branch name</Label>
+            <Width>30</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Latest commit</Label>
+            <Width>60</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Author</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Committed By</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Commit Date</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap/>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>"($($_.Commit.CommitId.Substring(0,10))) $(($_.Commit.Comment.Split('`n'))[0])"</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Commit.Author.Name</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Commit.Committer.Name</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.Commit.Committer.Date</ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
   </ViewDefinitions>
 
   <Controls>
+
     <Control>
       <Name>TeamProjects-GroupingFormat</Name>
       <CustomControl>
@@ -984,5 +1040,33 @@
         </CustomEntries>
       </CustomControl>
     </Control>
+
+    <Control>
+      <Name>TeamProjects-Repositories</Name>
+      <CustomControl>
+        <CustomEntries>
+          <CustomEntry>
+            <CustomItem>
+              <Frame>
+                <LeftIndent>4</LeftIndent>
+                <CustomItem>
+                  <Text>Team Project: </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>$_.Project</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                  <Text>  Repository: </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>$_.Repository</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                </CustomItem>
+              </Frame>
+            </CustomItem>
+          </CustomEntry>
+        </CustomEntries>
+      </CustomControl>
+    </Control>
+    
   </Controls>
 </Configuration>
