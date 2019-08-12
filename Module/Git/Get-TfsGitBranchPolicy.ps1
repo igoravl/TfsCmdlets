@@ -22,13 +22,13 @@ Function Get-TfsGitBranchPolicy
         [Parameter()]
         [SupportsWildcards()]
         [object] 
-        $Repository,
+        $Repository = '*',
 
         [Parameter()]
         [Alias('RefName')]
         [AllowNull()]
-        [string] 
-        $Branch,
+        [object] 
+        $Branch = 'master',
 
         [Parameter()]
         [object] 
@@ -67,20 +67,23 @@ Function Get-TfsGitBranchPolicy
             $policyTypeId = $PolicyType.Id
         }
 
-        if($Repository)
+        $repos = Get-TfsGitRepository -Repository $Repository -Project $Project -Collection $Collection | `
+            Select-Object Name, Id | Sort-Object Name
+
+        $continuationToken = $null
+
+        foreach($repo in $repos)
         {
-            $repos = Get-TfsGitRepository -Repository $Repository -Project $Project -Collection $Collection
-
-            foreach($repo in $repos)
+            do
             {
-                CALL_ASYNC($client.GetPolicyConfigurationsAsync($tp.Name, $repo.Id, $Branch, $policyTypeId),"Error retrieving branch policy configurations")
+                CALL_ASYNC($client.GetPolicyConfigurationsAsync($tp.Name, $repo, $Branch, $policyTypeId, $null, $continuationToken),"Error retrieving branch policy configurations for repository ID '$repo'")
+
                 Write-Output $result.PolicyConfigurations
+
+                $continuationToken = $result.ContinuationToken
             }
-
-            return
+            while ($continuationToken)
         }
-
-        CALL_ASYNC($client.GetPolicyConfigurationsAsync($tp.Name, $null, $Branch, $policyTypeId),"Error retrieving branch policy configurations")
         
         return $result.PolicyConfigurations
     }
