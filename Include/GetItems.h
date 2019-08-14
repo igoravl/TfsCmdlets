@@ -3,3 +3,4 @@
 #define GET_TEAM_PROJECT_FROM_ITEM(TP,TPC,ITEM) if(ITEM) {$Project = ITEM}; GET_TEAM_PROJECT(TP,TPC)
 #define CHECK_ITEM(ITEM_NAME) if (ITEM_NAME -is [ITEM_TYPE]) { _Log "Input item '$(ITEM_NAME)' is of type ITEM_TYPE; returning input item immediately, without further processing."; return ITEM_NAME }
 #define GET_CLIENT(TYPE_NAME) $client = _GetRestClient TYPE_NAME -Collection $tpc
+#define GET_TEAM(T,TP,TPC) T = Get-TfsTeam -Team $Team -Project $Project -Collection $Collection; if (T.Count -ne 1) {throw "Invalid or non-existent team '$Team'."}; GET_TEAM_PROJECT_FROM_ITEM(TP,TPC,T.ProjectName)
