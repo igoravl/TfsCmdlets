@@ -22,7 +22,6 @@ Function Get-TfsTeam
     (
         [Parameter(Position=0)]
         [Alias("Name")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [ITEM_TYPE])})] 
         [SupportsWildcards()]
         [object]
         $Team = '*',
@@ -52,9 +51,11 @@ Function Get-TfsTeam
     Process
     {
         CHECK_ITEM($Team)
-        GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Team.ProjectName)
 
-        $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient'
+        GET_TEAM_PROJECT($tp,$tpc)
+
+        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient')
+
         $workClient = _GetRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient'
 
         if($Team.ToString().Contains('*'))
@@ -65,6 +66,12 @@ Function Get-TfsTeam
         else
         {
             _Log "Get team named '$Team'"
+
+            if(_TestGuid $Team)
+            {
+                $Team = [guid]$Team
+            }
+
             $teams = $client.GetTeamAsync($tp.Name, $Team).Result
         }
 
