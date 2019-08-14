@@ -26,7 +26,7 @@ Function _Log
         $caller = _GetLogCallStack
     }
 
-    Write-Verbose "[$caller] $Message"
+    Write-Verbose "[$([DateTime]::Now.ToString('HH:mm:ss.ffff'))] [$caller] $Message"
 }
 
 Function _GetLogCallStack
