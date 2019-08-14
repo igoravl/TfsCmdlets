@@ -60,6 +60,12 @@ Function Get-TfsGitBranch
         
         foreach($repo in $repos)
         {
+            if($repo.Size -eq 0)
+            {
+                Write-Verbose "Repository $($repo.Name) is empty. Skipping."
+                continue
+            }
+
             CALL_ASYNC($client.GetBranchesAsync($tp.Name,$repo.Id),"Error retrieving branches from repository '$($repo.Name)'")
 
             Write-Output $result | Where-Object name -Like $Branch | `
