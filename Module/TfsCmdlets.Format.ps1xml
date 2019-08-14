@@ -1010,6 +1010,46 @@
       </TableControl>
     </View>
 
+    <View>
+      <Name>Board Card Rule Settings</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <ScriptBlock>$_.Project + '/' + $_.Team</ScriptBlock>
+        <CustomControlName>TeamProjects-Teams</CustomControlName>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Board name</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Card Style Rules</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Tag Color Rules</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap/>
+            <TableColumnItems>
+              <TableColumnItem>
+                <ScriptBlock>([uri] $_.Links.Links.board.Href).Segments[-1]</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.rules['fill'].Name -join ', '</ScriptBlock>
+              </TableColumnItem>
+              <TableColumnItem>
+                <ScriptBlock>$_.rules['tagStyle'].Name -join ', '</ScriptBlock>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
   </ViewDefinitions>
 
   <Controls>
@@ -1058,6 +1098,33 @@
                   <Text>  Repository: </Text>
                   <ExpressionBinding>
                     <ScriptBlock>$_.Repository</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                </CustomItem>
+              </Frame>
+            </CustomItem>
+          </CustomEntry>
+        </CustomEntries>
+      </CustomControl>
+    </Control>
+    
+    <Control>
+      <Name>TeamProjects-Teams</Name>
+      <CustomControl>
+        <CustomEntries>
+          <CustomEntry>
+            <CustomItem>
+              <Frame>
+                <LeftIndent>4</LeftIndent>
+                <CustomItem>
+                  <Text>Team Project: </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>$_.Project</ScriptBlock>
+                  </ExpressionBinding>
+                  <NewLine/>
+                  <Text>  Team: </Text>
+                  <ExpressionBinding>
+                    <ScriptBlock>$_.Team</ScriptBlock>
                   </ExpressionBinding>
                   <NewLine/>
                 </CustomItem>
