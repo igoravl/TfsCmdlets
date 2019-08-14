@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.Client.Project
 <#
 .SYNOPSIS
 Gets information about one or more team projects. 
@@ -30,7 +31,7 @@ As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamPro
 Function Get-TfsTeamProject
 {
     [CmdletBinding(DefaultParameterSetName='Get by project')]
-	[OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.Project')]
+	[OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
@@ -44,7 +45,7 @@ Function Get-TfsTeamProject
         [object]
         $Collection,
 
-		[Parameter(Position=0, Mandatory=$true, ParameterSetName="Get current")]
+		[Parameter(Mandatory=$true, ParameterSetName="Get current")]
         [switch]
         $Current,
 
@@ -65,12 +66,14 @@ Function Get-TfsTeamProject
             return $script:TfsProjectConnection
         }
 
-		if ($Project -is [Microsoft.TeamFoundation.WorkItemTracking.Client.Project])
-		{
-			return $Project
-		}
+		CHECK_ITEM($Project)
 
         $tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
+
+        if(($Project -is [string]) -and (_TestGuid $Project))
+        {
+            $Project = [uri] "vstfs:///Classification/TeamProject/$Project"
+        }
 
         if (($Project -is [uri]) -or ([System.Uri]::IsWellFormedUriString($Project, [System.UriKind]::Absolute)))
         {
@@ -82,7 +85,7 @@ Function Get-TfsTeamProject
 		if ($Project -is [string])
 		{
             $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-            
+                        
             if($Project.IndexOf('*') -ge 0)
             {
                 return _GetAllProjects $tpc | Where-Object Name -Like $Project | Foreach-Object { $wiStore.Projects[$_.Name] }
