@@ -22,7 +22,7 @@ Function Get-AzDevOrganization
 
 	Begin
 	{
-		_ImportRequiredAssembly 'Microsoft.VisualStudio.Services.WebApi'
+		REQUIRES(Microsoft.VisualStudio.Services.WebApi)
 	}
 
 	Process

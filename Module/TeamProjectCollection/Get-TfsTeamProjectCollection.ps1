@@ -58,7 +58,7 @@ Function Get-TfsTeamProjectCollection
 
 	Begin
 	{
-		_ImportRequiredAssembly 'Microsoft.TeamFoundation.Client'
+		REQUIRES(Microsoft.TeamFoundation.Client)
 	}
 
 	Process

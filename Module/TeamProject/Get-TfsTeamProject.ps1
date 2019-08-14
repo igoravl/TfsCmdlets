@@ -56,7 +56,7 @@ Function Get-TfsTeamProject
 
     Begin
     {
-        _ImportRequiredAssembly 'Microsoft.TeamFoundation.WorkItemTracking.Client'
+        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
     }
 
     Process
