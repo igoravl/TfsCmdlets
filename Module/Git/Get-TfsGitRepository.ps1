@@ -22,7 +22,7 @@ Function Get-TfsGitRepository
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias('Name')]
-        [string] 
+        [object] 
         $Repository = '*',
 
         [Parameter(ValueFromPipeline=$true)]
@@ -41,6 +41,8 @@ Function Get-TfsGitRepository
 
     Process
     {
+        CHECK_ITEM($Repository)
+        
         if(_TestGuid($Repository))
         {
             GET_COLLECTION($tpc)

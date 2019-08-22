@@ -19,7 +19,7 @@ Function Get-TfsGitBranchPolicy
     [OutputType('ITEM_TYPE')]
     Param
     (
-        [Parameter()]
+        [Parameter(Position=0, ValueFromPipeline=$true)]
         [SupportsWildcards()]
         [object] 
         $Repository = '*',
@@ -34,7 +34,7 @@ Function Get-TfsGitBranchPolicy
         [object] 
         $PolicyType,
 
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter()]
         [object]
         $Project,
 
@@ -50,7 +50,7 @@ Function Get-TfsGitBranchPolicy
 
     Process
     {
-        GET_TEAM_PROJECT($tp,$tpc)
+        GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Repository.ProjectReference.Name)
 
         GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
         
@@ -63,26 +63,21 @@ Function Get-TfsGitBranchPolicy
 
         if($PolicyType)
         {
-            $PolicyType = Get-TfsPolicyType -Type $PolicyType -Collection $Collection
+            $policy = Get-TfsPolicyType -Type $PolicyType -Project $tp -Collection $tpc
+
+            if(-not $policy)
+            {
+                throw "Invalid or non-existent policy type '$PolicyType'"
+            }
+            
             $policyTypeId = $PolicyType.Id
         }
 
-        $repos = Get-TfsGitRepository -Repository $Repository -Project $Project -Collection $Collection | `
-            Select-Object Name, Id | Sort-Object Name
-
-        $continuationToken = $null
+        $repos = Get-TfsGitRepository -Repository $Repository -Project $tp -Collection $tpc
 
         foreach($repo in $repos)
         {
-            do
-            {
-                CALL_ASYNC($client.GetPolicyConfigurationsAsync($tp.Name, $repo, $Branch, $policyTypeId, $null, $continuationToken),"Error retrieving branch policy configurations for repository ID '$repo'")
-
-                Write-Output $result.PolicyConfigurations
-
-                $continuationToken = $result.ContinuationToken
-            }
-            while ($continuationToken)
+            CALL_ASYNC($client.GetPolicyConfigurationsAsync($tp.Name, $repo.Id, $Branch, $policyTypeId),"Error retrieving branch policy configurations for repository '$($repo.Name)'")
         }
         
         return $result.PolicyConfigurations
