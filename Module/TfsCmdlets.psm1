@@ -11,6 +11,7 @@ _RegisterAssemblyResolver
 
 # Load essential assemblies
 
+# TODO - Add strong names to loaded assemblies, to avoid loading 2010 assemblies from GAC
 _ImportRequiredAssembly "*"
 
 # _ImportRequiredAssembly 'Newtonsoft.Json'
