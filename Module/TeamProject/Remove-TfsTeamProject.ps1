@@ -107,12 +107,3 @@ Function Remove-TfsTeamProject
         }
     }
 }
-
-Function _GetAllProjects
-{
-    param ($tpc)
-
-    $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-
-    return $css.ListAllProjects() | Where-Object Status -eq WellFormed
-}
