@@ -62,13 +62,13 @@ Function Set-TfsWorkItemQuery
 			throw "Ambiguous query name '$Query'. $($q.Count) queries were found matching the specified name/pattern:`n`n - " + ($q -join "`n - ")
 		}
 
-        if ($NewName -and $PSCmdlet.ShouldProcess($Name, "Rename work item query to '$NewName'"))
+        if ($NewName -and $PSCmdlet.ShouldProcess($Query, "Rename work item query to '$NewName'"))
         {
             isDirty = $true
             $q.Name = $NewName
         }
 
-        if ($Definition -and $PSCmdlet.ShouldProcess($Name, "Change work item query definition to '$Definition'"))
+        if ($Definition -and $PSCmdlet.ShouldProcess($Query, "Change work item query definition to '$Definition'"))
         {
             isDirty = $true
             $q.QueryText = $Definition

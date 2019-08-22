@@ -15,8 +15,9 @@ Function New-TfsTeamProjectCollection
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+		[Alias('Name')]
 		[string]
-		$Name,
+		$Collection,
 
 		[Parameter()]
 		[string]
@@ -71,7 +72,7 @@ Function New-TfsTeamProjectCollection
 
 	Process
 	{
-		if($PSCmdlet.ShouldProcess($Name, 'Create team project collection'))
+		if($PSCmdlet.ShouldProcess($Collection, 'Create team project collection'))
 		{
 			$configServer = Get-TfsConfigurationServer $Server -Credential $Credential
 			$tpcService = $configServer.GetService([type] 'Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService')
@@ -96,15 +97,15 @@ Function New-TfsTeamProjectCollection
 
 			try
 			{
-				Write-Progress -Id 1 -Activity "Create team project collection" -Status "Creating team project collection $Name" -PercentComplete 0
+				Write-Progress -Id 1 -Activity "Create team project collection" -Status "Creating team project collection $Collection" -PercentComplete 0
 
 				$start = Get-Date
 
 				$tpcJob = $tpcService.QueueCreateCollection(
-					$Name,
+					$Collection,
 					$Description, 
 					$Default.ToBool(),
-					"~/$Name/",
+					"~/$Collection/",
 					[Microsoft.TeamFoundation.Framework.Common.TeamFoundationServiceHostStatus] $InitialState,
 					$servicingTokens,
 					$ConnectionString,
@@ -125,10 +126,10 @@ Function New-TfsTeamProjectCollection
 						if ($jobDetail.Result -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobResult]::Failed -or 
 							$jobDetail.JobStatus -eq [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Failed)
 						{
-							throw "Error creating team project collection $Name : "
+							throw "Error creating team project collection $Collection : "
 						}
 					
-						$tpc = Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+						$tpc = Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Collection
 
 						if ($Passthru)
 						{
@@ -142,7 +143,7 @@ Function New-TfsTeamProjectCollection
 					Write-Progress -Id 1 -Activity "Create team project collection" -Completed
 			}
 
-			throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Name")
+			throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Collection")
 		}
 	}
 }

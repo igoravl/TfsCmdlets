@@ -16,8 +16,9 @@ Function New-TfsGlobalList
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]
+        [Alias('Name')]
         [string] 
-        $Name,
+        $GlobalList,
     
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Items')] 
         [string[]] 
@@ -46,28 +47,28 @@ Function New-TfsGlobalList
         [xml] $xml = Export-TfsGlobalList -Collection $Collection
 
         # Checks whether the global list already exists
-        $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$Name']")
+        $list = $xml.SelectSingleNode("//GLOBALLIST[@name='$GlobalList']")
 
         if ($null -ne $list)
         {
             if ($Force.IsPresent)
             {
-                if ($PSCmdlet.ShouldProcess($Name, 'Overwrite existing global list'))
+                if ($PSCmdlet.ShouldProcess($GlobalList, 'Overwrite existing global list'))
                 {
                     [void] $list.ParentNode.RemoveChild($list)
                 }
             }
             else
             {
-                Throw "Global List $Name already exists. To overwrite an existing list, use the -Force switch."
+                Throw "Global List $GlobalList already exists. To overwrite an existing list, use the -Force switch."
             }
         }
 
-        if($PSCmdlet.ShouldProcess($Name, 'Create global list'))
+        if($PSCmdlet.ShouldProcess($GlobalList, 'Create global list'))
         {
             # Creates the new list XML element
             $list = $xml.CreateElement("GLOBALLIST")
-            $list.SetAttribute("name", $Name)
+            $list.SetAttribute("name", $GlobalList)
 
             # Adds the item elements to the list
             foreach($item in $Items)
@@ -81,7 +82,7 @@ Function New-TfsGlobalList
             [void] $xml.DocumentElement.AppendChild($list)
 
             Import-TfsGlobalList -Xml $xml -Collection $Collection
-            $list =  Get-TfsGlobalList -Name $Name -Collection $Collection
+            $list =  Get-TfsGlobalList -Name $GlobalList -Collection $Collection
 
             if ($Passthru)
             {

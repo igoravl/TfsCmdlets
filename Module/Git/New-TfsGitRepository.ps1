@@ -22,8 +22,9 @@ Function New-TfsGitRepository
     Param
     (
         [Parameter(Mandatory=$true)]
+        [Alias('Name')]
         [string] 
-        $Name,
+        $Repository,
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -47,14 +48,14 @@ Function New-TfsGitRepository
 
     Process
     {
-        if($PSCmdlet.ShouldProcess($Name, 'Create Git repository'))
+        if($PSCmdlet.ShouldProcess($Repository, 'Create Git repository'))
         {
             $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
             #$tpc = $tp.Store.TeamProjectCollection
 
             $gitClient = _GetRestClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
             $tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = $tp.Guid; Name = $tp.Name}
-            $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Name; ProjectReference = $tpRef}
+            $repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = $Repository; ProjectReference = $tpRef}
             $task = $gitClient.CreateRepositoryAsync($repoToCreate, $tp.Name)
 
             $result = $task.Result

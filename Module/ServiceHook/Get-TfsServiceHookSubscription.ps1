@@ -5,8 +5,9 @@ Function Get-TfsServiceHookSubscription
     Param
     (
         [Parameter(Position=0)]
+        [Alias('Name')]
         [string]
-        $Name = '*',
+        $Subscription = '*',
 
         [Parameter()]
         [object]

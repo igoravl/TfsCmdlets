@@ -34,9 +34,10 @@ Function Export-TfsGlobalList
     Param
     (
         [Parameter(Position=0)]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string] 
-        $Name = "*",
+        $GlobalList = "*",
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -63,7 +64,7 @@ Function Export-TfsGlobalList
 
         foreach($node in $nodesToRemove)
         {
-            if (([System.Xml.XmlElement]$node).GetAttribute("name") -notlike $Name)
+            if (([System.Xml.XmlElement]$node).GetAttribute("name") -notlike $GlobalList)
             {
                 [void]$xml.DocumentElement.RemoveChild($node)
             }

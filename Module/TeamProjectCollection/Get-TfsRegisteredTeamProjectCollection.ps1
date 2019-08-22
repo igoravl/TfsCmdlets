@@ -15,13 +15,14 @@ Function Get-TfsRegisteredTeamProjectCollection
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string]
-        $Name = "*"
+        $Collection = "*"
     )
 
     Process
     {
-        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | Where-Object DisplayName -Like $Name
+        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | Where-Object DisplayName -Like $Collection
     }
 }

@@ -18,9 +18,10 @@ Function Get-TfsProcessTemplate
     Param
     (
         [Parameter(Position=0)]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string]
-        $Name = "*",
+        $ProcessTemplate = "*",
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -31,7 +32,7 @@ Function Get-TfsProcessTemplate
     {
         $tpc = Get-TfsTeamProjectCollection $Collection
         $processTemplateSvc = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.IProcessTemplates")
-        $templateHeaders = $processTemplateSvc.TemplateHeaders() | Where-Object Name -Like $Name
+        $templateHeaders = $processTemplateSvc.TemplateHeaders() | Where-Object Name -Like $ProcessTemplate
 
         foreach($templateHeader in $templateHeaders)
         {

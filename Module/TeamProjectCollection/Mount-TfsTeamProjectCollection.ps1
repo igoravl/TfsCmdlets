@@ -16,8 +16,9 @@ Function Mount-TfsTeamProjectCollection
 	Param
 	(
 		[Parameter(Mandatory=$true, Position=0)]
+		[Alias('Name')]
 		[string]
-		$Name,
+		$Collection,
 
 		[Parameter()]
 		[string]
@@ -80,7 +81,7 @@ Function Mount-TfsTeamProjectCollection
 
 		try
 		{
-			Write-Progress -Id 1 -Activity "Attach team project collection" -Status "Attaching team project collection $Name" -PercentComplete 0
+			Write-Progress -Id 1 -Activity "Attach team project collection" -Status "Attaching team project collection $Collection" -PercentComplete 0
 
 			#$start = Get-Date
 
@@ -90,19 +91,19 @@ Function Mount-TfsTeamProjectCollection
 				$ConnectionString,
 				$servicingTokens, 
 				$Clone.ToBool(),
-				$Name,
+				$Collection,
 				$Description,
-				"~/$Name/")
+				"~/$Collection/")
 
 			[void] $tpcService.WaitForCollectionServicingToComplete($tpcJob, $Timeout)
 
-			return Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Name
+			return Get-TfsTeamProjectCollection -Server $Server -Credential $Credential -Collection $Collection
 		}
 		finally
 		{
 			Write-Progress -Id 1 -Activity "Attach team project collection" -Completed
 		}
 
-		throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Name")
+		throw (New-Object 'System.TimeoutException' -ArgumentList "Operation timed out during creation of team project collection $Collection")
 	}
 }

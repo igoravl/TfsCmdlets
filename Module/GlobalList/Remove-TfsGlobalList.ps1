@@ -15,9 +15,10 @@ Function Remove-TfsGlobalList
     Param
     (
         [Parameter(ValueFromPipelineByPropertyName='Name')]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string] 
-        $Name = "*",
+        $GlobalList = "*",
     
         [Parameter()]
         [object]
@@ -34,7 +35,7 @@ Function Remove-TfsGlobalList
         $tpc = Get-TfsTeamProjectCollection $Collection
         $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
 
-        $lists = Get-TfsGlobalList -Name $Name -Collection $Collection
+        $lists = Get-TfsGlobalList -Name $GlobalList -Collection $Collection
         $listsToRemove = @()
 
         foreach($list in $lists)

@@ -15,8 +15,9 @@ Function Get-TfsRegisteredConfigurationServer
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
+        [Alias('Name')]
         [string]
-        $Name = "*"
+        $Server = "*"
     )
 
     Begin
@@ -26,11 +27,11 @@ Function Get-TfsRegisteredConfigurationServer
 
     Process
     {
-        if(($Name -eq "localhost") -or ($Name -eq "."))
+        if(($Server -eq "localhost") -or ($Server -eq "."))
         {
-            $Name = $env:COMPUTERNAME
+            $Server = $env:COMPUTERNAME
         }
 
-        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetConfigurationServers() | Where-Object Name -Like $Name
+        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetConfigurationServers() | Where-Object Name -Like $Server
     }
 }

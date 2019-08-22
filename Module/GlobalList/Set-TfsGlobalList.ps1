@@ -14,8 +14,9 @@ Function Set-TfsGlobalList
     Param
     (
         [Parameter(Mandatory=$true, ValueFromPipelineByPropertyName='Name')]
+        [Alias('Name')]
         [string] 
-        $Name,
+        $GlobalList,
     
         [Parameter(ParameterSetName="Edit list items")]
         [string[]] 
@@ -44,7 +45,7 @@ Function Set-TfsGlobalList
     
     Process
     {
-        $xml = [xml] (Export-TfsGlobalList -Name $Name -Collection $Collection)
+        $xml = [xml] (Export-TfsGlobalList -Name $GlobalList -Collection $Collection)
 
         # Retrieves the list
         $list = $xml.SelectSingleNode("//GLOBALLIST")
@@ -54,23 +55,23 @@ Function Set-TfsGlobalList
         {
             if (-not $Force.IsPresent)
             { 
-                throw "Global list name $Name is invalid or non-existent. Either check the name or use -Force to create a new list."
+                throw "Global list name $GlobalList is invalid or non-existent. Either check the name or use -Force to create a new list."
             }
             
             # Creates the new list XML element
             $list = $xml.CreateElement("GLOBALLIST")
-            [void] $list.SetAttribute("name", $Name)
+            [void] $list.SetAttribute("name", $GlobalList)
             [void] $xml.DocumentElement.AppendChild($list)
             $newList = $true
         }
 
         if ($PSCmdlet.ParameterSetName -eq "Rename list")
         {
-            if($PSCmdlet.ShouldProcess($Name, "Rename global list to $NewName"))
+            if($PSCmdlet.ShouldProcess($GlobalList, "Rename global list to $NewName"))
             {
                 $list.SetAttribute("name", $NewName)
                 Import-TfsGlobalList -Xml $xml -Collection $Collection
-                Remove-TfsGlobalList -Name $Name -Collection $Collection -Confirm:$false
+                Remove-TfsGlobalList -Name $GlobalList -Collection $Collection -Confirm:$false
             }
             return Get-TfsGlobalList -Name $NewName -Collection $Collection
         }
@@ -84,7 +85,7 @@ Function Set-TfsGlobalList
                 if ($null -ne $existingItem) { continue }
             }
 
-            if($PSCmdlet.ShouldProcess($Name, "Add item '$item' to global list"))
+            if($PSCmdlet.ShouldProcess($GlobalList, "Add item '$item' to global list"))
             {
                 $isDirty = $true
                 $itemElement = $xml.CreateElement("LISTITEM")
@@ -99,7 +100,7 @@ Function Set-TfsGlobalList
             {
                 $existingItem = $list.SelectSingleNode("LISTITEM[@value='$item']")
                 
-                if ($existingItem -and $PSCmdlet.ShouldProcess($Name, "Remove item '$item' from global list"))
+                if ($existingItem -and $PSCmdlet.ShouldProcess($GlobalList, "Remove item '$item' from global list"))
                 {
                     $isDirty = $true
                     [void]$list.RemoveChild($existingItem)
@@ -113,6 +114,6 @@ Function Set-TfsGlobalList
             Import-TfsGlobalList -Xml $xml -Collection $Collection -Force
         }
 
-        return Get-TfsGlobalList -Name $Name -Collection $Collection
+        return Get-TfsGlobalList -Name $GlobalList -Collection $Collection
     }
 }

@@ -27,9 +27,10 @@ Function Export-TfsWorkItemType
     Param
     (
         [Parameter()]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string] 
-        $Name = "*",
+        $WorkItemType = "*",
 
         [Parameter()]
         [switch]
@@ -46,7 +47,7 @@ Function Export-TfsWorkItemType
 
     Process
     {
-        $types = Get-TfsWorkItemType -Name $Name -Project $Project -Collection $Collection
+        $types = Get-TfsWorkItemType -Name $WorkItemType -Project $Project -Collection $Collection
 
         foreach($type in $types)
         {

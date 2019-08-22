@@ -18,9 +18,10 @@ Function Get-TfsGlobalList
     Param
     (
         [Parameter()]
+        [Alias('Name')]
         [SupportsWildcards()]
         [string] 
-        $Name = "*",
+        $GlobalList = "*",
     
         [Parameter(ValueFromPipeline=$true)]
         [object]
