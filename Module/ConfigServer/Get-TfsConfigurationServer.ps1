@@ -1,3 +1,4 @@
+#define INVALID_SERVER_ERROR_MSG 'No TFS connection information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet.'
 <#
 .SYNOPSIS
 Gets information about a configuration server.
@@ -25,8 +26,8 @@ Function Get-TfsConfigurationServer
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param
 	(
-		[Parameter(Position=0, ParameterSetName='Get by server', Mandatory=$true, ValueFromPipeline=$true)]
-        [AllowNull()]
+		[Parameter(Position=0, ParameterSetName='Get by server', Mandatory=$true)]
+		[AllowNull()]
 		[object] 
 		$Server,
 	
@@ -41,7 +42,7 @@ Function Get-TfsConfigurationServer
 
 	Process
 	{
-		if ($Current)
+		if ($Current.IsPresent -or (-not $Server))
 		{
 			return $script:TfsServerConnection
         }
@@ -53,39 +54,23 @@ Function Get-TfsConfigurationServer
 
 		$cred = Get-TfsCredential -Credential $Credential
 
-		if ($Server -is [Uri])
+		if (($Server -is [Uri]) -or ([Uri]::IsWellFormedUriString($Server, [UriKind]::Absolute)))
 		{
 			return New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Server), $cred
 		}
 
-		if ($Server -is [string])
+		if ($Server -is [string] -and (-not [string]::IsNullOrWhiteSpace($Server)))
 		{
-			if ([Uri]::IsWellFormedUriString($Server, [UriKind]::Absolute))
+			$serverNames = Get-TfsRegisteredConfigurationServer -Server $Server
+			
+			foreach($s in $serverNames)
 			{
-				return New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList ([Uri] $Server), $cred
+				Write-Output (New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList $s.Uri,  $cred)
 			}
 
-			if (-not [string]::IsNullOrWhiteSpace($Server))
-			{
-				$serverNames = Get-TfsRegisteredConfigurationServer $Name
-				
-				foreach($s in $serverNames)
-				{
-					New-Object Microsoft.TeamFoundation.Client.TfsConfigurationServer -ArgumentList $s.Uri,  $cred
-				}
-
-				return
-			}
+			return
 		}
 
-		if ($null -eq $Server)
-		{
-			if ($script:TfsServerConnection)
-			{
-				return $script:TfsServerConnection
-			}
-		}
-
-		throw "No TFS connection information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet."
+		throw INVALID_SERVER_ERROR_MSG
 	}
 }

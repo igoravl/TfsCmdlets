@@ -23,6 +23,16 @@ Function Get-TfsRegisteredTeamProjectCollection
 
     Process
     {
-        return [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() | Where-Object DisplayName -Like $Collection
+        $registeredCollections = [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() 
+        
+        foreach($tpc in $registeredCollections)
+        {
+            $tpcName = ([uri]$tpc.Uri).Segments[-1]
+
+            if($tpcName -like $Collection)
+            {
+                Write-Output $tpc
+            }
+        }
     }
 }
