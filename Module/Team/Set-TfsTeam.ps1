@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
 <#
 .SYNOPSIS
 Changes the details of a team.
@@ -9,7 +10,7 @@ HELP_PARAM_PROJECT
 HELP_PARAM_COLLECTION
 
 .INPUTS
-Microsoft.TeamFoundation.Client.TeamFoundationTeam
+ITEM_TYPE
 System.String
 #>
 Function Set-TfsTeam
@@ -20,7 +21,7 @@ Function Set-TfsTeam
     (
         [Parameter(Position=0, ValueFromPipeline=$true)]
         [Alias("Name")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Client.TeamFoundationTeam])})] 
+        [ValidateScript({($_ -is [string]) -or ($_ -is [ITEM_TYPE])})] 
         [SupportsWildcards()]
         [object]
         $Team = '*',
@@ -38,8 +39,9 @@ Function Set-TfsTeam
         $Description,
 
         [Parameter()]
+        [Alias('TeamFieldValue')]
         [string]
-        $TeamFieldValue,
+        $DefaultAreaPath,
 
         [Parameter()]
         [hashtable]
@@ -50,7 +52,7 @@ Function Set-TfsTeam
         $BacklogIteration,
 
         [Parameter()]
-        [string]
+        [object]
         $IterationPaths,
 
         # Default iteration macro
@@ -79,7 +81,11 @@ Function Set-TfsTeam
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
@@ -134,26 +140,26 @@ Function Set-TfsTeam
 
         $patch = New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValuesPatch'
 
-        if($TeamFieldValue -and $PSCmdlet.ShouldProcess($Team, "Set the team's team field value to $TeamFieldValue"))
+        if($DefaultAreaPath -and $PSCmdlet.ShouldProcess($Team, "Set the team's default area path (team field value in TFS) to $DefaultAreaPath"))
         {
             if($tpc.IsHostedServer)
             {
                 _Log "Conected to Azure DevOps Server. Treating Team Field Value as Area Path"
 
-                $TeamFieldValue = _NormalizeCssNodePath -Project $tp.Name -Path $TeamFieldValue -IncludeTeamProject
-
-                if(-not $AreaPaths)
-                {
-                    _Log "AreaPaths is empty and TeamFieldValue is an area path. Adding TeamFieldValue to AreaPaths as default value."
-
-                    $AreaPaths = @{ $TeamFieldValue = $true }
-                }
+                $DefaultAreaPath = _NormalizeCssNodePath -Project $tp.Name -Path $DefaultAreaPath -IncludeTeamProject
             }
 
-            _Log "Setting team field to $TeamFieldValue"
+            if(-not $AreaPaths)
+            {
+                _Log "AreaPaths is empty. Adding DefaultAreaPath (TeamFieldValue) to AreaPaths as default value."
+
+                $AreaPaths = @{ $DefaultAreaPath = $true }
+            }
+
+            _Log "Setting default area path (team field) to $DefaultAreaPath"
 
             $patch = New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValuesPatch' -Property @{
-                DefaultValue = $TeamFieldValue
+                DefaultValue = $DefaultAreaPath
             }
 
             $values = @()
@@ -235,6 +241,9 @@ Function Set-TfsTeam
             CHECK_ASYNC($task,$result,'Error applying iteration settings')
         }
 
-        return $t
+        if($Passthru.IsPresent)
+        {
+            return $t
+        }
     }
 }
