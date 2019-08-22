@@ -21,7 +21,7 @@ Function Disconnect-TfsTeamProject
     {
         if ($script:TfsProjectConnection)
         {
-            Remove-Variable -Name TfsProjectConnection -Scope Global
+            Remove-Variable -Name TfsProjectConnection -Scope Script
         }
     }
 }

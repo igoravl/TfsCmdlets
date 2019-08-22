@@ -23,7 +23,7 @@ Function Disconnect-TfsConfigurationServer
 
 		if ($script:TfsServerConnection)
         {
-		    Remove-Variable -Name TfsServerConnection -Scope Global
+		    Remove-Variable -Name TfsServerConnection -Scope Script
 		}
 	}
 }

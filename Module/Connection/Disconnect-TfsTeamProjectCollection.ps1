@@ -23,7 +23,7 @@ Function Disconnect-TfsTeamProjectCollection
 
         if ($script:TfsTpcConnection)
         {
-		    Remove-Variable -Name TfsTpcConnection -Scope Global
+		    Remove-Variable -Name TfsTpcConnection -Scope Script
 		}
 	}
 }
