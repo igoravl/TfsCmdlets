@@ -13,30 +13,29 @@
     ITEM_TYPE
 .NOTES
 #>
-Function Get-TfsWorkItemTag
+Function New-TfsWorkItemTag
 {
 
-    [CmdletBinding()]
+    [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
     [OutputType('ITEM_TYPE')]
     Param
     (
-        [Parameter(Position=0)]
-        [SupportsWildcards()]
+        [Parameter(Position=0,ValueFromPipeline=$true)]
         [Alias('Name')]
-        [object] 
-        $Tag = '*',
+        [string] 
+        $Tag,
 
         [Parameter()]
-        [switch]
-        $IncludeInactive,
-
-        [Parameter(ValueFromPipeline=$true)]
         [object]
         $Project,
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
@@ -46,14 +45,20 @@ Function Get-TfsWorkItemTag
 
     Process
     {
-        CHECK_ITEM($Tag)
-
         GET_TEAM_PROJECT($tp,$tpc)
+
+        if(-not $PSCmdlet.ShouldProcess($tp.Name, "Create work item tag '$Tag'"))
+        {
+            return
+        }
 
         GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
 
-        CALL_ASYNC($client.GetTagsAsync($tp.Guid, $IncludeInactive.IsPresent),"Error retrieving work item tag '$Tag'")
+        CALL_ASYNC($client.CreateTagAsync($tp.Guid, $Tag),"Error creating work item tag '$Tag'")
 
-        return $result | Where-Object Name -like $Tag | Add-Member -Name TeamProject -MemberType NoteProperty -Value $TP.Name -PassThru
+        if($Passthru)
+        {
+            return $result
+        }
     }
 }

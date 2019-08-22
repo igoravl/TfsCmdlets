@@ -957,6 +957,40 @@
     </View>
 
     <View>
+      <Name>Work Item Tag</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <Label>Team Project</Label>
+        <PropertyName>TeamProject</PropertyName>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Active?</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap/>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Active</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
       <Name>Git Branch</Name>
       <ViewSelectedBy>
         <TypeName>Microsoft.TeamFoundation.SourceControl.WebApi.GitBranchStats</TypeName>
