@@ -46,15 +46,18 @@ Function Remove-TfsArea
 
     Process
     {
-        $Areas = Get-TfsArea -Area $Area -Project $Project -Collection $Collection | Sort-Object -Property Path -Descending
+        $areas = Get-TfsArea -Area $Area -Project $Project -Collection $Collection | Sort-Object -Property Path -Descending
 
-        foreach($i in $Areas)
+        foreach($item in $areas)
         {
-            if ($PSCmdlet.ShouldProcess($i.RelativePath, "Delete Area"))
+            $projectName = $item.Path.Split("\\")[1]
+
+            if (-not ($PSCmdlet.ShouldProcess($projectName, "Delete Area '$($item.RelativePath)' and move orphaned work items to area '$MoveTo'")))
             {
-                $projectName = $i.Path.Split("\\")[1]
-                _DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Area -Project $projectName -Collection $Collection
+                continue
             }
+
+            _DeleteCssNode -Node $item -MoveToNode $MoveTo -Scope Area -Project $projectName -Collection $Collection
         }
     }
 }

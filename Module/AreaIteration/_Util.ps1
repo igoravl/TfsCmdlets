@@ -4,51 +4,61 @@ Function _GetCssNodes($Node, $Scope, $Project, $Collection)
 	{
 		if ($Node -is [Microsoft.TeamFoundation.Server.NodeInfo])
 		{
+			_Log "Input item is of type NodeInfo; returning input item immediately, without further processing."
+
 			return $Node
 		}
 
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		$tpc = $tp.Store.TeamProjectCollection
+		GET_TEAM_PROJECT($tp,$tpc)
+
 		$projectName = $tp.Name
-        $cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService")
+		$cssService = _GetCssService -Collection $tpc
         
 		if ($node -is [uri])
 		{
+			_Log "Getting node by URL [$node]"
 			return $cssService.GetNode($node)
 		}
 
 		$rootPath = _NormalizeCssNodePath -Project $projectName -Scope $Scope -Path '' -IncludeTeamProject -IncludeScope
 		$rootNodeUri = $cssService.GetNodeFromPath("$rootPath").Uri
-		$rootElement = $cssService.GetNodesXml(@($rootNodeUri), $true)
 
+		_Log "Retrieving Nodes XML from root path [$rootPath]"
+
+		$rootElement = $cssService.GetNodesXml(@($rootNodeUri), $true)
 		$nodePaths = $rootElement.SelectNodes('//@Path') | Select-Object -ExpandProperty '#text'
 
 		$fullPath = _NormalizeCssNodePath  -Project $projectName -Scope $Scope -Path $Node -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
-		$matchingPaths = $nodePaths | Where-Object { _Log "Evaluating '$_' against pattern '$fullPath'" -Caller (_GetLogCallStack); $_ -like $fullPath }
+		$matchingPaths = $nodePaths | Where-Object { _Log "Evaluating '$_' against pattern '$fullPath' == $($_ -like $fullPath)" -Caller (_GetLogCallStack); $_ -like $fullPath }
 
-        return $matchingPaths | Foreach-Object { $cssService.GetNodeFromPath($_) }
+        return $matchingPaths | Foreach-Object { _Log "Returning node from path [$_]" -Caller (_GetLogCallStack); $cssService.GetNodeFromPath($_) }
     }
 }
 
 Function _DeleteCssNode($Node, $Scope, $MoveToNode, $Project, $Collection)
 {
-    Process
-	{
-		$newNode = _GetCssNodes -Node $MoveToNode -Scope $Scope -Project $Project -Collection $Collection
-		$cssService = _GetCssService -Project $Project -Collection $Collection
+	GET_TEAM_PROJECT($tp,$tpc)
 
-		$cssService.DeleteBranches($Node.Uri, $newNode.Uri)        
-    }
+	$newNode = _GetCssNodes -Node $MoveToNode -Scope $Scope -Project $Project -Collection $Collection
+
+	_Log "Moving work items from deleted node [$($Node.Path)] to node [$($newNode.Path)]"
+
+	$cssService = _GetCssService -Collection $tpc
+
+	$cssService.DeleteBranches($Node.Uri, $newNode.Uri)        
 }
 
 Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishDate)
 {
 	Process
 	{
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		$tpc = $tp.Store.TeamProjectCollection
+		GET_TEAM_PROJECT($tp,$tpc)
+
 		$projectName = $tp.Name
-        $cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService")
+
+		_Log "Creating $Scope node [$Path] in project $projectName"
+
+		$cssService = _GetCssService -Collection $tpc
 
         try
         {
@@ -59,16 +69,24 @@ Function _NewCssNode ($Project, $Path, $Scope, $Collection, $StartDate, $FinishD
         }
         catch
         {
+			_Log "Parent node [$parentPath] does not exist. Creating recursively..."
+
             $parentNode = _NewCssNode -Project $Project -Path $parentPath -Scope $Scope -Collection $Collection
         }
 
 		if ($StartDate -or $FinishDate)
 		{
-			$cssService = $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService4")
+			_Log "Iteration date(s) were provided as Start = [$StartDate], Finish = [$FinishDate]. Creating iteration with supplied dates"
+			$cssService = _GetCssService -Collection $tpc -Version 4
 			$nodeUri = $cssService.CreateNode($nodeName, $parentNode.Uri, $StartDate, $FinishDate)
 		}
 		else
 		{
+			if($Scope -eq 'Iteration')
+			{
+				_Log "Iteration date(s) were not provided. Creating iteration without dates"
+			}
+			
 			$nodeUri = $cssService.CreateNode($nodeName, $parentNode.Uri)
 		}
 
@@ -121,6 +139,10 @@ Function _NormalizeCssNodePath
 	{
 		$Path = $Path.Trim(' ', '\\')
 
+		if ($Path -like "$Project\\$Scope\\*")
+		{
+			$Path = $Path.Substring("$Project\\$Scope\\".Length)
+		}
 		if ($Path -like "$Project\\*")
 		{
 			$Path = $Path.Substring($Path.IndexOf('\\'))
@@ -133,18 +155,19 @@ Function _NormalizeCssNodePath
 		$newPath += $Path
 	}
 
-	if ($IncludeTrailingBackslash) { $newPath += $Scope + '\\' }
+	if ($newPath.EndsWith('\\') -and (-not $IncludeTrailingBackslash.IsPresent))
+	{ 
+		$newPath = $newPath.TrimEnd('\\')
+	}
 
 	_Log "Normalized path: $newPath"
 
 	return $newPath -replace '\\\\{2,}', '\\'
 }
 
-Function _GetCssService($Project, $Collection, $Version)
+Function _GetCssService($Collection, $Version)
 {
-	$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-	$tpc = $tp.Store.TeamProjectCollection
-	$projectName = $tp.Name
+	GET_COLLECTION($tpc)
 
     return $tpc.GetService([type]"Microsoft.TeamFoundation.Server.ICommonStructureService$Version")
 }

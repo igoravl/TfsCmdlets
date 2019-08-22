@@ -24,6 +24,7 @@ Function Remove-TfsIteration
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [SupportsWildcards()]
         [Alias("Path")]
         [ValidateScript({($_ -is [string]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})] 
         [object]
@@ -50,11 +51,14 @@ Function Remove-TfsIteration
 
         foreach($i in $iterations)
         {
-            if ($PSCmdlet.ShouldProcess($i.RelativePath, "Delete Iteration"))
+            $projectName = $i.Path.Split("\\")[1]
+
+            if (-not ($PSCmdlet.ShouldProcess($projectName, "Delete Iteration '$($i.RelativePath)' and move orphaned work items to iteration '$MoveTo'")))
             {
-                $projectName = $i.Path.Split("\\")[1]
-                _DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Iteration -Project $projectName -Collection $Collection
+                continue
             }
+
+            _DeleteCssNode -Node $i -MoveToNode $MoveTo -Scope Iteration -Project $projectName -Collection $Collection
         }
     }
 }
