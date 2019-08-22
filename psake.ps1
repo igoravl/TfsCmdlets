@@ -98,12 +98,21 @@ Task CopyFiles {
         
         $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($_.FullName)`")
 
-        $dirName = $_.Directory.BaseName
+        $dirName = $_.Directory.FullName
+
+        if($dirName.Length -gt $ProjectDir.Length)
+        {
+            $dirName = $dirName.Substring($ProjectDir.Length+1)
+        }
+        else
+        {
+            $dirName = 'Module'
+        }
 
         if(($Configuration -eq 'Release') -and ($dirName -ne 'Module'))
         {
             # Merge files (Release)
-            $outputPath = (Join-Path $ModuleDir "$dirName\$dirName.ps1")
+            $outputPath = (Join-Path $ModuleDir "$dirName\$($dirName.Replace('\', '_')).ps1")
         }
 
         Write-Verbose "Copying preprocessed contents to $outputPath"
@@ -165,8 +174,8 @@ Task CopyLibraries {
 Task UpdateModuleManifest {
 
     $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
-    $functionList = (Get-ChildItem -Path $ProjectDir\**\*-*.ps1 | Select-Object -ExpandProperty BaseName | Sort-Object)
-    $nestedModuleList = (Get-ChildItem -Path $ModuleDir\**\*.ps1 | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
+    $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
+    $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $tfsOmNugetVersion = ((& $NugetExePath List $TfsPackageNames[0] -PreRelease) -split ' ')[1]
     
     Write-Verbose @"
