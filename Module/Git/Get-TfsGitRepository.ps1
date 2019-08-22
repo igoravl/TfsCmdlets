@@ -56,7 +56,7 @@ Function Get-TfsGitRepository
 
         GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
 
-        CALL_ASYNC($client.GetRepositoriesAsync($tp.Name), "Error getting repository '$Name'")
+        CALL_ASYNC($client.GetRepositoriesAsync($tp.Name), "Error getting repository '$Repository'")
         
         return $result | Where-Object Name -Like $Repository
     }
