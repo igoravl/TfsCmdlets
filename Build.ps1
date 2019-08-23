@@ -140,7 +140,7 @@ try
     $LegacyFullVersion = "${LegacyVersion}$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
     
     $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
-    $SemVerFullVersion = "${SemVerVersion}$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.$($VersionMetadata.BuildMetadata)"
+    $SemVerFullVersion = "${SemVerVersion}$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
 
     $BuildName = $SemVerFullVersion
 
