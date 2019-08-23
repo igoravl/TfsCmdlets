@@ -134,10 +134,10 @@ try
 
     $VersionMetadata | Write-Verbose
 
-    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-    $Version = "$($VersionMetadata.Major).$($VersionMetadata.Minor).$ProjectBuildNumber"
-    $BuildMetadata = "$(Get-Date -Format 'yyyyMMdd')_$($VersionMetadata.Sha.Substring(0,8))_branch_$($VersionMetadata.BranchName.Replace('/', '-'))"
-    $BuildName = "$Version.$BuildMetadata"
+    # $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+
+    $Version = "$($VersionMetadata.MajorMinorPatch).$($VersionMetadata.BuildMetadata)"
+    $BuildName = "$($VersionMetadata.MajorMinorPatch)$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
 
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
