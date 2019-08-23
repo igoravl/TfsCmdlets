@@ -136,11 +136,23 @@ try
 
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
 
+    
+    if($env:BUILD_REASON -eq 'PullRequest')
+    {
+        $LegacyBuildMetadata =  $VersionMetadata.PreReleaseTagWithDash
+        $SemVerMetadata = $LegacyBuildMetadata
+    }
+    else
+    {
+        $LegacyBuildMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+0$($VersionMetadata.BuildMetadata)"
+        $SemVerMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
+    }
+
     $LegacyVersion = "$($VersionMetadata.MajorMinorPatch).$ProjectBuildNumber"
-    $LegacyFullVersion = "${LegacyVersion}$($VersionMetadata.PreReleaseTagWithDash)+0$($VersionMetadata.BuildMetadata)"
+    $LegacyFullVersion = "${LegacyVersion}$LegacyBuildMetadata"
     
     $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
-    $SemVerFullVersion = "${SemVerVersion}$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
+    $SemVerFullVersion = "${SemVerVersion}$SemVerMetadata"
 
     $BuildName = $SemVerFullVersion
 
