@@ -57,7 +57,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
