@@ -140,6 +140,7 @@ try
     {
         $LegacyBuildMetadata = ''
         $SemVerMetadata = ''
+        $BuildNameSuffix = $VersionMetadata.PreReleaseTagWithDash
     }
     else
     {
@@ -160,7 +161,7 @@ try
 
     if ($env:BUILD_BUILDURI)
     {
-        Write-Output "##vso[build.updatebuildnumber]$BuildName"
+        Write-Output "##vso[build.updatebuildnumber]$BuildName$BuildNameSuffix"
     }
 
     # Run Psake
