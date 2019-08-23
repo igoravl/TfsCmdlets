@@ -57,7 +57,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, Test, PackageNuget, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -283,6 +283,10 @@ Task PackageChocolatey -Depends Build {
 
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
+
+    $nuspec = Get-Content $ChocolateySpecPath -Encoding UTF8 -Raw
+    $nuspec.Replace($NugetVersion, $ChocolateyVersion) | Out-File $ChocolateySpecPath -Encoding Utf8
+    
     & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
 }
 
