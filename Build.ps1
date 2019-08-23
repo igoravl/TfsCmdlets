@@ -137,7 +137,7 @@ try
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
 
     $LegacyVersion = "$($VersionMetadata.MajorMinorPatch).$ProjectBuildNumber"
-    $LegacyFullVersion = "${LegacyVersion}$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
+    $LegacyFullVersion = "${LegacyVersion}$($VersionMetadata.PreReleaseTagWithDash)+0$($VersionMetadata.BuildMetadata)"
     
     $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
     $SemVerFullVersion = "${SemVerVersion}$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
