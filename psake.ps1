@@ -205,6 +205,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         -FileList $fileList `
         -FunctionsToExport $functionList `
         -ModuleVersion $Version `
+        -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ','))
         -PrivateData @{
             Branch = $BranchName
             Build = $BuildName
