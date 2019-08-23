@@ -26,7 +26,7 @@ Properties {
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
-    $CompatiblePSEditions = @('Core', 'Desktop')
+    $CompatiblePSEditions = @('Desktop') #, 'Core')
     $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient','Microsoft.VisualStudio.Services.ServiceHooks.WebApi')
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
@@ -57,7 +57,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -205,7 +205,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         -FileList $fileList `
         -FunctionsToExport $functionList `
         -ModuleVersion $Version `
-        -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ','))
+        -CompatiblePSEditions $CompatiblePSEditions `
         -PrivateData @{
             Branch = $BranchName
             Build = $BuildName
