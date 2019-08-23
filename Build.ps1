@@ -140,7 +140,7 @@ try
     
     if($env:BUILD_REASON -eq 'PullRequest')
     {
-        $LegacyBuildMetadata =  $VersionMetadata.PreReleaseTagWithDash
+        $LegacyBuildMetadata =  $VersionMetadata.PreReleaseTagWithDash -replace '.', '_'
         $SemVerMetadata = $LegacyBuildMetadata
     }
     else
