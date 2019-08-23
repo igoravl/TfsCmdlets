@@ -35,7 +35,6 @@ Properties {
     $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
-    $NugetPackageVersion = "$($VersionMetadata.Major).$($VersionMetadata.Minor).$ProjectBuildNumber$($VersionMetadata.PreReleaseTagWithDash.Replace('.', ''))"
 
     # Chocolatey packaging
     $ChocolateyToolsDir = Join-Path $ChocolateyDir 'tools'
@@ -58,7 +57,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -265,7 +264,7 @@ Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$NugetPackageVersion.zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
+    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$NugetVersion.zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
@@ -340,9 +339,9 @@ Task PackageMsi -Depends Build {
         "-dProjectPath=$WixProjectDir\$WixProjectFileName",
         "-dTargetDir=$WixBinDir\",
         "-dTargetExt=.msi"
-        "-dTargetFileName=$ModuleName-$NugetPackageVersion.msi",
-        "-dTargetName=$ModuleName-$NugetPackageVersion",
-        "-dTargetPath=$WixBinDir\$ModuleName-$NugetPackageVersion.msi",
+        "-dTargetFileName=$ModuleName-$NugetVersion.msi",
+        "-dTargetName=$ModuleName-$NugetVersion",
+        "-dTargetPath=$WixBinDir\$ModuleName-$NugetVersion.msi",
         "-I$WixProjectDir",
         "-out", "$WixObjDir\",
         "-arch", "x86",
@@ -355,8 +354,8 @@ Task PackageMsi -Depends Build {
     & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose
 
     $LightArgs = @(
-        "-out", "$WixBinDir\$ModuleName-$NugetPackageVersion.msi",
-        "-pdbout", "$WixBinDir\$ModuleName-$NugetPackageVersion.wixpdb",
+        "-out", "$WixBinDir\$ModuleName-$NugetVersion.msi",
+        "-pdbout", "$WixBinDir\$ModuleName-$NugetVersion.wixpdb",
         "-sw1076",
         "-cultures:null", 
         "-ext", "$WixToolsDir\WixUtilExtension.dll",
@@ -377,8 +376,8 @@ Task PackageMsi -Depends Build {
 
 Task PackageDocs -Depends GenerateDocs {
 
-    #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetPackageVersion.zip") 
-    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetPackageVersion.zip") $DocsDir | Write-Verbose
+    #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetVersion.zip") 
+    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetVersion.zip") $DocsDir | Write-Verbose
 }
 
 Task GenerateDocs -Depends Build {
@@ -455,7 +454,7 @@ Task GenerateNuspec {
     <metadata>
         <id>$($SourceManifest.Name)</id>
         <title>$($SourceManifest.Name)</title>
-        <version>$NugetPackageVersion</version>
+        <version>$NugetVersion</version>
         <authors>$($SourceManifest.Author)</authors>
         <owners>$($SourceManifest.Author)</owners>
         <licenseUrl>$($SourceManifest.LicenseUri)</licenseUrl>

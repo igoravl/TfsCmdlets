@@ -134,10 +134,15 @@ try
 
     $VersionMetadata | Write-Verbose
 
-    # $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
 
-    $Version = "$($VersionMetadata.MajorMinorPatch).$($VersionMetadata.BuildMetadata)"
-    $BuildName = "$($VersionMetadata.MajorMinorPatch)$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
+    $LegacyVersion = "$($VersionMetadata.MajorMinorPatch).$ProjectBuildNumber"
+    $LegacyFullVersion = "${LegacyVersion}$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
+    
+    $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
+    $SemVerFullVersion = "${SemVerVersion}$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.$($VersionMetadata.BuildMetadata)"
+
+    $BuildName = $SemVerFullVersion
 
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
@@ -157,17 +162,18 @@ try
 
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose `
       -Parameters @{
-        SolutionDir = $SolutionDir; 
-        Configuration = $Configuration;
-        BranchName = $VersionMetadata.BranchName;
-        ModuleName = $ModuleName;
-        ModuleAuthor = $ModuleAuthor;
-        ModuleDescription = $ModuleDescription;
-        Commit = $VersionMetadata.Sha;
-        Version = "$Version";
+        SolutionDir = $SolutionDir
+        Configuration = $Configuration
+        BranchName = $VersionMetadata.BranchName
+        ModuleName = $ModuleName
+        ModuleAuthor = $ModuleAuthor
+        ModuleDescription = $ModuleDescription
+        Commit = $VersionMetadata.Sha
+        Version = $LegacyVersion
+        NuGetVersion = $LegacyFullVersion
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
-        BuildName = "$BuildName";
-        SemVer = "$Version$($VersionMetadata.PreReleaseTagWithDash)+$BuildMetadata"
+        BuildName = $BuildName
+        SemVer = $SemVerFullVersion
         VersionMetadata = $VersionMetadata 
     }
 
