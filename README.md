@@ -1,17 +1,21 @@
 TfsCmdlets
 ==========
 
-PowerShell Cmdlets for Team Foundation Server and Visual Studio Team Services
+PowerShell Cmdlets for Azure DevOps and Team Foundation Server
+
+## NEW! Version 2.0
+
+[Learn more](RELEASENOTES.md#new-version-2.0)
 
 ## Whats is TfsCmdlets?
 
-TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server and Visual Studio Team Services. 
+TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Azure DevOps (Server 2019+ and Services) and Team Foundation Server (up to 2018). 
 
 By using TfsCmdlets, TFS administrators (even power users) can create scripts to automate many different tasks, ranging from retrieving work items to create new team project collections.
 
-TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Team Foundation Server Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
+TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
 
-![Team Foundation Server Shell](src/Resources/TfsShell.png)
+![Azure DevOps Shell](Assets/TfsShell.png)
 
 ## Quick start guide 
 
@@ -52,12 +56,18 @@ TfsCmdlets can be obtained from many different sources and in many different for
 
 ### PowerShell Gallery
 
-If you're using Windows 10, Windows Server 2016 or installed Windows Management Framework 5 then the simplest way to install TfsCmdlets is via [PowerShell Gallery](https://www.powershellgallery.com/). 
+If you're using Windows 10, Windows Server 2016 (or later) or installed Windows Management Framework 5 (or later) then the simplest way to install TfsCmdlets is via [PowerShell Gallery](https://www.powershellgallery.com/).
 
 Open an elevated PowerShell prompt and type:
 
 ```PowerShell
 Install-Module TfsCmdlets
+```
+
+Optionally, you can install it locally in your user profile. That is particularly useful when you can't run as an administrator or don't want to make the module available to all users in the computer:
+
+```PowerShell
+Install-Module TfsCmdlets -Scope CurrentUser
 ```
 
 [Additional information](https://www.powershellgallery.com/packages/TfsCmdlets/)
@@ -92,7 +102,7 @@ You can get one of the offline installers listed below from the [GitHub Releases
 
 #### Full installer (MSI-based)
 
-The full installer will install the module files to the Program Files folder in your computer, make the module available to PowerShell and create the **Team Foundation Server Shell** icon in the Start Menu.
+The full installer will install the module files to the Program Files folder in your computer, make the module available to PowerShell and create the **Azure DevOps Shell** icon in the Start Menu.
 
 **To install the full installer**:
 
@@ -137,4 +147,4 @@ Coming soon.
 - [Release Notes](https://github.com/igoravl/tfscmdlets/wiki/RELEASENOTES)
 - [Online Documentation](https://github.com/igoravl/tfscmdlets/wiki/docindex)
 
-[![Build status](https://tfscmdlets.visualstudio.com/_apis/public/build/definitions/7b5fdbc8-960a-4c45-a3d0-029282010305/2/badge) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg)](http://chocolatey.org/packages/tfscmdlets) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Twitter](https://img.shields.io/twitter/url/https/github.com/igoravl/tfscmdlets/.svg?style=social)](https://twitter.com/intent/tweet?text=TfsCmdlets%3A%20PowerShell%20Cmdlets%20for%20TFS%20and%20VSO&url=https%3A%2F%2Fgithub.com%2Figoravl%2Ftfscmdlets)
+[![Build Status](https://dev.azure.com/TfsCmdlets/TfsCmdlets/_apis/build/status/PS_CI?branchName=master)](https://dev.azure.com/TfsCmdlets/TfsCmdlets/_build/latest?definitionId=2&branchName=master) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg)](http://chocolatey.org/packages/tfscmdlets) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Twitter](https://img.shields.io/twitter/url/https/github.com/igoravl/tfscmdlets/.svg?style=social)](https://twitter.com/intent/tweet?text=TfsCmdlets%3A%20PowerShell%20Cmdlets%20for%20TFS%20and%20VSO&url=https%3A%2F%2Fgithub.com%2Figoravl%2Ftfscmdlets)

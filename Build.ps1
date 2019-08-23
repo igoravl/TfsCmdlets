@@ -1,38 +1,59 @@
+#requires -Version 5
+
 [CmdletBinding()]
 Param
 (
-    $SolutionDir = (Join-Path $PSScriptRoot 'src'),
+    $SolutionDir,
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
-    $ModuleDescription = 'PowerShell Cmdlets for TFS and VSTS',
+    $ModuleDescription = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server',
     $Targets = "Package",
     $RepoCreationDate = (Get-Date '2014-10-24')
 )
 
-try
+Function Install-Dependencies
 {
-    Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
+    $NugetPackages = @('GitVersion.CommandLine')
+    $PsModules = @('InvokeBuild', 'psake', 'PsScriptAnalyzer')
 
-    Write-Verbose "Module being built from $SolutionDir"
+    $script:PackagesDir = Join-Path $SolutionDir 'packages'
 
-    Push-Location $SolutionDir
+    Write-Verbose "Restoring missing dependencies. Packages directory: $PackagesDir"
 
-    # Restore/install Nuget
+    Install-Nuget
 
-    Write-Verbose "Restoring Nuget client (if needed)"
+    Write-Verbose "Restoring NuGet package(s) ($($NugetPackages -join ', '))"
 
-    $PackagesDir = Join-Path $SolutionDir 'packages'
-    $NugetExePath = Join-Path $SolutionDir 'nuget.exe'
+    foreach($pkg in $NugetPackages)
+    {
+        Install-NugetPackage $pkg
+    }
 
-    Write-Verbose "PackagesDir: $PackagesDir"
-    Write-Verbose "NugetExePath: $NugetExePath"
-    
+    Write-Verbose "Restoring PowerShell module(s) ($($PsModules -join ', '))"
+
+    foreach($mod in $PsModules)
+    {
+        Install-PsModule $mod
+    }
+}
+
+Function Install-Nuget
+{
+    Write-Verbose "Restoring Nuget client"
+
+    $BuildToolsDir = Join-Path $SolutionDir 'BuildTools'
+    $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
+
     if (-not (Test-Path $PackagesDir -PathType Container))
     {
-        Write-Verbose "Folder $PackagesDir not found. Creating folder."
-        md $PackagesDir -Force | Write-Verbose
+        mkdir $PackagesDir -Force | Write-Verbose
+    }
+
+    if (-not (Test-Path $BuildToolsDir -PathType Container))
+    {
+        mkdir $BuildToolsDir -Force | Write-Verbose
     }
 
     if (-not (Test-Path $NugetExePath -PathType Leaf))
@@ -40,87 +61,101 @@ try
         Write-Verbose "Nuget.exe not found. Downloading from https://dist.nuget.org"
         Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NugetExePath | Write-Verbose
     }
-
-    # Restore/install GitVersion
-
-    Write-Verbose "Restoring GitVersion client (if needed)"
-
-    $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
-
-    if (-not (Test-Path $GitVersionPath -PathType Leaf))
+    else
     {
-        Write-Verbose "GitVersion.exe not found. Downloading from Nuget.org"
-        & $NugetExePath Install GitVersion.CommandLine -ExcludeVersion -OutputDirectory Packages *>&1 | Write-Verbose
+        Write-Verbose "NuGet client found; Skipping..."    
+    }
+
+    Write-Verbose "NugetExePath: $NugetExePath"
+}
+
+Function Install-NugetPackage($Package)
+{
+    Write-Verbose "Restoring NuGet package $Package"
+
+    $modulePath = Join-Path $SolutionDir "packages/$Package"
+
+    if (-not (Test-Path "$modulePath/*" -PathType Leaf))
+    {
+        Write-Verbose "Package not found. Downloading from Nuget.org"
+        & $NugetExePath Install $Package -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
     }
     else
     {
-        Write-Verbose "FOUND! Skipping..."    
+        Write-Verbose "NuGet package $Package found; Skipping..."    
+    }
+}
+
+Function Install-PsModule($Module)
+{
+    Write-Verbose "Restoring module $Module"
+
+    if (-not (Get-Module $Module -ListAvailable))
+    {
+        if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue))
+        {
+            Write-Verbose "Installing required Nuget package provider in order to install modules from PowerShell Gallery"
+            Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
+        }
+
+        Install-Module $Module -Scope CurrentUser -Force | Write-Verbose
+    }
+    else
+    {
+        Write-Verbose "PowerShell module $Module found; Skipping..."    
+    }
+}
+
+try
+{
+    if (-not $SolutionDir)
+    {
+        $SolutionDir = $PSScriptRoot
     }
 
-    $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
-    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-    $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
+    Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
+
+    Write-Verbose "SolutionDir: $SolutionDir"
+
+    Push-Location $SolutionDir
+
+    # Restore/install dependencies
+
+    Write-Verbose "=== RESTORE DEPENDENCIES ==="
+
+    Install-Dependencies
 
     # Set build name
 
-    $BuildName = "$($VersionMetadata.BranchName.Replace('/', '_')).$ProjectMetadataInfo.$($VersionMetadata.Sha.Substring(0,8))"
-    Write-Host "- Version: $BuildName`n" -ForegroundColor Cyan
+    Write-Verbose "=== SET BUILD NAME ==="
+
+    $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
+    $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
+
+    $VersionMetadata | Write-Verbose
+
+    # $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+
+    $Version = "$($VersionMetadata.MajorMinorPatch).$($VersionMetadata.BuildMetadata)"
+    $BuildName = "$($VersionMetadata.MajorMinorPatch)$($VersionMetadata.PreReleaseTagWithDash)+$($VersionMetadata.BuildMetadata)"
+
+    Write-Verbose "Outputting build name $BuildName to host"
+    Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
 
     if ($env:BUILD_BUILDURI)
     {
         Write-Output "##vso[build.updatebuildnumber]$BuildName"
     }
 
-    # Restore/install Psake
-
-    Write-Verbose "Restoring Psake (if needed)"
-
-    $psakeModulePath = Join-Path $SolutionDir 'packages\psake\tools\psake.psm1'
-
-    if (-not (Test-Path $psakeModulePath -PathType Leaf))
-    {
-        Write-Verbose "psake.psm1 not found. Downloading from Nuget.org"
-        & $NugetExePath Install psake -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
-    }
-    else
-    {
-        Write-Verbose "FOUND! Skipping..."    
-    }
-
-    Get-Module psake | Remove-Module
-    Import-Module $psakeModulePath
-
-    # Restore/install vswhere
-
-    Write-Verbose "Restoring vswhere (if needed)"
-
-    $vswherePath = Join-Path $SolutionDir 'packages\vswhere\tools\vswhere.exe'
-
-    if (-not (Test-Path $vswherePath -PathType Leaf))
-    {
-        & $NugetExePath Install vswhere -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
-    }
-    else
-    {
-        Write-Verbose "FOUND! Skipping..."    
-    }
-
-    # Detect installed Visual Studio version
-
-    $vsVersion = & $vswherePath -latest -legacy -property installationVersion -format value -version [12.0
-
-    if (-not $vsVersion)
-    {
-        throw "Visual Studio installation not found. It usually means a supported VS version (2013 and newer) is not currently installed."
-    }
-
-    Write-Verbose "Found Visual Studio $vsVersion"
-
     # Run Psake
 
-    $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent)
+    $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent -or ($VerbosePreference -eq 'Continue'))
+    $psakeScript = (Resolve-Path 'psake.ps1')
 
-    Invoke-Psake -Nologo -BuildFile (Resolve-Path 'psake.ps1') -TaskList $Targets -Verbose:$IsVerbose `
+    Write-Verbose "=== BEGIN PSAKE ==="
+    Write-Verbose "Invoking Psake script $psakeScript"
+
+    Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose `
       -Parameters @{
         SolutionDir = $SolutionDir; 
         Configuration = $Configuration;
@@ -129,13 +164,15 @@ try
         ModuleAuthor = $ModuleAuthor;
         ModuleDescription = $ModuleDescription;
         Commit = $VersionMetadata.Sha;
-        Version = "$($VersionMetadata.MajorMinorPatch).$($ProjectBuildNumber)";
+        Version = "$Version";
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
-        BuildName = "$($VersionMetadata.LegacySemver)+$ProjectMetadataInfo";
-        VisualStudioVersion = ([version]$vsVersion).Major;
-        SemVer = $VersionMetadata.LegacySemVer
+        BuildName = "$BuildName";
+        SemVer = "$Version$($VersionMetadata.PreReleaseTagWithDash)+$BuildMetadata"
         VersionMetadata = $VersionMetadata 
     }
+
+    Write-Verbose "=== END PSAKE ==="
+
 }
 finally
 {

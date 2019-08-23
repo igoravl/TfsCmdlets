@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Types>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Client.TfsConfigurationServer</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Name</Name>
+        <GetScriptBlock>$this.Uri.Host</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>TeamProject</Name>
+        <GetScriptBlock>$this.Project.Name</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Client.BuildController</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Collection</Name>
+        <GetScriptBlock>$this.BuildServer.TeamProjectCollection.Name</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>WorkItemStore</Name>
+        <GetScriptBlock>
+          return $this.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Client.TeamFoundationTeam</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>IsDefault</Name>
+        <GetScriptBlock>
+          try
+          {
+          $tpcId = $this.GetProperty('SecuringHostId')
+          $tpId = $this.Project
+
+          if ($TfsTpcConnection -and ($TfsTpcConnection.InstanceId -eq $tpcId))
+          {
+          $tpc = $TfsTpcConnection
+          }
+          else
+          {
+          $tpc = Get-TfsTeamProjectCollection | Where-Object InstanceId -eq $tpcId
+          }
+          $teamService = $tpc.GetService([type]'Microsoft.TeamFoundation.Client.TfsTeamService')
+          return ($teamService.GetDefaultTeamId("$tpId") -eq $this.Identity.TeamFoundationId)
+          }
+          catch
+          {
+          return $null
+          }
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Id</Name>
+        <GetScriptBlock>
+          $this.Identity.TeamFoundationId
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.Project</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ProcessTemplate</Name>
+        <GetScriptBlock>
+          try
+          {
+          $projectName = $null
+          $projectState = $null
+          $templateId = $null
+          $projectProperties = $null
+
+          $tpc = $this.Store.TeamProjectCollection
+          $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
+          $css.GetProjectProperties($this.Uri, [ref] $projectName, [ref] $projectState, [ref] $templateId, [ref] $projectProperties)
+
+          $processTemplate = $projectProperties | Where-Object Name -eq "Process Template" | select -ExpandProperty Value
+
+          if([string]::IsNullOrEmpty($processTemplate))
+          {
+          $processTemplate = "(Unknown)"
+          }
+
+          return $processTemplate
+          }
+          catch
+          {
+          return "(Error)"
+          }
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Collection</Name>
+        <GetScriptBlock>$this.Store.TeamProjectCollection.DisplayName</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>AssignedTo</Name>
+        <GetScriptBlock>
+          try
+          {
+          return $this.Fields["System.AssignedTo"].Value
+          }
+          catch
+          {
+          return "(Error)"
+          }
+        </GetScriptBlock>
+        <SetScriptBlock>
+          $this.Fields["System.AssignedTo"].Value = $args[0]
+        </SetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>WorkItemType</Name>
+        <GetScriptBlock>$this.Type.Name</GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Collection</Name>
+        <GetScriptBlock>$this.Store.TeamProjectCollection.DisplayName</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>Name</Name>
+        <GetScriptBlock>$this.CatalogNode.Resource.DisplayName</GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>InstanceId</Name>
+        <GetScriptBlock>$this.CatalogNode.Resource.Properties["InstanceId"]</GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.Server.NodeInfo</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>NodeType</Name>
+        <GetScriptBlock>
+          switch($this.StructureType)
+          {
+          'ProjectModelHierarchy' { return 'Area' }
+          'ProjectLifecycle' { return 'Iteration' }
+          default { return "(Unknown: $($this.StructureType))" }
+          }
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>TeamProject</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(1, $this.Path.IndexOf('\', 2)-1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>FullPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('\', 2))+$this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>Id</Name>
+        <GetScriptBlock>
+          [guid] $this.Uri.Substring($this.Uri.LastIndexOf('/')+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Parent.Path
+        </GetScriptBlock>
+      </ScriptProperty> 
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/')+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.Length - $this.Name.Length - 1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.Length - $this.Name.Length - 1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/')+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>ProjectName</Name>
+        <GetScriptBlock>
+          $this.Path.Substring(0, $this.Path.IndexOf('/'))
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ScopeName</Name>
+        <GetScriptBlock>
+          ($this.Path -split '/')[1]
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>ParentPath</Name>
+        <GetScriptBlock>
+          $this.Parent.Path
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>RelativePath</Name>
+        <GetScriptBlock>
+          $this.Path.Substring($this.Path.IndexOf('/', $this.QueryHierarchy.Name.Length+2)+1)
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>
+      Microsoft.TeamFoundation.WorkItemTracking.Client.Link
+    </Name>
+    <Members>
+      <ScriptProperty>
+        <Name>LinkType</Name>
+        <GetScriptBlock>
+          function _GetBuildArtifactKind($type, $id)
+          {
+          return 'Build'
+          }
+
+          function _GetRequirementsArtifactKind($type, $id)
+          {
+          return 'Storyboard'
+          }
+
+          function _GetGitArtifactKind($type, $id)
+          {
+          if ($type -eq 'Ref')
+          {
+          $pathSegments = $id -split '%2F'
+          if ($pathSegments[2].StartsWith('GB'))
+          {
+          $type = 'Branch'
+          }
+          elseif ($pathSegments[2].StartsWith('GT'))
+          {
+          $type = 'Tag'
+          }
+          }
+
+          return $type
+          }
+
+          function _GetTestManagementArtifactKind($type, $id)
+          {
+          if ($type -like 'TcmResultAttachment*')
+          {
+          return 'Test Result Attachment'
+          }
+          if ($type -like 'TcmResult*')
+          {
+          return 'Test Result'
+          }
+          return $type
+          }
+
+          function _GetVersionControlArtifactKind($type, $id)
+          {
+          if ($type -ne 'Changeset')
+          {
+          return 'Versioned Item'
+          }
+          return 'Changeset'
+          }
+
+          function _GetExternalLinkTypeName($link)
+          {
+          if ($link.LinkedArtifactUri -like 'vstfs:///*')
+          {
+          $uri = [uri] $link.LinkedArtifactUri
+          $artifactKind = $uri.Segments[1] -replace '/', ''
+          $func = "_Get$($artifactKind)ArtifactKind"
+          return &amp; $func ($uri.Segments[2] -replace '/', '') $uri.Segments[3]
+          }
+          return 'External'
+          }
+
+          try
+          {
+          switch($this.BaseType)
+          {
+          'RelatedLink'  { $this.LinkTypeEnd.Name }
+          'WorkItemLink'  { $this.LinkTypeEnd.Name }
+          'ExternalLink' { _GetExternalLinkTypeName $this }
+          default { $this.BaseType }
+          }
+          }
+          catch
+          {
+          $_.Exception.ToString()
+          }
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>LinkTarget</Name>
+        <GetScriptBlock>
+          function _GetOwner($link)
+          {
+          $field = $link.GetType().GetField('m_item', [System.Reflection.BindingFlags]::NonPublic -bor [System.Reflection.BindingFlags]::Instance)
+          if ($field)
+          {
+          return $field.GetValue($link)
+          }
+          throw 'm_item private field not found in link $($link.GetType().FullName)'
+          }
+
+          function _GetTpc($link)
+          {
+          $wi = _GetOwner $link
+          return $wi.Store.TeamProjectCollection
+          }
+
+          function _GetBuildArtifactTarget($type, $id)
+          {
+          return $id
+          }
+
+          function _GetRequirementsArtifactTarget($type, $id)
+          {
+          return [System.Net.WebUtility]::UrlDecode($id)
+          }
+
+          function _GetGitArtifactTarget($type, $id)
+          {
+          $pathSegments = $id -split '%2F'
+
+          if ($pathSegments.Count -ne 3)
+          {
+          return $id
+          }
+
+          $id = $pathSegments[2]
+
+          if ($pathSegments[2].StartsWith('GB') -or $pathSegments[2].StartsWith('GT'))
+          {
+          $id = $pathSegments[2].Substring(2)
+          }
+
+          return $id
+          }
+
+          function _GetTestManagementArtifactTarget($type, $id, $link)
+          {
+            return $link.LinkedArtifactUri
+          }
+
+          function _GetVersionControlArtifactTarget($type, $id, $link)
+          {
+          if ($type -eq 'VersionedItem')
+          {
+          (0..2) | Foreach-Object { $id = [System.Net.WebUtility]::UrlDecode($id) }
+          $id = $id -split '&amp;'
+              return "`$/$($id[0]) ($($id[1]), $($id[2]))"
+            }
+
+            if ($type -eq 'LatestItemVersion')
+            {
+              $tpc = _GetTpc $link
+              $vcs = $tpc.GetService([type]"Microsoft.TeamFoundation.VersionControl.Client.VersionControlServer")
+              $item = $vcs.GetItem([int]$id,$vcs.GetLatestChangesetId())
+              return "$($item.ServerItem) (latest version)"
+            }
+            
+            return $id
+          }
+
+          function _GetExternalLinkLocation($link)
+          {
+            if ($link.LinkedArtifactUri -like 'vstfs:///*')
+            {
+              $uri = [uri] $link.LinkedArtifactUri
+              $artifactKind = $uri.Segments[1] -replace '/', ''
+              $func = "_Get$($artifactKind)ArtifactTarget"
+              return &amp; $func ($uri.Segments[2] -replace '/', '') $uri.Segments[3] $link
+          }
+
+          return $link.LinkedArtifactUri
+          }
+
+          try
+          {
+          switch($this.BaseType)
+          {
+          'HyperLink'  { $this.Location }
+          'RelatedLink'  { "Work Item #$($this.RelatedWorkItemId)" }
+          'ExternalLink' { _GetExternalLinkLocation $this }
+          'WorkItemLink' { "Work Item #$($this.TargetId)" }
+          default { '' }
+          }
+          }
+          catch
+          {
+          $_.Exception.ToString()
+          }
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+  <Type>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>OppositeEndName</Name>
+        <GetScriptBlock>
+          return $this.OppositeEnd.Name
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
+</Types>
