@@ -136,6 +136,7 @@ try
 
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
 
+    Write-Warning $env:BUILD_REASON
     
     if($env:BUILD_REASON -eq 'PullRequest')
     {
