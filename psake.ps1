@@ -284,9 +284,6 @@ Task PackageChocolatey -Depends Build {
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
 
-    $nuspec = Get-Content $ChocolateySpecPath -Encoding UTF8 -Raw
-    $nuspec.Replace($NugetVersion, $ChocolateyVersion) | Out-File $ChocolateySpecPath -Encoding Utf8
-    
     & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
 }
 
