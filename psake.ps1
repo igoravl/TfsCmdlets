@@ -3,11 +3,6 @@ Framework '4.6'
 
 Properties {
 
-    Function Get-EscapedMSBuildArgument($arg)
-    {
-        return '"' + $arg.Replace('"', '\"') + '"'
-    }
-
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
     $ProjectDir = Join-Path $SolutionDir 'Module'
@@ -83,7 +78,7 @@ Task BuildLibrary {
     $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
     $TargetDir = (Join-Path $ModuleDir 'Lib')
 
-    exec { msbuild $LibSolutionPath /t:Rebuild /p:Configuration=$Configuration /p:DebugType=None /p:AllowedReferenceRelatedFileExtensions=none /p:Version=$Version /p:AssemblyVersion=$Version /v:d | Write-Verbose }
+    exec { msbuild $LibSolutionPath /t:Rebuild /p:Configuration=$Configuration /p:Version=$Version /p:AssemblyVersion=$Version /v:d | Write-Verbose }
 
     
 }
