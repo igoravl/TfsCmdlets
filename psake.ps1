@@ -1,4 +1,5 @@
 # This script is a psake script file and should not be called directly. Use Build.ps1 instead.
+Framework '4.6'
 
 Properties {
 
@@ -61,7 +62,7 @@ Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, 
 
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, CopyFiles, CopyLibraries, UpdateModuleManifest {
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, UpdateModuleManifest {
 
 }
 
@@ -75,6 +76,16 @@ Task CleanOutputDir {
     }
 
     New-Item $ModuleDir -ItemType Directory -Force | Out-Null
+}
+
+Task BuildLibrary {
+
+    $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
+    $TargetDir = (Join-Path $ModuleDir 'Lib')
+
+    exec { msbuild $LibSolutionPath /t:Rebuild /p:Configuration=$Configuration /p:DebugType=None /p:AllowedReferenceRelatedFileExtensions=none /p:Version=$Version /p:AssemblyVersion=$Version /v:d | Write-Verbose }
+
+    
 }
 
 Task CopyFiles {
@@ -158,7 +169,13 @@ Task CopyLibraries {
 
                 Write-Verbose "Copying file $SrcPath to $DstPath"
                 Copy-Item $SrcPath $DstPath -Force 
-        }
+            }
+
+            $LibBinDir = (Join-Path $SolutionDir "Lib/TfsCmdletsLib/bin/$Configuration")
+
+            $f = Get-ChildItem $LibBinDir -Include TfsCmdletsLib.dll -Recurse
+
+            Copy-Item $f -Destination $TargetDir
         } 
         catch
         {
