@@ -22,7 +22,7 @@ Function Rename-TfsWorkItemTag
         [object] 
         $Tag,
 
-        [Parameter()]
+        [Parameter(Position=1)]
         [string]
         $NewName,
 
@@ -32,7 +32,11 @@ Function Rename-TfsWorkItemTag
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
@@ -56,6 +60,11 @@ Function Rename-TfsWorkItemTag
             GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
 
             CALL_ASYNC($client.UpdateTagAsync($tp.Guid, $t.Id, $NewName, $t.Active),"Error renaming work item tag [$($t.Name)]'")
+
+            if($Passthru.IsPresent)
+            {
+                return $result
+            }
         }
     }
 }
