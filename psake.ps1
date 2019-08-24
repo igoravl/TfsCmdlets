@@ -227,7 +227,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         }
 }
 
-Task Test -Depends Build {
+Task Test -Depends Build -PreCondition { -not $SkipTests } {
 
     exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
         -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict}
@@ -283,7 +283,12 @@ Task PackageModule -Depends Build {
 Task PackageNuget -Depends Build, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
-    & $NugetExePath @('Pack', $NugetSpecPath, '-OutputDirectory', $NugetDir, '-Verbosity', 'Detailed', '-NonInteractive') *>&1 | Write-Verbose
+
+    $cmdLine = "$NugetExePath Pack $NugetSpecPath -OutputDirectory $NugetDir -Verbosity Detailed -NonInteractive -Version $NugetVersion"
+
+    Write-Verbose "Command line: [$cmdLine]"
+
+    Invoke-Expression $cmdLine *>&1 | Write-Verbose
 }
 
 Task PackageChocolatey -Depends Build {
@@ -296,7 +301,11 @@ Task PackageChocolatey -Depends Build {
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
 
-    & $ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir | Write-Verbose
+    $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $Version"
+
+    Write-Verbose "Command line: [$cmdLine]"
+
+    Invoke-Expression $cmdLine *>&1 | Write-Verbose
 }
 
 Task PackageMsi -Depends Build {
@@ -468,7 +477,7 @@ Task GenerateNuspec {
     <metadata>
         <id>$($SourceManifest.Name)</id>
         <title>$($SourceManifest.Name)</title>
-        <version>$NugetVersion</version>
+        <version>0.0.0</version>
         <authors>$($SourceManifest.Author)</authors>
         <owners>$($SourceManifest.Author)</owners>
         <licenseUrl>$($SourceManifest.LicenseUri)</licenseUrl>

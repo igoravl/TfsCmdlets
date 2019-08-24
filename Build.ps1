@@ -10,7 +10,8 @@ Param
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server',
     $Targets = "Package",
-    $RepoCreationDate = (Get-Date '2014-10-24')
+    $RepoCreationDate = (Get-Date '2014-10-24'),
+    [switch] $SkipTests
 )
 
 Function Install-Dependencies
@@ -187,6 +188,7 @@ try
         BuildName = $BuildName
         SemVer = $SemVerFullVersion
         VersionMetadata = $VersionMetadata 
+        SkipTests = $SkipTests.IsPresent
     }
 
     Write-Verbose "=== END PSAKE ==="
