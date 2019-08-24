@@ -998,6 +998,9 @@
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
+            <Label>Account Name</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>Display Name</Label>
           </TableColumnHeader>
           <TableColumnHeader>
@@ -1014,6 +1017,9 @@
           <TableRowEntry>
             <Wrap/>
             <TableColumnItems>
+              <TableColumnItem>
+                <ScriptBlock>$_.Properties['Account']</ScriptBlock>
+              </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>DisplayName</PropertyName>
               </TableColumnItem>
