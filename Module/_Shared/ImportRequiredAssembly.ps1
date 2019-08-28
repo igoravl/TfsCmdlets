@@ -4,7 +4,8 @@ Function _ImportRequiredAssembly($assemblyName)
 
     if($assemblyName -eq '*')
     {
-        $assemblies = (Get-ChildItem "$libPath/*.dll" -Exclude 'Microsoft.WitDataStore*.*').BaseName
+        $assemblies = (Get-ChildItem "$libPath/*.dll" -Exclude 'Microsoft.WitDataStore*.*','TfsCmdletsLib.dll').BaseName
+        $assemblies += (Get-ChildItem "$libPath/TfsCmdletsLib.dll").BaseName
     }
     else
     {

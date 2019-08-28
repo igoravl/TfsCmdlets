@@ -1,13 +1,12 @@
 #define ITEM_TYPE TfsCmdlets.TeamAdmins
-Function Add-TfsTeamAdministrator
+Function Add-TfsTeamAdmin
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
     [OutputType('ITEM_TYPE')]
     Param
     (
         # Specifies the board name(s). Wildcards accepted
         [Parameter(Position=0)]
-        [SupportsWildcards()]
         [Alias('Name')]
         [Alias('User')]
         [object]
@@ -36,8 +35,11 @@ Function Add-TfsTeamAdministrator
 
         _Log "Adding $($id.IdentityType) '$($id.DisplayName) ($($id.Properties['Account']))' to team '$($t.Name)'"
 
-        CALL_ASYNC($client.AddTeamAdministratorAsync($tp.Name, $t.Id, $id.Id),'Error setting team administrator')
+        if(-not $PSCmdlet.ShouldProcess($t.Name, "Add administrator '$($id.DisplayName) ($($id.Properties['Account']))'"))
+        {
+            return
+        }
 
-        return $result
+        return $client.AddTeamAdmin($tp.Name, $t.Id, $id.Id)
     }
 }
