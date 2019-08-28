@@ -70,7 +70,7 @@ Function Get-TfsTeamProject
 
         $tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
 
-        if(($Project -is [string]) -and (_TestGuid $Project))
+        if(_TestGuid $Project)
         {
             $Project = [uri] "vstfs:///Classification/TeamProject/$Project"
         }
