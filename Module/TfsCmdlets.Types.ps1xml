@@ -486,4 +486,15 @@
       </ScriptProperty>
     </Members>
   </Type>
+  <Type>
+    <Name>Microsoft.VisualStudio.Services.Identity.Identity</Name>
+    <Members>
+      <ScriptProperty>
+        <Name>IdentityType</Name>
+        <GetScriptBlock>
+          return &amp;{ if ($this.IsContainer) {'Group'} else {'User'} }
+        </GetScriptBlock>
+      </ScriptProperty>
+    </Members>
+  </Type>
 </Types>

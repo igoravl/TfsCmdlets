@@ -34,6 +34,8 @@ Function Get-TfsIdentity
 
     Process
     {
+        CHECK_ITEM($Identity)
+
         GET_COLLECTION($tpc)
         
         GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
@@ -49,10 +51,12 @@ Function Get-TfsIdentity
 
         if(_TestGuid $Identity)
         {
+            _Log "Finding identity with ID [$Identity] and QueryMembership=$qm"
             CALL_ASYNC($client.ReadIdentityAsync([guid]$Identity),"Error retrieving information from identity [$Identity]")
         }
         else
         {
+            _Log "Finding identity with account name [$Identity] and QueryMembership=$qm"
             CALL_ASYNC($client.ReadIdentitiesAsync([Microsoft.VisualStudio.Services.Identity.IdentitySearchFilter]::AccountName, [string]$Identity, 'None', $qm),"Error retrieving information from identity [$Identity]")
         }
 
