@@ -177,16 +177,11 @@ try
       -Parameters @{
         SolutionDir = $SolutionDir
         Configuration = $Configuration
-        BranchName = $VersionMetadata.BranchName
         ModuleName = $ModuleName
         ModuleAuthor = $ModuleAuthor
         ModuleDescription = $ModuleDescription
-        Commit = $VersionMetadata.Sha
-        Version = $LegacyVersion
-        NuGetVersion = $LegacyFullVersion
-        PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
         BuildName = $BuildName
-        SemVer = $SemVerFullVersion
+        BuildNumber = $ProjectBuildNumber
         VersionMetadata = $VersionMetadata 
         SkipTests = $SkipTests.IsPresent
     }
