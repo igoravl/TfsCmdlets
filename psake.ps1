@@ -208,6 +208,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         Commit = '$Commit'
         TfsClientVersion = '$tfsOmNugetVersion'
         PreRelease = '$PreRelease'
+        Version = '$SemVer'
     }
 }
 "@
