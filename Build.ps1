@@ -183,6 +183,7 @@ try
         ModuleDescription = $ModuleDescription
         Commit = $VersionMetadata.Sha
         Version = $LegacyVersion
+        ModuleVersion = $VersionMetadata.MajorMinorPatch
         NuGetVersion = $LegacyFullVersion
         PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
         BuildName = $BuildName

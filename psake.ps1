@@ -200,7 +200,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
     -NestedModules @($(($nestedModuleList | ForEach-Object { "'$_'" }) -join ',')) 
     -FileList @($(($fileList | ForEach-Object { "'$_'" }) -join ',')) 
     -FunctionsToExport @($(($functionList | ForEach-Object { "'$_'" }) -join ',')) 
-    -ModuleVersion '$Version' 
+    -ModuleVersion '$ModuleVersion' 
     -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ',')) 
     -PrivateData @{
         Branch = '$BranchName'
@@ -208,6 +208,7 @@ Updating module manifest file $ModuleManifestPath with the following content:
         Commit = '$Commit'
         TfsClientVersion = '$tfsOmNugetVersion'
         PreRelease = '$PreRelease'
+        Version = '$SemVer'
     }
 }
 "@
