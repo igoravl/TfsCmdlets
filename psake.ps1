@@ -250,7 +250,7 @@ Task DownloadTfsNugetPackage {
         if (-not (Test-Path "$packageDir.*" -PathType Container))
         {
             Write-Verbose "$package not found. Downloading from Nuget.org"
-            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
+            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease -PackageSaveMode nuspec`;nupkg *>&1 | Write-Verbose
         }
         else
         {
@@ -292,7 +292,7 @@ Task PackageNuget -Depends Build, GenerateNuspec {
     Invoke-Expression $cmdLine *>&1 | Write-Verbose
 }
 
-Task PackageChocolatey -Depends Build {
+Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerificationFile {
 
     if (-not (Test-Path $ChocolateyPath))
     {
@@ -494,4 +494,73 @@ Task GenerateNuspec {
 "@
 
     Set-Content -Path $NugetSpecPath -Value $nuspec
+}
+
+Task GenerateLicenseFile {
+ 
+    $outLicenseFile = Join-Path $ChocolateyToolsDir 'LICENSE.txt'
+
+    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile
+
+    $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
+
+    foreach($f in $specFiles)
+    {
+        $spec = [xml] (Get-Content $f -Raw -Encoding UTF8)
+        $packageUrl = "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
+
+        if($spec.package.metadata.license)
+        {
+            if ($spec.package.metadata.license.type -eq 'file')
+            {
+                $licenseFile = Join-Path $f.Directory $spec.package.metadata.license.'#text'
+                $licenseText = Get-Content $licenseFile -Raw -Encoding Utf8
+            }
+            else
+            {
+            $licenseText = "Please refer to https://spdx.org/licenses/$($spec.package.metadata.license.type).html for license information for this package."
+            }
+        }
+        else
+        {
+            $licenseUrl = $spec.package.metadata.licenseUrl
+            $licenseText = "Please refer to $licenseUrl for license information for this package."
+        }
+
+        @"
+=============================
+
+FROM $packageUrl
+
+LICENSE
+
+$licenseText
+
+"@ | Add-Content -Path $outLicenseFile -Encoding Utf8
+
+    }
+}
+
+Task GenerateVerificationFile {
+
+    $outVerifyFile = Join-Path $ChocolateyToolsDir 'VERIFICATION.txt'
+
+    $packageUrls = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse | ForEach-Object {
+        $spec = [xml] (Get-Content $_ -Raw -Encoding UTF8); `
+        Write-Output "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
+    }
+
+@"
+VERIFICATION
+============
+
+Verification is intended to assist the Chocolatey moderators and community
+in verifying that this package's contents are trustworthy.
+
+Binary files contained in this package can be compared against their respective NuGet source packages, listed below:
+
+$($packageUrls -join "`r`n")
+
+"@ | Out-File $outVerifyFile -Encoding Utf8
+
 }
