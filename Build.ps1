@@ -133,29 +133,16 @@ try
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
 
-    $VersionMetadata | Write-Verbose
-
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
 
     if($env:BUILD_REASON -eq 'PullRequest')
     {
-        $LegacyBuildMetadata = ''
-        $SemVerMetadata = ''
-        $BuildNameSuffix = $VersionMetadata.PreReleaseTagWithDash
-    }
-    else
-    {
-        $LegacyBuildMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+0$($VersionMetadata.BuildMetadata)"
-        $SemVerMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
+        $script:VersionMetadata = ($VersionMetadata | ConvertTo-Json | ForEach-Object { $_ -replace $VersionMetadata.BranchName, 'alpha' } | ConvertFrom-Json)
     }
 
-    $LegacyVersion = "$($VersionMetadata.MajorMinorPatch).$ProjectBuildNumber"
-    $LegacyFullVersion = "${LegacyVersion}$LegacyBuildMetadata"
-    
-    $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
-    $SemVerFullVersion = "${SemVerVersion}$SemVerMetadata"
+    $VersionMetadata | Write-Verbose
 
-    $BuildName = $SemVerFullVersion
+    $BuildName = $VersionMetadata.FullSemVer
 
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
