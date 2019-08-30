@@ -500,7 +500,12 @@ Task GenerateLicenseFile {
  
     $outLicenseFile = Join-Path $ChocolateyToolsDir 'LICENSE.txt'
 
-    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile
+    if(-not (Test-Path $ChocolateyToolsDir -PathType Container))
+    {
+        New-Item $ChocolateyToolsDir -Force -ItemType Directory | Write-Verbose
+    }
+    
+    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile -Force -Recurse
 
     $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
 
