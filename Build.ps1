@@ -132,17 +132,10 @@ try
 
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
-
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-
-    if($env:BUILD_REASON -eq 'PullRequest')
-    {
-        $script:VersionMetadata = ($VersionMetadata | ConvertTo-Json | ForEach-Object { $_ -replace $VersionMetadata.BranchName, 'alpha' } | ConvertFrom-Json)
-    }
+    $BuildName = $VersionMetadata.FullSemVer
 
     $VersionMetadata | Write-Verbose
-
-    $BuildName = $VersionMetadata.FullSemVer
 
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
