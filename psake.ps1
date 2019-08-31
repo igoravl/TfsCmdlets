@@ -77,7 +77,7 @@ Task BuildLibrary {
 
     $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
 
-    exec { msbuild $LibSolutionPath /t:Rebuild /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
+    exec { msbuild $LibSolutionPath /t:Restore;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
 
     
 }
