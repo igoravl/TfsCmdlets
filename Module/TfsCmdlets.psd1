@@ -19,7 +19,7 @@
     NestedModules = @() 
     PrivateData = @{ 
         PSData = @{
-            Tags = @('TfsCmdlets', 'TFS', 'VSTS', 'PowerShell', 'Azure', 'Azure DevOps', 'DevOps', 'ALM', 'Team Foundation Server')
+            Tags = @('TfsCmdlets', 'TFS', 'VSTS', 'PowerShell', 'Azure', 'AzureDevOps', 'DevOps', 'ALM', 'TeamFoundationServer')
             Branch = 'BranchName'
             Commit = 'Commit'
             Build = 'BuildName'
