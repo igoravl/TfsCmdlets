@@ -17,7 +17,7 @@ Param
 Function Install-Dependencies
 {
     $NugetPackages = @('GitVersion.CommandLine')
-    $PsModules = @('InvokeBuild', 'psake', 'PsScriptAnalyzer')
+    $PsModules = @('InvokeBuild', 'psake', 'PsScriptAnalyzer', 'VSSetup')
 
     $script:PackagesDir = Join-Path $SolutionDir 'packages'
 
@@ -132,30 +132,10 @@ try
 
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
+    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
+    $BuildName = $VersionMetadata.FullSemVer
 
     $VersionMetadata | Write-Verbose
-
-    $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-
-    if($env:BUILD_REASON -eq 'PullRequest')
-    {
-        $LegacyBuildMetadata = ''
-        $SemVerMetadata = ''
-        $BuildNameSuffix = $VersionMetadata.PreReleaseTagWithDash
-    }
-    else
-    {
-        $LegacyBuildMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+0$($VersionMetadata.BuildMetadata)"
-        $SemVerMetadata = "$($VersionMetadata.PreReleaseTagWithDash)+$ProjectBuildNumber.0$($VersionMetadata.BuildMetadata)"
-    }
-
-    $LegacyVersion = "$($VersionMetadata.MajorMinorPatch).$ProjectBuildNumber"
-    $LegacyFullVersion = "${LegacyVersion}$LegacyBuildMetadata"
-    
-    $SemVerVersion = "$($VersionMetadata.MajorMinorPatch)"
-    $SemVerFullVersion = "${SemVerVersion}$SemVerMetadata"
-
-    $BuildName = $SemVerFullVersion
 
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
@@ -177,16 +157,11 @@ try
       -Parameters @{
         SolutionDir = $SolutionDir
         Configuration = $Configuration
-        BranchName = $VersionMetadata.BranchName
         ModuleName = $ModuleName
         ModuleAuthor = $ModuleAuthor
         ModuleDescription = $ModuleDescription
-        Commit = $VersionMetadata.Sha
-        Version = $LegacyVersion
-        NuGetVersion = $LegacyFullVersion
-        PreRelease = "$($VersionMetadata.PreReleaseLabel)$($VersionMetadata.PreReleaseNumber)";
         BuildName = $BuildName
-        SemVer = $SemVerFullVersion
+        BuildNumber = $ProjectBuildNumber
         VersionMetadata = $VersionMetadata 
         SkipTests = $SkipTests.IsPresent
     }

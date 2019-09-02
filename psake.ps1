@@ -39,7 +39,7 @@ Properties {
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
-    $WixVersion = "$Version"
+    $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $SolutionDir "Setup\bin\$Configuration"
 
     #7zip
@@ -76,9 +76,8 @@ Task CleanOutputDir {
 Task BuildLibrary {
 
     $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
-    $TargetDir = (Join-Path $ModuleDir 'Lib')
 
-    exec { msbuild $LibSolutionPath /t:Rebuild /p:Configuration=$Configuration /p:Version=$Version /p:AssemblyVersion=$Version /v:d | Write-Verbose }
+    exec { msbuild $LibSolutionPath /t:Restore`;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
 
     
 }
@@ -200,14 +199,15 @@ Updating module manifest file $ModuleManifestPath with the following content:
     -NestedModules @($(($nestedModuleList | ForEach-Object { "'$_'" }) -join ',')) 
     -FileList @($(($fileList | ForEach-Object { "'$_'" }) -join ',')) 
     -FunctionsToExport @($(($functionList | ForEach-Object { "'$_'" }) -join ',')) 
-    -ModuleVersion '$Version' 
+    -ModuleVersion '$($VersionMetadata.NugetVersion)' 
     -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ',')) 
     -PrivateData @{
-        Branch = '$BranchName'
+        Branch = '$($VersionMetadata.BranchName)'
         Build = '$BuildName'
-        Commit = '$Commit'
+        Commit = '$($VersionMetadata.Commit)'
         TfsClientVersion = '$tfsOmNugetVersion'
-        PreRelease = '$PreRelease'
+        PreRelease = '$($VersionMetadata.NugetPrereleaseTag)'
+        Version = '$($VersionMetadata.FullSemVer)'
     }
 }
 "@
@@ -216,14 +216,15 @@ Updating module manifest file $ModuleManifestPath with the following content:
         -NestedModules $nestedModuleList `
         -FileList $fileList `
         -FunctionsToExport $functionList `
-        -ModuleVersion $Version `
+        -ModuleVersion $VersionMetadata.MajorMinorPatch `
         -CompatiblePSEditions $CompatiblePSEditions `
         -PrivateData @{
-            Branch = $BranchName
+            Branch = $VersionMetadata.BranchName
             Build = $BuildName
-            Commit = $Commit
+            Commit = $VersionMetadata.Sha
             TfsClientVersion = $tfsOmNugetVersion
-            PreRelease = $PreRelease
+            PreRelease = $VersionMetadata.NugetPrereleaseTag
+            Version = $VersionMetadata.FullSemVer
         }
 }
 
@@ -249,7 +250,7 @@ Task DownloadTfsNugetPackage {
         if (-not (Test-Path "$packageDir.*" -PathType Container))
         {
             Write-Verbose "$package not found. Downloading from Nuget.org"
-            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease *>&1 | Write-Verbose
+            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease -PackageSaveMode nuspec`;nupkg *>&1 | Write-Verbose
         }
         else
         {
@@ -277,21 +278,21 @@ Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$NugetVersion.zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
+    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
 
-    $cmdLine = "$NugetExePath Pack $NugetSpecPath -OutputDirectory $NugetDir -Verbosity Detailed -NonInteractive -Version $NugetVersion"
+    $cmdLine = "$NugetExePath Pack $NugetSpecPath -OutputDirectory $NugetDir -Verbosity Detailed -NonInteractive -Version $($VersionMetadata.NugetVersion)"
 
     Write-Verbose "Command line: [$cmdLine]"
 
     Invoke-Expression $cmdLine *>&1 | Write-Verbose
 }
 
-Task PackageChocolatey -Depends Build {
+Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerificationFile {
 
     if (-not (Test-Path $ChocolateyPath))
     {
@@ -301,7 +302,7 @@ Task PackageChocolatey -Depends Build {
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
 
-    $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $Version"
+    $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $($VersionMetadata.NugetVersion)"
 
     Write-Verbose "Command line: [$cmdLine]"
 
@@ -347,7 +348,7 @@ Task PackageMsi -Depends Build {
 
     $CandleArgs = @(
         "-sw$WixSuppressedWarnings",
-        "-dPRODUCTVERSION=$WixVersion",
+        "-dPRODUCTVERSION=$FourPartVersion",
         "-d`"PRODUCTNAME=$ModuleName - $ModuleDescription`"",
         "-d`"AUTHOR=$ModuleAuthor`"",
         "-dSourceDir=$ModuleDir\",
@@ -362,9 +363,9 @@ Task PackageMsi -Depends Build {
         "-dProjectPath=$WixProjectDir\$WixProjectFileName",
         "-dTargetDir=$WixBinDir\",
         "-dTargetExt=.msi"
-        "-dTargetFileName=$ModuleName-$NugetVersion.msi",
-        "-dTargetName=$ModuleName-$NugetVersion",
-        "-dTargetPath=$WixBinDir\$ModuleName-$NugetVersion.msi",
+        "-dTargetFileName=$ModuleName-$($VersionMetadata.NugetVersion).msi",
+        "-dTargetName=$ModuleName-$($VersionMetadata.NugetVersion)",
+        "-dTargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi",
         "-I$WixProjectDir",
         "-out", "$WixObjDir\",
         "-arch", "x86",
@@ -377,8 +378,8 @@ Task PackageMsi -Depends Build {
     & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose
 
     $LightArgs = @(
-        "-out", "$WixBinDir\$ModuleName-$NugetVersion.msi",
-        "-pdbout", "$WixBinDir\$ModuleName-$NugetVersion.wixpdb",
+        "-out", "$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi",
+        "-pdbout", "$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).wixpdb",
         "-sw1076",
         "-cultures:null", 
         "-ext", "$WixToolsDir\WixUtilExtension.dll",
@@ -399,8 +400,8 @@ Task PackageMsi -Depends Build {
 
 Task PackageDocs -Depends GenerateDocs {
 
-    #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$NugetVersion.zip") 
-    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$NugetVersion.zip") $DocsDir | Write-Verbose
+    #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$($VersionMetadata.NugetVersion).zip") 
+    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") $DocsDir | Write-Verbose
 }
 
 Task GenerateDocs -Depends Build {
@@ -493,4 +494,78 @@ Task GenerateNuspec {
 "@
 
     Set-Content -Path $NugetSpecPath -Value $nuspec
+}
+
+Task GenerateLicenseFile {
+ 
+    $outLicenseFile = Join-Path $ChocolateyToolsDir 'LICENSE.txt'
+
+    if(-not (Test-Path $ChocolateyToolsDir -PathType Container))
+    {
+        New-Item $ChocolateyToolsDir -Force -ItemType Directory | Write-Verbose
+    }
+    
+    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile -Force -Recurse
+
+    $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
+
+    foreach($f in $specFiles)
+    {
+        $spec = [xml] (Get-Content $f -Raw -Encoding UTF8)
+        $packageUrl = "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
+
+        if($spec.package.metadata.license)
+        {
+            if ($spec.package.metadata.license.type -eq 'file')
+            {
+                $licenseFile = Join-Path $f.Directory $spec.package.metadata.license.'#text'
+                $licenseText = Get-Content $licenseFile -Raw -Encoding Utf8
+            }
+            else
+            {
+            $licenseText = "Please refer to https://spdx.org/licenses/$($spec.package.metadata.license.type).html for license information for this package."
+            }
+        }
+        else
+        {
+            $licenseUrl = $spec.package.metadata.licenseUrl
+            $licenseText = "Please refer to $licenseUrl for license information for this package."
+        }
+
+        @"
+=============================
+
+FROM $packageUrl
+
+LICENSE
+
+$licenseText
+
+"@ | Add-Content -Path $outLicenseFile -Encoding Utf8
+
+    }
+}
+
+Task GenerateVerificationFile {
+
+    $outVerifyFile = Join-Path $ChocolateyToolsDir 'VERIFICATION.txt'
+
+    $packageUrls = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse | ForEach-Object {
+        $spec = [xml] (Get-Content $_ -Raw -Encoding UTF8); `
+        Write-Output "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
+    }
+
+@"
+VERIFICATION
+============
+
+Verification is intended to assist the Chocolatey moderators and community
+in verifying that this package's contents are trustworthy.
+
+Binary files contained in this package can be compared against their respective NuGet source packages, listed below:
+
+$($packageUrls -join "`r`n")
+
+"@ | Out-File $outVerifyFile -Encoding Utf8
+
 }
