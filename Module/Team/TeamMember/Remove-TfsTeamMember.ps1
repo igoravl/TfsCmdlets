@@ -1,14 +1,13 @@
-#define ITEM_TYPE TfsCmdlets.TeamAdmins
-Function Remove-TfsTeamAdmin
+Function Remove-TfsTeamMember
 {
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
-    [OutputType('ITEM_TYPE')]
     Param
     (
         # Specifies the board name(s). Wildcards accepted
         [Parameter(Position=0,ValueFromPipeline=$true)]
         [Alias('Name')]
         [Alias('User')]
+        [Alias('Member')]
         [object]
         $Identity,
 
@@ -39,20 +38,23 @@ Function Remove-TfsTeamAdmin
             GET_TEAM($t,$tp,$tpc)
         }
 
-        $id = Get-TfsIdentity -Identity $Identity -Collection $tpc
+        $gi = Get-TfsIdentity -Identity $t.Id -Collection $tpc
+        $ui = Get-TfsIdentity -Identity $Identity -Collection $tpc
 
-        GET_CLIENT('TfsCmdlets.TeamAdminHttpClient')
+        if(-not $ui)
+        {
+            throw "Invalid or non-existent identity '$Identity'"
+        }
 
-        _Log "Removing $($id.IdentityType) '$($id.DisplayName) ($($id.Properties['Account']))' from team '$($t.Name)'"
+        GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
 
-        if(-not $PSCmdlet.ShouldProcess($t.Name, "Remove administrator '$($id.DisplayName) ($($id.Properties['Account']))'"))
+        _Log "Removing $($ui.IdentityType) '$($ui.DisplayName) ($($ui.Properties['Account']))' from team '$($t.Name)'"
+
+        if(-not $PSCmdlet.ShouldProcess($t.Name, "Remove member '$($ui.DisplayName) ($($ui.Properties['Account']))'"))
         {
             return
         }
 
-        if(-not ([bool] $client.RemoveTeamAdmin($tp.Name, $t.Id, $id.Id).success))
-        {
-            throw 'Error removing team administrator'
-        }
+        CALL_ASYNC($client.RemoveMemberFromGroupAsync($gi.Descriptor, $ui.Descriptor), "Error removing team member '$($ui.DisplayName)' from team '$($t.Name)'")
     }
 }

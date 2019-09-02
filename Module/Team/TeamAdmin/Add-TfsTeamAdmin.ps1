@@ -29,7 +29,7 @@ Function Add-TfsTeamAdmin
     {
         GET_TEAM($t,$tp,$tpc)
 
-        $id = Get-TfsIdentity -Identity $Identity -Collection $rpc
+        $id = Get-TfsIdentity -Identity $Identity -Collection $tpc
 
         GET_CLIENT('TfsCmdlets.TeamAdminHttpClient')
 
