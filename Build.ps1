@@ -133,7 +133,7 @@ try
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-    $BuildName = $VersionMetadata.FullSemVer
+    $BuildName = ($VersionMetadata.FullSemVer -replace '+', "+$ProjectBuildNumber.")
 
     $VersionMetadata | Write-Verbose
 
@@ -142,7 +142,7 @@ try
 
     if ($env:BUILD_BUILDURI)
     {
-        Write-Output "##vso[build.updatebuildnumber]$BuildName$BuildNameSuffix"
+        Write-Output "##vso[build.updatebuildnumber]$BuildName"
     }
 
     # Run Psake
