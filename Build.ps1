@@ -133,7 +133,7 @@ try
     $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $script:VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-    $BuildName = ($VersionMetadata.FullSemVer -replace '+', "+$ProjectBuildNumber.")
+    $BuildName = ($VersionMetadata.FullSemVer -replace '\\+', "\\+$ProjectBuildNumber\\.")
 
     $VersionMetadata | Write-Verbose
 
