@@ -356,9 +356,9 @@
     </View>
 
     <View>
-      <Name>CSS Nodes</Name>
+      <Name>Classification Nodes</Name>
       <ViewSelectedBy>
-        <TypeName>Microsoft.TeamFoundation.Server.NodeInfo</TypeName>
+        <TypeName>Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode</TypeName>
       </ViewSelectedBy>
       <GroupBy>
         <Label>Team Project</Label>
@@ -406,7 +406,7 @@
                 <FormatString>{0:d}</FormatString>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>NodeType</PropertyName>
+                <PropertyName>StructureType</PropertyName>
               </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>

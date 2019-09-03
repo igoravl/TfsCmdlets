@@ -155,17 +155,12 @@
     </Members>
   </Type>
   <Type>
-    <Name>Microsoft.TeamFoundation.Server.NodeInfo</Name>
+    <Name>Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode</Name>
     <Members>
       <ScriptProperty>
         <Name>NodeType</Name>
         <GetScriptBlock>
-          switch($this.StructureType)
-          {
-          'ProjectModelHierarchy' { return 'Area' }
-          'ProjectLifecycle' { return 'Iteration' }
-          default { return "(Unknown: $($this.StructureType))" }
-          }
+          return $this.StructureType
         </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
@@ -177,7 +172,7 @@
       <ScriptProperty>
         <Name>FullPath</Name>
         <GetScriptBlock>
-          $this.Path.Substring(0, $this.Path.IndexOf('\', 2))+$this.Path.Substring($this.Path.IndexOf('\',$this.Path.Substring(0, $this.Path.IndexOf('\',1)+1).Length))
+          $this.Path.Replace("\$($this.TeamProject)\$($this.StructureType)", "\$($this.TeamProject)")
         </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
@@ -187,9 +182,15 @@
         </GetScriptBlock>
       </ScriptProperty>
       <ScriptProperty>
-        <Name>Id</Name>
+        <Name>StartDate</Name>
         <GetScriptBlock>
-          [guid] $this.Uri.Substring($this.Uri.LastIndexOf('/')+1)
+          $this.Attributes['startDate']
+        </GetScriptBlock>
+      </ScriptProperty>
+      <ScriptProperty>
+        <Name>FinishDate</Name>
+        <GetScriptBlock>
+          $this.Attributes['startDate']
         </GetScriptBlock>
       </ScriptProperty>
     </Members>

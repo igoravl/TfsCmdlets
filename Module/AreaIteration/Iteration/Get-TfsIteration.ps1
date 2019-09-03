@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode
 <#
 .SYNOPSIS
     Gets one or more Work Item Iterations from a given Team Project.
@@ -19,12 +20,12 @@
 Function Get-TfsIteration
 {
     [CmdletBinding()]
-    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [ITEM_TYPE])})]
         [SupportsWildcards()]
         [object]
         $Iteration = '\\**',
@@ -40,6 +41,6 @@ Function Get-TfsIteration
 
     Process
     {
-        return _GetCssNodes -Node $Iteration -Scope Iteration -Project $Project -Collection $Collection
+        return _GetNode -Path $Iteration -StructureGroup Iterations -Project $Project -Collection $Collection
     }
 }

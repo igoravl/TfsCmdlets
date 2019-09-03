@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode
 <#
 .SYNOPSIS
 Gets one or more Work Item Areas from a given Team Project.
@@ -30,12 +31,12 @@ Performs a recursive search and returns all area paths named 'Support' that may 
 Function Get-TfsArea
 {
     [CmdletBinding()]
-    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [ITEM_TYPE])})]
         [SupportsWildcards()]
         [object]
         $Area = '\\**',
@@ -51,6 +52,6 @@ Function Get-TfsArea
 
     Process
     {
-        return _GetCssNodes -Node $Area -Scope Area -Project $Project -Collection $Collection
+        return _GetNode -Path $Area -StructureGroup Areas -Project $Project -Collection $Collection
     }
 }
