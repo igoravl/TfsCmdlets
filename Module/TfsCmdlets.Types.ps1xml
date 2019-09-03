@@ -193,6 +193,12 @@
           $this.Attributes['startDate']
         </GetScriptBlock>
       </ScriptProperty>
+      <ScriptProperty>
+        <Name>Uri</Name>
+        <GetScriptBlock>
+          ([uri] "vstfs:///Classification/Node/$($this.Identifier)")
+        </GetScriptBlock>
+      </ScriptProperty>
     </Members>
   </Type>
 
