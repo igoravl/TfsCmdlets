@@ -41,6 +41,6 @@ Function Get-TfsIteration
 
     Process
     {
-        return _GetNode -Path $Iteration -StructureGroup Iterations -Project $Project -Collection $Collection
+        return _GetNode @PSBoundParameters
     }
 }

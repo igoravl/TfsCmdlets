@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode
 <#
 .SYNOPSIS
 Determines whether the specified Areas Paths exist.
@@ -23,15 +24,15 @@ Returns $true if an area path called 'Fabrikam Web Team' exists in a team projec
 Function Test-TfsArea
 {
     [CmdletBinding()]
-    [OutputType('bool')]
+    [OutputType([bool])]
     Param
     (
         [Parameter(Position=0)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [ITEM_TYPE])})]
         [SupportsWildcards()]
         [object]
-        $Area = '\\**',
+        $Area,
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -44,14 +45,6 @@ Function Test-TfsArea
 
     Process
     {
-        try
-        {
-            return [bool] (_GetCssNodes -Node $Area -Scope Area -Project $Project -Collection $Collection)
-        }
-        catch
-        {
-            Write-Warning "Error testing path: $_"
-            return $false
-        }
+        return _TestNode @PSBoundParameters
     }
 }

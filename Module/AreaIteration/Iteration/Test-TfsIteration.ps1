@@ -23,15 +23,15 @@
 Function Test-TfsIteration
 {
     [CmdletBinding()]
-    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
+    [OutputType([bool])]
     Param
     (
         [Parameter(Position=0)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [ITEM_TYPE])})]
         [SupportsWildcards()]
         [object]
-        $Iteration = '\\**',
+        $Iteration,
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -44,14 +44,6 @@ Function Test-TfsIteration
 
     Process
     {
-        try
-        {
-            return [bool] (_GetCssNodes -Node $Iteration -Scope Iteration -Project $Project -Collection $Collection)
-        }
-        catch
-        {
-            Write-Warning "Error testing path: $_"
-            return $false
-        }
+        return _TestNode @PSBoundParameters
     }
 }

@@ -7,12 +7,11 @@ Function _GetNode
     (
         [Parameter()]
         [SupportsWildcards()]
+        [Alias('Area')]
+        [Alias('Iteration')]
+        [Alias('Path')]
         [object]
-        $Path = '\\**',
-
-        [Parameter()]
-        [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
-        $StructureGroup,
+        $Node = '\\**',
 
         [Parameter()]
         [object]
@@ -23,39 +22,38 @@ Function _GetNode
         $Collection
     )
 
-    Process
+    CHECK_ITEM($Node)
+    
+    GET_TEAM_PROJECT($tp,$tpc)
+
+    GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+
+    $StructureGroup = _GetStructureGroup
+
+    if(_IsWildcard $Node)
     {
-        CHECK_ITEM($Path)
-        
-        GET_TEAM_PROJECT($tp,$tpc)
+        $depth = 1
+        $pattern = _NormalizeNodePath -Project $tp.Name -Scope $StructureGroup -Path $Node -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
+        $Node = '/'
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
-
-        if(_IsWildcard $Path)
-        {
-            $depth = 1
-            $pattern = _NormalizeNodePath -Project $tp.Name -Scope $StructureGroup -Path $Path -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
-            $Path = '/'
-
-            _Log "Preparing to recursively search for pattern '$pattern'"
-        }
-        else
-        {
-            $Path = _NormalizeNodePath -Project $tp.Name -Scope $StructureGroup -Path $Path -IncludeLeadingBackslash
-            $depth = 0
-
-            _Log "Getting $StructureGroup under path '$Path'"
-        }
-
-        CALL_ASYNC($client.GetClassificationNodeAsync($tp.Name,$StructureGroup,$Path,$depth), "Error retrieving $StructureGroup from path '$Path'")
-
-        if(-not ($pattern))
-        {
-            return $result
-        }
-
-        _GetNodeRecursively -Pattern $pattern -Node $result -StructureGroup $StructureGroup -Project $tp.Name -Client $client
+        _Log "Preparing to recursively search for pattern '$pattern'"
     }
+    else
+    {
+        $Node = _NormalizeNodePath -Project $tp.Name -Scope $StructureGroup -Path $Node -IncludeLeadingBackslash
+        $depth = 0
+
+        _Log "Getting $StructureGroup under path '$Node'"
+    }
+
+    CALL_ASYNC($client.GetClassificationNodeAsync($tp.Name,$StructureGroup,$Node,$depth), "Error retrieving $StructureGroup from path '$Node'")
+
+    if(-not ($pattern))
+    {
+        return $result
+    }
+
+    _GetNodeRecursively -Pattern $pattern -Node $result -StructureGroup $StructureGroup -Project $tp.Name -Client $client
 }
 
 Function _GetNodeRecursively($Pattern, $Node, $StructureGroup, $Project, $Client, $Depth = 2)

@@ -52,6 +52,6 @@ Function Get-TfsArea
 
     Process
     {
-        return _GetNode -Path $Area -StructureGroup Areas -Project $Project -Collection $Collection
+        return _GetNode @PSBoundParameters
     }
 }
