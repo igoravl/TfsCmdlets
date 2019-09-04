@@ -57,7 +57,7 @@ Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, 
 
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, UpdateModuleManifest {
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, UpdateModuleManifest {
 
 }
 
@@ -78,8 +78,6 @@ Task BuildLibrary {
     $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
 
     exec { msbuild $LibSolutionPath /t:Restore`;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
-
-    
 }
 
 Task CopyFiles {
@@ -87,7 +85,7 @@ Task CopyFiles {
     # Copy other module files to output dir
 
     Write-Verbose "Copying module files to output folder"
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1 
+    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
 
     # Preprocess and copy PowerShell files to output dir
 
@@ -179,6 +177,13 @@ Task CopyLibraries {
         {
         }
     }
+}
+
+Task GenerateTypesXml {
+
+    $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
+
+    Export-PstgXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile -Verbose | Write-Verbose
 }
 
 Task UpdateModuleManifest {

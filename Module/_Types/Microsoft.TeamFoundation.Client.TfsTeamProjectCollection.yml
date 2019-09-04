@@ -1,0 +1,6 @@
+﻿- ScriptProperty:
+    Name: Name
+    GetScriptBlock: $this.CatalogNode.Resource.DisplayName
+- ScriptProperty:
+    Name: InstanceId
+    GetScriptBlock: $this.CatalogNode.Resource.Properties["InstanceId"]
