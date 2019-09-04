@@ -183,7 +183,7 @@ Task GenerateTypesXml {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
 
-    Export-PstgXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile -Verbose | Write-Verbose
+    Export-PsTypesXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile | Write-Verbose
 }
 
 Task UpdateModuleManifest {
