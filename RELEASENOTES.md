@@ -83,6 +83,25 @@ As we move towards Azure DevOps REST API, TfsCmdlets will become compatible with
 
 ------------------------
 
+## Version 2.0.0-beta.6 (_02/Sep/2019_)
+
+### Improvements
+
+- Add new group membership management cmdlets:
+  - Add-TfsGroupMember
+  - Get-TfsGroupMember
+  - Remove-TfsGroupMember
+
+### Bug fixes
+
+N/A
+
+### Known issues
+
+N/A
+
+------------------------
+
 ## Previous Versions
 
 ### 1.0.0-alpha7 (_22/Oct/2015_)
