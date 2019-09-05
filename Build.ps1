@@ -17,7 +17,7 @@ Param
 Function Install-Dependencies
 {
     $NugetPackages = @('GitVersion.CommandLine')
-    $PsModules = @('InvokeBuild', 'psake', 'PsScriptAnalyzer', 'VSSetup', 'Ps1xmlgen')
+    $PsModules = @('psake', 'PsScriptAnalyzer', 'VSSetup', 'PSYaml', 'Ps1xmlgen')
 
     $script:PackagesDir = Join-Path $SolutionDir 'packages'
 
