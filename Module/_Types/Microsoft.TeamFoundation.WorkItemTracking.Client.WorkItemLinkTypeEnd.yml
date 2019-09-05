@@ -1,0 +1,3 @@
+﻿- ScriptProperty:
+    Name: OppositeEndName
+    GetScriptBlock: return $this.OppositeEnd.Name

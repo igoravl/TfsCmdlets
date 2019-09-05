@@ -1,0 +1,12 @@
+﻿- ScriptProperty:
+    Name: ProjectName
+    GetScriptBlock: $this.Path.Substring(0, $this.Path.IndexOf('/'))
+- ScriptProperty:
+    Name: ScopeName
+    GetScriptBlock: ($this.Path -split '/')[1]
+- ScriptProperty:
+    Name: ParentPath
+    GetScriptBlock: $this.Parent.Path
+- ScriptProperty:
+    Name: RelativePath
+    GetScriptBlock: $this.Path.Substring($this.Path.IndexOf('/', $this.QueryHierarchy.Name.Length+2)+1)
