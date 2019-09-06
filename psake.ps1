@@ -191,16 +191,7 @@ Task UpdateModuleManifest {
     $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
-    $nugetOutput =  (& $NugetExePath List $TfsPackageNames[0] -PreRelease)
-
-    if($nugetOutput)
-    {
-        $tfsOmNugetVersion = ($nugetOutput -split ' ')[1]
-    }
-    else
-    {
-        $tfsOmNugetVersion = 'offline-build-0.0.0'
-    }
+    $tfsOmNugetVersion = (Get-ChildItem (Join-Path $PackagesDir "$($TfsPackageNames[0])*")).BaseName.SubString($TfsPackageNames[0].Length+1)
     
     Write-Verbose @"
 Updating module manifest file $ModuleManifestPath with the following content:
