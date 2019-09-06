@@ -32,7 +32,7 @@ Function _GetNode
 
     if(_IsWildcard $Node)
     {
-        $depth = 1
+        $depth = 2
         $pattern = _NormalizeNodePath -Project $tp.Name -Scope $StructureGroup -Path $Node -IncludeScope -IncludeTeamProject -IncludeLeadingBackslash
         $Node = '/'
 
