@@ -8,15 +8,15 @@ Function _Throw
 
         [Parameter(Position=1)]
         [object]
-        $Exception
+        $Exceptions
     )
 
     $caller = (Get-PSCallStack)[1].Command
 
-    if ($Exception)
+    if ($Exceptions)
     {
-        $Message += "`r`rAdditional error information: $Exception"
+        $Message += "`n`nAdditional error information: $($Exceptions | ForEach-Object{ "$_"})"
     }
 
-    throw "[$caller] $Message"
+    throw "[$caller] $Message`n`n"
 }
