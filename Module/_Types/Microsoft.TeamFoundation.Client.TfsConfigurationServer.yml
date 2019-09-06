@@ -1,0 +1,3 @@
+﻿- ScriptProperty:
+    Name: Name
+    GetScriptBlock: $this.Uri.Host
