@@ -1,4 +1,4 @@
-Function _GetStructureGroup([ref] $StructureGroup)
+Function _GetStructureGroup($StructureGroup)
 {
     if($StructureGroup -is [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup])
     {
