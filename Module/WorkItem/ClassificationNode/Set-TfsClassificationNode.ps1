@@ -89,7 +89,7 @@ Function Set-TfsClassificationNode
 
         if ($PSBoundParameters.ContainsKey('MoveBy') -and $PSCmdlet.ShouldProcess($nodeToSet.RelativePath, "Reorder node by moving it $MoveBy positions (negative is up, positive is down)"))
         {
-
+            _throw "Reorder areas/iterations is currently not supported"
         }
 
         if ($StructureGroup -eq 'Iterations' -and ($PSBoundParameters.ContainsKey("StartDate") -or $PSBoundParameters.ContainsKey("FinishDate")))
