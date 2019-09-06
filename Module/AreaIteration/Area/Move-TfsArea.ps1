@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode
 <#
 .SYNOPSIS
     Moves a Work Item Area from its parent area to another one in the same Team Project.
@@ -22,17 +23,18 @@
 Function Move-TfsArea
 {
     [CmdletBinding(ConfirmImpact='Medium')]
-    [OutputType('Microsoft.TeamFoundation.Server.NodeInfo')]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
         [Alias("Path")]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [type]'ITEM_TYPE')})]
         [object]
         $Area,
 
-        [Parameter(Position=1l)]
-        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [Microsoft.TeamFoundation.Server.NodeInfo])})]
+        [Parameter(Position=1)]
+        [Alias('MoveTo')]
+        [ValidateScript({($_ -is [string]) -or ($_ -is [uri]) -or ($_ -is [type]'ITEM_TYPE')})]
         [object]
         $Destination,
 
@@ -51,27 +53,6 @@ Function Move-TfsArea
 
     Process
     {
-        $node = Get-TfsArea -Area $Area -Project $Project -Collection $Collection
-
-        if (-not $node)
-        {
-            throw "Invalid or non-existent area $Area"
-        }
-
-        $destinationNode = Get-TfsArea -Area $Destination -Project $Project -Collection $Collection
-
-        if (-not $node)
-        {
-            throw "Invalid or non-existent destination area $Destination"
-        }
-
-        $cssService = _GetCssService -Project $Project -Collection $Collection
-        $cssService.MoveBranch($node.Uri, $destinationNode.Uri)
-        $node = $cssService.GetNode($node.Uri)
-
-        if ($Passthru)
-        {
-            return $node
-        }
+        return _MoveNode @PSBoundParameters
     }
 }
