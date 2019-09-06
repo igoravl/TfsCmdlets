@@ -15,7 +15,7 @@
     GetScriptBlock: $this.Attributes['startDate']
 - ScriptProperty:
     Name: FinishDate
-    GetScriptBlock: $this.Attributes['startDate']
+    GetScriptBlock: $this.Attributes['finishDate']
 - ScriptProperty:
     Name: Uri
     GetScriptBlock: ([uri] "vstfs:///Classification/Node/$($this.Identifier)")
