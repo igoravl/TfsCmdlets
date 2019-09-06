@@ -11,9 +11,9 @@
             },
             "presentation": {
                 "echo": true,
-                "reveal": "silent",
+                "reveal": "always",
                 "focus": false,
-                "panel": "shared",
+                "panel": "dedicated",
                 "showReuseMessage": true,
                 "clear": false
             },

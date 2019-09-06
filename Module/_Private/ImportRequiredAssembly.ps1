@@ -22,7 +22,7 @@ Function _ImportRequiredAssembly($assemblyName)
         }
         catch
         {
-            Write-Error "Error loading assembly '$asm': $($_.Exception)"
+            Write-Warning "Error loading assembly '$asm': $($_.Exception.Message)"
         }
     }
 }

@@ -69,8 +69,8 @@ Function Connect-TfsTeamProjectCollection
         [securestring]
         $Password,
 
-        [Parameter(ParameterSetName="Credential object", Mandatory=$true)]
-        [ValidateNotNull]
+		[Parameter(ParameterSetName="Credential object", Mandatory=$true)]
+		[ValidateNotNull()]
 		[object]
         $Credential,
 
