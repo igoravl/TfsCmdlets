@@ -36,15 +36,13 @@ Function Get-TfsBuildFolder
 
         if(_IsWildCard $Folder)
         {
-            $path = '/'
-        }
-        else
-        {
-            $path = $Folder
+            CALL_ASYNC($client.GetFoldersAsync($tp.Name, '\\', $QueryOrder))
+            return $result | Where-Object { ($_.Path -Like $Folder) -or ($_.Name -like $Folder) }
         }
 
-        CALL_ASYNC($client.GetFoldersAsync($tp.Name, $path, $QueryOrder))
-
-        return $result | Where-Object Path -Like $Folder
+        
+        CALL_ASYNC($client.GetFoldersAsync($tp.Name, "\\$($Folder.Trim('\\'))", $QueryOrder), "Error fetching build folders")
+        
+        return $result
     }
 }
