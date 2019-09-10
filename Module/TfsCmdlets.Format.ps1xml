@@ -120,9 +120,10 @@
     </View>
 
     <View>
-      <Name>Build Folders</Name>
+      <Name>Build and Release Folders</Name>
       <ViewSelectedBy>
         <TypeName>Microsoft.TeamFoundation.Build.WebApi.Folder</TypeName>
+        <TypeName>Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder</TypeName>
       </ViewSelectedBy>
       <GroupBy>
         <Label>Team Project</Label>
