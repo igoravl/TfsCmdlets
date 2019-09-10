@@ -1,5 +1,5 @@
 #define ITEM_TYPE Microsoft.TeamFoundation.Build.WebApi.Folder
-Function Remove-TfsBuildFolder
+Function Remove-TfsBuildDefinitionFolder
 {
     [CmdletBinding(ConfirmImpact='High', SupportsShouldProcess=$true)]
     [OutputType('ITEM_TYPE')]

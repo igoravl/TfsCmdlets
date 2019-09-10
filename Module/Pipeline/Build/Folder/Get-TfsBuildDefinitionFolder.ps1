@@ -1,5 +1,5 @@
 #define ITEM_TYPE Microsoft.TeamFoundation.Build.WebApi.Folder
-Function Get-TfsBuildFolder
+Function Get-TfsBuildDefinitionFolder
 {
     [CmdletBinding()]
     [OutputType('ITEM_TYPE')]
