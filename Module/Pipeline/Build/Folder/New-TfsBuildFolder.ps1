@@ -46,7 +46,7 @@ Function New-TfsBuildFolder
 
         $Folder = $Folder.ToString().Trim('\\')
 
-        CALL_ASYNC($client.CreateFolderAsync($newFolder, $tp.Name, "\\$Folder"))
+        CALL_ASYNC($client.CreateFolderAsync($newFolder, $tp.Name, "\\$Folder"), "Error creating folder '$Folder'")
 
         if($Passthru)
         {
