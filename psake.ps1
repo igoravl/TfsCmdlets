@@ -145,7 +145,9 @@ Task CopyStaticFiles {
     # Copy other module files to output dir
 
     Write-Verbose "Copying module files to output folder"
+
     Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
+    Copy-Item -Path $SolutionDir\*.md -Destination $ModuleDir -Force
 }
 
 Task CopyLibraries {
