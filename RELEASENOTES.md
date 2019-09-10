@@ -83,16 +83,23 @@ As we move towards Azure DevOps REST API, TfsCmdlets will become compatible with
 
 ------------------------
 
-## Version 2.0.0-beta.8 (_06/Sep/2019_)
+## Version 2.0.0-beta.9 (_10/Sep/2019_)
 
 ### Improvements
 
-- Area/iteration cmdlets have been ported to the new REST API
-- New "generic" versions of the area/iteration cmdlets are now available. `*-TfsClassificationNode` cmdlets have a `-StructureGroup` argument that accepts either 'Areas' or 'Iterations'. Actually, area and iteration cmdlets (`*-TfsArea` and `*-TfsIteration`) are now merely aliases to their respective `*-TfsClassificationNode` counterparts.
+- Add folder management cmdlets for Build and Release Definitions:
+  - Build
+    - Get-TfsBuildDefinitionFolder
+    - New-TfsBuildDefinitionFolder
+    - Remove-TfsBuildDefinitionFolder
+  - Release
+    - Get-TfsReleaseDefinitionFolder
+    - New-TfsReleaseDefinitionFolder
+    - Remove-TfsReleaseDefinitionFolder
 
 ### Bug fixes
 
-- Fix a bug in Connect-TfsTeamProjectCollection when passing a credential ([27dd30](https://github.com/igoravl/TfsCmdlets/commit/27dd302e1b243436229c3f44fa138c22952718b3))
+N/A
 
 ### Known issues
 
@@ -101,6 +108,21 @@ As we move towards Azure DevOps REST API, TfsCmdlets will become compatible with
 ------------------------
 
 ## Previous Versions
+
+### Version 2.0.0-beta.8 (_06/Sep/2019_)
+
+#### Improvements
+
+- Area/iteration cmdlets have been ported to the new REST API
+- New "generic" versions of the area/iteration cmdlets are now available. `*-TfsClassificationNode` cmdlets have a `-StructureGroup` argument that accepts either 'Areas' or 'Iterations'. Actually, area and iteration cmdlets (`*-TfsArea` and `*-TfsIteration`) are now merely aliases to their respective `*-TfsClassificationNode` counterparts.
+
+#### Bug fixes
+
+- Fix a bug in Connect-TfsTeamProjectCollection when passing a credential ([27dd30](https://github.com/igoravl/TfsCmdlets/commit/27dd302e1b243436229c3f44fa138c22952718b3))
+
+#### Known issues
+
+- Set-TfsArea and Set-TfsIteration no longer support reordering of node (`-MoveBy` argument). Still trying to figure out how to do it with the REST API
 
 ### Version 2.0.0-beta.6 (_02/Sep/2019_)
 
