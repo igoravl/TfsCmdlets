@@ -120,6 +120,40 @@
     </View>
 
     <View>
+      <Name>Build Folders</Name>
+      <ViewSelectedBy>
+        <TypeName>Microsoft.TeamFoundation.Build.WebApi.Folder</TypeName>
+      </ViewSelectedBy>
+      <GroupBy>
+        <Label>Team Project</Label>
+        <ScriptBlock>$_.Project.Name</ScriptBlock>
+      </GroupBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Name</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Path</Label>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <Wrap/>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Path</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+    <View>
       <Name>Teams</Name>
       <ViewSelectedBy>
         <TypeName>Microsoft.TeamFoundation.Core.WebApi.WebApiTeam</TypeName>
