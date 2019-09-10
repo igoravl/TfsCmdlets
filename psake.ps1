@@ -61,7 +61,7 @@ Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyF
 
 }
 
-Task CleanOutputDir {
+Task CleanOutputDir -PreCondition {-not $Incremental} {
 
     Write-Verbose "Cleaning output path $ModuleDir"
     
@@ -75,32 +75,45 @@ Task CleanOutputDir {
 
 Task BuildLibrary {
 
-    $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
+    $LibSolutionDir = (Join-Path $SolutionDir 'Lib')
+    $LibSolutionPath = (Join-Path $LibSolutionDir 'TfsCmdletsLib.sln')
 
-    exec { msbuild $LibSolutionPath /t:Restore`;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
+    $inputs = (Get-ChildItem $LibSolutionDir -Recurse -File)
+    $output = (Join-Path $ModuleDir 'Lib/TfsCmdletsLib.dll')
+
+    if(_IsUpToDate $inputs $output)
+    {
+        Write-Verbose "TfsCmdletsLib output assembly is up-to-date; skipping"
+        return
+    }
+
+    exec { msbuild $LibSolutionPath /t:Restore`;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:n /ds | Write-Verbose }
 }
 
-Task CopyFiles {
-
-    # Copy other module files to output dir
-
-    Write-Verbose "Copying module files to output folder"
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
+Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles, CopyLibraries {
 
     # Preprocess and copy PowerShell files to output dir
 
     Write-Verbose "Preprocessing and copying PowerShell files to output folder"
 
-    Remove-Item -Path $ModuleDir\*.ps1 -Recurse -Force
+    $includeFiles = (Get-ChildItem (Join-Path $SolutionDir 'Include'))
 
-    Get-ChildItem -Path $ProjectDir\* -Include *.ps1 -Recurse | ForEach-Object {
+    foreach($input in (Get-ChildItem -Path $ProjectDir/* -Include *.ps1 -Recurse))
+    {
+        $inputs = @($input) + $includeFiles
+        $outputPath = (Join-Path $ModuleDir $input.FullName.SubString($ProjectDir.Length+1))
 
-        $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
-        Write-Verbose "Preprocessing $($_.FullName)"
+        if(_IsUpToDate $inputs $outputPath)
+        {
+            Write-Verbose "$outputPath is up-to-date; skipping"
+            continue
+        }
+
+        Write-Verbose "Preprocessing $($input.FullName)"
         
-        $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($_.FullName)`")
+        $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($input.FullName)`")
 
-        $dirName = $_.Directory.FullName
+        $dirName = $input.Directory.FullName
 
         if($dirName.Length -gt $ProjectDir.Length)
         {
@@ -127,6 +140,14 @@ Task CopyFiles {
     Get-ChildItem -Path $ModuleDir\* -Include *.ps1 -Recurse | ForEach-Object { $_.Attributes = 'ReadOnly'}
 }
 
+Task CopyStaticFiles {
+
+    # Copy other module files to output dir
+
+    Write-Verbose "Copying module files to output folder"
+    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
+}
+
 Task CopyLibraries {
 
     Write-Verbose "Copying TFS Client Object Model assemblies to output folder $TargetDir"
@@ -148,15 +169,28 @@ Task CopyLibraries {
                 $SrcPath = $f.FullName
                 $DstPath = Join-Path $TargetDir $f.Name
 
-                if (Test-Path $DstPath)
+                Write-Verbose "File: $SrcPath"
+
+                if ((Test-Path $DstPath))
                 {
                     $SrcFileInfo = Get-ChildItem $SrcPath
                     $DstFileInfo = Get-ChildItem $DstPath
 
-                    if($SrcFileInfo.VersionInfo.FileVersion -le $DstFileInfo.VersionInfo.FileVersion)
+                    if(($SrcFileInfo.VersionInfo.FileVersion -lt $DstFileInfo.VersionInfo.FileVersion))
                     {
+                        Write-Verbose "Destination has a greater version than source; skipping"
                         continue
                     }
+
+                    if(_IsUpToDate $SrcFileInfo $DstFileInfo)
+                    {
+                        Write-Verbose "Destination is up to date; skipping"
+                        continue
+                    }
+                }
+                else
+                {
+                    Write-Verbose "Destination does not exist"
                 }
 
                 Write-Verbose "Copying file $SrcPath to $DstPath"
@@ -179,9 +213,16 @@ Task CopyLibraries {
     }
 }
 
-Task GenerateTypesXml {
+Task GenerateTypesXml  {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
+    $inputFiles = (Get-ChildItem (Join-Path $ProjectDir '_Types') -Include '*.yml')
+
+    if(_IsUpToDate $inputFiles $outputFile)
+    {
+        Write-Verbose "Output file is up-to-date; skipping"
+        return
+    }
 
     Export-PsTypesXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile | Write-Verbose
 }
@@ -192,36 +233,12 @@ Task UpdateModuleManifest {
     $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $tfsOmNugetVersion = (Get-ChildItem (Join-Path $PackagesDir "$($TfsPackageNames[0])*")).BaseName.SubString($TfsPackageNames[0].Length+1)
-    
-    Write-Verbose @"
-Updating module manifest file $ModuleManifestPath with the following content:
-
-{
-    -Author '$ModuleAuthor'
-    -CompanyName '$ModuleAuthor'
-    -Copyright '$Copyright' 
-    -Description '$ModuleDescription'
-    -NestedModules @($(($nestedModuleList | ForEach-Object { "'$_'" }) -join ',')) 
-    -FileList @($(($fileList | ForEach-Object { "'$_'" }) -join ',')) 
-    -FunctionsToExport @($(($functionList | ForEach-Object { "'$_'" }) -join ',')) 
-    -ModuleVersion '$($VersionMetadata.NugetVersion)' 
-    -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ',')) 
-    -PrivateData @{
-        Branch = '$($VersionMetadata.BranchName)'
-        Build = '$BuildName'
-        Commit = '$($VersionMetadata.Commit)'
-        TfsClientVersion = '$tfsOmNugetVersion'
-        PreRelease = '$($VersionMetadata.NugetPrereleaseTag)'
-        Version = '$($VersionMetadata.FullSemVer)'
-    }
-}
-"@
 
     Update-ModuleManifest -Path $ModuleManifestPath `
         -NestedModules $nestedModuleList `
         -FileList $fileList `
         -FunctionsToExport $functionList `
-        -ModuleVersion $VersionMetadata.MajorMinorPatch `
+        -ModuleVersion $FourPartVersion `
         -CompatiblePSEditions $CompatiblePSEditions `
         -PrivateData @{
             Branch = $VersionMetadata.BranchName
@@ -231,6 +248,8 @@ Updating module manifest file $ModuleManifestPath with the following content:
             PreRelease = $VersionMetadata.NugetPrereleaseTag
             Version = $VersionMetadata.FullSemVer
         }
+
+    Get-Content $ModuleManifestPath | Write-Verbose
 }
 
 Task Test -Depends Build -PreCondition { -not $SkipTests } {
@@ -573,4 +592,32 @@ $($packageUrls -join "`r`n")
 
 "@ | Out-File $outVerifyFile -Encoding Utf8
 
+}
+
+Function _IsUpToDate($Inputs, $Output)
+{
+    if(-not $Incremental -or (-not (Test-Path $Output)))
+    {
+        return $false
+    }
+
+    if($Output -isnot [System.IO.FileSystemInfo])
+    {
+        $Output = Get-ChildItem $Output
+    }
+    
+    foreach($input in $Inputs)
+    {
+        if($input -isnot [System.IO.FileSystemInfo])
+        {
+            $input = Get-ChildItem $input
+        }
+
+        if($input.LastWriteTimeUtc -gt $Output.LastWriteTimeUtc)
+        {
+            return $false
+        }
+    }
+
+    return $true
 }
