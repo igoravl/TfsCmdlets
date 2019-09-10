@@ -1,5 +1,5 @@
 #define ITEM_TYPE Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder
-Function Get-TfsReleaseFolder
+Function Get-TfsReleaseDefinitionFolder
 {
     [CmdletBinding()]
     [OutputType('ITEM_TYPE')]
