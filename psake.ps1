@@ -23,7 +23,7 @@ Properties {
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
     $CompatiblePSEditions = @('Desktop') #, 'Core')
-    $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient','Microsoft.VisualStudio.Services.ServiceHooks.WebApi')
+    $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient','Microsoft.VisualStudio.Services.ServiceHooks.WebApi', 'Microsoft.VisualStudio.Services.Release.Client')
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
     # Nuget packaging
