@@ -134,6 +134,9 @@
             <Label>Name</Label>
           </TableColumnHeader>
           <TableColumnHeader>
+            <Label>Description</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
             <Label>Path</Label>
           </TableColumnHeader>
         </TableHeaders>
@@ -143,6 +146,9 @@
             <TableColumnItems>
               <TableColumnItem>
                 <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Description</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Path</PropertyName>
