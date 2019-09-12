@@ -1,91 +1,26 @@
-# What's new in 2.0.0-beta1
+# TfsCmdlets Release Notes
 
-## New version 2.0
+## Version 2.0.0-beta.10 (_12/Sep/2019_)
 
-TfsCmdlets is has been gradually rebuilt with three main goals in mind:
+### Improvements
 
-- Replace most of the reliance on the old TFS Client Object Model with the new Azure DevOps REST API;
-- Make the functions/cmdlets easier to code and mantain, expediting the development process;
-- Create a new automated test suite.
+- Not an improvement per se, but the *MoveBy* argument in the Set-TfsClassificationNode cmdlet (and related area/iteration ones) now displays a 'deprecated' warning when MoveBy is specified. The argument is then ignored.
 
-Since the last release, a lot has changed. See some highlights:
+### Bug fixes
 
-### New Build Process
+- Fix an issue with Area/Iteration cmdlets not processing pipelines correctly
 
-Now we have new (but still evolving) [build](https://dev.azure.com/tfscmdlets/TfsCmdlets/_build?definitionId=2) and [release](https://dev.azure.com/tfscmdlets/TfsCmdlets/_release?definitionId=4&view=mine) processes based on Azure DevOps.
+### Known issues
 
-### New cmdlets
-
-Although they're technically advanced functions, I guess there's nothing wrong in calling our "commands" cmdlets, right?
-
-In any case, there are 20+ new cmdlets (with many more coming).
-
-The new cmdlets (as of Aug 22, 2019) are:
-
-- Administration
-  - Start-TfsIdentitySync
-- Areas and Iterations
-  - Test-TfsArea
-  - Test-TfsIteration
-- Git
-  - Get-TfsGitBranch
-  - Get-TfsGitBranchPolicy
-  - Get-TfsGitPolicyType
-- Helpers
-  - Get-TfsRestClient
-- Service Hooks
-  - Get-TfsServiceHookConsumer
-  - Get-TfsServiceHookNotificationHistory
-  - Get-TfsServiceHookPublisher
-  - Get-TfsServiceHookSubscription
-- Team Project
-  - Remove-TfsTeamProject
-- Test Case Management
-  - Copy-TfsTestPlan
-  - Get-TfsTestPlan
-  - Remove-TfsTestPlan
-- Work (Teams Backlogs and Boards)
-  - Get-TfsTeamBacklog
-  - Get-TfsTeamBoard
-  - Get-TfsTeamBoardCardRuleSettings
-  - Set-TfsTeamBoardCardRuleSettings
-  - Set-TfsWorkItemBoardStatus
-- Work Item
-  - Get-TfsWorkItemQueryFolder
-  - Get-TfsWorkItemTag
-  - Move-TfsWorkItem
-  - New-TfsWorkItemQueryFolder
-  - New-TfsWorkItemTag
-  - Remove-TfsWorkItemQueryFolder
-  - Remove-TfsWorkItemTag
-  - Rename-TfsWorkItemTag
-
-### Deprecated cmdlets
-
-The following cmdlets are deprecated:
-
-- Get-TfsHttpClient
-- Get-TfsXamlBuildAgent
-- Get-TfsXamlBuildController
-- Get-TfsXamlBuildDefinition
-- Get-TfsXamlBuildQueue
-- New-TfsXamlBuildService
-
-### Azure DevOps REST API
-
-Cmdlets now use the new Azure DevOps REST API. Old cmdlets are still in the process of being migrated from the old TFS Client Object model to the new REST APIs. That is likely a breaking change, as the objects returned by the cmdlets will change. The Work Item-related cmdlets are the most affected.
-
-### PowerShell Core
-
-TfsCmdlets currently is **not** compatible with PowerShell Core, due to its reliance on the TFS Client Object Model (which, in turn, requires Windows and .NET Framework).
-
-As we move towards Azure DevOps REST API, TfsCmdlets will become compatible with PS Core and thus cross-platform.
+- N/A
 
 ------------------------
 
-## Version 2.0.0-beta.9 (_10/Sep/2019_)
+## Previous Versions
 
-### Improvements
+### Version 2.0.0-beta.9 (_10/Sep/2019_)
+
+#### Improvements
 
 - Add folder management cmdlets for Build and Release Definitions:
   - Build
@@ -97,17 +32,13 @@ As we move towards Azure DevOps REST API, TfsCmdlets will become compatible with
     - New-TfsReleaseDefinitionFolder
     - Remove-TfsReleaseDefinitionFolder
 
-### Bug fixes
+#### Bug fixes
 
 N/A
 
-### Known issues
+#### Known issues
 
 - Set-TfsArea and Set-TfsIteration no longer support reordering of node (`-MoveBy` argument). Still trying to figure out how to do it with the REST API
-
-------------------------
-
-## Previous Versions
 
 ### Version 2.0.0-beta.8 (_06/Sep/2019_)
 
