@@ -17,7 +17,7 @@ Function Get-TfsClassificationNode
         [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
         $StructureGroup,
 
-        [Parameter()]
+        [Parameter(ValueFromPipeline=$true)]
         [object]
         $Project,
 

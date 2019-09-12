@@ -5,7 +5,7 @@ Function Move-TfsClassificationNode
     [OutputType('ITEM_TYPE')]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0)]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Alias('Area')]
         [Alias('Iteration')]
         [Alias('Path')]
