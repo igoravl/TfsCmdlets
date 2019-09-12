@@ -87,9 +87,9 @@ Function Set-TfsClassificationNode
 
         GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
 
-        if ($PSBoundParameters.ContainsKey('MoveBy') -and $PSCmdlet.ShouldProcess($nodeToSet.RelativePath, "Reorder node by moving it $MoveBy positions (negative is up, positive is down)"))
+        if ($PSBoundParameters.ContainsKey('MoveBy'))
         {
-            _throw "Reorder areas/iterations is currently not supported"
+            Write-Warning "Reordering of areas/iterations is deprecated, as Azure DevOps UX keeps areas and iterations properly sorted. MoveBy argument ignored."
         }
 
         if ($StructureGroup -eq 'Iterations' -and ($PSBoundParameters.ContainsKey("StartDate") -or $PSBoundParameters.ContainsKey("FinishDate")))

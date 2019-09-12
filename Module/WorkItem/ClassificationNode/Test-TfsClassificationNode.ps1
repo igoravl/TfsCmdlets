@@ -4,7 +4,7 @@ Function Test-TfsClassificationNode
     [CmdletBinding()]
     Param
     (
-        [Parameter()]
+        [Parameter(ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Alias('Area')]
         [Alias('Iteration')]
         [Alias('Path')]

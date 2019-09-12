@@ -5,7 +5,7 @@ PowerShell Cmdlets for Azure DevOps and Team Foundation Server
 
 ## NEW! Version 2.0
 
-[Learn more](RELEASENOTES.md#new-version-2.0)
+[Learn more](Docs/Version2.md)
 
 ## Whats is TfsCmdlets?
 

@@ -24,7 +24,7 @@ Function Remove-TfsClassificationNode
     [CmdletBinding(ConfirmImpact='High', SupportsShouldProcess=$true)]
     Param
     (
-        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true)]
+        [Parameter(Mandatory=$true, Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [Alias("Area")]
         [Alias("Iteration")]
         [Alias("Path")]
