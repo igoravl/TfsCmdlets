@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 
@@ -147,6 +149,31 @@ namespace TfsCmdlets
                 mediaType, null, content);
 
             return Send(msg, userState);
+        }
+
+        public async Task<HttpResponseMessage> InvokeAsync(
+            HttpMethod method,
+            string apiPath,
+            string content = null,
+            string requestMediaType = "application/json",
+            string responseMediaType = "application/json",
+            IDictionary<string, string> additionalHeaders = null,
+            IDictionary<string, string> queryParameters = null,
+            string apiVersion = "1.0",
+            object userState = null)
+        {
+            HttpContent httpContent = null;
+
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                httpContent = new StringContent(content, Encoding.UTF8, requestMediaType);
+            }
+
+            var msg = CreateMessage(method, apiPath, apiVersion,
+                additionalHeaders, queryParameters,
+                responseMediaType, null, httpContent);
+
+            return await SendAsync(msg, userState);
         }
 
         public T PostForm<T>(

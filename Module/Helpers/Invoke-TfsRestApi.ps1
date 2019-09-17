@@ -34,11 +34,47 @@ Function Invoke-TfsRestApi
         [object[]]
         $ArgumentList,
 
-        [Parameter(ParameterSetName="Library call")]
+        [Parameter(Mandatory=$true, ParameterSetName="URL call")]
         [string]
-        $ErrorMessage,
+        $Path,
 
-        [Parameter(ParameterSetName="Library call")]
+        [Parameter(ParameterSetName="URL call")]
+        [string]
+        $Method = 'GET',
+
+        [Parameter(ParameterSetName="URL call")]
+        [string]
+        $Content,
+
+        [Parameter(ParameterSetName="URL call")]
+        [string]
+        $RequestMediaType = 'application/json',
+
+        [Parameter(ParameterSetName="URL call")]
+        [string]
+        $ResponseMediaType = 'application/json',
+
+        [Parameter(ParameterSetName="URL call")]
+        [hashtable]
+        $AdditionalHeaders,
+
+        [Parameter(ParameterSetName="URL call")]
+        [hashtable]
+        $QueryParameters,
+
+        [Parameter(ParameterSetName="URL call")]
+        [string]
+        $ApiVersion = '1.0',
+
+        [Parameter(ParameterSetName="URL call")]
+        [object]
+        $Team,
+
+        [Parameter(ParameterSetName="URL call")]
+        [object]
+        $Project,
+
+        [Parameter()]
         [object]
         $Collection,
 
@@ -51,9 +87,29 @@ Function Invoke-TfsRestApi
     {
         GET_COLLECTION($tpc)
 
-        GET_CLIENT($ClientType)
+        if($PSCmdlet.ParameterSetName -eq 'Library call')
+        {
+            GET_CLIENT($ClientType)
+            $task = $client.$Operation.Invoke($ArgumentList)
+        }
+        else
+        {
+            GET_CLIENT('TfsCmdlets.GenericHttpClient')
 
-        $task = $client.$Operation.Invoke($ArgumentList)
+            if($Path -like '*{projectId}*')
+            {
+                GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Team.Project)
+                $Path = $Path.Replace('{projectId}', $tp.Guid)
+            }
+
+            if($Path -like '*{teamId}*')
+            {
+                GET_TEAM($t,$tp,$tpc)
+                $Path = $Path.Replace('{teamId}', $t.Id)
+            }
+            
+            $task = $client.InvokeAsync($Method, $Path, $Content, $RequestMediaType, $ResponseMediaType, $AdditionalHeaders, $QueryParameters, $ApiVersion)
+        }
 
         if ($AsTask)
         {
@@ -62,6 +118,16 @@ Function Invoke-TfsRestApi
 
         CHECK_ASYNC($task,$result,$Message)
 
+        if($PSCmdlet.ParameterSetName -eq 'URL call')
+        {
+            Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+
+            if($ResponseMediaType -eq 'application/json')
+            {
+                Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value ($result.Content.ReadAsStringAsync().GetAwaiter().GetResult() | ConvertFrom-Json)
+            }
+        }
+        
         return $result
     }
 }
