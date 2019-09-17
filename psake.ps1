@@ -234,7 +234,7 @@ Task UpdateModuleManifest {
     $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
-    $tfsOmNugetVersion = (Get-ChildItem (Join-Path $PackagesDir "$($TfsPackageNames[0])*")).BaseName.SubString($TfsPackageNames[0].Length+1)
+    $tfsOmNugetVersion = (Get-ChildItem (Join-Path $NugetPackagesDir "$($TfsPackageNames[0])*")).BaseName.SubString($TfsPackageNames[0].Length+1)
 
     Update-ModuleManifest -Path $ModuleManifestPath `
         -NestedModules $nestedModuleList `
