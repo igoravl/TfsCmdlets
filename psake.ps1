@@ -97,6 +97,7 @@ Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles, CopyLibraries {
     Write-Verbose "Preprocessing and copying PowerShell files to output folder"
 
     $includeFiles = (Get-ChildItem (Join-Path $SolutionDir 'Include'))
+    $writtenFiles = @()
 
     foreach($input in (Get-ChildItem -Path $ProjectDir/* -Include *.ps1 -Recurse))
     {
@@ -128,6 +129,16 @@ Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles, CopyLibraries {
         {
             # Merge files (Release)
             $outputPath = (Join-Path $ModuleDir "$dirName\$($dirName.Replace('\', '_')).ps1")
+        }
+
+        if($writtenFiles -notcontains $outputPath)
+        {
+            if(Test-Path $outputPath)
+            {
+                Write-Verbose "Removing file $outputPath before writing"
+                Remove-Item $outputPath -Force
+            }
+            $writtenFiles += $outputPath
         }
 
         Write-Verbose "Copying preprocessed contents to $outputPath"
