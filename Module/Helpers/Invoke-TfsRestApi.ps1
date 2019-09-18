@@ -43,16 +43,17 @@ Function Invoke-TfsRestApi
         $Method = 'GET',
 
         [Parameter(ParameterSetName="URL call")]
+        [Alias('Content')]
         [string]
-        $Content,
+        $Body,
 
         [Parameter(ParameterSetName="URL call")]
         [string]
-        $RequestMediaType = 'application/json',
+        $RequestContentType = 'application/json',
 
         [Parameter(ParameterSetName="URL call")]
         [string]
-        $ResponseMediaType = 'application/json',
+        $ResponseContentType = 'application/json',
 
         [Parameter(ParameterSetName="URL call")]
         [hashtable]
@@ -74,6 +75,10 @@ Function Invoke-TfsRestApi
         [object]
         $Project,
 
+        [Parameter(ParameterSetName="URL call")]
+        [switch]
+        $UseSps,
+
         [Parameter()]
         [object]
         $Collection,
@@ -94,7 +99,14 @@ Function Invoke-TfsRestApi
         }
         else
         {
-            GET_CLIENT('TfsCmdlets.GenericHttpClient')
+            $Path = $Path.TrimStart('/')
+            
+            if($UseSps.IsPresent)
+            {
+                $prefix = "Sps"
+            }
+
+            GET_CLIENT("TfsCmdlets.${prefix}GenericHttpClient")
 
             if($Path -like '*{projectId}*')
             {
@@ -108,7 +120,7 @@ Function Invoke-TfsRestApi
                 $Path = $Path.Replace('{teamId}', $t.Id)
             }
             
-            $task = $client.InvokeAsync($Method, $Path, $Content, $RequestMediaType, $ResponseMediaType, $AdditionalHeaders, $QueryParameters, $ApiVersion)
+            $task = $client.InvokeAsync($Method, $Path, $Body, $RequestContentType, $ResponseContentType, $AdditionalHeaders, $QueryParameters, $ApiVersion)
         }
 
         if ($AsTask)
@@ -122,7 +134,7 @@ Function Invoke-TfsRestApi
         {
             Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
 
-            if($ResponseMediaType -eq 'application/json')
+            if($ResponseContentType -eq 'application/json')
             {
                 Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value ($result.Content.ReadAsStringAsync().GetAwaiter().GetResult() | ConvertFrom-Json)
             }
