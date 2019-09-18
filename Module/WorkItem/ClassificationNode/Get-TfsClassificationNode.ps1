@@ -65,6 +65,8 @@ Function Get-TfsClassificationNode
 
 Function _GetNodeRecursively($Pattern, $Node, $StructureGroup, $Project, $Client, $Depth = 2)
 {
+    _FixNodePath -Node $Node -StructureGroup $StructureGroup -Project $Project
+
     _Log "Searching for pattern '$Pattern' under $($Node.Path)"
 
     if($Node.HasChildren -and ($Node.Children.Count -eq 0))
@@ -85,6 +87,26 @@ Function _GetNodeRecursively($Pattern, $Node, $StructureGroup, $Project, $Client
     {
         _GetNodeRecursively -Pattern $Pattern -Node $c -StructureGroup $StructureGroup -Project $Project -Client $Client -Depth $Depth
     }
+}
+
+Function _FixNodePath($Node, $StructureGroup, $Project)
+{
+    if ($Node.Path)
+    {
+        Write-Verbose 'Not fixing path'
+        # Nothing to fix
+        return
+    }
+
+    $StructureGroup = $StructureGroup.ToString()
+
+    # Older versions of the REST API don't populate the Path property. So, let's do it ourselves
+
+    $decodedUrl = [System.Web.HttpUtility]::UrlDecode($Node.Url)
+    $path = $decodedUrl.Substring($decodedUrl.IndexOf("/$StructureGroup")+1).Replace($StructureGroup, '').Replace('/', '\\')
+    $Node.Path = "\\$Project\\$($StructureGroup.TrimEnd('s'))$path"
+
+    Write-Verbose "Fixed path: $($Node.Path)"
 }
 
 Set-Alias -Name Get-TfsArea -Value Get-TfsClassificationNode

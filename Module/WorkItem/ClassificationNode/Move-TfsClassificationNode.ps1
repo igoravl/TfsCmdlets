@@ -40,8 +40,6 @@ Function Move-TfsClassificationNode
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        $structureGroup = _GetStructureGroup $structureGroup
-
         $sourceNode = _GetNode -Node $Node -Project $Project -Collection $Collection
 
         if(-not $sourceNode)

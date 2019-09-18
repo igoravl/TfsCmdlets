@@ -27,6 +27,8 @@ Function Test-TfsClassificationNode
 
     Process
     {
+        GET_STRUCTURE_GROUP
+        
         try
         {
             return (Get-TfsClassificationNode @PSBoundParameters).Count -gt 0
