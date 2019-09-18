@@ -188,8 +188,8 @@ Function Set-TfsTeam
         {
             _Log "Setting backlog iteration to $BacklogIteration"
             $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
-            $patch.BacklogIteration = [guid] $iteration.Id
-            $patch.DefaultIteration = [guid] $iteration.Id
+            $patch.BacklogIteration = [guid] $iteration.Identifier
+            $patch.DefaultIteration = [guid] $iteration.Identifier
 
             $isDirty = $true
         }
@@ -198,7 +198,7 @@ Function Set-TfsTeam
         {
             _Log "Setting default iteration to $DefaultIteration"
             $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
-            $patch.DefaultIteration = [guid] $iteration.Id
+            $patch.DefaultIteration = [guid] $iteration.Identifier
 
             $isDirty = $true
         }
