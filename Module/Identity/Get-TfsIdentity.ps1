@@ -19,13 +19,17 @@ Function Get-TfsIdentity
     [CmdletBinding()]
     Param
     (
-        [Parameter(Position=0,Mandatory=$true)]
+        [Parameter(Position=0,Mandatory=$true,ParameterSetName='Get Identity')]
         [object]
         $Identity,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='Get Identity')]
         [switch]
         $QueryMembership,
+
+        [Parameter(Mandatory=$true,ParameterSetName='Get current user')]
+        [switch]
+        $Current,
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
@@ -38,6 +42,13 @@ Function Get-TfsIdentity
 
         GET_COLLECTION($tpc)
         
+        if($PSCmdlet.ParameterSetName -eq 'Get current user')
+        {
+            $userId = $tpc.AuthorizedIdentity.TeamFoundationId
+
+            return Get-TfsIdentity -Identity $userId -Collection $tpc
+        }
+
         GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
 
         if($QueryMembership.IsPresent)
