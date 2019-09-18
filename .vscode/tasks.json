@@ -52,7 +52,7 @@
             ]
         },
         {
-            "label": "Rebuild",
+            "label": "Clean",
             "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "presentation": {
                 "echo": true,
@@ -75,7 +75,7 @@
             ]
         },
         {
-            "label": "package",
+            "label": "Package",
             "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "group": "none",
             "presentation": {
@@ -94,6 +94,7 @@
                 "${workspaceRoot}/build.ps1",
                 "-Configuration",
                 "Release",
+                "-SkipTests",
                 "-Targets",
                 "Package"
             ]
