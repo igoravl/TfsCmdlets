@@ -3,7 +3,7 @@
     "command": "powershell",
     "tasks": [
         {
-            "label": "build",
+            "label": "Build",
             "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "group": {
                 "kind": "build",
@@ -31,6 +31,50 @@
             ]
         },
         {
+            "label": "Rebuild",
+            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${workspaceRoot}/build.ps1",
+                "-Targets",
+                "Clean"
+            ]
+        },
+        {
+            "label": "Rebuild",
+            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": true,
+                "clear": false
+            },
+            "args": [   
+                "-ExecutionPolicy",
+                "Unrestricted",
+                "-NoProfile",
+                "-File",
+                "${workspaceRoot}/build.ps1",
+                "-Configuration",
+                "Debug",
+                "-Targets",
+                "Clean"
+            ]
+        },
+        {
             "label": "package",
             "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "group": "none",
@@ -49,13 +93,13 @@
                 "-File",
                 "${workspaceRoot}/build.ps1",
                 "-Configuration",
-                "Debug",
+                "Release",
                 "-Targets",
                 "Package"
             ]
         },
         {
-            "label": "build",
+            "label": "Test",
             "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "group": "test",
             "presentation": {
