@@ -146,7 +146,7 @@ Function Set-TfsTeam
             {
                 _Log "Conected to Azure DevOps Server. Treating Team Field Value as Area Path"
 
-                $DefaultAreaPath = _NormalizeCssNodePath -Project $tp.Name -Path $DefaultAreaPath -IncludeTeamProject
+                $DefaultAreaPath = _NormalizeNodePath -Project $tp.Name -Path $DefaultAreaPath -Scope Areas -IncludeTeamProject
             }
 
             if(-not $AreaPaths)
@@ -167,7 +167,7 @@ Function Set-TfsTeam
             foreach($a in $AreaPaths.GetEnumerator())
             {
                 $values += New-Object 'Microsoft.TeamFoundation.Work.WebApi.TeamFieldValue' -Property @{
-                    Value = _NormalizeCssNodePath -Project $tp.Name -Path $a.Key -IncludeTeamProject
+                    Value = _NormalizeNodePath -Project $tp.Name -Path $a.Key -Scope Areas -IncludeTeamProject
                     IncludeChildren = $a.Value
                 }
             }
