@@ -16,7 +16,7 @@ HELP_PARAM_COLLECTION
 Microsoft.TeamFoundation.WorkItemTracking.Client.Project
 System.String
 #>
-Function Get-TfsWorkItemQueryFolder
+Function Get-TfsWorkItemQueryItem
 {
     [CmdletBinding()]
     [OutputType('ITEM_TYPE')]
@@ -26,8 +26,10 @@ Function Get-TfsWorkItemQueryFolder
         [ValidateNotNull()]
         [SupportsWildcards()]
         [Alias("Path")]
+        [Alias("Folder")]
+        [Alias("Query")]
         [object]
-        $Folder = '**/*',
+        $Item = '**',
 
         [Parameter()]
         [ValidateSet('Personal', 'Shared', 'Both')]
@@ -35,10 +37,10 @@ Function Get-TfsWorkItemQueryFolder
         $Scope = 'Both',
 
         [Parameter()]
-        [timespan]
-        $Timeout = '00:00:10',
+        [ValidateSet('Folder', 'Query')]
+        [string]
+        $ItemType,
 
-        # Include deleted folders
         [Parameter()]
         [switch]
         $IncludeDeleted,
@@ -54,7 +56,9 @@ Function Get-TfsWorkItemQueryFolder
 
     Process
     {
-        CHECK_ITEM($Folder)
+        CHECK_ITEM($Item)
+
+        GET_QUERY_ITEM_TYPE
 
         GET_TEAM_PROJECT($tp,$tpc)
 
@@ -62,33 +66,53 @@ Function Get-TfsWorkItemQueryFolder
 
         CALL_ASYNC($client.GetQueriesAsync($tp.Name, 'None', 2), "Error fetching work item query items")
 
-        foreach($item in $result)
+        _Log "Getting $($ItemType.ToLower()) items matching '$Item'"
+
+        foreach($i in $result)
         {
-            _GetQueryItemRecursively -Pattern $Folder -Item $item -IsFolder $true -Scope $Scope -IncludeDeleted $IncludeDeleted.IsPresent -Project $tp.Name -Client $Client
+            _GetQueryItemRecursively -Pattern $Item -Item $i -ItemType $ItemType -Scope $Scope -IncludeDeleted $IncludeDeleted.IsPresent -Project $tp.Name -Client $Client
         }
     }
 }
 
-Function _GetQueryItemRecursively($Pattern, $Item, $IsFolder, $Scope, $Project, $Client, $Depth = 2, $IncludeDeleted)
+Set-Alias -Name Get-TfsWorkItemQueryFolder -Value Get-TfsWorkItemQueryItem
+Set-Alias -Name Get-TfsWorkItemQuery -Value Get-TfsWorkItemQueryItem
+
+Function _GetQueryItemRecursively($Pattern, $Item, $ItemType, $Scope, $Project, $Client, $Depth = 2, $IncludeDeleted)
 {
-    _Log "Searching for pattern '$Pattern' under $($Item.Path)"
+    _Log "'$($Item.Path)' (ItemType=$($Item.ItemType),IsPublic=$($Item.IsPublic))"
+    _Log $Item.GetType().FullName
 
     if($Item.HasChildren -and ($Item.Children.Count -eq 0))
     {
         _Log "Fetching child nodes for node '$($Item.Path)'"
 
         CALL_ASYNC($client.GetQueryAsync($Project, $Item.Path, 'None', $Depth, $IncludeDeleted), "Error retrieving $StructureGroup from path '$($Item.RelativePath)'")
+
         $Item = $result
     }
 
-    _Log "Item.IsPublic = $($Item.IsPublic) and Scope = $Scope"
-
-    if(($Item.IsFolder -eq $IsFolder) -and ($Scope -eq 'Both' -or (($Scope -eq 'Shared') -and $Item.IsPublic)))
+    if($Item.ItemType -ne $ItemType)
     {
-    # if($Item.Path -like $Pattern)
-    # {
-        _Log "$($Item.Path) matches pattern $Pattern. Returning node."
-        Write-Output $Item
+        _Log "Skipping item. '$($Item.Path)' is not a '$ItemType'."
+    }
+    elseif ($Scope -eq 'Both' -or `
+            (($Scope -eq 'Shared') -and $Item.IsPublic) -or `
+            (($Scope -eq 'Personal') -and (-not $Item.IsPublic)))
+    {
+        if($Item.Path -like $Pattern)
+        {
+            _Log "'$($Item.Path)' matches pattern '$Pattern'. Returning node."
+            Write-Output $Item
+        }
+        else
+        {
+            _Log "Skipping item. '$($Item.Path)' does not match pattern '$Pattern'."
+        }
+    }
+    else
+    {
+        _Log "Skipping item. '$($Item.Path)' does not match scope '$Scope'."
     }
 
     foreach($c in $Item.Children)
