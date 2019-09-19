@@ -1,0 +1,12 @@
+ViewSelectedBy:
+  - Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
+GroupBy:
+  Label: Team Project
+  PropertyName: ProjectReference.Name
+TableControl: 
+  Name: 
+  DefaultBranch:
+    Width: 20
+    Label: Default Branch
+  RemoteUrl:
+    Label: Remote URL

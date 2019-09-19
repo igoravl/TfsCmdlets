@@ -1,0 +1,22 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode
+GroupBy: 
+  Label: Team Project
+  PropertyName: TeamProject
+TableControl: 
+  Name: 
+    Width: 20
+  RelativePath: 
+    Label: Relative Path
+    Width: 60
+  StartDate: 
+    Label: Start Date
+    Width: 10
+    FormatString: "{0:d}"
+  FinishDate: 
+    Label: Fin. Date
+    Width: 10
+    FormatString: "{0:d}"
+  StructureType: 
+    Label: Type
+    Width: 10

@@ -1,0 +1,53 @@
+Passthru: |
+  <View>
+    <Name>Queued Builds</Name>
+    <ViewSelectedBy>
+      <TypeName>Microsoft.TeamFoundation.Build.Client.QueuedBuild</TypeName>
+    </ViewSelectedBy>
+    <TableControl>
+      <TableHeaders>
+        <TableColumnHeader>
+          <Label>Build Definition</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Build Name</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Status</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Priority</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Date Queued</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Requested By</Label>
+        </TableColumnHeader>
+      </TableHeaders>
+      <TableRowEntries>
+        <TableRowEntry>
+          <TableColumnItems>
+            <TableColumnItem>
+              <ScriptBlock>$_.BuildDefinition.Name</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.Build.BuildNumber</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.Status</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.Priority</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.QueueTime</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.RequestedBy</ScriptBlock>
+            </TableColumnItem>
+          </TableColumnItems>
+        </TableRowEntry>
+      </TableRowEntries>
+    </TableControl>
+  </View>

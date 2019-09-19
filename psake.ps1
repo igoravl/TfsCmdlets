@@ -57,7 +57,7 @@ Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, 
 
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, UpdateModuleManifest {
+Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest {
 
 }
 
@@ -238,6 +238,20 @@ Task GenerateTypesXml  {
     }
 
     Export-PsTypesXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile | Write-Verbose
+}
+
+Task GenerateFormatXml  {
+
+    $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Format.ps1xml')
+    $inputFiles = (Get-ChildItem (Join-Path $ProjectDir '_Formats') -Recurse -Include '*.yml')
+
+    if(_IsUpToDate $inputFiles $outputFile)
+    {
+        Write-Verbose "Output file is up-to-date; skipping"
+        return
+    }
+
+    Export-PsFormatXml -InputDirectory (Join-Path $ProjectDir '_Formats') -DestinationFile $outputFile | Write-Verbose
 }
 
 Task UpdateModuleManifest {

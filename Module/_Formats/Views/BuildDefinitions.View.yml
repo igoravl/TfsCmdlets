@@ -1,0 +1,17 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Build.Client.BuildDefinition
+GroupBy: 
+  Label: Team Project
+  PropertyName: TeamProject
+TableControl: 
+  Name: 
+    Width: 30
+  Id: 
+    Width: 5
+  QueueStatus: 
+    Width: 15
+    Label: Queue Status
+  ContinuousIntegrationType: 
+    Width: 15
+    Label: CI Type
+  Uri:

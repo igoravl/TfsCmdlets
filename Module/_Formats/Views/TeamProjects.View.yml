@@ -1,0 +1,14 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+GroupBy: 
+  Label: Collection
+  PropertyName: Collection
+TableControl: 
+    Name: 
+      Width: 20
+    Id: 
+      Width: 38
+    Uri: 
+      Width: 74
+    ProcessTemplate: 
+      Label: Process Template

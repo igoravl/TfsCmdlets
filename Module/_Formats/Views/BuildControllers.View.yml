@@ -1,0 +1,14 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Build.Client.BuildController
+GroupBy: 
+  Label: Team Project Collection
+  PropertyName: Collection
+TableControl: 
+  Name: 
+    Width: 30
+  QueueCount: 
+    Width: 12
+    Label: Queue Count
+  Status: 
+    Width: 12
+  Uri: 

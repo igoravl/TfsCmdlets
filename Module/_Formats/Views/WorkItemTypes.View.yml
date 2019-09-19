@@ -1,0 +1,34 @@
+Passthru: |
+  <View>
+    <Name>Work Item Types</Name>
+    <ViewSelectedBy>
+      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType</TypeName>
+    </ViewSelectedBy>
+    <GroupBy>
+      <ScriptBlock>$_.Store.TeamProjectCollection.DisplayName + " / " + $_.Project.Name</ScriptBlock>
+      <CustomControlName>TeamProjects-GroupingFormat</CustomControlName>
+    </GroupBy>
+    <TableControl>
+      <TableHeaders>
+        <TableColumnHeader>
+          <Width>30</Width>
+          <Label>Name</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Description</Label>
+        </TableColumnHeader>
+      </TableHeaders>
+      <TableRowEntries>
+        <TableRowEntry>
+          <TableColumnItems>
+            <TableColumnItem>
+              <PropertyName>Name</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+              <PropertyName>Description</PropertyName>
+            </TableColumnItem>
+          </TableColumnItems>
+        </TableRowEntry>
+      </TableRowEntries>
+    </TableControl>
+  </View>

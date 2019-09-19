@@ -1,0 +1,52 @@
+Passthru: |
+  <View>
+    <Name>Test Plans</Name>
+    <ViewSelectedBy>
+      <TypeName>Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan</TypeName>
+    </ViewSelectedBy>
+    <GroupBy>
+      <Label>Team Project</Label>
+      <PropertyName>Project.Name</PropertyName>
+    </GroupBy>
+    <TableControl>
+      <TableHeaders>
+        <TableColumnHeader>
+          <Label>Name</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Owner</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Start Date</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>End Date</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Description</Label>
+        </TableColumnHeader>
+      </TableHeaders>
+      <TableRowEntries>
+        <TableRowEntry>
+          <Wrap/>
+          <TableColumnItems>
+            <TableColumnItem>
+              <PropertyName>Name</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+              <ScriptBlock>$_.Owner.DisplayName</ScriptBlock>
+            </TableColumnItem>
+            <TableColumnItem>
+              <PropertyName>StartDate</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+              <PropertyName>EndDate</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+              <PropertyName>Description</PropertyName>
+            </TableColumnItem>
+          </TableColumnItems>
+        </TableRowEntry>
+      </TableRowEntries>
+    </TableControl>
+  </View>

@@ -1,0 +1,3 @@
+- ScriptProperty:
+    Name: ItemType
+    GetScriptBlock: if($this.IsFolder){return 'Folder'}else{return 'Query'}

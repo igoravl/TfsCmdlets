@@ -1,0 +1,36 @@
+Passthru: |
+  <View>
+    <Name>Work Items Query Folders</Name>
+    <ViewSelectedBy>
+      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder</TypeName>
+      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2</TypeName>
+    </ViewSelectedBy>
+    <GroupBy>
+      <Label>Folder</Label>
+      <PropertyName>ParentPath</PropertyName>
+    </GroupBy>
+    <TableControl>
+      <TableHeaders>
+        <TableColumnHeader>
+          <Width>30</Width>
+          <Label>Name</Label>
+        </TableColumnHeader>
+        <TableColumnHeader>
+          <Label>Full Path</Label>
+        </TableColumnHeader>
+      </TableHeaders>
+      <TableRowEntries>
+        <TableRowEntry>
+          <Wrap/>
+          <TableColumnItems>
+            <TableColumnItem>
+              <PropertyName>Name</PropertyName>
+            </TableColumnItem>
+            <TableColumnItem>
+              <PropertyName>Path</PropertyName>
+            </TableColumnItem>
+          </TableColumnItems>
+        </TableRowEntry>
+      </TableRowEntries>
+    </TableControl>
+  </View>
