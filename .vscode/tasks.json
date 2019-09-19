@@ -26,8 +26,8 @@
                 "-Configuration",
                 "Debug",
                 "-Targets",
-                "Build",
-                "-Incremental"
+                "Build" //,
+                //"-Incremental"
             ]
         },
         {

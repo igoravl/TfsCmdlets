@@ -9,14 +9,14 @@
             "args": [
                 "${fileBasenameNoExtension}"
             ],
-            "preLaunchTask": "build"
+            "preLaunchTask": "Build"
         },
         {
             "name": "PowerShell Attach Interactive Session Runspace",
             "type": "PowerShell",
             "request": "attach",
             "processId": "current",
-            "preLaunchTask": "build"
+            "preLaunchTask": "Build"
         }
     ]
 }
