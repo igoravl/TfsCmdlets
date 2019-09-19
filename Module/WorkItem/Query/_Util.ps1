@@ -23,19 +23,6 @@ Function _NormalizeQueryPath($Path, $RootFolder, $ProjectName)
     return "$ProjectName/$RootFolder/$($match.Groups[$match.Groups.Count-1])"
 }
 
-Function _RegisterQueryHelper()
-{
-    if (([System.Management.Automation.PSTypeName]'TfsCmdlets.QueryHelper').Type)
-    {
-        return
-    }
-
-    Add-Type -Language CSharp -ReferencedAssemblies 'Microsoft.TeamFoundation.WorkItemTracking.Client' `
-        -TypeDefinition @'
-${File:CSharp\\QueryHelper.cs}
-'@
-}
-
 Function _GetQueryFoldersRecursively
 {
     Param

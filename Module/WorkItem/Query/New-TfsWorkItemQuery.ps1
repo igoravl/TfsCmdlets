@@ -61,11 +61,6 @@ Function New-TfsWorkItemQuery
         $Passthru
     )
 
-    Begin
-    {
-        _RegisterQueryHelper
-    }
-
     Process
     {
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
