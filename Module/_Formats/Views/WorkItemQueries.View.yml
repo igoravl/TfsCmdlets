@@ -1,43 +1,14 @@
-Passthru: |
-  <View>
-    <Name>Work Items Queries</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition</TypeName>
-      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2</TypeName>
-    </ViewSelectedBy>
-    <GroupBy>
-      <Label>Folder</Label>
-      <PropertyName>ParentPath</PropertyName>
-    </GroupBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Width>20</Width>
-          <Label>Name</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>7</Width>
-          <Label>Type</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Definition</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>Name</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>QueryType</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>QueryText</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2
+GroupBy: 
+  Label: Folder
+  PropertyName: ParentPath
+TableControl: 
+  Name: 
+    Width: 20
+  QueryType: 
+    Width: 7
+    Label: Type
+  QueryText: 
+    Label: Definition

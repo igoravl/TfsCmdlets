@@ -1,49 +1,14 @@
-Passthru: |
-  <View>
-    <Name>Process Templates</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.Server.TemplateHeader</TypeName>
-    </ViewSelectedBy>
-    <GroupBy>
-      <Label>Collection</Label>
-      <PropertyName>Collection</PropertyName>
-    </GroupBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Width>50</Width>
-          <Label>Name</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>15</Width>
-          <Label>State</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>15</Width>
-          <Label>TemplateId</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Description</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>Name</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>State</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>TemplateId</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Description</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Server.TemplateHeader
+GroupBy: 
+  Label: Collection
+  PropertyName: Collection
+TableControl: 
+  Name: 
+    Width: 50
+  State: 
+    Width: 15
+  TemplateId: 
+    Width: 15
+    Label: Template Id
+  Description:

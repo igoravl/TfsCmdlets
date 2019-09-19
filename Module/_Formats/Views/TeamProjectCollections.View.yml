@@ -1,38 +1,9 @@
-Passthru: |
-  <View>
-    <Name>Team Project Collections</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</TypeName>
-    </ViewSelectedBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Width>30</Width>
-          <Label>Name</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>38</Width>
-          <Label>InstanceId</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Uri</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>Name</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>InstanceId</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Uri</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+TableControl: 
+  Name: 
+    Width: 30
+  InstanceId: 
+    Width: 38
+    Label: Instance Id
+  Uri: 

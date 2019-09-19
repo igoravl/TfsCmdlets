@@ -1,30 +1,6 @@
-Passthru: |
-  <View>
-    <Name>Policy Type</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.Policy.WebApi.PolicyType</TypeName>
-    </ViewSelectedBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Label>Display Name</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Description</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>DisplayName</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Description</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Policy.WebApi.PolicyType
+TableControl: 
+  DisplayName: 
+    Label: Display Name
+  Description: 

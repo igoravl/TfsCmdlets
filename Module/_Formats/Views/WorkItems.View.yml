@@ -1,66 +1,20 @@
-Passthru: |
-  <View>
-    <Name>Work Items</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem</TypeName>
-    </ViewSelectedBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Width>8</Width>
-          <Label>Id</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>4</Width>
-          <Label>Rev</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>20</Width>
-          <Label>Type</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>15</Width>
-          <Label>State</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>20</Width>
-          <Label>Changed</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>25</Width>
-          <Label>Assigned To</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Title</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>Id</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Revision</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>WorkItemType</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>State</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>ChangedDate</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>AssignedTo</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Title</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
+TableControl: 
+  Id: 
+    Width: 8
+  Revision: 
+    Width: 4
+    Label: Rev
+  WorkItemType: 
+    Width: 20
+    Label: Type
+  State: 
+    Width: 15
+  ChangedDate: 
+    Width: 20
+    Label: Changed
+  AssignedTo: 
+    Width: 25
+    Label: Assigned To
+  Title: 

@@ -1,39 +1,11 @@
-Passthru: |
-  <View>
-    <Name>Work Items Links</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.WorkItemTracking.Client.Link</TypeName>
-    </ViewSelectedBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Width>15</Width>
-          <Label>LinkType</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>50</Width>
-          <Label>Target</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Width>50</Width>
-          <Label>Comment</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem>
-              <PropertyName>LinkType</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>LinkTarget</PropertyName>
-            </TableColumnItem>
-            <TableColumnItem>
-              <PropertyName>Comment</PropertyName>
-            </TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.Link
+TableControl: 
+  LinkType: 
+    Width: 15
+    Label: Link Type
+  LinkTarget: 
+    Width: 50
+    Label: Target
+  Comment: 
+    Width: 50

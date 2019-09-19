@@ -1,34 +1,10 @@
-Passthru: |
-  <View>
-    <Name>Teams</Name>
-    <ViewSelectedBy>
-      <TypeName>Microsoft.TeamFoundation.Core.WebApi.WebApiTeam</TypeName>
-    </ViewSelectedBy>
-    <GroupBy>
-      <Label>Team Project</Label>
-      <PropertyName>ProjectName</PropertyName>
-    </GroupBy>
-    <TableControl>
-      <TableHeaders>
-        <TableColumnHeader>
-          <Label>Name</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Description</Label>
-        </TableColumnHeader>
-        <TableColumnHeader>
-          <Label>Members</Label>
-        </TableColumnHeader>
-      </TableHeaders>
-      <TableRowEntries>
-        <TableRowEntry>
-          <Wrap/>
-          <TableColumnItems>
-            <TableColumnItem><PropertyName>Name</PropertyName></TableColumnItem>
-            <TableColumnItem><PropertyName>Description</PropertyName></TableColumnItem>
-            <TableColumnItem><ScriptBlock>$_.Members.Identity.Count</ScriptBlock></TableColumnItem>
-          </TableColumnItems>
-        </TableRowEntry>
-      </TableRowEntries>
-    </TableControl>
-  </View>
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
+GroupBy: 
+  Label: Team Project
+  PropertyName: ProjectName
+TableControl: 
+  Name: 
+  Description:
+  Members: 
+    ScriptBlock: $_.Members.Identity.Count
