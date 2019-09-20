@@ -29,7 +29,7 @@ Function Get-TfsWorkItemQueryItem
         [Alias("Folder")]
         [Alias("Query")]
         [object]
-        $Item = '**',
+        $Item = '*/**',
 
         [Parameter()]
         [ValidateSet('Personal', 'Shared', 'Both')]
