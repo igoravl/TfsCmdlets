@@ -1,0 +1,27 @@
+Passthru: |
+  <Control>
+    <Name>TeamProjects-Folders</Name>
+    <CustomControl>
+      <CustomEntries>
+        <CustomEntry>
+          <CustomItem>
+            <Frame>
+              <LeftIndent>4</LeftIndent>
+              <CustomItem>
+                <Text>Team Project: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Project</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+                <Text>  Folder: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Folder</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+              </CustomItem>
+            </Frame>
+          </CustomItem>
+        </CustomEntry>
+      </CustomEntries>
+    </CustomControl>
+  </Control>

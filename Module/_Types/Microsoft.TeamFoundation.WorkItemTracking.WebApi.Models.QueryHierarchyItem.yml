@@ -1,3 +1,6 @@
 - ScriptProperty:
     Name: ItemType
     GetScriptBlock: if($this.IsFolder){return 'Folder'}else{return 'Query'}
+- ScriptProperty:
+    Name: Folder
+    GetScriptBlock: return "/$($this.Path.TrimEnd($this.Name).TrimEnd('/'))"

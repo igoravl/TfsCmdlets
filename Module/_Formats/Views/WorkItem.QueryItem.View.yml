@@ -1,0 +1,14 @@
+ViewSelectedBy:
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem
+GroupBy:
+  ScriptBlock: $_.Project + '/' + $_.Folder
+  CustomControlName: TeamProjects-Folders
+TableControl:
+  Name:
+    Width: 20
+  QueryType:
+    Label: Type
+    Width: 6
+  Columns:
+  Wiql:
+    Label: Definition
