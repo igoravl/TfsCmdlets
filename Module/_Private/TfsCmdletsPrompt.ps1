@@ -1,4 +1,4 @@
-Function Prompt
+Function _TfsCmdletsPrompt
 {
     $promptPrefix = '[Not connected]'
     $defaultPsPrompt = "$($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "

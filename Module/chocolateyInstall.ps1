@@ -11,7 +11,7 @@ $ShortcutTargetDir = "$Env:ProgramData\\Microsoft\\Windows\\Start Menu\\Programs
 $ShortcutName = 'Azure DevOps Shell'
 $ShortcutFilePath = "$ShortcutTargetDir\\$ShortcutName.lnk"
 $ShortcutExecutable = "$Env:SystemRoot\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
-$ShortcutArguments = '-noexit -command "Import-Module TfsCmdlets"'
+$ShortcutArguments = '-noexit -command "Import-Module TfsCmdlets; Enter-TfsShell"'
 $ShortcutIconLocation = "$ToolsDir\\TfsCmdlets\\TfsCmdletsShell.ico"
 
 if (-not (Test-Path $ShortcutFilePath))
