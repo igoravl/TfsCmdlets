@@ -1,22 +1,57 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0-beta.10 (_12/Sep/2019_)
+## Version 2.0.0-beta.11 (_??/??/2019_)
 
 ### Improvements
 
-- Not an improvement per se, but the *MoveBy* argument in the Set-TfsClassificationNode cmdlet (and related area/iteration ones) now displays a 'deprecated' warning when MoveBy is specified. The argument is then ignored.
+#### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`
+
+These cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
+
+#### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to the REST API
+
+In the process, they've been generalized and converted to aliases to their new "generic" counterparts (`*-TfsWorkItemQueryItem`), much like the Area/Iteration cmdlets.
+
+#### Convert PowerShell Format/Types XML files (*.Format.ps1xml, *.Types.ps1xml) to YAML
+
+Now both **TfsCmdlets.Types.ps1xml** and **TfsCmdlets.Format.ps1xml** files are generated during build time from YAML files with [ps1xmlgen](https://github.com/igoravl/ps1xmlgen). That offers a much better experience to edit/mantain PowerShell's type/format XML files.
+
+#### Add `Invoke-TfsRestApi`
+
+The new `Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API in those scenarios/APIs not yet covered by TfsCmdlets.
+
+#### Argument completers
+
+This improvement is way overdue, but now we have the first set of argument completers. Any cmdlets with the arguments `-Server`, `-Collection` and `-Project` can be "Tab-completed".
 
 ### Bug fixes
 
-- Fix an issue with Area/Iteration cmdlets not processing pipelines correctly
+- Fix iteration processing in Set-TfsTeam ([72f0fc0](https://github.com/igoravl/TfsCmdlets/pull/98/commits/72f0fc0cdcba7d41c8341efd0b0304303058907e)), ([e15d1ee](https://github.com/igoravl/TfsCmdlets/pull/98/commits/e15d1ee0bff2e8a5bd20b26e11d1b41413eb79b9))
+- Fix build when in Release configuration ([6a795ce](https://github.com/igoravl/TfsCmdlets/pull/98/commits/6a795ce49331e37fbd7319f26c1e452d0135a7f6))
+- Fix classification node (area/iteration) retrieval for old APIs ([0df3616](https://github.com/igoravl/TfsCmdlets/pull/98/commits/0df3616868a15054125261555ecefed1d830d599))
+- Fix TFS Client Library version retrieval ([a9ac849](https://github.com/igoravl/TfsCmdlets/pull/98/commits/a9ac849643f5738e9616ae5c01a12c93c4d1345c))
 
 ### Known issues
 
-- N/A
+- Incremental build is currently disabled in the default Visual Studio Code Build task, as it's a bit inconsistent.
 
 ------------------------
 
 ## Previous Versions
+
+### Version 2.0.0-beta.10 (_12/Sep/2019_)
+
+#### Improvements
+
+- Not an improvement per se, but the *MoveBy* argument in the Set-TfsClassificationNode cmdlet (and related area/iteration ones) now displays a 'deprecated' warning when MoveBy is specified. The argument is then ignored.
+
+#### Bug fixes
+
+- Fix an issue with Area/Iteration cmdlets not processing pipelines correctly
+
+#### Known issues
+
+- N/A
 
 ### Version 2.0.0-beta.9 (_10/Sep/2019_)
 
