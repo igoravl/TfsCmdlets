@@ -17,7 +17,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "args": [   
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
@@ -26,8 +26,7 @@
                 "-Configuration",
                 "Debug",
                 "-Targets",
-                "Build" //,
-                //"-Incremental"
+                "Build"
             ]
         },
         {
@@ -41,7 +40,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "args": [   
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
@@ -62,7 +61,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "args": [   
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
@@ -72,7 +71,8 @@
                 "Debug",
                 "-Targets",
                 "Clean"
-            ]
+            ],
+            "problemMatcher": []
         },
         {
             "label": "Package",
@@ -86,7 +86,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "args": [   
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
@@ -111,7 +111,7 @@
                 "showReuseMessage": true,
                 "clear": false
             },
-            "args": [   
+            "args": [
                 "-ExecutionPolicy",
                 "Unrestricted",
                 "-NoProfile",
@@ -122,6 +122,6 @@
                 "-Targets",
                 "Test"
             ]
-        },
+        }
     ]
 }
