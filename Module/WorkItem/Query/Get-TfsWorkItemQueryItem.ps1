@@ -37,7 +37,7 @@ Function Get-TfsWorkItemQueryItem
         $Scope = 'Both',
 
         [Parameter()]
-        [ValidateSet('Folder', 'Query')]
+        [ValidateSet('Folder', 'Query', 'Both')]
         [string]
         $ItemType,
 
@@ -64,7 +64,7 @@ Function Get-TfsWorkItemQueryItem
 
         GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
 
-        CALL_ASYNC($client.GetQueriesAsync($tp.Name, 'None', 2), "Error fetching work item query items")
+        CALL_ASYNC($client.GetQueriesAsync($tp.Name, 'All', 2), "Error fetching work item query items")
 
         _Log "Getting $($ItemType.ToLower()) items matching '$Item'"
 
@@ -87,12 +87,12 @@ Function _GetQueryItemRecursively($Pattern, $Item, $ItemType, $Scope, $Project, 
     {
         _Log "Fetching child nodes for node '$($Item.Path)'"
 
-        CALL_ASYNC($client.GetQueryAsync($Project, $Item.Path, 'None', $Depth, $IncludeDeleted), "Error retrieving $StructureGroup from path '$($Item.RelativePath)'")
+        CALL_ASYNC($client.GetQueryAsync($Project, $Item.Path, 'All', $Depth, $IncludeDeleted), "Error retrieving $StructureGroup from path '$($Item.RelativePath)'")
 
         $Item = $result
     }
 
-    if($Item.ItemType -ne $ItemType)
+    if(($ItemType -ne 'Both') -and ($Item.ItemType -ne $ItemType))
     {
         _Log "Skipping item. '$($Item.Path)' is not a '$ItemType'."
     }
@@ -103,6 +103,8 @@ Function _GetQueryItemRecursively($Pattern, $Item, $ItemType, $Scope, $Project, 
         if($Item.Path -like $Pattern)
         {
             _Log "'$($Item.Path)' matches pattern '$Pattern'. Returning node."
+
+            $Item | Add-Member -MemberType NoteProperty -Name Project -Value $Project
             Write-Output $Item
         }
         else
