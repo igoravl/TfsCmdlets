@@ -1,7 +1,7 @@
 ViewSelectedBy: 
   - Microsoft.VisualStudio.Services.Identity.Identity
 TableControl: 
-  'Account Name': 
+  AccountName: 
     Label: Account Name
   DisplayName: 
     Label: Display Name

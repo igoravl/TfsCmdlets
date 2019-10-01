@@ -1,3 +1,6 @@
 ﻿- ScriptProperty:
     Name: IdentityType
     GetScriptBlock: return &{ if ($this.IsContainer) {'Group'} else {'User'} }
+- ScriptProperty:
+    Name: AccountName
+    GetScriptBlock: return $this.Properties['Account']
