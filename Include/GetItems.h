@@ -1,3 +1,4 @@
+#define GET_SERVER(SRV) SRV = Get-TfsConfigurationServer -Server $Server; if (-not SRV -or (SRV.Count -ne 1)) {throw "Invalid or non-existent server $Server."}
 #define GET_COLLECTION(TPC) TPC = Get-TfsTeamProjectCollection -Collection $Collection; if (-not TPC -or (TPC.Count -ne 1)) {throw "Invalid or non-existent team project collection $Collection."}
 #define GET_TEAM_PROJECT(TP,TPC) TP = Get-TfsTeamProject -Project $Project -Collection $Collection; if (-not TP -or (TP.Count -ne 1)) {throw "Invalid or non-existent team project $Project."}; TPC = TP.Store.TeamProjectCollection
 #define GET_TEAM_PROJECT_FROM_ITEM(TP,TPC,ITEM) if(ITEM) {$Project = ITEM}; GET_TEAM_PROJECT(TP,TPC)

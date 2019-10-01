@@ -10,13 +10,11 @@ Function _GetRestClient
 
         [Parameter()]
         [object] 
-        $Collection
+        $Provider
     )
 
     Process
     {
-        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
-
-        return _InvokeGenericMethod -InputObject $tpc -MethodName GetClient -GenericType $Type
+        return _InvokeGenericMethod -InputObject $Provider -MethodName GetClient -GenericType $Type
     }
 }

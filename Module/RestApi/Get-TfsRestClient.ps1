@@ -1,6 +1,6 @@
 Function Get-TfsRestClient
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName="Get by collection")]
     [OutputType('Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase')]
     Param
     (
@@ -8,13 +8,22 @@ Function Get-TfsRestClient
         [string]
         $Type,
 
-        [Parameter()]
+        [Parameter(ParameterSetName="Get by collection")]
         [object] 
-        $Collection
+        $Collection,
+
+        [Parameter(ParameterSetName="Get by server", Mandatory=$true)]
+        [object] 
+        $Server
     )
 
     Process
     {
-        return _GetRestClient @PSBoundParameters
+        if($Collection)
+        {
+            return _GetRestClient -Type $Type -Provider (Get-TfsTeamProjectCollection -Collection $Collection)
+        }
+
+        return _GetRestClient -Type $Type -Provider (Get-TfsConfigurationServer -Server $Server)
     }
 }
