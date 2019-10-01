@@ -33,23 +33,29 @@ Function Get-TfsIdentity
 
         [Parameter(ValueFromPipeline=$true)]
         [object]
-        $Collection
+        $Server
     )
 
     Process
     {
-        CHECK_ITEM($Identity)
-
-        GET_COLLECTION($tpc)
-        
         if($PSCmdlet.ParameterSetName -eq 'Get current user')
         {
-            $userId = $tpc.AuthorizedIdentity.TeamFoundationId
+            $srv = Get-TfsConfigurationServer -Current
 
-            return Get-TfsIdentity -Identity $userId -Collection $tpc
+            if(-not $srv)
+            {
+                return
+            }
+
+            $Identity = $srv.AuthorizedIdentity.TeamFoundationId
         }
-
-        GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
+        else
+        {
+            CHECK_ITEM($Identity)
+            GET_SERVER($srv)
+        }
+        
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient' -Server $srv
 
         if($QueryMembership.IsPresent)
         {
