@@ -43,7 +43,7 @@ if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver'
     Write-Verbose 'Calling AssemblyResolver.Register()'
     [TfsCmdlets.AssemblyResolver]::Register($assemblies, [bool]($TfsCmdletsDebugStartup))
 
-    Write-Host "Assembly resolver loading took $($resolverSw.ElapsedMilliseconds)ms."
+    Write-Verbose "Assembly resolver loading took $($resolverSw.ElapsedMilliseconds)ms."
 }
 else
 {
