@@ -3,28 +3,66 @@ Function Enter-TfsShell
     [CmdletBinding()]
     Param
     (
+        # Specifies the shell window title. If omitted, defaults to "Azure DevOps Shell"
+        [Parameter()]
+        [string]
+        $WindowTitle = 'Azure DevOps Shell',
+
+        # Do not clear screen on entering shell
+        [Parameter()]
+        [switch]
+        $DoNotClearHost
     )
+
+    if($script:IsInShell)
+    {
+        # Avoid reentrance
+        return
+    }
 
     # Persist current values for later restoring
 
-    $script:PrevShellTitle = $Host.UI.RawUI.WindowTitle
-
-    if(Test-Path function:\prompt)
+    if(-not $script:PrevShellTitle)
     {
-        $script:PrevPrompt = Get-Content function:\prompt
+        $script:PrevShellTitle = $Host.UI.RawUI.WindowTitle
+
+        if(Test-Path function:\prompt)
+        {
+            $script:PrevPrompt = Get-Content function:\prompt
+        }
     }
 
     # Replace title and prompt
 
-    $Host.UI.RawUI.WindowTitle = 'Azure DevOps Shell'
-    Set-Content function:\prompt (Get-Content function:\_TfsCmdletsPrompt)
+    $Host.UI.RawUI.WindowTitle = $WindowTitle
+    Set-Content function:\prompt {_TfsCmdletsPrompt}
 
     # Show banner
 
-    Clear-Host
-    $module = Test-ModuleManifest -Path (Join-Path $PSScriptRoot '../TfsCmdlets.psd1')
+    if(-not $DoNotClearHost.IsPresent)
+    {
+        Clear-Host
+    }
+
+    $module = Test-ModuleManifest -Path (Join-Path $MyInvocation.MyCommand.Module.ModuleBase 'TfsCmdlets.psd1')
     Write-Host "TfsCmdlets: $($module.Description)"
     Write-Host "Version $($module.PrivateData.Build)"
-    Write-Host "Azure DevOps Client Library v$($module.PrivateData.TfsClientVersion)"
+    Write-Host "Azure DevOps Client Library version $($module.PrivateData.TfsClientVersion)"
+    Write-Host ""
+    Write-Host "Loading TfsCmdlets module took $($global:TfsCmdletsLoadSw.ElapsedMilliseconds)ms."
+
+    $profileScript = Join-Path $([System.Environment]::GetFolderPath('MyDocuments')) "WindowsPowerShell/TfsCmdlets_Profile.ps1"
+
+    if(Test-Path ($profileScript))
+    {
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        . $profileScript
+        $sw.Stop()
+
+        Write-Host "Loading TfsCmdlets profile took $($sw.ElapsedMilliseconds)ms."
+    }
+
+    $script:IsInShell = $true
+    
     Write-Host ""
 }
