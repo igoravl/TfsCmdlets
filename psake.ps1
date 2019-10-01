@@ -128,7 +128,7 @@ Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles, CopyLibraries {
         if(($Configuration -eq 'Release') -and ($dirName -ne 'Module'))
         {
             # Merge files (Release)
-            $outputPath = (Join-Path $ModuleDir "$dirName\$($dirName.Replace('\', '_')).ps1")
+            $outputPath = (Join-Path $ModuleDir "TfsCmdlets.psm1")
         }
 
         if($writtenFiles -notcontains $outputPath)
@@ -261,20 +261,29 @@ Task UpdateModuleManifest {
     $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
     $tfsOmNugetVersion = (Get-ChildItem (Join-Path $NugetPackagesDir "$($TfsPackageNames[0])*")).BaseName.SubString($TfsPackageNames[0].Length+1)
 
-    Update-ModuleManifest -Path $ModuleManifestPath `
-        -NestedModules $nestedModuleList `
-        -FileList $fileList `
-        -FunctionsToExport $functionList `
-        -ModuleVersion $FourPartVersion `
-        -CompatiblePSEditions $CompatiblePSEditions `
-        -PrivateData @{
-            Branch = $VersionMetadata.BranchName
-            Build = $BuildName
-            Commit = $VersionMetadata.Sha
-            TfsClientVersion = $tfsOmNugetVersion
-            PreRelease = $VersionMetadata.NugetPrereleaseTag
-            Version = $VersionMetadata.FullSemVer
+    $manifestArgs = @{
+        Path = $ModuleManifestPath
+        FileList = $fileList
+        FunctionsToExport = $functionList
+        ModuleVersion = $FourPartVersion
+        CompatiblePSEditions = $CompatiblePSEditions
+        PrivateData = @{
+        Branch = $VersionMetadata.BranchName
+        Build = $BuildName
+        Commit = $VersionMetadata.Sha
+        TfsClientVersion = $tfsOmNugetVersion
+        PreRelease = $VersionMetadata.NugetPrereleaseTag
+        Version = $VersionMetadata.FullSemVer
         }
+    }
+
+    if($nestedModuleList)
+    {
+        # Won't be available when building in Release
+        $manifestArgs['NestedModules'] = $nestedModuleList
+    }
+
+    Update-ModuleManifest @manifestArgs
 
     Get-Content $ModuleManifestPath | Write-Verbose
 }
