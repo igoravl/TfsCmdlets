@@ -53,7 +53,7 @@ Task Rebuild -Depends Clean, Build {
 
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, Test, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 
 }
 
@@ -317,6 +317,14 @@ Task DownloadTfsNugetPackage {
             Write-Verbose "FOUND! Skipping..."
         }
     }
+}
+
+Task RemoveEmptyFolders {
+
+    Get-ChildItem $ModuleDir -Recurse -Force -Directory | 
+        Sort-Object -Property FullName -Descending |
+        Where-Object { $($_ | Get-ChildItem -Force | Select-Object -First 1).Count -eq 0 } |
+        Remove-Item | Write-Verbose
 }
 
 Task Clean {
