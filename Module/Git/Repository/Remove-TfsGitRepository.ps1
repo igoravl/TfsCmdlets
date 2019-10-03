@@ -48,7 +48,7 @@ Function Remove-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         #$tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = _GetRestClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
 
         if ($Repository -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])
         {
@@ -63,7 +63,7 @@ Function Remove-TfsGitRepository
         {
             if ($PSCmdlet.ShouldProcess($repo.Name, "Delete Git repository from Team Project $($tp.Name)"))
             {
-                $gitClient.DeleteRepositoryAsync($repo.Id).Wait()
+                $client.DeleteRepositoryAsync($repo.Id).Wait()
             }
         }
     }

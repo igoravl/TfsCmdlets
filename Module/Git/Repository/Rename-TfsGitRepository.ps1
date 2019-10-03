@@ -58,7 +58,7 @@ Function Rename-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         #$tpc = $tp.Store.TeamProjectCollection
 
-        $gitClient = _GetRestClient -Type 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient'
+        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
 
         if ($Repository -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])
         {
@@ -73,7 +73,7 @@ Function Rename-TfsGitRepository
         {
             if ($PSCmdlet.ShouldProcess($repo.Name, "Rename Git repository in Team Project $($tp.Name) to $NewName"))
             {
-                $task = $gitClient.RenameRepositoryAsync($repo, $NewName)
+                $task = $client.RenameRepositoryAsync($repo, $NewName)
                 $task.Wait()
 
                 if ($Passthru)

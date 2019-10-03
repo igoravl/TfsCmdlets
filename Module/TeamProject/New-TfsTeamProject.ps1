@@ -38,7 +38,7 @@ Function New-TfsTeamProject
         {
             $tpc = Get-TfsTeamProjectCollection $Collection
             $template = Get-TfsProcessTemplate -Collection $tpc -Name $ProcessTemplate
-            $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient' -Collection $tpc
+            GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient')
 
             $tpInfo = New-Object 'Microsoft.TeamFoundation.Core.WebApi.TeamProject'
             $tpInfo.Name = $Project
@@ -62,7 +62,7 @@ Function New-TfsTeamProject
 
             # Wait for the operation to complete
 
-            $operationsClient = _GetRestClient 'Microsoft.VisualStudio.Services.Operations.OperationsHttpClient' -Collection $tpc
+            GET_CLIENT('Microsoft.VisualStudio.Services.Operations.OperationsHttpClient')
 
             $opsToken = $operationsClient.GetOperation($token.Id).Result
 

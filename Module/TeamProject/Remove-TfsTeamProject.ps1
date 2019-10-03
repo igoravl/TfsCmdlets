@@ -81,7 +81,7 @@ Function Remove-TfsTeamProject
         
                     # Wait for the operation to complete
         
-                    $operationsClient = _GetRestClient 'Microsoft.VisualStudio.Services.Operations.OperationsHttpClient' -Collection $tpc
+                    GET_CLIENT('Microsoft.VisualStudio.Services.Operations.OperationsHttpClient')
         
                     $opsToken = $operationsClient.GetOperation($token.Id).Result
         

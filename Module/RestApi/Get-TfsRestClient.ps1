@@ -19,11 +19,15 @@ Function Get-TfsRestClient
 
     Process
     {
-        if($Collection)
+        if($PSCmdlet.ParameterSetName -eq 'Get by collection')
         {
-            return _GetRestClient -Type $Type -Provider (Get-TfsTeamProjectCollection -Collection $Collection)
+            $provider =  (Get-TfsTeamProjectCollection -Collection $Collection)
+        }
+        else
+        {
+            $provider =  (Get-TfsConfigurationServer -Server $Server)
         }
 
-        return _GetRestClient -Type $Type -Provider (Get-TfsConfigurationServer -Server $Server)
+        return _InvokeGenericMethod -InputObject $provider -MethodName 'GetClient' -GenericType $Type
     }
 }

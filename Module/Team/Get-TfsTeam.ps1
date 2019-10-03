@@ -56,7 +56,7 @@ Function Get-TfsTeam
 
         GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient')
 
-        $workClient = _GetRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient'
+        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
 
         if($Team.ToString().Contains('*'))
         {

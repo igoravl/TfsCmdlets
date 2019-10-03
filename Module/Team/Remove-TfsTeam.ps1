@@ -45,7 +45,7 @@ Function Remove-TfsTeam
             return
         }
 
-        $client = _GetRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient'
+        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient')
         $task = $client.DeleteTeamAsync($tp.Name, $t.Name)
 
         CHECK_ASYNC($task,$result,'Error deleting team')
