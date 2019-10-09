@@ -35,6 +35,6 @@ Register-ArgumentCompleter -ParameterName Team -Verbose -ScriptBlock {
 
     if ($tp)
     {
-        return Get-TfsTeam -Team "$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty Name | _EscapeArgumentValue
+        return Get-TfsTeam -Team "$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty Name | Sort-Object | _EscapeArgumentValue
     }
 }
