@@ -55,8 +55,7 @@ Function Get-TfsTeam
         GET_TEAM_PROJECT($tp,$tpc)
 
         GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient')
-
-        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
+        GET_CLIENT2('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient',$workClient)
 
         if($Team.ToString().Contains('*'))
         {
