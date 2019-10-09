@@ -10,6 +10,10 @@
         "[Pp]ackages": true,
         "[Ss]etup/bin": true,
         "[Ss]etup/obj": true,
+        "**/.vs": true,
+        "**/[Bb]in": true,
+        "**/[Oo]bj": true,
+        "**/[Pp]ackages": true,
         "out": true
     },
     "search.usePCRE2": true
