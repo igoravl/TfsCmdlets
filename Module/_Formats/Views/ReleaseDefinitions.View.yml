@@ -1,0 +1,12 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition
+GroupBy: 
+  Label: Folder
+  PropertyName: Path
+TableControl: 
+  Name: 
+    Width: 30
+  Revision: 
+    Width: 8
+  ModifiedOn: 
+    Label: Modified On
