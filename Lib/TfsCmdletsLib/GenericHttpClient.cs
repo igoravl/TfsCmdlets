@@ -14,31 +14,49 @@ namespace TfsCmdlets
     {
         #region Constructors and fields
 
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials) : base(baseUrl, credentials)
+        private static string _Host;
+
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials) : base(SetHost(baseUrl), credentials)
         {
         }
 
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings) : base(
-            baseUrl, credentials, settings)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings) : base(SetHost(baseUrl), credentials, settings)
         {
         }
 
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, params DelegatingHandler[] handlers) : base(
-            baseUrl, credentials, handlers)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, handlers)
         {
         }
 
-        public GenericHttpClient(Uri baseUrl, HttpMessageHandler pipeline, bool disposeHandler) : base(baseUrl,
-            pipeline, disposeHandler)
+        public GenericHttpClient(Uri baseUrl, HttpMessageHandler pipeline, bool disposeHandler) : base(SetHost(baseUrl), pipeline, disposeHandler)
         {
         }
 
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings,
-            params DelegatingHandler[] handlers) : base(baseUrl, credentials, settings, handlers)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, settings, handlers)
         {
         }
 
         #endregion
+
+        public Uri Uri { get; private set; }
+
+        public static void UseHost(string host)
+        {
+            _Host = host;
+        }
+
+        private static Uri SetHost(Uri baseUrl)
+        {
+            if (_Host == null)
+            {
+                return baseUrl;
+            }
+
+            baseUrl = (new UriBuilder(baseUrl) { Host = _Host }).Uri;
+            _Host = null;
+
+            return baseUrl;
+        }
 
         /// <summary>
         /// Sends a GET request to an Azure DevOps API
@@ -254,6 +272,9 @@ namespace TfsCmdlets
                 content,
                 queryParameters,
                 mediaType);
+ 
+            Uri = msg.RequestUri;
+            
             return msg;
         }
     }

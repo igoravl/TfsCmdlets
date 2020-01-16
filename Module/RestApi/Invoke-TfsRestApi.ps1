@@ -65,7 +65,7 @@ Function Invoke-TfsRestApi
 
         [Parameter(ParameterSetName="URL call")]
         [string]
-        $ApiVersion = '1.0',
+        $ApiVersion = '4.1',
 
         [Parameter(ParameterSetName="URL call")]
         [object]
@@ -76,12 +76,16 @@ Function Invoke-TfsRestApi
         $Project,
 
         [Parameter(ParameterSetName="URL call")]
-        [switch]
-        $UseSps,
+        [string]
+        $UseHost,
 
         [Parameter()]
         [object]
         $Collection,
+
+        [Parameter()]
+        [switch]
+        $Raw,
 
         [Parameter()]
         [switch]
@@ -94,33 +98,53 @@ Function Invoke-TfsRestApi
 
         if($PSCmdlet.ParameterSetName -eq 'Library call')
         {
+            _Log "Using library call method"
+
             GET_CLIENT($ClientType)
             $task = $client.$Operation.Invoke($ArgumentList)
         }
         else
         {
+            _Log "Using URL call method"
+
             $Path = $Path.TrimStart('/')
             
-            if($UseSps.IsPresent)
+            if($UseHost)
             {
-                $prefix = "Sps"
+                if($UseHost -notlike '*.dev.azure.com')
+                {
+                    _Log "Converting service prefix $UseHost to $UseHost.dev.azure.com"
+
+                    $UseHost += '.dev.azure.com'
+                }
+
+                _Log "Using service host $UseHost"
+                [TfsCmdlets.GenericHttpClient]::UseHost($UseHost)
             }
 
-            GET_CLIENT("TfsCmdlets.${prefix}GenericHttpClient")
+            GET_CLIENT("TfsCmdlets.GenericHttpClient")
 
-            if($Path -like '*{projectId}*')
+            if($Path -like '*{project}*')
             {
                 GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Team.Project)
-                $Path = $Path.Replace('{projectId}', $tp.Guid)
+                $Path = $Path.Replace('{project}', $tp.Guid)
+
+                _Log "Replace token {project} in URL with '$($tp.Guid)'"
             }
 
-            if($Path -like '*{teamId}*')
+            if($Path -like '*{team}*')
             {
                 GET_TEAM($t,$tp,$tpc)
-                $Path = $Path.Replace('{teamId}', $t.Id)
+                $Path = $Path.Replace('{team}', $t.Id)
+
+                _Log "Replace token {team} in URL with '$($t.Id)'"
             }
+
+            _Log "Calling API '$Path', version '$ApiVersion', via $Method"
             
             $task = $client.InvokeAsync($Method, $Path, $Body, $RequestContentType, $ResponseContentType, $AdditionalHeaders, $QueryParameters, $ApiVersion)
+
+            _Log "URI called: $($client.Uri)"
         }
 
         if ($AsTask)
@@ -132,11 +156,21 @@ Function Invoke-TfsRestApi
 
         if($PSCmdlet.ParameterSetName -eq 'URL call')
         {
-            Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+            $json = $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+            $obj = ($json | ConvertFrom-Json)
 
-            if($ResponseContentType -eq 'application/json')
+            if($Raw.IsPresent)
             {
-                Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value ($result.Content.ReadAsStringAsync().GetAwaiter().GetResult() | ConvertFrom-Json)
+                Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $json
+
+                if($ResponseContentType -eq 'application/json')
+                {
+                    Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value $obj
+                }
+            }
+            else
+            {
+                $result = $obj
             }
         }
         
