@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0-beta.11 (_??/??/2019_)
+## Version 2.0.0-beta.11 (_20/Jan/2020_)
 
 ### Improvements
 
