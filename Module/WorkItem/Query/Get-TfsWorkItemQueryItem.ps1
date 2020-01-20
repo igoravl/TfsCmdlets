@@ -80,8 +80,7 @@ Set-Alias -Name Get-TfsWorkItemQuery -Value Get-TfsWorkItemQueryItem
 
 Function _GetQueryItemRecursively($Pattern, $Item, $ItemType, $Scope, $Project, $Client, $Depth = 2, $IncludeDeleted)
 {
-    _Log "'$($Item.Path)' (ItemType=$($Item.ItemType),IsPublic=$($Item.IsPublic))"
-    _Log $Item.GetType().FullName
+    _Log "Found item '$($Item.Path)' (ItemType=$($Item.ItemType),IsPublic=$($Item.IsPublic),HasChildren=$($Item.HasChildren))"
 
     if($Item.HasChildren -and ($Item.Children.Count -eq 0))
     {
@@ -94,9 +93,9 @@ Function _GetQueryItemRecursively($Pattern, $Item, $ItemType, $Scope, $Project, 
 
     if(($ItemType -ne 'Both') -and ($Item.ItemType -ne $ItemType))
     {
-        _Log "Skipping item. '$($Item.Path)' is not a '$ItemType'."
+        _Log "Skipping item. '$($Item.Path)' is '$($Item.ItemType)' but ItemType is '$ItemType'."
     }
-    elseif ($Scope -eq 'Both' -or `
+    elseif (($Scope -eq 'Both') -or `
             (($Scope -eq 'Shared') -and $Item.IsPublic) -or `
             (($Scope -eq 'Personal') -and (-not $Item.IsPublic)))
     {
