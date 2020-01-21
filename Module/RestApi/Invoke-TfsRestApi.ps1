@@ -156,21 +156,29 @@ Function Invoke-TfsRestApi
 
         if($PSCmdlet.ParameterSetName -eq 'URL call')
         {
-            $json = $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
-            $obj = ($json | ConvertFrom-Json)
+            $response = $result.Content.ReadAsStringAsync().GetAwaiter().GetResult()
 
             if($Raw.IsPresent)
             {
-                Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $json
+                Add-Member -InputObject $result -Name 'ResponseString' -MemberType NoteProperty -Value $response
 
-                if($ResponseContentType -eq 'application/json')
+                switch($result.Content.Headers.ContentType)
                 {
-                    Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value $obj
+                    'application/json' {
+                        $obj = ($response | ConvertFrom-Json)
+                        Add-Member -InputObject $result -Name 'ResponseObject' -MemberType NoteProperty -Value $obj
+                    }
                 }
             }
             else
             {
-                $result = $obj
+                switch($result.Content.Headers.ContentType)
+                {
+                    'application/json' {
+                        $response = ($response | ConvertFrom-Json)
+                    }
+                }
+                $result = $response
             }
         }
         
