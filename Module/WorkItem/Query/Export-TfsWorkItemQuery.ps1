@@ -38,13 +38,13 @@ For queries made against Team Services, the WIQL length must not exceed 32K char
 #>
 Function Export-TfsWorkItemQuery
 {
-    [CmdletBinding(DefaultParameterSetName='Export to output stream', SupportsShouldProcess=$true)]
+    [CmdletBinding(DefaultParameterSetName='Export to output stream', SupportsShouldProcess=$true, ConfirmImpact='Medium')]
     [OutputType('xml')]
     Param
     (
         [Parameter(ValueFromPipeline=$true, Position=0)]
         [SupportsWildcards()]
-        [string] 
+        [object] 
         $Query = "**/*",
 
         [Parameter()]
@@ -118,13 +118,15 @@ Function Export-TfsWorkItemQuery
 
 		foreach($q in $queries)
 		{
+            GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$q.TeamProject)
+
 			$xml = [xml]@"
 <?xml version="1.0" encoding="$Encoding"?>
 <!-- Original Query Path: $($q.Path) -->
 <WorkItemQuery Version="1">
-  <TeamFoundationServer>$($q.Project.Store.TeamProjectCollection.Uri)</TeamFoundationServer>
-  <TeamProject>$($q.Project.Name)</TeamProject>
-  <Wiql><![CDATA[$($q.QueryText)]]></Wiql>
+  <TeamFoundationServer>$($tp.Store.TeamProjectCollection.Uri)</TeamFoundationServer>
+  <TeamProject>$($tp.Name)</TeamProject>
+  <Wiql><![CDATA[$($q.Wiql)]]></Wiql>
 </WorkItemQuery>
 "@
 			if (-not $Destination)
