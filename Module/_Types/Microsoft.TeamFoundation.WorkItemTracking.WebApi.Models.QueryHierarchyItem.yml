@@ -4,3 +4,6 @@
 - ScriptProperty:
     Name: Folder
     GetScriptBlock: return "/$($this.Path.TrimEnd($this.Name).TrimEnd('/'))"
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: return ((($this.Url -split '/_apis/')[0]) -split '/')[-1]
