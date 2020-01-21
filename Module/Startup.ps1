@@ -56,7 +56,7 @@ $libPath = (Join-Path $PSScriptRoot "lib" -Resolve)
 $assemblies = (Get-ChildItem "$libPath/*.dll" -Exclude 'Microsoft.WitDataStore*.*','TfsCmdletsLib.dll').BaseName
 $assemblies += (Get-ChildItem "$libPath/TfsCmdletsLib.dll").BaseName
 
-$global:TfsCmdletsAssemblyLoadjob = Start-Job -ScriptBlock {
+# $global:TfsCmdletsAssemblyLoadjob = Start-Job -ScriptBlock {
     foreach($asm in $assemblies)
     {
         Write-Verbose "Loading assembly $asm from folder $libPath"
@@ -70,4 +70,4 @@ $global:TfsCmdletsAssemblyLoadjob = Start-Job -ScriptBlock {
             Write-Warning "Error loading assembly '$asm': $($_.Exception.Message)"
         }
     }
-}
+# }
