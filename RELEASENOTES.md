@@ -1,24 +1,24 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0-beta.11 (_20/Jan/2020_)
+## Version 2.0.0-beta.11 (_21/Jan/2020_)
 
 ### Improvements
 
-#### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`
+#### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`, `Get-TfsVersion`, `Invoke-TfsRestApi`
 
-These cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
+The new `Enter-TfsShell` and `Exit-TfsShell` cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
 
-#### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to the REST API
+`Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API in those scenarios/APIs not yet covered by TfsCmdlets.
+
+Lastly, `Get-TfsVersion` returns version information on a given team project collection / organization. Currently, only Azure DevOps Services organizations are supported. Support for TFS and Azure DevOps Server will be added in a future release.
+
+#### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to REST API
 
 In the process, they've been generalized and converted to aliases to their new "generic" counterparts (`*-TfsWorkItemQueryItem`), much like the Area/Iteration cmdlets.
 
 #### Convert PowerShell Format/Types XML files (*.Format.ps1xml, *.Types.ps1xml) to YAML
 
 Now both **TfsCmdlets.Types.ps1xml** and **TfsCmdlets.Format.ps1xml** files are generated during build time from YAML files with [ps1xmlgen](https://github.com/igoravl/ps1xmlgen). That offers a much better experience to edit/mantain PowerShell's type/format XML files.
-
-#### Add `Invoke-TfsRestApi`
-
-The new `Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API in those scenarios/APIs not yet covered by TfsCmdlets.
 
 #### Argument completers
 
