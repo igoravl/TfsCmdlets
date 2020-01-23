@@ -1,6 +1,7 @@
 . "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\_TestSetup.ps1"
 
-$allFunctions = Get-Command -Module TfsCmdlets
+$allFunctions = Get-Command -Module TfsCmdlets | Where-Object CommandType -ne 'Alias' | Sort-Object { $_.Name }
+#$allAliases = Get-Command -Module TfsCmdlets | Where-Object CommandType -eq 'Alias'
 
 $destructiveVerbs = 'Dismount|Remove|Stop'
 $stateChangingVerbs = 'Import|Mount|Move|New|Rename|Set|Start'
