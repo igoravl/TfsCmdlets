@@ -21,36 +21,40 @@ Function _NormalizeNodePath
 		$ExcludePath,
 
 		[switch]
-		$IncludeLeadingBackslash,
+		$IncludeLeadingSeparator,
 
 		[switch]
-		$IncludeTrailingBackslash,
+		$IncludeTrailingSeparator,
 
 		[switch]
-		$IncludeTeamProject
+		$IncludeTeamProject,
+
+		[string]
+		$Separator = $Separator
 	)
 
 	_Log "Normalizing path '$Path' with arguments $(_DumpObj $PSBoundParameters)"
 
+	$Path = $Path -replace '[/|\\]', $Separator
 	$newPath = ''
 
 	$scopeName = $Scope.ToString().TrimEnd('s')
 
-	if ($IncludeLeadingBackslash) { $newPath += '\\' }
-	if ($IncludeTeamProject) { $newPath += $Project + '\\' }
-	if ($IncludeScope) { $newPath += $scopeName + '\\' }
+	if ($IncludeLeadingSeparator) { $newPath += $Separator }
+	if ($IncludeTeamProject) { $newPath += $Project + $Separator }
+	if ($IncludeScope) { $newPath += $scopeName + $Separator }
 
 	if(-not $ExcludePath.IsPresent)
 	{
-		$Path = $Path.Trim(' ', '\\')
+		$Path = $Path.Trim(' ', $Separator)
 
-		if ($Path -like "$Project\\$scopeName\\*")
+		if ($Path -like "$Project${Separator}$scopeName${Separator}*")
 		{
-			$Path = $Path.Substring("$Project\\$scopeName\\".Length)
+			$Path = $Path.Substring("$Project${Separator}$scopeName${Separator}".Length)
 		}
-		if ($Path -like "$Project\\*")
+		if ($Path -like "$Project${Separator}*")
 		{
-			$Path = $Path.Substring($Path.IndexOf('\\'))
+			$Path = $Path.Substring($Path.IndexOf($Separator))
 		}
 		elseif ($Path -eq $Project)
 		{
@@ -60,12 +64,12 @@ Function _NormalizeNodePath
 		$newPath += $Path
 	}
 
-	if ($newPath.EndsWith('\\') -and (-not $IncludeTrailingBackslash.IsPresent))
+	if ($newPath.EndsWith($Separator) -and (-not $IncludeTrailingSeparator.IsPresent))
 	{ 
-		$newPath = $newPath.TrimEnd('\\')
+		$newPath = $newPath.TrimEnd($Separator)
 	}
 
 	_Log "Normalized path: $newPath"
 
-	return $newPath -replace '\\\\{2,}', '\\'
+	return $newPath -replace '${Separator}${Separator}{2,}', $Separator
 }
