@@ -45,11 +45,11 @@ Function Enter-TfsShell
     }
 
     $module = Test-ModuleManifest -Path (Join-Path $MyInvocation.MyCommand.Module.ModuleBase 'TfsCmdlets.psd1')
-    Write-Host "TfsCmdlets: $($module.Description)"
-    Write-Host "Version $($module.PrivateData.Build)"
-    Write-Host "Azure DevOps Client Library version $($module.PrivateData.TfsClientVersion)"
-    Write-Host ""
-    Write-Host "Loading TfsCmdlets module took $($global:TfsCmdletsLoadSw.ElapsedMilliseconds)ms."
+    Write-Output "TfsCmdlets: $($module.Description)"
+    Write-Output "Version $($module.PrivateData.Build)"
+    Write-Output "Azure DevOps Client Library version $($module.PrivateData.TfsClientVersion)"
+    Write-Output ""
+    Write-Output "Loading TfsCmdlets module took $($global:TfsCmdletsLoadSw.ElapsedMilliseconds)ms."
 
     $profileScript = Join-Path $([System.Environment]::GetFolderPath('MyDocuments')) "WindowsPowerShell/TfsCmdlets_Profile.ps1"
 
@@ -59,10 +59,10 @@ Function Enter-TfsShell
         . $profileScript
         $sw.Stop()
 
-        Write-Host "Loading TfsCmdlets profile took $($sw.ElapsedMilliseconds)ms."
+        Write-Output "Loading TfsCmdlets profile took $($sw.ElapsedMilliseconds)ms."
     }
 
     $script:IsInShell = $true
     
-    Write-Host ""
+    Write-Output ""
 }

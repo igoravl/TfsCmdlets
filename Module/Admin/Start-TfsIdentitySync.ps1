@@ -19,7 +19,8 @@ System.Uri
 Function Start-TfsIdentitySync
 {
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
-	[CmdletBinding()]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsPsCredentialType', '')]
+	[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='Medium')]
 	Param
 	(
 		[Parameter(Position=0,ValueFromPipeline=$true)]
@@ -44,38 +45,41 @@ Function Start-TfsIdentitySync
 			throw "Invalid or non-existent configuration server $Server"
 		}
 
+		if(-not $PSCmdlet.ShouldProcess($srv.Url, 'Start identity sync'))
+		{
+			return
+		}
+
 		$jobSvc = $srv.GetService([type]'Microsoft.TeamFoundation.Framework.Client.ITeamFoundationJobService')
 		$syncJobId = [guid]'544dd581-f72a-45a9-8de0-8cd3a5f29dfe'
 		$syncJobDef = $jobSvc.QueryJobs() | Where-Object { $_.JobId -eq $syncJobId }
 
-		if ($syncJobDef)
-		{
-			_Log "Queuing job '$($syncJobDef.Name)' with high priority now"
-
-			$success = ([bool] $jobSvc.QueueJobNow($syncJobDef, $true))
-
-			if (-not $success)
-			{
-				throw "Failed to queue synchronization job"
-			}
-
-			if($Wait.IsPresent)
-			{
-				do
-				{
-					_Log "Waiting for the job to complete"
-					Start-Sleep -Seconds 5
-
-					$status = $jobSvc.QueryLatestJobHistory($syncJobId)
-					_Log "Current job status: $($status.Result)"
-				} while($status.Result -eq 'None')
-
-				return $result
-			}
-		}
-		else
+		if (-not $syncJobDef)
 		{
 			throw "Could not find Periodic Identity Synchronization job definition (id $syncJobId). Unable to start synchronization process."
+		}
+
+		_Log "Queuing job '$($syncJobDef.Name)' with high priority now"
+
+		$success = ([bool] $jobSvc.QueueJobNow($syncJobDef, $true))
+
+		if (-not $success)
+		{
+			throw "Failed to queue synchronization job"
+		}
+
+		if($Wait.IsPresent)
+		{
+			do
+			{
+				_Log "Waiting for the job to complete"
+				Start-Sleep -Seconds 5
+
+				$status = $jobSvc.QueryLatestJobHistory($syncJobId)
+				_Log "Current job status: $($status.Result)"
+			} while($status.Result -eq 'None')
+
+			return $result
 		}
 	}
 }

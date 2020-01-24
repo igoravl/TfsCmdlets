@@ -1,7 +1,7 @@
 #define ITEM_TYPE Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings
 Function Set-TfsTeamBoardCardRuleSettings
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='Medium')]
     [OutputType('ITEM_TYPE')]
     Param
     (
@@ -81,6 +81,11 @@ Function Set-TfsTeamBoardCardRuleSettings
 
         foreach($boardName in $boards)
         {
+            if(-not $PSCmdlet.ShouldProcess($boardName, 'Set board card rule settings'))
+            {
+                continue
+            }
+            
             $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList $tp.Name, $t.Name
 
             CALL_ASYNC($client.GetBoardCardRuleSettingsAsync($ctx,$boardName),"Error retrieving card rule settings for board '$Board'")

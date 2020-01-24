@@ -191,8 +191,7 @@ Function Copy-TfsTestPlan
 			$IterationPath = $destTp.Name
 		}
 
-        $tpc = $tp.Store.TeamProjectCollection
-		
+        GET_COLLECTION($tpc)
 		GET_CLIENT("$ns.TestPlanHttpClient")
 
 		$cloneParams = New-Object "$ns.CloneTestPlanParams" -Property @{
