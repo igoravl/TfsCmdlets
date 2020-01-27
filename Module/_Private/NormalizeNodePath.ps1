@@ -11,8 +11,8 @@ Function _NormalizeNodePath
 		[string]
 		$Project, 
 
-        [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
-		$Scope, 
+        [string]
+		$Scope = '', 
 
 		[switch]
 		$IncludeScope,
@@ -30,46 +30,70 @@ Function _NormalizeNodePath
 		$IncludeTeamProject,
 
 		[string]
-		$Separator = $Separator
+		$Separator = '\\'
 	)
 
 	_Log "Normalizing path '$Path' with arguments $(_DumpObj $PSBoundParameters)"
 
-	$Path = $Path -replace '[/|\\]', $Separator
-	$newPath = ''
+	$Path = $Path -replace '[/|\\\\]+', $Separator
+	$newPath = @()
 
-	$scopeName = $Scope.ToString().TrimEnd('s')
+	switch($Scope)
+	{
+		'Areas' {
+			$Scope = 'Area'
+		}
+		'Iterations' {
+			$Scope = 'Iteration'
+		}
+	}
 
-	if ($IncludeLeadingSeparator) { $newPath += $Separator }
-	if ($IncludeTeamProject) { $newPath += $Project + $Separator }
-	if ($IncludeScope) { $newPath += $scopeName + $Separator }
+	if ($IncludeLeadingSeparator) { $newPath += '' }
+	if ($IncludeTeamProject) { $newPath += $Project }
+	if ($IncludeScope) { $newPath += $Scope }
 
 	if(-not $ExcludePath.IsPresent)
 	{
 		$Path = $Path.Trim(' ', $Separator)
 
-		if ($Path -like "$Project${Separator}$scopeName${Separator}*")
+		if($Path.StartsWith($Project))
 		{
-			$Path = $Path.Substring("$Project${Separator}$scopeName${Separator}".Length)
+			if ($Path -like "$Project${Separator}$Scope${Separator}*")
+			{
+				$Path = $Path.Substring("$Project${Separator}$Scope${Separator}".Length)
+			}
+			if ($Path -like "$Project${Separator}*")
+			{
+				$Path = $Path.Substring($Path.IndexOf($Separator)+1)
+			}
+			elseif ($Path -eq $Project)
+			{
+				$Path = ''
+			}
 		}
-		if ($Path -like "$Project${Separator}*")
+		elseif ($Path.StartsWith($Scope))
 		{
-			$Path = $Path.Substring($Path.IndexOf($Separator))
+			if ($Path -like "$Scope${Separator}*")
+			{
+				$Path = $Path.Substring($Path.IndexOf($Separator)+1)
+			}
+			elseif ($Path -eq $Scope)
+			{
+				$Path = ''
+			}
 		}
-		elseif ($Path -eq $Project)
-		{
-			$Path = ''
-		}
-
+		
 		$newPath += $Path
 	}
 
-	if ($newPath.EndsWith($Separator) -and (-not $IncludeTrailingSeparator.IsPresent))
+	if ($IncludeTrailingSeparator.IsPresent)
 	{ 
-		$newPath = $newPath.TrimEnd($Separator)
+		$newPath += ''
 	}
+
+	$newPath = $newPath -join $Separator
 
 	_Log "Normalized path: $newPath"
 
-	return $newPath -replace '${Separator}${Separator}{2,}', $Separator
+	return $newPath
 }
