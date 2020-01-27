@@ -1,5 +1,6 @@
 Function Enter-TfsShell
 {
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     [CmdletBinding()]
     Param
     (
