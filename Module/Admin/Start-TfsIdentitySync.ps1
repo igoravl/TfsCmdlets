@@ -19,7 +19,7 @@ System.Uri
 Function Start-TfsIdentitySync
 {
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsPsCredentialType', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	[CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='Medium')]
 	Param
 	(
