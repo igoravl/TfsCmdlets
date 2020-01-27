@@ -18,9 +18,9 @@ Function Get-TfsServiceHookConsumer
 
     Process
     {
-        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+        GET_COLLECTION($tpc)
         GET_CLIENT('Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient')
 
-        $client.GetConsumersAsync().Result | Where-Object {($_Name -Like $Consumer) -or ($_.Id -Like $Consumer)}
+        return $client.GetConsumersAsync().Result | Where-Object {($_Name -Like $Consumer) -or ($_.Id -Like $Consumer)}
     }
 }

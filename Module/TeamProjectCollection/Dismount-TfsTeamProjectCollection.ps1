@@ -67,7 +67,7 @@ Function Dismount-TfsTeamProjectCollection
 
 	Process
 	{
-		$tpc = Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Credential
+		GET_COLLECTION($tpc) -Server $Server -Credential $Credential
 
 		if ($PSCmdlet.ShouldProcess($tpc.Name, "Detach Project Collection"))
 		{

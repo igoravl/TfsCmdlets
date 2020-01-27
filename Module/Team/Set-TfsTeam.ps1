@@ -104,7 +104,7 @@ Function Set-TfsTeam
         }
         else
         {
-            $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+            GET_COLLECTION($tpc)
         }
 
         $teamService = $tpc.GetService([type]'Microsoft.TeamFoundation.Client.TfsTeamService')

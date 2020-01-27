@@ -23,7 +23,7 @@ Function Get-TfsWorkItemLinkEndType
 
     Process
     {
-        $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+        GET_COLLECTION($tpc)
 
         return $tpc.WorkItemStore.WorkItemLinkTypes.LinkTypeEnds
     }

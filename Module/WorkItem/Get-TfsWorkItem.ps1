@@ -84,7 +84,7 @@ Function Get-TfsWorkItem
         }
         else
         {
-            $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+            GET_COLLECTION($tpc)
             $store = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
         }
 

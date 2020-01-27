@@ -48,7 +48,7 @@ Function Set-TfsWorkItem
         }
         else
         {
-            $tpc = Get-TfsTeamProjectCollection -Collection $Collection
+            GET_COLLECTION($tpc)
             $id = (Get-TfsWorkItem -WorkItem $WorkItem -Collection $Collection).Id
         }
 
