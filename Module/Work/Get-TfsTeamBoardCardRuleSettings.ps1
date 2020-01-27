@@ -1,5 +1,5 @@
 #define ITEM_TYPE Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings
-Function Get-TfsTeamBoardCardRuleSettings
+Function Get-TfsTeamBoardCardRuleSetting
 {
     [CmdletBinding()]
     [OutputType('ITEM_TYPE')]

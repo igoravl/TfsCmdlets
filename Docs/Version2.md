@@ -47,8 +47,8 @@ The new cmdlets (as of Aug 22, 2019) are:
 - Work (Teams Backlogs and Boards)
   - Get-TfsTeamBacklog
   - Get-TfsTeamBoard
-  - Get-TfsTeamBoardCardRuleSettings
-  - Set-TfsTeamBoardCardRuleSettings
+  - Get-TfsTeamBoardCardRuleSetting
+  - Set-TfsTeamBoardCardRuleSetting
   - Set-TfsWorkItemBoardStatus
 - Work Item
   - Get-TfsWorkItemQueryFolder
