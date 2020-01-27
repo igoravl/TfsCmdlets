@@ -35,73 +35,73 @@ $allFunctions | Foreach-Object {
 
         Context 'Custom Correctness Tests' {
 
-            $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
+            # $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
 
-            It 'Functions should have the "Tfs/AzDev" standard prefix' {
-                $cmd.Noun.Substring(0, 3) | Should Match 'Tfs|AzDev'
-            }
+            # It 'Functions should have the "Tfs/AzDev" standard prefix' {
+            #     $cmd.Noun.Substring(0, 3) | Should Match 'Tfs|AzDev'
+            # }
 
-            It 'Functions should have [CmdletBinding()] annotation' {
-                $cmdletBindingDefinition | Should Match $cmdletBindingRegexExpr
-            }
+            # It 'Functions should have [CmdletBinding()] annotation' {
+            #     $cmdletBindingDefinition | Should Match $cmdletBindingRegexExpr
+            # }
 
-            if ($cmd.Verb -match $valueReturningVerbs)
-            {
-                It "Functions with verbs matching '$valueReturningVerbs' should have [OutputType] set" {
-                    $cmd.OutputType.Count | Should BeGreaterThan 0
-                }
-            }
+            # if ($cmd.Verb -match $valueReturningVerbs)
+            # {
+            #     It "Functions with verbs matching '$valueReturningVerbs' should have [OutputType] set" {
+            #         $cmd.OutputType.Count | Should BeGreaterThan 0
+            #     }
+            # }
 
-            if ($cmd.Verb -match $stateChangingVerbs)
-            {
-                It "Functions with verbs matching '$stateChangingVerbs' should have ConfirmImpact set to at least Medium" {
-                    $cmdletBindingDefinition | Should Match 'ConfirmImpact=.*(Medium|High)'
-                }
-            }
+            # if ($cmd.Verb -match $stateChangingVerbs)
+            # {
+            #     It "Functions with verbs matching '$stateChangingVerbs' should have ConfirmImpact set to at least Medium" {
+            #         $cmdletBindingDefinition | Should Match 'ConfirmImpact=.*(Medium|High)'
+            #     }
+            # }
 
-            if ($cmd.Verb -match $destructiveVerbs)
-            {
-                It "Functions with verbs matching '$destructiveVerbs' should have ConfirmImpact set to High" {
-                    $cmdletBindingDefinition | Should Match 'ConfirmImpact=[''"]High[''"]'
-                }
-            }
+            # if ($cmd.Verb -match $destructiveVerbs)
+            # {
+            #     It "Functions with verbs matching '$destructiveVerbs' should have ConfirmImpact set to High" {
+            #         $cmdletBindingDefinition | Should Match 'ConfirmImpact=[''"]High[''"]'
+            #     }
+            # }
 
-            if ($cmd.Verb -match $passthruVerbs)
-            {
-                It "Functions with verbs matching '$passthruVerbs' should have -Passthru argument" {
-                    $cmd.Parameters.Keys.Contains('Passthru') | Should Be $true
-                }
-                It "Functions with verbs matching '$passthruVerbs' should check $Passthru in code" {
-                    $cmd.Definition -match 'if\s? \(\$Passthru\)'
-                }
-            }
+            # if ($cmd.Verb -match $passthruVerbs)
+            # {
+            #     It "Functions with verbs matching '$passthruVerbs' should have -Passthru argument" {
+            #         $cmd.Parameters.Keys.Contains('Passthru') | Should Be $true
+            #     }
+            #     It "Functions with verbs matching '$passthruVerbs' should check $Passthru in code" {
+            #         $cmd.Definition -match 'if\s? \(\$Passthru\)'
+            #     }
+            # }
 
-            $cmdDocs = Get-Help $cmd.Name
+            # $cmdDocs = Get-Help $cmd.Name
 
-            It 'Functions should have minimal documentation (Synopsis, description, examples)' {
-                $missingSections = @()
-                if (-not $cmdDocs.Synopsis) { $missingSections += 'Synopsis' }
-                if (-not $cmdDocs.Description) { $missingSections += 'Description' }
-                if (-not $cmdDocs.Examples) { $missingSections += 'Examples' }
-                ($missingSections -join ', ') | Should BeNullOrEmpty
-            }
+            # It 'Functions should have minimal documentation (Synopsis, description, examples)' {
+            #     $missingSections = @()
+            #     if (-not $cmdDocs.Synopsis) { $missingSections += 'Synopsis' }
+            #     if (-not $cmdDocs.Description) { $missingSections += 'Description' }
+            #     if (-not $cmdDocs.Examples) { $missingSections += 'Examples' }
+            #     ($missingSections -join ', ') | Should BeNullOrEmpty
+            # }
 
-            It 'Pipeline parameters and input types should be properly set' {
-                $pipelineBoundParam = ($cmd.Parameters.Values | Where-Object {$_.Attributes | Where-Object { $_.ValueFromPipeline -eq $true }})
-                $inputDocs = $cmdDocs.inputTypes
-                if ($pipelineBoundParam -or $hasInputDocs)
-                {
-                    $pipelineBoundParam | Should Not BeNullOrEmpty
-                    $inputDocs | Should Not BeNullOrEmpty
-                }
-            }
+            # It 'Pipeline parameters and input types should be properly set' {
+            #     $pipelineBoundParam = ($cmd.Parameters.Values | Where-Object {$_.Attributes | Where-Object { $_.ValueFromPipeline -eq $true }})
+            #     $inputDocs = $cmdDocs.inputTypes
+            #     if ($pipelineBoundParam -or $hasInputDocs)
+            #     {
+            #         $pipelineBoundParam | Should Not BeNullOrEmpty
+            #         $inputDocs | Should Not BeNullOrEmpty
+            #     }
+            # }
 
-            $parameterDocs = $cmdDocs.Parameters.parameter
+            # $parameterDocs = $cmdDocs.Parameters.parameter
 
-            It "Parameters should have a description" {
-                $paramsWithoutDesc = ($parameterDocs | Where-Object Name -NotIn @('WhatIf', 'Confirm') |  Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
-                $paramsWithoutDesc | Should BeNullOrEmpty
-            }
+            # It "Parameters should have a description" {
+            #     $paramsWithoutDesc = ($parameterDocs | Where-Object Name -NotIn @('WhatIf', 'Confirm') |  Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
+            #     $paramsWithoutDesc | Should BeNullOrEmpty
+            # }
 
             # if (($pdoc.defaultvalue -match '\*') )
             # {
