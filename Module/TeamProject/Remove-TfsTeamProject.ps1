@@ -24,6 +24,7 @@ As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamPro
 #>
 Function Remove-TfsTeamProject
 {
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact='High')]
     Param
     (
