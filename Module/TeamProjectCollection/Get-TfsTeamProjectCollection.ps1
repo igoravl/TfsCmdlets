@@ -32,9 +32,10 @@ Cmdlets in the TfsCmdlets module that operate on a collection level require a Tf
 #>
 Function Get-TfsTeamProjectCollection
 {
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
+	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	[CmdletBinding(DefaultParameterSetName='Get by collection')]
 	[OutputType('ITEM_TYPE')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	Param
 	(
 		[Parameter(Position=0, ParameterSetName="Get by collection")]
