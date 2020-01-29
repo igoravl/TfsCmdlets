@@ -71,8 +71,7 @@ Function Get-TfsTestPlan
             return $TestPlan
         }
 
-        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-        $tpc = $tp.Store.TeamProjectCollection
+        GET_TEAM_PROJECT($tp,$tpc)
         GET_CLIENT('Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlanHttpClient')
 
         return $client.GetTestPlansAsync(

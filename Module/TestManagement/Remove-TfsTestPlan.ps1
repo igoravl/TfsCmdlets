@@ -39,14 +39,7 @@ Function Remove-TfsTestPlan
 			$Project = $plan.Project.Name
 		}
 
-		$tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-		
-		if(-not $tp)
-		{
-            throw "Invalid or non-existent team project $Project"
-		}
-
-        $tpc = $tp.Store.TeamProjectCollection
+        GET_TEAM_PROECT($tp,$tpc)
         GET_CLIENT("$ns.TestPlanHttpClient")
 
         if ($PSCmdlet.ShouldProcess("Plan $($plan.Id) ('$($plan.Name)')", "Remove test plan"))
