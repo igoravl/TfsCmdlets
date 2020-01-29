@@ -116,7 +116,7 @@ Function Connect-TfsTeamProjectCollection
 			if ($PSBoundParameters.ContainsKey('Passthru')) { [void] $PSBoundParameters.Remove('Passthru') }
 
 			$creds = Get-TfsCredential @PSBoundParameters
-			GET_COLLECTION($tpc) -Server $Server -Credential $Creds
+			$tpc = Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Creds
 
 			if (-not $tpc -or ($tpc.Count -ne 1))
 			{
