@@ -3,10 +3,10 @@
 $allFunctions = Get-Command -Module TfsCmdlets | Where-Object CommandType -ne 'Alias' | Sort-Object { $_.Name }
 #$allAliases = Get-Command -Module TfsCmdlets | Where-Object CommandType -eq 'Alias'
 
-$destructiveVerbs = 'Dismount|Remove|Stop'
-$stateChangingVerbs = 'Import|Mount|Move|New|Rename|Set|Start'
-$passthruVerbs = '^Connect|Copy|^Move|New|Rename'
-$valueReturningVerbs = "Get|$passthruVerbs"
+$destructiveVerbs = '^Dismount|^Remove|^Stop'
+$stateChangingVerbs = '^Import|^Mount|^Move|^New|^Rename|^Set|^Start'
+$passthruVerbs = '^Connect|^Copy|^Move|^New|^Rename'
+$valueReturningVerbs = "^Get|$passthruVerbs"
 $cmdletBindingRegexExpr = '\[CmdletBinding.+\]'
 $cmdletBindingRegex = [regex] $cmdletBindingRegexExpr
 
@@ -19,19 +19,19 @@ $allFunctions | Foreach-Object {
         $cmd = $_
         $cmdDefinitionPath = (Get-ChildItem (Join-Path $projectDir "$cmd.ps1") -Recurse).FullName
 
-        # Context 'Standard PSScriptAnalyzer Tests' {
+        Context 'Standard PSScriptAnalyzer Tests' {
 
-        #     $result = Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules
+            $result = Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules
 
-        #     foreach($rule in $analyzerRules)
-        #     {
-        #         It "Should pass $rule" {
-        #             $failure = $result | Where-Object RuleName -eq $rule.RuleName
-        #             $locInfo = ($failure | Foreach-Object { "`n$($_.ScriptPath): $($_.Line)"}) -join ''
-        #             $locInfo | Should BeNullOrEmpty
-        #         }
-        #     }
-        # }
+            foreach($rule in $analyzerRules)
+            {
+                It "Should pass $rule" {
+                    $failure = $result | Where-Object RuleName -eq $rule.RuleName
+                    $locInfo = ($failure | Foreach-Object { "`n$($_.ScriptPath): $($_.Line)"}) -join ''
+                    $locInfo | Should BeNullOrEmpty
+                }
+            }
+        }
 
         Context 'Custom Correctness Tests' {
 
