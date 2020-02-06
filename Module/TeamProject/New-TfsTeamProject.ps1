@@ -2,6 +2,11 @@
 .SYNOPSIS
 Creates a new team project. 
 
+.INPUTS
+Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+System.String
+System.Uri
+
 #>
 Function New-TfsTeamProject
 {
@@ -34,63 +39,65 @@ Function New-TfsTeamProject
 
     Process
     {
-        if($PSCmdlet.ShouldProcess($Project, 'Create team project'))
+        if(-not $PSCmdlet.ShouldProcess($Project, 'Create team project'))
         {
-            $tpc = Get-TfsTeamProjectCollection $Collection
-            $template = Get-TfsProcessTemplate -Collection $tpc -Name $ProcessTemplate
-            GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient')
+            return
+        }
 
-            $tpInfo = New-Object 'Microsoft.TeamFoundation.Core.WebApi.TeamProject'
-            $tpInfo.Name = $Project
-            $tpInfo.Description = $Description
-            $tpInfo.Capabilities = New-Object 'System.Collections.Generic.Dictionary[[string],System.Collections.Generic.Dictionary[[string],[string]]]'
+        $tpc = Get-TfsTeamProjectCollection $Collection
+        $template = Get-TfsProcessTemplate -Collection $tpc -Name $ProcessTemplate
+        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient')
 
-            $tpInfo.Capabilities.Add('versioncontrol', (New-Object 'System.Collections.Generic.Dictionary[[string],[string]]'))
-            $tpInfo.Capabilities['versioncontrol'].Add('sourceControlType', $SourceControl)
+        $tpInfo = New-Object 'Microsoft.TeamFoundation.Core.WebApi.TeamProject'
+        $tpInfo.Name = $Project
+        $tpInfo.Description = $Description
+        $tpInfo.Capabilities = New-Object 'System.Collections.Generic.Dictionary[[string],System.Collections.Generic.Dictionary[[string],[string]]]'
 
-            $tpInfo.Capabilities.Add('processTemplate', (New-Object 'System.Collections.Generic.Dictionary[[string],[string]]'))
-            $tpInfo.Capabilities['processTemplate'].Add('templateTypeId', ([xml]$template.Metadata).metadata.version.type)
+        $tpInfo.Capabilities.Add('versioncontrol', (New-Object 'System.Collections.Generic.Dictionary[[string],[string]]'))
+        $tpInfo.Capabilities['versioncontrol'].Add('sourceControlType', $SourceControl)
 
-            # Trigger the project creation
+        $tpInfo.Capabilities.Add('processTemplate', (New-Object 'System.Collections.Generic.Dictionary[[string],[string]]'))
+        $tpInfo.Capabilities['processTemplate'].Add('templateTypeId', ([xml]$template.Metadata).metadata.version.type)
 
-            $token = $client.QueueCreateProject($tpInfo).Result
+        # Trigger the project creation
 
-            if (-not $token)
-            {
-                throw "Error queueing team project creation: $($client.LastResponseContext.Exception.Message)"
-            }
+        $token = $client.QueueCreateProject($tpInfo).Result
 
-            # Wait for the operation to complete
+        if (-not $token)
+        {
+            throw "Error queueing team project creation: $($client.LastResponseContext.Exception.Message)"
+        }
 
-            GET_CLIENT('Microsoft.VisualStudio.Services.Operations.OperationsHttpClient')
+        # Wait for the operation to complete
 
+        GET_CLIENT('Microsoft.VisualStudio.Services.Operations.OperationsHttpClient')
+
+        $opsToken = $operationsClient.GetOperation($token.Id).Result
+
+        while (
+            ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded) -and
+            ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Failed) -and 
+            ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Cancelled))
+        {
+            Start-Sleep -Seconds 2
             $opsToken = $operationsClient.GetOperation($token.Id).Result
+        }
 
-            while (
-                ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded) -and
-                ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Failed) -and 
-                ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Cancelled))
-            {
-                Start-Sleep -Seconds 2
-                $opsToken = $operationsClient.GetOperation($token.Id).Result
-            }
+        if ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded)
+        {
+            throw "Error creating team project $Project"
+        }
 
-            if ($opsToken.Status -ne [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded)
-            {
-                throw "Error creating team project $Project"
-            }
+        # Force a metadata cache refresh prior to retrieving the newly created project
 
-            # Force a metadata cache refresh prior to retrieving the newly created project
+        $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
+        $wiStore.RefreshCache()
 
-            $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-            $wiStore.RefreshCache()
+        $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
 
-            $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
-
-            if ($Passthru)
-            {
-                return $tp
-            }
+        if ($Passthru)
+        {
+            return $tp
         }
     }
 }

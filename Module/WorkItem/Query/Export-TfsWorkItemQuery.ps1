@@ -109,7 +109,7 @@ Function Export-TfsWorkItemQuery
             }
         }
 
-		$queries = Get-TfsWorkItemQuery -Query $Query -Scope $Scope -Project $Project -Collection $Collection
+		$queries = Get-TfsWorkItemQueryItem -ItemType Query -Query $Query -Scope $Scope -Project $Project -Collection $Collection
         
         if (-not $queries)
         {

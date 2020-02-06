@@ -15,6 +15,7 @@ Function Rename-TfsWorkItemTag
 {
 
     [CmdletBinding(ConfirmImpact='Medium', SupportsShouldProcess=$true)]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0,ValueFromPipeline=$true)]

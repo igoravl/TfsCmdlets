@@ -10,6 +10,10 @@ HELP_PARAM_PROJECT
 
 .PARAMETER Collection
 HELP_PARAM_COLLECTION
+
+.INPUTS
+Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
+System.Int32
 #>
 Function Set-TfsWorkItem
 {

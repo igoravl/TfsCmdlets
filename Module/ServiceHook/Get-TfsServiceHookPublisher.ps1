@@ -1,6 +1,6 @@
 Function Get-TfsServiceHookPublisher
 {
-    [Cmdletbinding()]
+    [CmdletBinding()]
     [OutputType('Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher')]
     Param
     (

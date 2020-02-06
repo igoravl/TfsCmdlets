@@ -218,7 +218,7 @@ Function _GetWorkItemByWiql($QueryText, $Macros, $Project, $store)
 {
 	if ($QueryText -notlike 'select*')
 	{
-		$q = Get-TfsWorkItemQuery -Query $QueryText -Project $Project
+		$q = Get-TfsWorkItemQueryItem -ItemType Query -Query $QueryText -Project $Project
 
 		if (-not $q)
 		{

@@ -11,6 +11,10 @@ HELP_PARAM_PROJECT
 .PARAMETER Collection
 HELP_PARAM_COLLECTION
 
+.INPUTS
+Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+System.String
+
 .EXAMPLE
 Start-TfsBuild -BuildDefinition "My Build Definition" -Project "MyTeamProject"
 This example queue a Build Definition "My Build Definition" of Team Project "MyTeamProject".

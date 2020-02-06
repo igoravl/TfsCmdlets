@@ -1,6 +1,6 @@
 Function Get-TfsServiceHookConsumer
 {
-    [Cmdletbinding()]
+    [CmdletBinding()]
     [OutputType('Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer')]
     Param
     (

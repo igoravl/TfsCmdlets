@@ -1,4 +1,4 @@
-Function Get-AzDevOrganization
+Function Get-AzdoOrganization
 {
 	[CmdletBinding(DefaultParameterSetName='Get by collection')]
 	[OutputType('Microsoft.TeamFoundation.Client.TfsTeamProjectCollection')]

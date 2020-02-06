@@ -32,7 +32,11 @@ Function Move-TfsWorkItem
 
         [Parameter()]
         [object]
-        $Collection
+        $Collection,
+
+        [Parameter()]
+        [switch]
+        $Passthru
     )
 
     Begin
@@ -50,13 +54,13 @@ Function Move-TfsWorkItem
         
         if ($Area)
         {
-            $targetArea = Get-TfsArea $Area -Project $targetTp
+            $targetArea = Get-TfsClassificationNode -StructureGroup Areas -Node $Area -Project $targetTp
 
             if (-not $targetArea)
             {
                 if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create area path '$Area'"))
                 {
-                    $targetArea = New-TfsArea $Area -Project $targetTp -Passthru
+                    $targetArea = New-TfsClassificationNode -StructureGroup Areas -Node $Area -Project $targetTp -Passthru
                 }
             }
 
@@ -65,18 +69,18 @@ Function Move-TfsWorkItem
         else
         {
             _Log 'Area not informed. Moving to root iteration.'
-            $targetArea = Get-TfsArea '\' -Project $targetTp
+            $targetArea = Get-TfsClassificationNode -StructureGroup Areas -Node '\' -Project $targetTp
         }
 
         if ($Iteration)
         {
-            $targetIteration = Get-TfsIteration $Iteration -Project $targetTp
+            $targetIteration = Get-TfsClassificationNode -StructureGroup Iterations -Node $Iteration -Project $targetTp
 
             if (-not $targetIteration)
             {
                 if ($PSCmdlet.ShouldProcess("Team Project '$($targetTp.Name)'", "Create iteration path '$Iteration'"))
                 {
-                    $targetIteration = New-TfsIteration $Iteration -Project $targetTp -Passthru
+                    $targetIteration = New-TfsClassificationNode -StructureGroup Iterations -Node $Iteration -Project $targetTp -Passthru
                 }
             }
 
@@ -85,7 +89,7 @@ Function Move-TfsWorkItem
         else
         {
             _Log 'Iteration not informed. Moving to root iteration.'
-            $targetIteration = Get-TfsIteration '\' -Project $targetTp
+            $targetIteration = Get-TfsClassificationNode -StructureGroup Iterations -Node '\' -Project $targetTp
         }
 
         $targetArea = "$($targetTp.Name)$($targetArea.RelativePath)"
@@ -136,7 +140,10 @@ Function Move-TfsWorkItem
 
             CHECK_ASYNC($task,$result,'Error moving work item')
 
-            return Get-TfsWorkItem $result.Id -Collection $tpc
+            if($Passthru.IsPresent)
+            {
+                return Get-TfsWorkItem $result.Id -Collection $tpc
+            }
         }
     }
 }

@@ -17,6 +17,7 @@
 Function Get-TfsIdentity
 {
     [CmdletBinding()]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0,Mandatory=$true,ParameterSetName='Get Identity')]

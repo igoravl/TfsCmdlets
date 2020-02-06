@@ -1,6 +1,7 @@
 Function Get-TfsVersion
 {
     [CmdletBinding()]
+    [OutputType('PSCustomObject')]
     Param
     (
         [Parameter(ValueFromPipeline=$true)]

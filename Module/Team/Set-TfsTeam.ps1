@@ -187,7 +187,7 @@ Function Set-TfsTeam
         if ($BacklogIteration -and $PSCmdlet.ShouldProcess($Team, "Set the team's backlog iteration to $BacklogIteration"))
         {
             _Log "Setting backlog iteration to $BacklogIteration"
-            $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
+            $iteration = Get-TfsClassificationNode -StructureGroup Iterations -Iteration $BacklogIteration -Project $Project -Collection $Collection
             $patch.BacklogIteration = [guid] $iteration.Identifier
             $patch.DefaultIteration = [guid] $iteration.Identifier
 
@@ -197,7 +197,7 @@ Function Set-TfsTeam
         if ($DefaultIteration -and $PSCmdlet.ShouldProcess($Team, "Set the team's default iteration to $DefaultIteration"))
         {
             _Log "Setting default iteration to $DefaultIteration"
-            $iteration = Get-TfsIteration -Iteration $BacklogIteration -Project $Project -Collection $Collection
+            $iteration = Get-TfsClassificationNode -StructureGroup Iterations -Iteration $BacklogIteration -Project $Project -Collection $Collection
             $patch.DefaultIteration = [guid] $iteration.Identifier
 
             $isDirty = $true

@@ -1,5 +1,10 @@
+#define ITEM_TYPE Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Notification
+<#
+#>
 Function Get-TfsServiceHookNotificationHistory
 {
+    [CmdletBinding()]
+    [OutputType('ITEM_TYPE')]
     Param
     (
         [Parameter(Position=0, ValueFromPipeline=$true, Mandatory=$true)]
