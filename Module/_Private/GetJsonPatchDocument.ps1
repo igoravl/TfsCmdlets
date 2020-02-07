@@ -1,7 +1,7 @@
 Function _GetJsonPatchDocument
 {
     [CmdletBinding()]
-    [OutputType([Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchDocument])]
+    [OutputType('Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchDocument')]
     Param
     (
         $operations
@@ -17,10 +17,12 @@ Function _GetJsonPatchDocument
             continue
         }
 
-        $jsonOp = New-Object 'Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchOperation'
-        $jsonOp.Operation = $op.Operation
-        $jsonOp.Path = $op.Path
-        $jsonOp.Value = $op.Value
+        $jsonOp = New-Object 'Microsoft.VisualStudio.Services.WebApi.Patch.Json.JsonPatchOperation' -Property @{
+            Operation = $op.Operation
+            From = $op.From
+            Path = $op.Path
+            Value = $op.Value
+        }
 
         $doc.Add($jsonOp)
     }
