@@ -90,3 +90,5 @@ Function Connect-TfsTeamProject
 		}
 	}
 }
+
+Set-Alias -Name ctfstp -Value Connect-TfsTeamProject

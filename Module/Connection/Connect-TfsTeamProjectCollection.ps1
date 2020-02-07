@@ -150,3 +150,7 @@ Function Connect-TfsTeamProjectCollection
 		}
 	}
 }
+
+Set-Alias -Name Connect-AzdoOrganization -Value Connect-TfsTeamProjectCollection
+Set-Alias -Name Connect-TfsOrganization -Value Connect-TfsTeamProjectCollection
+Set-Alias -Name ctfs -Value Connect-TfsTeamProjectCollection

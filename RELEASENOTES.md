@@ -24,6 +24,21 @@ Now both **TfsCmdlets.Types.ps1xml** and **TfsCmdlets.Format.ps1xml** files are 
 
 This improvement is way overdue, but now we have the first set of argument completers. Any cmdlets with the arguments `-Server`, `-Collection` and `-Project` can be "Tab-completed".
 
+#### New aliases for Connect-* cmdlets
+
+Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team you can use optionally use one of the aliases below:
+
+* Connect-TfsConfigurationServer
+  * ctfssvr
+* Connect-TfsTeamProjectCollection
+  * Connect-AzdoOrganization
+  * Connect-TfsOrganization
+  * ctfs
+* Connect-TfsTeamProject
+  * ctfstp
+* Connect-TfsTeam
+  * ctfsteam
+
 ### Bug fixes
 
 - Fix iteration processing in Set-TfsTeam ([72f0fc0](https://github.com/igoravl/TfsCmdlets/pull/98/commits/72f0fc0cdcba7d41c8341efd0b0304303058907e)), ([e15d1ee](https://github.com/igoravl/TfsCmdlets/pull/98/commits/e15d1ee0bff2e8a5bd20b26e11d1b41413eb79b9))
