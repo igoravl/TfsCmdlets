@@ -10,5 +10,18 @@ if (-not $hasBuild)
     throw "Module TfsCmdlets not found at $modulePath. Build project prior to running tests."
 }
 
-Get-Module TfsCmdlets | Remove-Module
-Import-Module (Join-Path $modulePath 'TfsCmdlets.psd1') -Force
+$mod = (Get-Module TfsCmdlets)
+$loadMod = (-not $mod)
+
+if($mod -and ($mod.Path -ne (Join-Path $modulePath 'TfsCmdlets.psm1')))
+{
+    Write-Host "TestSetup: Removing module" -ForegroundColor Cyan
+    Get-Module TfsCmdlets | Remove-Module
+    $loadMod = $true
+}
+
+if($loadMod)
+{
+    Write-Host "TestSetup: Importing module" -ForegroundColor Cyan
+    Import-Module $modPath -Force
+}

@@ -21,12 +21,9 @@ $allFunctions | Foreach-Object {
 
         Context 'Standard PSScriptAnalyzer Tests' {
 
-            $result = Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules
-
-            foreach($rule in $analyzerRules)
-            {
-                It "Should pass $rule" {
-                    $failure = $result | Where-Object RuleName -eq $rule.RuleName
+            Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules | ForEach-Object {
+                $result = $_
+                It "Should pass $($result.RuleName)" {
                     $locInfo = ($failure | Foreach-Object { "`n$($_.ScriptPath): $($_.Line)"}) -join ''
                     $locInfo | Should BeNullOrEmpty
                 }
