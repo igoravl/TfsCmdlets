@@ -1,7 +1,7 @@
 Function _TfsCmdletsPrompt
 {
     $promptPrefix = '[Not connected]'
-    $defaultPsPrompt = " $($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
+    $defaultPsPrompt = "$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
     $backColor = 'DarkGray'
     $foreColor = 'White'
 
@@ -11,6 +11,8 @@ Function _TfsCmdletsPrompt
     {
         $tpc = (Get-TfsTeamProjectCollection -Current)
         $tp = (Get-TfsTeamProject -Current)
+        $t = (Get-TfsTeam -Current)
+
         $serverName = $server.Name
         $userName = $server.AuthorizedIdentity.UniqueName
 
@@ -45,6 +47,11 @@ Function _TfsCmdletsPrompt
             $promptPrefix += "/$($tp.Name)"
         }
 
+        if ($t)
+        {
+            $promptPrefix += "/$($t.Name)"
+        }
+
         if($userName)
         {
             $promptPrefix += " ($userName)"
@@ -54,7 +61,7 @@ Function _TfsCmdletsPrompt
 
     }
  
-    Write-Host -Object $promptPrefix -NoNewline -ForegroundColor $foreColor -BackgroundColor $backColor
+    Write-Host -Object $promptPrefix -ForegroundColor $foreColor -BackgroundColor $backColor # -NoNewline
 
     return $defaultPsPrompt
 }

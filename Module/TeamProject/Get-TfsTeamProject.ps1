@@ -61,9 +61,9 @@ Function Get-TfsTeamProject
 
     Process
     {
-        if ($Current)
+        if ($Current.IsPresent -or (-not $Project))
         {
-            return $script:TfsProjectConnection
+			return [TfsCmdlets.CurrentConnections]::Project
         }
 
 		CHECK_ITEM($Project)
@@ -92,14 +92,6 @@ Function Get-TfsTeamProject
             }
 
             return $wiStore.Projects[$Project]
-		}
-
-		if ($null -eq $Project)
-		{
-			if ($script:TfsProjectConnection)
-			{
-				return $script:TfsProjectConnection
-			}
 		}
 
 		throw "No TFS team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet."

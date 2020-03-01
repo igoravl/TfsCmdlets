@@ -16,31 +16,35 @@
 #>
 Function Get-TfsTeam
 {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='Get by team')]
     [OutputType('ITEM_TYPE')]
     param
     (
-        [Parameter(Position=0)]
+        [Parameter(Position=0, ParameterSetName='Get by team')]
         [Alias("Name")]
         [SupportsWildcards()]
         [object]
         $Team = '*',
 
-        [Parameter()]
+        [Parameter(ParameterSetName='Get by team')]
         [switch]
         $IncludeMembers,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='Get by team')]
         [switch]
         $IncludeSettings,
 
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline=$true, ParameterSetName='Get by team')]
         [object]
         $Project,
 
-        [Parameter()]
+        [Parameter(ParameterSetName='Get by team')]
         [object]
-        $Collection
+        $Collection,
+
+		[Parameter(Mandatory=$true, ParameterSetName="Get current")]
+        [switch]
+        $Current
     )
 
     Begin
@@ -50,6 +54,11 @@ Function Get-TfsTeam
 
     Process
     {
+        if($Current.IsPresent -or (-not $Team))
+        {
+			return [TfsCmdlets.CurrentConnections]::Team
+        }
+
         CHECK_ITEM($Team)
 
         GET_TEAM_PROJECT($tp,$tpc)

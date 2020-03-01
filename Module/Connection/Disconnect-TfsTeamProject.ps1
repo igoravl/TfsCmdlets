@@ -17,11 +17,11 @@ Function Disconnect-TfsTeamProject
     Param
     (
     )
-    Process
-    {
-        if ($script:TfsProjectConnection)
-        {
-            Remove-Variable -Name TfsProjectConnection -Scope Script
-        }
-    }
+
+    End
+	{
+        Disconnect-TfsTeam
+
+        [TfsCmdlets.CurrentConnections]::Project = $null
+	}
 }

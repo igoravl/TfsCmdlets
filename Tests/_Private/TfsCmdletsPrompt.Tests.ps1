@@ -4,7 +4,7 @@ InModuleScope 'TfsCmdlets' {
 
     Describe '_TfsCmdletsPrompt' {
 
-        $defaultPsPrompt = " $($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
+        $defaultPsPrompt = "$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
 
         $contexts = @(
             @{Server = $null; 
@@ -13,26 +13,26 @@ InModuleScope 'TfsCmdlets' {
                 Expected = '[AzDev:/orgname (foo@bar.com)]'},
             @{Server = 'https://dev.azure.com/orgname'   ; Name = 'dev.azure.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = $null     ; User = 'foo@bar.com'; 
                 Expected = '[AzDev:/orgname/projname (foo@bar.com)]'},
-            # @{Server = 'https://dev.azure.com/orgname'   ; Name = 'dev.azure.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = 'teamname'; User = 'foo@bar.com'; 
-            #     Expected = '[AzDev:/orgname/projname/teamname (foo@bar.com)]'},
+            @{Server = 'https://dev.azure.com/orgname'   ; Name = 'dev.azure.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = 'teamname'; User = 'foo@bar.com'; 
+                Expected = '[AzDev:/orgname/projname/teamname (foo@bar.com)]'},
             @{Server = 'https://orgname.visualstudio.com'; Name = 'orgname.visualstudio.com'; Collection = 'DefaultCollection'; Project = $null     ; Team = $null     ; User = 'foo@bar.com'; 
                 Expected = '[AzDev:/orgname (foo@bar.com)]'},
             @{Server = 'https://orgname.visualstudio.com'; Name = 'orgname.visualstudio.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = $null     ; User = 'foo@bar.com'; 
                 Expected = '[AzDev:/orgname/projname (foo@bar.com)]'},
-            # @{Server = 'https://orgname.visualstudio.com'; Name = 'orgname.visualstudio.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = 'teamname'; User = 'foo@bar.com'; 
-            #     Expected = ''},
+            @{Server = 'https://orgname.visualstudio.com'; Name = 'orgname.visualstudio.com'; Collection = 'DefaultCollection'; Project = 'projname'; Team = 'teamname'; User = 'foo@bar.com'; 
+                Expected = '[AzDev:/orgname/projname/teamname (foo@bar.com)]'},
             @{Server = 'http://tfs:8080/collectioname'   ; Name = 'tfs'; Collection = 'collectionname'   ; Project = $null     ; Team = $null     ; User = 'BAR\foo'    ; 
                 Expected = '[TFS:/tfs/collectionname (BAR\foo)]'},
             @{Server = 'http://tfs:8080/collectioname'   ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = $null     ; User = 'BAR\foo'    ; 
                 Expected = '[TFS:/tfs/collectionname/projname (BAR\foo)]'},
-            # @{Server = 'http://tfs:8080/collectioname'   ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = 'teamname'; User = 'BAR\foo'    ; 
-            #     Expected = ''},
+            @{Server = 'http://tfs:8080/collectioname'   ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = 'teamname'; User = 'BAR\foo'    ; 
+                Expected = '[TFS:/tfs/collectionname/projname/teamname (BAR\foo)]'},
             @{Server = 'http://tfs:8080/'                ; Name = 'tfs'; Collection = 'collectionname'   ; Project = $null     ; Team = $null     ; User = 'BAR\foo'    ; 
                 Expected = '[TFS:/tfs/collectionname (BAR\foo)]'},
             @{Server = 'http://tfs:8080/'                ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = $null     ; User = 'BAR\foo'    ; 
                 Expected = '[TFS:/tfs/collectionname/projname (BAR\foo)]'}
-            # @{Server = 'http://tfs:8080/'                ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = 'teamname'; User = 'BAR\foo'    ; 
-            #     Expected = ''}
+            @{Server = 'http://tfs:8080/'                ; Name = 'tfs'; Collection = 'collectionname'   ; Project = 'projname'; Team = 'teamname'; User = 'BAR\foo'    ; 
+                Expected = '[TFS:/tfs/collectionname/projname/teamname (BAR\foo)]'}
         )
 
         foreach ($ctxData in $contexts) 

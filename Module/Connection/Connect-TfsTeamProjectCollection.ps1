@@ -92,12 +92,6 @@ Function Connect-TfsTeamProjectCollection
 		$Passthru
 	)
 
-	Begin
-	{
-		USE_PSCORE_ALTERNATIVE(Connect-AzDevOrganization)
-		REQUIRES(Microsoft.TeamFoundation.Client)
-	}
-
 	Process
 	{
 		$tpc = $null
@@ -110,6 +104,15 @@ Function Connect-TfsTeamProjectCollection
 		else
 		{
 			_Log "Connecting with $($PSCmdlet.ParameterSetName)"
+
+			if($Collection -is [string] -and ($MyInvocation.InvocationName -eq 'Connect-AzdoOrganization'))
+			{
+				if(-not [uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute))
+				{
+					_Log "Converting collection name '$Collection' to URL 'https://dev.azure.com/$Collection'"
+					$Collection = "https://dev.azure.com/$Collection"
+				}
+			}
 
 			if ($PSBoundParameters.ContainsKey('Collection')) { [void] $PSBoundParameters.Remove('Collection') }
 			if ($PSBoundParameters.ContainsKey('Server')) { [void] $PSBoundParameters.Remove('Server') }
@@ -134,13 +137,9 @@ Function Connect-TfsTeamProjectCollection
 			}
 		}
 
-		$script:TfsTeamConnection = $null
-		$script:TfsProjectConnection = $null
-		$script:TfsTpcConnection = $tpc
-		$script:TfsServerConnection = $tpc.ConfigurationServer
-
-		$script:AzDevTeamConnection = $null
-		$script:AzDevProjectConnection = $null
+		[TfsCmdlets.CurrentConnections]::Reset()
+		[TfsCmdlets.CurrentConnections]::Server = $tpc.ConfigurationServer
+		[TfsCmdlets.CurrentConnections]::Collection = $tpc
 
 		_Log "Connected to $($tpc.Uri)"
 

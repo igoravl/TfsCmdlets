@@ -37,7 +37,6 @@ Function Connect-TfsTeamProject
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
 	[OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.Project')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
@@ -79,10 +78,12 @@ Function Connect-TfsTeamProject
 			throw "Error connecting to team project $Project"
 		}
 
-		$script:TfsTeamConnection = $null
-		$script:TfsProjectConnection = $tp
-		$script:TfsTpcConnection = $tp.Store.TeamProjectCollection
-		$script:TfsServerConnection = $script:TfsTpcConnection.ConfigurationServer
+		$tpc = $tp.Store.TeamProjectCollection
+
+		[TfsCmdlets.CurrentConnections]::Reset()
+		[TfsCmdlets.CurrentConnections]::Server = $tpc.ConfigurationServer
+		[TfsCmdlets.CurrentConnections]::Collection = $tpc
+		[TfsCmdlets.CurrentConnections]::Project = $tp
 
 		if ($Passthru)
 		{

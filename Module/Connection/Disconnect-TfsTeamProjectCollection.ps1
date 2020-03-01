@@ -13,17 +13,14 @@ Disconnects from the currently connected TFS team project collection
 Function Disconnect-TfsTeamProjectCollection
 {
     [CmdletBinding()]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     Param
     (
     )
-	Process
+
+    End
 	{
         Disconnect-TfsTeamProject
 
-        if ($script:TfsTpcConnection)
-        {
-		    Remove-Variable -Name TfsTpcConnection -Scope Script
-		}
+        [TfsCmdlets.CurrentConnections]::Collection = $null
 	}
 }

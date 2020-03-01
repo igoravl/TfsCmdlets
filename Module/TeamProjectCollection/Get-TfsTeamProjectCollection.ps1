@@ -63,9 +63,9 @@ Function Get-TfsTeamProjectCollection
 
 	Process
 	{
-		if (($Current.IsPresent -or (-not $Collection)) -and ($script:TfsTpcConnection))
+		if ($Current.IsPresent -or (-not $Collection))
         {
-            return $script:TfsTpcConnection
+			return [TfsCmdlets.CurrentConnections]::Collection
 		}
 		
 		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])

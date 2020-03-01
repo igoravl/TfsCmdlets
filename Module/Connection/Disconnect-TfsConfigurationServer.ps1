@@ -13,17 +13,12 @@ Disconnects from the currently connected TFS configuration server
 Function Disconnect-TfsConfigurationServer
 {
     [CmdletBinding()]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
     Param
     (
-    )
-	Process
+	)
+	
+	End
 	{
-        Disconnect-TfsTeamProjectCollection
-
-		if ($script:TfsServerConnection)
-        {
-		    Remove-Variable -Name TfsServerConnection -Scope Script
-		}
+		[TfsCmdlets.CurrentConnections]::Reset()
 	}
 }

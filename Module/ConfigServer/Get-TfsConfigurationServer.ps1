@@ -21,7 +21,6 @@ Function Get-TfsConfigurationServer
 {
 	[CmdletBinding(DefaultParameterSetName='Get by server')]
 	[OutputType('Microsoft.TeamFoundation.Client.TfsConfigurationServer')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
 	Param
@@ -44,7 +43,7 @@ Function Get-TfsConfigurationServer
 	{
 		if ($Current.IsPresent -or (-not $Server))
 		{
-			return $script:TfsServerConnection
+			return [TfsCmdlets.CurrentConnections]::Server
         }
 
 		if ($Server -is [Microsoft.TeamFoundation.Client.TfsConfigurationServer])

@@ -79,10 +79,8 @@ Function Connect-TfsConfigurationServer
 			throw "Error connecting to TFS"
 		}
 
-		$script:TfsTeamConnection = $null
-		$script:TfsProjectConnection = $null
-		$script:TfsTpcConnection = $null
-		$script:TfsServerConnection = $configServer
+		[TfsCmdlets.CurrentConnections]::Reset()
+		[TfsCmdlets.CurrentConnections]::Server = $configServer
 
 		if ($Passthru)
 		{
