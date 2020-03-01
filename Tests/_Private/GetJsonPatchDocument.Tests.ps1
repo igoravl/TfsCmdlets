@@ -8,13 +8,13 @@ InModuleScope 'TfsCmdlets' {
             [ordered]@{
                 Operation = 'Add'
                 Path = '/bar'
-                From = $null
+                From = ''
                 Value = 'baz'
             },
             [ordered]@{
                 Operation = 'Remove'
                 Path = '/bar'
-                From = $null
+                From = ''
                 Value = 'baz'
             }
         )
@@ -23,20 +23,20 @@ InModuleScope 'TfsCmdlets' {
             [ordered]@{
                 Operation = 0
                 Path = '/bar'
-                From = $null
+                From = ''
                 Value = 'baz'
             },
             [ordered]@{
                 Operation = 1
                 Path = '/bar'
-                From = $null
+                From = ''
                 Value = 'baz'
             }
         )
 
         Context 'Unit Tests' {
             It 'Should create a document' {
-                _GetJsonPatchDocument -Operations $actual | ConvertTo-Json | Should Be ($expected | ConvertTo-Json)
+                _GetJsonPatchDocument -Operations $actual | ConvertTo-Json -Compress | Should Be ($expected | ConvertTo-Json -Compress)
             }
         }
     }
