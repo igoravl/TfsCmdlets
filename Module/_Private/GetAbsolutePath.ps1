@@ -3,23 +3,21 @@ function _GetAbsolutePath
     [CmdletBinding()]
     Param
     (
+        [string]
         $Path, 
 
-        [switch]$CreateFolder
+        [switch]
+        $CreateFolder
     )
 
-    Process
+    $Path = [System.IO.Path]::Combine($pwd.Path, $Path)
+    $Path = [System.IO.Path]::GetFullPath($Path)
+    $folder = Split-Path $Path -Parent
+
+    if ((-not (Test-Path $folder -PathType Container)) -and ($CreateFolder.IsPresent))
     {
-        $Path = [System.IO.Path]::Combine($pwd.Path, $Path)
-        $Path = [System.IO.Path]::GetFullPath($Path)
-
-        $folder = Split-Path $Path -Parent
-
-        if ((-not (Test-Path $folder)) -and ($CreateFolder.IsPresent))
-        {
-            New-Item $folder -ItemType Directory -Force | _Log
-        }
-
-        return $Path
+        New-Item $folder -ItemType Directory -Force | _Log
     }
+
+    return $Path
 }
