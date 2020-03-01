@@ -8,7 +8,7 @@
 
 The new `Enter-TfsShell` and `Exit-TfsShell` cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
 
-`Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API in those scenarios/APIs not yet covered by TfsCmdlets.
+`Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API for scenarios/APIs not yet covered by TfsCmdlets.
 
 Lastly, `Get-TfsVersion` returns version information on a given team project collection / organization. Currently, only Azure DevOps Services organizations are supported. Support for TFS and Azure DevOps Server will be added in a future release.
 
@@ -45,6 +45,8 @@ Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team 
 - Fix build when in Release configuration ([6a795ce](https://github.com/igoravl/TfsCmdlets/pull/98/commits/6a795ce49331e37fbd7319f26c1e452d0135a7f6))
 - Fix classification node (area/iteration) retrieval for old APIs ([0df3616](https://github.com/igoravl/TfsCmdlets/pull/98/commits/0df3616868a15054125261555ecefed1d830d599))
 - Fix TFS Client Library version retrieval ([a9ac849](https://github.com/igoravl/TfsCmdlets/pull/98/commits/a9ac849643f5738e9616ae5c01a12c93c4d1345c))
+- Fix Azure DevOps Shell command prompt
+- Fix Disconnect-* issues
 
 ### Known issues
 
