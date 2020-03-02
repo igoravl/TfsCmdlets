@@ -111,10 +111,9 @@ Function Invoke-TfsRestApi
             
             if($UseHost)
             {
-                if($UseHost -notlike '*.dev.azure.com')
+                if($UseHost.IndexOf('.') -eq -1)
                 {
                     _Log "Converting service prefix $UseHost to $UseHost.dev.azure.com"
-
                     $UseHost += '.dev.azure.com'
                 }
 
