@@ -8,13 +8,17 @@ Function Get-TfsRestClient
         [string]
         $Type,
 
-        [Parameter(ParameterSetName="Get by collection")]
+        [Parameter(ParameterSetName="Get by collection", Mandatory=$true)]
         [object] 
         $Collection,
 
         [Parameter(ParameterSetName="Get by server", Mandatory=$true)]
         [object] 
-        $Server
+        $Server,
+
+        [Parameter(DontShow=$true)]
+        [string]
+        $Variable
     )
 
     Process
