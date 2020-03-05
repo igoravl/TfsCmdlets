@@ -38,7 +38,7 @@ Function New-TfsBuildDefinitionFolder
             return
         }
 
-        GET_CLIENT('Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient' -Collection $tpc
 
         $newFolder = New-Object 'ITEM_TYPE' -Property @{
             Description = $Description

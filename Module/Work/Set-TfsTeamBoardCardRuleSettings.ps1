@@ -77,7 +77,7 @@ Function Set-TfsTeamBoardCardRuleSetting
         }
 
         GET_TEAM($t,$tp,$tpc)
-        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
 
         foreach($boardName in $boards)
         {

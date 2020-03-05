@@ -52,7 +52,7 @@ Function New-TfsWorkItemTag
             return
         }
 
-        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient' -Collection $tpc
 
         CALL_ASYNC($client.CreateTagAsync($tp.Guid, $Tag),"Error creating work item tag '$Tag'")
 

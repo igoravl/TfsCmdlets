@@ -46,7 +46,7 @@ Function Get-TfsReleaseDefinition
         # {
         #     GET_COLLECTION($tpc)
             
-        #     GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
+        #     $client = Get-TfsRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
 
         #     CALL_ASYNC($client.GetRepositoryAsync($guid),"Error getting repository with ID $guid")
 
@@ -55,7 +55,7 @@ Function Get-TfsReleaseDefinition
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2' -Collection $tpc
 
         CALL_ASYNC($client.GetReleaseDefinitionsAsync($tp.Name), "Error getting release definition '$Definition'")
         

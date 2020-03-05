@@ -31,7 +31,7 @@ Function Add-TfsTeamAdmin
 
         $id = Get-TfsIdentity -Identity $Identity -Collection $tpc
 
-        GET_CLIENT('TfsCmdlets.TeamAdminHttpClient')
+        $client = Get-TfsRestClient 'TfsCmdlets.TeamAdminHttpClient' -Collection $tpc
 
         _Log "Adding $($id.IdentityType) '$($id.DisplayName) ($($id.Properties['Account']))' to team '$($t.Name)'"
 

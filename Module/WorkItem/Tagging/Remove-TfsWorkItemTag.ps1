@@ -54,7 +54,7 @@ Function Remove-TfsWorkItemTag
                 continue
             }
 
-            GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
+            $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient' -Collection $tpc
 
             CALL_ASYNC($client.DeleteTagAsync($tp.Guid, $t.Id),"Error deleting work item tag [$($t.Name)]'")
         }

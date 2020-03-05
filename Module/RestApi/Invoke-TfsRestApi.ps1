@@ -100,7 +100,7 @@ Function Invoke-TfsRestApi
         {
             _Log "Using library call method"
 
-            GET_CLIENT($ClientType)
+            $client = Get-TfsRestClient $ClientType -Collection $tpc
             $task = $client.$Operation.Invoke($ArgumentList)
         }
         else
@@ -121,7 +121,7 @@ Function Invoke-TfsRestApi
                 [TfsCmdlets.GenericHttpClient]::UseHost($UseHost)
             }
 
-            GET_CLIENT("TfsCmdlets.GenericHttpClient")
+            $client = Get-TfsRestClient "TfsCmdlets.GenericHttpClient" -Collection $tpc
 
             if($Path -like '*{project}*')
             {

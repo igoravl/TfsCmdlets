@@ -59,7 +59,7 @@ Function Remove-TfsBuildDefinitionFolder
 
             GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$f.Project.Name)
 
-            GET_CLIENT('Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient')
+            $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient' -Collection $tpc
 
             if(-not $Force.IsPresent)
             {

@@ -42,7 +42,7 @@ Function Get-TfsTeamBoard
 
         GET_TEAM($t,$tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
 
         $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList $tp.Name, $t.Name
 

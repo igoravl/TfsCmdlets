@@ -69,7 +69,7 @@ Function Move-TfsClassificationNode
             Id = $sourceNode.Id
         }
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         CALL_ASYNC($client.CreateOrUpdateClassificationNodeAsync($patch, $tp.Name, $structureGroup, $destinationNode.RelativePath.SubString(1)), "Error moving node $($sourceNode.RelativePath) to $($destinationNode.RelativePath)")
 

@@ -192,7 +192,7 @@ Function Copy-TfsTestPlan
 		}
 
         GET_COLLECTION($tpc)
-		GET_CLIENT("$ns.TestPlanHttpClient")
+		$client = Get-TfsRestClient "$ns.TestPlanHttpClient" -Collection $tpc
 
 		$cloneParams = New-Object "$ns.CloneTestPlanParams" -Property @{
 			sourceTestPlan = New-Object "$ns.SourceTestPlanInfo" -Property @{

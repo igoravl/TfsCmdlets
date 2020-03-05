@@ -34,7 +34,7 @@ Function Get-TfsClassificationNode
         
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         if(_IsWildcard $Node)
         {

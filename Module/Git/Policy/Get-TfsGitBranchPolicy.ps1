@@ -52,7 +52,7 @@ Function Get-TfsGitBranchPolicy
     {
         GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Repository.ProjectReference.Name)
 
-        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
         
         if($Branch -and ($Branch -notlike 'refs/*'))
         {

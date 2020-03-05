@@ -32,7 +32,7 @@ Function Get-TfsReleaseDefinitionFolder
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient' -Collection $tpc
 
         if(_IsWildCard $Folder)
         {

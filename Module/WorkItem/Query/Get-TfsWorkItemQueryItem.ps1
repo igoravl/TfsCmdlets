@@ -62,7 +62,7 @@ Function Get-TfsWorkItemQueryItem
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         CALL_ASYNC($client.GetQueriesAsync($tp.Name, 'All', 2), "Error fetching work item query items")
 

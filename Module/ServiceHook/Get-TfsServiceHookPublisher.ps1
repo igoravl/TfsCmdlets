@@ -19,7 +19,7 @@ Function Get-TfsServiceHookPublisher
     Process
     {
         GET_COLLECTION($tpc)
-        GET_CLIENT('Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient' -Collection $tpc
 
         $client.GetPublishersAsync().Result | Where-Object {($_Name -Like $Publisher) -or ($_.Id -Like $Publisher)}
     }

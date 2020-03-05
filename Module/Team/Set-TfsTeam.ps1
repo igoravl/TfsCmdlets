@@ -133,7 +133,7 @@ Function Set-TfsTeam
 
         # Prepare for the second stage
 
-        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
         $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList @($tp.Name, $t.Name)
 
         # Set Team Field and Area Path settings

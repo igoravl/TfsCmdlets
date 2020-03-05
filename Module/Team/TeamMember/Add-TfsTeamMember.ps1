@@ -38,7 +38,7 @@ Function Add-TfsTeamMember
             throw "Invalid or non-existent identity '$Identity'"
         }
 
-        GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient' -Collection $tpc
 
         _Log "Adding $($ui.IdentityType) '$($ui.DisplayName) ($($ui.Properties['Account']))' to team '$($t.Name)'"
 

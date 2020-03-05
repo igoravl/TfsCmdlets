@@ -51,7 +51,7 @@ Function Get-TfsTeamBacklog
         $t = Get-TfsTeam -Team $Team -Project $Project -Collection $Collection
         GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$t.ProjectName)
 
-        GET_CLIENT('Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient' -Collection $tpc
         $ctx = New-Object 'Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext' -ArgumentList @($tp.Name, $t.Name)
 
         if (-not $Backlog.ToString().Contains('*'))

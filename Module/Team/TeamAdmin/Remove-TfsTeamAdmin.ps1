@@ -41,7 +41,7 @@ Function Remove-TfsTeamAdmin
 
         $id = Get-TfsIdentity -Identity $Identity -Collection $tpc
 
-        GET_CLIENT('TfsCmdlets.TeamAdminHttpClient')
+        $client = Get-TfsRestClient 'TfsCmdlets.TeamAdminHttpClient' -Collection $tpc
 
         _Log "Removing $($id.IdentityType) '$($id.DisplayName) ($($id.Properties['Account']))' from team '$($t.Name)'"
 

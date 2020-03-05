@@ -58,7 +58,7 @@ Function New-TfsTeam
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient' -Collection $tpc
 
         $result = $client.CreateTeamAsync((New-Object 'ITEM_TYPE' -Property @{
             Name = $Team

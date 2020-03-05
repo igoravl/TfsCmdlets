@@ -50,7 +50,7 @@ Function Get-TfsWorkItemTag
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient' -Collection $tpc
 
         CALL_ASYNC($client.GetTagsAsync($tp.Guid, $IncludeInactive.IsPresent),"Error retrieving work item tag '$Tag'")
 

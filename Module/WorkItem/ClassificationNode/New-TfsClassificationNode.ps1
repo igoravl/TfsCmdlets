@@ -60,7 +60,7 @@ Function New-TfsClassificationNode
             return
         }
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         $parentPath = (Split-Path $Node -Parent)
         $nodeName = (Split-Path $Node -Leaf)

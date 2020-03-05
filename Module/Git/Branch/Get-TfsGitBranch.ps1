@@ -56,7 +56,7 @@ Function Get-TfsGitBranch
 
         GET_COLLECTION($tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
         
         foreach($repo in $repos)
         {

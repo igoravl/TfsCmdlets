@@ -135,7 +135,7 @@ Function Move-TfsWorkItem
             "Move work item to team project '$($targetTp.Name)' under area path " +
             "'$($targetArea)' and iteration path '$($targetIteration)'"))
         {
-            GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+            $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
             $task = $client.UpdateWorkItemAsync($patch, $wi.Id)
 
             CHECK_ASYNC($task,$result,'Error moving work item')

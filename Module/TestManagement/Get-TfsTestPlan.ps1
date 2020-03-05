@@ -72,7 +72,7 @@ Function Get-TfsTestPlan
         }
 
         GET_TEAM_PROJECT($tp,$tpc)
-        GET_CLIENT('Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlanHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlanHttpClient' -Collection $tpc
 
         return $client.GetTestPlansAsync(
             $tp.Name, $Owner, $null, 

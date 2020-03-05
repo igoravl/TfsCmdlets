@@ -73,7 +73,7 @@ Function New-TfsWorkItemQueryItem
 
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         
         $newItem = New-Object 'ITEM_TYPE' -Property @{

@@ -45,7 +45,7 @@ Function Get-TfsPolicyType
 
         GET_TEAM_PROJECT($tp,$tpc)
         
-        GET_CLIENT('Microsoft.TeamFoundation.Policy.WebApi.PolicyHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Policy.WebApi.PolicyHttpClient' -Collection $tpc
 
         CALL_ASYNC($client.GetPolicyTypesAsync($tp.Name),"Error retrieving policy types")
         

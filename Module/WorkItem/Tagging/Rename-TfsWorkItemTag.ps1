@@ -58,7 +58,7 @@ Function Rename-TfsWorkItemTag
 
             GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$t.TeamProject)
 
-            GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient')
+            $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient' -Collection $tpc
 
             CALL_ASYNC($client.UpdateTagAsync($tp.Guid, $t.Id, $NewName, $t.Active),"Error renaming work item tag [$($t.Name)]'")
 

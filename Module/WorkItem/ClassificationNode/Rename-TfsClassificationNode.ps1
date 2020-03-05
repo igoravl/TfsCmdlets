@@ -60,7 +60,7 @@ Function Rename-TfsClassificationNode
         
         GET_TEAM_PROJECT($tp,$tpc)
 
-        GET_CLIENT('Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient' -Collection $tpc
 
         $nodeToRename = Get-TfsClassificationNode -Node $Node -StructureGroup $StructureGroup -Project $Project -Collection $Collection
 

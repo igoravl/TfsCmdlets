@@ -41,7 +41,7 @@ Function Remove-TfsGroupMember
             throw "Invalid or non-existent identity '$Identity'"
         }
 
-        GET_CLIENT('Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient' -Collection $tpc
 
         _Log "Removing $($ui.IdentityType) '$($ui.DisplayName) ($($ui.Properties['Account']))' from group '$($gi.DisplayName)'"
 

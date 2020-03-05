@@ -32,7 +32,7 @@ Function Get-TfsBuildDefinitionFolder
 
         GET_TEAM_PROJECT_FROM_ITEM($tp,$tpc,$Folder.Project.Name)
 
-        GET_CLIENT('Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient' -Collection $tpc
 
         if(_IsWildCard $Folder)
         {

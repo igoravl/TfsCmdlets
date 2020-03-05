@@ -40,7 +40,7 @@ Function Remove-TfsTestPlan
 		}
 
         GET_TEAM_PROECT($tp,$tpc)
-        GET_CLIENT("$ns.TestPlanHttpClient")
+        $client = Get-TfsRestClient "$ns.TestPlanHttpClient" -Collection $tpc
 
         if ($PSCmdlet.ShouldProcess("Plan $($plan.Id) ('$($plan.Name)')", "Remove test plan"))
         {

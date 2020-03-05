@@ -48,7 +48,7 @@ Function Remove-TfsGitRepository
         $tp = Get-TfsTeamProject -Project $Project -Collection $Collection
         #$tpc = $tp.Store.TeamProjectCollection
 
-        GET_CLIENT('Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient')
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient' -Collection $tpc
 
         if ($Repository -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository])
         {

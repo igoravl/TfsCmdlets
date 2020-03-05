@@ -63,7 +63,7 @@ Function Remove-TfsTeamProject
         foreach($tp in $tps)
         {
             $tpc = $tp.TeamProjectCollection
-            GET_CLIENT('Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient')
+            $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient' -Collection $tpc
 
             if($PSCmdlet.ShouldProcess($tp.Name, 'Delete team project'))
             {
@@ -82,7 +82,7 @@ Function Remove-TfsTeamProject
         
                     # Wait for the operation to complete
         
-                    GET_CLIENT('Microsoft.VisualStudio.Services.Operations.OperationsHttpClient')
+                    $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.Operations.OperationsHttpClient' -Collection $tpc
         
                     $opsToken = $operationsClient.GetOperation($token.Id).Result
         
