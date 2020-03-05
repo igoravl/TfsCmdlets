@@ -53,7 +53,7 @@ Function Get-TfsIdentity
         else
         {
             CHECK_ITEM($Identity)
-            GET_SERVER($srv)
+            _GetServer
         }
         
         $client = Get-TfsRestClient 'Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient' -Server $srv
