@@ -1,23 +1,23 @@
-. "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\..\_TestSetup.ps1"
+# . "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\..\_TestSetup.ps1"
 
-InModuleScope 'TfsCmdlets' {
+# InModuleScope 'TfsCmdlets' {
 
-    Describe '_GetRestClient' {
+#     Describe '_GetRestClient' {
 
-        Context 'Getting collection-scoped client' {
+#         Context 'Getting collection-scoped client' {
 
-            It '' {
+#             It '' {
 
-                $client = Get-TfsRestClient -Type '' -Collection $foo
-            }
-        }
+#                 $client = Get-TfsRestClient -Type 'Foo.Bar.BazClient' -Collection $foo
+#             }
+#         }
 
-        Context 'Getting server-scoped client' {
+#         Context 'Getting server-scoped client' {
 
-            It '' {
+#             It '' {
 
-                $client = Get-TfsRestClient -Type '' -Server $foo
-            }
-        }
-    }
-}
+#                 $client = Get-TfsRestClient -Type '' -Server $foo
+#             }
+#         }
+#     }
+# }

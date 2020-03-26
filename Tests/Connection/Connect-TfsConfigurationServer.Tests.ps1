@@ -13,6 +13,7 @@ InModuleScope 'TfsCmdlets' {
         Context 'When connecting interactively' {
 
             Mock 'Get-TfsConfigurationServer' -ParameterFilter { ($Server -eq $expectedUri) -and ($Credential -eq $expectedInteractiveCred) } -MockWith { return @{ Uri = $Server; Credential = $Credential } }
+            Mock '_SetMru' -ParameterFilter { $ListName -eq 'Server' -and $Value -eq $expectedUri } -Verifiable
 
             Connect-TfsConfigurationServer -Server $expectedUri -Interactive
 
@@ -31,11 +32,16 @@ InModuleScope 'TfsCmdlets' {
                 [TfsCmdlets.CurrentConnections]::Project | Should Be $null
                 [TfsCmdlets.CurrentConnections]::Team | Should Be $null
             }
+
+            It 'Should update MRU list' {
+                Assert-VerifiableMocks
+            }
         }
 
         Context 'When connecting with default credential' {
 
             Mock 'Get-TfsConfigurationServer' -ParameterFilter { ($Server -eq $expectedUri) -and ($Credential -eq $null)} -MockWith { return @{ Uri = $Server; Credential = $Credential } } -Verifiable
+            Mock '_SetMru' -ParameterFilter { $ListName -eq 'Server' -and $Value -eq $expectedUri } -Verifiable
 
             [TfsCmdlets.CurrentConnections]::Reset()
 
@@ -56,11 +62,16 @@ InModuleScope 'TfsCmdlets' {
                 [TfsCmdlets.CurrentConnections]::Project | Should Be $null
                 [TfsCmdlets.CurrentConnections]::Team | Should Be $null
             }
+
+            It 'Should update MRU list' {
+                Assert-VerifiableMocks
+            }
         }
 
         Context 'When connecting with explicit credential' {
 
             Mock 'Get-TfsConfigurationServer' -ParameterFilter { ($Server -eq $expectedUri) -and ($Credential -eq $expectedCred)} -MockWith { return @{ Uri = $Server; Credential = $Credential } } -Verifiable
+            Mock '_SetMru' -ParameterFilter { $ListName -eq 'Server' -and $Value -eq $expectedUri } -Verifiable
 
             [TfsCmdlets.CurrentConnections]::Reset()
 
@@ -81,11 +92,16 @@ InModuleScope 'TfsCmdlets' {
                 [TfsCmdlets.CurrentConnections]::Project | Should Be $null
                 [TfsCmdlets.CurrentConnections]::Team | Should Be $null
             }
+
+            It 'Should update MRU list' {
+                Assert-VerifiableMocks
+            }
         }
 
         Context 'When connecting to invalid server' {
 
             Mock 'Get-TfsConfigurationServer' -MockWith { return $null }
+            Mock '_SetMru'
 
             It 'Should throw' {
                 { Connect-TfsConfigurationServer -Server $expectedUri -Interactive } | Should Throw
@@ -93,6 +109,9 @@ InModuleScope 'TfsCmdlets' {
                 { Connect-TfsConfigurationServer -Server $expectedUri } | Should Throw
             }
 
+            It 'Should not update MRU list' {
+                Assert-MockCalled '_SetMru' -Times 0
+            }
         }
     }
 }

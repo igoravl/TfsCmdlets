@@ -69,10 +69,19 @@ Function Connect-TfsTeam
         GET_TEAM($t,$tp,$tpc)
 
 		[TfsCmdlets.CurrentConnections]::Reset()
-		[TfsCmdlets.CurrentConnections]::Server = $tpc.ConfigurationServer
+		[TfsCmdlets.CurrentConnections]::Server = $srv
 		[TfsCmdlets.CurrentConnections]::Collection = $tpc
 		[TfsCmdlets.CurrentConnections]::Project = $tp
 		[TfsCmdlets.CurrentConnections]::Team = $t
+
+		_Log "Adding '$($t.Name)' to the MRU list"
+
+		_SetMru 'Server' -Value ($srv.Uri)
+		_SetMru 'Collection' -Value ($tpc.Uri)
+		_SetMru 'Project' -Value ($tp.Name)
+		_SetMru 'Team' -Value ($t.Name)
+
+		_Log "Connected to '$($t.Name)'"
 
 		if ($Passthru)
 		{

@@ -80,10 +80,20 @@ Function Connect-TfsTeamProject
 
 		$tpc = $tp.Store.TeamProjectCollection
 
+		$srv = $tpc.ConfigurationServer
+
 		[TfsCmdlets.CurrentConnections]::Reset()
-		[TfsCmdlets.CurrentConnections]::Server = $tpc.ConfigurationServer
+		[TfsCmdlets.CurrentConnections]::Server = $srv
 		[TfsCmdlets.CurrentConnections]::Collection = $tpc
 		[TfsCmdlets.CurrentConnections]::Project = $tp
+
+		_Log "Adding '$($tp.Name)' to the MRU list"
+
+		_SetMru 'Server' -Value ($srv.Uri)
+		_SetMru 'Collection' -Value ($tpc.Uri)
+		_SetMru 'Project' -Value ($tp.Name)
+
+		_Log "Connected to $($tp.Name)"
 
 		if ($Passthru)
 		{

@@ -80,7 +80,14 @@ Function Connect-TfsConfigurationServer
 		}
 
 		[TfsCmdlets.CurrentConnections]::Reset()
+
+		_Log "Connecting to $($configServer.Uri)"
+
 		[TfsCmdlets.CurrentConnections]::Server = $configServer
+
+		_Log "Adding $($configServer.Uri) to the MRU list"
+
+		_SetMru 'Server' -Value ([string]$configServer.Uri)
 
 		if ($Passthru)
 		{

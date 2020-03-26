@@ -137,9 +137,16 @@ Function Connect-TfsTeamProjectCollection
 			}
 		}
 
+		$srv = $tpc.ConfigurationServer
+
 		[TfsCmdlets.CurrentConnections]::Reset()
-		[TfsCmdlets.CurrentConnections]::Server = $tpc.ConfigurationServer
+		[TfsCmdlets.CurrentConnections]::Server = $srv
 		[TfsCmdlets.CurrentConnections]::Collection = $tpc
+
+		_Log "Adding $($tpc.Uri) to the MRU list"
+
+		_SetMru 'Server' -Value ($srv.Uri)
+		_SetMru 'Collection' -Value ($tpc.Uri)
 
 		_Log "Connected to $($tpc.Uri)"
 
