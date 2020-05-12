@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.VisualStudio.Services.WebApi.VssConnection
 <#
 .SYNOPSIS
 Connects to a team project collection. 
@@ -45,7 +46,7 @@ System.Uri
 Function Connect-TfsTeamProjectCollection
 {
 	[CmdletBinding(DefaultParameterSetName="Cached credentials")]
-	[OutputType('Microsoft.TeamFoundation.Client.TfsTeamProjectCollection')]
+	[OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
@@ -92,52 +93,47 @@ Function Connect-TfsTeamProjectCollection
 		$Passthru
 	)
 
+	Begin
+	{
+		_LogParams
+	}
+
 	Process
 	{
 		$tpc = $null
 
-		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])
+		if ($Collection -is [ITEM_TYPE])
 		{
 			_Log "Collection argument is of type TfsTeamProjectCollection. Reusing object."
 			$tpc = $Collection
+		}
+		elseif(($Collection -is [string]) -and (-not [uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute)))
+		{
+			_Log "Converting collection name '$Collection' to URL 'https://dev.azure.com/$Collection'"
+			$Collection = "https://dev.azure.com/$Collection"
 		}
 		else
 		{
 			_Log "Connecting with $($PSCmdlet.ParameterSetName)"
 
-			if($Collection -is [string] -and ($MyInvocation.InvocationName -eq 'Connect-AzdoOrganization'))
-			{
-				if(-not [uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute))
-				{
-					_Log "Converting collection name '$Collection' to URL 'https://dev.azure.com/$Collection'"
-					$Collection = "https://dev.azure.com/$Collection"
-				}
-			}
+			$args = $PSBoundParameters
+			
+			[void] $args.Remove('Collection')
+			[void] $args.Remove('Server')
+			[void] $args.Remove('Passthru')
 
-			if ($PSBoundParameters.ContainsKey('Collection')) { [void] $PSBoundParameters.Remove('Collection') }
-			if ($PSBoundParameters.ContainsKey('Server')) { [void] $PSBoundParameters.Remove('Server') }
-			if ($PSBoundParameters.ContainsKey('Passthru')) { [void] $PSBoundParameters.Remove('Passthru') }
-
-			$creds = Get-TfsCredential @PSBoundParameters
-			$tpc = Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential $Creds
+			$tpc = Get-TfsTeamProjectCollection -Collection $Collection -Server $Server -Credential (Get-TfsCredential @args)
 
 			if (-not $tpc -or ($tpc.Count -ne 1))
 			{
 				throw "Invalid or non-existent team project collection $Collection"
 			}
 
-			try
-			{
-				_Log "Calling TfsTeamProjectCollection.EnsureAuthenticated()"
-				$tpc.EnsureAuthenticated()
-			}
-			catch
-			{
-				throw "Error connecting to team project collection $Collection ($_)"
-			}
+			_Log "Calling VssConnection.ConnectAsync()"
+			CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to team project collection / organization '$Collection'")
 		}
 
-		$srv = $tpc.ConfigurationServer
+		$srv = $tpc.ParentConnection
 
 		[TfsCmdlets.CurrentConnections]::Reset()
 		[TfsCmdlets.CurrentConnections]::Server = $srv
@@ -157,6 +153,4 @@ Function Connect-TfsTeamProjectCollection
 	}
 }
 
-Set-Alias -Name Connect-AzdoOrganization -Value Connect-TfsTeamProjectCollection
-Set-Alias -Name Connect-TfsOrganization -Value Connect-TfsTeamProjectCollection
 Set-Alias -Name ctfs -Value Connect-TfsTeamProjectCollection

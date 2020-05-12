@@ -1,4 +1,4 @@
-#define ITEM_TYPE Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+#define ITEM_TYPE Microsoft.VisualStudio.Services.WebApi.VssConnection
 <#
 .SYNOPSIS
 Gets information about one or more team project collections.
@@ -56,58 +56,25 @@ Function Get-TfsTeamProjectCollection
 		$Credential
 	)
 
-	Begin
-	{
-		REQUIRES(Microsoft.TeamFoundation.Client)
-	}
-
 	Process
 	{
 		if ($Current.IsPresent -or (-not $Collection))
         {
+			_Log 'Return current connection'
 			return [TfsCmdlets.CurrentConnections]::Collection
 		}
 		
-		if ($Collection -is [Microsoft.TeamFoundation.Client.TfsTeamProjectCollection])
-		{
-			return $Collection
-		}
+		CHECK_ITEM($Collection)
 
 		$cred = Get-TfsCredential -Credential $Credential
 
 		if ($Collection -is [Uri] -or ([Uri]::IsWellFormedUriString($Collection, [UriKind]::Absolute)))
 		{
-			return New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList ([uri]$Collection), $cred
+			_Log "Return collection referenced by URL '$Collection'"
+
+			$tpc = [Microsoft.VisualStudio.Services.WebApi.VssConnection]::new([uri]$Collection, $cred)
 		}
 
-		if ($Collection -is [string])
-		{
-			$configServer = Get-TfsConfigurationServer -Server $Server -Credential $cred
-
-			if($configServer)
-			{
-				$filter = [Guid[]] @([Microsoft.TeamFoundation.Framework.Common.CatalogResourceTypes]::ProjectCollection)
-				$collections = $configServer.CatalogNode.QueryChildren($filter, $false, [Microsoft.TeamFoundation.Framework.Common.CatalogQueryOptions]::None) 
-				$collections = $collections | Select-Object -ExpandProperty Resource | Where-Object DisplayName -like $Collection
-
-				foreach ($tpc in $collections)
-				{
-					$collectionId = $tpc.Properties["InstanceId"]
-					Write-Output $configServer.GetTeamProjectCollection($collectionId)
-				}
-			}
-
-			$registeredCollection = Get-TfsRegisteredTeamProjectCollection $Collection
-
-			if($registeredCollection.Count)
-			{
-				foreach($tpc in $registeredCollection)
-				{
-					Write-Output (New-Object Microsoft.TeamFoundation.Client.TfsTeamProjectCollection -ArgumentList ([uri]$tpc.Uri), $cred)
-				}
-
-				return
-			}
-		}
+		return $tpc
 	}
 }
