@@ -73,6 +73,7 @@ Function Get-TfsTeamProjectCollection
 			_Log "Return collection referenced by URL '$Collection'"
 
 			$tpc = [Microsoft.VisualStudio.Services.WebApi.VssConnection]::new([uri]$Collection, $cred)
+			CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to '$tpc.Uri'")
 		}
 
 		return $tpc
