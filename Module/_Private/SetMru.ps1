@@ -28,7 +28,10 @@ Function _SetMru
 
     _Log "Removing '$Value' from the list (if present)"
     
-    $list.Remove($Value)
+    while($list.Contains($Value))
+    {
+        [void] $list.Remove($Value)
+    }
 
     _Log "Adding '$Value' to the top of the list."
     
