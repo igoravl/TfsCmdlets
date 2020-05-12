@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.VisualStudio.Services.Client.VssClientCredentials
 <#
 .SYNOPSIS
     Provides credentials to use when you connect to a Team Foundation Server or Visual Studio Team Services account.
@@ -12,7 +13,7 @@
 Function Get-TfsCredential
 {
     [CmdletBinding(DefaultParameterSetName="Cached credentials")]
-    [OutputType('Microsoft.TeamFoundation.Client.TfsClientCredentials')]
+    [OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
     Param
@@ -44,6 +45,11 @@ Function Get-TfsCredential
         $Interactive
     )
 
+    Begin
+    {
+        _LogParams
+    }
+    
     Process
     {
         $parameterSetName = $PSCmdlet.ParameterSetName
@@ -58,18 +64,18 @@ Function Get-TfsCredential
         switch($parameterSetName)
         {
             'Cached Credentials' {
-                $fedCred = New-Object 'Microsoft.TeamFoundation.Client.CookieCredential' -ArgumentList $true
-                $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $true
+                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Client.VssFederatedCredential' -ArgumentList $true
+                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $true
             }
 
             'User name and password' {
                 $netCred = New-Object 'System.Net.NetworkCredential' -ArgumentList $UserName, $Password
-                $fedCred = New-Object 'Microsoft.TeamFoundation.Client.BasicAuthCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $netCred
+                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
+                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
             }
 
             'Credential object' {
-                if ($Credential -is [Microsoft.TeamFoundation.Client.TfsClientCredentials])
+                if ($Credential -is [ITEM_TYPE])
                 {
                     return $Credential
                 }
@@ -87,19 +93,19 @@ Function Get-TfsCredential
                     throw "Invalid argument Credential. Supply either a PowerShell credential (PSCredential object) or a System.Net.NetworkCredential object."    
                 }
 
-                $fedCred = New-Object 'Microsoft.TeamFoundation.Client.BasicAuthCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $netCred
+                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
+                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
             }
 
             'Personal Access Token' {
                 $netCred = New-Object 'System.Net.NetworkCredential' -ArgumentList 'dummy-pat-user', $PersonalAccessToken
-                $fedCred = New-Object 'Microsoft.TeamFoundation.Client.BasicAuthCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $netCred
+                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
+                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
             }
 
             'Prompt for credential' {
-                $fedCred = New-Object 'Microsoft.TeamFoundation.Client.CookieCredential' -ArgumentList $false
-                $winCred = New-Object 'Microsoft.TeamFoundation.Client.WindowsCredential' -ArgumentList $false
+                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Client.VssFederatedCredential' -ArgumentList $false
+                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $false
                 $allowInteractive = $true
             }
 
@@ -108,6 +114,15 @@ Function Get-TfsCredential
             }
         }
 
-        return New-Object 'Microsoft.TeamFoundation.Client.TfsClientCredentials' -ArgumentList $winCred, $fedCred, $allowInteractive
+        if($allowInteractive)
+        {
+            $promptType = [Microsoft.VisualStudio.Services.Common.CredentialPromptType]::PromptIfNeeded
+        }
+        else
+        {
+            $promptType = [Microsoft.VisualStudio.Services.Common.CredentialPromptType]::DoNotPrompt
+        }
+
+        return New-Object 'Microsoft.VisualStudio.Services.Client.VssClientCredentials' -ArgumentList $winCred, $fedCred, $promptType
     }
 }
