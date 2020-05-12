@@ -1,3 +1,4 @@
+#define ITEM_TYPE Microsoft.TeamFoundation.Core.WebApi.TeamProject
 <#
 .SYNOPSIS
 Connects to a team project.
@@ -36,7 +37,7 @@ Connects to a project called FabrikamFiber in the team project collection specif
 Function Connect-TfsTeamProject
 {
 	[CmdletBinding(DefaultParameterSetName="Explicit credentials")]
-	[OutputType('Microsoft.TeamFoundation.WorkItemTracking.Client.Project')]
+	[OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
@@ -66,19 +67,17 @@ Function Connect-TfsTeamProject
 
 	Process
 	{
-		if ($Interactive.IsPresent)
-		{
-			$Credential = (Get-TfsCredential -Interactive)
-		}
+		$tpcArgs = $PSBoundParameters
+		[void] $tpcArgs.Remove('Project')
 
-		$tp = (Get-TfsTeamProject -Project $Project -Collection $Collection -Credential $Credential | Select-Object -First 1)
+		$tpc = Get-TfsTeamProjectCollection @tpcArgs
+
+		$tp = (Get-TfsTeamProject -Project $Project -Collection $tpc | Select-Object -First 1)
 
 		if (-not $tp)
 		{
 			throw "Error connecting to team project $Project"
 		}
-
-		$tpc = $tp.Store.TeamProjectCollection
 
 		$srv = $tpc.ConfigurationServer
 

@@ -1,4 +1,4 @@
-#define ITEM_TYPE Microsoft.TeamFoundation.WorkItemTracking.Client.Project
+#define ITEM_TYPE Microsoft.TeamFoundation.Core.WebApi.TeamProject
 <#
 .SYNOPSIS
 Gets information about one or more team projects. 
@@ -12,13 +12,6 @@ Specifies the name of a Team Project. Wildcards are supported.
 .PARAMETER Collection
 HELP_PARAM_COLLECTION
 
-.PARAMETER Server
-Specifies either a URL or the name of the Team Foundation Server configuration server (the "root" of a TFS installation) to connect to, or a previously initialized Microsoft.TeamFoundation.Client.TfsConfigurationServer object.
-For more details, see the -Server argument in the Get-TfsTeamProjectCollection cmdlet.
-
-.PARAMETER Credential
-HELP_PARAM_TFSCREDENTIAL
-
 .INPUTS
 Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
 System.String
@@ -30,79 +23,48 @@ As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamPro
 #>
 Function Get-TfsTeamProject
 {
-    [CmdletBinding(DefaultParameterSetName='Get by project')]
-	[OutputType('ITEM_TYPE')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
-	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
+    [CmdletBinding(DefaultParameterSetName = 'Get by project')]
+    [OutputType('ITEM_TYPE')]
     Param
     (
-        [Parameter(Position=0, ParameterSetName='Get by project')]
+        [Parameter(Position = 0, ParameterSetName = 'Get by project')]
         [object] 
         $Project = '*',
 
-        [Parameter(ValueFromPipeline=$true, Position=1, ParameterSetName='Get by project')]
+        [Parameter(ValueFromPipeline = $true, Position = 1, ParameterSetName = 'Get by project')]
         [object]
         $Collection,
 
-		[Parameter(Mandatory=$true, ParameterSetName="Get current")]
+        [Parameter(Mandatory = $true, ParameterSetName = "Get current")]
         [switch]
-        $Current,
-
-		[Parameter(ParameterSetName='Get by project')]
-		[object]
-		$Credential
+        $Current
     )
-
-    Begin
-    {
-        REQUIRES(Microsoft.TeamFoundation.WorkItemTracking.Client)
-    }
 
     Process
     {
-        if ($Current.IsPresent -or (-not $Project))
+        if ($Current)
         {
-			return [TfsCmdlets.CurrentConnections]::Project
+            return [TfsCmdlets.CurrentConnections]::Project
         }
 
-		CHECK_ITEM($Project)
+        CHECK_ITEM($Project)
 
-        $tpc = Get-TfsTeamProjectCollection $Collection -Credential $Credential
+        GET_COLLECTION($tpc)
 
-        if(_TestGuid $Project)
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient' -Collection $tpc
+
+        if ((_TestGuid $Project) -or (-not (_IsWildcard $Project)))
         {
-            $Project = [uri] "vstfs:///Classification/TeamProject/$Project"
+            CALL_ASYNC($client.GetProject([string] $Project, $true), "Error getting team project '$Project'")
+
+            return $result
         }
 
-        if (($Project -is [uri]) -or ([System.Uri]::IsWellFormedUriString($Project, [System.UriKind]::Absolute)))
-        {
-            $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-            $projInfo = $css.GetProject([string] $Project)
-            $Project = $projInfo.Name
+        CALL_ASYNC($client.GetProjects(), "Error getting team project(s) matching '$Project'")
+
+        $result | Where-Object Name -like $Project | ForEach-Object {
+            CALL_ASYNC($client.GetProject($_.Id, $true), "Error getting team project '$($_.Id)'")
+            Write-Output $result
         }
-
-		if ($Project -is [string])
-		{
-            $wiStore = $tpc.GetService([type]'Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore')
-                        
-            if($Project.IndexOf('*') -ge 0)
-            {
-                return _GetAllProjects $tpc | Where-Object Name -Like $Project | Foreach-Object { $wiStore.Projects[$_.Name] }
-            }
-
-            return $wiStore.Projects[$Project]
-		}
-
-		throw "No TFS team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet."
     }
-}
-
-Function _GetAllProjects
-{
-    param ($tpc)
-
-    $css = $tpc.GetService([type]'Microsoft.TeamFoundation.Server.ICommonStructureService')
-
-    return $css.ListAllProjects() | Where-Object Status -eq WellFormed
 }
