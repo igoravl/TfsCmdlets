@@ -14,11 +14,7 @@ Function Get-TfsRestClient
 
         [Parameter(ParameterSetName="Get by server", Mandatory=$true)]
         [object] 
-        $Server,
-
-        [Parameter(DontShow=$true)]
-        [string]
-        $Variable
+        $Server
     )
 
     Process
