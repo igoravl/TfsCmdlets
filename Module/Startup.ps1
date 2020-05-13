@@ -1,10 +1,18 @@
+# Try to detect Verbose mode from Import-Module call
+
+$stack = Get-PSCallStack
+
+if($stack[1].Position -match 'Import-Module.*(TfsCmdlets)+.*(-Verbose)+')
+{
+    $TfsCmdletsDebugStartup = $true
+}
+
 # Initialize variables
 
 $script:IsDesktop = ($PSEdition -ne 'Core')
 $script:IsCore = -not $script:IsDesktop
 $global:TfsCmdletsLoadSw = [System.Diagnostics.Stopwatch]::StartNew()
-
-Write-Host "Loading module TfsCmdlets from $PSScriptRoot"
+$PrivateData = (Test-ModuleManifest (Join-Path $PSScriptRoot 'TfsCmdlets.psd1')).PrivateData
 
 # Configure assembly resolver
 
@@ -15,6 +23,8 @@ if ($TfsCmdletsDebugStartup)
     # For some reason, setting VerbosePreference here breaks the script. Using Set-Alias to work around it
     Set-Alias Write-Verbose Write-Host -Option Private
 }
+
+Write-Verbose "Loading module TfsCmdlets v$($PrivateData.Version) from $PSScriptRoot"
 
 Write-Verbose 'Registering custom Assembly Resolver'
 
@@ -29,10 +39,11 @@ if (-not ([System.Management.Automation.PSTypeName]'TfsCmdlets.AssemblyResolver'
 
     Add-Type -TypeDefinition $sourceText -Language CSharp
 
-    $libPath = (Join-Path $PSScriptRoot 'Lib' -Resolve)
+    $targetFramework = $PrivateData."${PSEdition}TargetFramework"
+    $libPath = (Join-Path $PSScriptRoot "Lib/${targetFramework}" -Resolve)
     $assemblies = [System.Collections.Generic.Dictionary[string,string]]::new()
 
-    Write-Verbose "Enumerating assemblies from $libPath"
+    Write-Verbose "Enumerating assemblies in $libPath"
 
     foreach($f in (Get-ChildItem $libPath -Filter '*.dll'))
     {
@@ -52,22 +63,16 @@ else
 
 # Pre-load assemblies in the background
 
-$libPath = (Join-Path $PSScriptRoot "lib" -Resolve)
-$assemblies = (Get-ChildItem "$libPath/*.dll" -Exclude 'Microsoft.WitDataStore*.*','TfsCmdletsLib.dll').BaseName
-$assemblies += (Get-ChildItem "$libPath/TfsCmdletsLib.dll").BaseName
+foreach($asm in $assemblies.Keys)
+{
+    Write-Verbose "Loading assembly $asm from folder $libPath"
 
-# $global:TfsCmdletsAssemblyLoadjob = Start-Job -ScriptBlock {
-    foreach($asm in $assemblies)
+    try
     {
-        Write-Verbose "Loading assembly $asm from folder $libPath"
-
-        try
-        {
-            Add-Type -Path (Join-Path $libPath "$asm.dll")
-        }
-        catch
-        {
-            Write-Warning "Error loading assembly '$asm': $($_.Exception.Message)"
-        }
+        Add-Type -Path (Join-Path $libPath "$asm.dll")
     }
-# }
+    catch
+    {
+        Write-Warning "Error loading assembly '$asm': $($_.Exception.Message)"
+    }
+}
