@@ -129,8 +129,6 @@ Function Connect-TfsTeamProjectCollection
 				throw "Invalid or non-existent team project collection $Collection"
 			}
 
-			_Log "Calling VssConnection.ConnectAsync()"
-			CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to team project collection / organization '$Collection'")
 		}
 
 		$srv = $tpc.ParentConnection
@@ -143,6 +141,9 @@ Function Connect-TfsTeamProjectCollection
 
 		_SetMru 'Server' -Value ($srv.Uri)
 		_SetMru 'Collection' -Value ($tpc.Uri)
+
+		_Log "Calling VssConnection.ConnectAsync()"
+		CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to team project collection / organization '$Collection'")
 
 		_Log "Connected to $($tpc.Uri)"
 

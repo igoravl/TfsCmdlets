@@ -79,7 +79,7 @@ Function Connect-TfsTeamProject
 			throw "Error connecting to team project $Project"
 		}
 
-		$srv = $tpc.ConfigurationServer
+		$srv = $tpc.ParentConnection
 
 		[TfsCmdlets.CurrentConnections]::Reset()
 		[TfsCmdlets.CurrentConnections]::Server = $srv

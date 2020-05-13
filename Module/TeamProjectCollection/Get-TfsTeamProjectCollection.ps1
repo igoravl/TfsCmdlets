@@ -41,7 +41,7 @@ Function Get-TfsTeamProjectCollection
 		[Parameter(Position=0, ParameterSetName="Get by collection")]
         [SupportsWildcards()]
 		[object] 
-		$Collection = "*",
+		$Collection,
 	
 		[Parameter(ValueFromPipeline=$true, ParameterSetName="Get by collection")]
 		[object] 
