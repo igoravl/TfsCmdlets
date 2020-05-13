@@ -14,7 +14,7 @@ $analyzerRules = Get-ScriptAnalyzerRule -Severity Warning
 
 $allFunctions | Foreach-Object {
 
-    Describe "$_" {
+    Describe "$_" -Tag 'Correctness' {
 
         $cmd = $_
         $cmdDefinitionPath = (Get-ChildItem (Join-Path $projectDir "$cmd.ps1") -Recurse).FullName

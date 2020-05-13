@@ -44,13 +44,13 @@ InModuleScope 'TfsCmdlets' {
             It 'Should be able to create folder and traverse up' {
                 Mock 'New-Item' -ParameterFilter { $Path -eq "$rootPath\test\a\b\d" } -Verifiable
                 _GetAbsolutePath '..\d\foo.bar' -CreateFolder | Should Be "$rootPath\test\a\b\d\foo.bar"
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
 
             It 'Should be able to create folder and traverse down' {
                 Mock 'New-Item' -ParameterFilter { $Path -eq "$rootPath\test\a\b\c\e" } -Verifiable
                 _GetAbsolutePath 'e\foo.bar' -CreateFolder | Should Be "$rootPath\test\a\b\c\e\foo.bar"
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
 
             Pop-Location

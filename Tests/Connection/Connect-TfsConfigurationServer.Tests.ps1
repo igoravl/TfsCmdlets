@@ -34,7 +34,7 @@ InModuleScope 'TfsCmdlets' {
             }
 
             It 'Should update MRU list' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
         }
 
@@ -64,7 +64,7 @@ InModuleScope 'TfsCmdlets' {
             }
 
             It 'Should update MRU list' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
         }
 
@@ -94,7 +94,7 @@ InModuleScope 'TfsCmdlets' {
             }
 
             It 'Should update MRU list' {
-                Assert-VerifiableMocks
+                Assert-VerifiableMock
             }
         }
 
