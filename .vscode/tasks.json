@@ -25,6 +25,7 @@
                 "${workspaceRoot}/build.ps1",
                 "-Configuration",
                 "Debug",
+                "-Incremental",
                 "-Targets",
                 "Build"
             ]
@@ -47,7 +48,7 @@
                 "-File",
                 "${workspaceRoot}/build.ps1",
                 "-Targets",
-                "Clean"
+                "Rebuild"
             ]
         },
         {
