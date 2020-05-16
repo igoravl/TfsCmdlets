@@ -1,5 +1,5 @@
 # This script is a psake script file and should not be called directly. Use Build.ps1 instead.
-Framework '4.6'
+Framework '4.6.2'
 
 Properties {
 
@@ -21,7 +21,7 @@ Properties {
     $ModuleBinDir = (Join-Path $ModuleDir 'bin')
 
     # Assembly generation
-    $TargetFrameworks = @{DesktopTargetFramework = 'net472'; CoreTargetFramework = 'netstandard2.0'}
+    $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp2.0'}
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -53,15 +53,15 @@ Properties {
 }
 
 Task Rebuild -Depends Clean, Build {
-
 }
 
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
-
 }
 
 Task Build -Depends CleanOutputDir, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
+}
 
+Task Test -Depends Build, UnitTests, AllTests {
 }
 
 Task CleanOutputDir -PreCondition { -not $Incremental } {
@@ -161,15 +161,7 @@ Task CopyStaticFiles {
 
 Task CopyLibraries {
 
-    Write-Verbose "Copying TFS Client Object Model assemblies to output folder $TargetDir"
-
     $TargetDir = (Join-Path $ModuleDir 'Lib')
-
-    # if (-not (Test-Path $TargetDir -PathType Container)) 
-    # {
-    #     Write-Verbose "Creating output folder $TargetDir"
-    #     New-Item $TargetDir -ItemType Directory | Out-Null
-    # }
 
     foreach($tf in $TargetFrameworks.Values)
     {
@@ -185,7 +177,13 @@ Task CopyLibraries {
         Get-ChildItem (Join-Path $srcDir '*') -File | ForEach-Object { 
             try
             {
-                Copy-Item $_ -Destination $dstDir -Recurse
+                $src = $_
+                $dst = Join-Path $dstDir $f.Name
+
+                # if(_IsUpToDate $src $dst) { continue }
+
+                Write-Verbose "Copying $($_.Name) to $dstDir"
+                Copy-Item $src -Destination $dstDir
             }
             catch
             {
@@ -193,7 +191,17 @@ Task CopyLibraries {
             }
         }
 
-        Get-ChildItem (Join-Path $srcDir '*') -Directory | Copy-Item -Destination $dstDir -Recurse -ErrorAction SilentlyContinue
+        # Get-ChildItem (Join-Path $srcDir '*') -Directory -Exclude (Get-ChildItem (Join-Path $dstDir '*') -Directory | Select-Object -ExpandProperty Name) | ForEach-Object { 
+        #     try
+        #     {
+        #         Write-Verbose "Copying $($_.Name) to $dstDir recursively"
+        #         Copy-Item $_ -Destination $dstDir -Recurse
+        #     }
+        #     catch
+        #     {
+        #         Write-Warning "$_"
+        #     }
+        # }
     }
 }
 Task GenerateTypesXml {
@@ -263,39 +271,16 @@ Task UpdateModuleManifest {
 
 Task UnitTests -PreCondition { -not $SkipTests }  {
 
-    Exec { Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-            -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict -Show Failed -EnableExit -ExcludeTag Correctness, Integration }
+    Exec { Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults-Unit.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') -EnableExit:$IsCI -ExcludeTag Correctness, Integration, PSCore, PSDesktop }
 }
 
 Task AllTests -PreCondition { -not $SkipTests } {
 
-    Exec { Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-            -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict -Show Failed -EnableExit }
-}
+    Write-Output '= PowerShell Core ='
+    Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Core.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSDesktop" }
 
-Task DownloadTfsNugetPackage {
-
-    Write-Verbose "Restoring Nuget packages"
-
-    $packageDir = (Join-Path $NugetPackagesDir $package)
-    # $packages = @('Newtonsoft.Json','Microsoft.AspNet.WebApi.Core','Microsoft.AspNet.WebApi.Client') + $TfsPackageNames
-
-    foreach ($package in $TfsPackageNames) 
-    {
-        Write-Verbose "Restoring $package Nuget package (if needed)"
-
-        $packageDir = (Join-Path $NugetPackagesDir $package)
-
-        if (-not (Test-Path "$packageDir.*" -PathType Container))
-        {
-            Write-Verbose "$package not found. Downloading from Nuget.org"
-            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease -PackageSaveMode nuspec`;nupkg *>&1 | Write-Verbose
-        }
-        else
-        {
-            Write-Verbose "FOUND! Skipping..."
-        }
-    }
+    Write-Output '= Windows PowerShell ='
+    Exec { powershell.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Desktop.xml) -OutputFormat NUnitXml  -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSCore" }
 }
 
 Task RemoveEmptyFolders {
