@@ -141,9 +141,12 @@ try
     Write-Verbose "Outputting build name $BuildName to host"
     Write-Host "- Build $BuildName`n" -ForegroundColor Cyan
 
+    $isCI = $false
+
     if ($env:BUILD_BUILDURI)
     {
         Write-Output "##vso[build.updatebuildnumber]$BuildName"
+        $isCI = $true
     }
 
     # Run Psake
@@ -166,6 +169,7 @@ try
         VersionMetadata = $VersionMetadata 
         SkipTests = $SkipTests.IsPresent
         Incremental = $Incremental.IsPresent
+        IsCI = $isCI
     }
 
     Write-Verbose "=== END PSAKE ==="
