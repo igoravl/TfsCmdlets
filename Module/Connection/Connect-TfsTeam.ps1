@@ -59,6 +59,13 @@ Function Connect-TfsTeam
 		$Passthru
 	)
 
+	Begin
+	{
+		_LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
+	}
+
+
 	Process
 	{
 		if ($Interactive.IsPresent)

@@ -48,6 +48,7 @@ Function Get-TfsCredential
     Begin
     {
         _LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
     }
     
     Process
@@ -64,14 +65,13 @@ Function Get-TfsCredential
         switch($parameterSetName)
         {
             'Cached Credentials' {
-                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Client.VssFederatedCredential' -ArgumentList $true
-                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $true
+                return [Microsoft.VisualStudio.Services.Client.VssClientCredentials]::new($true)
             }
 
             'User name and password' {
-                $netCred = New-Object 'System.Net.NetworkCredential' -ArgumentList $UserName, $Password
-                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
+                $netCred = [System.Net.NetworkCredential]::new($UserName, $Password)
+                $fedCred = [Microsoft.VisualStudio.Services.Common.VssBasicCredential]::new($netCred)
+                $winCred = [Microsoft.VisualStudio.Services.Common.WindowsCredential]::new($netCred)
             }
 
             'Credential object' {
@@ -93,19 +93,25 @@ Function Get-TfsCredential
                     throw "Invalid argument Credential. Supply either a PowerShell credential (PSCredential object) or a System.Net.NetworkCredential object."    
                 }
 
-                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
+                $fedCred = [Microsoft.VisualStudio.Services.Common.VssBasicCredential]::new($netCred)
+                $winCred = [Microsoft.VisualStudio.Services.Common.WindowsCredential]::new($netCred)
             }
 
             'Personal Access Token' {
-                $netCred = New-Object 'System.Net.NetworkCredential' -ArgumentList 'dummy-pat-user', $PersonalAccessToken
-                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Common.VssBasicCredential' -ArgumentList $netCred
-                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $netCred
+                $netCred = [System.Net.NetworkCredential]::new('dummy-pat-user', $PersonalAccessToken)
+                $fedCred = [Microsoft.VisualStudio.Services.Common.VssBasicCredential]::new($netCred)
+                $winCred = [Microsoft.VisualStudio.Services.Common.WindowsCredential]::new($netCred)
             }
 
             'Prompt for credential' {
-                $fedCred = New-Object 'Microsoft.VisualStudio.Services.Client.VssFederatedCredential' -ArgumentList $false
-                $winCred = New-Object 'Microsoft.VisualStudio.Services.Common.WindowsCredential' -ArgumentList $false
+
+                if($PSEdition -eq 'Core')
+                {
+                    Throw 'Interactive logons are currently not supported in PowerShell Core. Use personal access tokens instead.'
+                }
+
+                $fedCred = [Microsoft.VisualStudio.Services.Client.VssFederatedCredential]::new($false)
+                $winCred = [Microsoft.VisualStudio.Services.Common.WindowsCredential]::new($false)
                 $allowInteractive = $true
             }
 
@@ -123,6 +129,6 @@ Function Get-TfsCredential
             $promptType = [Microsoft.VisualStudio.Services.Common.CredentialPromptType]::DoNotPrompt
         }
 
-        return New-Object 'Microsoft.VisualStudio.Services.Client.VssClientCredentials' -ArgumentList $winCred, $fedCred, $promptType
+        return [Microsoft.VisualStudio.Services.Client.VssClientCredentials]::new($winCred, $fedCred, $promptType)
     }
 }

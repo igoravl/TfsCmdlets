@@ -65,6 +65,12 @@ Function Connect-TfsTeamProject
 		$Passthru
 	)
 
+	Begin
+	{
+		_LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
+	}
+
 	Process
 	{
 		$tpcArgs = $PSBoundParameters

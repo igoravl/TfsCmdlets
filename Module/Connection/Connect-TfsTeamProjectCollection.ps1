@@ -45,7 +45,7 @@ System.Uri
 #>
 Function Connect-TfsTeamProjectCollection
 {
-	[CmdletBinding(DefaultParameterSetName="Cached credentials")]
+	[CmdletBinding(DefaultParameterSetName="Prompt for credential")]
 	[OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidGlobalVars', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
@@ -58,7 +58,7 @@ Function Connect-TfsTeamProjectCollection
 		[object] 
 		$Collection,
 	
-        [Parameter(ParameterSetName="Cached credentials")]
+        [Parameter(ParameterSetName="Cached credentials", Mandatory=$true)]
         [switch]
         $Cached,
 
@@ -80,7 +80,7 @@ Function Connect-TfsTeamProjectCollection
         [string]
         $PersonalAccessToken,
 
-        [Parameter(ParameterSetName="Prompt for credential", Mandatory=$true)]
+        [Parameter(ParameterSetName="Prompt for credential")]
         [switch]
         $Interactive,
 
@@ -96,6 +96,7 @@ Function Connect-TfsTeamProjectCollection
 	Begin
 	{
 		_LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
 	}
 
 	Process
@@ -131,6 +132,9 @@ Function Connect-TfsTeamProjectCollection
 
 		}
 
+		_Log "Calling VssConnection.ConnectAsync()"
+		CALL_ASYNC($tpc.ConnectAsync([Microsoft.VisualStudio.Services.WebApi.VssConnectMode]::User), "Error connecting to team project collection / organization '$Collection'")
+
 		$srv = $tpc.ParentConnection
 
 		[TfsCmdlets.CurrentConnections]::Reset()
@@ -142,10 +146,7 @@ Function Connect-TfsTeamProjectCollection
 		_SetMru 'Server' -Value ($srv.Uri)
 		_SetMru 'Collection' -Value ($tpc.Uri)
 
-		_Log "Calling VssConnection.ConnectAsync()"
-		CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to team project collection / organization '$Collection'")
-
-		_Log "Connected to $($tpc.Uri)"
+		_Log "Connected to $($tpc.Uri), ID $($tpc.ServerId), as $($tpc.AuthorizedIdentity.DisplayName)"
 
 		if ($Passthru)
 		{

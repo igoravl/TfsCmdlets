@@ -56,6 +56,12 @@ Function Get-TfsTeamProjectCollection
 		$Credential
 	)
 
+	Begin
+	{
+		_LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
+	}
+
 	Process
 	{
 		if ($Current.IsPresent -or (-not $Collection))
@@ -73,7 +79,7 @@ Function Get-TfsTeamProjectCollection
 			_Log "Return collection referenced by URL '$Collection'"
 
 			$tpc = [Microsoft.VisualStudio.Services.WebApi.VssConnection]::new([uri]$Collection, $cred)
-			CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to '$tpc.Uri'")
+			CALL_ASYNC($tpc.ConnectAsync(), "Error connecting to '$($tpc.Uri)':")
 		}
 
 		return $tpc

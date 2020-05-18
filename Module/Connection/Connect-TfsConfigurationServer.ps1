@@ -65,6 +65,12 @@ Function Connect-TfsConfigurationServer
 		$Passthru
 	)
 
+	Begin
+	{
+		_LogParams
+        _Requires 'Microsoft.VisualStudio.Services.Common', 'Microsoft.VisualStudio.Services.Client.Interactive', 'Microsoft.TeamFoundation.Core.WebApi'
+	}
+
 	Process
 	{
 		if ($PSCmdlet.ParameterSetName -eq 'Prompt for credentials')

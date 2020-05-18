@@ -40,6 +40,11 @@ Function Get-TfsTeamProject
         $Current
     )
 
+    Begin
+    {
+        _Requires 'Microsoft.TeamFoundation.Core.WebApi'
+    }
+
     Process
     {
         if ($Current)
