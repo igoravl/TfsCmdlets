@@ -22,6 +22,6 @@ if($mod -and ($mod.Path -ne (Join-Path $modulePath 'TfsCmdlets.psm1')))
 
 if($loadMod)
 {
-    Write-Host "TestSetup: Importing module" -ForegroundColor Cyan
+    Write-Host "- TestSetup: Importing module" -ForegroundColor Cyan
     Import-Module (Join-Path $modulePath 'TfsCmdlets.psd1') -Force
 }
