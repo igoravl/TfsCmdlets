@@ -1,14 +1,16 @@
-. "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\..\_TestSetup.ps1"
+. "$(Join-Path $PSScriptRoot '/../_TestSetup.ps1')"
 
 InModuleScope 'TfsCmdlets' {
 
-    Describe 'Connect-TfsConfigurationServer' {
-
+    BeforeAll {
         $expectedUri = 'https://foo/bar'
         $expectedInteractiveCred = 'InteractiveCred'
         $expectedCred = 'usr:pwd'
 
         Mock 'Get-TfsCredential' -ParameterFilter { $Interactive.IsPresent } -MockWith { return $expectedInteractiveCred } 
+    }
+
+    Describe 'Connect-TfsConfigurationServer' -Tag PSDesktop {
 
         Context 'When connecting interactively' {
 
@@ -37,6 +39,9 @@ InModuleScope 'TfsCmdlets' {
                 Assert-VerifiableMock
             }
         }
+    }
+
+    Describe 'Connect-TfsConfigurationServer' {
 
         Context 'When connecting with default credential' {
 
