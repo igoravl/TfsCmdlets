@@ -12,35 +12,35 @@
 #>
 Function Get-TfsCredential
 {
-    [CmdletBinding(DefaultParameterSetName="Cached credentials")]
+    [CmdletBinding(DefaultParameterSetName='Cached credentials')]
     [OutputType('ITEM_TYPE')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '')]
 	[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUsePSCredentialType', '')]
     Param
     (
-        [Parameter(ParameterSetName="Cached credentials")]
+        [Parameter(ParameterSetName='Cached credentials')]
         [switch]
         $Cached,
 
-        [Parameter(ParameterSetName="User name and password", Mandatory=$true, Position=1)]
+        [Parameter(ParameterSetName='User name and password', Mandatory=$true, Position=1)]
         [string]
         $UserName,
 
-        [Parameter(ParameterSetName="User name and password", Position=2)]
+        [Parameter(ParameterSetName='User name and password', Position=2)]
         [securestring]
         $Password,
 
-        [Parameter(ParameterSetName="Credential object", Mandatory=$true)]
+        [Parameter(ParameterSetName='Credential object', Mandatory=$true)]
         [AllowNull()]
 		[object]
         $Credential,
 
-        [Parameter(ParameterSetName="Personal Access Token", Mandatory=$true)]
+        [Parameter(ParameterSetName='Personal Access Token', Mandatory=$true)]
         [Alias('Pat')]
         [string]
         $PersonalAccessToken,
 
-        [Parameter(ParameterSetName="Prompt for credential", Mandatory=$true)]
+        [Parameter(ParameterSetName='Prompt for credential', Mandatory=$true)]
         [switch]
         $Interactive
     )
@@ -116,7 +116,8 @@ Function Get-TfsCredential
             }
 
             else {
-                throw "Invalid parameter set $($PSCmdlet.ParameterSetName)"
+                $setName = $PSCmdlet.ParameterSetName
+                throw "Invalid parameter set $setName"
             }
         }
 
