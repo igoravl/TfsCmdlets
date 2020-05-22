@@ -3,18 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.89
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets", "TfsCmdlets\TfsCmdlets.csproj", "{7FD740D8-4A07-4633-A192-36BEFA719866}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TfsCmdlets.Common", "TfsCmdlets.Common\TfsCmdlets.Common.shproj", "{BCF418C8-4FD6-4B6B-80E5-756F56E80CE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.PSCore", "TfsCmdlets.PSCore\TfsCmdlets.PSCore.csproj", "{62337EEF-CCE4-488E-8F6F-E90A57186AB1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.PSDesktop", "TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.csproj", "{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		TfsCmdlets.Common\TfsCmdlets.Common.projitems*{62337eef-cce4-488e-8f6f-e90a57186ab1}*SharedItemsImports = 5
+		TfsCmdlets.Common\TfsCmdlets.Common.projitems*{bcf418c8-4fd6-4b6b-80e5-756f56e80ce4}*SharedItemsImports = 13
+		TfsCmdlets.Common\TfsCmdlets.Common.projitems*{f4e8b2d2-4364-426a-9a41-a5036a9df08f}*SharedItemsImports = 5
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7FD740D8-4A07-4633-A192-36BEFA719866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FD740D8-4A07-4633-A192-36BEFA719866}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FD740D8-4A07-4633-A192-36BEFA719866}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FD740D8-4A07-4633-A192-36BEFA719866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62337EEF-CCE4-488E-8F6F-E90A57186AB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62337EEF-CCE4-488E-8F6F-E90A57186AB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62337EEF-CCE4-488E-8F6F-E90A57186AB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62337EEF-CCE4-488E-8F6F-E90A57186AB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

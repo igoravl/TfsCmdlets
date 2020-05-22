@@ -9,7 +9,7 @@ Param
     $ModuleName = 'TfsCmdlets',
     $ModuleAuthor = 'Igor Abade V. Leite',
     $ModuleDescription = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server',
-    $Targets = "Package",
+    $Targets = @("Package"),
     $RepoCreationDate = (Get-Date '2014-10-24'),
     [switch] $SkipTests,
     [switch] $Incremental

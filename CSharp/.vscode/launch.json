@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Windows PowerShell",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "c:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "args": [
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}\\TfsCmdlets\\bin\\debug\\netstandard2.0\\TfsCmdlets.dll -Prefix Tfs"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "PowerShell Core",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
+            "args": [
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}\\TfsCmdlets\\bin\\debug\\netstandard2.0\\TfsCmdlets.dll -Prefix Tfs"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        }
+    ]
+}

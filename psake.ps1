@@ -58,7 +58,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
+Task Build -Depends CleanOutputDir, BuildLibrary, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
 }
 
 Task Test -Depends Build, UnitTests, AllTests {
@@ -78,80 +78,20 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
 
 Task BuildLibrary {
 
-    $LibSolutionDir = (Join-Path $SolutionDir 'Lib')
-    $LibSolutionPath = (Join-Path $LibSolutionDir 'TfsCmdletsLib.sln')
+    $LibSolutionDir = (Join-Path $SolutionDir 'CSharp')
 
-    foreach($f in $TargetFrameworks.Values)
+    foreach($p in @('Core', 'Desktop'))
     {
-        Write-Verbose "Build $f version of TfsCmdletsLib"
-        Exec { dotnet publish $LibSolutionPath -c $Configuration -f $f --self-contained true /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
+        Write-Verbose "Build TfsCmdlets.PS$p"
+        Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c Release -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
     }
 }
 
-Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles, CopyLibraries {
+Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles {
 
-    # Preprocess and copy PowerShell files to output dir
-
-    Write-Verbose "Preprocessing and copying PowerShell files to output folder"
-
-    $includeFiles = (Get-ChildItem (Join-Path $SolutionDir 'Include'))
-    $writtenFiles = @()
-
-    foreach ($input in (Get-ChildItem -Path $ProjectDir/* -Include *.ps1 -Recurse))
-    {
-        $inputs = @($input) + $includeFiles
-        $outputPath = (Join-Path $ModuleDir $input.FullName.SubString($ProjectDir.Length + 1))
-
-        if (_IsUpToDate $inputs $outputPath)
-        {
-            Write-Verbose "$outputPath is up-to-date; skipping"
-            continue
-        }
-
-        Write-Verbose "Preprocessing $($input.FullName)"
-        
-        $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($input.FullName)`")
-
-        $dirName = $input.Directory.FullName
-
-        if ($dirName.Length -gt $ProjectDir.Length)
-        {
-            $dirName = $dirName.Substring($ProjectDir.Length + 1)
-        }
-        else
-        {
-            $dirName = 'Module'
-        }
-
-        if (($Configuration -eq 'Release') -and ($dirName -ne 'Module'))
-        {
-            # Merge files (Release)
-            $outputPath = (Join-Path $ModuleDir "TfsCmdlets.psm1")
-        }
-
-        if ($writtenFiles -notcontains $outputPath)
-        {
-            if (Test-Path $outputPath)
-            {
-                Write-Verbose "Removing file $outputPath before writing"
-                Remove-Item $outputPath -Force
-            }
-            $writtenFiles += $outputPath
-        }
-
-        Write-Verbose "Copying preprocessed contents to $outputPath"
-
-        Add-Content -Path $outputPath -Value $data -Force
-    }
-
-    # Mark outputted files as read-only to prevent editing and eventual data loss during debugging sessions
-
-    Get-ChildItem -Path $ModuleDir\* -Include *.ps1 -Recurse | ForEach-Object { $_.Attributes = 'ReadOnly' }
 }
 
 Task CopyStaticFiles {
-
-    # Copy other module files to output dir
 
     Write-Verbose "Copying module files to output folder"
 
@@ -159,51 +99,6 @@ Task CopyStaticFiles {
     Copy-Item -Path $SolutionDir\*.md -Destination $ModuleDir -Force
 }
 
-Task CopyLibraries {
-
-    $TargetDir = (Join-Path $ModuleDir 'Lib')
-
-    foreach($tf in $TargetFrameworks.Values)
-    {
-        $srcDir = Join-Path $SolutionDir "Lib/TfsCmdletsLib/bin/$Configuration/$tf/publish"
-        $dstDir = Join-Path $TargetDir $tf
-
-        if (-not (Test-Path $dstDir -PathType Container)) 
-        {
-            Write-Verbose "Creating output folder $dstDir"
-            New-Item $dstDir -ItemType Directory -Force | Out-Null
-        }
-    
-        Get-ChildItem (Join-Path $srcDir '*') -File | ForEach-Object { 
-            try
-            {
-                $src = $_
-                $dst = Join-Path $dstDir $f.Name
-
-                # if(_IsUpToDate $src $dst) { continue }
-
-                Write-Verbose "Copying $($_.Name) to $dstDir"
-                Copy-Item $src -Destination $dstDir
-            }
-            catch
-            {
-                Write-Warning "$_"
-            }
-        }
-
-        # Get-ChildItem (Join-Path $srcDir '*') -Directory -Exclude (Get-ChildItem (Join-Path $dstDir '*') -Directory | Select-Object -ExpandProperty Name) | ForEach-Object { 
-        #     try
-        #     {
-        #         Write-Verbose "Copying $($_.Name) to $dstDir recursively"
-        #         Copy-Item $_ -Destination $dstDir -Recurse
-        #     }
-        #     catch
-        #     {
-        #         Write-Warning "$_"
-        #     }
-        # }
-    }
-}
 Task GenerateTypesXml {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
@@ -234,10 +129,10 @@ Task GenerateFormatXml {
 
 Task UpdateModuleManifest {
 
-    $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
-    $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
-    $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
-    $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.deps.json') -Recurse)[0] | ConvertFrom-Json)
+    # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    # $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
+    # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.PSCore.deps.json') -Recurse)[0] | ConvertFrom-Json)
     $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
 
     $PrivateData = @{
@@ -251,8 +146,8 @@ Task UpdateModuleManifest {
 
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
-        FileList             = $fileList
-        FunctionsToExport    = $functionList
+        # FileList             = $fileList
+        # FunctionsToExport    = $functionList
         ModuleVersion        = $FourPartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData

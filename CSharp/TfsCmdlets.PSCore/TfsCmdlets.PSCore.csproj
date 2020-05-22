@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>TfsCmdlets.PSCore</RootNamespace>
+    <RootNamespace>TfsCmdlets</RootNamespace>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
+    <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
+  </ItemGroup>
+
+  <Import Project="..\TfsCmdlets.Common\TfsCmdlets.Common.projitems" Label="Shared" />
+
+</Project>

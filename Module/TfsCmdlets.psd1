@@ -3,8 +3,7 @@
     CompanyName = 'Igor Abade V. Leite'
     Copyright = '(c) 2014 Igor Abade V. Leite. All rights reserved.'
     Description = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server'
-    # RootModule = 'TfsCmdlets.psm1'
-    RootModule = 'Lib/netstandard2.0/TfsCmdletsLib.dll'
+    RootModule = if($PSEdition -eq 'Core') { 'Lib/Core/TfsCmdlets.PSCore.dll' } else { 'Lib/Desktop/TfsCmdlets.PSDesktop.dll' }
     DefaultCommandPrefix = 'Tfs'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     HelpInfoURI = 'https://github.com/igoravl/tfscmdlets/wiki/'
@@ -12,7 +11,6 @@
     PowerShellVersion = '5.1'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
-    ScriptsToProcess = 'Startup.ps1'
     AliasesToExport = '*'
     VariablesToExport = @()
     CmdletsToExport = @()
