@@ -1,12 +1,10 @@
-﻿using System;
-using System.Reflection;
-using System.Runtime.Loader;
+﻿using System.Runtime.Loader;
 
 namespace TfsCmdlets
 {
-    internal class AssemblyResolver: BaseAssemblyResolver
+    public partial class AssemblyResolver
     {
-        protected override void RegisterEventHandler()
+        private void RegisterEventHandler()
         {
             AssemblyLoadContext.Default.Resolving += (ctx, asmName) =>
             {

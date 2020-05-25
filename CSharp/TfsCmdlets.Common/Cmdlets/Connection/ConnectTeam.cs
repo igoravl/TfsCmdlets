@@ -36,7 +36,6 @@ Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
 System.String
 */
 
-using System;
 using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Connection

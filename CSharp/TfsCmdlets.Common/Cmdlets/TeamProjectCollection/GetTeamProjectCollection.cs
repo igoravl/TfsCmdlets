@@ -40,7 +40,6 @@ System.Uri
 Cmdlets in the TfsCmdlets module that operate on a collection level require a TfsConfigurationServer object to be provided via the -Server argument. If absent, it will default to the connection opened by Connect-TfsConfigurationServer.
 */
 
-using System;
 using System.Management.Automation;
 using TfsCmdlets.Extensions;
 

@@ -28,7 +28,6 @@ Microsoft.TeamFoundation.WorkItemTracking.Client.Project
 System.String
 */
 
-using System;
 using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query

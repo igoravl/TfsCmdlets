@@ -49,7 +49,6 @@ https://www.visualstudio.com/en-us/docs/work/reference/process-templates/define-
 For queries made against Team Services, the WIQL length must not exceed 32K characters. The system won"t allow you to create or run queries that exceed that length.
 */
 
-using System;
 using System.Management.Automation;
 using System.Xml;
 

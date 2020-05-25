@@ -24,6 +24,7 @@ System.Uri
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
@@ -44,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
 
         protected override void ProcessRecord()
         {
-            WriteObject(this.GetServer());
+            WriteObject(this.GetService<VssConnection>().Get("Server"));
         }
     }
 }

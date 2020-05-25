@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Windows PowerShell": {
+    "PowerShell Core": {
       "commandName": "Executable",
-      "executablePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\PowerShell.exe",
+      "executablePath": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
       "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath)\" -Prefix Tfs"
     }
   }

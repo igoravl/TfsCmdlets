@@ -33,9 +33,7 @@ As with most cmdlets in the TfsCmdlets module, this cmdlet requires a TfsTeamPro
 
 */
 
-using System;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.Search.WebApi.Contracts;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {

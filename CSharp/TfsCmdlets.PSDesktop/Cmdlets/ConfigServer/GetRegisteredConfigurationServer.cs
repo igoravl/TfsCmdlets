@@ -9,10 +9,7 @@
     System.String
 */
 
-using System;
-using System.Linq;
 using System.Management.Automation;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {

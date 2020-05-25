@@ -32,7 +32,6 @@ Imports the contents of an XML document called gl.xml to the current project col
 To import global lists, you must be a member of the Project Collection Administrators security group
 */
 
-using System;
 using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList

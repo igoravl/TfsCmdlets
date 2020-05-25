@@ -59,10 +59,8 @@ System.String
 System.Uri
 */
 
-using System;
 using System.Management.Automation;
 using System.Security;
-using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 
@@ -108,8 +106,8 @@ namespace TfsCmdlets.Cmdlets.Connection
             var tpc = this.GetCollection();
             tpc.ConnectAsync().SyncResult();
 
-            var client = tpc.GetClient<ProjectCollectionHttpClient>();
-            var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;
+            //var client = tpc.GetClient<ProjectCollectionHttpClient>();
+            //var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;
 
             var srv = tpc.GetConfigurationServer();
 

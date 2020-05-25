@@ -6,13 +6,11 @@
     <SharedGUID>bcf418c8-4fd6-4b6b-80e5-756f56e80ce4</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>TfsCmdlets.Common</Import_RootNamespace>
+    <Import_RootNamespace>TfsCmdlets</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)BaseAssemblyResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\BaseCmdlet.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\ConfigServer\GetConfigurationServer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\ConfigServer\GetRegisteredConfigurationServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectConfigurationServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectTeam.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectTeamProject.cs" />
@@ -115,19 +113,31 @@
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Work\GetTeamBoardCardRuleSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Work\SetTeamBoardCardRuleSettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Work\SetWorkItemBoardStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Consts.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CurrentConnections.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\CmdletExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ConnectionExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\CredentialExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\LogExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ParameterExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PSObjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ServiceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClient\GenericHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClient\TeamAdminHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ModuleInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServiceProvider\CmdletServiceProviderImpl.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\BaseService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServiceProvider\ExportsAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\Connection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\CredentialsService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ConnectionService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ServiceProvider\ICmdletServiceProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IConnection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\LogService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\EnvironmentUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ErrorUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Mru.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\PSJsonConverter.cs" />

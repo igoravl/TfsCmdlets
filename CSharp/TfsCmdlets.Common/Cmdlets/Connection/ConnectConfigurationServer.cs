@@ -47,18 +47,18 @@ https://blogs.msdn.microsoft.com/taylaf/2010/02/23/introducing-the-tfsconnection
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Connection
 {
     [Cmdlet(VerbsCommunications.Connect, "ConfigurationServer", DefaultParameterSetName="Explicit credentials")]
-	//[OutputType(typeof(Microsoft.TeamFoundation.Client.TfsConfigurationServer))]
+	[OutputType(typeof(VssConnection))]
     public class ConnectConfigurationServer: BaseCmdlet
     {
-/*
 		[Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
 		[ValidateNotNull()]
-		[object] 
-		Server,
+		public object Server { get; set; }
 	
 		[Parameter(ParameterSetName="Explicit credentials")]
 		public object Credential { get; set; }
@@ -69,37 +69,22 @@ namespace TfsCmdlets.Cmdlets.Connection
 		[Parameter()]
 		public SwitchParameter Passthru { get; set; }
 
+        protected override void ProcessRecord()
+        {
+            var srv = this.GetServer();
+            srv.ConnectAsync().SyncResult();
 
-	protected override void ProcessRecord()
-	{
-		if (ParameterSetName == "Prompt for credentials")
-		{
-			Credential = (Get-TfsCredential -Interactive)
-		}
+            //var client = tpc.GetClient<ProjectCollectionHttpClient>();
+            //var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;
 
-		configServer = Get-TfsConfigurationServer -Server Server -Credential Credential
+            CurrentConnections.Set(srv);
 
-		if (! configServer)
-		{
-			throw new Exception("Error connecting to TFS")
-		}
+            this.Log($"Connected to {srv.Uri}, ID {srv.ServerId}, as {srv.AuthorizedIdentity.DisplayName}");
 
-		[TfsCmdlets.CurrentConnections]::Reset()
-
-		this.Log($"Connecting to {{configServer}.Uri}");
-
-		[TfsCmdlets.CurrentConnections]::Server = configServer
-
-		this.Log($"Adding {{configServer}.Uri} to the MRU list");
-
-		_SetMru "Server" -Value ([string]configServer.Uri)
-
-		if (Passthru)
-		{
-			WriteObject(configServer); return;
-		}
+            if (Passthru)
+            {
+                WriteObject(srv);
+            }
+        }
 	}
-}
-*/
-}
 }

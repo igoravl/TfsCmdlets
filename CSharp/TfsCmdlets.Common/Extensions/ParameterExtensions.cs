@@ -24,14 +24,10 @@ namespace TfsCmdlets.Extensions
                             ((SwitchParameter) pi.GetValue(cmdlet)).ToBool() : 
                             pi.GetValue(cmdlet)));
 
-            return parms;
-        }
-
-        internal static ParameterDictionary GetParameters(this PSCmdlet caller)
-        {
-            var parms = GetParameters((Cmdlet) caller);
-
-            parms.Add("ParameterSetName", caller.ParameterSetName);
+            if (cmdlet is PSCmdlet psCmdlet)
+            {
+                parms.Add("ParameterSetName", psCmdlet.ParameterSetName);
+            }
 
             return parms;
         }

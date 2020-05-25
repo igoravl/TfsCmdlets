@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Reflection;
 
 namespace TfsCmdlets
 {
-    internal class AssemblyResolver: BaseAssemblyResolver
+    public partial class AssemblyResolver
     {
-        protected override void RegisterEventHandler()
+        private void RegisterEventHandler()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
             {

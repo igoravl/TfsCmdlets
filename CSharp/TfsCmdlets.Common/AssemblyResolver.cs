@@ -5,11 +5,9 @@ using System.Reflection;
 
 namespace TfsCmdlets
 {
-    public abstract class BaseAssemblyResolver
+    public partial class AssemblyResolver
     {
         public Dictionary<string, AssemblyEntry> Assemblies { get; } = new Dictionary<string, AssemblyEntry>(StringComparer.OrdinalIgnoreCase);
-
-        protected abstract void RegisterEventHandler();
 
         public void Register()
         {
@@ -26,7 +24,7 @@ namespace TfsCmdlets
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
 
-        protected Assembly ResolveAssembly(string assemblyName)
+        private Assembly ResolveAssembly(string assemblyName)
         {
             if (!Assemblies.ContainsKey(assemblyName))
             {

@@ -10,12 +10,9 @@
    
 */
 
-using System;
 using System.Management.Automation;
-using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
-using Microsoft.VisualStudio.Services.Common;
 using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Connection
@@ -46,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.Connection
 
         protected override void EndProcessing()
         {
-            WriteObject(this.GetCredential());
+            WriteObject(this.GetService<VssClientCredentials>().Get());
         }
     }
 }
