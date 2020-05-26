@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
         protected override void ProcessRecord()
         {
-            WriteObject(this.GetMany<Microsoft.TeamFoundation.Core.WebApi.TeamProject>().ToList(), true);
+            WriteObject(this.GetMany<Microsoft.TeamFoundation.Core.WebApi.TeamProject>(), true);
         }
     }
 }
