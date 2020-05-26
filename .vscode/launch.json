@@ -2,20 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell Interactive Session",
-            "type": "PowerShell",
+            "name": "Windows PowerShell",
+            "type": "clr",
             "request": "launch",
-            "script": "${workspaceFolder}\\DebugStartup.ps1",
+            "program": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\PowerShell.exe",
             "args": [
-                "${fileBasenameNoExtension}"
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1"
             ],
+            "console": "externalTerminal",
             "preLaunchTask": "Build"
         },
         {
-            "name": "PowerShell Attach Interactive Session Runspace",
-            "type": "PowerShell",
-            "request": "attach",
-            "processId": "current",
+            "name": "PowerShell Core",
+            "type": "coreclr",
+            "program": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
+            "args": [
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1"
+            ],
             "preLaunchTask": "Build"
         }
     ]
