@@ -83,7 +83,7 @@ Task BuildLibrary {
     foreach($p in @('Core', 'Desktop'))
     {
         Write-Verbose "Build TfsCmdlets.PS$p"
-        Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c Release -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
+        Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
     }
 }
 
