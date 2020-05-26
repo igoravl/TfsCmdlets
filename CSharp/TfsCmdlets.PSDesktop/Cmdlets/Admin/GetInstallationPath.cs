@@ -36,19 +36,19 @@ namespace TfsCmdlets.Cmdlets.Admin
     [OutputType(typeof(string))]
     public class GetInstallationPath : BaseCmdlet
     {
-        [Parameter()]
+        [Parameter]
         [Alias("Session")]
         public object ComputerName { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public TfsComponent Component { get; set; } = TfsComponent.BaseInstallation;
 
 		[Parameter(Mandatory = true)]
         [ValidateSet("11.0", "12.0", "14.0", "15.0", "16.0")]
         public string Version { get; set; }
 
-        [Parameter()]
-        [System.Management.Automation.Credential()]
+        [Parameter]
+        [Credential]
         public PSCredential Credential { get; set; } = PSCredential.Empty;
 
         /*

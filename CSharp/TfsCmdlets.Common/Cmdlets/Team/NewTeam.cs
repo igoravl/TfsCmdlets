@@ -29,11 +29,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
     [Cmdlet(VerbsCommon.New, "Team", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.WebApiTeam))]
+    [OutputType(typeof(WebApiTeam))]
     public class NewTeam : BaseCmdlet
     {
         /*

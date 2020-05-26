@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         # Query order
         [Parameter()]
         [Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder]
-        QueryOrder = [Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder]::None,
+        QueryOrder = Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder.None,
 
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }

@@ -67,12 +67,12 @@ using TfsCmdlets.Extensions;
 namespace TfsCmdlets.Cmdlets.Connection
 {
     [Cmdlet(VerbsCommunications.Connect, "TeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.WebApi.VssConnection))]
+    [OutputType(typeof(VssConnection))]
     public class ConnectTeamProjectCollection : BaseCmdlet
     {
 
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         public object Collection { get; set; }
 
         [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
@@ -85,7 +85,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         public SecureString Password { get; set; }
 
         [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
-        [ValidateNotNull()]
+        [ValidateNotNull]
         public object Credential { get; set; }
 
         [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
@@ -95,25 +95,25 @@ namespace TfsCmdlets.Cmdlets.Connection
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public object Server { get; set; }
 
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru { get; set; }
 
         protected override void ProcessRecord()
         {
             var tpc = this.GetCollection();
-            tpc.ConnectAsync().SyncResult();
+            tpc.Connect();
 
             //var client = tpc.GetClient<ProjectCollectionHttpClient>();
             //var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;
 
-            var srv = tpc.GetConfigurationServer();
+            var srv = tpc.ConfigurationServer;
 
             CurrentConnections.Set(srv, tpc);
 
-            this.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as {tpc.AuthorizedIdentity.DisplayName}");
+            this.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.AuthorizedIdentity.DisplayName}'");
 
             if (Passthru)
             {

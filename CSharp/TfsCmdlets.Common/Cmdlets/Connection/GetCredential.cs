@@ -43,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.Connection
 
         protected override void EndProcessing()
         {
-            WriteObject(this.GetService<VssClientCredentials>().Get());
+            WriteObject(this.GetOne<VssClientCredentials>());
         }
     }
 }

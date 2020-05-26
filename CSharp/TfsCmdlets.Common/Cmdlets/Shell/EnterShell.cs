@@ -54,11 +54,11 @@ namespace TfsCmdlets.Cmdlets.Shell
             Write-Output ""
             Write-Output $"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
 
-            profileScript = Join-Path $([System.Environment]::GetFolderPath("MyDocuments")) "WindowsPowerShell/TfsCmdlets_Profile.ps1"
+            profileScript = Join-Path $(System.Environment.GetFolderPath("MyDocuments")) "WindowsPowerShell/TfsCmdlets_Profile.ps1"
 
             if(Test-Path (profileScript))
             {
-                sw = [System.Diagnostics.Stopwatch]::StartNew()
+                sw = System.Diagnostics.Stopwatch.StartNew()
                 . profileScript
                 sw.Stop()
 

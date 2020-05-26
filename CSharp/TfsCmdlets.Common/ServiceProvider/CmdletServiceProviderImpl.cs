@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.ServiceProvider
 {
@@ -29,9 +30,9 @@ namespace TfsCmdlets.ServiceProvider
             return (IService<T>) GetService(cmdlet, typeof(T));
         }
 
-        public T Get<T>(Cmdlet cmdlet, object userState = null)
+        public T GetInstanceOf<T>(Cmdlet cmdlet, object userState = null)
         {
-            return GetService<T>(cmdlet).Get(userState);
+            return GetService<T>(cmdlet).GetOne(userState);
         }
 
         private void RegisterFactories()

@@ -29,11 +29,12 @@ System.String
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
     [Cmdlet(VerbsCommon.Rename, "GitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    [OutputType(typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository))]
+    [OutputType(typeof(GitRepository))]
     public class RenameGitRepository : BaseCmdlet
     {
         /*

@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 
             protected override void ProcessRecord()
             {
-                if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]::Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]::Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
+                if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
 
                 nodes = Get-TfsClassificationNode -Node Node -StructureGroup StructureGroup -Project Project -Collection Collection
                 moveToNode =  Get-TfsClassificationNode -Node MoveTo -StructureGroup StructureGroup -Project Project -Collection Collection

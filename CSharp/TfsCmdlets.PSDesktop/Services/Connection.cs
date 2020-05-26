@@ -1,15 +1,35 @@
-﻿namespace TfsCmdlets.Services
+﻿using System;
+using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Framework.Client;
+
+namespace TfsCmdlets.Services
 {
-    internal partial class Connection
+    public partial class Connection
     {
-        public T GetClient<T>()
+        public static implicit operator TfsConnection(Connection c) => c.InnerConnection;
+        public static implicit operator Connection(TfsConnection c) => new Connection(c);
+
+        internal TfsConnection InnerConnection => BaseObject as TfsConnection;
+
+        internal TfsConnection ConfigurationServer =>
+            (InnerConnection as TfsTeamProjectCollection)?.ConfigurationServer ??
+            InnerConnection as TfsConfigurationServer;
+
+        internal TeamFoundationIdentity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
+
+        internal Guid ServerId => InnerConnection.InstanceId;
+
+        public object GetClientFromType(Type type)
         {
-            throw new System.NotImplementedException();
+            return InnerConnection.GetType()
+                .GetMethod("GetClient")
+                .MakeGenericMethod(type)
+                .Invoke(InnerConnection, null);
         }
 
-        public T GetService<T>()
+        partial void DoConnect()
         {
-            throw new System.NotImplementedException();
+            if (BaseObject is TfsConnection tfs) tfs.EnsureAuthenticated();
         }
     }
 }

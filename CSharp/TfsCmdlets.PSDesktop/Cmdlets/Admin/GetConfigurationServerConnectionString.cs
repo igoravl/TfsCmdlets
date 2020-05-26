@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
 		[Parameter()]
 		[System.Management.Automation.Credential()]
 		[System.Management.Automation.PSCredential]
-		Credential = [System.Management.Automation.PSCredential]::Empty
+		Credential = System.Management.Automation.PSCredential.Empty
 
 	protected override void ProcessRecord()
 	{

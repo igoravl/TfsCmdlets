@@ -76,11 +76,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
     [Cmdlet(VerbsCommon.Copy, "TestPlan")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan))]
+    [OutputType(typeof(TestPlan))]
     public class CopyTestPlan: BaseCmdlet
     {
 /*
@@ -188,7 +189,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 			}
 			else
 			{
-				NewName = $"{{plan}.Name} (cloned $([DateTime]::Now.ToShortDateString()))"
+				NewName = $"{{plan}.Name} (cloned $(DateTime.Now.ToShortDateString()))"
 			}
 		}
 

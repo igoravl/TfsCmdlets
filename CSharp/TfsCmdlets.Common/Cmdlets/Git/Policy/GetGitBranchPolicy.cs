@@ -26,11 +26,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Policy.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git.Policy
 {
     [Cmdlet(VerbsCommon.Get, "GitBranchPolicy")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration))]
+    [OutputType(typeof(PolicyConfiguration))]
     public class GetGitBranchPolicy: BaseCmdlet
     {
 /*

@@ -1,7 +1,9 @@
 ﻿using System.Management.Automation;
 using System.Reflection;
+using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Extensions
 {
@@ -14,17 +16,22 @@ namespace TfsCmdlets.Extensions
 
         internal static VssClientCredentials GetCredentials(this Cmdlet cmdlet)
         {
-            return cmdlet.GetService<VssClientCredentials>().Get();
+            return cmdlet.GetOne<VssClientCredentials>();
         }
 
-        internal static VssConnection GetCollection(this Cmdlet cmdlet)
+        internal static Connection GetServer(this Cmdlet cmdlet)
         {
-            return Get(cmdlet, "Collection");
+            return GetConnection(cmdlet, "Server");
         }
 
-        internal static VssConnection GetServer(this Cmdlet cmdlet)
+        internal static Connection GetCollection(this Cmdlet cmdlet)
         {
-            return Get(cmdlet, "Server");
+            return GetConnection(cmdlet, "Collection");
+        }
+
+        internal static TeamProject GetProject(this Cmdlet cmdlet)
+        {
+            return cmdlet.GetOne<TeamProject>();
         }
 
         internal static string GetCommandName(this Cmdlet cmdlet)
@@ -34,12 +41,9 @@ namespace TfsCmdlets.Extensions
             return attr == null ? cmdlet.GetType().Name : $"{attr.VerbName}-{Consts.DEFAULT_PREFIX}{attr.NounName}";
         }
 
-
-        private static VssConnection Get(Cmdlet cmdlet, string connectionType)
+        private static Connection GetConnection(Cmdlet cmdlet, string connectionType)
         {
-            return cmdlet.GetService<VssConnection>().Get(connectionType);
+            return cmdlet.GetOne<Connection>(connectionType);
         }
-
-
     }
 }

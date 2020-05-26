@@ -14,11 +14,12 @@
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
     [Cmdlet(VerbsCommon.New, "WorkItemTag", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition))]
+    [OutputType(typeof(WebApiTagDefinition))]
     public class NewWorkItemTag : BaseCmdlet
     {
         /*

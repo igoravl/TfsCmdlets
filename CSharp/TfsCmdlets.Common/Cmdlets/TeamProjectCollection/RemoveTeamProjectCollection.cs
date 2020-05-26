@@ -29,12 +29,12 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 Server,
 
                 [Parameter()]
-                public timespan Timeout { get; set; } = [timespan]::MaxValue,
+                public timespan Timeout { get; set; } = timespan.MaxValue,
 
                 [Parameter()]
                 [System.Management.Automation.Credential()]
                 [System.Management.Automation.PSCredential]
-                Credential = [System.Management.Automation.PSCredential]::Empty
+                Credential = System.Management.Automation.PSCredential.Empty
 
             protected override void ProcessRecord()
             {

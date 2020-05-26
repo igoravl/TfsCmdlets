@@ -74,15 +74,15 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                 opsToken = operationsClient.GetOperation(token.Id).Result
 
                 while (
-                    (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded) -and
-                    (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Failed) && 
-                    (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Cancelled))
+                    (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Succeeded) -and
+                    (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Failed) && 
+                    (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Cancelled))
                 {
                     Start-Sleep -Seconds 2
                     opsToken = operationsClient.GetOperation(token.Id).Result
                 }
 
-                if (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded)
+                if (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Succeeded)
                 {
                     throw new Exception($"Error creating team project {Project}")
                 }

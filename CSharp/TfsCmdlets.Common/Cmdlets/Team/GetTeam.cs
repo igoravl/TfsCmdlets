@@ -27,11 +27,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
     [Cmdlet(VerbsCommon.Get, "Team", DefaultParameterSetName="Get by team")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.WebApiTeam))]
+    [OutputType(typeof(WebApiTeam))]
     public class GetTeam: BaseCmdlet
     {
 /*
@@ -64,7 +65,7 @@ namespace TfsCmdlets.Cmdlets.Team
     {
         if(Current.IsPresent || (! Team))
         {
-			WriteObject([TfsCmdlets.CurrentConnections]::Team); return;
+			WriteObject(TfsCmdlets.CurrentConnections.Team); return;
         }
 
         if (Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTeam; returning input item immediately, without further processing."; WriteObject(Team }); return;);

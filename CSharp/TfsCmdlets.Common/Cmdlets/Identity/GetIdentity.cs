@@ -58,11 +58,11 @@ namespace TfsCmdlets.Cmdlets.Identity
 
         if(QueryMembership.IsPresent)
         {
-            qm = [Microsoft.VisualStudio.Services.Identity.QueryMembership]::Direct
+            qm = Microsoft.VisualStudio.Services.Identity.QueryMembership.Direct
         }
         else
         {
-            qm = [Microsoft.VisualStudio.Services.Identity.QueryMembership]::None
+            qm = Microsoft.VisualStudio.Services.Identity.QueryMembership.None
         }
 
         if(_TestGuid Identity)
@@ -73,7 +73,7 @@ namespace TfsCmdlets.Cmdlets.Identity
         else
         {
             this.Log($"Finding identity with account name [{Identity}] and QueryMembership=qm");
-            task = client.ReadIdentitiesAsync([Microsoft.VisualStudio.Services.Identity.IdentitySearchFilter]::AccountName, [string]Identity, "None", qm); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving information from identity [{Identity}]" task.Exception.InnerExceptions })
+            task = client.ReadIdentitiesAsync(Microsoft.VisualStudio.Services.Identity.IdentitySearchFilter.AccountName, [string]Identity, "None", qm); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving information from identity [{Identity}]" task.Exception.InnerExceptions })
         }
 
         WriteObject(result); return;

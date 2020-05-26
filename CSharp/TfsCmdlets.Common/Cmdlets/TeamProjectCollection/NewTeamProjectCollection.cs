@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 public int PollingInterval { get; set; } = 5,
 
                 [Parameter()]
-                public timespan Timeout { get; set; } = [timespan]::MaxValue,
+                public timespan Timeout { get; set; } = timespan.MaxValue,
 
                 [Parameter()]
                 [object] 
@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 [Parameter()]
                 [System.Management.Automation.Credential()]
                 [System.Management.Automation.PSCredential]
-                Credential = [System.Management.Automation.PSCredential]::Empty,
+                Credential = System.Management.Automation.PSCredential.Empty,
 
                 [Parameter()]
                 public SwitchParameter Passthru { get; set; }
@@ -108,15 +108,15 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                         {
                             Start-Sleep -Seconds PollingInterval
 
-                            collectionInfo = tpcService.GetCollection(tpcJob.HostId, [Microsoft.TeamFoundation.Framework.Client.ServiceHostFilterFlags]::IncludeAllServicingDetails)
+                            collectionInfo = tpcService.GetCollection(tpcJob.HostId, Microsoft.TeamFoundation.Framework.Client.ServiceHostFilterFlags.IncludeAllServicingDetails)
                             jobDetail = collectionInfo.ServicingDetails | Where-Object JobId == tpcJob.JobId
 
                             if ((null = = jobDetail) || 
-                                ((jobDetail.JobStatus != [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Queued) && 
-                                (jobDetail.JobStatus != [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Running)))
+                                ((jobDetail.JobStatus != Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus.Queued) && 
+                                (jobDetail.JobStatus != Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus.Running)))
                             {
-                                if (jobDetail.Result == [Microsoft.TeamFoundation.Framework.Client.ServicingJobResult]::Failed || 
-                                    jobDetail.JobStatus == [Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus]::Failed)
+                                if (jobDetail.Result == Microsoft.TeamFoundation.Framework.Client.ServicingJobResult.Failed || 
+                                    jobDetail.JobStatus == Microsoft.TeamFoundation.Framework.Client.ServicingJobStatus.Failed)
                                 {
                                     throw new Exception($"Error creating team project collection {Collection} : ")
                                 }

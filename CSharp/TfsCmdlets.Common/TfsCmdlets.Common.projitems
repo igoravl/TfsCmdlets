@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AssemblyResolver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\BaseCmdlet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\ConfigServer\GetConfigurationServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectConfigurationServer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectTeam.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\Connection\ConnectTeamProject.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\PSObjectExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\ServiceExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClient\GenericHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClient\TeamAdminHttpClient.cs" />
@@ -132,11 +134,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)ServiceProvider\ExportsAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\CredentialsService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\ConnectionService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ServiceProvider\ICmdletServiceProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Services\IConnection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\LogService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ProjectService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\EnvironmentUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\ErrorUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Util\Mru.cs" />

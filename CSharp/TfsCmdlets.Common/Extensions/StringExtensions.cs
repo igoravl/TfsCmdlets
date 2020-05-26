@@ -10,5 +10,11 @@ namespace TfsCmdlets.Extensions
                 .Get(pattern, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant)
                 .IsMatch(input);
         }
+
+        internal static bool IsWildcard(this string input)
+        {
+            return WildcardPattern.ContainsWildcardCharacters(input);
+        }
+
     }
 }

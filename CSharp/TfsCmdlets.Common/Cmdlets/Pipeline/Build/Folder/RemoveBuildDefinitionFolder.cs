@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                     {
                         this.Log($"Force argument not set. Check if folder "{{f}.Path}" has build definitions");
 
-                        task = client.GetDefinitionsAsync2(tp.Name, [string]null, [string]null, [string]null, [Microsoft.TeamFoundation.Build.WebApi.DefinitionQueryOrder]::None, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching build definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
+                        task = client.GetDefinitionsAsync2(tp.Name, string]null, [string]null, [string]null, [Microsoft.TeamFoundation.Build.WebApi.DefinitionQueryOrder.None, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching build definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
 
                         if(result.Count -gt 0)
                         {

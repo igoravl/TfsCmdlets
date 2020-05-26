@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     public class ConnectConfigurationServer: BaseCmdlet
     {
 		[Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
-		[ValidateNotNull()]
+		[ValidateNotNull]
 		public object Server { get; set; }
 	
 		[Parameter(ParameterSetName="Explicit credentials")]
@@ -66,13 +66,13 @@ namespace TfsCmdlets.Cmdlets.Connection
 		[Parameter(ParameterSetName="Prompt for credentials", Mandatory=true)]
 		public SwitchParameter Interactive { get; set; }
 
-		[Parameter()]
+		[Parameter]
 		public SwitchParameter Passthru { get; set; }
 
         protected override void ProcessRecord()
         {
             var srv = this.GetServer();
-            srv.ConnectAsync().SyncResult();
+            srv.Connect();
 
             //var client = tpc.GetClient<ProjectCollectionHttpClient>();
             //var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;

@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 
     protected override void ProcessRecord()
     {
-        registeredCollections = [Microsoft.TeamFoundation.Client.RegisteredTfsConnections]::GetProjectCollections() 
+        registeredCollections = Microsoft.TeamFoundation.Client.RegisteredTfsConnections.GetProjectCollections() 
         
         foreach(tpc in registeredCollections)
         {

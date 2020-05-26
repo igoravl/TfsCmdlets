@@ -1,9 +1,10 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
     [Cmdlet(VerbsCommon.Get, "ClassificationNode")]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode))]
+    [OutputType(typeof(WorkItemClassificationNode))]
     public class GetClassificationNode: BaseCmdlet
     {
 /*
@@ -28,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
     {
         if (Node is Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode) { this.Log("Input item is of type Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode; returning input item immediately, without further processing."; WriteObject(Node }); return;);
 
-        if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]::Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]::Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
+        if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
         
         tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
@@ -100,7 +101,7 @@ Function _FixNodePath(Node, StructureGroup, Project)
 
     # Older versions of the REST API don"t populate the Path property. So, let"s do it ourselves
 
-    decodedUrl = [System.Web.HttpUtility]::UrlDecode(Node.Url)
+    decodedUrl = System.Web.HttpUtility.UrlDecode(Node.Url)
     path = decodedUrl.Substring(decodedUrl.IndexOf($"/{StructureGroup}")+1).Replace(StructureGroup, "").Replace("/", "\")
     Node.Path = $"\{Project}\{StructureGroup.TrimEnd("s"})path"
 

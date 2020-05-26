@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
                 if (BypassRules)
                 {
-                    store = new Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore(tpc, [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags]::BypassRules)
+                    store = new Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore(tpc, Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags.BypassRules)
                 }
                 else
                 {

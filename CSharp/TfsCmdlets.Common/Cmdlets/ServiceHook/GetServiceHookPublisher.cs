@@ -1,9 +1,10 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
     [Cmdlet(VerbsCommon.Get, "ServiceHookPublisher")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher))]
+    [OutputType(typeof(Publisher))]
     public class GetServiceHookPublisher: BaseCmdlet
     {
 /*

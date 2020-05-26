@@ -2,11 +2,12 @@
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
     [Cmdlet(VerbsCommon.Get, "ServiceHookNotificationHistory")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Notification))]
+    [OutputType(typeof(Notification))]
     public class GetServiceHookNotificationHistory: BaseCmdlet
     {
 /*

@@ -1,9 +1,10 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
     [Cmdlet(VerbsCommon.Get, "TeamBoard")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Work.WebApi.Board))]
+    [OutputType(typeof(Board))]
     public class GetTeamBoard: BaseCmdlet
     {
 /*

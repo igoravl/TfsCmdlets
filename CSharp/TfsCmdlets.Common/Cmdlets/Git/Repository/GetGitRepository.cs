@@ -26,11 +26,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
     [Cmdlet(VerbsCommon.Get, "GitRepository")]
-    [OutputType(typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository))]
+    [OutputType(typeof(GitRepository))]
     public class GetGitRepository: BaseCmdlet
     {
 /*

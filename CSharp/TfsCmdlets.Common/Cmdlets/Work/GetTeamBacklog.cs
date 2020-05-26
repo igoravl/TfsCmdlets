@@ -26,11 +26,12 @@ System.String
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
     [Cmdlet(VerbsCommon.Get, "TeamBacklog")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration))]
+    [OutputType(typeof(BacklogLevelConfiguration))]
     public class GetTeamBacklog: BaseCmdlet
     {
 /*

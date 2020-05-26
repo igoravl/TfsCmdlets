@@ -1,9 +1,10 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
     [Cmdlet(VerbsCommon.Set, "TeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    [OutputType(typeof(Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings))]
+    [OutputType(typeof(BoardCardRuleSettings))]
     public class SetTeamBoardCardRuleSetting : BaseCmdlet
     {
         /*

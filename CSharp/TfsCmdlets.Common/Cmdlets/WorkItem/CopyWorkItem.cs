@@ -118,16 +118,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 			witd = wi.Type
 		}
 
-		flags = [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags]::None
+		flags = Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.None
 
 		if (IncludeAttachments)
 		{
-			flags = flags -bor [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags]::CopyFiles
+			flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyFiles
 		}
 
 		if (IncludeLinks)
 		{
-			flags = flags -bor [Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags]::CopyLinks
+			flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyLinks
 		}
 
 		copy = wi.Copy(witd, flags)

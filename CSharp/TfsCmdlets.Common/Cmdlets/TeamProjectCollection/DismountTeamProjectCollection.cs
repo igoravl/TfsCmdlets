@@ -74,7 +74,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 		public string Reason { get; set; }
 	
 		[Parameter()]
-		public timespan Timeout { get; set; } = [timespan]::MaxValue,
+		public timespan Timeout { get; set; } = timespan.MaxValue,
 
 		[Parameter()]
 		public object Credential { get; set; }

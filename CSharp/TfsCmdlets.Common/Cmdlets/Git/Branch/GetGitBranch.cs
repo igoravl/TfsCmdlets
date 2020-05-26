@@ -26,11 +26,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git.Branch
 {
     [Cmdlet(VerbsCommon.Get, "GitBranch")]
-    [OutputType(typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitBranchStats))]
+    [OutputType(typeof(GitBranchStats))]
     public class GetGitBranch: BaseCmdlet
     {
 /*

@@ -46,76 +46,71 @@ Connect-TfsTeamProject -Project FabrikamFiber -Collection http://vsalm:8080/tfs/
 Connects to a project called FabrikamFiber in the team project collection specified in the given URL
 */
 
+using System;
 using System.Management.Automation;
+using System.Security;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Connection
 {
-    [Cmdlet(VerbsCommunications.Connect, "TeamProject", DefaultParameterSetName="Explicit credentials")]
-	[OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
-    public class ConnectTeamProject: BaseCmdlet
+    [Cmdlet(VerbsCommunications.Connect, "TeamProject", DefaultParameterSetName = "Explicit credentials")]
+    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
+    public class ConnectTeamProject : BaseCmdlet
     {
-/*
-		[Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
-		[ValidateNotNull()]
-		[object] 
-		Project,
-	
-		[Parameter()]
-		[object] 
-		Collection,
-	
-		[Parameter(ParameterSetName="Explicit credentials")]
-		public object Credential { get; set; }
 
-		[Parameter(ParameterSetName="Prompt for credentials", Mandatory=true)]
-		public SwitchParameter Interactive { get; set; }
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        [ValidateNotNull()]
+        public object Project { get; set; }
 
-		[Parameter()]
-		public SwitchParameter Passthru { get; set; }
+        [Parameter()]
+        public object Collection { get; set; }
 
-	protected override void BeginProcessing()
-	{
-		// this.LogParams
-        // _Requires "Microsoft.VisualStudio.Services.Common", "Microsoft.VisualStudio.Services.Client.Interactive", "Microsoft.TeamFoundation.Core.WebApi"
-	}
+        [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
+        public SwitchParameter Cached { get; set; }
 
-	protected override void ProcessRecord()
-	{
-		tpcArgs = PSBoundParameters
-		[void] tpcArgs.Remove("Project")
+        [Parameter(ParameterSetName = "User name and password", Mandatory = true, Position = 1)]
+        public string UserName { get; set; }
 
-		tpc = Get-TfsTeamProjectCollection @tpcArgs
+        [Parameter(ParameterSetName = "User name and password", Position = 2)]
+        public SecureString Password { get; set; }
 
-		tp = (Get-TfsTeamProject -Project Project -Collection tpc | Select-Object -First 1)
+        [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
+        [ValidateNotNull]
+        public object Credential { get; set; }
 
-		if (! tp)
-		{
-			throw new Exception($"Error connecting to team project {Project}")
-		}
+        [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
+        [Alias("Pat", "PersonalAccessToken")]
+        public string AccessToken { get; set; }
 
-		srv = tpc.ParentConnection
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        public SwitchParameter Interactive { get; set; }
 
-		[TfsCmdlets.CurrentConnections]::Reset()
-		[TfsCmdlets.CurrentConnections]::Server = srv
-		[TfsCmdlets.CurrentConnections]::Collection = tpc
-		[TfsCmdlets.CurrentConnections]::Project = tp
+        [Parameter]
+        public object Server { get; set; }
 
-		this.Log($"Adding "{{tp}.Name}" to the MRU list");
+        [Parameter]
+        public SwitchParameter Passthru { get; set; }
 
-		_SetMru "Server" -Value (srv.Uri)
-		_SetMru "Collection" -Value (tpc.Uri)
-		_SetMru "Project" -Value (tp.Name)
+        protected override void ProcessRecord()
+        {
+            var tpc = this.GetCollection();
+            var tp = this.GetProject();
 
-		this.Log($"Connected to {{tp}.Name}");
+            CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp);
 
-		if (Passthru)
-		{
-			WriteObject(tp); return;
-		}
-	}
-}
+            // TODO: 
+            //this.Log($"Adding '{tp.Name} to the MRU list");
+            //_SetMru "Server" - Value(srv.Uri)
+            //_SetMru "Collection" - Value(tpc.Uri)
+            //_SetMru "Project" - Value(tp.Name)
 
-Set-Alias -Name ctfstp -Value Connect-TfsTeamProject
-*/
-}
+
+            this.Log($"Connected to '{tp.Name}'");
+
+            if (Passthru)
+            {
+                WriteObject(tp);
+            }
+        }
+    }
 }

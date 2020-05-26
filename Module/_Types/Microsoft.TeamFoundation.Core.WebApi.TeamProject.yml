@@ -1,0 +1,3 @@
+- ScriptProperty:
+    Name: ProcessTemplate
+    GetScriptBlock: $this.Capabilities.processTemplate.templateName

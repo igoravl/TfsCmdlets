@@ -29,11 +29,12 @@ System.String
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
     [Cmdlet(VerbsCommon.Get, "WorkItemQueryItem")]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem))]
+    [OutputType(typeof(QueryHierarchyItem))]
     public class GetWorkItemQueryItem: BaseCmdlet
     {
 /*

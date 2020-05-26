@@ -20,11 +20,12 @@
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
     [Cmdlet(VerbsCommon.Get, "TestPlan")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan))]
+    [OutputType(typeof(TestPlan))]
     public class GetTestPlan: BaseCmdlet
     {
 /*

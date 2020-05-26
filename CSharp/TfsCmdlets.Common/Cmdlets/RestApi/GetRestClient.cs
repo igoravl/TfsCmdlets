@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         {
             var provider = ParameterSetName == "Get by collection" ? this.GetCollection() : this.GetServer();
 
-            WriteObject(provider.GetClient(Type.GetType(TypeName)));
+            WriteObject(provider.GetClientFromType(Type.GetType(TypeName)));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     public class GetConfigurationServer : BaseCmdlet
     {
         [Parameter(Position = 0, ParameterSetName = "Get by server", Mandatory = true)]
-        [AllowNull()]
+        [AllowNull]
         public object Server { get; set; }
 
         [Parameter(Position = 0, ParameterSetName = "Get current")]
@@ -45,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
 
         protected override void ProcessRecord()
         {
-            WriteObject(this.GetService<VssConnection>().Get("Server"));
+            WriteObject(this.GetServer());
         }
     }
 }

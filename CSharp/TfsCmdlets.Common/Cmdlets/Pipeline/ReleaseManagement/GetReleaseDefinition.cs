@@ -26,11 +26,12 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 {
     [Cmdlet(VerbsCommon.Get, "ReleaseDefinition")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition))]
+    [OutputType(typeof(ReleaseDefinition))]
     public class GetReleaseDefinition: BaseCmdlet
     {
 /*

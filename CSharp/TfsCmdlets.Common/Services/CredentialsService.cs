@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Net;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(VssClientCredentials))]
     internal class CredentialsService : BaseService<VssClientCredentials>
     {
-        private enum ConnectionMode
-        {
-            CachedCredentials, CredentialObject, UserNamePassword, AccessToken, Interactive
-        }
+        protected override string ItemName => "Credential";
 
-        public override VssClientCredentials Get(object userState = null)
+        protected override IEnumerable<VssClientCredentials> GetItems(object filter)
         {
             var parms = Cmdlet.GetParameters();
 
@@ -36,9 +35,9 @@ namespace TfsCmdlets.Services
                 parameterSetName = ConnectionMode.Interactive;
 
             var allowInteractive = false;
-            NetworkCredential netCred;
-            FederatedCredential fedCred;
-            WindowsCredential winCred;
+            NetworkCredential netCred = null;
+            FederatedCredential fedCred = null;
+            WindowsCredential winCred = null;
 
             switch (parameterSetName)
             {
@@ -46,7 +45,8 @@ namespace TfsCmdlets.Services
                 {
                     Logger.Log("Using cached credentials");
 
-                    return new VssClientCredentials(true);
+                    yield return new VssClientCredentials(true);
+                    break;
                 }
 
                 case ConnectionMode.UserNamePassword:
@@ -69,7 +69,8 @@ namespace TfsCmdlets.Services
                             Logger.Log(
                                 "Using supplied credential as-is, since object already is of type VssClientCredentials");
 
-                            return cred;
+                            yield return cred;
+                            break;
                         }
 
                         case PSCredential cred:
@@ -116,10 +117,8 @@ namespace TfsCmdlets.Services
                 case ConnectionMode.Interactive:
                 {
                     if (EnvironmentUtil.PSEdition.Equals("Core"))
-                    {
                         throw new Exception(
                             "Interactive logins are currently not supported in PowerShell Core. Use personal access tokens instead.");
-                    }
 
                     Logger.Log("Using interactive credential");
 
@@ -138,7 +137,16 @@ namespace TfsCmdlets.Services
 
             var promptType = allowInteractive ? CredentialPromptType.PromptIfNeeded : CredentialPromptType.DoNotPrompt;
 
-            return new VssClientCredentials(winCred, fedCred, promptType);
+            yield return new VssClientCredentials(winCred, fedCred, promptType);
+        }
+
+        private enum ConnectionMode
+        {
+            CachedCredentials,
+            CredentialObject,
+            UserNamePassword,
+            AccessToken,
+            Interactive
         }
     }
 }

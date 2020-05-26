@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Extensions
 {
@@ -13,9 +16,19 @@ namespace TfsCmdlets.Extensions
             return _provider.GetService(cmdlet, type);
         }
 
-        internal static IService<T> GetService<T>(this Cmdlet cmdlet) where T: class
+        internal static IService<T> GetService<T>(this Cmdlet cmdlet) where T : class
         {
-            return (IService<T>) GetService(cmdlet, typeof(T));
+            return (IService<T>)GetService(cmdlet, typeof(T));
+        }
+
+        internal static T GetOne<T>(this Cmdlet cmdlet, object userState = null) where T : class
+        {
+            return GetService<T>(cmdlet).GetOne(userState);
+        }
+
+        internal static IEnumerable<T> GetMany<T>(this Cmdlet cmdlet, object userState = null) where T : class
+        {
+            return GetService<T>(cmdlet).GetMany(userState);
         }
 
         internal static T GetClient<T>(this Cmdlet cmdlet) where T : VssHttpClientBase
@@ -30,9 +43,7 @@ namespace TfsCmdlets.Extensions
 
         internal static object GetClient(this Cmdlet cmdlet, Type type, string scope = "Collection")
         {
-            var vssConnection = GetService<VssConnection>(cmdlet).Get(scope);
-
-            return vssConnection.GetClient(type);
+            return GetService<VssConnection>(cmdlet).GetOne(scope).GetClient(type);
         }
 
         internal static void Register(ICmdletServiceProvider provider)

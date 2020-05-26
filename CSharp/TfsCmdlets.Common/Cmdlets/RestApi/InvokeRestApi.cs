@@ -63,11 +63,11 @@ namespace TfsCmdlets.Cmdlets.RestApi
         [Parameter(ParameterSetName = "URL call")]
         public string UseHost { get; set; }
 
-        [Parameter()] public object Collection { get; set; }
+        [Parameter] public object Collection { get; set; }
 
-        [Parameter()] public SwitchParameter Raw { get; set; }
+        [Parameter] public SwitchParameter Raw { get; set; }
 
-        [Parameter()] public SwitchParameter AsTask { get; set; }
+        [Parameter] public SwitchParameter AsTask { get; set; }
 
         protected override void EndProcessing()
         {

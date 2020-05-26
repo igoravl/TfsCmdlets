@@ -97,9 +97,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     
 
                     while (
-                        (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded) - and
-                        (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Failed) &&
-                        (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Cancelled))
+                        (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Succeeded) - and
+                        (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Failed) &&
+                        (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Cancelled))
                         {
                             this.Log($"Waiting for the queued operation to finish (current status: {{opsToken}.Status})");
 
@@ -107,7 +107,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                         opsToken = operationsClient.GetOperation(token.Id).Result
                     }
 
-                        if (opsToken.Status != [Microsoft.VisualStudio.Services.Operations.OperationStatus]::Succeeded)
+                        if (opsToken.Status != Microsoft.VisualStudio.Services.Operations.OperationStatus.Succeeded)
                         {
                             this.Log($"Queued operation finished with status {{opsToken}.Status}");
     

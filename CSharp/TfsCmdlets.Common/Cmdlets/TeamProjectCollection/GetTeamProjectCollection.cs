@@ -41,16 +41,17 @@ Cmdlets in the TfsCmdlets module that operate on a collection level require a Tf
 */
 
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
     [Cmdlet(VerbsCommon.Get, "TeamProjectCollection", DefaultParameterSetName = "Get by collection")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.WebApi.VssConnection))]
+    [OutputType(typeof(VssConnection))]
     public class GetTeamProjectCollection : BaseCmdlet
     {
         [Parameter(Position = 0, ParameterSetName = "Get by collection")]
-        [SupportsWildcards()]
+        [SupportsWildcards]
         public object Collection { get; set; }
 
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by collection")]

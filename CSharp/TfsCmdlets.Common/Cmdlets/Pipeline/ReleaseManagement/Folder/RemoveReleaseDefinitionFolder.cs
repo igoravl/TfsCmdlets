@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
                     {
                         this.Log($"Force argument not set. Check if folder "{{f}.Path}" has release definitions");
 
-                        task = client.GetReleaseDefinitionsAsync(tp.Name, [string]null, [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts.ReleaseDefinitionExpands]::None, [string]null, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching release definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
+                        task = client.GetReleaseDefinitionsAsync(tp.Name, string]null, [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts.ReleaseDefinitionExpands.None, [string]null, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching release definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
 
                         if(result.Count -gt 0)
                         {

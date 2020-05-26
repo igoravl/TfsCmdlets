@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
         # Query order
         [Parameter()]
         [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder]
-        QueryOrder = [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder]::None,
+        QueryOrder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder.None,
 
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }
