@@ -1,24 +1,28 @@
 using System.Management.Automation;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
     [Cmdlet(VerbsCommon.Exit, "Shell")]
-    public class ExitShell: BaseCmdlet
+    public class ExitShell : BaseCmdlet
     {
-/*
+        protected override void EndProcessing()
+        {
+            if(!EnterShell.IsInShell) return;
 
-    if(script:PrevShellTitle)
-    {
-        Host.UI.RawUI.WindowTitle = script:PrevShellTitle
+            if (!string.IsNullOrEmpty(EnterShell.PrevShellTitle))
+            {
+                Host.UI.RawUI.WindowTitle = EnterShell.PrevShellTitle;
+            }
+
+            if (EnterShell.PrevPrompt != null)
+            {
+                this.InvokeScript("Set-Content function:prompt $args[0]", EnterShell.PrevPrompt);
+            }
+
+            EnterShell.IsInShell = false;
+
+            this.InvokeScript("Clear-Host");
+        }
     }
-
-    if(script:PrevPrompt)
-    {
-        Set-Content function:prompt script:PrevPrompt
-    }
-
-    Clear-Host
-}
-*/
-}
 }

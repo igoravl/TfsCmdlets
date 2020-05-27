@@ -1,74 +1,144 @@
+using System;
+using System.Collections;
+using System.IO;
 using System.Management.Automation;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
     [Cmdlet(VerbsCommon.Enter, "Shell")]
-    public class EnterShell
+    public class EnterShell : BaseCmdlet
     {
-        /*
-            [CmdletBinding()]
-            Param
-            (
-                # Specifies the shell window title. If omitted, defaults to "Azure DevOps Shell"
-                [Parameter()]
-                public string WindowTitle { get; set; } = "Azure DevOps Shell",
+        [Parameter()]
+        public string WindowTitle { get; set; } = "Azure DevOps Shell";
 
-                # Do not clear screen on entering shell
-                [Parameter()]
-                public SwitchParameter DoNotClearHost { get; set; }
+        [Parameter()]
+        public SwitchParameter DoNotClearHost { get; set; }
 
-            if(script:IsInShell)
+        internal static bool IsInShell {get;set;}
+        internal static string PrevShellTitle {get;set;}
+        internal static ScriptBlock PrevPrompt {get;set;}
+
+        protected override void EndProcessing()
+        {
+            if (IsInShell)
             {
-                # Avoid reentrance
-                return
+                return;
             }
 
-            # Persist current values for later restoring
+            PrevShellTitle ??= Host.UI.RawUI.WindowTitle;
 
-            if(! script:PrevShellTitle)
+            if (this.InvokeScript<bool>("Test-Path function:prompt"))
             {
-                script:PrevShellTitle = Host.UI.RawUI.WindowTitle
-
-                if(Test-Path function:prompt)
-                {
-                    script:PrevPrompt = Get-Content function:prompt
-                }
+                PrevPrompt = this.InvokeScript<ScriptBlock>("Get-Content function:prompt");
             }
 
-            # Replace title and prompt
+            Host.UI.RawUI.WindowTitle = WindowTitle;
 
-            Host.UI.RawUI.WindowTitle = WindowTitle
-            Set-Content function:prompt {_TfsCmdletsPrompt}
+            var prompt = ScriptBlock.Create(@"
+$promptPrefix = '[Not connected]'
+$defaultPsPrompt = ""$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) ""
+$backColor = 'DarkGray'
+$foreColor = 'White'
 
-            # Show banner
+$server = (Get-TfsConfigurationServer -Current)
 
-            if(! DoNotClearHost.IsPresent)
-            {
-                Clear-Host
-            }
+if($server)
+{
+    $tpc = (Get-TfsTeamProjectCollection -Current); $tp = (Get-TfsTeamProject -Current); $t = (Get-TfsTeam -Current)
+    $serverName = $server.Name; $userName = $server.AuthorizedIdentity.UniqueName
 
-            module = Test-ModuleManifest -Path (Join-Path MyInvocation.MyCommand.Module.ModuleBase "TfsCmdlets.psd1")
-            Write-Output $"TfsCmdlets: {{module}.Description}"
-            Write-Output $"Version {{module}.PrivateData.Build}"
-            Write-Output $"Azure DevOps Client Library version {{module}.PrivateData.TfsClientVersion}"
-            Write-Output ""
-            Write-Output $"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
+    if ($serverName -like '*.visualstudio.com')
+    {
+        $tpcName = $serverName.SubString(0, $serverName.IndexOf('.'))
+        $promptPrefix = ""[AzDev:/$tpcName""
+        $backColor = 'DarkBlue'
+        $foreColor = 'White'
+    }
+    elseif ($serverName -eq 'dev.azure.com')
+    {
+        $tpcName = $server.Uri.Segments[1]
+        $promptPrefix = ""[AzDev:/$tpcName""
+        $backColor = 'DarkBlue'
+        $foreColor = 'White'
+    }
+    else
+    {
+        $promptPrefix = ""[TFS:/$($server.Uri.Host)/""
+        $backColor = 'DarkMagenta'
+        $foreColor = 'White'
 
-            profileScript = Join-Path $(System.Environment.GetFolderPath("MyDocuments")) "WindowsPowerShell/TfsCmdlets_Profile.ps1"
-
-            if(Test-Path (profileScript))
-            {
-                sw = System.Diagnostics.Stopwatch.StartNew()
-                . profileScript
-                sw.Stop()
-
-                Write-Output $"Loading TfsCmdlets profile took {{sw}.ElapsedMilliseconds}ms."
-            }
-
-            script:IsInShell = true
-
-            Write-Output ""
+        if ($tpc)
+        {
+            $promptPrefix += ""$($tpc.Name)""
         }
-        */
+    }
+
+    if ($tp)
+    {
+        $promptPrefix += ""/$($tp.Name)""
+    }
+
+    if ($t)
+    {
+        $promptPrefix += ""/$($t.Name)""
+    }
+
+    if($userName)
+    {
+        $promptPrefix += "" ($userName)""
+    }
+
+    $promptPrefix += ']'
+
+}
+
+Write-Host -Object $promptPrefix -ForegroundColor $foreColor -BackgroundColor $backColor # -NoNewline
+
+return $defaultPsPrompt
+            ");
+
+            this.InvokeScript("Set-Content function:prompt $args[0]", prompt);
+
+            if (!DoNotClearHost.IsPresent)
+            {
+                this.InvokeScript("Clear-Host");
+            }
+
+            var manifest = MyInvocation.MyCommand.Module;
+            var privateData = (Hashtable)manifest.PrivateData;
+
+            WriteObject($"TfsCmdlets: {manifest.Description}");
+            WriteObject($"Version {privateData["Build"]}");
+            WriteObject($"Azure DevOps Client Library version {privateData["TfsClientVersion"]}");
+            WriteObject("");
+            // WriteObject($"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
+
+            var profileDir = Path.GetDirectoryName((string)((PSObject) this.GetVariableValue("PROFILE")).BaseObject);
+            var profilePath = Path.Combine(profileDir, "TfsCmdlets_Profile.ps1");
+
+            if (File.Exists(profilePath))
+            {
+                var sw = System.Diagnostics.Stopwatch.StartNew();
+
+                try
+                {
+                    this.InvokeScript($". '{profilePath}'");
+                }
+                catch(CmdletInvocationException ex)
+                {
+                    WriteWarning($"Error loading profile {profilePath}: {ex.Message}");
+                    WriteWarning($"{ex.ErrorRecord.InvocationInfo.PositionMessage}");
+                    WriteObject("");
+                }
+
+                sw.Stop();
+                WriteObject($"Loading TfsCmdlets profile took {sw.ElapsedMilliseconds}ms.");
+            }
+
+            IsInShell = true;
+
+            WriteObject("");
+        }
     }
 }
