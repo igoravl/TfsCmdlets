@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System.Linq;
+using System.Management.Automation;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Client;
@@ -12,6 +13,13 @@ namespace TfsCmdlets.Extensions
         internal static object InvokeScript(this PSCmdlet cmdlet, string script, params object[] arguments)
         {
             return cmdlet.InvokeCommand.InvokeScript(script, arguments);
+        }
+
+        internal static T InvokeScript<T>(this PSCmdlet cmdlet, string script, params object[] arguments)
+        {
+            var obj = cmdlet.InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
+
+            return (T) obj;
         }
 
         internal static VssClientCredentials GetCredentials(this Cmdlet cmdlet)
