@@ -14,13 +14,10 @@
     General notes
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using System.Net.Http;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.HttpClient;
+using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
@@ -71,24 +68,6 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
         protected override void EndProcessing()
         {
-            var tpc = this.GetCollection();
-
-            Path = Path.TrimStart('/');
-
-            if (!string.IsNullOrEmpty(UseHost))
-            {
-                if (!UseHost.Contains("."))
-                {
-                    this.Log($"Converting service prefix {UseHost} to {UseHost}.dev.azure.com");
-                    UseHost += ".dev.azure.com";
-                }
-
-                this.Log($"Using service host {UseHost}");
-                GenericHttpClient.UseHost(UseHost);
-            }
-
-            var client = tpc.GetClient<GenericHttpClient>();
-
             if (Path.IsLike("*{project}*"))
             {
                 //TODO: Team / TP
@@ -115,7 +94,9 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
             this.Log($"Calling API '{Path}', version 'ApiVersion', via {Method}");
 
-            var task = client.InvokeAsync(new HttpMethod(Method), Path, Body,
+            var collection = this.GetCollection();
+            var client = this.GetService<IRestApiService>();
+            var task = client.InvokeAsync(collection, Path, Method, Body,
                 RequestContentType, ResponseContentType,
                 AdditionalHeaders, QueryParameters, ApiVersion);
 
@@ -127,21 +108,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
                 return;
             }
 
-            var result = task.Result;
-
-            if (task.IsFaulted)
-            {
-                if (task.Exception == null)
-                {
-                    throw new Exception("Unknown error when calling REST API");
-                }
-
-                var message = string.Join("; ",
-                    task.Exception.InnerExceptions?.Select(ex => ex.Message));
-
-                throw new Exception(message);
-            }
-
+            var result = task.GetResult("Unknown error when calling REST API");
             var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             var responseType = result.Content.Headers.ContentType.MediaType;
 
@@ -152,16 +119,15 @@ namespace TfsCmdlets.Cmdlets.RestApi
                 o.AddNoteProperty("ResponseBody", responseBody);
 
                 if (responseType.Equals("application/json"))
-                {
                     o.AddNoteProperty("ResponseObject", PSJsonConverter.Deserialize(responseBody));
-                }
 
                 WriteObject(o);
                 return;
             }
 
-            WriteObject(responseType.Equals("application/json") ? 
-                PSJsonConverter.Deserialize(responseBody) : responseBody);
+            WriteObject(responseType.Equals("application/json")
+                ? PSJsonConverter.Deserialize(responseBody)
+                : responseBody);
         }
     }
 }
