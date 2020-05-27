@@ -46,7 +46,7 @@ namespace TfsCmdlets.Services
                     Logger.Log("Using cached credentials");
 
                     yield return new VssClientCredentials(true);
-                    break;
+                    yield break;
                 }
 
                 case ConnectionMode.UserNamePassword:
