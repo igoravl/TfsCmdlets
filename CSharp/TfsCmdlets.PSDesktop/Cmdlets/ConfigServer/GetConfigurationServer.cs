@@ -30,7 +30,7 @@ using TfsCmdlets.Extensions;
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
     [Cmdlet(VerbsCommon.Get, "ConfigurationServer", DefaultParameterSetName = "Get by server")]
-    //[OutputType(typeof(Microsoft.TeamFoundation.Client.TfsConfigurationServer))]
+    [OutputType(typeof(Microsoft.TeamFoundation.Client.TfsConfigurationServer))]
     public class GetConfigurationServer : BaseCmdlet
     {
         [Parameter(Position = 0, ParameterSetName = "Get by server", Mandatory = true)]
