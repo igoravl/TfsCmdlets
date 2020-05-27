@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Net;
+using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
 using TfsCmdlets.Extensions;
@@ -18,16 +19,16 @@ namespace TfsCmdlets.Services
         {
             var parms = Cmdlet.GetParameters();
 
-            var credential = parms["Credential"];
-            var userName = parms["UserName"] as string;
-            var password = parms["Password"] as string;
-            var accessToken = parms["AccessToken"] as string;
-            var interactive = (bool) parms["Interactive"];
+            var credential = parms.Get<object>("Credential");
+            var userName = parms.Get<string>("UserName");
+            var password = parms.Get<SecureString>("Password");
+            var accessToken = parms.Get<string>("AccessToken");
+            var interactive = parms.Get<bool>("Interactive");
             var parameterSetName = ConnectionMode.CachedCredentials;
 
             if (credential != null)
                 parameterSetName = ConnectionMode.CredentialObject;
-            else if (!string.IsNullOrEmpty(userName) || !string.IsNullOrEmpty(password))
+            else if (!string.IsNullOrEmpty(userName) || password != null)
                 parameterSetName = ConnectionMode.UserNamePassword;
             else if (!string.IsNullOrEmpty(accessToken))
                 parameterSetName = ConnectionMode.AccessToken;
@@ -70,7 +71,7 @@ namespace TfsCmdlets.Services
                                 "Using supplied credential as-is, since object already is of type VssClientCredentials");
 
                             yield return cred;
-                            break;
+                            yield break;
                         }
 
                         case PSCredential cred:

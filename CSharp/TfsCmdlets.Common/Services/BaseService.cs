@@ -7,7 +7,7 @@ using TfsCmdlets.ServiceProvider;
 
 namespace TfsCmdlets.Services
 {
-    internal abstract class BaseService<T>: IService<T>
+    internal abstract class BaseService : IService
     {
         private ILogService _logger;
 
@@ -15,11 +15,16 @@ namespace TfsCmdlets.Services
 
         public Cmdlet Cmdlet { get; set; }
 
+        protected ILogService Logger => _logger ??= Provider.GetOne<ILogService>(Cmdlet);
+    }
+
+    internal abstract class BaseService<T> : BaseService, IService<T>
+    {
+        protected abstract IEnumerable<T> GetItems(object filter);
+
         public ParameterDictionary Parameters { get; set; }
 
         protected abstract string ItemName { get; }
-
-        protected abstract IEnumerable<T> GetItems(object filter);
 
         public T GetOne(object filter = null)
         {
@@ -41,7 +46,5 @@ namespace TfsCmdlets.Services
 
             return GetItems(filter);
         }
-
-        protected ILogService Logger => _logger ??= Provider.GetService<ILogService>(Cmdlet).GetOne();
     }
 }

@@ -17,22 +17,40 @@ namespace TfsCmdlets.ServiceProvider
             RegisterFactories();
         }
 
-        public IService GetService(Cmdlet cmdlet, Type serviceType)
+        public T GetService<T>(Cmdlet cmdlet) where T : IService
         {
+            var serviceType = typeof(T);
+
             if (!_factories.ContainsKey(serviceType))
+            {
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
+            }
 
-            return _factories[serviceType](this, cmdlet);
+            return (T) _factories[serviceType](this, cmdlet);
         }
 
-        public IService<T> GetService<T>(Cmdlet cmdlet)
+        public T GetOne<T>(Cmdlet cmdlet, object userState = null)
         {
-            return (IService<T>) GetService(cmdlet, typeof(T));
+            var serviceType = typeof(T);
+
+            if (!_factories.ContainsKey(serviceType))
+            {
+                throw new ArgumentException($"Invalid service {serviceType.FullName}");
+            }
+
+            return ((IService<T>) _factories[serviceType](this, cmdlet)).GetOne(userState);
         }
 
-        public T GetInstanceOf<T>(Cmdlet cmdlet, object userState = null)
+        public IEnumerable<T> GetMany<T>(Cmdlet cmdlet, object userState = null)
         {
-            return GetService<T>(cmdlet).GetOne(userState);
+            var serviceType = typeof(T);
+
+            if (!_factories.ContainsKey(serviceType))
+            {
+                throw new ArgumentException($"Invalid service {serviceType.FullName}");
+            }
+
+            return ((IService<T>)_factories[serviceType](this, cmdlet)).GetMany(userState);
         }
 
         private void RegisterFactories()

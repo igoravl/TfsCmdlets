@@ -11,9 +11,25 @@ namespace TfsCmdlets.Services
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
 
-        internal TfsConnection ConfigurationServer =>
-            (InnerConnection as TfsTeamProjectCollection)?.ConfigurationServer ??
-            InnerConnection as TfsConfigurationServer;
+        internal TfsConnection ConfigurationServer
+        {
+            get
+            {
+                if (InnerConnection is TfsTeamProjectCollection tpc)
+                {
+                    var srv = tpc.ConfigurationServer;
+
+                    if(srv == null)
+                    {
+                        srv = new TfsConfigurationServer(tpc.Uri, tpc.ClientCredentials);
+                    }
+
+                    return srv;
+                }
+
+                return InnerConnection;
+            }
+        }
 
         internal TeamFoundationIdentity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
 
@@ -27,9 +43,18 @@ namespace TfsCmdlets.Services
                 .Invoke(InnerConnection, null);
         }
 
+        internal bool IsHosted => InnerConnection.IsHostedServer;
+
         partial void DoConnect()
         {
-            if (BaseObject is TfsConnection tfs) tfs.EnsureAuthenticated();
+            if (BaseObject is TfsTeamProjectCollection tpc)
+            {
+                tpc.EnsureAuthenticated();
+            }
+            else if(BaseObject is TfsConfigurationServer srv)
+            {
+                srv.EnsureAuthenticated();
+            }
         }
     }
 }

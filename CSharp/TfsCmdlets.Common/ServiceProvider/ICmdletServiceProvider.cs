@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using TfsCmdlets.Services;
 
@@ -6,10 +7,10 @@ namespace TfsCmdlets.ServiceProvider
 {
     internal interface ICmdletServiceProvider
     {
-        IService GetService(Cmdlet cmdlet, Type serviceType);
+        T GetService<T>(Cmdlet cmdlet) where T: IService;
 
-        IService<T> GetService<T>(Cmdlet cmdlet);
+        T GetOne<T>(Cmdlet cmdlet, object userState = null);
 
-        T GetInstanceOf<T>(Cmdlet cmdlet, object userState = null);
+        IEnumerable<T> GetMany<T>(Cmdlet cmdlet, object userState = null);
     }
 }

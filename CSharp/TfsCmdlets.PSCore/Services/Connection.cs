@@ -12,8 +12,7 @@ namespace TfsCmdlets.Services
 
         internal VssConnection InnerConnection => this.BaseObject as VssConnection;
 
-        internal VssConnection ConfigurationServer =>
-            IsHosted(InnerConnection) ? InnerConnection : InnerConnection.ParentConnection;
+        internal VssConnection ConfigurationServer => IsHosted ? InnerConnection : InnerConnection.ParentConnection;
 
         internal Identity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
 
@@ -27,12 +26,9 @@ namespace TfsCmdlets.Services
             }
         }
 
-        private static bool IsHosted(VssConnection conn)
-        {
-            return (
-                conn.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
-                conn.Uri.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
-        }
+        internal bool IsHosted => (
+            InnerConnection.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
+            InnerConnection.Uri.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
 
         public object GetClientFromType(Type type) => InnerConnection.GetClient(type);
     }

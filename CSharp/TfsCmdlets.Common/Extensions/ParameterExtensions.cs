@@ -42,7 +42,16 @@ namespace TfsCmdlets.Extensions
 
         public T Get<T>(string name, T defaultValue = default)
         {
-            return ContainsKey(name) ? (T) this[name] : defaultValue;
+            if(!ContainsKey(name)) return defaultValue;
+
+            object val = this[name];
+
+            if(val is PSObject obj)
+            {
+                val = obj.BaseObject;
+            }
+
+            return (T) val;
         }
     }
 }

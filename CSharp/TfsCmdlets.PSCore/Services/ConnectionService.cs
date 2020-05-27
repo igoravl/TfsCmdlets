@@ -41,7 +41,7 @@ namespace TfsCmdlets.Services
                     case Uri uri:
                     {
                         Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
-                        result = new VssConnection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                        result = new VssConnection(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):
@@ -60,8 +60,10 @@ namespace TfsCmdlets.Services
                     }
                 }
 
-            if (connectionType.Equals("Server") && result.ParentConnection != null && !result.IsHosted())
-                result = result.ParentConnection;
+            if (connectionType.Equals("Server"))
+            {
+                result = (new Connection(result)).ConfigurationServer;
+            }
 
             yield return new Connection(result);
         }

@@ -14,7 +14,7 @@ namespace TfsCmdlets.Services
         protected override IEnumerable<TeamProject> GetItems(object filter)
         {
             var parms = Cmdlet.GetParameters();
-            var project = parms["Project"];
+            var project = parms.Get<object>("Project");
             var current = parms.Get<bool>("Current");
 
             var tpc = Cmdlet.GetCollection();

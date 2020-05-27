@@ -41,10 +41,19 @@ namespace TfsCmdlets.Services
                     case Uri uri:
                     {
                         Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
+
+                        if(uri.LocalPath.Equals("/"))
+                        {
+                            Cmdlet.WriteWarning("Connecting to a Team Foundation Server instance without " +
+                                $"specifying a collection name may lead to errors. Instead of using {uri} " +
+                                "(without a collection name), consider supplying one in the URL, as in e.g. " +
+                                $"{uri}DefaultCollection");
+                        }
+
                         if (connectionType.Equals("Server"))
-                            result = new TfsConfigurationServer(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                            result = new TfsConfigurationServer(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
                         else
-                            result = new TfsTeamProjectCollection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                            result = new TfsTeamProjectCollection(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):
