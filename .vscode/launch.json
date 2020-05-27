@@ -9,8 +9,9 @@
             "args": [
                 "-noexit",
                 "-command",
-                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1"
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
             ],
+            "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "preLaunchTask": "Build"
         },
@@ -21,7 +22,7 @@
             "args": [
                 "-noexit",
                 "-command",
-                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1"
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
             ],
             "preLaunchTask": "Build"
         }
