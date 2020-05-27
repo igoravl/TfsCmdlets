@@ -5,7 +5,7 @@ Properties {
 
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
-    $ProjectDir = Join-Path $SolutionDir 'Module'
+    $ProjectDir = Join-Path $SolutionDir 'PS'
     $TestsDir = Join-Path $SolutionDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
@@ -21,7 +21,7 @@ Properties {
     $ModuleBinDir = (Join-Path $ModuleDir 'bin')
 
     # Assembly generation
-    $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp2.0'}
+    $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp3.1'}
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -95,7 +95,7 @@ Task CopyStaticFiles {
 
     Write-Verbose "Copying module files to output folder"
 
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
+    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $SolutionDir\*.md -Destination $ModuleDir -Force
 }
 
