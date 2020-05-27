@@ -9,6 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.PSCore", "TfsCmd
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.PSDesktop", "TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.csproj", "{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Tests.UnitTests", "TfsCmdlets.Tests.UnitTests\TfsCmdlets.Tests.UnitTests.csproj", "{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{990DD3E9-3685-472A-AB57-2D304A5C86D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Tests.Integration.PSCore", "TfsCmdlets.Tests.Integration.PSCore\TfsCmdlets.Tests.Integration.PSCore.csproj", "{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Tests.Integration.PSDesktop", "TfsCmdlets.Tests.Integration.PSDesktop\TfsCmdlets.Tests.Integration.PSDesktop.csproj", "{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		TfsCmdlets.Common\TfsCmdlets.Common.projitems*{62337eef-cce4-488e-8f6f-e90a57186ab1}*SharedItemsImports = 5
@@ -28,9 +36,26 @@ Global
 		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4E8B2D2-4364-426A-9A41-A5036A9DF08F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D239B0E-69CB-46E3-9D9A-A41349AF3BB9} = {990DD3E9-3685-472A-AB57-2D304A5C86D6}
+		{6CC762DD-A6C9-435C-8CA2-ECE8CE615309} = {990DD3E9-3685-472A-AB57-2D304A5C86D6}
+		{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF} = {990DD3E9-3685-472A-AB57-2D304A5C86D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE0EFD1C-9A73-41C3-BD86-7E8112462C2B}
