@@ -101,7 +101,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         [Parameter]
         public SwitchParameter Passthru { get; set; }
 
-        protected override void ProcessRecord()
+        protected override void EndProcessing()
         {
             var tpc = this.GetCollection();
             tpc.Connect();
