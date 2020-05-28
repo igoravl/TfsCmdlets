@@ -51,55 +51,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
 
         protected override void ProcessRecord()
         {
-            var tpc = this.GetCollection();
-            var tp = this.GetProject();
-            object result = null;
-
-            while (result == null)
-            {
-                switch (Repository)
-                {
-                    case PSObject o:
-                        {
-                            Repository = o.BaseObject;
-                            continue;
-                        }
-                    case GitRepository repo:
-                        {
-                            result = repo;
-                            break;
-                        }
-                    case Guid guid:
-                        {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            result = client.GetRepositoryAsync(tp.Name, guid).GetResult($"Error getting repository with ID {guid}");
-                            break;
-                        }
-                    case string s when s.IsGuid():
-                        {
-                            Repository = new Guid(s);
-                            continue;
-                        }
-                    case string s when !s.IsWildcard():
-                        {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            result = client.GetRepositoryAsync(tp.Name, s).GetResult($"Error getting repository '{s}'");
-                            break;
-                        }
-                    case string s:
-                        {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            result = client.GetRepositoriesAsync(tp.Name).GetResult($"Error getting repository(ies) '{s}'").Where(r => r.Name.IsLike(s));
-                            break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException(nameof(Repository));
-                        }
-                }
-            }
-
-            WriteObject(result, true);
+            WriteObject(this.GetMany<GitRepository>(), true);
         }
     }
 }
