@@ -83,7 +83,15 @@ Task BuildLibrary {
     foreach($p in @('Core', 'Desktop'))
     {
         Write-Verbose "Build TfsCmdlets.PS$p"
-        Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
+        try
+        {
+            Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
+        }
+        catch
+        {
+            Get-Content $OutDir/MSBuild.log 
+            throw "Error building solution"
+        }
     }
 }
 
@@ -161,7 +169,13 @@ Task UpdateModuleManifest {
 
     Update-ModuleManifest @manifestArgs
 
-    Get-Content $ModuleManifestPath | Write-Verbose
+    # Set RootModule manually to inject conditional loading logic
+
+    $rootModuleExpr = 'RootModule = if($PSEdition -eq "Core") { "Lib/Core/TfsCmdlets.PSCore.dll" } else { "Lib/Desktop/TfsCmdlets.PSDesktop.dll" }'
+    $manifestText = (Get-Content $ModuleManifestPath -Raw) -replace "RootModule = '.+?'", $rootModuleExpr
+    $manifestText | Out-File $ModuleManifestPath -Encoding utf8
+
+    Write-Verbose $manifestText
 }
 
 Task UnitTests -PreCondition { -not $SkipTests }  {
