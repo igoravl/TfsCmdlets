@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
@@ -37,9 +38,9 @@ namespace TfsCmdlets.Extensions
             return GetConnection(cmdlet, "Collection");
         }
 
-        internal static TeamProject GetProject(this Cmdlet cmdlet)
+        internal static (Connection, TeamProject) GetCollectionAndProject(this Cmdlet cmdlet)
         {
-            return cmdlet.GetOne<TeamProject>();
+            return (cmdlet.GetCollection(), cmdlet.GetOne<TeamProject>());
         }
 
         internal static string GetCommandName(this Cmdlet cmdlet)
@@ -49,9 +50,9 @@ namespace TfsCmdlets.Extensions
             return attr == null ? cmdlet.GetType().Name : $"{attr.VerbName}-{Consts.DEFAULT_PREFIX}{attr.NounName}";
         }
 
-        private static Connection GetConnection(Cmdlet cmdlet, string connectionType)
+        private static Connection GetConnection(Cmdlet cmdlet, string connectionType, ParameterDictionary overriddenParameters = null)
         {
-            return cmdlet.GetOne<Connection>(connectionType);
+            return cmdlet.GetOne<Connection>(overriddenParameters, connectionType);
         }
     }
 }
