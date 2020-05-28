@@ -3,6 +3,8 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.Framework.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TfsCmdlets.Cmdlets;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Extensions
 {
@@ -24,7 +26,7 @@ namespace TfsCmdlets.Extensions
         {
             if (!IsVerbose(cmdlet)) return;
 
-            var parms = cmdlet.GetParameters();
+            var parms = new ParameterDictionary(cmdlet);
 
             if (parms.ContainsKey("Password") && parms["Password"] != null)
             {

@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Extensions

@@ -14,8 +14,7 @@ namespace TfsCmdlets.Services
         protected override IEnumerable<Connection> GetItems(object userState)
         {
             var connectionType = (string) userState;
-            var parms = Cmdlet.GetParameters();
-            var connection = parms.Get<object>(connectionType);
+            var connection = Parameters.Get<object>(connectionType);
 
             VssConnection result = null;
 

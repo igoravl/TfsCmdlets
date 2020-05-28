@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.ServiceProvider;
 
@@ -29,7 +30,7 @@ namespace TfsCmdlets.Services
         public T GetOne(ParameterDictionary overriddenParameters, object userState = null)
         {
             Parameters = (overriddenParameters ?? new ParameterDictionary());
-            Parameters.Merge(Cmdlet.GetParameters());
+            Parameters.Merge(new ParameterDictionary(Cmdlet));
 
             var items = GetMany(overriddenParameters, userState)?.ToList()?? new List<T>();
 
@@ -44,7 +45,7 @@ namespace TfsCmdlets.Services
         public IEnumerable<T> GetMany(ParameterDictionary overriddenParameters, object userState = null)
         {
             Parameters = (overriddenParameters ?? new ParameterDictionary());
-            Parameters.Merge(Cmdlet.GetParameters());
+            Parameters.Merge(new ParameterDictionary(Cmdlet));
 
             return GetItems(userState);
         }

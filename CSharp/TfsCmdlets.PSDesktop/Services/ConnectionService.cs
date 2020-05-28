@@ -14,8 +14,7 @@ namespace TfsCmdlets.Services
             if (userState == null) throw new ArgumentNullException(nameof(userState));
 
             var connectionType = (string) userState;
-            var parms = Cmdlet.GetParameters();
-            var connection = parms.Get<object>(connectionType);
+            var connection = Parameters.Get<object>(connectionType);
 
             TfsConnection result = null;
 

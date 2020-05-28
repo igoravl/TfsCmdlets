@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.ServiceProvider;
 using TfsCmdlets.Services;
 

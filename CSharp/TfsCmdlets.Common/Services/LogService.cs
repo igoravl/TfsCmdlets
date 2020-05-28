@@ -2,6 +2,7 @@
 using System.Management.Automation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Services
@@ -35,7 +36,7 @@ namespace TfsCmdlets.Services
         {
             // TODO: if (!IsVerbose(cmdlet)) return;
 
-            var parms = Cmdlet.GetParameters();
+            var parms = new ParameterDictionary(Cmdlet);
 
             if (parms.ContainsKey("Password") && parms["Password"] != null) parms["Password"] = "***";
 
