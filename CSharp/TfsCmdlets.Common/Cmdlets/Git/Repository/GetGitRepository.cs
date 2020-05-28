@@ -25,57 +25,81 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
     System.String
 */
 
+using System;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
     [Cmdlet(VerbsCommon.Get, "GitRepository")]
     [OutputType(typeof(GitRepository))]
-    public class GetGitRepository: BaseCmdlet
+    public class GetGitRepository : BaseCmdlet
     {
-/*
-        [Parameter(Position=0)]
+
+        [Parameter(Position = 0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        [object] 
-        Repository = "*",
+        public object Repository { get; set; } = "*";
 
-        [Parameter(ValueFromPipeline=true)]
+        [Parameter(ValueFromPipeline = true)]
         public object Project { get; set; }
 
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void BeginProcessing()
-    {
-        #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.SourceControl.WebApi"
-    }
-
-    protected override void ProcessRecord()
-    {
-        if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository) { this.Log("Input item is of type Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository; returning input item immediately, without further processing."; WriteObject(Repository }); return;);
-        
-        if(_TestGuid(Repository))
+        protected override void ProcessRecord()
         {
-            tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-            
-            client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
+            var tpc = this.GetCollection();
+            var tp = this.GetProject();
+            object result = null;
 
-            task = client.GetRepositoryAsync(guid); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error getting repository with ID {guid}" task.Exception.InnerExceptions })
+            while (result == null)
+            {
+                switch (Repository)
+                {
+                    case PSObject o:
+                        {
+                            Repository = o.BaseObject;
+                            continue;
+                        }
+                    case GitRepository repo:
+                        {
+                            result = repo;
+                            break;
+                        }
+                    case Guid guid:
+                        {
+                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+                            result = client.GetRepositoryAsync(tp.Name, guid).GetResult($"Error getting repository with ID {guid}");
+                            break;
+                        }
+                    case string s when s.IsGuid():
+                        {
+                            Repository = new Guid(s);
+                            continue;
+                        }
+                    case string s when !s.IsWildcard():
+                        {
+                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+                            result = client.GetRepositoryAsync(tp.Name, s).GetResult($"Error getting repository '{s}'");
+                            break;
+                        }
+                    case string s:
+                        {
+                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+                            result = client.GetRepositoriesAsync(tp.Name).GetResult($"Error getting repository(ies) '{s}'").Where(r => r.Name.IsLike(s));
+                            break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException(nameof(Repository));
+                        }
+                }
+            }
 
-            WriteObject(result); return;
+            WriteObject(result, true);
         }
-
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
-
-        task = client.GetRepositoriesAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error getting repository "{Repository}"" task.Exception.InnerExceptions })
-        
-        WriteObject(result | Where-Object Name -Like Repository); return;
     }
-}
-*/
-}
 }

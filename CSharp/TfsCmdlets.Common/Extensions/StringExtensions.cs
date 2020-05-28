@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 
 namespace TfsCmdlets.Extensions
 {
@@ -16,5 +17,9 @@ namespace TfsCmdlets.Extensions
             return WildcardPattern.ContainsWildcardCharacters(input);
         }
 
+        internal static bool IsGuid(this string input)
+        {
+            return Guid.TryParse(input, out _);
+        }
     }
 }
