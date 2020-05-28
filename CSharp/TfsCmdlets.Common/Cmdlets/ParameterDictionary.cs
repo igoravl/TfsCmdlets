@@ -5,20 +5,23 @@ using System.Management.Automation;
 using System.Reflection;
 using Microsoft.VisualStudio.Services.Common;
 
-namespace TfsCmdlets.Extensions
+namespace TfsCmdlets.Cmdlets
 {
-    internal static class ParametersHelper
+    internal class ParameterDictionary: Dictionary<string, object>
     {
-        internal static ParameterDictionary GetParameters(this Cmdlet cmdlet)
+        public ParameterDictionary()
+            : base(StringComparer.OrdinalIgnoreCase)
         {
-            var parms = new ParameterDictionary();
-            
+        }
+
+        public ParameterDictionary(Cmdlet cmdlet): this()
+        {
             cmdlet
                 .GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null)
                 .ForEach(pi => 
-                    parms.Add(
+                    Add(
                         pi.Name, 
                         pi.PropertyType == typeof(SwitchParameter)? 
                             ((SwitchParameter) pi.GetValue(cmdlet)).ToBool() : 
@@ -26,18 +29,8 @@ namespace TfsCmdlets.Extensions
 
             if (cmdlet is PSCmdlet psCmdlet)
             {
-                parms.Add("ParameterSetName", psCmdlet.ParameterSetName);
+                Add("ParameterSetName", psCmdlet.ParameterSetName);
             }
-
-            return parms;
-        }
-    }
-
-    internal class ParameterDictionary: Dictionary<string, object>
-    {
-        public ParameterDictionary()
-            : base(StringComparer.OrdinalIgnoreCase)
-        {
         }
 
         public T Get<T>(string name, T defaultValue = default)
