@@ -16,14 +16,14 @@ namespace TfsCmdlets.Extensions
             return _provider.GetService<T>(cmdlet);
         }
 
-        internal static T GetOne<T>(this Cmdlet cmdlet, object userState = null) where T : class
+        internal static T GetOne<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
         {
-            return _provider.GetOne<T>(cmdlet, userState);
+            return _provider.GetOne<T>(cmdlet, overriddenParameters, userState);
         }
 
-        internal static IEnumerable<T> GetMany<T>(this Cmdlet cmdlet, object userState = null) where T : class
+        internal static IEnumerable<T> GetMany<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
         {
-            return _provider.GetMany<T>(cmdlet, userState);
+            return _provider.GetMany<T>(cmdlet, overriddenParameters, userState);
         }
 
         internal static T GetClient<T>(this Cmdlet cmdlet) where T : VssHttpClientBase
@@ -36,9 +36,9 @@ namespace TfsCmdlets.Extensions
         //    return GetClient(cmdlet, Type.GetType(typeName));
         //}
 
-        internal static object GetClient(this Cmdlet cmdlet, Type type, string scope = "Collection")
+        internal static object GetClient(this Cmdlet cmdlet, Type type, string scope = "Collection", ParameterDictionary overriddenParameters = null)
         {
-            return GetOne<VssConnection>(cmdlet, scope).GetClient(type);
+            return GetOne<VssConnection>(cmdlet, overriddenParameters, scope).GetClient(type);
         }
 
         internal static void Register(ICmdletServiceProvider provider)

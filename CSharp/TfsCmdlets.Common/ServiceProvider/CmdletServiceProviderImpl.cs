@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.ServiceProvider
@@ -29,7 +30,7 @@ namespace TfsCmdlets.ServiceProvider
             return (T) _factories[serviceType](this, cmdlet);
         }
 
-        public T GetOne<T>(Cmdlet cmdlet, object userState = null)
+        public T GetOne<T>(Cmdlet cmdlet, ParameterDictionary overriddenParameters, object userState = null)
         {
             var serviceType = typeof(T);
 
@@ -38,10 +39,10 @@ namespace TfsCmdlets.ServiceProvider
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IService<T>) _factories[serviceType](this, cmdlet)).GetOne(userState);
+            return ((IDataService<T>) _factories[serviceType](this, cmdlet)).GetOne(overriddenParameters, userState);
         }
 
-        public IEnumerable<T> GetMany<T>(Cmdlet cmdlet, object userState = null)
+        public IEnumerable<T> GetMany<T>(Cmdlet cmdlet, ParameterDictionary overriddenParameters, object userState = null)
         {
             var serviceType = typeof(T);
 
@@ -50,7 +51,7 @@ namespace TfsCmdlets.ServiceProvider
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IService<T>)_factories[serviceType](this, cmdlet)).GetMany(userState);
+            return ((IDataService<T>)_factories[serviceType](this, cmdlet)).GetMany(overriddenParameters, userState);
         }
 
         private void RegisterFactories()
@@ -62,20 +63,21 @@ namespace TfsCmdlets.ServiceProvider
 
                 if (attr.Singleton)
                 {
-                    var svc = Activator.CreateInstance(type) as IService;
+                    if (!(Activator.CreateInstance(type) is IService svc)) continue;
                     svc.Provider = this;
-
                     _factories.Add(attr.Exports, (prv, ctx) => svc);
                 }
                 else
                 {
                     _factories.Add(attr.Exports, delegate(ICmdletServiceProvider prv, Cmdlet ctx)
                     {
-                        var svc = Activator.CreateInstance(type) as IService;
+                        if (!(Activator.CreateInstance(type) is IService svc))
+                            throw new Exception($"Error instantiating {type.FullName}");
+
                         svc.Provider = prv;
                         svc.Cmdlet = ctx;
-
                         return svc;
+
                     });
                 }
             }

@@ -12,12 +12,12 @@ namespace TfsCmdlets.Services
         Cmdlet Cmdlet { get; set; }
     }
 
-    internal interface IService<out T>: IService
+    internal interface IDataService<out T>: IService
     {
         ParameterDictionary Parameters { get; set; }
 
-        T GetOne(object filter = null);
+        T GetOne(ParameterDictionary overriddenParameters, object filter = null);
 
-        IEnumerable<T> GetMany(object userState = null);
+        IEnumerable<T> GetMany(ParameterDictionary overriddenParameters, object userState = null);
     }
 }

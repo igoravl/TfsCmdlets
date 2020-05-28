@@ -7,7 +7,7 @@ using TfsCmdlets.Extensions;
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(Connection))]
-    internal class ConnectionService : BaseService<Connection>
+    internal class ConnectionService : BaseDataService<Connection>
     {
         protected override IEnumerable<Connection> GetItems(object userState)
         {

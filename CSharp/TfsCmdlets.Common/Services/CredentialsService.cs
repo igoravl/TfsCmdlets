@@ -5,25 +5,22 @@ using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
-using TfsCmdlets.Extensions;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(VssClientCredentials))]
-    internal class CredentialsService : BaseService<VssClientCredentials>
+    internal class CredentialsService : BaseDataService<VssClientCredentials>
     {
         protected override string ItemName => "Credential";
 
-        protected override IEnumerable<VssClientCredentials> GetItems(object filter)
+        protected override IEnumerable<VssClientCredentials> GetItems(object userState)
         {
-            var parms = Cmdlet.GetParameters();
-
-            var credential = parms.Get<object>("Credential");
-            var userName = parms.Get<string>("UserName");
-            var password = parms.Get<SecureString>("Password");
-            var accessToken = parms.Get<string>("AccessToken");
-            var interactive = parms.Get<bool>("Interactive");
+            var credential = Parameters.Get<object>("Credential");
+            var userName = Parameters.Get<string>("UserName");
+            var password = Parameters.Get<SecureString>("Password");
+            var accessToken = Parameters.Get<string>("AccessToken");
+            var interactive = Parameters.Get<bool>("Interactive");
             var parameterSetName = ConnectionMode.CachedCredentials;
 
             if (credential != null)
@@ -36,9 +33,10 @@ namespace TfsCmdlets.Services
                 parameterSetName = ConnectionMode.Interactive;
 
             var allowInteractive = false;
-            NetworkCredential netCred = null;
-            FederatedCredential fedCred = null;
-            WindowsCredential winCred = null;
+
+            NetworkCredential netCred;
+            FederatedCredential fedCred;
+            WindowsCredential winCred;
 
             switch (parameterSetName)
             {

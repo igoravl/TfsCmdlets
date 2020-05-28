@@ -44,7 +44,7 @@ namespace TfsCmdlets.Extensions
         {
             if(!ContainsKey(name)) return defaultValue;
 
-            object val = this[name];
+            var val = this[name];
 
             if(val is PSObject obj)
             {
@@ -52,6 +52,14 @@ namespace TfsCmdlets.Extensions
             }
 
             return (T) val;
+        }
+
+        public void Merge(ParameterDictionary other)
+        {
+            foreach (var kvp in other.Where(kvp => !ContainsKey(kvp.Key)))
+            {
+                Add(kvp.Key, kvp.Value);
+            }
         }
     }
 }

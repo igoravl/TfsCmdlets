@@ -7,13 +7,13 @@ using TfsCmdlets.Extensions;
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(Connection))]
-    internal class ConnectionService : BaseService<Connection>
+    internal class ConnectionService : BaseDataService<Connection>
     {
         protected override string ItemName => "Connection";
 
-        protected override IEnumerable<Connection> GetItems(object filter)
+        protected override IEnumerable<Connection> GetItems(object userState)
         {
-            var connectionType = (string) filter;
+            var connectionType = (string) userState;
             var parms = Cmdlet.GetParameters();
             var connection = parms.Get<object>(connectionType);
 

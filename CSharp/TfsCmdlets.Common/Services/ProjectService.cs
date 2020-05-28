@@ -7,15 +7,14 @@ using TfsCmdlets.Extensions;
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(TeamProject))]
-    internal class ProjectService : BaseService<TeamProject>
+    internal class ProjectService : BaseDataService<TeamProject>
     {
         protected override string ItemName => "Team Project";
 
-        protected override IEnumerable<TeamProject> GetItems(object filter)
+        protected override IEnumerable<TeamProject> GetItems(object userState)
         {
-            var parms = Cmdlet.GetParameters();
-            var project = parms.Get<object>("Project");
-            var current = parms.Get<bool>("Current");
+            var project = Parameters.Get<object>("Project");
+            var current = Parameters.Get<bool>("Current");
 
             var tpc = Cmdlet.GetCollection();
             var client = tpc.GetClient<ProjectHttpClient>();
