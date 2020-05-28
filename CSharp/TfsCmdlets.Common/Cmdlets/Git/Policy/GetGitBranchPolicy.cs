@@ -63,9 +63,9 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
 
     protected override void ProcessRecord()
     {
-        if(Repository.ProjectReference.Name) {Project = Repository.ProjectReference.Name}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        if(Repository.ProjectReference.Name) {Project = Repository.ProjectReference.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
         
         if(Branch && (Branch -notlike "refs/*"))
         {

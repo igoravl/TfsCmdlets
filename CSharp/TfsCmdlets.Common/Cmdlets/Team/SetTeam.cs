@@ -99,7 +99,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 if (Project)
                 {
-                    tp = Get-TfsTeamProject -Project Project -Collection Collection
+                    tp = this.GetProject();
                     tpc = tp.Store.TeamProjectCollection
                 }
                 else
@@ -133,7 +133,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 # Prepare for the second stage
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
                 ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(@(tp.Name, t.Name))
 
                 # Set Team Field and Area Path settings

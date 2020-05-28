@@ -62,7 +62,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
                 [Parameter(ValueFromPipeline=true, Position=0)]
                 [SupportsWildcards()]
                 [object] 
-        // TODO: Remover espaço antes do /
+        // TODO: Remover espaï¿½o antes do /
                 Query = "** /*",
 
                 [Parameter()]
@@ -127,7 +127,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 
                 foreach(q in queries)
                 {
-                    if(q.TeamProject) {Project = q.TeamProject}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                    if(q.TeamProject) {Project = q.TeamProject}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
                     xml = [xml]@"
         <?xml version=$"1.0" encoding="{Encoding}"?>

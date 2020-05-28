@@ -45,14 +45,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 
                 foreach(t in tags)
                 {
-                    if(t.TeamProject) {Project = t.TeamProject}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                    if(t.TeamProject) {Project = t.TeamProject}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
                     if(! ShouldProcess(tp.Name, $"Delete work item tag [{{t}.Name}]"))
                     {
                         continue
                     }
 
-                    client = Get-TfsRestClient "Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient" -Collection tpc
+                    var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
                     task = client.DeleteTagAsync(tp.Guid, t.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error deleting work item tag [{{t}.Name}]"" task.Exception.InnerExceptions })
                 }

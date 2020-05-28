@@ -28,9 +28,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     {
         if (Folder is Microsoft.TeamFoundation.Build.WebApi.Folder) { this.Log("Input item is of type Microsoft.TeamFoundation.Build.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
 
-        if(Folder.Project.Name) {Project = Folder.Project.Name}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        if(Folder.Project.Name) {Project = Folder.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
         if(_IsWildCard Folder)
         {

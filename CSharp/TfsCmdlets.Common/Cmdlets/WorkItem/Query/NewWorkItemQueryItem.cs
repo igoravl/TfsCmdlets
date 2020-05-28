@@ -78,9 +78,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
                     return
                 }
 
-                tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
 
                 newItem = new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem() -Property @{

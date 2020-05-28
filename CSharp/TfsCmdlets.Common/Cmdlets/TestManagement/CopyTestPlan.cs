@@ -174,7 +174,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 			Project = plan.Project.Name
 		}
 
-		tp = Get-TfsTeamProject -Project Project -Collection Collection
+		tp = this.GetProject();
 		
 		if(! tp)
 		{

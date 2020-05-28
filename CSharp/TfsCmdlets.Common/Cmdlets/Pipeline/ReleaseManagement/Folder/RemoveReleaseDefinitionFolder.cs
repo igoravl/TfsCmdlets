@@ -53,9 +53,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
                         this.Log($"Folder "{{f}.Path}" has no sub-folders");
                     }
 
-                    if(f.Project.Name) {Project = f.Project.Name}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                    if(f.Project.Name) {Project = f.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                    client = Get-TfsRestClient "Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient" -Collection tpc
+                    var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
 
                     if(! Force.IsPresent)
                     {

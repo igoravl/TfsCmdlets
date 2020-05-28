@@ -92,9 +92,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
                     throw new Exception($"Invalid or non-existent node {Node}")
                 }
 
-                tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
                 if (PSBoundParameters.ContainsKey("MoveBy"))
                 {

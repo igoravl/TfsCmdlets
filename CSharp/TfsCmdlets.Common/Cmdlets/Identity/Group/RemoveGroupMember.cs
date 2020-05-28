@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                     throw new Exception($"Invalid or non-existent identity "{Identity}"")
                 }
 
-                client = Get-TfsRestClient "Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
 
                 this.Log($"Removing {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" from group "$(gi.DisplayName)"");
 

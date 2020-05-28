@@ -54,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.Work
                 }
                 else
                 {
-                    tp = Get-TfsTeamProject -Project Project -Collection Collection
+                    tp = this.GetProject();
                     tpc = tp.Store.TeamProjectCollection
                     WorkItem = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
                 }
@@ -117,7 +117,7 @@ namespace TfsCmdlets.Cmdlets.Work
                 if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
                 {
                     patch = _GetJsonPatchDocument ops
-                    client = Get-TfsRestClient "Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient" -Collection tpc
+                    var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
                     wi = client.UpdateWorkItemAsync(patch, id).Result
                     WriteObject(wi); return;
                 }

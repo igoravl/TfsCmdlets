@@ -27,14 +27,14 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 
             protected override void ProcessRecord()
             {
-                tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
                 if(! ShouldProcess(tp.Name, $"Create build folder "{Folder}""))
                 {
                     return
                 }
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
                 newFolder = new Microsoft.TeamFoundation.Build.WebApi.Folder() -Property @{
                     Description = Description

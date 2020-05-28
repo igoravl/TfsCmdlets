@@ -60,9 +60,9 @@ namespace TfsCmdlets.Cmdlets.Work
     {
         if (Backlog is Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration) { this.Log("Input item is of type Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration; returning input item immediately, without further processing."; WriteObject(Backlog }); return;);
         t = Get-TfsTeam -Team Team -Project Project -Collection Collection
-        if(t.ProjectName) {Project = t.ProjectName}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
         ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(@(tp.Name, t.Name))
 
         if (! Backlog.ToString().Contains("*"))

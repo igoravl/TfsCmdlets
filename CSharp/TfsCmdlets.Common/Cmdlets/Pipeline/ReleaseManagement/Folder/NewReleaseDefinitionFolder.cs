@@ -27,14 +27,14 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
 
             protected override void ProcessRecord()
             {
-                tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
                 if(! ShouldProcess(tp.Name, $"Create release folder "{Folder}""))
                 {
                     return
                 }
 
-                client = Get-TfsRestClient "Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
 
                 newFolder = new Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder() -Property @{
                     Description = Description

@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     {
         if((! Repository) && Project)
         {
-            tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+            tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
             Repository = tp.Name
         }
 
@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
 
         tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
         
         foreach(repo in repos)
         {

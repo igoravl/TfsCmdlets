@@ -93,8 +93,7 @@ namespace TfsCmdlets.Cmdlets.Connection
 
         protected override void ProcessRecord()
         {
-            var tpc = this.GetCollection();
-            var tp = this.GetProject();
+            var (tpc, tp) = this.GetCollectionAndProject();
 
             CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp);
 

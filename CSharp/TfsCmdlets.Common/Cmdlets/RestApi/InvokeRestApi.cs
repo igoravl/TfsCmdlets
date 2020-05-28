@@ -77,7 +77,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
                 //    Project = Team.Project
                 //};
 
-                //tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                //tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
                 //Path = Path.Replace("{project}", tp.Guid)
 
                 //this.Log($"Replace token {{project}} in URL with [{tp.Guid}]");
@@ -86,7 +86,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
             if (Path.IsLike("*{team}*"))
             {
                 //TODO: Team
-                //t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+                //t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
                 //Path = Path.Replace("{team}", t.Id)
 
                 //this.Log($"Replace token {team} in URL with "{{t}.Id}"");

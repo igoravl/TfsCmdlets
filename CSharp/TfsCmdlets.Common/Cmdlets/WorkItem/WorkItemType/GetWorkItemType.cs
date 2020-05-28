@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
             WriteObject(Type); return;
         }
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection
+        tp = this.GetProject();
 
         WriteObject(tp.WorkItemTypes | Where-Object Name -Like Type); return;
     }

@@ -47,9 +47,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     {
         if (Tag is Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition; returning input item immediately, without further processing."; WriteObject(Tag }); return;);
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
         task = client.GetTagsAsync(tp.Guid, IncludeInactive.IsPresent); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving work item tag "{Tag}"" task.Exception.InnerExceptions })
 

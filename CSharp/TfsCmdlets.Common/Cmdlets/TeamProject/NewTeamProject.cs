@@ -45,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 tpc = Get-TfsTeamProjectCollection Collection
                 template = Get-TfsProcessTemplate -Collection tpc -Name ProcessTemplate
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient>();
 
                 tpInfo = new Microsoft.TeamFoundation.Core.WebApi.TeamProject()
                 tpInfo.Name = Project
@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 # Wait for the operation to complete
 
-                client = Get-TfsRestClient "Microsoft.VisualStudio.Services.Operations.OperationsHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.VisualStudio.Services.Operations.OperationsHttpClient>();
 
                 opsToken = operationsClient.GetOperation(token.Id).Result
 
@@ -92,7 +92,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                 wiStore = tpc.GetService([type]"Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
                 wiStore.RefreshCache()
 
-                tp = Get-TfsTeamProject -Project Project -Collection Collection
+                tp = this.GetProject();
 
                 if (Passthru)
                 {

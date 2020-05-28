@@ -25,11 +25,11 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
             protected override void ProcessRecord()
             {
-                t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+                t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
 
                 id = Get-TfsIdentity -Identity Identity -Collection tpc
 
-                client = Get-TfsRestClient "TfsCmdlets.TeamAdminHttpClient" -Collection tpc
+                var client = tpc.GetClient<TfsCmdlets.TeamAdminHttpClient>();
 
                 this.Log($"Adding {{id}.IdentityType} "$(id.DisplayName) ($(id.Properties["Account"]))" to team "$(t.Name)"");
 

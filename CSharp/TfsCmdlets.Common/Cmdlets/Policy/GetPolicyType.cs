@@ -56,9 +56,9 @@ namespace TfsCmdlets.Cmdlets.Policy
     {
         if (Type is Microsoft.TeamFoundation.Policy.WebApi.PolicyType) { this.Log("Input item is of type Microsoft.TeamFoundation.Policy.WebApi.PolicyType; returning input item immediately, without further processing."; WriteObject(Type }); return;);
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
         
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.Policy.WebApi.PolicyHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.Policy.WebApi.PolicyHttpClient>();
 
         task = client.GetPolicyTypesAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception("Error retrieving policy types" task.Exception.InnerExceptions })
         

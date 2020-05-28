@@ -68,10 +68,10 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                     Project = Repository.ProjectReference.Name
                 }
 
-                tp = Get-TfsTeamProject -Project Project -Collection Collection
+                tp = this.GetProject();
                 #tpc = tp.Store.TeamProjectCollection
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
                 if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository)
                 {

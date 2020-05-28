@@ -83,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     {
         if (Project)
         {
-            tp = Get-TfsTeamProject -Project Project -Collection Collection
+            tp = this.GetProject();
             tpc = tp.Store.TeamProjectCollection
             store = tp.Store
         }

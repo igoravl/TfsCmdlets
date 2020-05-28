@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Alias("Path")]
         [Alias("Folder")]
         [Alias("Query")]
-// TODO: Remover espaço antes de /
+// TODO: Remover espaï¿½o antes de /
         public object Item { get; set; } = "* /**",
 
         [Parameter()]
@@ -70,9 +70,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 
         if(! (PSBoundParameters.ContainsKey("ItemType"))){if (MyInvocation.InvocationName -like "*Folder"){ItemType = "Folder"}elseif (MyInvocation.InvocationName -like "*Query"){ItemType = "Query"}else{throw new Exception("Invalid or missing ItemType argument"}};PSBoundParameters["ItemType"] = ItemType)
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
         task = client.GetQueriesAsync(tp.Name, "All", 2); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching work item query items" task.Exception.InnerExceptions })
 

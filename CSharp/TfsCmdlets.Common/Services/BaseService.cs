@@ -9,28 +9,29 @@ namespace TfsCmdlets.Services
 {
     internal abstract class BaseService : IService
     {
-        private ILogService _logger;
+        private ILogger _logger;
 
         public ICmdletServiceProvider Provider { get; set; }
 
         public Cmdlet Cmdlet { get; set; }
 
-        protected ILogService Logger => _logger ??= Provider.GetOne<ILogService>(Cmdlet);
+        protected ILogger Logger => _logger ??= new LoggerImpl(Cmdlet);
     }
 
-    internal abstract class BaseService<T> : BaseService, IService<T>
+    internal abstract class BaseDataService<T> : BaseService, IDataService<T>
     {
-        protected abstract IEnumerable<T> GetItems(object filter);
+        protected abstract IEnumerable<T> GetItems(object userState);
 
         public ParameterDictionary Parameters { get; set; }
 
         protected abstract string ItemName { get; }
 
-        public T GetOne(object filter = null)
+        public T GetOne(ParameterDictionary overriddenParameters, object userState = null)
         {
-            Parameters ??= Cmdlet.GetParameters();
+            Parameters = (overriddenParameters ?? new ParameterDictionary());
+            Parameters.Merge(Cmdlet.GetParameters());
 
-            var items = GetMany(filter)?.ToList()?? new List<T>();
+            var items = GetMany(overriddenParameters, userState)?.ToList()?? new List<T>();
 
             if (items.Count != 1 || items[0] == null)
             {
@@ -40,11 +41,12 @@ namespace TfsCmdlets.Services
             return items[0];
         }
 
-        public IEnumerable<T> GetMany(object filter = null)
+        public IEnumerable<T> GetMany(ParameterDictionary overriddenParameters, object userState = null)
         {
-            Parameters ??= Cmdlet.GetParameters();
+            Parameters = (overriddenParameters ?? new ParameterDictionary());
+            Parameters.Merge(Cmdlet.GetParameters());
 
-            return GetItems(filter);
+            return GetItems(userState);
         }
     }
 }

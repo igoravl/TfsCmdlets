@@ -26,62 +26,47 @@ System.String
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
     [Cmdlet(VerbsCommon.Remove, "GitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveGitRepository : BaseCmdlet
     {
-        /*
-                [Parameter(Mandatory=true, ValueFromPipeline=true)]
-                [SupportsWildcards()]
-                [Alias("Name")]
-                [object] 
-                Repository,
 
-                [Parameter()]
-                public object Project { get; set; }
+        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [SupportsWildcards()]
+        [Alias("Name")]
+        public object Repository { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        [Parameter()] public object Project { get; set; }
 
-            protected override void BeginProcessing()
+        [Parameter()] public object Collection { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository repo)
             {
-                Add-Type -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
-                Add-Type -AssemblyName "Microsoft.TeamFoundation.SourceControl.WebApi"
+                Project = repo.ProjectReference.Name;
             }
 
-            protected override void ProcessRecord()
-            {
-                if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository)
-                {
-                    Project = Repository.ProjectReference.Name
-                }
+            var (tpc, tp) = this.GetCollectionAndProject();
+            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            //        var reposToDelete = Get - TfsGitRepository - Name Repository - Project Project - Collection Collection
+            //            }
 
-                tp = Get-TfsTeamProject -Project Project -Collection Collection
-                #tpc = tp.Store.TeamProjectCollection
+            //        foreach (repo in reposToDelete)
+            //        {
+            //            if (ShouldProcess(repo.Name, $"Delete Git repository from Team Project {{tp}.Name}"))
+            //            {
+            //                client.DeleteRepositoryAsync(repo.Id).Wait()
+            //                }
+            //        }
+            //    }
+            //}
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
-
-                if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository)
-                {
-                    reposToDelete = @(Repository)
-                }
-                else
-                {
-                    reposToDelete = Get-TfsGitRepository -Name Repository -Project Project -Collection Collection
-                }
-
-                foreach(repo in reposToDelete)
-                {
-                    if (ShouldProcess(repo.Name, $"Delete Git repository from Team Project {{tp}.Name}"))
-                    {
-                        client.DeleteRepositoryAsync(repo.Id).Wait()
-                    }
-                }
-            }
+            //    */
         }
-
-        */
     }
 }

@@ -29,11 +29,11 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
                     Project = Identity.ProjectId 
                     t = Get-TfsTeam -Team Identity.TeamId -Project Project -Collection Collection
 
-                    tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                    tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
                 }
                 else
                 {
-                    t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+                    t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
                 }
 
                 gi = Get-TfsIdentity -Identity t.Id -Collection tpc
@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
                     throw new Exception($"Invalid or non-existent identity "{Identity}"")
                 }
 
-                client = Get-TfsRestClient "Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
 
                 this.Log($"Removing {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" from team "$(t.Name)"");
 

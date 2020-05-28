@@ -28,9 +28,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
     {
         if (Folder is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder) { this.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
 
         if(_IsWildCard Folder)
         {

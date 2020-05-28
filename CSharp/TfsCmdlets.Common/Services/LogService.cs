@@ -1,23 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.ServiceProvider;
 
 namespace TfsCmdlets.Services
 {
-    internal interface ILogService
+    internal interface ILogger
     {
         void Log(string message, string commandName = null, bool force = false);
 
         void LogParameters();
     }
 
-    [Exports(typeof(ILogService))]
-    internal class LogServiceImpl : IService<ILogService>, ILogService
+    internal class LoggerImpl : ILogger
     {
+        private Cmdlet Cmdlet { get; set; }
+        
+        internal LoggerImpl(Cmdlet cmdlet)
+        {
+            Cmdlet = cmdlet;
+        }
+
         public void Log(string message, string commandName = null, bool force = false)
         {
             // TODO: if (!IsVerbose(cmdlet)) return;
@@ -42,11 +46,5 @@ namespace TfsCmdlets.Services
                     .Trim('{', '}')
             );
         }
-
-        public ICmdletServiceProvider Provider { get; set; }
-        public Cmdlet Cmdlet { get; set; }
-        public ParameterDictionary Parameters { get; set; }
-        ILogService IService<ILogService>.GetOne(object userState) => this;
-        public IEnumerable<ILogService> GetMany(object userState = null) => throw new NotImplementedException();
     }
 }

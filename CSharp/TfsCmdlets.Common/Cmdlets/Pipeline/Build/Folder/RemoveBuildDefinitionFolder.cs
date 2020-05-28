@@ -53,9 +53,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                         this.Log($"Folder "{{f}.Path}" has no sub-folders");
                     }
 
-                    if(f.Project.Name) {Project = f.Project.Name}; tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                    if(f.Project.Name) {Project = f.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                    client = Get-TfsRestClient "Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient" -Collection tpc
+                    var client = tpc.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
                     if(! Force.IsPresent)
                     {

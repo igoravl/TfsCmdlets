@@ -70,10 +70,10 @@ namespace TfsCmdlets.Cmdlets.Team
 
         if (Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTeam; returning input item immediately, without further processing."; WriteObject(Team }); return;);
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        client = Get-TfsRestClient "Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient" -Collection tpc
-        workClient = Get-TfsRestClient "Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient" -Collection tpc
+        var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+        workvar client = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
 
         if(Team.ToString().Contains("*"))
         {

@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
             protected override void ProcessRecord()
             {
-                if(Team.ProjectName) {Project = Team.ProjectName}; tpc = Get-TfsTeamProject -Project Project -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tp = tpc.Store.TeamProjectCollection)
+                if(Team.ProjectName) {Project = Team.ProjectName}; tpc = this.GetProject();; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tp = tpc.Store.TeamProjectCollection)
                 t = Get-TfsTeam -Team Team -Project Project -Collection Collection
 
                 if (! ShouldProcess(t.Name, "Delete team"))
@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Team
                     return
                 }
 
-                client = Get-TfsRestClient "Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient" -Collection tpc
+                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
                 task = client.DeleteTeamAsync(tp.Name, t.Name)
 
                 result = task.Result; if(task.IsFaulted) { _throw new Exception("Error deleting team" task.Exception.InnerExceptions })

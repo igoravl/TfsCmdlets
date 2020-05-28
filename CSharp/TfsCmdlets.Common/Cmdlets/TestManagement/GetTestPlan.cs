@@ -69,8 +69,8 @@ namespace TfsCmdlets.Cmdlets.TestManagement
             WriteObject(TestPlan); return;
         }
 
-        tp = Get-TfsTeamProject -Project Project -Collection Collection; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-        client = Get-TfsRestClient "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlanHttpClient" -Collection tpc
+        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        var client = tpc.GetClient<Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlanHttpClient>();
 
         WriteObject(client.GetTestPlansAsync(); return;
             tp.Name, Owner, null, 
