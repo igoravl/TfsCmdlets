@@ -39,5 +39,6 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

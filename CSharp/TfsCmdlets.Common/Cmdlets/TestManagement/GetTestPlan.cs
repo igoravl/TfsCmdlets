@@ -79,5 +79,6 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

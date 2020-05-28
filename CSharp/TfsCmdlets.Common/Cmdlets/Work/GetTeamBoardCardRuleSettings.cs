@@ -71,5 +71,6 @@ namespace TfsCmdlets.Cmdlets.Work
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

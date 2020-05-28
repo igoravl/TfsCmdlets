@@ -133,5 +133,6 @@ Function _GetQueryItemRecursively(Pattern, Item, ItemType, Scope, Project, Clien
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

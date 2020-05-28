@@ -73,5 +73,6 @@ Function _GetChangedFields([Microsoft.TeamFoundation.WorkItemTracking.Client.Wor
     WriteObject(result); return;
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

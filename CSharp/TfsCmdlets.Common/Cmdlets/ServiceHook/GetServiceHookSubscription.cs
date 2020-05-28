@@ -24,5 +24,6 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

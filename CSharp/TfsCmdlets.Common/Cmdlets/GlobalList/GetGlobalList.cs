@@ -66,5 +66,6 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

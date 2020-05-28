@@ -53,5 +53,6 @@ Function _GetConnectionString(Version)
 	WriteObject((Select-Xml -Xml webConfig -XPath "/configuration/appSettings/add[@key="applicationDatabase"]/@value").Node.Value); return;
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

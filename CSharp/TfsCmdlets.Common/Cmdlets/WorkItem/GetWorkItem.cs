@@ -283,5 +283,6 @@ Function _GetWorkItemByWiql(QueryText, Macros, Project, store)
     WriteObject(wis); return;
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

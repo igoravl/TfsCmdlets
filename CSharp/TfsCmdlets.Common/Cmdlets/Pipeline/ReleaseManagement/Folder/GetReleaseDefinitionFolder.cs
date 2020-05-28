@@ -48,5 +48,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

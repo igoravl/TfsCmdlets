@@ -111,5 +111,6 @@ Function _FixNodePath(Node, StructureGroup, Project)
 Set-Alias -Name Get-TfsArea -Value Get-TfsClassificationNode
 Set-Alias -Name Get-TfsIteration -Value Get-TfsClassificationNode
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

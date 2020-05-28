@@ -52,5 +52,6 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

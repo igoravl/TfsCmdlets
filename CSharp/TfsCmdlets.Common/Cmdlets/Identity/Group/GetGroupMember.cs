@@ -43,5 +43,6 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

@@ -57,5 +57,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

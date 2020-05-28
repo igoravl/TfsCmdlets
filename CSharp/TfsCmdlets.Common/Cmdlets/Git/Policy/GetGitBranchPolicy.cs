@@ -97,5 +97,6 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

@@ -53,5 +53,6 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

@@ -54,5 +54,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

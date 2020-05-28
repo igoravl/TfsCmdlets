@@ -43,5 +43,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 Set-Alias -Name Test-TfsArea -Value Test-TfsClassificationNode
 Set-Alias -Name Test-TfsIteration -Value Test-TfsClassificationNode
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

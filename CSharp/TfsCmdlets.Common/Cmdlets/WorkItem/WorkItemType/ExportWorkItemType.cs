@@ -69,5 +69,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

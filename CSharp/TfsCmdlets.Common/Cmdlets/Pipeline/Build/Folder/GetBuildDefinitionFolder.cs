@@ -45,5 +45,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     }
 }
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }

@@ -108,5 +108,6 @@ namespace TfsCmdlets.Cmdlets.Connection
 
 Set-Alias -Name ctfst -Value Connect-TfsTeam
 */
-}
+    protected override void EndProcessing() => throw new System.NotImplementedException();
+    }
 }
