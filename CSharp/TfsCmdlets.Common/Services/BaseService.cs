@@ -32,9 +32,9 @@ namespace TfsCmdlets.Services
 
             var items = GetMany(filter)?.ToList()?? new List<T>();
 
-            if (items.Count != 1)
+            if (items.Count != 1 || items[0] == null)
             {
-                throw new Exception($"Invalid {ItemName}(s) '{filter}'");
+                throw new Exception($"Invalid or non-existent {ItemName}.");
             }
 
             return items[0];
