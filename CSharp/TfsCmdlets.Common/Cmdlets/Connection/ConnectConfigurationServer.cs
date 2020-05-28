@@ -74,9 +74,6 @@ namespace TfsCmdlets.Cmdlets.Connection
             var srv = this.GetServer();
             srv.Connect();
 
-            //var client = tpc.GetClient<ProjectCollectionHttpClient>();
-            //var col = client.GetProjectCollection(tpc.ServerId.ToString()).Result;
-
             CurrentConnections.Set(srv);
 
             this.Log($"Connected to {srv.Uri}, ID {srv.ServerId}, as {srv.AuthorizedIdentity.DisplayName}");
