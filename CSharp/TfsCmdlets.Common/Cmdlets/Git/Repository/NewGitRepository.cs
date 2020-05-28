@@ -29,7 +29,9 @@ System.String
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
@@ -37,49 +39,45 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     [OutputType(typeof(GitRepository))]
     public class NewGitRepository : BaseCmdlet
     {
-        /*
-                [Parameter(Mandatory=true)]
-                [Alias("Name")]
-                [string] 
-                Repository,
+        [Parameter(Mandatory = true, Position = 0)]
+        [Alias("Name")]
+        public string Repository { get; set; }
 
-                [Parameter(ValueFromPipeline=true)]
-                public object Project { get; set; }
+        [Parameter(ValueFromPipeline = true)]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        [Parameter()]
+        public object Collection { get; set; }
 
-                [Parameter()]
-                public SwitchParameter Passthru { get; set; }
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
 
-            protected override void BeginProcessing()
+        protected override void ProcessRecord()
+        {
+            if (!ShouldProcess(Repository, "Create Git repository")) return;
+
+            var tpc = this.GetCollection();
+            var tp = this.GetProject();
+            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+
+            var tpRef = new TeamProjectReference()
             {
-                Add-Type -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
-                Add-Type -AssemblyName "Microsoft.TeamFoundation.SourceControl.WebApi"
-                Add-Type -AssemblyName "Microsoft.TeamFoundation.Common"
-            }
+                Id = tp.Id,
+                Name = tp.Name
+            };
 
-            protected override void ProcessRecord()
+            var repoToCreate = new GitRepository()
             {
-                if(ShouldProcess(Repository, "Create Git repository"))
-                {
-                    tp = Get-TfsTeamProject -Project Project -Collection Collection
-                    #tpc = tp.Store.TeamProjectCollection
+                Name = Repository,
+                ProjectReference = tpRef
+            };
 
-                    client = Get-TfsRestClient "Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient" -Collection tpc
-                    tpRef = [Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference] @{Id = tp.Guid; Name = tp.Name}
-                    repoToCreate = [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] @{Name = Repository; ProjectReference = tpRef}
-                    task = client.CreateRepositoryAsync(repoToCreate, tp.Name)
+            var result = client.CreateRepositoryAsync(repoToCreate, tp.Name).GetResult("Error create Git repository");
 
-                    result = task.Result
-
-                    if (Passthru)
-                    {
-                        WriteObject(result); return;
-                    }
-                }
+            if (Passthru)
+            {
+                WriteObject(result);
             }
         }
-        */
     }
 }
