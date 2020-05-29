@@ -179,11 +179,11 @@ Task UnitTests -PreCondition { -not $SkipTests }  {
 
 Task AllTests -PreCondition { -not $SkipTests } {
 
-    Write-Output '= PowerShell Core ='
-    Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Core.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSDesktop" }
+    # Write-Output '= PowerShell Core ='
+    # Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Core.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSDesktop" }
 
-    Write-Output '= Windows PowerShell ='
-    Exec { powershell.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Desktop.xml) -OutputFormat NUnitXml  -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSCore" }
+    # Write-Output '= Windows PowerShell ='
+    # Exec { powershell.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Desktop.xml) -OutputFormat NUnitXml  -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSCore" }
 }
 
 Task RemoveEmptyFolders {
@@ -213,7 +213,7 @@ Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") | Write-Verbose
+    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") -Force | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
@@ -336,14 +336,14 @@ Task PackageMsi -Depends Build {
 Task PackageDocs -Depends GenerateDocs {
 
     # Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$($VersionMetadata.NugetVersion).zip") 
-    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir | Write-Verbose
+    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir -Force | Write-Verbose
 }
 
 Task GenerateDocs -Depends Build {
 
-    # # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
+    # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
 
-    # if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
+    if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
     # $subModules = Get-ChildItem $ModuleDir -Directory | Select-Object -ExpandProperty Name
 
