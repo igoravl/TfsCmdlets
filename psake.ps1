@@ -44,12 +44,6 @@ Properties {
     # Wix packaging
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $SolutionDir "Setup\bin\$Configuration"
-
-    #7zip
-    $7zipExepath = Join-Path $SolutionDir 'BuildTools/7za.exe'
-
-    #gpp
-    $gppExePath = Join-Path $SolutionDir 'BuildTools/gpp.exe'
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -219,7 +213,7 @@ Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
+    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
