@@ -6,7 +6,7 @@
         if ($this.__PropertyBag -and $this.__PropertyBag[$Name]) { return $this.__PropertyBag[$Name] } elseif (-not ($this.__PropertyBag)) { $this | Add-Member -Name __PropertyBag -MemberType NoteProperty -Value @{ } -Force }
 
         if(-not $this.ParentConnection) { return $null }
-        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectCollectionHttpClient' -Collection $this
+        $client = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectCollectionHttpClient,Microsoft.TeamFoundation.Core.WebApi' -Collection $this
         $result = $client.GetProjectCollection($this.ServerId).Result
         $this.__PropertyBag[$Name] = $result
 

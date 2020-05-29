@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
@@ -23,7 +24,24 @@ namespace TfsCmdlets.Cmdlets.RestApi
         {
             var provider = ParameterSetName == "Get by collection" ? this.GetCollection() : this.GetServer();
 
-            WriteObject(provider.GetClientFromType(Type.GetType(TypeName)));
+            Type clientType;
+
+            if(TypeName.Contains(","))
+            {
+                // Fully qualified - use Type.GetType
+                clientType = Type.GetType(TypeName);
+            }
+            else
+            {
+                // Not fully qualified - iterate over all loaded assemblies (may not find if assembly's not loaded yet)
+                clientType = AppDomain.CurrentDomain.GetAssemblies().Select(asm => asm.GetType(TypeName)).FirstOrDefault();
+            }
+
+            if (clientType == null) throw new Exception($"Invalid or non-existent type '{TypeName}'. " +
+                "If the type name is correct, either provide the assembly name in the form of 'Type,Assembly' " +
+                "or check whether its assembly has been previously loaded");
+
+            WriteObject(provider.GetClientFromType(clientType));
         }
     }
 }
