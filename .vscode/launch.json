@@ -2,7 +2,19 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Windows PowerShell",
+            "name": "(PowerShell) Interactive Session",
+            "type": "PowerShell",
+            "request": "launch",
+            "args": [
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
+            ],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build"
+        },
+        {
+            "name": "(.NET) Windows PowerShell",
             "type": "clr",
             "request": "launch",
             "program": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\PowerShell.exe",
@@ -16,7 +28,7 @@
             "preLaunchTask": "Build"
         },
         {
-            "name": "PowerShell Core",
+            "name": "(.NET) PowerShell 7 Preview",
             "type": "coreclr",
             "request": "launch",
             "program": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
@@ -28,6 +40,20 @@
             "cwd": "${workspaceFolder}",
             "console": "externalTerminal",
             "preLaunchTask": "Build"
-       }
+        },
+        {
+            "name": "(.NET) PowerShell 7",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "args": [
+                "-noexit",
+                "-command",
+                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "preLaunchTask": "Build"
+        }
     ]
 }
