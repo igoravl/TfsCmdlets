@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         # Specifies the board name(s). Wildcards accepted
         [Parameter(Position=0)]
         [SupportsWildcards()]
-        public object Identity { get; set; } = "*",
+        public object Identity { get; set; } = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Group { get; set; }

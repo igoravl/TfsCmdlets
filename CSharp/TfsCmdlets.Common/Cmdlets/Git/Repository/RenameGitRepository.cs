@@ -39,8 +39,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     {
         /*
                 [Parameter(Mandatory=true, ValueFromPipeline=true, Position=0)]
-                [object] 
-                Repository,
+        public object Repository,
 
                 [Parameter(Mandatory=true, Position=1)]
                 [string] 

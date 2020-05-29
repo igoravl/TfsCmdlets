@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Work
 /*
         [Parameter()]
         [SupportsWildcards()]
-        public object Board { get; set; } = "*",
+        public object Board { get; set; } = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Team { get; set; }

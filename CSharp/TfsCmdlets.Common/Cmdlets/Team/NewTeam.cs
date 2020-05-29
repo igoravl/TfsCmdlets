@@ -40,12 +40,10 @@ namespace TfsCmdlets.Cmdlets.Team
         /*
                 [Parameter(Mandatory=true, ValueFromPipeline=true)]
                 [Alias("Name")]
-                [string] 
-                Team,
+        public string Team,
 
                 [Parameter()]
-                [string] 
-                Description,
+        public string Description,
 
                 [Parameter()]
                 public object Project { get; set; }

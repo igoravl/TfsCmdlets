@@ -35,8 +35,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         Param
         (
             [Parameter(Position=0,ValueFromPipeline=true)]
-            [object] 
-            Server,
+        public object Server,
 
             [Parameter()]
             public SwitchParameter Wait { get; set; }

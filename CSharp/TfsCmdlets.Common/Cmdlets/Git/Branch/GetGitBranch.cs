@@ -38,13 +38,11 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         [Parameter()]
         [Alias("RefName")]
         [SupportsWildcards()]
-        [object] 
-        Branch = "*",
+        public object Branch = "*";
 
         [Parameter(ValueFromPipeline=true)]
         [SupportsWildcards()]
-        [object] 
-        Repository,
+        public object Repository,
 
         [Parameter()]
         public object Project { get; set; }

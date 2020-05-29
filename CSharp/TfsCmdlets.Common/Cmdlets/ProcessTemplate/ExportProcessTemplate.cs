@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 /*
         [Parameter(Position=0)]
         [SupportsWildcards()]
-        public object Process { get; set; } = "*",
+        public object Process { get; set; } = "*";
 
         [Parameter(Mandatory=true)]
         public string DestinationPath { get; set; }

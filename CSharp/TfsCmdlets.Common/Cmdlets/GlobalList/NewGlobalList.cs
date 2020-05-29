@@ -31,8 +31,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /*
                 [Parameter(Mandatory=true, ValueFromPipelineByPropertyName="Name")]
                 [Alias("Name")]
-                [string] 
-                GlobalList,
+        public string GlobalList,
 
                 [Parameter(Mandatory=true, ValueFromPipelineByPropertyName="Items")] 
                 [string[]] 

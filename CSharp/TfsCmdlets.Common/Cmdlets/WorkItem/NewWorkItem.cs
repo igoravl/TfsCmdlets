@@ -52,8 +52,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     {
         /*
                 [Parameter(ValueFromPipeline=true, Mandatory=true, Position=0)]
-                [object] 
-                Type,
+        public object Type,
 
                 [Parameter(Position=1)]
                 public string Title { get; set; }

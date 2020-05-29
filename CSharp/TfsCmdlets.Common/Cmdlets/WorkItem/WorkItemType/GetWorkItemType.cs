@@ -50,8 +50,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        [object] 
-        Type = "*",
+        public object Type = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }

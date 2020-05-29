@@ -38,8 +38,7 @@ namespace TfsCmdlets.Cmdlets.Policy
         [Parameter()]
         [SupportsWildcards()]
         [Alias("Name")]
-        [object] 
-        Type = "*",
+        public object Type = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }

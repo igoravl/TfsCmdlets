@@ -91,8 +91,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         public object TestPlan { get; set; }
 
         [Parameter()]
-        [object] 
-        Project,
+        public object Project,
 
         [Parameter()]
         [string] 
@@ -100,16 +99,13 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 
 		[Parameter()]
 		[Alias("Destination")]
-        [object] 
-        DestinationProject,
+        public object DestinationProject,
 
         [Parameter()]
-        [string] 
-        AreaPath,
+        public string AreaPath,
 
         [Parameter()]
-        [string] 
-        IterationPath,
+        public string IterationPath,
 
         [Parameter()]
         [SwitchParameter] 
@@ -129,8 +125,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         CloneRequirements,
 
         [Parameter()]
-        [string] 
-        DestinationWorkItemType = "Test Case",
+        public string DestinationWorkItemType = "Test Case",
 
         [Parameter()]
         [int[]] 

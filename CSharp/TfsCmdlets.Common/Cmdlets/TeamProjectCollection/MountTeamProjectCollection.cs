@@ -49,8 +49,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 public timespan Timeout { get; set; } = timespan.MaxValue,
 
                 [Parameter(ValueFromPipeline=true)]
-                [object] 
-                Server,
+        public object Server,
 
                 [Parameter()]
                 [System.Management.Automation.Credential()]

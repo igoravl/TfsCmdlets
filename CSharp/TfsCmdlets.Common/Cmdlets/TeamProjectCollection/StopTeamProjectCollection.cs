@@ -18,15 +18,13 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     {
         /*
                 [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
-                [object] 
-                Collection,
+        public object Collection,
 
                 [Parameter()]
                 public string Reason { get; set; }
 
                 [Parameter()]
-                [object] 
-                Server,
+        public object Server,
 
                 [Parameter()]
                 [System.Management.Automation.Credential()]

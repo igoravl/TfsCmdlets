@@ -19,8 +19,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     {
         /*
                 [Parameter(Position=0, Mandatory=true)]
-                [string] 
-                Project,
+        public string Project,
 
                 [Parameter(ValueFromPipeline=true, Position=1)]
                 public object Collection { get; set; }

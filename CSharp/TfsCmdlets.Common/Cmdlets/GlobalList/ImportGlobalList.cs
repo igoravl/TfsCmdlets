@@ -42,8 +42,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /*
                 [Parameter(Mandatory=true, ValueFromPipeline=true)]
                 [Alias("Xml")]
-                [object] 
-                InputObject,
+        public object InputObject,
 
                 [Parameter()]
                 public SwitchParameter Force { get; set; }
@@ -74,7 +73,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
                 {
                     existingLists = Get-TfsGlobalList -Collection tpc
 
-                    //TODO: Remover espaço após *
+                    //TODO: Remover espaï¿½o apï¿½s *
 
                     listsInXml = ([xml](InputObject)).SelectNodes("//* /@name")."#text"
 

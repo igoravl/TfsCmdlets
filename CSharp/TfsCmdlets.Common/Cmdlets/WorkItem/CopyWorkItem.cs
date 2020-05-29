@@ -70,12 +70,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public object WorkItem { get; set; }
 
         [Parameter()]
-        [object] 
-        Type,
+        public object Type,
 
         [Parameter()]
-        [object] 
-        Project,
+        public object Project,
 
         [Parameter()]
         [SwitchParameter] 

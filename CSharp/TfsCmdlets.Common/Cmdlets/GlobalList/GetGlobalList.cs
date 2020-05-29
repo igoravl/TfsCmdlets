@@ -34,8 +34,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         [Parameter()]
         [Alias("Name")]
         [SupportsWildcards()]
-        [string] 
-        GlobalList = "*",
+        public string GlobalList = "*";
     
         [Parameter(ValueFromPipeline=true)]
         public object Collection { get; set; }

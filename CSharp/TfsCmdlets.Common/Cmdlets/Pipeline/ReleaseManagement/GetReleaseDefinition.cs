@@ -38,8 +38,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        [object] 
-        Definition = "*",
+        public object Definition = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }

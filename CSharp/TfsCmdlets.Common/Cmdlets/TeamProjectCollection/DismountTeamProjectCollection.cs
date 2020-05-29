@@ -63,12 +63,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     {
 /*
 		[Parameter(Mandatory=true, Position=0)]
-		[object] 
-		Collection,
+        public object Collection,
 
 		[Parameter(ValueFromPipeline=true)]
-		[object] 
-		Server,
+        public object Server,
 	
 		[Parameter()]
 		public string Reason { get; set; }

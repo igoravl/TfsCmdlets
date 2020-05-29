@@ -37,18 +37,15 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
 /*
         [Parameter(Position=0, ValueFromPipeline=true)]
         [SupportsWildcards()]
-        [object] 
-        Repository = "*",
+        public object Repository = "*";
 
         [Parameter()]
         [Alias("RefName")]
         [AllowNull()]
-        [object] 
-        Branch = "master",
+        public object Branch = "master",
 
         [Parameter()]
-        [object] 
-        PolicyType,
+        public object PolicyType,
 
         [Parameter()]
         public object Project { get; set; }

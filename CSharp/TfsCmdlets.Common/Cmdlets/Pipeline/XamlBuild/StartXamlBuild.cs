@@ -41,8 +41,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
     {
         /*
                 [Parameter(Mandatory=true, Position=0)]
-                [object] 
-                BuildDefinition,
+        public object BuildDefinition,
 
                 [Parameter(ValueFromPipeline=true, Mandatory=true)]
                 [object]

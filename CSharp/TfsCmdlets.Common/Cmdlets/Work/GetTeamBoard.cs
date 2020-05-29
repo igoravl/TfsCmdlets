@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Work
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        public object Board { get; set; } = "*",
+        public object Board { get; set; } = "*";
 
         [Parameter()]
         public SwitchParameter SkipDetails { get; set; }

@@ -46,8 +46,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         [Parameter()]
         [Alias("Name")]
         [SupportsWildcards()]
-        [string] 
-        WorkItemType = "*",
+        public string WorkItemType = "*";
 
         [Parameter()]
         public SwitchParameter IncludeGlobalLists { get; set; }

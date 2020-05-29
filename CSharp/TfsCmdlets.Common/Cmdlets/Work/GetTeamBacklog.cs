@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Work
         [Alias("Name")]
         [ValidateScript({(_ is string]) || (_ is [Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration])}) 
         [SupportsWildcards()]
-        public object Backlog { get; set; } = "*",
+        public object Backlog { get; set; } = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Team { get; set; }

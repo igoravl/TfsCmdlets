@@ -25,8 +25,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /*
                 [Parameter(Position=0,ValueFromPipeline=true)]
                 [Alias("Name")]
-                [string] 
-                Tag,
+        public string Tag,
 
                 [Parameter()]
                 public object Project { get; set; }

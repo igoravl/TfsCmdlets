@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 [Alias("Name")]
                 [ValidateScript({(_ is string]) || (_ is [Microsoft.TeamFoundation.Core.WebApi.WebApiTeam])}) 
                 [SupportsWildcards()]
-                public object Team { get; set; } = "*",
+                public object Team { get; set; } = "*";
 
                 [Parameter()]
                 public object Project { get; set; }

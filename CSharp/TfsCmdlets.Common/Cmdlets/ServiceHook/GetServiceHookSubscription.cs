@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
 /*
         [Parameter(Position=0)]
         [Alias("Name")]
-        public string Subscription { get; set; } = "*",
+        public string Subscription { get; set; } = "*";
 
         [Parameter()]
         public object Collection { get; set; }

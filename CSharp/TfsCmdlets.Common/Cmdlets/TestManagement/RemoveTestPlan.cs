@@ -12,8 +12,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
                 public object TestPlan { get; set; }
 
                 [Parameter()]
-                [object] 
-                Project,
+        public object Project,
 
                 [Parameter()]
                 public object Collection { get; set; }

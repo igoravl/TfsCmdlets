@@ -43,8 +43,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /*
             [Parameter(Position=0,ValueFromPipeline=true)]
         [SupportsWildcards()]
-        [object] 
-        Project,
+        public object Project,
 
         [Parameter()]
         public object Collection { get; set; }

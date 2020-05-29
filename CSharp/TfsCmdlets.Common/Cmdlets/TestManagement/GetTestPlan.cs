@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         [SupportsWildcards()]
         [Alias("Id")]
         [Alias("Name")]
-        public object TestPlan { get; set; } = "*",
+        public object TestPlan { get; set; } = "*";
 
         # Specifices the plan"s owner name
         [Parameter()]

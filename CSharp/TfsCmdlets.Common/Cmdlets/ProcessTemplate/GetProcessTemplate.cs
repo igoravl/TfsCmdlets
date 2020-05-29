@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         [Parameter(Position=0)]
         [Alias("Name")]
         [SupportsWildcards()]
-        public string ProcessTemplate { get; set; } = "*",
+        public string ProcessTemplate { get; set; } = "*";
 
         [Parameter(ValueFromPipeline=true)]
         public object Collection { get; set; }

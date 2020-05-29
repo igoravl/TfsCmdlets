@@ -26,8 +26,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         [Parameter(Position=0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        [object] 
-        Tag = "*",
+        public object Tag = "*";
 
         [Parameter()]
         public SwitchParameter IncludeInactive { get; set; }

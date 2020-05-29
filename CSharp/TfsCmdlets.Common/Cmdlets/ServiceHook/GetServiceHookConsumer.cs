@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [SupportsWildcards()]
         [Alias("Name")]
         [Alias("Id")]
-        public string Consumer { get; set; } = "*",
+        public string Consumer { get; set; } = "*";
 
         [Parameter()]
         public object Collection { get; set; }

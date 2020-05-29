@@ -40,6 +40,7 @@ System.Uri
 Cmdlets in the TfsCmdlets module that operate on a collection level require a TfsConfigurationServer object to be provided via the -Server argument. If absent, it will default to the connection opened by Connect-TfsConfigurationServer.
 */
 
+using System;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
@@ -65,7 +66,14 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 
         protected override void ProcessRecord()
         {
-            WriteObject(this.GetCollection());
+            try
+            {
+                WriteObject(this.GetMany<TfsCmdlets.Services.Connection>(null, "Collection"), true);
+            }
+            catch
+            {
+                if(!Current) throw;
+            }
         }
     }
 }

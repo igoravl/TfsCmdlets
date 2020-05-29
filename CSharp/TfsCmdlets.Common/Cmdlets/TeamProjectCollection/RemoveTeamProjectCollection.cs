@@ -21,12 +21,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     {
         /*
                 [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
-                [object] 
-                Collection,
+        public object Collection,
 
                 [Parameter()]
-                [object] 
-                Server,
+        public object Server,
 
                 [Parameter()]
                 public timespan Timeout { get; set; } = timespan.MaxValue,
