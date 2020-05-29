@@ -1,47 +1,58 @@
 Function prompt {
-
-    $promptPrefix = '[Not connected]'
+ 
     $defaultPsPrompt = "$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
     $backColor = 'DarkGray'
     $foreColor = 'White'
 
-    $server = (Get-TfsConfigurationServer -Current)
-
-    if ($server) {
+    try {
         $tpc = (Get-TfsTeamProjectCollection -Current)
         $tp = (Get-TfsTeamProject -Current)
-        $t = $null #(Get-TfsTeam -Current)
+        $t = (Get-TfsTeam -Current)
 
-        $serverName = $server.Name; $userName = $server.AuthorizedIdentity.UniqueName
+        if (-not $tpc) {
+            Write-Host -Object '[Not connected]' -ForegroundColor $foreColor -BackgroundColor $backColor
+            return $defaultPsPrompt
+        }
+
+        $serverName = $tpc.Uri.Host;
+        
+        if($tpc.AuthorizedIdentity.UniqueName)
+        {
+            $userName = $tpc.AuthorizedIdentity.UniqueName
+        }
+        else
+        {
+            $userName = $tpc.AuthorizedIdentity.Properties['Account']
+        }
 
         if ($serverName -like '*.visualstudio.com') {
             $tpcName = $serverName.SubString(0, $serverName.IndexOf('.'))
-            $promptPrefix = "[AzDev:/$tpcName"
+            $promptPrefix = "[AzDev: $tpcName"
             $backColor = 'DarkBlue'
             $foreColor = 'White'
         }
         elseif ($serverName -eq 'dev.azure.com') {
-            $tpcName = $server.Uri.Segments[1]
-            $promptPrefix = "[AzDev:/$tpcName"
+            $tpcName = $tpc.Uri.Segments[1]
+            $promptPrefix = "[AzDev: $tpcName"
             $backColor = 'DarkBlue'
             $foreColor = 'White'
         }
         else {
-            $promptPrefix = "[TFS:/$($server.Uri.Host)/"
+            $promptPrefix = "[TFS: $($tpc.Uri.Host)"
             $backColor = 'DarkMagenta'
             $foreColor = 'White'
 
             if ($tpc) {
-                $promptPrefix += "$($tpc.Name)"
+                $promptPrefix += " > $($tpc.Name)"
             }
         }
 
         if ($tp) {
-            $promptPrefix += "/$($tp.Name)"
+            $promptPrefix += " > $($tp.Name)"
         }
 
         if ($t) {
-            $promptPrefix += "/$($t.Name)"
+            $promptPrefix += " > $($t.Name)"
         }
 
         if ($userName) {
@@ -50,9 +61,12 @@ Function prompt {
 
         $promptPrefix += ']'
 
-    }
+        Write-Host -Object $promptPrefix -ForegroundColor $foreColor -BackgroundColor $backColor # -NoNewline
 
-    Write-Host -Object $promptPrefix -ForegroundColor $foreColor -BackgroundColor $backColor # -NoNewline
+    }
+    catch {
+        Write-Warning $_
+    }
 
     return $defaultPsPrompt
 }

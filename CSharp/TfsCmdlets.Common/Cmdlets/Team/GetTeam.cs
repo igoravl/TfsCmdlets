@@ -28,102 +28,81 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.Get, "Team", DefaultParameterSetName="Get by team")]
+    [Cmdlet(VerbsCommon.Get, "Team", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
-    public class GetTeam: BaseCmdlet
+    public class GetTeam : BaseCmdlet
     {
-/*
-        [Parameter(Position=0, ParameterSetName="Get by team")]
+        [Parameter(Position = 0, ParameterSetName = "Get by team")]
         [Alias("Name")]
         [SupportsWildcards()]
-        public object Team { get; set; } = "*",
+        public object Team { get; set; } = "*";
 
-        [Parameter(ParameterSetName="Get by team")]
+        [Parameter(ParameterSetName = "Get by team")]
         public SwitchParameter IncludeMembers { get; set; }
 
-        [Parameter(ParameterSetName="Get by team")]
+        [Parameter(ParameterSetName = "Get by team")]
         public SwitchParameter IncludeSettings { get; set; }
 
-        [Parameter(ValueFromPipeline=true, ParameterSetName="Get by team")]
+        [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by team")]
         public object Project { get; set; }
 
-        [Parameter(ParameterSetName="Get by team")]
+        [Parameter(ParameterSetName = "Get by team")]
         public object Collection { get; set; }
 
-		[Parameter(Mandatory=true, ParameterSetName="Get current")]
+        [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
 
-    protected override void BeginProcessing()
-    {
-        #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
-    }
-
-    protected override void ProcessRecord()
-    {
-        if(Current.IsPresent || (! Team))
+        protected override void ProcessRecord()
         {
-			WriteObject(TfsCmdlets.CurrentConnections.Team); return;
-        }
-
-        if (Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTeam; returning input item immediately, without further processing."; WriteObject(Team }); return;);
-
-        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
-        workvar client = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
-
-        if(Team.ToString().Contains("*"))
-        {
-            this.Log($"Get all teams matching "{Team}"");
-            teams = client.GetTeamsAsync(tp.Name).Result | Where-Object Name -like Team
-        }
-        else
-        {
-            this.Log($"Get team named "{Team}"");
-
-            if(_TestGuid Team)
+            if (Current)
             {
-                Team = [guid]Team
+                try
+                {
+                    WriteObject(this.GetMany<WebApiTeam>(), true);
+                    return;
+                }
+                finally { }
             }
 
-            teams = client.GetTeamAsync(tp.Name, Team).Result
-        }
-
-        foreach(t in teams)
-        {
-            if (IncludeMembers.IsPresent)
+            if (!IncludeMembers && !IncludeSettings)
             {
-                this.Log($"Retrieving team membership information for team "{{t}.Name}"");
-
-                members = client.GetTeamMembersWithExtendedPropertiesAsync(tp.Name, t.Name).Result
-                t | Add-Member -Name "Members" -MemberType NoteProperty -Value members
-
-            }
-            else
-            {
-                t | Add-Member -Name "Members" -MemberType NoteProperty -Value @()
+                WriteObject(this.GetMany<WebApiTeam>(), true);
+                return;
             }
 
-            if (IncludeSettings.IsPresent)
-            {
-                this.Log($"Retrieving team settings for team "{{t}.Name}"");
+            var (tpc, tp) = this.GetCollectionAndProject();
+            var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+            var workClient = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
 
-                ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(tp.Name, t.Name)
-                t | Add-Member -Name "Settings" -MemberType NoteProperty -Value workClient.GetTeamSettingsAsync(ctx).Result
-            }
-            else
+            foreach (var t in this.GetMany<WebApiTeam>())
             {
-                t | Add-Member -Name "Settings" -MemberType NoteProperty -Value null
+                var pso = new PSObject(t);
+
+                if (IncludeMembers)
+                {
+                    this.Log($"Retrieving team membership information for team '{t.Name}'");
+
+                    var members = client.GetTeamMembersWithExtendedPropertiesAsync(tp.Name, t.Name)
+                        .GetResult($"Error retrieving membership information for team {t.Name}");
+
+                    pso.AddNoteProperty("Members", members);
+
+                }
+
+                if (IncludeSettings.IsPresent)
+                {
+                    this.Log($"Retrieving team settings for team '{t.Name}'");
+
+                    var ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(tp.Name, t.Name);
+                    pso.AddNoteProperty("Settings", workClient.GetTeamSettingsAsync(ctx).GetResult($"Error retrieving settings for team {t.Name}"));
+                }
+
+                WriteObject(pso);
             }
         }
-
-        WriteObject(teams); return;
-    }
-}
-*/
-    protected override void EndProcessing() => throw new System.NotImplementedException();
     }
 }

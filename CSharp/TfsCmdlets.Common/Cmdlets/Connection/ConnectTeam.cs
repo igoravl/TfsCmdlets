@@ -37,77 +37,70 @@ System.String
 */
 
 using System.Management.Automation;
+using System.Security;
 using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Connection
 {
-    [Cmdlet(VerbsCommunications.Connect, "Team", DefaultParameterSetName="Explicit credentials")]
-	[OutputType(typeof(WebApiTeam))]
-    public class ConnectTeam: BaseCmdlet
+    [Cmdlet(VerbsCommunications.Connect, "Team", DefaultParameterSetName = "Explicit credentials")]
+    [OutputType(typeof(WebApiTeam))]
+    public class ConnectTeam : BaseCmdlet
     {
-/*
-		[Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
-		[ValidateNotNull()]
-		[object] 
-		Team,
-	
-		[Parameter()]
-		[object] 
-		Project,
-	
-		[Parameter()]
-		[object] 
-		Collection,
-	
-		[Parameter(ParameterSetName="Explicit credentials")]
-		public object Credential { get; set; }
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        [ValidateNotNull()]
+        public object Team { get; set; }
 
-		[Parameter(ParameterSetName="Prompt for credentials", Mandatory=true)]
-		public SwitchParameter Interactive { get; set; }
+        [Parameter()]
+        public object Project { get; set; }
 
-		[Parameter()]
-		public SwitchParameter Passthru { get; set; }
+        [Parameter()]
+        public object Collection { get; set; }
 
-	protected override void BeginProcessing()
-	{
-		// this.LogParams
-        // _Requires "Microsoft.VisualStudio.Services.Common", "Microsoft.VisualStudio.Services.Client.Interactive", "Microsoft.TeamFoundation.Core.WebApi"
-	}
+        [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
+        public SwitchParameter Cached { get; set; }
 
+        [Parameter(ParameterSetName = "User name and password", Mandatory = true, Position = 1)]
+        public string UserName { get; set; }
 
-	protected override void ProcessRecord()
-	{
-		if (Interactive.IsPresent)
-		{
-			Credential = (Get-TfsCredential -Interactive)
-		}
+        [Parameter(ParameterSetName = "User name and password", Position = 2)]
+        public SecureString Password { get; set; }
 
-        t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+        [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
+        [ValidateNotNull]
+        public object Credential { get; set; }
 
-		TfsCmdlets.CurrentConnections.Reset()
-		TfsCmdlets.CurrentConnections.Server = srv
-		TfsCmdlets.CurrentConnections.Collection = tpc
-		TfsCmdlets.CurrentConnections.Project = tp
-		TfsCmdlets.CurrentConnections.Team = t
+        [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
+        [Alias("Pat", "PersonalAccessToken")]
+        public string AccessToken { get; set; }
 
-		this.Log($"Adding "{{t}.Name}" to the MRU list");
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        public SwitchParameter Interactive { get; set; }
 
-		_SetMru "Server" -Value (srv.Uri)
-		_SetMru "Collection" -Value (tpc.Uri)
-		_SetMru "Project" -Value (tp.Name)
-		_SetMru "Team" -Value (t.Name)
+        [Parameter]
+        public object Server { get; set; }
 
-		this.Log($"Connected to "{{t}.Name}"");
+        [Parameter]
+        public SwitchParameter Passthru { get; set; }
 
-		if (Passthru)
-		{
-			WriteObject(t); return;
-		}
-	}
-}
+        protected override void ProcessRecord()
+        {
+            var (tpc, tp, t) = this.GetCollectionProjectAndTeam();
 
-Set-Alias -Name ctfst -Value Connect-TfsTeam
-*/
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+            CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp, t);
+
+            // TODO: 
+            //this.Log($"Adding '{tp.Name} to the MRU list");
+            //_SetMru "Server" - Value(srv.Uri)
+            //_SetMru "Collection" - Value(tpc.Uri)
+            //_SetMru "Project" - Value(tp.Name)
+
+            this.Log($"Connected to '{t.Name}'");
+
+            if (Passthru)
+            {
+                WriteObject(tp);
+            }
+        }
     }
 }

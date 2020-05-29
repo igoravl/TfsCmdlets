@@ -44,6 +44,11 @@ namespace TfsCmdlets.Extensions
             return (cmdlet.GetCollection(), cmdlet.GetOne<TeamProject>());
         }
 
+        internal static (Connection, TeamProject, WebApiTeam) GetCollectionProjectAndTeam(this Cmdlet cmdlet)
+        {
+            return (cmdlet.GetCollection(), cmdlet.GetOne<TeamProject>(), cmdlet.GetOne<WebApiTeam>());
+        }
+
         internal static string GetCommandName(this Cmdlet cmdlet)
         {
             var attr = cmdlet.GetType().GetCustomAttribute<CmdletAttribute>();
