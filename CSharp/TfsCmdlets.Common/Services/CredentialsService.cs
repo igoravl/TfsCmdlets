@@ -5,6 +5,7 @@ using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
+using TfsCmdlets.ServiceProvider;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services

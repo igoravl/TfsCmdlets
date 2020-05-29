@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.ServiceProvider
 {
-    internal class ExportsAttribute: Attribute
+    internal class ExportsAttribute : Attribute
     {
         public Type Exports { get; set; }
 

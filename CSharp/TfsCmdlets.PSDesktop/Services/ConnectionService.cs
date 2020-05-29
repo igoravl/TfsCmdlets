@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.VisualStudio.Services.Client;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.ServiceProvider;
 
 namespace TfsCmdlets.Services
 {

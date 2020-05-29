@@ -5,6 +5,7 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.ServiceProvider;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Team

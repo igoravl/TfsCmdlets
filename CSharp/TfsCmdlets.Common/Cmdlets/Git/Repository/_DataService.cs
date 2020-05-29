@@ -4,12 +4,13 @@ using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.ServiceProvider;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
     [Exports(typeof(GitRepository))]
-    internal class GitRepositoryDataService: BaseDataService<GitRepository>
+    internal class GitRepositoryDataService : BaseDataService<GitRepository>
     {
         protected override string ItemName => "Git Repository";
 
@@ -52,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                     case string s:
                         {
                             var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            
+
                             foreach (var repo in client.GetRepositoriesAsync(tp.Name).GetResult($"Error getting repository(ies) '{s}'").Where(r => r.Name.IsLike(s)))
                             {
                                 yield return repo;
