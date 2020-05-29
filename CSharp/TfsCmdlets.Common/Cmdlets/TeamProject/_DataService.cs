@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Exports(typeof(TeamProject))]
-    internal class ProjectService : BaseDataService<TeamProject>
+    [Exports(typeof(WebApiTeamProject))]
+    internal class ProjectService : BaseDataService<WebApiTeamProject>
     {
         protected override string ItemName => "Team Project";
 
-        protected override IEnumerable<TeamProject> GetItems(object userState)
+        protected override IEnumerable<WebApiTeamProject> GetItems(object userState)
         {
             var project = ItemFilter = Parameters.Get<object>("Project");
             var current = Parameters.Get<bool>("Current");
@@ -32,7 +34,7 @@ namespace TfsCmdlets.Services
             while (true)
                 switch (project)
                 {
-                    case TeamProject tp:
+                    case WebApiTeamProject tp:
                     {
                         yield return tp;
                         yield break;
