@@ -9,7 +9,7 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Cmdlets.Admin
 {
     [Cmdlet(VerbsCommon.Get, "Version")]
-    [OutputType(typeof(PSCustomObject))]
+    [OutputType(typeof(ServerVersion))]
     public class GetVersion : BaseCmdlet
     {
         [Parameter(ValueFromPipeline = true)]
@@ -79,7 +79,7 @@ namespace TfsCmdlets.Cmdlets.Admin
             WriteObject(serverVersion);
         }
 
-        private static Dictionary<int,int> _tfsMajorVersionTable = new Dictionary<int, int> {
+        private static readonly Dictionary<int,int> _tfsMajorVersionTable = new Dictionary<int, int> {
             [8] = 2005,
             [9] = 2008,
             [10] = 2010,
@@ -92,14 +92,11 @@ namespace TfsCmdlets.Cmdlets.Admin
             [18] = 2020
         };
 
-        private static Dictionary<string, ServerVersion> _tfsVersionTable = new Dictionary<string, ServerVersion>() {
+        private static readonly Dictionary<string, ServerVersion> _tfsVersionTable = new Dictionary<string, ServerVersion>() {
 
         };
     }
-}
 
-namespace TfsCmdlets
-{
     public class ServerVersion
     {
         public Version Version { get; set; }
