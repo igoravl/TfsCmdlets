@@ -13,8 +13,18 @@ namespace TfsCmdlets.Services
 
         protected override IEnumerable<TeamProject> GetItems(object userState)
         {
-            var project = Parameters.Get<object>("Project");
+            var project = ItemFilter = Parameters.Get<object>("Project");
             var current = Parameters.Get<bool>("Current");
+
+            if(project == null || current)
+            {
+                Logger.Log("Get currently connected team project");
+
+                var c = CurrentConnections.Project;
+                if(c != null) yield return c;
+
+                yield break;
+            }
 
             var tpc = Cmdlet.GetCollection();
             var client = tpc.GetClient<ProjectHttpClient>();
@@ -22,13 +32,6 @@ namespace TfsCmdlets.Services
             while (true)
                 switch (project)
                 {
-                    case null:
-                    case object _ when current:
-                    {
-                        Logger.Log("Get currently connected team project");
-                        yield return CurrentConnections.Project;
-                        yield break;
-                    }
                     case TeamProject tp:
                     {
                         yield return tp;
@@ -52,6 +55,7 @@ namespace TfsCmdlets.Services
                         {
                             yield return client.GetProject(tpRef.Id.ToString(), true).GetResult($"Error getting team project '{tpRef.Id}'");
                         }
+                        
                         yield break;
                     }
                 }

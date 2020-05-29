@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
         protected override IEnumerable<GitRepository> GetItems(object userState)
         {
             var (tpc, tp) = Cmdlet.GetCollectionAndProject();
-            var repository = Parameters.Get<object>("Repository");
+            var repository = ItemFilter = Parameters.Get<object>("Repository");
 
             while (true)
             {

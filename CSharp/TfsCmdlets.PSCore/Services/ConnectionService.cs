@@ -9,12 +9,14 @@ namespace TfsCmdlets.Services
     [Exports(typeof(Connection))]
     internal class ConnectionService : BaseDataService<Connection>
     {
-        protected override string ItemName => "Connection";
+        private string _connectionType;
+
+        protected override string ItemName => _connectionType;
 
         protected override IEnumerable<Connection> GetItems(object userState)
         {
-            var connectionType = (string) userState;
-            var connection = Parameters.Get<object>(connectionType);
+            _connectionType = (string) userState;
+            var connection = ItemFilter = Parameters.Get<object>(_connectionType);
 
             VssConnection result = null;
 
@@ -33,13 +35,16 @@ namespace TfsCmdlets.Services
                     }
                     case null:
                     {
-                        Logger.Log($"Get currently connected {connectionType}");
-                        result = ((Connection) CurrentConnections.Get(connectionType)).InnerConnection;
+                        Logger.Log($"Get currently connected {_connectionType}");
+                        result = ((Connection) CurrentConnections.Get(_connectionType))?.InnerConnection;
+
+                        if(result == null) yield break;
+
                         break;
                     }
                     case Uri uri:
                     {
-                        Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
+                        Logger.Log($"Get {_connectionType} referenced by URL '{uri}'");
                         result = new VssConnection(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
                         break;
                     }
@@ -55,11 +60,11 @@ namespace TfsCmdlets.Services
                     }
                     default:
                     {
-                        throw new Exception($"Invalid or non-existent {connectionType} {connection}.");
+                        throw new Exception($"Invalid or non-existent {_connectionType} {connection}.");
                     }
                 }
 
-            if (connectionType.Equals("Server"))
+            if (_connectionType.Equals("Server"))
             {
                 result = (new Connection(result)).ConfigurationServer;
             }

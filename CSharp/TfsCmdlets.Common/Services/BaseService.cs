@@ -27,17 +27,15 @@ namespace TfsCmdlets.Services
 
         protected abstract string ItemName { get; }
 
+        protected object ItemFilter { get; set; }
+
         public T GetOne(ParameterDictionary overriddenParameters, object userState = null)
         {
             Parameters = (overriddenParameters ?? new ParameterDictionary());
             Parameters.Merge(new ParameterDictionary(Cmdlet));
 
             var items = GetMany(overriddenParameters, userState)?.ToList()?? new List<T>();
-
-            if (items.Count != 1 || items[0] == null)
-            {
-                throw new Exception($"Invalid or non-existent {ItemName}.");
-            }
+            if(items == null || items.Count == 0) throw new Exception($"Invalid or non-existent {ItemName} '{ItemFilter}'");
 
             return items[0];
         }
