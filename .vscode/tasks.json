@@ -9,6 +9,7 @@
                 "kind": "build",
                 "isDefault": true
             },
+            "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
