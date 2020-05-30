@@ -9,6 +9,10 @@
     <DocumentationFile>$(OutDir)\TfsCmdlets.PSDesktop.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Projects\gh-igoravl\TfsCmdlets\CSharp\TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
