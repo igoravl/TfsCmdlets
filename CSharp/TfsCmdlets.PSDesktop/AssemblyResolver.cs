@@ -4,7 +4,7 @@ namespace TfsCmdlets
 {
     public partial class AssemblyResolver
     {
-        private void RegisterEventHandler()
+        partial void RegisterEventHandler()
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
             {

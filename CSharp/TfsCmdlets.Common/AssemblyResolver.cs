@@ -9,6 +9,8 @@ namespace TfsCmdlets
     {
         public Dictionary<string, AssemblyEntry> Assemblies { get; } = new Dictionary<string, AssemblyEntry>(StringComparer.OrdinalIgnoreCase);
 
+        partial void RegisterEventHandler();
+        
         public void Register()
         {
             RegisterEventHandler();
