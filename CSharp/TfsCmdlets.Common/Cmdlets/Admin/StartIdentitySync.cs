@@ -27,21 +27,39 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
+    /// <summary>
+    /// <para type="synopsis">
+    /// Triggers an Identity Sync server job.
+    /// </para>
+    /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "IdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [WindowsOnly]
     public partial class StartIdentitySync : BaseCmdlet
     {
+        /// <summary>
+        /// HELP_SERVER
+        /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         public object Server { get; set; }
 
+        /// <summary>
+        /// Waits until the job finishes running. If omitted, the identity sync job will run asynchronously.
+        /// </summary>
         [Parameter()]
         public SwitchParameter Wait { get; set; }
 
+        /// <summary>
+        /// HELP_CREDENTIAL
+        /// </summary>
+        /// <value></value>
         [Parameter()]
         public object Credential { get; set; }
 
         partial void DoProcessRecord();
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             DoProcessRecord();

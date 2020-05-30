@@ -4,7 +4,7 @@ namespace TfsCmdlets.Cmdlets.Admin
 {
     partial class GetInstallationPath
     {
-        partial void DoEndProcessing()
+        partial void DoProcessRecord()
         {
             throw new NotImplementedException();
 

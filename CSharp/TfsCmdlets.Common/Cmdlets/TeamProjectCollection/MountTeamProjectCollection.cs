@@ -55,7 +55,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 [System.Management.Automation.Credential()]
                 [System.Management.Automation.PSCredential]
                 Credential = System.Management.Automation.PSCredential.Empty
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 configServer = Get-TfsConfigurationServer Server -Credential Credential
                 tpcService = configServer.GetService([type] "Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService")

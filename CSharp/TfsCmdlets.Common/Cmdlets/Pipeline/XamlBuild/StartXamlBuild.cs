@@ -71,7 +71,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
                 if (PSVersionTable.PSEdition != "Desktop") { throw new Exception("This cmdlet requires does not work in PowerShell Core. It uses TFS Client Object Model, which only works in Windows PowerShell" })
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if(ShouldProcess(BuildDefinition, "Queue new build"))
                 {

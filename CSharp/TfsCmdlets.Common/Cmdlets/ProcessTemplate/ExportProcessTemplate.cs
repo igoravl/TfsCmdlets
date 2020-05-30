@@ -71,7 +71,10 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         [Parameter(ValueFromPipeline=true)]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         tpc = Get-TfsTeamProjectCollection Collection
         processTemplateSvc = tpc.GetService([type]"Microsoft.TeamFoundation.Server.IProcessTemplates")
@@ -133,6 +136,9 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

@@ -40,7 +40,10 @@ namespace TfsCmdlets.Cmdlets.Work
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if ((! Column) && (! ColumnStage) && (! Lane))
                 {

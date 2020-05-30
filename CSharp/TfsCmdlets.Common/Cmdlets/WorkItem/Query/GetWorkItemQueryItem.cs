@@ -64,7 +64,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Item is Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem) { this.Log("Input item is of type Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem; returning input item immediately, without further processing."; WriteObject(Item }); return;);
 
@@ -133,6 +136,9 @@ Function _GetQueryItemRecursively(Pattern, Item, ItemType, Scope, Project, Clien
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

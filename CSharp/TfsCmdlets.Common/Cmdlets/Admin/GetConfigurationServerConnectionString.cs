@@ -21,11 +21,14 @@ namespace TfsCmdlets.Cmdlets.Admin
 	[WindowsOnly]
     public partial class GetConfigurationServerConnectionString: BaseCmdlet
     {
-        partial void DoEndProcessing();
+        partial void DoProcessRecord();
 
-        protected override void EndProcessing()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
         {
-            DoEndProcessing();
+            DoProcessRecord();
         }
     }
 }

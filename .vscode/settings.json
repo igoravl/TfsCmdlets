@@ -14,7 +14,9 @@
         "**/[Bb]in": true,
         "**/[Oo]bj": true,
         "**/[Pp]ackages": true,
-        "out": true
+        "**/*.user": true,
+        "out": true,
+        "**/TfsCmdlets.PSDesktop.xml": true
     },
     "search.usePCRE2": true
 }

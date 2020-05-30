@@ -43,7 +43,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
 
@@ -54,6 +57,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

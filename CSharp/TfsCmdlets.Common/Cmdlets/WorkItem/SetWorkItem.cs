@@ -54,7 +54,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 [Parameter()]
                 public object Collection { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
                 {

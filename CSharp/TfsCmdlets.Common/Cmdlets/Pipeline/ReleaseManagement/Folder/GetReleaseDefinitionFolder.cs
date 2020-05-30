@@ -24,7 +24,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
         [Parameter()]
         public object Collection { get; set; }
     
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Folder is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder) { this.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
 
@@ -48,6 +51,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

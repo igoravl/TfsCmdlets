@@ -28,7 +28,10 @@ namespace TfsCmdlets.Cmdlets.Work
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if(Board is Microsoft.TeamFoundation.Work.WebApi.Board)
         {
@@ -71,6 +74,9 @@ namespace TfsCmdlets.Cmdlets.Work
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

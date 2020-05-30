@@ -99,6 +99,9 @@
                 "-SkipTests",
                 "-Targets",
                 "Package"
+            ],
+            "problemMatcher": [
+                "$msCompile"
             ]
         },
         {

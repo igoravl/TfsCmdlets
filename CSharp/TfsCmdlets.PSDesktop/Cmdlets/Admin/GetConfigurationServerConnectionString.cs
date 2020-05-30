@@ -4,7 +4,7 @@ namespace TfsCmdlets.Cmdlets.Admin
 {
     public partial class GetConfigurationServerConnectionString : BaseCmdlet
     {
-        partial void DoEndProcessing()
+        partial void DoProcessRecord()
         {
             throw new NotImplementedException();
         }

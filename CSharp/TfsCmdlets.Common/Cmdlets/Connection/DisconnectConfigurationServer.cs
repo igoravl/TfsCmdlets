@@ -18,7 +18,10 @@ namespace TfsCmdlets.Cmdlets.Connection
     [Cmdlet(VerbsCommunications.Disconnect, "ConfigurationServer")]
     public class DisconnectConfigurationServer : BaseCmdlet
     {
-        protected override void EndProcessing()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
         {
             CurrentConnections.Reset();
         }

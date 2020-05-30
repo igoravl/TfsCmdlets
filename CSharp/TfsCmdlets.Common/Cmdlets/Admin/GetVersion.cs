@@ -1,20 +1,37 @@
 using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
+    /// <summary>
+    /// <para type="synopsis">
+    /// Gets the version information about Team Foundation / Azure DevOps servers and Azure DevOps Services organizations.
+    /// </para>
+    /// <para type="description">
+    /// The Get-TfsVersion cmdlet retrieves version information from the supplied team project collection or Azure DevOps organization. 
+    /// Currently supported platforms are Team Foundation Server 2015+, Azure DevOps Server 2019+ and Azure DevOps Services. 
+    /// When available/applicable, detailed information about installed updates, deployed sprints and so on are also provided.
+    /// </para>
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "Version")]
     [OutputType(typeof(ServerVersion))]
     public class GetVersion : BaseCmdlet
     {
+        /// <summary>
+        /// HELP_COLLECTION
+        /// </summary>
+        /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public object Collection { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             var tpc = this.GetCollection();
@@ -58,15 +75,11 @@ namespace TfsCmdlets.Cmdlets.Admin
 
                 var version = new Version(matches[0].Groups[1].Value);
 
-                if(_tfsVersionTable.ContainsKey(version.ToString()))
-                {
-                    serverVersion = _tfsVersionTable[version.ToString()];
-                }
-                else
+                if(!TfsVersionTable.TryGetServerVersion(version.Major, out serverVersion))
                 {
                     serverVersion = new ServerVersion {
                         Version = version,
-                        FriendlyVersion = (version.Major >= 17? $"Azure DevOps": "Team Foundation") + $" Server {_tfsMajorVersionTable[version.Major]}",
+                        FriendlyVersion = (version.Major >= 17? $"Azure DevOps": "Team Foundation") + $" Server {TfsVersionTable.GetYear(version.Major)}",
                         IsHosted = false,
                         LongVersion = version.ToString(),
                         Sprint = "N/A",
@@ -78,33 +91,5 @@ namespace TfsCmdlets.Cmdlets.Admin
 
             WriteObject(serverVersion);
         }
-
-        private static readonly Dictionary<int,int> _tfsMajorVersionTable = new Dictionary<int, int> {
-            [8] = 2005,
-            [9] = 2008,
-            [10] = 2010,
-            [11] = 2011,
-            [12] = 2013,
-            [14] = 2015,
-            [15] = 2017,
-            [16] = 2018,
-            [17] = 2019,
-            [18] = 2020
-        };
-
-        private static readonly Dictionary<string, ServerVersion> _tfsVersionTable = new Dictionary<string, ServerVersion>() {
-
-        };
-    }
-
-    public class ServerVersion
-    {
-        public Version Version { get; set; }
-        public string LongVersion { get; set; }
-        public string FriendlyVersion { get; set; }
-        public bool IsHosted { get; set; }
-        public string Sprint { get; set; }
-        public string Update { get; set; }
-
     }
 }

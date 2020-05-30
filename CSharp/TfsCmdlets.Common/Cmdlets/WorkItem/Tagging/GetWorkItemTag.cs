@@ -42,7 +42,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Tag is Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition; returning input item immediately, without further processing."; WriteObject(Tag }); return;);
 
@@ -56,6 +59,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

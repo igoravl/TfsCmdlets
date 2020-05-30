@@ -6,6 +6,7 @@ Properties {
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
     $ProjectDir = Join-Path $SolutionDir 'PS'
+    $LibSolutionDir = Join-Path $SolutionDir 'CSharp'
     $TestsDir = Join-Path $SolutionDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
@@ -25,7 +26,7 @@ Properties {
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
-    $CompatiblePSEditions = @('Desktop') #, 'Core')
+    $CompatiblePSEditions = @('Desktop', 'Core')
     $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient', 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi', 'Microsoft.VisualStudio.Services.Release.Client')
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
@@ -72,8 +73,6 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
 
 Task BuildLibrary {
 
-    $LibSolutionDir = (Join-Path $SolutionDir 'CSharp')
-
     foreach($p in @('Core', 'Desktop'))
     {
         Write-Verbose "Build TfsCmdlets.PS$p"
@@ -99,6 +98,11 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $SolutionDir\*.md -Destination $ModuleDir -Force
+
+    foreach($p in @('Core', 'Desktop'))
+    {
+        Get-ChildItem -Path (Join-Path $LibSolutionDir 'TfsCmdlets.PSDesktop.dll-Help.xml') -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
+    }
 }
 
 Task GenerateTypesXml {
@@ -149,7 +153,7 @@ Task UpdateModuleManifest {
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
         # FileList             = $fileList
-        # FunctionsToExport    = $functionList
+        FunctionsToExport    = @()
         ModuleVersion        = $FourPartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData

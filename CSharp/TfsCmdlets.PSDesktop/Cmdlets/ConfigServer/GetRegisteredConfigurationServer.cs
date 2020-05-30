@@ -5,6 +5,9 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
+    /// <summary>
+    /// Gets one or more Team Foundation Server addresses registered in the current computer.
+    /// </summary>
     partial class GetRegisteredConfigurationServer
     {
         partial void DoProcessRecord()

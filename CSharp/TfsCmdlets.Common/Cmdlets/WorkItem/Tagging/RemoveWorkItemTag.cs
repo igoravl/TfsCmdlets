@@ -38,7 +38,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 tags = Get-TfsWorkItemTag -Tag Tag -Project Project -Collection Collection
 

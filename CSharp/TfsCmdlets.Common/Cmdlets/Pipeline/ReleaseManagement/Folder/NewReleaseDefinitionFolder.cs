@@ -25,7 +25,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
                 [Parameter()]
                 public SwitchParameter Passthru { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 

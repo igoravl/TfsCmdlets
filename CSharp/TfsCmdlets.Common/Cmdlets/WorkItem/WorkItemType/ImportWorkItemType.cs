@@ -43,7 +43,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
                 [Parameter()]
                 public object Collection { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 tp = Get-TfsTeamProject Project Collection
                 tp.WorkItemTypes.Import(Xml.OuterXml)

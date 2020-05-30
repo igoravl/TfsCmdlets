@@ -56,6 +56,9 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             if (Current)

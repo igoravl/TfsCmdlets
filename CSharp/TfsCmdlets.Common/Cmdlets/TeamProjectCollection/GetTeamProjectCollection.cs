@@ -58,12 +58,15 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by collection")]
         public object Server { get; set; }
 
-        [Parameter(Position = 0, ParameterSetName = "Get current")]
+        [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
 
         [Parameter(ParameterSetName = "Get by collection")]
         public object Credential { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             try

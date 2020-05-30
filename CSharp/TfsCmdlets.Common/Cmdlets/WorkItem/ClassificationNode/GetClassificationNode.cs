@@ -25,7 +25,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Node is Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode) { this.Log("Input item is of type Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode; returning input item immediately, without further processing."; WriteObject(Node }); return;);
 
@@ -111,6 +114,9 @@ Function _FixNodePath(Node, StructureGroup, Project)
 Set-Alias -Name Get-TfsArea -Value Get-TfsClassificationNode
 Set-Alias -Name Get-TfsIteration -Value Get-TfsClassificationNode
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

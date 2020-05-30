@@ -77,7 +77,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 		[Parameter()]
 		public object Credential { get; set; }
 
-	protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
 	{
 		tpc = Get-TfsTeamProjectCollection -Collection Collection -Server Server -Credential Credential
 
@@ -96,6 +99,9 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 	}
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

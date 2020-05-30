@@ -6,7 +6,10 @@ namespace TfsCmdlets.Cmdlets.Shell
     [Cmdlet(VerbsCommon.Exit, "Shell")]
     public class ExitShell : BaseCmdlet
     {
-        protected override void EndProcessing()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
         {
             if(!EnterShell.IsInShell) return;
 

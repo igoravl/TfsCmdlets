@@ -24,7 +24,10 @@ namespace TfsCmdlets.Cmdlets.TestManagement
                 ns = "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
 

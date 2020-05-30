@@ -28,7 +28,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
                 [System.Management.Automation.PSCredential]
                 Credential = System.Management.Automation.PSCredential.Empty
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if(ShouldProcess(Collection, "Start team project collection"))
                 {
