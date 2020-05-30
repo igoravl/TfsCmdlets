@@ -11,6 +11,7 @@
     DotNetFrameworkVersion = '4.6.2'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
+    HelpInfoUri = "https://raw.githubusercontent.com/igoravl/TfsCmdlets/helpfiles/"
     AliasesToExport = '*'
     PrivateData = @{ 
         PSData = @{
