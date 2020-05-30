@@ -52,7 +52,10 @@ namespace TfsCmdlets.Cmdlets.Team
                 [Parameter()]
                 public SwitchParameter Passthru { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 result = Set-TfsTeam -Team Team -NewName NewName -Project Project -Collection Collection
 

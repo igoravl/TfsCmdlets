@@ -69,6 +69,9 @@ namespace TfsCmdlets.Cmdlets.Connection
 		[Parameter]
 		public SwitchParameter Passthru { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             var srv = this.GetServer();

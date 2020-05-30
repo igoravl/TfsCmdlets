@@ -79,7 +79,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Project)
         {
@@ -283,6 +286,9 @@ Function _GetWorkItemByWiql(QueryText, Macros, Project, store)
     WriteObject(wis); return;
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

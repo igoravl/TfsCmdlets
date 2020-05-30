@@ -39,7 +39,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
 

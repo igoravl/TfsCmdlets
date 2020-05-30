@@ -27,7 +27,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                 [Parameter()]
                 public object Collection { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 folders = Get-TfsBuildFolder -Folder Folder -Project Project -Collection Collection
 

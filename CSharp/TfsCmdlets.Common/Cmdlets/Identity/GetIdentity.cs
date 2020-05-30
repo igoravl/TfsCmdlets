@@ -35,7 +35,10 @@ namespace TfsCmdlets.Cmdlets.Identity
         [Parameter(ValueFromPipeline=true)]
         public object Server { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if(ParameterSetName == "Get current user")
         {
@@ -80,6 +83,9 @@ namespace TfsCmdlets.Cmdlets.Identity
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

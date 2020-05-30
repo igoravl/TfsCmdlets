@@ -49,6 +49,9 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
         [Parameter()]
         public object Collection { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             WriteObject(this.GetMany<GitRepository>(), true);

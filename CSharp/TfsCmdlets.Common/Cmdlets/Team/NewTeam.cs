@@ -59,7 +59,10 @@ namespace TfsCmdlets.Cmdlets.Team
 
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if (! ShouldProcess(Project, $"Create team {Team}"))
                 {

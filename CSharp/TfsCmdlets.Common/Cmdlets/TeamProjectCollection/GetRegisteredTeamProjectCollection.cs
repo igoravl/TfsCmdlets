@@ -23,7 +23,10 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [SupportsWildcards()]
         public string Collection { get; set; } = "*"
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         registeredCollections = Microsoft.TeamFoundation.Client.RegisteredTfsConnections.GetProjectCollections() 
         
@@ -39,6 +42,9 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

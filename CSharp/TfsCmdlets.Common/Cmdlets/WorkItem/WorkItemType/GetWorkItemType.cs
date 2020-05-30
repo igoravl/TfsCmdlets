@@ -58,7 +58,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Type is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType)
         {
@@ -71,6 +74,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

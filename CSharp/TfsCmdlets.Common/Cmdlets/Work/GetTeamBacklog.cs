@@ -56,7 +56,10 @@ namespace TfsCmdlets.Cmdlets.Work
         # #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Backlog is Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration) { this.Log("Input item is of type Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration; returning input item immediately, without further processing."; WriteObject(Backlog }); return;);
         t = Get-TfsTeam -Team Team -Project Project -Collection Collection
@@ -85,6 +88,9 @@ namespace TfsCmdlets.Cmdlets.Work
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

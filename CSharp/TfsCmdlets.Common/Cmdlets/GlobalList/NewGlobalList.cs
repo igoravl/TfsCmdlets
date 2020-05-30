@@ -51,7 +51,10 @@ namespace TfsCmdlets.Cmdlets.GlobalList
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 [xml] xml = Export-TfsGlobalList -Collection Collection
 

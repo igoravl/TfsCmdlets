@@ -47,7 +47,10 @@ namespace TfsCmdlets.Cmdlets.Team
                 [Parameter()]
                 public object Collection { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if(Team.ProjectName) {Project = Team.ProjectName}; tpc = this.GetProject();; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tp = tpc.Store.TeamProjectCollection)
                 t = Get-TfsTeam -Team Team -Project Project -Collection Collection

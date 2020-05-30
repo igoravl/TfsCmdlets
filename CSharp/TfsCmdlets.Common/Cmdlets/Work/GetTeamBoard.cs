@@ -33,7 +33,10 @@ namespace TfsCmdlets.Cmdlets.Work
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Board is Microsoft.TeamFoundation.Work.WebApi.Board) { this.Log("Input item is of type Microsoft.TeamFoundation.Work.WebApi.Board; returning input item immediately, without further processing."; WriteObject(Board }); return;);
 
@@ -67,6 +70,9 @@ namespace TfsCmdlets.Cmdlets.Work
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

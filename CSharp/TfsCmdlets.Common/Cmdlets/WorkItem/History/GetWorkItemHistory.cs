@@ -41,7 +41,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
         latestRev = wi.Revisions.Count - 1
@@ -73,6 +76,9 @@ Function _GetChangedFields([Microsoft.TeamFoundation.WorkItemTracking.Client.Wor
     WriteObject(result); return;
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

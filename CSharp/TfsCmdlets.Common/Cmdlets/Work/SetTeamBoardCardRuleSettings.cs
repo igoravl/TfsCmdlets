@@ -49,7 +49,10 @@ namespace TfsCmdlets.Cmdlets.Work
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 Write-Verbose $"Getting card rules for team {Team}"
 

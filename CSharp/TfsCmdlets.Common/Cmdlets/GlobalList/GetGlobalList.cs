@@ -44,7 +44,10 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
     }
     
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         xml = [xml](Export-TfsGlobalList @PSBoundParameters)
 
@@ -65,6 +68,9 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

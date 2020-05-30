@@ -55,7 +55,10 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Policy.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if((! Repository) && Project)
         {
@@ -87,6 +90,9 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

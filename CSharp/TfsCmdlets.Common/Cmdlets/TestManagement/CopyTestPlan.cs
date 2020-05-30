@@ -148,7 +148,10 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 		ns = "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
 		plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
 
@@ -258,6 +261,9 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

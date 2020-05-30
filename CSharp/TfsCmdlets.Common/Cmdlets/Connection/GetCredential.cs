@@ -41,7 +41,10 @@ namespace TfsCmdlets.Cmdlets.Connection
         [Parameter(ParameterSetName = "Prompt for credential", Mandatory = true)]
         public SwitchParameter Interactive { get; set; }
 
-        protected override void EndProcessing()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
         {
             WriteObject(this.GetOne<VssClientCredentials>());
         }

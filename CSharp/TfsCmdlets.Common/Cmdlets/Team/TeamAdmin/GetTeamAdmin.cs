@@ -21,7 +21,10 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         [Parameter()]
         public object Collection { get; set; }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if(Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam)
         {
@@ -53,6 +56,9 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

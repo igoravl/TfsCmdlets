@@ -24,7 +24,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         [Parameter()]
         public object Collection { get; set; }
     
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Folder is Microsoft.TeamFoundation.Build.WebApi.Folder) { this.Log("Input item is of type Microsoft.TeamFoundation.Build.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
 
@@ -45,6 +48,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

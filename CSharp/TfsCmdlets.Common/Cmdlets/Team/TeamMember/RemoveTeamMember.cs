@@ -22,7 +22,10 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
                 [Parameter()]
                 public object Collection { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if(Identity.TeamId && Identity.ProjectId)
                 {

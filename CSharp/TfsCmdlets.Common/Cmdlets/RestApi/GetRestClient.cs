@@ -20,6 +20,9 @@ namespace TfsCmdlets.Cmdlets.RestApi
         [Parameter(ParameterSetName = "Get by server", Mandatory = true)]
         public object Server { get; set; }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             var provider = ParameterSetName == "Get by collection" ? this.GetCollection() : this.GetServer();

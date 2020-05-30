@@ -66,7 +66,10 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
         [Parameter] public SwitchParameter AsTask { get; set; }
 
-        protected override void EndProcessing()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
         {
             if (Path.IsLike("*{project}*"))
             {

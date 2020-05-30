@@ -59,6 +59,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 # _ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
         }
 
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
         protected override void ProcessRecord()
         {
             tps = Get - TfsTeamProject - Project Project - Collection Collection

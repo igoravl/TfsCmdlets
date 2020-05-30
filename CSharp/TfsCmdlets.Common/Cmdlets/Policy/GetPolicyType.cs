@@ -51,7 +51,10 @@ namespace TfsCmdlets.Cmdlets.Policy
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Policy.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (Type is Microsoft.TeamFoundation.Policy.WebApi.PolicyType) { this.Log("Input item is of type Microsoft.TeamFoundation.Policy.WebApi.PolicyType; returning input item immediately, without further processing."; WriteObject(Type }); return;);
 

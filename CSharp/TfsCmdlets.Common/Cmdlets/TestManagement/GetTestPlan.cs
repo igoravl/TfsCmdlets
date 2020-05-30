@@ -62,7 +62,10 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         #_ImportRequiredAssembly -AssemblyName "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
     }
 
-    protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
     {
         if (TestPlan is Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan)
         {
@@ -79,6 +82,9 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     }
 }
 */
-    protected override void EndProcessing() => throw new System.NotImplementedException();
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

@@ -35,7 +35,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                 [Parameter()]
                 public SwitchParameter Passthru { get; set; }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 if(! ShouldProcess(Project, "Create team project"))
                 {

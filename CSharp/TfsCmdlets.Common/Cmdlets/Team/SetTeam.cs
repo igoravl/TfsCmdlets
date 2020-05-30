@@ -93,7 +93,10 @@ namespace TfsCmdlets.Cmdlets.Team
                 #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
             }
 
-            protected override void ProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
             {
                 t = Get-TfsTeam -Team Team -Project Project -Collection Collection
 

@@ -8,6 +8,10 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Projects\gh-igoravl\TfsCmdlets\CSharp\TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
@@ -17,6 +21,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
     <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <Import Project="..\TfsCmdlets.Common\TfsCmdlets.Common.projitems" Label="Shared" />
