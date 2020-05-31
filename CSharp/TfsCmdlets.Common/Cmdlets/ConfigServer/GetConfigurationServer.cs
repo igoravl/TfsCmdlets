@@ -6,9 +6,6 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <para type="synopsis">
     /// Gets information about a configuration server.
     /// </para>
-    /// <para type="input">Microsoft.TeamFoundation.Client.TfsConfigurationServer</para>
-    /// <para type="input">System.String</para>
-    /// <para type="input">System.Uri</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ConfigurationServer", DefaultParameterSetName = "Get by server")]
     [WindowsOnly]
@@ -18,8 +15,11 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         /// <para type="description">
         /// HELP_SERVER
         /// </para>
+        /// <para type="inputType">Microsoft.TeamFoundation.Client.TfsConfigurationServer</para>
+        /// <para type="inputType">System.String</para>
+        /// <para type="inputType">System.Uri</para>
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Get by server")]
+        [Parameter(Position = 0, ParameterSetName = "Get by server", ValueFromPipeline = true)]
         [AllowNull]
         public object Server { get; set; }
 

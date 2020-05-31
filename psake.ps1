@@ -5,14 +5,14 @@ Properties {
 
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
-    $ProjectDir = Join-Path $SolutionDir 'PS'
-    $LibSolutionDir = Join-Path $SolutionDir 'CSharp'
-    $TestsDir = Join-Path $SolutionDir 'Tests'
+    $PSDir = Join-Path $RootProjectDir 'PS'
+    $SolutionDir = Join-Path $RootProjectDir 'CSharp'
+    $TestsDir = Join-Path $RootProjectDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
-    $OutDir = Join-Path $SolutionDir 'out'
+    $OutDir = Join-Path $RootProjectDir 'out'
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
@@ -31,8 +31,8 @@ Properties {
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
     # Nuget packaging
-    $NugetExePath = Join-Path $SolutionDir 'BuildTools/nuget.exe'
-    $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
+    $NugetExePath = Join-Path $RootProjectDir 'BuildTools/nuget.exe'
+    $NugetPackagesDir = Join-Path $RootProjectDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
 
@@ -44,7 +44,7 @@ Properties {
 
     # Wix packaging
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
-    $WixOutputPath = Join-Path $SolutionDir "Setup\bin\$Configuration"
+    $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -78,7 +78,7 @@ Task BuildLibrary {
         Write-Verbose "Build TfsCmdlets.PS$p"
         try
         {
-            Exec { dotnet publish "$LibSolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
+            Exec { dotnet publish "$SolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
         }
         catch
         {
@@ -96,19 +96,19 @@ Task CopyStaticFiles {
 
     Write-Verbose "Copying module files to output folder"
 
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
-    Copy-Item -Path $SolutionDir\*.md -Destination $ModuleDir -Force
+    Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
+    Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
 
     foreach($p in @('Core', 'Desktop'))
     {
-        Get-ChildItem -Path (Join-Path $LibSolutionDir 'TfsCmdlets.PSDesktop.dll-Help.xml') -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
+        Get-ChildItem -Path (Join-Path $SolutionDir 'TfsCmdlets.PSDesktop.dll-Help.xml') -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
     }
 }
 
 Task GenerateTypesXml {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
-    $inputFiles = (Get-ChildItem (Join-Path $ProjectDir '_Types') -Include '*.yml')
+    $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Types') -Include '*.yml')
 
     if (_IsUpToDate $inputFiles $outputFile)
     {
@@ -116,13 +116,13 @@ Task GenerateTypesXml {
         return
     }
 
-    Export-PsTypesXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile | Write-Verbose
+    Export-PsTypesXml -InputDirectory (Join-Path $PSDir '_Types') -DestinationFile $outputFile | Write-Verbose
 }
 
 Task GenerateFormatXml {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Format.ps1xml')
-    $inputFiles = (Get-ChildItem (Join-Path $ProjectDir '_Formats') -Recurse -Include '*.yml')
+    $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Formats') -Recurse -Include '*.yml')
 
     if (_IsUpToDate $inputFiles $outputFile)
     {
@@ -130,13 +130,13 @@ Task GenerateFormatXml {
         return
     }
 
-    Export-PsFormatXml -InputDirectory (Join-Path $ProjectDir '_Formats') -DestinationFile $outputFile | Write-Verbose
+    Export-PsFormatXml -InputDirectory (Join-Path $PSDir '_Formats') -DestinationFile $outputFile | Write-Verbose
 }
 
 Task UpdateModuleManifest {
 
     # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
-    # $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
+    # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.PSCore.deps.json') -Recurse)[0] | ConvertFrom-Json)
     $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
@@ -252,7 +252,7 @@ Task PackageMsi -Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixProjectDir = Join-Path $SolutionDir 'Setup'
+    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
     $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
     $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
@@ -291,7 +291,7 @@ Task PackageMsi -Depends Build {
         "-d`"PRODUCTNAME=$ModuleName - $ModuleDescription`"",
         "-d`"AUTHOR=$ModuleAuthor`"",
         "-dSourceDir=$ModuleDir\",
-        "-dSolutionDir=$SolutionDir\",
+        "-dSolutionDir=$RootProjectDir\",
         "-dConfiguration=$Configuration"
         "-dOutDir=$WixBinDir\"
         "-dPlatform=x86",
@@ -345,7 +345,7 @@ Task PackageDocs -Depends GenerateDocs {
 
 Task GenerateDocs -Depends Build {
 
-    # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
+    # . (Join-Path $RootProjectDir '..\BuildDoc.ps1' -Resolve) 
 
     if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
 
@@ -444,7 +444,7 @@ Task GenerateLicenseFile {
         New-Item $ChocolateyToolsDir -Force -ItemType Directory | Write-Verbose
     }
     
-    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile -Force -Recurse
+    Copy-Item $RootProjectDir\LICENSE.md $outLicenseFile -Force -Recurse
 
     $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
 

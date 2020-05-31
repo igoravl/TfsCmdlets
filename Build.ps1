@@ -3,7 +3,7 @@
 [CmdletBinding()]
 Param
 (
-    $SolutionDir,
+    $RootProjectDir,
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
@@ -20,7 +20,7 @@ Function Install-Dependencies
     $NugetPackages = @('GitVersion.CommandLine')
     $PsModules = @('psake', 'PsScriptAnalyzer', 'VSSetup', 'powershell-yaml', 'ps1xmlgen', 'PlatyPS')
 
-    $script:PackagesDir = Join-Path $SolutionDir 'packages'
+    $script:PackagesDir = Join-Path $RootProjectDir 'packages'
 
     Write-Verbose "Restoring missing dependencies. Packages directory: $PackagesDir"
 
@@ -45,7 +45,7 @@ Function Install-Nuget
 {
     Write-Verbose "Restoring Nuget client"
 
-    $BuildToolsDir = Join-Path $SolutionDir 'BuildTools'
+    $BuildToolsDir = Join-Path $RootProjectDir 'BuildTools'
     $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
 
     if (-not (Test-Path $PackagesDir -PathType Container))
@@ -75,7 +75,7 @@ Function Install-NugetPackage($Package)
 {
     Write-Verbose "Restoring NuGet package $Package"
 
-    $modulePath = Join-Path $SolutionDir "packages/$Package"
+    $modulePath = Join-Path $RootProjectDir "packages/$Package"
 
     if (-not (Test-Path "$modulePath/*" -PathType Leaf))
     {
@@ -110,16 +110,16 @@ Function Install-PsModule($Module)
 
 try
 {
-    if (-not $SolutionDir)
+    if (-not $RootProjectDir)
     {
-        $SolutionDir = $PSScriptRoot
+        $RootProjectDir = $PSScriptRoot
     }
 
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
 
-    Write-Verbose "SolutionDir: $SolutionDir"
+    Write-Verbose "SolutionDir: $RootProjectDir"
 
-    Push-Location $SolutionDir
+    Push-Location $RootProjectDir
 
     # Restore/install dependencies
 
@@ -131,7 +131,7 @@ try
 
     Write-Verbose "=== SET BUILD NAME ==="
 
-    $GitVersionPath = Join-Path $SolutionDir 'packages\gitversion.commandline\tools\GitVersion.exe'
+    $GitVersionPath = Join-Path $RootProjectDir 'packages\gitversion.commandline\tools\GitVersion.exe'
     $VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $BuildName = $VersionMetadata.FullSemVer.Replace('+', "+$ProjectBuildNumber.")
@@ -159,7 +159,7 @@ try
 
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose `
       -Parameters @{
-        SolutionDir = $SolutionDir
+        RootProjectDir = $RootProjectDir
         Configuration = $Configuration
         ModuleName = $ModuleName
         ModuleAuthor = $ModuleAuthor
