@@ -15,11 +15,11 @@ namespace TfsCmdlets.Cmdlets.Connection
     ///  NOTE: Currently it is only supported in Windows PowerShell.
     /// </remarks>
     /// <example>
-    ///   <code>PS&gt; Connect-TfsConfigurationServer -Server http://vsalm:8080/tfs</code>
+    ///   <code>Connect-TfsConfigurationServer -Server http://vsalm:8080/tfs</code>
     ///   <para>Connects to the TFS server specified by the URL in the Server argument</para>
     /// </example>
     /// <example>
-    ///   <code>PS&gt; Connect-TfsConfigurationServer -Server vsalm</code>
+    ///   <code>Connect-TfsConfigurationServer -Server vsalm</code>
     ///   <para>Connects to a previously registered TFS server by its user-defined name "vsalm". For more information, see Get-TfsRegisteredConfigurationServer</para>
     /// </example>
     /// <para type="input">Microsoft.TeamFoundation.Client.TfsConfigurationServer</para>
