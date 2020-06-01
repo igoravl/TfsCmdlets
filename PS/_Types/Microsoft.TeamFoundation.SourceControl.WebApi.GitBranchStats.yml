@@ -1,6 +1,18 @@
 - ScriptProperty:
-    Name: TeamProject
+    Name: Project
     GetScriptBlock: |
         return [TfsCmdlets.Util.LazyProperty]::Get($this, 'TeamProject', {
-            return "TpName"
+            $url = [uri] $_.Commit.Url.SubString(0, $_.Commit.Url.IndexOf('/commits/'))
+            $path = $url.PathAndQuery.Substring($url.Segments[1].Length)
+            $repo = Invoke-TfsRestApi $path
+            return $repo.project.Name
+        })
+- ScriptProperty:
+    Name: Repository
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Repository', {
+            $url = [uri] $_.Commit.Url.SubString(0, $_.Commit.Url.IndexOf('/commits/'))
+            $path = $url.PathAndQuery.Substring($url.Segments[1].Length)
+            $repo = Invoke-TfsRestApi $path
+            return $repo.Name
         })

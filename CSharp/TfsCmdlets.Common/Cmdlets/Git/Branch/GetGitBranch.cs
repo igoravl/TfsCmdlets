@@ -101,13 +101,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 }
             }
 
-            foreach (var b in result)
-            {
-                var pso = new PSObject(b);
-                pso.AddNoteProperty("Project", repo.ProjectReference.Name);
-                pso.AddNoteProperty("Repository", repo.Name);
-                WriteObject(pso);
-            }
+            WriteObject(result, true);
         }
     }
 }
