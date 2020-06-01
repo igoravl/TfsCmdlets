@@ -26,7 +26,6 @@
                 "${workspaceRoot}/build.ps1",
                 "-Configuration",
                 "Debug",
-                "-Incremental",
                 "-Targets",
                 "Build"
             ]
