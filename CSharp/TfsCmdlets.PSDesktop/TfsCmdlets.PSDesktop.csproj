@@ -6,10 +6,13 @@
     <AssemblyName>TfsCmdlets.PSDesktop</AssemblyName>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <LangVersion>8.0</LangVersion>
-    <DocumentationFile>$(OutDir)\TfsCmdlets.PSDesktop.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>D:\Projects\gh-igoravl\TfsCmdlets\CSharp\TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>D:\Projects\gh-igoravl\TfsCmdlets\CSharp\TfsCmdlets.PSDesktop\TfsCmdlets.PSDesktop.xml</DocumentationFile>
   </PropertyGroup>
 
@@ -22,10 +25,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
     <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
-    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.13">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
 
   <Import Project="..\TfsCmdlets.Common\TfsCmdlets.Common.projitems" Label="Shared" />

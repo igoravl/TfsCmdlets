@@ -9,23 +9,22 @@ using TfsCmdlets.Util;
 namespace TfsCmdlets.Cmdlets.Admin
 {
     /// <summary>
-    /// <para type="synopsis">
-    /// Gets the version information about Team Foundation / Azure DevOps servers and Azure DevOps Services organizations.
-    /// </para>
-    /// <para type="description">
-    /// The Get-TfsVersion cmdlet retrieves version information from the supplied team project collection or Azure DevOps organization. 
-    /// Currently supported platforms are Team Foundation Server 2015+, Azure DevOps Server 2019+ and Azure DevOps Services. 
-    /// When available/applicable, detailed information about installed updates, deployed sprints and so on are also provided.
-    /// </para>
+    ///   Gets the version information about Team Foundation / Azure DevOps servers and 
+    ///   Azure DevOps Services organizations.
     /// </summary>
+    /// <remarks>
+    ///   The Get-TfsVersion cmdlet retrieves version information from the supplied team project collection 
+    ///   or Azure DevOps organization. Currently supported platforms are Team Foundation Server 2015+, 
+    ///   Azure DevOps Server 2019+ and Azure DevOps Services. When available/applicable, detailed 
+    ///   information about installed updates, deployed sprints and so on are also provided.
+    /// </remarks>
     [Cmdlet(VerbsCommon.Get, "Version")]
     [OutputType(typeof(ServerVersion))]
     public class GetVersion : BaseCmdlet
     {
         /// <summary>
-        /// HELP_COLLECTION
+        /// HELP_PARAM_COLLECTION
         /// </summary>
-        /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public object Collection { get; set; }
 

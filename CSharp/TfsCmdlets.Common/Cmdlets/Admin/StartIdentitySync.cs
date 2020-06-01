@@ -28,16 +28,14 @@ using System.Management.Automation;
 namespace TfsCmdlets.Cmdlets.Admin
 {
     /// <summary>
-    /// <para type="synopsis">
-    /// Triggers an Identity Sync server job.
-    /// </para>
+    ///   Triggers an Identity Sync server job.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "IdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [WindowsOnly]
     public partial class StartIdentitySync : BaseCmdlet
     {
         /// <summary>
-        /// HELP_SERVER
+        /// HELP_PARAM_SERVER
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         public object Server { get; set; }
@@ -49,9 +47,8 @@ namespace TfsCmdlets.Cmdlets.Admin
         public SwitchParameter Wait { get; set; }
 
         /// <summary>
-        /// HELP_CREDENTIAL
+        /// HELP_PARAM_CREDENTIAL
         /// </summary>
-        /// <value></value>
         [Parameter()]
         public object Credential { get; set; }
 

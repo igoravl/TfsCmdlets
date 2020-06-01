@@ -19,7 +19,7 @@ Properties {
     $DocsDir = Join-Path $OutDir 'docs'
     $ModuleDir = Join-Path $OutDir 'module'
     $PortableDir = Join-Path $OutDir 'portable'
-    $ModuleBinDir = (Join-Path $ModuleDir 'bin')
+    $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
     $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp3.1'}
@@ -53,7 +53,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, BuildLibrary, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
 }
 
 Task Test -Depends Build, UnitTests, AllTests {
@@ -71,6 +71,14 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
     New-Item $ModuleDir -ItemType Directory -Force | Out-Null
 }
 
+Task CreateOutputDir {
+
+    if(-not (Test-Path $OutDir -PathType Container))
+    {
+        New-Item $OutDir -ItemType Directory | Write-Verbose
+    }
+}
+
 Task BuildLibrary {
 
     foreach($p in @('Core', 'Desktop'))
@@ -85,6 +93,30 @@ Task BuildLibrary {
             Get-Content $OutDir/MSBuild.log 
             throw "Error building solution"
         }
+    }
+}
+
+Task GenerateHelp {
+
+    $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
+    $helpFile = Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml"
+
+    exec { & $xmldocExePath "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\net462\TfsCmdlets.PSDesktop.dll`"" | Write-Verbose }
+
+    $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
+    $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
+
+    foreach($token in $helpTokens.GetEnumerator())
+    {
+        $helpContents = $helpContents -replace $token.Key, $token.Value
+    }
+
+    $helpContents | Out-File $helpFile -Encoding utf8
+
+    if($helpContents -match 'HELP_[A-Z_]+')
+    {
+        Write-Warning 'Undefined tokens found in documentation:'
+        Get-Content $helpFile -Encoding utf8 | Select-String -Pattern 'HELP_[A-Z_]+' | Write-Warning
     }
 }
 
