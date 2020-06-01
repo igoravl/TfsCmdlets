@@ -84,7 +84,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         {
             const string cmd = "_GetInstallationPath -Version $args[0] -Component $args[1]";
             const string localTemplate = "{0}";
-            const string remoteTemplate = "Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList $args[0] $args[1] ";
+            // const string remoteTemplate = "Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList $args[0] $args[1] ";
             // const string remoteComputerTemplate = remoteTemplate + " -Computer $args[2] -Credential $args[3]";
             // const string remoteSessionTemplate = remoteTemplate + " -Session $args[2]";
 
