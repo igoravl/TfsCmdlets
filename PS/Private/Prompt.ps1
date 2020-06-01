@@ -1,8 +1,14 @@
 Function prompt {
  
     $defaultPsPrompt = "$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
-    $backColor = 'DarkGray'
-    $foreColor = 'White'
+
+    $escBgBlue = "$([char]0x1b)[44m"
+    $escBgMagenta = "$([char]0x1b)[45m"
+    $escBgGray = "$([char]0x1b)[40;1m"
+
+    $escFgGray = "$([char]0x1b)[30;1m"
+    $escFgWhite = "$([char]0x1b)[37;1m"
+    $escReset = "$([char]0x1b)[40m$([char]0x1b)[0m"
 
     try {
         $tpc = (Get-TfsTeamProjectCollection -Current)
@@ -10,40 +16,36 @@ Function prompt {
         $t = (Get-TfsTeam -Current)
 
         if (-not $tpc) {
-            Write-Host -Object '[Not connected]' -ForegroundColor $foreColor -BackgroundColor $backColor
-            return $defaultPsPrompt
+            return "${escBgGray}${escFgGray}[Not connected]$escReset" + [System.Environment]::NewLine + $defaultPsPrompt
         }
 
         $serverName = $tpc.Uri.Host;
         
-        if($tpc.AuthorizedIdentity.UniqueName)
-        {
+        if ($tpc.AuthorizedIdentity.UniqueName) {
             $userName = $tpc.AuthorizedIdentity.UniqueName
         }
-        else
-        {
+        else {
             $userName = $tpc.AuthorizedIdentity.Properties['Account']
         }
 
         if ($serverName -like '*.visualstudio.com') {
             $tpcName = $serverName.SubString(0, $serverName.IndexOf('.'))
-            $promptPrefix = "[AzDev: $tpcName"
-            $backColor = 'DarkBlue'
-            $foreColor = 'White'
+            $promptPrefix = "${escBgBlue}${escFgWhite}[$tpcName.visualstudio.com"
         }
         elseif ($serverName -eq 'dev.azure.com') {
             $tpcName = $tpc.Uri.Segments[1]
-            $promptPrefix = "[AzDev: $tpcName"
-            $backColor = 'DarkBlue'
-            $foreColor = 'White'
+            $promptPrefix = "${escBgBlue}${escFgWhite}[dev.azure.com/$tpcName"
         }
         else {
-            $promptPrefix = "[TFS: $($tpc.Uri.Host)"
-            $backColor = 'DarkMagenta'
-            $foreColor = 'White'
+            $promptPrefix = "${escBgMagenta}${escFgWhite}[$($tpc.Uri.Host)"
 
             if ($tpc) {
-                $promptPrefix += " > $($tpc.Name)"
+                if ($tpc.Name) {
+                    $promptPrefix += " > $($tpc.Name)"
+                }
+                else {
+                    $promptPrefix += " > $($tpc.Uri.Segments[-1])"
+                }
             }
         }
 
@@ -56,17 +58,12 @@ Function prompt {
         }
 
         if ($userName) {
-            $promptPrefix += " ($userName)"
+            $promptPrefix += " ${escFgGray}(${userName})$escFgWhite"
         }
 
-        $promptPrefix += ']'
-
-        Write-Host -Object $promptPrefix -ForegroundColor $foreColor -BackgroundColor $backColor # -NoNewline
-
+        $promptPrefix += "]$escReset"
     }
-    catch {
-        Write-Warning $_
-    }
+    catch { }
 
-    return $defaultPsPrompt
+    return $promptPrefix + [System.Environment]::NewLine + $defaultPsPrompt
 }
