@@ -1,0 +1,6 @@
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'TeamProject', {
+            return "TpName"
+        })
