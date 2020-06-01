@@ -7,6 +7,7 @@
     DefaultCommandPrefix = 'Tfs'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     ModuleVersion = '1.0.0.0'
+    NestedModules = @('Private/Functions.psm1')
     PowerShellVersion = '5.1'
     DotNetFrameworkVersion = '4.6.2'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
