@@ -1,7 +1,4 @@
 /*
-.SYNOPSIS
-    Gets information from one or more branches in a Git repository.
-
 .PARAMETER Project
     Specifies either the name of the Team Project or a previously initialized Microsoft.TeamFoundation.WorkItemTracking.Client.Project object to connect to. If omitted, it defaults to the connection opened by Connect-TfsTeamProject (if any). 
 
@@ -25,74 +22,101 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
     System.String
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Branch
 {
+    /// <summary>
+    /// Gets information from one or more branches in a remote Git repository.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "GitBranch")]
     [OutputType(typeof(GitBranchStats))]
-    public class GetGitBranch: BaseCmdlet
+    public class GetGitBranch : BaseCmdlet
     {
-/*
+        /// <summary>
+        /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 
+        /// When omitted, all branches are returned.
+        /// </summary>
+        /// <value></value>
         [Parameter()]
         [Alias("RefName")]
         [SupportsWildcards()]
-        public object Branch = "*";
+        public object Branch { get; set; } = "*";
 
-        [Parameter(ValueFromPipeline=true)]
-        [SupportsWildcards()]
-        public object Repository,
+        /// <summary>
+        /// HELP_PARAM_GIT_REPOSITORY
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public object Repository { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter()]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
-
-    protected override void BeginProcessing()
-    {
-        #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Policy.WebApi"
-    }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
-    {
-        if((! Repository) && Project)
         {
-            tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-            Repository = tp.Name
-        }
+            var repo = this.GetOne<GitRepository>();
+            var tpc = this.GetCollection();
+            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
-        repos = Get-TfsGitRepository -Repository Repository -Project Project -Collection Collection
-
-        tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-
-        var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-        
-        foreach(repo in repos)
-        {
-            if(repo.Size == 0)
+            if (repo.Size == 0)
             {
-                Write-Verbose $"Repository {{repo}.Name} is empty. Skipping."
-                continue
+                this.Log($"Repository {repo.Name} is empty. Skipping.");
+                return;
             }
 
-            task = client.GetBranchesAsync(tp.Name,repo.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving branches from repository "{{repo}.Name}"" task.Exception.InnerExceptions })
+            string branch;
 
-            Write-Output result | Where-Object name -Like Branch | `
-                Add-Member -Name  "Project" -MemberType NoteProperty -Value repo.ProjectReference.Name -PassThru | `
-                Add-Member -Name  "Repository" -MemberType NoteProperty -Value repo.Name -PassThru | `
-                Sort-Object Project, Repository
+            switch(Branch)
+            {
+                case null: 
+                case string s when string.IsNullOrEmpty(s):
+                {
+                    throw new ArgumentNullException(nameof(Branch));
+                }
+                case GitBranchStats gbs:
+                {
+                    branch = gbs.Name;
+                    break;
+                }
+                case string s:
+                {
+                    branch = s;
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentException($"Invalid value '{Branch.ToString()}' for argument Branch");
+                }
+            } 
+
+            var result = client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
+                .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
+                .Where(b => b.Name.IsLike(branch));
+
+            foreach (var b in result)
+            {
+                var pso = new PSObject(b);
+                pso.AddNoteProperty("Project", repo.ProjectReference.Name);
+                pso.AddNoteProperty("Repository", repo.Name);
+                WriteObject(pso);
+            }
         }
-    }
-}
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }
