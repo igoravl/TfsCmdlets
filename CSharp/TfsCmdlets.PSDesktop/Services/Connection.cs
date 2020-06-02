@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Framework.Client;
 
@@ -37,8 +39,11 @@ namespace TfsCmdlets.Services
 
         public object GetClientFromType(Type type)
         {
-            return InnerConnection.GetType()
-                .GetMethod("GetClient")
+            var m = InnerConnection.GetType()
+                .GetMethods(BindingFlags.Public|BindingFlags.Instance)
+                .Where(m=>m.Name.Equals("GetClient")).FirstOrDefault();
+
+            return m?
                 .MakeGenericMethod(type)
                 .Invoke(InnerConnection, null);
         }
