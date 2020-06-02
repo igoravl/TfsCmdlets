@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
 using System.Management.Automation;
+using System.Reflection;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {
@@ -14,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         [Alias("Type")]
         public string TypeName { get; set; }
 
-        [Parameter(ParameterSetName = "Get by collection", Mandatory = true)]
+        [Parameter(ParameterSetName = "Get by collection")]
         public object Collection { get; set; }
 
         [Parameter(ParameterSetName = "Get by server", Mandatory = true)]
@@ -38,6 +40,20 @@ namespace TfsCmdlets.Cmdlets.RestApi
             {
                 // Not fully qualified - iterate over all loaded assemblies (may not find if assembly's not loaded yet)
                 clientType = AppDomain.CurrentDomain.GetAssemblies().Select(asm => asm.GetType(TypeName)).FirstOrDefault();
+
+                if(clientType == null)
+                {
+                    // Try to guess the assembly name from the class name
+                    var assemblyName = TypeName.Substring(0, TypeName.LastIndexOf("."));
+
+                    try
+                    {
+                        var asm = Assembly.LoadFrom(
+                            $"{this.MyInvocation.MyCommand.Module.ModuleBase}/Lib/{EnvironmentUtil.PSEdition}/{assemblyName}.dll");
+                        clientType = asm.GetType(TypeName);
+                    }
+                    finally {}
+                }
             }
 
             if (clientType == null) throw new Exception($"Invalid or non-existent type '{TypeName}'. " +
