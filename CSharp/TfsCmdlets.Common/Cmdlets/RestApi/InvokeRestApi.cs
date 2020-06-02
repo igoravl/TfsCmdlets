@@ -14,6 +14,7 @@
     General notes
 */
 
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using TfsCmdlets.Extensions;
@@ -95,9 +96,20 @@ namespace TfsCmdlets.Cmdlets.RestApi
                 //this.Log($"Replace token {team} in URL with "{{t}.Id}"");
             }
 
+            var collection = this.GetCollection();
+
+            if(Uri.IsWellFormedUriString(Path, UriKind.Absolute))
+            {
+                var uri = new Uri(Path);
+
+                if(uri.AbsoluteUri.StartsWith(collection.Uri.AbsoluteUri))
+                {
+                    Path = Path.Substring(collection.Uri.AbsoluteUri.Length);
+                }
+            }
+
             this.Log($"Calling API '{Path}', version 'ApiVersion', via {Method}");
 
-            var collection = this.GetCollection();
             var client = this.GetService<IRestApiService>();
             var task = client.InvokeAsync(collection, Path, Method, Body,
                 RequestContentType, ResponseContentType,
