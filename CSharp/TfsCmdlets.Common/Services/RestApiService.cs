@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using TfsCmdlets.HttpClient;
-using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {

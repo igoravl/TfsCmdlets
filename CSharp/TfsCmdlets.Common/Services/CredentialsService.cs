@@ -5,7 +5,7 @@ using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
-using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services
@@ -13,9 +13,7 @@ namespace TfsCmdlets.Services
     [Exports(typeof(VssClientCredentials))]
     internal class CredentialsService : BaseDataService<VssClientCredentials>
     {
-        protected override string ItemName => "Credential";
-
-        protected override IEnumerable<VssClientCredentials> GetItems(object userState)
+        protected override IEnumerable<VssClientCredentials> DoGetItems(object userState)
         {
             var credential = Parameters.Get<object>("Credential");
             var userName = Parameters.Get<string>("UserName");

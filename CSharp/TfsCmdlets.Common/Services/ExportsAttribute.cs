@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TfsCmdlets.ServiceProvider
+namespace TfsCmdlets.Services
 {
     internal class ExportsAttribute : Attribute
     {

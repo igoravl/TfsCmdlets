@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.VisualStudio.Services.Client;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(Connection))]
     internal class ConnectionService : BaseDataService<Connection>
     {
-        protected override IEnumerable<Connection> GetItems(object userState)
+        protected override IEnumerable<Connection> DoGetItems(object userState)
         {
             if (userState == null) throw new ArgumentNullException(nameof(userState));
 
@@ -73,7 +73,5 @@ namespace TfsCmdlets.Services
 
             yield return new Connection(result);
         }
-
-        protected override string ItemName => "Connection";
     }
 }

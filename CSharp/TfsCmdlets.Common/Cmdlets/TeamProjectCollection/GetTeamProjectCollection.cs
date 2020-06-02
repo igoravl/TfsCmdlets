@@ -51,18 +51,30 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     [OutputType(typeof(VssConnection))]
     public class GetTeamProjectCollection : BaseCmdlet
     {
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by collection")]
-        [SupportsWildcards]
         public object Collection { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_SERVER
+        /// </summary>
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by collection")]
         public object Server { get; set; }
 
-        [Parameter(Mandatory = true, ParameterSetName = "Get current")]
-        public SwitchParameter Current { get; set; }
-
+        /// <summary>
+        /// HELP_PARAM_CREDENTIAL
+        /// </summary>
         [Parameter(ParameterSetName = "Get by collection")]
         public object Credential { get; set; }
+
+        /// <summary>
+        /// Returns the team project collection specified in the last call to 
+        /// Connect-TfsTeamProjectCollection (i.e. the "current" project collection)
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Get current")]
+        public SwitchParameter Current { get; set; }
 
         /// <summary>
         /// Performs execution of the command

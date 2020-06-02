@@ -16,9 +16,9 @@ namespace TfsCmdlets.Services
 
     internal class LoggerImpl : ILogger
     {
-        private Cmdlet Cmdlet { get; set; }
+        private BaseCmdlet Cmdlet { get; set; }
         
-        internal LoggerImpl(Cmdlet cmdlet)
+        internal LoggerImpl(BaseCmdlet cmdlet)
         {
             Cmdlet = cmdlet;
         }
@@ -27,7 +27,7 @@ namespace TfsCmdlets.Services
         {
             // TODO: if (!IsVerbose(cmdlet)) return;
 
-            if (string.IsNullOrEmpty(commandName)) commandName = Cmdlet.GetCommandName();
+            if (string.IsNullOrEmpty(commandName)) commandName = Cmdlet.CommandName;
 
             Cmdlet.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
         }

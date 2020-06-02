@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace TfsCmdlets.Cmdlets
 {
-    internal class ParameterDictionary: Dictionary<string, object>
+    public class ParameterDictionary: Dictionary<string, object>
     {
         public ParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)

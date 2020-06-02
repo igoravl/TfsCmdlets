@@ -5,7 +5,6 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.ServiceProvider;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Team
@@ -13,11 +12,9 @@ namespace TfsCmdlets.Cmdlets.Team
     [Exports(typeof(WebApiTeam))]
     internal class TeamDataService : BaseDataService<WebApiTeam>
     {
-        protected override string ItemName => "Team";
-
-        protected override IEnumerable<WebApiTeam> GetItems(object userState)
+        protected override IEnumerable<WebApiTeam> DoGetItems(object userState)
         {
-            var team = ItemFilter = Parameters.Get<object>("Team");
+            var team = Parameters.Get<object>("Team");
             var current = Parameters.Get<bool>("Current");
 
             if (team == null || current)

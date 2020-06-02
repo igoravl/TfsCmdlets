@@ -9,4 +9,11 @@
         Tools, 
         VersionControlProxy
     }
+
+    public enum ClientScope
+    {
+        Server, 
+        Collection
+    }
+
 }

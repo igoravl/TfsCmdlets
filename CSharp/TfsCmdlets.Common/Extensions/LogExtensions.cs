@@ -10,38 +10,38 @@ namespace TfsCmdlets.Extensions
 {
     internal static class LogExtensions
     {
-        internal static void Log(this PSCmdlet cmdlet, string message, string commandName = null, bool force = false)
-        {
-            if (!IsVerbose(cmdlet, force)) return;
+        // internal static void Log(this BaseCmdlet cmdlet, string message, string commandName = null, bool force = false)
+        // {
+        //     if (!IsVerbose(cmdlet, force)) return;
 
-            if (string.IsNullOrEmpty(commandName))
-            {
-                commandName = cmdlet.GetCommandName();
-            }
+        //     if (string.IsNullOrEmpty(commandName))
+        //     {
+        //         commandName = cmdlet.CommandName;
+        //     }
 
-            cmdlet.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
-        }
+        //     cmdlet.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
+        // }
 
-        internal static void LogParameters(this PSCmdlet cmdlet)
-        {
-            if (!IsVerbose(cmdlet)) return;
+        // internal static void LogParameters(this BaseCmdlet cmdlet)
+        // {
+        //     if (!IsVerbose(cmdlet)) return;
 
-            var parms = new ParameterDictionary(cmdlet);
+        //     var parms = new ParameterDictionary(cmdlet);
 
-            if (parms.ContainsKey("Password") && parms["Password"] != null)
-            {
-                parms["Password"] = "***";
-            }
+        //     if (parms.ContainsKey("Password") && parms["Password"] != null)
+        //     {
+        //         parms["Password"] = "***";
+        //     }
 
-            Log(cmdlet, "ARGS: " + JObject.FromObject(parms)
-                            .ToString(Formatting.None)
-                            .Replace("\":", "\" = ")
-                            .Replace(",\"", "; \"") 
-                            .Trim('{', '}')
-                        );
-        }
+        //     Log(cmdlet, "ARGS: " + JObject.FromObject(parms)
+        //                     .ToString(Formatting.None)
+        //                     .Replace("\":", "\" = ")
+        //                     .Replace(",\"", "; \"") 
+        //                     .Trim('{', '}')
+        //                 );
+        // }
 
-        //private static string GetLogSiteName(PSCmdlet cmdlet)
+        //private static string GetLogSiteName(BaseCmdlet cmdlet)
         //{
             //var cs = new Stack();
             //var callStack = cmdlet.InvokeCommand.InvokeScript("Get-PSCallStack").Select(o => o.BaseObject as CallStackFrame).Skip(1);
@@ -80,7 +80,7 @@ namespace TfsCmdlets.Extensions
         //    return !string.IsNullOrEmpty(commandInfo.Name) ? commandInfo.Name : frame.FunctionName;
         //}
 
-        private static bool IsVerbose(PSCmdlet cmdlet, bool force = false)
+        private static bool IsVerbose(BaseCmdlet cmdlet, bool force = false)
         {
             if (force) return true;
 

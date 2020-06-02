@@ -9,11 +9,11 @@ namespace TfsCmdlets.Services
     {
         public Connection(object obj) : base(obj) { }
 
-        internal Uri Uri => InnerConnection.Uri;
+        internal virtual Uri Uri => InnerConnection.Uri;
 
-        internal T GetClient<T>() where T : VssHttpClientBase => InnerConnection.GetClient<T>();
+        internal virtual T GetClient<T>() where T : VssHttpClientBase => InnerConnection.GetClient<T>();
 
-        internal void Connect() => DoConnect();
+        internal virtual void Connect() => DoConnect();
 
         partial void DoConnect();
 

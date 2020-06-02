@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets
 {
@@ -11,7 +11,7 @@ namespace TfsCmdlets
             var resolver = new AssemblyResolver();
             resolver.Register();
 
-            ServiceExtensions.Register(new CmdletServiceProviderImpl());
+            ServiceManager.Register(new CmdletServiceProviderImpl());
         }
     }
 }

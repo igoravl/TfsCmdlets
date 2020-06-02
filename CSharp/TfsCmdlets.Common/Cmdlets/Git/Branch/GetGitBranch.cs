@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Git.Branch
 {
@@ -46,38 +47,48 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         /// </summary>
         protected override void ProcessRecord()
         {
-            var repo = this.GetOne<GitRepository>();
-            var tpc = this.GetCollection();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            WriteObject(this.GetMany<GitRepository>(), true);
+        }
+    }
+
+    [Exports(typeof(GitBranchStats))]
+    internal partial class GitBranchStatsDataServiceImpl : BaseDataService<GitBranchStats>
+    {
+        protected override IEnumerable<GitBranchStats> DoGetItems(object userState)
+        {
+            var branch = GetParameter<object>("Branch");
+            GitRepository repo = GetOne<GitRepository>();
 
             if (repo.Size == 0)
             {
-                this.Log($"Repository {repo.Name} is empty. Skipping.");
-                return;
+                Logger.Log($"Repository {repo.Name} is empty. Skipping.");
+                yield break;
             }
 
-            string branch;
+            var (tpc, tp) = GetCollectionAndProject();
+            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            string branchName;
 
-            switch(Branch)
+            switch(branch)
             {
                 case null: 
                 case string s when string.IsNullOrEmpty(s):
                 {
-                    throw new ArgumentNullException(nameof(Branch));
+                    throw new ArgumentNullException("Branch", "Branch argument is required.");
                 }
                 case GitBranchStats gbs:
                 {
-                    branch = gbs.Name;
+                    branchName = gbs.Name;
                     break;
                 }
                 case string s:
                 {
-                    branch = s;
+                    branchName = s;
                     break;
                 }
                 default:
                 {
-                    throw new ArgumentException($"Invalid value '{Branch.ToString()}' for argument Branch");
+                    throw new ArgumentException($"Invalid branch '{branch.ToString()}'", "Branch");
                 }
             } 
 
@@ -87,7 +98,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
             {
                 result = client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
                     .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
-                    .Where(b => b.Name.IsLike(branch));
+                    .Where(b => b.Name.IsLike(branchName));
             }
             catch(Exception ex)
             {
@@ -101,7 +112,10 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 }
             }
 
-            WriteObject(result, true);
+            foreach(var b in result)
+            {
+                yield return b;
+            }
         }
     }
 }

@@ -2,23 +2,23 @@
 using System.Management.Automation;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.ServiceProvider;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {
-    internal interface IService
+    public interface IService
     {
         ICmdletServiceProvider Provider { get; set;  }
 
-        Cmdlet Cmdlet { get; set; }
+        BaseCmdlet Cmdlet { get; set; }
     }
 
-    internal interface IDataService<out T>: IService
+    public interface IDataService<out T>: IService where T: class
     {
         ParameterDictionary Parameters { get; set; }
 
-        T GetOne(ParameterDictionary overriddenParameters, object filter = null);
+        T GetOne(ParameterDictionary overriddenParameters = null, object filter = null);
 
-        IEnumerable<T> GetMany(ParameterDictionary overriddenParameters, object userState = null);
+        IEnumerable<T> GetMany(ParameterDictionary overriddenParameters = null, object userState = null);
     }
 }
