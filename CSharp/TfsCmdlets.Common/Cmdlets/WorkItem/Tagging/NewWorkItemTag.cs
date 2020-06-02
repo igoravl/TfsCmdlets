@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
                     return
                 }
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
                 task = client.CreateTagAsync(tp.Guid, Tag); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error creating work item tag "{Tag}"" task.Exception.InnerExceptions })
 

@@ -15,10 +15,8 @@ namespace TfsCmdlets.Services
 
     public interface IDataService<out T>: IService where T: class
     {
-        ParameterDictionary Parameters { get; set; }
+        T GetInstanceOf(ParameterDictionary overriddenParameters = null, object filter = null);
 
-        T GetOne(ParameterDictionary overriddenParameters = null, object filter = null);
-
-        IEnumerable<T> GetMany(ParameterDictionary overriddenParameters = null, object userState = null);
+        IEnumerable<T> GetCollectionOf(ParameterDictionary overriddenParameters = null, object userState = null);
     }
 }

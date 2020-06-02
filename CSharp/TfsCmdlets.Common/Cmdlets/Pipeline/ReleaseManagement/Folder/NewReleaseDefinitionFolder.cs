@@ -37,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
                     return
                 }
 
-                var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
+                var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
 
                 newFolder = new Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder() -Property @{
                     Description = Description

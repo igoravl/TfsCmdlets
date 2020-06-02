@@ -15,11 +15,11 @@ namespace TfsCmdlets.Services
     {
         protected override IEnumerable<VssClientCredentials> DoGetItems(object userState)
         {
-            var credential = Parameters.Get<object>("Credential");
-            var userName = Parameters.Get<string>("UserName");
-            var password = Parameters.Get<SecureString>("Password");
-            var accessToken = Parameters.Get<string>("AccessToken");
-            var interactive = Parameters.Get<bool>("Interactive");
+            var credential = GetParameter<object>("Credential");
+            var userName = GetParameter<string>("UserName");
+            var password = GetParameter<SecureString>("Password");
+            var accessToken = GetParameter<string>("AccessToken");
+            var interactive = GetParameter<bool>("Interactive");
             var parameterSetName = ConnectionMode.CachedCredentials;
 
             if (credential != null)

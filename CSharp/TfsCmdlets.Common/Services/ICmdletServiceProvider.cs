@@ -11,17 +11,17 @@ namespace TfsCmdlets.Services
     {
         TService GetService<TService>(BaseCmdlet cmdlet) where TService : IService;
 
-        TObj GetOne<TObj>(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where TObj : class;
+        TObj GetInstanceOf<TObj>(BaseCmdlet cmdlet, ParameterDictionary parameters = null, object userState = null) where TObj : class;
 
-        IEnumerable<TObj> GetMany<TObj>(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where TObj : class;
+        IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet cmdlet, ParameterDictionary parameters = null, object userState = null) where TObj : class;
 
-        TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null);
+        TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        (TfsConnection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null);
+        (TfsConnection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null);
+        (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary overriddenParameters = null);
+        TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
         
     }
 }

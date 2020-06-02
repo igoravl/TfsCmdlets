@@ -47,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 tpc = Get-TfsTeamProjectCollection Collection
                 template = Get-TfsProcessTemplate -Collection tpc -Name ProcessTemplate
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient>();
 
                 tpInfo = new Microsoft.TeamFoundation.Core.WebApi.TeamProject()
                 tpInfo.Name = Project
@@ -71,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 # Wait for the operation to complete
 
-                var client = tpc.GetClient<Microsoft.VisualStudio.Services.Operations.OperationsHttpClient>();
+                var client = GetClient<Microsoft.VisualStudio.Services.Operations.OperationsHttpClient>();
 
                 opsToken = operationsClient.GetOperation(token.Id).Result
 

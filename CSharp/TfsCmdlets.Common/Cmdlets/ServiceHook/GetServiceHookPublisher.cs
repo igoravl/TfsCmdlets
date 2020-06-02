@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         protected override void ProcessRecord()
     {
         tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-        var client = tpc.GetClient<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient>();
+        var client = GetClient<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient>();
 
         client.GetPublishersAsync().Result | Where-Object {(_Name -Like Publisher) || (_.Id -Like Publisher)}
     }

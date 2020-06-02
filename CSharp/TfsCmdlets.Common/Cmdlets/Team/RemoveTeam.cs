@@ -60,7 +60,7 @@ namespace TfsCmdlets.Cmdlets.Team
                     return
                 }
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
                 task = client.DeleteTeamAsync(tp.Name, t.Name)
 
                 result = task.Result; if(task.IsFaulted) { _throw new Exception("Error deleting team" task.Exception.InnerExceptions })

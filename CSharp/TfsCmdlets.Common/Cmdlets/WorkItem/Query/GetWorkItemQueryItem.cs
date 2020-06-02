@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 
         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+        var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
         task = client.GetQueriesAsync(tp.Name, "All", 2); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching work item query items" task.Exception.InnerExceptions })
 

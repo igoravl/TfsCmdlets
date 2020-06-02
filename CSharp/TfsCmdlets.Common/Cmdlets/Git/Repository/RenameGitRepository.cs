@@ -73,7 +73,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                 tp = this.GetProject();
                 #tpc = tp.Store.TeamProjectCollection
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
                 if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository)
                 {

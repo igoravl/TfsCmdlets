@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
                     throw new Exception($"Invalid or non-existent identity "{Identity}"")
                 }
 
-                var client = tpc.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+                var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
 
                 this.Log($"Adding {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" to team "$(t.Name)"");
 

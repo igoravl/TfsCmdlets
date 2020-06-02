@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         # {
         #     tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
             
-        #     var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+        #     var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
         #     task = client.GetRepositoryAsync(guid); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error getting repository with ID {guid}" task.Exception.InnerExceptions })
 
@@ -70,7 +70,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2>();
+        var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2>();
 
         task = client.GetReleaseDefinitionsAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error getting release definition "{Definition}"" task.Exception.InnerExceptions })
         

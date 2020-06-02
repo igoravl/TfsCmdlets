@@ -71,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
 
                 result = client.CreateTeamAsync((new Microsoft.TeamFoundation.Core.WebApi.WebApiTeam() -Property @{
                     Name = Team

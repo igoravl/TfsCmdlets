@@ -31,7 +31,7 @@ namespace TfsCmdlets.Services
             return (T) _factories[serviceType](this, BaseCmdlet);
         }
 
-        public TObj GetOne<TObj>(BaseCmdlet BaseCmdlet, ParameterDictionary overriddenParameters, object userState)
+        public TObj GetInstanceOf<TObj>(BaseCmdlet BaseCmdlet, ParameterDictionary overriddenParameters, object userState)
             where TObj: class
         {
             var serviceType = typeof(TObj);
@@ -41,10 +41,10 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IDataService<TObj>) _factories[serviceType](this, BaseCmdlet)).GetOne(overriddenParameters, userState);
+            return ((IDataService<TObj>) _factories[serviceType](this, BaseCmdlet)).GetInstanceOf(overriddenParameters, userState);
         }
 
-        public IEnumerable<TObj> GetMany<TObj>(BaseCmdlet BaseCmdlet, ParameterDictionary overriddenParameters, object userState)
+        public IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet BaseCmdlet, ParameterDictionary overriddenParameters, object userState)
             where TObj: class
         {
             var serviceType = typeof(TObj);
@@ -54,12 +54,12 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet)).GetMany(overriddenParameters, userState);
+            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet)).GetCollectionOf(overriddenParameters, userState);
         }
 
         public TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
-            var srv = GetOne<TfsConnection>(cmdlet, parameters, "Server");
+            var srv = GetInstanceOf<TfsConnection>(cmdlet, parameters, "Server");
 
             if (srv == null)
             {
@@ -71,7 +71,7 @@ namespace TfsCmdlets.Services
 
         public TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
-            var tpc = GetOne<TfsConnection>(cmdlet, parameters, "Collection");
+            var tpc = GetInstanceOf<TfsConnection>(cmdlet, parameters, "Collection");
 
             if (tpc == null)
             {
@@ -88,7 +88,7 @@ namespace TfsCmdlets.Services
             parameters ??= new ParameterDictionary();
             parameters["Collection"] = tpc;
 
-            var tp = GetOne<WebApiTeamProject>(cmdlet, parameters, null);
+            var tp = GetInstanceOf<WebApiTeamProject>(cmdlet, parameters, null);
 
             if (tp == null)
             {
@@ -106,7 +106,7 @@ namespace TfsCmdlets.Services
             parameters["Collection"] = tpc;
             parameters["Project"] = tp;
 
-            var team = GetOne<WebApiTeam>(cmdlet, parameters, null);
+            var team = GetInstanceOf<WebApiTeam>(cmdlet, parameters, null);
 
             if (team == null)
             {

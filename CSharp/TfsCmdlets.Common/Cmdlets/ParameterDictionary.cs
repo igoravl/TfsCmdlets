@@ -14,6 +14,28 @@ namespace TfsCmdlets.Cmdlets
         {
         }
 
+        public ParameterDictionary(ParameterDictionary other)
+            : this()
+        {
+            if(other == null || other.Count == 0) return;
+
+            foreach(var kvp in other)
+            {
+                Add(kvp.Key, kvp.Value);
+            }
+        }
+
+        public ParameterDictionary(ParameterDictionary original, ParameterDictionary mergeWith)
+            : this(original)
+        {
+            Merge(mergeWith);
+        }
+
+        public ParameterDictionary(ParameterDictionary original, Cmdlet mergeWith)
+            : this(original, new ParameterDictionary(mergeWith))
+        {
+        }
+
         public ParameterDictionary(Cmdlet cmdlet): this()
         {
             cmdlet
@@ -49,6 +71,8 @@ namespace TfsCmdlets.Cmdlets
 
         public void Merge(ParameterDictionary other)
         {
+            if(other == null || other.Count == 0) return;
+            
             foreach (var kvp in other.Where(kvp => !ContainsKey(kvp.Key)))
             {
                 Add(kvp.Key, kvp.Value);

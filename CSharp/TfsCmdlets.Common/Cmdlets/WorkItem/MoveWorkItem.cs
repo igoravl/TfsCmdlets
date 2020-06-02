@@ -131,7 +131,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                     $"Move work item to team project "{{targetTp}.Name}" under area path " +
                     $""{{targetArea}}" and iteration path "$(targetIteration)""))
                 {
-                    var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                    var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
                     task = client.UpdateWorkItemAsync(patch, wi.Id)
 
                     result = task.Result; if(task.IsFaulted) { _throw new Exception("Error moving work item" task.Exception.InnerExceptions })

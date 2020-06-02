@@ -136,7 +136,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 # Prepare for the second stage
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
                 ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(@(tp.Name, t.Name))
 
                 # Set Team Field and Area Path settings

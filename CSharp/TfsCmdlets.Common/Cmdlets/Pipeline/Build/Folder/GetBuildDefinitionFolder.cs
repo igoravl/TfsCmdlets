@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 
         if(Folder.Project.Name) {Project = Folder.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-        var client = tpc.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+        var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
         if(_IsWildCard Folder)
         {

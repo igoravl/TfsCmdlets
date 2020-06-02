@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 
                     if(t.TeamProject) {Project = t.TeamProject}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                    var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
+                    var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
                     task = client.UpdateTagAsync(tp.Guid, t.Id, NewName, t.Active); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error renaming work item tag [{{t}.Name}]"" task.Exception.InnerExceptions })
 

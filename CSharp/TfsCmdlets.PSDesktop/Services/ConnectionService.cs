@@ -15,7 +15,7 @@ namespace TfsCmdlets.Services
             if (userState == null) throw new ArgumentNullException(nameof(userState));
 
             var connectionType = (string) userState;
-            var connection = Parameters.Get<object>(connectionType);
+            var connection = GetParameter<object>(connectionType);
 
             TfsConnection result = null;
 
@@ -51,9 +51,9 @@ namespace TfsCmdlets.Services
                         }
 
                         if (connectionType.Equals("Server"))
-                            result = new TfsConfigurationServer(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
+                            result = new TfsConfigurationServer(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
                         else
-                            result = new TfsTeamProjectCollection(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
+                            result = new TfsTeamProjectCollection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):

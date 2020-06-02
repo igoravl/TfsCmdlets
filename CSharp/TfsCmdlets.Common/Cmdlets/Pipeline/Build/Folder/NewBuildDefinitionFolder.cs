@@ -37,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                     return
                 }
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
                 newFolder = new Microsoft.TeamFoundation.Build.WebApi.Folder() -Property @{
                     Description = Description

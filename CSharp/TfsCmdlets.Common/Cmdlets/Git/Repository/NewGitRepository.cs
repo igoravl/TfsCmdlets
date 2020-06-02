@@ -60,7 +60,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
             if (!ShouldProcess(Repository, "Create Git repository")) return;
 
             var (tpc, tp) = this.GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
             var tpRef = new TeamProjectReference()
             {

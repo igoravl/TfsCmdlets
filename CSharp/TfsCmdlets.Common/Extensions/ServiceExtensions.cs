@@ -16,14 +16,14 @@ namespace TfsCmdlets.Extensions
         //     return _provider.GetService<T>(cmdlet);
         // }
 
-        // internal static T GetOne<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
+        // internal static T GetInstanceOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
         // {
-        //     return _provider.GetOne<T>(cmdlet, overriddenParameters, userState);
+        //     return _provider.GetInstanceOf<T>(cmdlet, overriddenParameters, userState);
         // }
 
-        // internal static IEnumerable<T> GetMany<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
+        // internal static IEnumerable<T> GetCollectionOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
         // {
-        //     return _provider.GetMany<T>(cmdlet, overriddenParameters, userState);
+        //     return _provider.GetCollectionOf<T>(cmdlet, overriddenParameters, userState);
         // }
 
         // internal static T GetClient<T>(this Cmdlet cmdlet) where T : VssHttpClientBase
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Extensions
 
         // internal static object GetClient(this Cmdlet cmdlet, Type type, string scope = "Collection", ParameterDictionary overriddenParameters = null)
         // {
-        //     return GetOne<VssConnection>(cmdlet, overriddenParameters, scope).GetClient(type);
+        //     return GetInstanceOf<VssConnection>(cmdlet, overriddenParameters, scope).GetClient(type);
         // }
 
         // internal static void Register(ICmdletServiceProvider provider)

@@ -13,7 +13,7 @@ namespace TfsCmdlets.Services
         protected override IEnumerable<Connection> DoGetItems(object userState)
         {
             var connectionType = (string) userState;
-            var connection = Parameters.Get<object>(connectionType);
+            var connection = GetParameter<object>(connectionType);
 
             VssConnection result = null;
 
@@ -42,7 +42,7 @@ namespace TfsCmdlets.Services
                     case Uri uri:
                     {
                         Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
-                        result = new VssConnection(uri, Provider.GetOne<VssClientCredentials>(Cmdlet));
+                        result = new VssConnection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):

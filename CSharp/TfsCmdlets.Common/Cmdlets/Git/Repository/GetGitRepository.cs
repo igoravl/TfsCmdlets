@@ -42,13 +42,19 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     {
         protected override IEnumerable<GitRepository> DoGetItems(object userState)
         {
-            var (tpc, tp) = GetCollectionAndProject();
-            var repository = Parameters.Get<object>("Repository");
+            var (_, tp) = GetCollectionAndProject();
+            var repository = GetParameter<object>("Repository");
 
             while (true)
             {
                 switch (repository)
                 {
+                    case null:
+                    case string s when string.IsNullOrEmpty(s):
+                        {
+                            repository = tp.Name;
+                            continue;
+                        }
                     case PSObject o:
                         {
                             repository = o.BaseObject;
@@ -61,8 +67,10 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                         }
                     case Guid guid:
                         {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            yield return client.GetRepositoryAsync(tp.Name, guid).GetResult($"Error getting repository with ID {guid}");
+                            yield return GetClient<GitHttpClient>()
+                                .GetRepositoryAsync(tp.Name, guid)
+                                .GetResult($"Error getting repository with ID {guid}");
+
                             yield break;
                         }
                     case string s when s.IsGuid():
@@ -72,15 +80,18 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                         }
                     case string s when !s.IsWildcard():
                         {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-                            yield return client.GetRepositoryAsync(tp.Name, s).GetResult($"Error getting repository '{s}'");
+                            yield return GetClient<GitHttpClient>()
+                                .GetRepositoryAsync(tp.Name, s)
+                                .GetResult($"Error getting repository '{s}'");
+
                             yield break;
                         }
                     case string s:
                         {
-                            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-
-                            foreach (var repo in client.GetRepositoriesAsync(tp.Name).GetResult($"Error getting repository(ies) '{s}'").Where(r => r.Name.IsLike(s)))
+                            foreach (var repo in GetClient<GitHttpClient>()
+                                .GetRepositoriesAsync(tp.Name)
+                                .GetResult($"Error getting repository(ies) '{s}'")
+                                .Where(r => r.Name.IsLike(s)))
                             {
                                 yield return repo;
                             }

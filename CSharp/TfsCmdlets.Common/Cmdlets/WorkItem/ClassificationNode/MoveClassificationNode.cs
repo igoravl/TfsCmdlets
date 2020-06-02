@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
                     Id = sourceNode.Id
                 }
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
                 task = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, destinationNode.RelativePath.SubString(1)); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error moving node {{sourceNode}.RelativePath} to $(destinationNode.RelativePath)" task.Exception.InnerExceptions })
 

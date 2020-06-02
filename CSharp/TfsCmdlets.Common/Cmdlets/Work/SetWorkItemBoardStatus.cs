@@ -120,7 +120,7 @@ namespace TfsCmdlets.Cmdlets.Work
                 if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
                 {
                     patch = _GetJsonPatchDocument ops
-                    var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                    var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
                     wi = client.UpdateWorkItemAsync(patch, id).Result
                     WriteObject(wi); return;
                 }

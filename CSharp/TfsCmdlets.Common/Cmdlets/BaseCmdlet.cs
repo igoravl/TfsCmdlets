@@ -121,10 +121,10 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <typeparam name="T">The type of the API client</typeparam>
         /// <returns>An instance of the requested API client</returns>
-        protected object GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
+        protected T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where T : VssHttpClientBase
         {
-            return Provider.GetOne<TfsConnection>(this, parameters, scope.ToString()).GetClient<T>();
+            return Provider.GetInstanceOf<TfsConnection>(this, parameters, scope.ToString()).GetClient<T>();
         }
 
         /// <summary>
@@ -137,14 +137,14 @@ namespace TfsCmdlets.Cmdlets
             return Provider.GetService<T>(this);
         }
 
-        protected TObj GetOne<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
         {
-            return Provider.GetOne<TObj>(this, parameters, userState);
+            return Provider.GetInstanceOf<TObj>(this, parameters, userState);
         }
 
-        protected IEnumerable<TObj> GetMany<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
         {
-            return Provider.GetMany<TObj>(this, parameters, userState);
+            return Provider.GetCollectionOf<TObj>(this, parameters, userState);
         }
 
         protected void Log(string message, string commandName = null, bool force = false)

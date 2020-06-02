@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
                 id = Get-TfsIdentity -Identity Identity -Collection tpc
 
-                var client = tpc.GetClient<TfsCmdlets.TeamAdminHttpClient>();
+                var client = GetClient<TfsCmdlets.TeamAdminHttpClient>();
 
                 this.Log($"Removing {{id}.IdentityType} "$(id.DisplayName) ($(id.Properties["Account"]))" from team "$(t.Name)"");
 

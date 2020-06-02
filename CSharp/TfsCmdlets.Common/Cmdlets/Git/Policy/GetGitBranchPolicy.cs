@@ -1,7 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Policy.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Git.Policy
 {
@@ -10,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "GitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
-    public class GetGitBranchPolicy : BaseCmdlet
+    public class GetGitBranchPolicy : BaseCmdlet<PolicyConfiguration>
     {
         [Parameter()]
         public object PolicyType { get; set; } = "*";
@@ -39,23 +42,20 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+    }
 
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
+    [Exports(typeof(PolicyConfiguration))]
+    internal class GitBranchPolicyDataServiceImpl : BaseDataService<PolicyConfiguration>
+    {
+        protected override IEnumerable<PolicyConfiguration> DoGetItems(object userState)
         {
-            var repo = this.GetOne<GitRepository>();
-            Project = repo.ProjectReference.Name;
+            throw new NotImplementedException();
+            
+            var repo = this.GetInstanceOf<GitRepository>();
+            OverrideParameter("Project", repo.ProjectReference.Name);
 
-            var (tpc, tp) = this.GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-
-            if(Branch is string s && !s.StartsWith("refs/"))
-            {
-                Branch = $"refs/{s.Trim('/')}";
-            }
+            var branch = GetInstanceOf<GitBranchStats>();
+            var policyType = GetInstanceOf<PolicyType>();
 
             // if(PolicyType != null)
             // {
@@ -73,7 +73,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
 
             // foreach(repo in repos)
             // {
-            //     task = client.GetPolicyConfigurationsAsync(tp.Name, repo.Id, Branch, policyTypeId); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving branch policy configurations for repository "{{repo}.Name}"" task.Exception.InnerExceptions })
+            //     task = client.GetPolicyConfigurationsAsync(tp.Name, repo.Id, branch, policyTypeId); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving branch policy configurations for repository "{{repo}.Name}"" task.Exception.InnerExceptions })
             // }
 
             // WriteObject(result.PolicyConfigurations); return;

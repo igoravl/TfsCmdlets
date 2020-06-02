@@ -54,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
                         continue
                     }
 
-                    var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
+                    var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
                     task = client.DeleteTagAsync(tp.Guid, t.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error deleting work item tag [{{t}.Name}]"" task.Exception.InnerExceptions })
                 }

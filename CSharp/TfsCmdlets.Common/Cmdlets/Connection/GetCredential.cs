@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// </summary>
         protected override void ProcessRecord()
         {
-            WriteObject(this.GetOne<VssClientCredentials>());
+            WriteObject(this.GetInstanceOf<VssClientCredentials>());
         }
     }
 }

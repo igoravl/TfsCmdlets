@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
             }
 
             var (tpc, tp) = this.GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
             //        var reposToDelete = Get - TfsGitRepository - Name Repository - Project Project - Collection Collection
             //            }
 

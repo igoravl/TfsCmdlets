@@ -97,7 +97,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 
                 tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
                 if (PSBoundParameters.ContainsKey("MoveBy"))
                 {

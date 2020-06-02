@@ -14,8 +14,8 @@ namespace TfsCmdlets.Cmdlets.Team
     {
         protected override IEnumerable<WebApiTeam> DoGetItems(object userState)
         {
-            var team = Parameters.Get<object>("Team");
-            var current = Parameters.Get<bool>("Current");
+            var team = GetParameter<object>("Team");
+            var current = GetParameter<bool>("Current");
 
             if (team == null || current)
             {
@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.Team
             }
 
             var (tpc, tp) = Cmdlet.GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
 
             while (true)
             {

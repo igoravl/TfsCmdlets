@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "GitBranch")]
     [OutputType(typeof(GitBranchStats))]
-    public class GetGitBranch : BaseCmdlet
+    public class GetGitBranch : BaseCmdlet<GitBranchStats>
     {
         /// <summary>
         /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 
@@ -41,14 +41,6 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            WriteObject(this.GetMany<GitRepository>(), true);
-        }
     }
 
     [Exports(typeof(GitBranchStats))]
@@ -57,7 +49,8 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         protected override IEnumerable<GitBranchStats> DoGetItems(object userState)
         {
             var branch = GetParameter<object>("Branch");
-            GitRepository repo = GetOne<GitRepository>();
+            var repo = GetInstanceOf<GitRepository>();
+            OverrideParameter("Project", repo.ProjectReference.Name);
 
             if (repo.Size == 0)
             {
@@ -65,8 +58,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 yield break;
             }
 
-            var (tpc, tp) = GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            var client = GetClient<GitHttpClient>();
             string branchName;
 
             switch(branch)

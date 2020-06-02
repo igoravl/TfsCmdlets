@@ -23,42 +23,46 @@ namespace TfsCmdlets.Services
 
     internal abstract class BaseDataService<T> : BaseService, IDataService<T> where T: class
     {
+        private ParameterDictionary _parameters;
+        
         protected abstract IEnumerable<T> DoGetItems(object userState);
 
-        public ParameterDictionary Parameters { get; set; }
-
-        public T GetOne(ParameterDictionary overriddenParameters = null, object userState = null) 
+        public T GetInstanceOf(ParameterDictionary parameters = null, object userState = null) 
         {
-            Parameters = (overriddenParameters ?? new ParameterDictionary());
-            Parameters.Merge(new ParameterDictionary(Cmdlet));
-
-            var items = GetMany(overriddenParameters, userState)?.ToList()?? new List<T>();
+            var items = GetCollectionOf(parameters, userState)?.ToList()?? new List<T>();
             if(items == null || items.Count == 0) return null;//throw new Exception($"Invalid or non-existent {ItemName} '{ItemFilter}'");
 
             return items[0];
         }
 
-        public IEnumerable<T> GetMany(ParameterDictionary overriddenParameters = null, object userState = null)
+        public IEnumerable<T> GetCollectionOf(ParameterDictionary parameters = null, object userState = null)
         {
-            Parameters = (overriddenParameters ?? new ParameterDictionary());
-            Parameters.Merge(new ParameterDictionary(Cmdlet));
-
+            _parameters = new ParameterDictionary(parameters, Cmdlet);
             return DoGetItems(userState);
         }
 
         protected TParam GetParameter<TParam>(string name, TParam defaultValue = default(TParam))
         {
-            return Parameters.Get<TParam>(name, defaultValue);
+            if(_parameters == null) return defaultValue;
+
+            return _parameters.Get<TParam>(name, defaultValue) ?? defaultValue;
         }
 
-        protected TObj GetOne<TObj>(ParameterDictionary overriddenParameters = null, object userState = null) where TObj: class
+        protected void OverrideParameter(string name, object value)
         {
-            return Provider.GetOne<TObj>(Cmdlet, overriddenParameters, userState);
+            if(_parameters == null) return;
+
+            _parameters[name] = value;
         }
 
-        protected IEnumerable<TObj> GetMany<TObj>(ParameterDictionary overriddenParameters = null, object userState = null) where TObj: class
+        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj: class
         {
-            return Provider.GetMany<TObj>(Cmdlet, overriddenParameters, userState);
+            return Provider.GetInstanceOf<TObj>(Cmdlet, parameters, userState);
+        }
+
+        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj: class
+        {
+            return Provider.GetCollectionOf<TObj>(Cmdlet, parameters, userState);
         }
 
         protected Connection GetCollection(ParameterDictionary parameters = null)
@@ -79,7 +83,7 @@ namespace TfsCmdlets.Services
         protected TClient GetClient<TClient>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where TClient : VssHttpClientBase
         {
-            return Provider.GetOne<TfsConnection>(Cmdlet, parameters, scope.ToString()).GetClient<TClient>();
+            return Provider.GetInstanceOf<TfsConnection>(Cmdlet, parameters, scope.ToString()).GetClient<TClient>();
         }
     }
 }

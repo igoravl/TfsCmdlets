@@ -32,7 +32,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
                 id = Get-TfsIdentity -Identity Identity -Collection tpc
 
-                var client = tpc.GetClient<TfsCmdlets.TeamAdminHttpClient>();
+                var client = GetClient<TfsCmdlets.TeamAdminHttpClient>();
 
                 this.Log($"Adding {{id}.IdentityType} "$(id.DisplayName) ($(id.Properties["Account"]))" to team "$(t.Name)"");
 

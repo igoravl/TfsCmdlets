@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
                     return
                 }
 
-                var client = tpc.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
                 parentPath = (Split-Path Node -Parent)
                 nodeName = (Split-Path Node -Leaf)

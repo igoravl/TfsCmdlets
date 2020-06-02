@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
 
                     if(f.Project.Name) {Project = f.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 
-                    var client = tpc.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
+                    var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
 
                     if(! Force.IsPresent)
                     {

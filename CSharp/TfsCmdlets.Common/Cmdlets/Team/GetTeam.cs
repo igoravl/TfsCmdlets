@@ -65,7 +65,7 @@ namespace TfsCmdlets.Cmdlets.Team
             {
                 try
                 {
-                    WriteObject(this.GetMany<WebApiTeam>(), true);
+                    WriteObject(this.GetCollectionOf<WebApiTeam>(), true);
                     return;
                 }
                 finally { }
@@ -73,15 +73,15 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (!IncludeMembers && !IncludeSettings)
             {
-                WriteObject(this.GetMany<WebApiTeam>(), true);
+                WriteObject(this.GetCollectionOf<WebApiTeam>(), true);
                 return;
             }
 
             var (tpc, tp) = this.GetCollectionAndProject();
-            var client = tpc.GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
-            var workClient = tpc.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
+            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+            var workClient = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
 
-            foreach (var t in this.GetMany<WebApiTeam>())
+            foreach (var t in this.GetCollectionOf<WebApiTeam>())
             {
                 var pso = new PSObject(t);
 
