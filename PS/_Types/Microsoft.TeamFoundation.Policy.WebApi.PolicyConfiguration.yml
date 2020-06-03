@@ -1,0 +1,25 @@
+- ScriptProperty:
+    Name: PolicySettings
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'PolicySettings', {
+            return $_.Settings.ToString() | ConvertFrom-Json
+        })
+- ScriptProperty:
+    Name: Branch
+    GetScriptBlock: $this.PolicySettings.scope[0].refName.SubString(11)
+- ScriptProperty:
+    Name: RefName
+    GetScriptBlock: $this.PolicySettings.scope[0].refName
+- ScriptProperty:
+    Name: DisplayName
+    GetScriptBlock: $this.Type.DisplayName
+- ScriptProperty:
+    Name: BuildDefinition
+    GetScriptBlock: |
+        if ($this.Type.DisplayName -ne 'Build') { return }
+
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'BuildDefinition', {
+            $url = $_.Url.Substring(0, $_.Url.IndexOf('/policy/configurations'))
+            $url = "$url/build/definitions/$($_.PolicySettings.buildDefinitionId)"
+            return (Invoke-TfsRestApi $url).name
+        })

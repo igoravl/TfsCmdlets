@@ -1,0 +1,18 @@
+ViewSelectedBy:
+  - Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration
+GroupBy:
+  PropertyName: Branch
+TableControl: 
+  DisplayName: 
+    Label: DisplayName
+  Details:
+    ScriptBlock: |
+      $buildDef = $_.BuildDefinition
+      switch ($_.DisplayName)
+      {
+        'Build' { 'Build Definition: ' + $buildDef }
+        default { 'N/A' }
+      }
+      
+  IsEnabled:
+    Label: "Is Enabled?"
