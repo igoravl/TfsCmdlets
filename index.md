@@ -9,13 +9,13 @@ TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in Pow
 
 By using TfsCmdlets, TFS administrators (even power users) can create scripts to automate many different tasks, ranging from retrieving work items to create new team project collections.
 
-TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
+TfsCmdlets is available in many formats. The installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
 
-![Azure DevOps Shell](images/TfsShell.png)
+![Azure DevOps Shell](assets/images/TfsShell.png)
 
 ## Quick start guide 
 
-Firstly, download and configure the latest version of the [Visual Studio ALM Virtual Machine](http://aka.ms/almvm) (a.k.a "_Brian Keller VM_") in your computer in order to have a sandbox to play with. 
+Firstly, download and configure the latest version of the [Azure DevOps Virtual Machine](http://aka.ms/almvm) (a.k.a "_Brian Keller VM_") in your computer in order to have a sandbox to play with. 
 
 Next, install TfsCmdlets inside the virtual machine (see section "_How to install_", below), open a PowerShell window and try the following commands:
 
