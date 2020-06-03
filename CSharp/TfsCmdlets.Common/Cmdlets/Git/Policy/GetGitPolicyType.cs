@@ -22,7 +22,7 @@ namespace TfsCmdlets.Cmdlets.Policy
         [Parameter(Position = 0)]
         [SupportsWildcards()]
         [Alias("Name")]
-        public object PolicyType = "*";
+        public object PolicyType { get; set; } = "*";
 
         /// <summary>
         /// HELP_PARAM_PROJECT
@@ -77,7 +77,7 @@ namespace TfsCmdlets.Cmdlets.Policy
                         {
                             var (tpc, tp) = this.GetCollectionAndProject();
                             var client = GetClient<PolicyHttpClient>();
-                            foreach(var pt in client.GetPolicyTypesAsync(tp.Name)
+                            foreach (var pt in client.GetPolicyTypesAsync(tp.Name)
                                 .GetResult("Error retrieving policy types")
                                 .Where(p => p.DisplayName.IsLike(s)))
                             {
@@ -88,7 +88,7 @@ namespace TfsCmdlets.Cmdlets.Policy
                         }
                     default:
                         {
-                            throw new ArgumentException($"Invalid policy type {policyType}", nameof(policyType));
+                            throw new ArgumentException($"Invalid policy type '{policyType}'", nameof(policyType));
                         }
                 }
             }
