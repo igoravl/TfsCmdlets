@@ -19,7 +19,6 @@ Firstly, download and configure the latest version of the [Visual Studio ALM Vir
 
 Next, install TfsCmdlets inside the virtual machine (see section "_How to install_", below), open a PowerShell window and try the following commands:
 
-
 ```PowerShell
 # Connect to the FabrikamFiber team project collection
 # (Will be used as default for the -Collection argument when required by a cmdlet)
