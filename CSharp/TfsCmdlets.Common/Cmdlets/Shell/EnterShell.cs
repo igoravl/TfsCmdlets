@@ -57,7 +57,6 @@ namespace TfsCmdlets.Cmdlets.Shell
             WriteObject($"TfsCmdlets: {manifest.Description}");
             WriteObject($"Version {privateData["Build"]}");
             WriteObject($"Azure DevOps Client Library version {privateData["TfsClientVersion"]}");
-            WriteObject("");
             // WriteObject($"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
 
             var profileDir = Path.GetDirectoryName((string)((PSObject) this.GetVariableValue("PROFILE")).BaseObject);
