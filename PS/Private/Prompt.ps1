@@ -34,7 +34,7 @@ Function prompt {
         }
         elseif ($serverName -eq 'dev.azure.com') {
             $tpcName = $tpc.Uri.Segments[1]
-            $promptPrefix = "${escBgBlue}${escFgWhite}[dev.azure.com/$tpcName"
+            $promptPrefix = "${escBgBlue}${escFgWhite}[dev.azure.com > $tpcName"
         }
         else {
             $promptPrefix = "${escBgMagenta}${escFgWhite}[$($tpc.Uri.Host)"
