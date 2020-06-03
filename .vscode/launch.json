@@ -3,13 +3,9 @@
     "configurations": [
         {
             "name": "(PowerShell) Interactive Session",
+            "createTemporaryIntegratedConsole": true,
             "type": "PowerShell",
             "request": "launch",
-            "args": [
-                "-noexit",
-                "-command",
-                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
-            ],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "Build"
         },

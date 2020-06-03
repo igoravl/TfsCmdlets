@@ -1,28 +1,16 @@
-Param
-(
-    [Parameter()]
-    [String]
-    $SourceDir,
-
-    [Parameter()]
-    [String]
-    $OutputDir
-)
-
-
 ## Table Descriptors -----------------------------------------------------------
 function HeaderCell {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0, Mandatory=$true)]
+        [Parameter(Position = 0, Mandatory = $true)]
         [String]
         $Name,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [Switch]
         $Centre,
 
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [Switch]
         $Right
     )
@@ -32,7 +20,8 @@ function HeaderCell {
         $align = "Left"
         if ($Centre) {
             $align = "Centre"
-        } elseif ($Right) {
+        }
+        elseif ($Right) {
             $align = "Right"
         }
 
@@ -47,7 +36,7 @@ function HeaderCell {
 function Header {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0, Mandatory=$true)]
+        [Parameter(Position = 0, Mandatory = $true)]
         [ScriptBlock]
         $Cells
     )
@@ -64,7 +53,7 @@ function Header {
 function Cell {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0)]
+        [Parameter(Position = 0)]
         [String]
         $Content = ''
     )
@@ -77,7 +66,7 @@ function Cell {
 function Row {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0, Mandatory=$true)]
+        [Parameter(Position = 0, Mandatory = $true)]
         [ScriptBlock]
         $Cells
     )
@@ -94,14 +83,14 @@ function Row {
 function Describe-Table {
     [CmdletBinding()]
     param(
-        [Parameter(Position=0, Mandatory=$true)]
+        [Parameter(Position = 0, Mandatory = $true)]
         [ScriptBlock]
         $Content
     )
 
     process {
         $table = New-Object System.Object
-        $rows  = @()
+        $rows = @()
 
         # Build the table
         &$Content | foreach {
@@ -113,7 +102,7 @@ function Describe-Table {
                 }
 
                 "Row" {
-                    $rows += ,$row.Cells
+                    $rows += , $row.Cells
                 }
             }
         }
@@ -165,12 +154,12 @@ function MakeRow($cells, $widths) {
 function Format-MarkdownTable {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         $Table
     )
 
     process {
-        $mdtable  = @()
+        $mdtable = @()
 
         # Add the header row
         $mdtable += MakeRow ($table.Columns | foreach { $_.Name })
@@ -191,12 +180,11 @@ function Format-MarkdownTable {
 }
 
 
-Function AutoLink
-{
+Function AutoLink {
     [CmdletBinding()]
     Param
     (
-        [Parameter(ValueFromPipeline=$true)]
+        [Parameter(ValueFromPipeline = $true)]
         [string]
         $doc, 
         
@@ -211,27 +199,22 @@ Function AutoLink
 
     $cmdList = Get-Command -Module TfsCmdlets | Where-Object Name -ne $cmdName | Select -ExpandProperty Name
 
-    foreach($cmd in $cmdList)
-    {
+    foreach ($cmd in $cmdList) {
         $doc = $doc -replace "\b(?<CmdletName>$cmd)\b", '[${CmdletName}](${CmdletName})'
     }
 
     return $doc
 }
 
-Function GenerateSyntax($help, $cmd)
-{
+Function GenerateSyntax($help, $cmd) {
     $syntaxes = ($help.syntax | Out-String).Trim().Replace('`r', '').Replace('`n', '').Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
     $i = 0
     $output = ''
 
-    foreach ($syntax in $syntaxes)
-    {
-        if ($syntaxes.Length -gt 1)
-        {
-            if ($i -gt 0)
-            {
-                $output += [Environment]::NewLine +  [Environment]::NewLine 
+    foreach ($syntax in $syntaxes) {
+        if ($syntaxes.Length -gt 1) {
+            if ($i -gt 0) {
+                $output += [Environment]::NewLine + [Environment]::NewLine 
             }
             $output += "# " + $($cmd.ParameterSets[$i++].Name + [Environment]::NewLine)
         }
@@ -242,14 +225,13 @@ Function GenerateSyntax($help, $cmd)
     return $output
 }
 
-Function GenerateParameters($cmd)
-{
+Function GenerateParameters($cmd) {
     $commonParameters = @('ErrorAction', 'WarningAction', 'InformationAction', 'Verbose', 'Debug', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 'OutVariable', 'OutBuffer', 'PipelineVariable')
 
     $paramTable = Describe-Table {
         Header {
             HeaderCell "Parameter"
-#            HeaderCell "Type" -Centre
+            #            HeaderCell "Type" -Centre
             HeaderCell "Description"
         }
 
@@ -257,35 +239,44 @@ Function GenerateParameters($cmd)
 
             $paramName = ($cmdParam.Name | Out-String).Trim()
 
-            $param = Get-Help $cmdName -Parameter $cmdParam.Name
+            switch ($paramName) {
+                'WhatIf' {
+                    $paramDesc = 'Shows what would happen if the cmdlet runs. The cmdlet is not run.'
+                    break
+                }
+                'Confirm' {
+                    $paramDesc = 'Prompts you for confirmation before running the cmdlet.'
+                    break
+                }
+                default {
+                    $param = Get-Help $cmdName -Parameter $cmdParam.Name
 
-            if ($param) 
-            {
-                $paramType = ($param.type.name | Out-String).Trim()
-                $paramDesc = ($param.description | Out-String).Trim()
-            }
-            else
-            {
-                $paramType = ($cmdParam.Type | Out-String).Trim()
-            }
-
-            if ($paramType -eq 'SwitchParameter') {
-                $paramType = 'Switch'
-            }
-
-            if ($paramDesc) {
-                # Sanitise the description
-                $paramDesc = ($paramDesc -split "`r?`n" |
-                              foreach { $_.Trim() }) -join ' '
-            }
-            else
-            {
-                $paramDesc = '_N/A_'
+                    if ($param) {
+                        $paramType = ($param.type.name | Out-String).Trim()
+                        $paramDesc = ($param.description | Out-String).Trim()
+                    }
+                    else {
+                        $paramType = ($cmdParam.Type | Out-String).Trim()
+                    }
+        
+                    if ($paramType -eq 'SwitchParameter') {
+                        $paramType = 'Switch'
+                    }
+        
+                    if ($paramDesc) {
+                        # Sanitise the description
+                        $paramDesc = ($paramDesc -split "`r?`n" |
+                            foreach { $_.Trim() }) -join ' '
+                    }
+                    else {
+                        $paramDesc = '_N/A_'
+                    }
+                }
             }
 
             Row {
                 Cell $paramName
- #               Cell $paramType
+                #               Cell $paramType
                 Cell $paramDesc
             }
         }
@@ -300,12 +291,18 @@ Function GenerateParameters($cmd)
 
 function ConvertCommandHelp($help, $cmdList) {
 
-    $cmd = Get-Command $help.Name -Module TfsCmdlets
+    try {
+        $cmd = Get-Command $help.Name -Module TfsCmdlets
+    }
+    catch {
+        throw $_
+    }
+
     $mod = Get-Module TfsCmdlets
     $cmdName = $help.Name
     $Description = if ($help.description) { ($help.description | Select -ExpandProperty Text) -join "`r`n`r`n" }
-    $Notes = if ($help.alertSet) { ($help.alertSet.alert  | Select -ExpandProperty Text) -join "`r`n`r`n" }
-    $InputTypes = if ($help.inputTypes) { '* ' + ($help.inputTypes.inputType.type.name -replace  "`n", "`r`n* ") }
+    $Notes = if ($help.alertSet) { ($help.alertSet.alert | Select -ExpandProperty Text) -join "`r`n`r`n" }
+    $InputTypes = if ($help.inputTypes) { '* ' + ($help.inputTypes.inputType.type.name -replace "`n", "`r`n* ") }
     $OutputTypes = if ($cmd.OutputType) { '* ' + ($cmd.OutputType | Select -ExpandProperty Name) -join "`r`n* " }
     $Aliases = (Get-Alias | Where-Object ResolvedCommandName -eq $cmdName | Select -ExpandProperty Name)
 
