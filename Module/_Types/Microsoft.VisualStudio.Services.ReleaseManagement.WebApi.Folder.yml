@@ -1,3 +1,0 @@
-﻿- ScriptProperty:
-    Name: Name
-    GetScriptBlock: if($this.Path -eq '\') { '\' } else { $this.Path.Substring($this.Path.LastIndexOf('\')+1) }

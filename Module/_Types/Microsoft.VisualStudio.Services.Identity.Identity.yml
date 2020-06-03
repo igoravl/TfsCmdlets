@@ -1,3 +1,0 @@
-﻿- ScriptProperty:
-    Name: IdentityType
-    GetScriptBlock: return &{ if ($this.IsContainer) {'Group'} else {'User'} }

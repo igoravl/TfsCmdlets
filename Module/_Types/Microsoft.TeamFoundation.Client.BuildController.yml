@@ -1,3 +1,0 @@
-﻿- ScriptProperty:
-    Name: Collection
-    GetScriptBlock: $this.BuildServer.TeamProjectCollection.Name

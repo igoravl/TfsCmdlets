@@ -1,3 +1,0 @@
-﻿- ScriptProperty:
-    Name: ParentPath
-    GetScriptBlock: $this.Parent.Path
