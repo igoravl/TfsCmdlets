@@ -26,7 +26,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet(VerbsCommon.Get, "ProcessTemplate")]
+    [Cmdlet(VerbsCommon.Get, "TfsProcessTemplate")]
     //[OutputType(typeof(Microsoft.TeamFoundation.Server.TemplateHeader))]
     public class GetProcessTemplate: BaseCmdlet
     {

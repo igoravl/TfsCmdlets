@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
 {
-    [Cmdlet(VerbsCommon.Get, "ReleaseDefinitionFolder")]
+    [Cmdlet(VerbsCommon.Get, "TfsReleaseDefinitionFolder")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder))]
     public class GetReleaseDefinitionFolder: BaseCmdlet
     {

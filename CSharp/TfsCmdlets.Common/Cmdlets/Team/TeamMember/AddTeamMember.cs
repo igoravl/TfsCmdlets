@@ -3,7 +3,7 @@ using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
-    [Cmdlet(VerbsCommon.Add, "TeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Add, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(TeamAdmins))]
     public class AddTeamMember : BaseCmdlet
     {

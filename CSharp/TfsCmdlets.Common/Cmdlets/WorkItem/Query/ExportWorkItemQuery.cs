@@ -54,7 +54,7 @@ using System.Xml;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
-    [Cmdlet(VerbsData.Export, "WorkItemQuery", DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsData.Export, "TfsWorkItemQuery", DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(XmlDocument))]
     public class ExportWorkItemQuery : BaseCmdlet
     {

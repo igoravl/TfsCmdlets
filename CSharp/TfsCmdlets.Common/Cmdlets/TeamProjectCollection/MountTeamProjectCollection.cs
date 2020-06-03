@@ -15,7 +15,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsData.Mount, "TeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsData.Mount, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium)]
     public class MountTeamProjectCollection : BaseCmdlet
     {
         /*

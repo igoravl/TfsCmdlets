@@ -49,7 +49,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet(VerbsData.Export, "ProcessTemplate")]
+    [Cmdlet(VerbsData.Export, "TfsProcessTemplate")]
     public class ExportProcessTemplate: BaseCmdlet
     {
 /*

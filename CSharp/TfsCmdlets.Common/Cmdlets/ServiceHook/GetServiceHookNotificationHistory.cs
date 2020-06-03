@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
-    [Cmdlet(VerbsCommon.Get, "ServiceHookNotificationHistory")]
+    [Cmdlet(VerbsCommon.Get, "TfsServiceHookNotificationHistory")]
     [OutputType(typeof(Notification))]
     public class GetServiceHookNotificationHistory: BaseCmdlet
     {

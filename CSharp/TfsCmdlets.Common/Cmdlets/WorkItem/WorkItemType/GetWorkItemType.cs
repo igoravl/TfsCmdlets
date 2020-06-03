@@ -42,7 +42,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemType")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemType")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType))]
     public class GetWorkItemType: BaseCmdlet
     {

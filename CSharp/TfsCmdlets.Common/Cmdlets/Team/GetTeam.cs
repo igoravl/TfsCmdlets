@@ -32,7 +32,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.Get, "Team", DefaultParameterSetName = "Get by team")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
     public class GetTeam : BaseCmdlet
     {

@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
-    [Cmdlet(VerbsCommon.Remove, "TestPlan", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTestPlan", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveTestPlan : BaseCmdlet
     {
         /*

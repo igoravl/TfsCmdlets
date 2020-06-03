@@ -23,7 +23,7 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {
-    [Cmdlet(VerbsLifecycle.Invoke, "RestApi", DefaultParameterSetName = "URL call")]
+    [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi", DefaultParameterSetName = "URL call")]
     public class InvokeRestApi : BaseCmdlet
     {
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "URL call")]

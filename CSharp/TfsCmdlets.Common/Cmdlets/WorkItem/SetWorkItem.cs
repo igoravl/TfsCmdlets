@@ -32,7 +32,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.Set, "WorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "TfsWorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     public class SetWorkItem : BaseCmdlet
     {
         /*

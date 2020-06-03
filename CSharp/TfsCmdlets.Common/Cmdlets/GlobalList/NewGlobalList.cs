@@ -24,7 +24,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
-    [Cmdlet(VerbsCommon.New, "GlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(PSCustomObject))]
     public class NewGlobalList : BaseCmdlet
     {

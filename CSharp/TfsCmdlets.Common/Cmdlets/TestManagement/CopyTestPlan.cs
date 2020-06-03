@@ -80,7 +80,7 @@ using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
-    [Cmdlet(VerbsCommon.Copy, "TestPlan")]
+    [Cmdlet(VerbsCommon.Copy, "TfsTestPlan")]
     [OutputType(typeof(TestPlan))]
     public class CopyTestPlan: BaseCmdlet
     {

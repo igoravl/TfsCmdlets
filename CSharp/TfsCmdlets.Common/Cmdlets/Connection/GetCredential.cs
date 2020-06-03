@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <summary>
     /// Provides credentials to use when you connect to a Team Foundation Server or Azure DevOps organization.
     /// </summary>
-    [Cmdlet("Get", "Credential", DefaultParameterSetName = "Cached credentials")]
+    [Cmdlet("Get", "TfsCredential", DefaultParameterSetName = "Cached credentials")]
     [OutputType("Microsoft.VisualStudio.Services.Client.VssClientCredentials")]
     public class GetCredential : BaseCmdlet
     {

@@ -30,7 +30,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.Remove, "Team", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeam", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     [OutputType(typeof(WebApiTeam))]
     public class RemoveTeam : BaseCmdlet
     {

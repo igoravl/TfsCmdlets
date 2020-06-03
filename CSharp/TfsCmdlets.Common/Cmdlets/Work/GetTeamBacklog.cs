@@ -30,7 +30,7 @@ using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
-    [Cmdlet(VerbsCommon.Get, "TeamBacklog")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeamBacklog")]
     [OutputType(typeof(BacklogLevelConfiguration))]
     public class GetTeamBacklog: BaseCmdlet
     {

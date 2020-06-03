@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
-    [Cmdlet(VerbsCommon.Set, "TeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(BoardCardRuleSettings))]
     public class SetTeamBoardCardRuleSetting : BaseCmdlet
     {

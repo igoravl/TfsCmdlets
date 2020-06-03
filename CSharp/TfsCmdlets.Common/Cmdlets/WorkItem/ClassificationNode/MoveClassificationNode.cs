@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
-    [Cmdlet(VerbsCommon.Move, "ClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Move, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
     public class MoveClassificationNode : BaseCmdlet
     {

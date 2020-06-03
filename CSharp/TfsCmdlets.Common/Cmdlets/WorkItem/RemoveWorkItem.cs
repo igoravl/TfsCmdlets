@@ -25,7 +25,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.Remove, "WorkItem", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsWorkItem", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveWorkItem : BaseCmdlet
     {
         /*

@@ -33,7 +33,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemQueryItem")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemQueryItem")]
     [OutputType(typeof(QueryHierarchyItem))]
     public class GetWorkItemQueryItem: BaseCmdlet
     {

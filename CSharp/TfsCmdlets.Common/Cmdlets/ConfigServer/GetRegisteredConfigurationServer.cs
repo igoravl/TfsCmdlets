@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <summary>
     /// Gets one or more Team Foundation Server addresses registered in the current computer.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "RegisteredConfigurationServer")]
+    [Cmdlet(VerbsCommon.Get, "TfsRegisteredConfigurationServer")]
     [OutputType("Microsoft.TeamFoundation.Client.RegisteredConfigurationServer")]
     [WindowsOnly]
     public partial class GetRegisteredConfigurationServer : BaseCmdlet

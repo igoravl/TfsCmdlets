@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
-    [Cmdlet(VerbsCommon.Remove, "TeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveTeamMember : BaseCmdlet
     {
         /*

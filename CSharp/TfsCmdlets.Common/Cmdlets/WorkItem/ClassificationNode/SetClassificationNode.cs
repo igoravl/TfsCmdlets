@@ -45,7 +45,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
-    [Cmdlet(VerbsCommon.Set, "ClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
     public class SetClassificationNode : BaseCmdlet
     {

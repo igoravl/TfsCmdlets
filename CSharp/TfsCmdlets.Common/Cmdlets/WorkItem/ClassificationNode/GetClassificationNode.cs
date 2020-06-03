@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
-    [Cmdlet(VerbsCommon.Get, "ClassificationNode")]
+    [Cmdlet(VerbsCommon.Get, "TfsClassificationNode")]
     [OutputType(typeof(WorkItemClassificationNode))]
     public class GetClassificationNode: BaseCmdlet
     {

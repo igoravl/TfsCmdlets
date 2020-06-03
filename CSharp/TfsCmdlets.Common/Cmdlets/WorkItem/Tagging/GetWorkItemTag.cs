@@ -18,7 +18,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemTag")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemTag")]
     [OutputType(typeof(WebApiTagDefinition))]
     public class GetWorkItemTag: BaseCmdlet
     {

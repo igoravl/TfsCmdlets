@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     ///   Azure DevOps Server 2019+ and Azure DevOps Services. When available/applicable, detailed 
     ///   information about installed updates, deployed sprints and so on are also provided.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "Version")]
+    [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
     public class GetVersion : BaseCmdlet
     {

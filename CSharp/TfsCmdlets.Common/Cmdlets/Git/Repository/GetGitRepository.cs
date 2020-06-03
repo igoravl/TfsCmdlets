@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     /// <summary>
     /// Gets information from one or more Git repositories in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "GitRepository")]
+    [Cmdlet(VerbsCommon.Get, "TfsGitRepository")]
     [OutputType(typeof(GitRepository))]
     public class GetGitRepository : BaseCmdlet<GitRepository>
     {

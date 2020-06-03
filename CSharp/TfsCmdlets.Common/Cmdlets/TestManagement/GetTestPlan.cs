@@ -24,7 +24,7 @@ using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
-    [Cmdlet(VerbsCommon.Get, "TestPlan")]
+    [Cmdlet(VerbsCommon.Get, "TfsTestPlan")]
     [OutputType(typeof(TestPlan))]
     public class GetTestPlan: BaseCmdlet
     {

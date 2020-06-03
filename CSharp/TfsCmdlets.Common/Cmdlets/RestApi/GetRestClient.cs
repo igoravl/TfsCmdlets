@@ -8,7 +8,7 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {
-    [Cmdlet(VerbsCommon.Get, "RestClient", DefaultParameterSetName = "Get by collection")]
+    [Cmdlet(VerbsCommon.Get, "TfsRestClient", DefaultParameterSetName = "Get by collection")]
     [OutputType(typeof(VssHttpClientBase))]
     public class GetRestClient : BaseCmdlet
     {

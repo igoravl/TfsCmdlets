@@ -24,7 +24,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
-    [Cmdlet(VerbsCommon.Remove, "GlobalList", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveGlobalList : BaseCmdlet
     {
         /*

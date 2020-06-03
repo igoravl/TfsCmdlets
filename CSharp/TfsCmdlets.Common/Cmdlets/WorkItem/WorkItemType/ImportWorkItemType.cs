@@ -29,7 +29,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
 {
-    [Cmdlet(VerbsData.Import, "WorkItemType", ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsData.Import, "TfsWorkItemType", ConfirmImpact = ConfirmImpact.Medium)]
     public class ImportWorkItemType : BaseCmdlet
     {
         /*

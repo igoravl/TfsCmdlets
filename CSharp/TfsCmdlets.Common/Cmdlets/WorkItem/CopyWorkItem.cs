@@ -59,7 +59,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.Copy, "WorkItem")]
+    [Cmdlet(VerbsCommon.Copy, "TfsWorkItem")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
     public class CopyWorkItem: BaseCmdlet
     {

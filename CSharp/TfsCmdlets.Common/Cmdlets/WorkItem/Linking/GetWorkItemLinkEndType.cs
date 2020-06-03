@@ -25,7 +25,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemLinkEndType")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemLinkEndType")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd))]
     public class GetWorkItemLinkEndType: BaseCmdlet
     {

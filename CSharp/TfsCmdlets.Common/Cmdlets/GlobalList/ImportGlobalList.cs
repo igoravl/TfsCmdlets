@@ -36,7 +36,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
-    [Cmdlet(VerbsData.Import, "GlobalList", ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsData.Import, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium)]
     public class ImportGlobalList : BaseCmdlet
     {
         /*

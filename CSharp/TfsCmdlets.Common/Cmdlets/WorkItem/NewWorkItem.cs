@@ -46,7 +46,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.New, "WorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsWorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
     public class NewWorkItem : BaseCmdlet
     {

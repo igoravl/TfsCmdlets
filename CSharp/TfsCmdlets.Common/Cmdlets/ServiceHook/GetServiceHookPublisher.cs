@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
-    [Cmdlet(VerbsCommon.Get, "ServiceHookPublisher")]
+    [Cmdlet(VerbsCommon.Get, "TfsServiceHookPublisher")]
     [OutputType(typeof(Publisher))]
     public class GetServiceHookPublisher: BaseCmdlet
     {

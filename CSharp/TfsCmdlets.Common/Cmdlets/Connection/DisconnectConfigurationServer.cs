@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// as provided by "Get-TfsConfigurationServer -Current" will no longer work after a call to this cmdlet, 
     /// unless their -Server argument is provided or a new call to Connect-TfsConfigurationServer is made.
     /// </remarks>
-    [Cmdlet(VerbsCommunications.Disconnect, "ConfigurationServer")]
+    [Cmdlet(VerbsCommunications.Disconnect, "TfsConfigurationServer")]
     public class DisconnectConfigurationServer : BaseCmdlet
     {
         /// <summary>

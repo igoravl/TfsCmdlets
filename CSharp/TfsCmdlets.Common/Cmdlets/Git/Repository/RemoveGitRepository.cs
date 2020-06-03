@@ -31,7 +31,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
-    [Cmdlet(VerbsCommon.Remove, "GitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveGitRepository : BaseCmdlet
     {
 

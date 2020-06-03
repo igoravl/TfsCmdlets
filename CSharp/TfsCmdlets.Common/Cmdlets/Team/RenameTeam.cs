@@ -29,7 +29,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.Rename, "Team", ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Rename, "TfsTeam", ConfirmImpact = ConfirmImpact.Medium)]
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.TeamFoundationTeam))]
     public class RenameTeam : BaseCmdlet
     {

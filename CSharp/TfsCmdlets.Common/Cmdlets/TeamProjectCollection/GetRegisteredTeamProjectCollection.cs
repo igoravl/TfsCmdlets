@@ -13,7 +13,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsCommon.Get, "RegisteredTeamProjectCollection")]
+    [Cmdlet(VerbsCommon.Get, "TfsRegisteredTeamProjectCollection")]
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]
     public class GetRegisteredTeamProjectCollection: BaseCmdlet
     {

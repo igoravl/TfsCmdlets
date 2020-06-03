@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
-    [Cmdlet(VerbsCommon.Set, "WorkItemBoardStatus", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "TfsWorkItemBoardStatus", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItem))]
     public class SetWorkItemBoardStatus : BaseCmdlet
     {

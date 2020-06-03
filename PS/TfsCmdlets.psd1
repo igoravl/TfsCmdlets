@@ -4,7 +4,6 @@
     Copyright = '(c) 2014 Igor Abade V. Leite. All rights reserved.'
     Description = 'PowerShell Cmdlets for Azure DevOps and Team Foundation Server'
     RootModule = 'Lib/Desktop/TfsCmdlets.PSDesktop.dll'
-    DefaultCommandPrefix = 'Tfs'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     ModuleVersion = '1.0.0.0'
     NestedModules = @('Private/Functions.psm1')

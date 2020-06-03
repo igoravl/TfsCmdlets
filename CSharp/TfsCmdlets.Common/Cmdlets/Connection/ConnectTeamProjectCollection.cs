@@ -93,7 +93,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     ///         the currently logged-in user). It's equivalent to the command:</para>
     ///   <code>Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Credential (Get-TfsCredential -Interactive)</code>
     /// </example>
-    [Cmdlet(VerbsCommunications.Connect, "TeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(VssConnection))]
     public class ConnectTeamProjectCollection : BaseCmdlet
     {

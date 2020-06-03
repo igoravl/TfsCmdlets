@@ -16,7 +16,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsCommon.Remove, "TeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveTeamProjectCollection : BaseCmdlet
     {
         /*

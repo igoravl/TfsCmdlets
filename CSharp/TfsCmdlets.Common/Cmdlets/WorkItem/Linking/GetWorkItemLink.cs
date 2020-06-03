@@ -30,7 +30,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemLink")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemLink")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.Link))]
     public class GetWorkItemLink: BaseCmdlet
     {

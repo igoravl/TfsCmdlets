@@ -57,7 +57,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsData.Dismount, "TeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess=true)]
+    [Cmdlet(VerbsData.Dismount, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess=true)]
 	[OutputType(typeof(string))]
     public class DismountTeamProjectCollection: BaseCmdlet
     {

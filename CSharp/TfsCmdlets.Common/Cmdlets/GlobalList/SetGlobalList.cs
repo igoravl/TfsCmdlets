@@ -23,7 +23,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
-    [Cmdlet(VerbsCommon.Set, "GlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     public class SetGlobalList : BaseCmdlet
     {
         /*

@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <summary>
     /// Connects to a team.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "Team", DefaultParameterSetName = "Explicit credentials")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsTeam", DefaultParameterSetName = "Explicit credentials")]
     [OutputType(typeof(WebApiTeam))]
     public class ConnectTeam : BaseCmdlet
     {

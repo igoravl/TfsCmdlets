@@ -18,7 +18,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Identity
 {
-    [Cmdlet(VerbsCommon.Get, "Identity")]
+    [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
     public class GetIdentity: BaseCmdlet
     {

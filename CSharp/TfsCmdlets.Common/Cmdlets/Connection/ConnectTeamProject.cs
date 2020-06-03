@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <summary>
     /// Connects to a Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "TeamProject", DefaultParameterSetName = "Explicit credentials")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Explicit credentials")]
     [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
     public class ConnectTeamProject : BaseCmdlet
     {

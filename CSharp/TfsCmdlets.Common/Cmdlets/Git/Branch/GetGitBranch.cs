@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// <summary>
     /// Gets information from one or more branches in a remote Git repository.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "GitBranch")]
+    [Cmdlet(VerbsCommon.Get, "TfsGitBranch")]
     [OutputType(typeof(GitBranchStats))]
     public class GetGitBranch : BaseCmdlet<GitBranchStats>
     {

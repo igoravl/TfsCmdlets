@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <summary>
     /// Gets the configuration server database connection string.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ConfigurationServerConnectionString")]
+    [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
     [OutputType(typeof(string))]
     [WindowsOnly]
     public class GetConfigurationServerConnectionString : BaseCmdlet

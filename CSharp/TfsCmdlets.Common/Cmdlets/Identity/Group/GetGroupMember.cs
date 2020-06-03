@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet(VerbsCommon.Get, "GroupMember")]
+    [Cmdlet(VerbsCommon.Get, "TfsGroupMember")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
     public class GetGroupMember: BaseCmdlet
     {

@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <summary>
     ///   Gets information about a configuration server.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ConfigurationServer", DefaultParameterSetName = "Get by server")]
+    [Cmdlet(VerbsCommon.Get, "TfsConfigurationServer", DefaultParameterSetName = "Get by server")]
     [WindowsOnly]
     public partial class GetConfigurationServer : BaseCmdlet
     {

@@ -13,7 +13,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsLifecycle.Stop, "TeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Stop, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class StopTeamProjectCollection : BaseCmdlet
     {
         /*

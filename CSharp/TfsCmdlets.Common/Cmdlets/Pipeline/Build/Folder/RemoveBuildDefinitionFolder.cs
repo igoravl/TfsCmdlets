@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
-    [Cmdlet(VerbsCommon.Remove, "BuildDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
     public class RemoveBuildDefinitionFolder : BaseCmdlet
     {

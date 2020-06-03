@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.Move, "WorkItem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Move, "TfsWorkItem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
     public class MoveWorkItem : BaseCmdlet
     {

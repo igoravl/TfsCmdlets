@@ -42,7 +42,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
-    [Cmdlet(VerbsData.Export, "GlobalList")]
+    [Cmdlet(VerbsData.Export, "TfsGlobalList")]
     [OutputType(typeof(string))]
     public class ExportGlobalList: BaseCmdlet
     {

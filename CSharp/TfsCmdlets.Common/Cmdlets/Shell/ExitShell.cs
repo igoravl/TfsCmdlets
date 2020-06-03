@@ -3,7 +3,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
-    [Cmdlet(VerbsCommon.Exit, "Shell")]
+    [Cmdlet(VerbsCommon.Exit, "TfsShell")]
     public class ExitShell : BaseCmdlet
     {
         /// <summary>

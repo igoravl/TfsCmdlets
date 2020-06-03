@@ -15,7 +15,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
-    [Cmdlet(VerbsCommon.Remove, "WorkItemTag", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveWorkItemTag : BaseCmdlet
     {
         /*

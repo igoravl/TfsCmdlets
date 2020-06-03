@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
-    [Cmdlet(VerbsCommon.Get, "BuildDefinitionFolder")]
+    [Cmdlet(VerbsCommon.Get, "TfsBuildDefinitionFolder")]
     [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
     public class GetBuildDefinitionFolder: BaseCmdlet
     {

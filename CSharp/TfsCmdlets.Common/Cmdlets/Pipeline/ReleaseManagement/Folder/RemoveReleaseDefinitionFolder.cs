@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
 {
-    [Cmdlet(VerbsCommon.Remove, "ReleaseDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsReleaseDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder))]
     public class RemoveReleaseDefinitionFolder : BaseCmdlet
     {

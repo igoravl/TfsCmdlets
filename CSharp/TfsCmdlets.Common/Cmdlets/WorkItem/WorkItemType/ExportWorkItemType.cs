@@ -38,7 +38,7 @@ using System.Xml;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
 {
-    [Cmdlet(VerbsData.Export, "WorkItemType")]
+    [Cmdlet(VerbsData.Export, "TfsWorkItemType")]
     [OutputType(typeof(XmlDocument))]
     public class ExportWorkItemType: BaseCmdlet
     {

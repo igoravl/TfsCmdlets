@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet(VerbsCommon.Remove, "GroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsGroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveGroupMember : BaseCmdlet
     {
         /*

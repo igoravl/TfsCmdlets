@@ -30,7 +30,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItem", DefaultParameterSetName="Query by text")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName="Query by text")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
     public class GetWorkItem: BaseCmdlet
     {

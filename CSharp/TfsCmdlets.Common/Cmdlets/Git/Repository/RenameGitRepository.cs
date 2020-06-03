@@ -33,7 +33,7 @@ using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
-    [Cmdlet(VerbsCommon.Rename, "GitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Rename, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(GitRepository))]
     public class RenameGitRepository : BaseCmdlet
     {

@@ -29,7 +29,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.Set, "Team", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Set, "TfsTeam", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.TeamFoundationTeam))]
     public class SetTeam : BaseCmdlet
     {

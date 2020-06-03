@@ -24,7 +24,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet(VerbsData.Import, "ProcessTemplate", ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsData.Import, "TfsProcessTemplate", ConfirmImpact = ConfirmImpact.Medium)]
     public class ImportProcessTemplate : BaseCmdlet
     {
         /*

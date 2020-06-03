@@ -7,7 +7,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
-    [Cmdlet(VerbsCommon.Enter, "Shell")]
+    [Cmdlet(VerbsCommon.Enter, "TfsShell")]
     public class EnterShell : BaseCmdlet
     {
         [Parameter()]

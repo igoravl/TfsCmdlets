@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
-    [Cmdlet(VerbsCommon.New, "BuildDefinitionFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
     public class NewBuildDefinitionFolder : BaseCmdlet
     {

@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet(VerbsCommon.Add, "GroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Add, "TfsGroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     public class AddGroupMember : BaseCmdlet
     {
         /*

@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
-    [Cmdlet(VerbsCommon.Get, "TeamBoardCardRuleSetting")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeamBoardCardRuleSetting")]
     [OutputType(typeof(BoardCardRuleSettings))]
     public class GetTeamBoardCardRuleSetting: BaseCmdlet
     {

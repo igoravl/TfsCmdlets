@@ -33,7 +33,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet(VerbsCommon.New, "Team", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsTeam", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTeam))]
     public class NewTeam : BaseCmdlet
     {

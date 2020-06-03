@@ -35,7 +35,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git.Repository
 {
-    [Cmdlet(VerbsCommon.New, "GitRepository", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsGitRepository", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
     public class NewGitRepository : BaseCmdlet
     {

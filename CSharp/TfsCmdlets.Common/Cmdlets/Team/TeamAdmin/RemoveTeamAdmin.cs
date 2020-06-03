@@ -3,7 +3,7 @@ using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
-    [Cmdlet(VerbsCommon.Remove, "TeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     [OutputType(typeof(TeamAdmins))]
     public class RemoveTeamAdmin : BaseCmdlet
     {

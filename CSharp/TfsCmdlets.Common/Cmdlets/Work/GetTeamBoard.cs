@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
-    [Cmdlet(VerbsCommon.Get, "TeamBoard")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeamBoard")]
     [OutputType(typeof(Board))]
     public class GetTeamBoard: BaseCmdlet
     {

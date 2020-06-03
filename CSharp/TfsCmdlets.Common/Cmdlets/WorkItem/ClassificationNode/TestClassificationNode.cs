@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
-    [Cmdlet(VerbsDiagnostic.Test, "ClassificationNode")]
+    [Cmdlet(VerbsDiagnostic.Test, "TfsClassificationNode")]
     public class TestClassificationNode: BaseCmdlet
     {
 /*

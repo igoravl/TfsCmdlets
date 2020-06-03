@@ -16,7 +16,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
-    [Cmdlet(VerbsCommon.Rename, "WorkItemTag", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Rename, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTagDefinition))]
     public class RenameWorkItemTag : BaseCmdlet
     {

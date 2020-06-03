@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
-    [Cmdlet(VerbsCommon.Get, "TeamMember")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeamMember")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
     public class GetTeamMember: BaseCmdlet
     {

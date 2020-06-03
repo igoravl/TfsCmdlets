@@ -28,7 +28,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.History
 {
-    [Cmdlet(VerbsCommon.Get, "WorkItemHistory")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemHistory")]
     [OutputType(typeof(PSCustomObject))]
     public class GetWorkItemHistory: BaseCmdlet
     {

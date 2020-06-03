@@ -37,7 +37,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
 {
-    [Cmdlet(VerbsCommon.Remove, "ClassificationNode", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveClassificationNode : BaseCmdlet
     {
         /*

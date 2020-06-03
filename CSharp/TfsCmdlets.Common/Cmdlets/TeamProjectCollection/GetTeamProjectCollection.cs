@@ -47,7 +47,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Cmdlet(VerbsCommon.Get, "TeamProjectCollection", DefaultParameterSetName = "Get by collection")]
+    [Cmdlet(VerbsCommon.Get, "TfsTeamProjectCollection", DefaultParameterSetName = "Get by collection")]
     [OutputType(typeof(VssConnection))]
     public class GetTeamProjectCollection : BaseCmdlet
     {

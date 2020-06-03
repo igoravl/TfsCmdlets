@@ -13,7 +13,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Cmdlet(VerbsCommon.New, "TeamProject", DefaultParameterSetName = "Get by project", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsTeamProject", DefaultParameterSetName = "Get by project", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.Project))]
     public class NewTeamProject : BaseCmdlet
     {

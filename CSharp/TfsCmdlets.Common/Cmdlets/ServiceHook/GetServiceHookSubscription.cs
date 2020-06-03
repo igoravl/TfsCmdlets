@@ -3,7 +3,7 @@ using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
-    [Cmdlet(VerbsCommon.Get, "ServiceHookSubscription")]
+    [Cmdlet(VerbsCommon.Get, "TfsServiceHookSubscription")]
     [OutputType(typeof(Subscription))]
     public class GetServiceHookSubscription: BaseCmdlet
     {

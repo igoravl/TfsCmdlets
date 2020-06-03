@@ -30,7 +30,7 @@ using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 {
-    [Cmdlet(VerbsCommon.Get, "ReleaseDefinition")]
+    [Cmdlet(VerbsCommon.Get, "TfsReleaseDefinition")]
     [OutputType(typeof(ReleaseDefinition))]
     public class GetReleaseDefinition: BaseCmdlet
     {

@@ -37,8 +37,8 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Cmdlet(VerbsCommon.Remove, "TeamProject", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
-    public class RemoveTeamProject
+    [Cmdlet(VerbsCommon.Remove, "TfsTeamProject", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    public class RemoveTeamProject: BaseCmdlet
     {
         /*
             [Parameter(Position=0,ValueFromPipeline=true)]

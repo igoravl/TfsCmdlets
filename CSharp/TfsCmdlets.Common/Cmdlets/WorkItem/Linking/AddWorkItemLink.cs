@@ -57,7 +57,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet(VerbsCommon.Add, "WorkItemLink")]
+    [Cmdlet(VerbsCommon.Add, "TfsWorkItemLink")]
     public class AddWorkItemLink: BaseCmdlet
     {
 /*

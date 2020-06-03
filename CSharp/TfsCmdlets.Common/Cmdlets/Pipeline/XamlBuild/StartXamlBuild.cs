@@ -36,7 +36,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
 {
-    [Cmdlet(VerbsLifecycle.Start, "XamlBuild", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Start, "TfsXamlBuild", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     public class StartXamlBuild : BaseCmdlet
     {
         /*
