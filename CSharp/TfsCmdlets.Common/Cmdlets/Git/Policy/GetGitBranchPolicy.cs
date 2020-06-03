@@ -10,7 +10,7 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Cmdlets.Git.Policy
 {
     /// <summary>
-    /// Gets information about the Git branch policies defined for the given branches.
+    /// Gets the Git branch policy configuration of the given Git branches.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "GitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
