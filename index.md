@@ -55,13 +55,13 @@ If you're using Windows 10, Windows Server 2016 (or later) or installed Windows 
 
 Open an elevated PowerShell prompt and type:
 
-```PowerShell
+```powershell
 Install-Module TfsCmdlets
 ```
 
 Optionally, you can install it locally in your user profile. That is particularly useful when you can't run as an administrator or don't want to make the module available to all users in the computer:
 
-```PowerShell
+```powershell
 Install-Module TfsCmdlets -Scope CurrentUser
 ```
 
@@ -71,7 +71,7 @@ Install-Module TfsCmdlets -Scope CurrentUser
 
 Using Chocolatey? Then open an elevated PowerShell prompt and type:
 
-```PowerShell
+```powershell
 # To install the latest pre-release (alpha, beta) version of TfsCmdlets, type:
 choco install TfsCmdlets -pre
 
@@ -124,7 +124,7 @@ You must end up with a folder structure similar to ```[Documents]\WindowsPowerSh
 
 To test the installation, open a new PowerShell window and type:
 
-```PowerShell
+```powershell
 Import-Module TfsCmdlets
 ```
 
