@@ -19,7 +19,7 @@ Firstly, download and configure the latest version of the [Azure DevOps Virtual 
 
 Next, install TfsCmdlets inside the virtual machine (see section "_How to install_", below), open a PowerShell window and try the following commands:
 
-```PowerShell
+```powershell
 # Connect to the FabrikamFiber team project collection
 # (Will be used as default for the -Collection argument when required by a cmdlet)
 Connect-TfsTeamProjectCollection http://vsalm:8080/tfs/FabrikamFiberCollection
