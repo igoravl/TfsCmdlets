@@ -1,0 +1,15 @@
+_site
+.sass-cache
+.jekyll-metadata
+vendor
+.bash*
+.profile
+.sudo*
+.gem
+.config
+.bundle
+.vscode*
+*:Zone.Identifier
+.jekyll-cache
+[Pp]ackages
+[Oo]ut
