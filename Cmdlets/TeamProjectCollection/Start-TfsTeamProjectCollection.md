@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Start-TfsTeamProjectCollection
+description: 
 parent: TeamProjectCollection
-grand_parent: Cmdlets
+breadcrumbs: [TeamProjectCollection]
 ---
 ## Start-TfsTeamProjectCollection
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Start-TfsTeamProjectCollection
-    [<CommonParameter>]
+
+Start-TfsTeamProjectCollection     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

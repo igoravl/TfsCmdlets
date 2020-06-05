@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsTeamProject
+description: 
 parent: TeamProject
-grand_parent: Cmdlets
+breadcrumbs: [TeamProject]
 ---
 ## Remove-TfsTeamProject
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsTeamProject
-    [<CommonParameter>]
+
+Remove-TfsTeamProject     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

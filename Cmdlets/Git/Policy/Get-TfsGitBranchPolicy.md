@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsGitBranchPolicy
+description: Gets the Git branch policy configuration of the given Git branches.
 parent: Git/Policy
-grand_parent: Cmdlets
+breadcrumbs: [Git,Policy]
 ---
 ## Get-TfsGitBranchPolicy
 {: .no_toc}
@@ -10,17 +11,17 @@ grand_parent: Cmdlets
 Gets the Git branch policy configuration of the given Git branches.
 
 ```powershell
-Get-TfsGitBranchPolicy [[-PolicyType] <object>]
-    [-Branch <object>]
-    [-Collection <object>]
-    [-Project <object>]
-    [-Repository <object>]
-    [<CommonParameter>]
+
+Get-TfsGitBranchPolicy     [-PolicyType <object>]
+     [-Branch <object>]
+     [-Project <object>]
+     [-Collection <object>]
+     [-Repository <object>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

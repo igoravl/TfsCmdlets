@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: New-TfsWorkItemQueryItem
+description: 
 parent: WorkItem/Query
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,Query]
 ---
 ## New-TfsWorkItemQueryItem
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-New-TfsWorkItemQueryItem
-    [<CommonParameter>]
+
+New-TfsWorkItemQueryItem     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

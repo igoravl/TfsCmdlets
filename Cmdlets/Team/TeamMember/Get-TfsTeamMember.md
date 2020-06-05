@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsTeamMember
+description: 
 parent: Team/TeamMember
-grand_parent: Cmdlets
+breadcrumbs: [Team,TeamMember]
 ---
 ## Get-TfsTeamMember
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsTeamMember
-    [<CommonParameter>]
 
+Get-TfsTeamMember
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

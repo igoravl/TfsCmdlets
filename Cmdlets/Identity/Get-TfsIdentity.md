@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsIdentity
+description: 
 parent: Identity
-grand_parent: Cmdlets
+breadcrumbs: [Identity]
 ---
 ## Get-TfsIdentity
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsIdentity
-    [<CommonParameter>]
 
+Get-TfsIdentity
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsServiceHookConsumer
+description: 
 parent: ServiceHook
-grand_parent: Cmdlets
+breadcrumbs: [ServiceHook]
 ---
 ## Get-TfsServiceHookConsumer
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsServiceHookConsumer
-    [<CommonParameter>]
 
+Get-TfsServiceHookConsumer
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

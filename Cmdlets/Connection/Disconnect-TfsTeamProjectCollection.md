@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Disconnect-TfsTeamProjectCollection
+description: Disconnects from the currently connected TFS team project collection or Azure DevOps organization.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Disconnect-TfsTeamProjectCollection
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 Disconnects from the currently connected TFS team project collection or Azure DevOps organization.
 
 ```powershell
-Disconnect-TfsTeamProjectCollection
-    [<CommonParameter>]
 
+Disconnect-TfsTeamProjectCollection
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

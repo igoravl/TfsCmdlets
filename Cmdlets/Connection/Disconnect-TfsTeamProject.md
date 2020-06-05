@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Disconnect-TfsTeamProject
+description: Disconnects from the currently connected team project.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Disconnect-TfsTeamProject
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 Disconnects from the currently connected team project.
 
 ```powershell
-Disconnect-TfsTeamProject
-    [<CommonParameter>]
 
+Disconnect-TfsTeamProject
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

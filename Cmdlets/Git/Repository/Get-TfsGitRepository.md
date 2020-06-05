@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsGitRepository
+description: Gets information from one or more Git repositories in a team project.
 parent: Git/Repository
-grand_parent: Cmdlets
+breadcrumbs: [Git,Repository]
 ---
 ## Get-TfsGitRepository
 {: .no_toc}
@@ -10,15 +11,15 @@ grand_parent: Cmdlets
 Gets information from one or more Git repositories in a team project.
 
 ```powershell
-Get-TfsGitRepository [[-Repository] <object>]
-    [-Collection <object>]
-    [-Project <object>]
-    [<CommonParameter>]
+
+Get-TfsGitRepository     [-Repository <object>]
+     [-Project <object>]
+     [-Collection <object>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

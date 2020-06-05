@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Copy-TfsTestPlan
+description: 
 parent: TestManagement
-grand_parent: Cmdlets
+breadcrumbs: [TestManagement]
 ---
 ## Copy-TfsTestPlan
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Copy-TfsTestPlan
-    [<CommonParameter>]
 
+Copy-TfsTestPlan
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

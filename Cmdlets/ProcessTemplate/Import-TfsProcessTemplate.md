@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Import-TfsProcessTemplate
+description: 
 parent: ProcessTemplate
-grand_parent: Cmdlets
+breadcrumbs: [ProcessTemplate]
 ---
 ## Import-TfsProcessTemplate
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Import-TfsProcessTemplate
-    [<CommonParameter>]
 
+Import-TfsProcessTemplate
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

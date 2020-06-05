@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Add-TfsTeamAdmin
+description: 
 parent: Team/TeamAdmin
-grand_parent: Cmdlets
+breadcrumbs: [Team,TeamAdmin]
 ---
 ## Add-TfsTeamAdmin
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Add-TfsTeamAdmin
-    [<CommonParameter>]
+
+Add-TfsTeamAdmin     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

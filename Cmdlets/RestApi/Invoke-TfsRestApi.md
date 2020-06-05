@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Invoke-TfsRestApi
+description: 
 parent: RestApi
-grand_parent: Cmdlets
+breadcrumbs: [RestApi]
 ---
 ## Invoke-TfsRestApi
 {: .no_toc}
@@ -10,22 +11,26 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Invoke-TfsRestApi
-    [-Path] <string>
-    [-AdditionalHeaders <Dictionary`2>]
-    [-ApiVersion <string>]
-    [-AsTask]
-    [-Body <string>]
-    [-Collection <object>]
-    [-Method <string>]
-    [-Project <object>]
-    [-QueryParameters <D
-    [<CommonParameter>]
+
+Invoke-TfsRestApi     -Path <string>
+     [-Method <string>]
+     [-Body <string>]
+     [-RequestContentType <string>]
+     [-ResponseContentType <string>]
+     [-AdditionalHeaders <Dictionary`2>]
+     [-QueryParameters <Dictionary`2>]
+     [-ApiVersion <string>]
+     [-Team <object>]
+     [-Project <object>]
+     [-UseHost <string>]
+     [-Collection <object>]
+     [-Raw]
+     [-AsTask]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

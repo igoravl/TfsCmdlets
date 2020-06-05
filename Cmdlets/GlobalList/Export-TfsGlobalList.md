@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Export-TfsGlobalList
+description: 
 parent: GlobalList
-grand_parent: Cmdlets
+breadcrumbs: [GlobalList]
 ---
 ## Export-TfsGlobalList
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Export-TfsGlobalList
-    [<CommonParameter>]
 
+Export-TfsGlobalList
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

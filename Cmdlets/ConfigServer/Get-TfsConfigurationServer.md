@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsConfigurationServer
+description: Gets information about a configuration server.
 parent: ConfigServer
-grand_parent: Cmdlets
+breadcrumbs: [ConfigServer]
 ---
 ## Get-TfsConfigurationServer
 {: .no_toc}
@@ -11,19 +12,17 @@ Gets information about a configuration server.
 
 ```powershell
 # Get by server
-Get-TfsConfigurationServer [[-Server] <object>] [[-Credential] <object>]
-    [<CommonParameter>]
-
-
-# Get current
-Get-TfsConfigurationServer
-    -Current
-    [<CommonParameter>]
+ 
+Get-TfsConfigurationServer     [-Server <object>]
+     [-Credential <object>]
+ # Get current
+ 
+Get-TfsConfigurationServer     -Current
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

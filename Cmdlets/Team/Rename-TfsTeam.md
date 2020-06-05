@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Rename-TfsTeam
+description: 
 parent: Team
-grand_parent: Cmdlets
+breadcrumbs: [Team]
 ---
 ## Rename-TfsTeam
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Rename-TfsTeam
-    [<CommonParameter>]
 
+Rename-TfsTeam
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

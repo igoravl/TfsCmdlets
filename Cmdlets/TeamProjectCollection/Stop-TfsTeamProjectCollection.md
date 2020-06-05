@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Stop-TfsTeamProjectCollection
+description: 
 parent: TeamProjectCollection
-grand_parent: Cmdlets
+breadcrumbs: [TeamProjectCollection]
 ---
 ## Stop-TfsTeamProjectCollection
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Stop-TfsTeamProjectCollection
-    [<CommonParameter>]
+
+Stop-TfsTeamProjectCollection     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

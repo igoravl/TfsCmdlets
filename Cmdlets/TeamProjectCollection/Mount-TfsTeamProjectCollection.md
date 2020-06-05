@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Mount-TfsTeamProjectCollection
+description: 
 parent: TeamProjectCollection
-grand_parent: Cmdlets
+breadcrumbs: [TeamProjectCollection]
 ---
 ## Mount-TfsTeamProjectCollection
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Mount-TfsTeamProjectCollection
-    [<CommonParameter>]
 
+Mount-TfsTeamProjectCollection
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

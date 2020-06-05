@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Start-TfsXamlBuild
+description: 
 parent: Pipeline/XamlBuild
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,XamlBuild]
 ---
 ## Start-TfsXamlBuild
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Start-TfsXamlBuild
-    [<CommonParameter>]
+
+Start-TfsXamlBuild     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

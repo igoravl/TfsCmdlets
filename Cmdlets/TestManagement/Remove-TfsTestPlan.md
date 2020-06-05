@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsTestPlan
+description: 
 parent: TestManagement
-grand_parent: Cmdlets
+breadcrumbs: [TestManagement]
 ---
 ## Remove-TfsTestPlan
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsTestPlan
-    [<CommonParameter>]
+
+Remove-TfsTestPlan     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

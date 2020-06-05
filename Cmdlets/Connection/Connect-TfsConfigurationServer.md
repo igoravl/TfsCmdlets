@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Connect-TfsConfigurationServer
+description: Connects to a configuration server.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Connect-TfsConfigurationServer
 {: .no_toc}
@@ -11,37 +12,36 @@ Connects to a configuration server.
 
 ```powershell
 # Prompt for credential
-Connect-TfsConfigurationServer
-    [-Server] <object>
-    -Cached
-    [-Passthru] [<CommonParameters>]Connect-TfsConfigurationServer
-    [-Server] <object>
-    [-UserName] <string> [[-Password] <Secure
-    [<CommonParameter>]
-
-
-# Cached credentials
-[<CommonParameters>]Connect-TfsConfigurationServer
-    [-Server] <object>
-    -Credential <object>
-    [-Passthru]
-    [<CommonParameter>]
-
-
-# User name and password
-Connect-TfsConfigurationServer
-    [-Server] <object>
-    -AccessToken <string>
-    [-Passthru] [<CommonParameters>]Connect-TfsConfigurationServer
-    [-Server] <object>
-    [-Interactive]
-    [-Passthru]
-    [<CommonParameter>]
+ 
+Connect-TfsConfigurationServer     -Server <object>
+     [-Interactive]
+     [-Passthru]
+ # Cached credentials
+ 
+Connect-TfsConfigurationServer     -Server <object>
+     -Cached
+     [-Passthru]
+ # User name and password
+ 
+Connect-TfsConfigurationServer     -Server <object>
+     -UserName <string>
+     [-Password <SecureString>]
+     [-Passthru]
+ # Credential object
+ 
+Connect-TfsConfigurationServer     -Server <object>
+     -Credential <object>
+     [-Passthru]
+ # Personal Access Token
+ 
+Connect-TfsConfigurationServer     -Server <object>
+     -AccessToken <string>
+     [-Passthru]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

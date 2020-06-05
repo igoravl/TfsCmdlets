@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Set-TfsGlobalList
+description: 
 parent: GlobalList
-grand_parent: Cmdlets
+breadcrumbs: [GlobalList]
 ---
 ## Set-TfsGlobalList
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Set-TfsGlobalList
-    [<CommonParameter>]
+
+Set-TfsGlobalList     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

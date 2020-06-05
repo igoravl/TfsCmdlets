@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Set-TfsTeamBoardCardRuleSetting
+description: 
 parent: Work
-grand_parent: Cmdlets
+breadcrumbs: [Work]
 ---
 ## Set-TfsTeamBoardCardRuleSetting
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Set-TfsTeamBoardCardRuleSetting
-    [<CommonParameter>]
+
+Set-TfsTeamBoardCardRuleSetting     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

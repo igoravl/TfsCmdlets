@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsProcessTemplate
+description: 
 parent: ProcessTemplate
-grand_parent: Cmdlets
+breadcrumbs: [ProcessTemplate]
 ---
 ## Get-TfsProcessTemplate
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsProcessTemplate
-    [<CommonParameter>]
 
+Get-TfsProcessTemplate
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

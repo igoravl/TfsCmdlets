@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Add-TfsGroupMember
+description: 
 parent: Identity/Group
-grand_parent: Cmdlets
+breadcrumbs: [Identity,Group]
 ---
 ## Add-TfsGroupMember
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Add-TfsGroupMember
-    [<CommonParameter>]
+
+Add-TfsGroupMember     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

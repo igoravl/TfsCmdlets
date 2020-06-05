@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsTeamProject
+description: Gets information about one or more team projects.
 parent: TeamProject
-grand_parent: Cmdlets
+breadcrumbs: [TeamProject]
 ---
 ## Get-TfsTeamProject
 {: .no_toc}
@@ -11,19 +12,17 @@ Gets information about one or more team projects.
 
 ```powershell
 # Get by project
-Get-TfsTeamProject [[-Project] <object>] [[-Collection] <object>]
-    [<CommonParameter>]
-
-
-# Get current
-Get-TfsTeamProject
-    -Current
-    [<CommonParameter>]
+ 
+Get-TfsTeamProject     [-Project <object>]
+     [-Collection <object>]
+ # Get current
+ 
+Get-TfsTeamProject     -Current
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

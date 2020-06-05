@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Copy-TfsWorkItem
+description: 
 parent: WorkItem
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem]
 ---
 ## Copy-TfsWorkItem
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Copy-TfsWorkItem
-    [<CommonParameter>]
 
+Copy-TfsWorkItem
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

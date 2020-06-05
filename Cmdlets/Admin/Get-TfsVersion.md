@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsVersion
+description: Gets the version information about Team Foundation / Azure DevOps servers and Azure DevOps Services organizations.
 parent: Admin
-grand_parent: Cmdlets
+breadcrumbs: [Admin]
 ---
 ## Get-TfsVersion
 {: .no_toc}
@@ -10,14 +11,13 @@ grand_parent: Cmdlets
 Gets the version information about Team Foundation / Azure DevOps servers and Azure DevOps Services organizations.
 
 ```powershell
-Get-TfsVersion
-    [-Collection <object>]
-    [<CommonParameter>]
+
+Get-TfsVersion     [-Collection <object>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

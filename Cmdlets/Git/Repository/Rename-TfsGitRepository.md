@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Rename-TfsGitRepository
+description: 
 parent: Git/Repository
-grand_parent: Cmdlets
+breadcrumbs: [Git,Repository]
 ---
 ## Rename-TfsGitRepository
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Rename-TfsGitRepository
-    [<CommonParameter>]
+
+Rename-TfsGitRepository     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

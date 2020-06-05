@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsGitRepository
+description: 
 parent: Git/Repository
-grand_parent: Cmdlets
+breadcrumbs: [Git,Repository]
 ---
 ## Remove-TfsGitRepository
 {: .no_toc}
@@ -10,16 +11,17 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsGitRepository
-    -Repository <object>
-    [-Collection <object>]
-    [-Project <object>]
-    [<CommonParameter>]
+
+Remove-TfsGitRepository     -Repository <object>
+     [-Project <object>]
+     [-Collection <object>]
+     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

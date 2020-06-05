@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsRegisteredTeamProjectCollection
+description: 
 parent: TeamProjectCollection
-grand_parent: Cmdlets
+breadcrumbs: [TeamProjectCollection]
 ---
 ## Get-TfsRegisteredTeamProjectCollection
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsRegisteredTeamProjectCollection
-    [<CommonParameter>]
 
+Get-TfsRegisteredTeamProjectCollection
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

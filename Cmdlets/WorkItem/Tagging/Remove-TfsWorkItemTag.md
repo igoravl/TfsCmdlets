@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsWorkItemTag
+description: 
 parent: WorkItem/Tagging
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,Tagging]
 ---
 ## Remove-TfsWorkItemTag
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsWorkItemTag
-    [<CommonParameter>]
+
+Remove-TfsWorkItemTag     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsRegisteredConfigurationServer
+description: Gets one or more Team Foundation Server addresses registered in the current computer.
 parent: ConfigServer
-grand_parent: Cmdlets
+breadcrumbs: [ConfigServer]
 ---
 ## Get-TfsRegisteredConfigurationServer
 {: .no_toc}
@@ -10,13 +11,13 @@ grand_parent: Cmdlets
 Gets one or more Team Foundation Server addresses registered in the current computer.
 
 ```powershell
-Get-TfsRegisteredConfigurationServer [[-Server] <string>]
-    [<CommonParameter>]
+
+Get-TfsRegisteredConfigurationServer     [-Server <string>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

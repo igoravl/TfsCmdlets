@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsTeamMember
+description: 
 parent: Team/TeamMember
-grand_parent: Cmdlets
+breadcrumbs: [Team,TeamMember]
 ---
 ## Remove-TfsTeamMember
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsTeamMember
-    [<CommonParameter>]
+
+Remove-TfsTeamMember     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

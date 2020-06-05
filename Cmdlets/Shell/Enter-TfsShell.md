@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Enter-TfsShell
+description: 
 parent: Shell
-grand_parent: Cmdlets
+breadcrumbs: [Shell]
 ---
 ## Enter-TfsShell
 {: .no_toc}
@@ -10,15 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Enter-TfsShell
-    [-DoNotClearHost]
-    [-WindowTitle <string>]
-    [<CommonParameter>]
+
+Enter-TfsShell     [-WindowTitle <string>]
+     [-DoNotClearHost]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

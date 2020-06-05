@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsBuildDefinitionFolder
+description: 
 parent: Pipeline/Build/Folder
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,Build,Folder]
 ---
 ## Remove-TfsBuildDefinitionFolder
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsBuildDefinitionFolder
-    [<CommonParameter>]
+
+Remove-TfsBuildDefinitionFolder     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

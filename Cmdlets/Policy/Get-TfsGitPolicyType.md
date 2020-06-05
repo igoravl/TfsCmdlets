@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsGitPolicyType
+description: Gets one or more Git branch policies supported by the given team project.
 parent: Policy
-grand_parent: Cmdlets
+breadcrumbs: [Policy]
 ---
 ## Get-TfsGitPolicyType
 {: .no_toc}
@@ -10,15 +11,15 @@ grand_parent: Cmdlets
 Gets one or more Git branch policies supported by the given team project.
 
 ```powershell
-Get-TfsGitPolicyType [[-PolicyType] <object>]
-    [-Collection <object>]
-    [-Project <object>]
-    [<CommonParameter>]
+
+Get-TfsGitPolicyType     [-PolicyType <object>]
+     [-Project <object>]
+     [-Collection <object>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

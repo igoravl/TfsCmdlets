@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsTeam
+description: 
 parent: Team
-grand_parent: Cmdlets
+breadcrumbs: [Team]
 ---
 ## Get-TfsTeam
 {: .no_toc}
@@ -10,17 +11,21 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsTeam [[-Team] <object>]
-    [-Collection <object>]
-    [-IncludeMembers]
-    [-IncludeSettings]
-    [-Project <object>]
-    [<CommonParameter>]
+# Get by team
+ 
+Get-TfsTeam     [-Team <object>]
+     [-IncludeMembers]
+     [-IncludeSettings]
+     [-Project <object>]
+     [-Collection <object>]
+ # Get current
+ 
+Get-TfsTeam     -Current
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

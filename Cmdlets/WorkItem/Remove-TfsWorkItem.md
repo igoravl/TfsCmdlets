@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsWorkItem
+description: 
 parent: WorkItem
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem]
 ---
 ## Remove-TfsWorkItem
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsWorkItem
-    [<CommonParameter>]
+
+Remove-TfsWorkItem     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Disconnect-TfsConfigurationServer
+description: Disconnects from the currently connected configuration server.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Disconnect-TfsConfigurationServer
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 Disconnects from the currently connected configuration server.
 
 ```powershell
-Disconnect-TfsConfigurationServer
-    [<CommonParameter>]
 
+Disconnect-TfsConfigurationServer
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

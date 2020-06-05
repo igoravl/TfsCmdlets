@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsBuildDefinitionFolder
+description: 
 parent: Pipeline/Build/Folder
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,Build,Folder]
 ---
 ## Get-TfsBuildDefinitionFolder
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsBuildDefinitionFolder
-    [<CommonParameter>]
 
+Get-TfsBuildDefinitionFolder
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

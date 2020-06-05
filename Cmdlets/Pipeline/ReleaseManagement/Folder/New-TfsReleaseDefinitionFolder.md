@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: New-TfsReleaseDefinitionFolder
+description: 
 parent: Pipeline/ReleaseManagement/Folder
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,ReleaseManagement,Folder]
 ---
 ## New-TfsReleaseDefinitionFolder
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-New-TfsReleaseDefinitionFolder
-    [<CommonParameter>]
+
+New-TfsReleaseDefinitionFolder     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

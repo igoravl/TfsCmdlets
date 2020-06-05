@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsRestClient
+description: 
 parent: RestApi
-grand_parent: Cmdlets
+breadcrumbs: [RestApi]
 ---
 ## Get-TfsRestClient
 {: .no_toc}
@@ -11,22 +12,18 @@ grand_parent: Cmdlets
 
 ```powershell
 # Get by collection
-Get-TfsRestClient
-    [-TypeName] <string>
-    [-Collection <object>]
-    [<CommonParameter>]
-
-
-# Get by server
-Get-TfsRestClient
-    [-TypeName] <string>
-    -Server <object>
-    [<CommonParameter>]
+ 
+Get-TfsRestClient     -TypeName <string>
+     [-Collection <object>]
+ # Get by server
+ 
+Get-TfsRestClient     -TypeName <string>
+     -Server <object>
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

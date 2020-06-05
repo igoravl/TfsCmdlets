@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsConfigurationServerConnectionString
+description: Gets the configuration server database connection string.
 parent: Admin
-grand_parent: Cmdlets
+breadcrumbs: [Admin]
 ---
 ## Get-TfsConfigurationServerConnectionString
 {: .no_toc}
@@ -11,24 +12,20 @@ Gets the configuration server database connection string.
 
 ```powershell
 # Use computer name
-Get-TfsConfigurationServerConnectionString
-    [-ComputerName <string>]
-    [-Credential <PSCredential>]
-    [-Version <int>]
-    [<CommonParameter>]
-
-
-# Use session
-Get-TfsConfigurationServerConnectionString
-    -Session <PSSession>
-    [-Credential <PSCredential>]
-    [-Version <int>]
-    [<CommonParameter>]
+ 
+Get-TfsConfigurationServerConnectionString     [-ComputerName <string>]
+     [-Version <int>]
+     [-Credential <PSCredential>]
+ # Use session
+ 
+Get-TfsConfigurationServerConnectionString     -Session <PSSession>
+     [-Version <int>]
+     [-Credential <PSCredential>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

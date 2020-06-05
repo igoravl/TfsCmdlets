@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsGitBranch
+description: Gets information from one or more branches in a remote Git repository.
 parent: Git/Branch
-grand_parent: Cmdlets
+breadcrumbs: [Git,Branch]
 ---
 ## Get-TfsGitBranch
 {: .no_toc}
@@ -10,16 +11,16 @@ grand_parent: Cmdlets
 Gets information from one or more branches in a remote Git repository.
 
 ```powershell
-Get-TfsGitBranch [[-Branch] <object>]
-    [-Collection <object>]
-    [-Project <object>]
-    [-Repository <object>]
-    [<CommonParameter>]
+
+Get-TfsGitBranch     [-Branch <object>]
+     [-Repository <object>]
+     [-Project <object>]
+     [-Collection <object>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

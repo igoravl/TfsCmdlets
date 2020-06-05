@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsReleaseDefinition
+description: 
 parent: Pipeline/ReleaseManagement
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,ReleaseManagement]
 ---
 ## Get-TfsReleaseDefinition
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsReleaseDefinition
-    [<CommonParameter>]
 
+Get-TfsReleaseDefinition
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

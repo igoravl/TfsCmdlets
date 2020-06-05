@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsTeamProjectCollection
+description: 
 parent: TeamProjectCollection
-grand_parent: Cmdlets
+breadcrumbs: [TeamProjectCollection]
 ---
 ## Get-TfsTeamProjectCollection
 {: .no_toc}
@@ -11,21 +12,18 @@ grand_parent: Cmdlets
 
 ```powershell
 # Get by collection
-Get-TfsTeamProjectCollection [[-Collection] <object>]
-    [-Credential <object>]
-    [-Server <object>]
-    [<CommonParameter>]
-
-
-# Get current
-Get-TfsTeamProjectCollection
-    -Current
-    [<CommonParameter>]
+ 
+Get-TfsTeamProjectCollection     [-Collection <object>]
+     [-Server <object>]
+     [-Credential <object>]
+ # Get current
+ 
+Get-TfsTeamProjectCollection     -Current
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

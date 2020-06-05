@@ -50,20 +50,7 @@ layout: table_wrappers
         </div>
         <div class="page">
           {% unless page.url == "/" %}
-            <nav class="breadcrumb-nav">
-              <ol class="breadcrumb-nav-list">
-                <li class="breadcrumb-nav-list-item"><a href="/">Home</a></li>
-                {% if page.parent %}
-                  {% if page.grand_parent %}
-                    <li class="breadcrumb-nav-list-item"><a href="{{ first_level_url }}">{{ page.grand_parent }}</a></li>
-                    <li class="breadcrumb-nav-list-item"><a href="{{ second_level_url }}">{{ page.parent }}</a></li>
-                  {% else %}
-                    <li class="breadcrumb-nav-list-item"><a href="{{ first_level_url }}">{{ page.parent }}</a></li>
-                  {% endif %}
-                  <li class="breadcrumb-nav-list-item"><span>{{ page.title }}</span></li>
-                {% endif %}
-              </ol>
-            </nav>
+            {% include breadcrumbs.html %}
           {% endunless %}
           <div id="main-content" class="page-content" role="main">
             {% if site.heading_anchors != false %}

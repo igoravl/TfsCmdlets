@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Connect-TfsTeamProjectCollection
+description: Connects to a TFS team project collection or Azure DevOps organization.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Connect-TfsTeamProjectCollection
 {: .no_toc}
@@ -11,53 +12,41 @@ Connects to a TFS team project collection or Azure DevOps organization.
 
 ```powershell
 # Prompt for credential
-Connect-TfsTeamProjectCollection
-    [-Collection] <object>
-    -Cached
-    [-Passthru]
-    [-Server <object>]
-    [<CommonParameter>]
-
-
-# Cached credentials
-Connect-TfsTeamProjectCollection
-    [-Collection] <object>
-    [-UserName] <string> [[-Password] <SecureString>]
-    [-Passthru]
-    [-Server <object>]
-    [<CommonParameter>]
-
-
-# User name and password
-Connect-TfsTeamProjectCollection
-    [-Collection] <object>
-    -Credential <object>
-    [-Passthru]
-    [-Server <object>]
-    [<CommonParameter>]
-
-
-# Credential object
-Connect-TfsTeamProjectCollection
-    [-Collection] <object>
-    -AccessToken <string>
-    [-Passthru]
-    [-Server <object>]
-    [<CommonParameter>]
-
-
-# Personal Access Token
-Connect-TfsTeamProjectCollection
-    [-Collection] <object>
-    [-Interactive]
-    [-Passthru]
-    [-Server <object>]
-    [<CommonParameter>]
+ 
+Connect-TfsTeamProjectCollection     -Collection <object>
+     [-Interactive]
+     [-Server <object>]
+     [-Passthru]
+ # Cached credentials
+ 
+Connect-TfsTeamProjectCollection     -Collection <object>
+     -Cached
+     [-Server <object>]
+     [-Passthru]
+ # User name and password
+ 
+Connect-TfsTeamProjectCollection     -Collection <object>
+     -UserName <string>
+     [-Password <SecureString>]
+     [-Server <object>]
+     [-Passthru]
+ # Credential object
+ 
+Connect-TfsTeamProjectCollection     -Collection <object>
+     -Credential <object>
+     [-Server <object>]
+     [-Passthru]
+ # Personal Access Token
+ 
+Connect-TfsTeamProjectCollection     -Collection <object>
+     -AccessToken <string>
+     [-Server <object>]
+     [-Passthru]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: New-TfsGitRepository
+description: 
 parent: Git/Repository
-grand_parent: Cmdlets
+breadcrumbs: [Git,Repository]
 ---
 ## New-TfsGitRepository
 {: .no_toc}
@@ -10,17 +11,18 @@ grand_parent: Cmdlets
 
 
 ```powershell
-New-TfsGitRepository
-    [-Repository] <string>
-    [-Collection <object>]
-    [-Passthru]
-    [-Project <object>]
-    [<CommonParameter>]
+
+New-TfsGitRepository     -Repository <string>
+     [-Project <object>]
+     [-Collection <object>]
+     [-Passthru]
+     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Test-TfsClassificationNode
+description: 
 parent: WorkItem/ClassificationNode
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,ClassificationNode]
 ---
 ## Test-TfsClassificationNode
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Test-TfsClassificationNode
-    [<CommonParameter>]
 
+Test-TfsClassificationNode
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

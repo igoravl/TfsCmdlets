@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Remove-TfsReleaseDefinitionFolder
+description: 
 parent: Pipeline/ReleaseManagement/Folder
-grand_parent: Cmdlets
+breadcrumbs: [Pipeline,ReleaseManagement,Folder]
 ---
 ## Remove-TfsReleaseDefinitionFolder
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Remove-TfsReleaseDefinitionFolder
-    [<CommonParameter>]
+
+Remove-TfsReleaseDefinitionFolder     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

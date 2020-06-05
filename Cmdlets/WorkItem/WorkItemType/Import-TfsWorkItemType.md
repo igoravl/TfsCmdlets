@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Import-TfsWorkItemType
+description: 
 parent: WorkItem/WorkItemType
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,WorkItemType]
 ---
 ## Import-TfsWorkItemType
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Import-TfsWorkItemType
-    [<CommonParameter>]
 
+Import-TfsWorkItemType
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

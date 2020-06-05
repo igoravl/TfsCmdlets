@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Start-TfsIdentitySync
+description: Triggers an Identity Sync server job.
 parent: Admin
-grand_parent: Cmdlets
+breadcrumbs: [Admin]
 ---
 ## Start-TfsIdentitySync
 {: .no_toc}
@@ -10,15 +11,17 @@ grand_parent: Cmdlets
 Triggers an Identity Sync server job.
 
 ```powershell
-Start-TfsIdentitySync [[-Server] <object>]
-    [-Credential <object>]
-    [-Wait]
-    [<CommonParameter>]
+
+Start-TfsIdentitySync     [-Server <object>]
+     [-Wait]
+     [-Credential <object>]
+     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

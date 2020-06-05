@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsCredential
+description: Provides credentials to use when you connect to a Team Foundation Server or Azure DevOps organization.
 parent: Connection
-grand_parent: Cmdlets
+breadcrumbs: [Connection]
 ---
 ## Get-TfsCredential
 {: .no_toc}
@@ -11,38 +12,26 @@ Provides credentials to use when you connect to a Team Foundation Server or Azur
 
 ```powershell
 # Cached credentials
-Get-TfsCredential
-    [-Cached]
-    [<CommonParameter>]
-
-
-# User name and password
-Get-TfsCredential
-    [-UserName] <string> [[-Password] <SecureString>]
-    [<CommonParameter>]
-
-
-# Credential object
-Get-TfsCredential
-    -Credential <object>
-    [<CommonParameter>]
-
-
-# Personal Access Token
-Get-TfsCredential
-    -AccessToken <string>
-    [<CommonParameter>]
-
-
-# Prompt for credential
-Get-TfsCredential
-    -Interactive
-    [<CommonParameter>]
+ 
+Get-TfsCredential     [-Cached]
+ # User name and password
+ 
+Get-TfsCredential     -UserName <string>
+     [-Password <SecureString>]
+ # Credential object
+ 
+Get-TfsCredential     -Credential <object>
+ # Personal Access Token
+ 
+Get-TfsCredential     -AccessToken <string>
+ # Prompt for credential
+ 
+Get-TfsCredential     -Interactive
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

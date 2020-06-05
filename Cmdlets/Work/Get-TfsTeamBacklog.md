@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsTeamBacklog
+description: 
 parent: Work
-grand_parent: Cmdlets
+breadcrumbs: [Work]
 ---
 ## Get-TfsTeamBacklog
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsTeamBacklog
-    [<CommonParameter>]
 
+Get-TfsTeamBacklog
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

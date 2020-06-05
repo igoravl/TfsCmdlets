@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Add-TfsWorkItemLink
+description: 
 parent: WorkItem/Linking
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,Linking]
 ---
 ## Add-TfsWorkItemLink
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Add-TfsWorkItemLink
-    [<CommonParameter>]
 
+Add-TfsWorkItemLink
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

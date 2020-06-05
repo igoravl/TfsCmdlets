@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Export-TfsWorkItemQuery
+description: 
 parent: WorkItem/Query
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,Query]
 ---
 ## Export-TfsWorkItemQuery
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Export-TfsWorkItemQuery
-    [<CommonParameter>]
+
+Export-TfsWorkItemQuery     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

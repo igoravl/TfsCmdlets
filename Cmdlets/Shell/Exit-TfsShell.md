@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Exit-TfsShell
+description: 
 parent: Shell
-grand_parent: Cmdlets
+breadcrumbs: [Shell]
 ---
 ## Exit-TfsShell
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Exit-TfsShell
-    [<CommonParameter>]
 
+Exit-TfsShell
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

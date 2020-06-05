@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsWorkItemHistory
+description: 
 parent: WorkItem/History
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem,History]
 ---
 ## Get-TfsWorkItemHistory
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsWorkItemHistory
-    [<CommonParameter>]
 
+Get-TfsWorkItemHistory
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

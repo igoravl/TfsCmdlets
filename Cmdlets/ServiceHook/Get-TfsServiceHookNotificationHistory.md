@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsServiceHookNotificationHistory
+description: 
 parent: ServiceHook
-grand_parent: Cmdlets
+breadcrumbs: [ServiceHook]
 ---
 ## Get-TfsServiceHookNotificationHistory
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsServiceHookNotificationHistory
-    [<CommonParameter>]
 
+Get-TfsServiceHookNotificationHistory
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

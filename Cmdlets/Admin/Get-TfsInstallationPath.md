@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsInstallationPath
+description: Gets the installation path of a given Team Foundation Server component.
 parent: Admin
-grand_parent: Cmdlets
+breadcrumbs: [Admin]
 ---
 ## Get-TfsInstallationPath
 {: .no_toc}
@@ -11,26 +12,22 @@ Gets the installation path of a given Team Foundation Server component.
 
 ```powershell
 # Use computer name
-Get-TfsInstallationPath
-    [-Component {BaseInstallation | ApplicationTier | SharePointExtensions | TeamBuild | Tools | VersionControlProxy}]
-    [-ComputerName <string>]
-    [-Credential <PSCredential>]
-    [-Version <int>]
-    [<CommonParameter>]
-
-
-# Use session
-Get-TfsInstallationPath
-    -Session <PSSession>
-    [-Component {BaseInstallation | ApplicationTier | SharePointExtensions | TeamBuild | Tools | VersionControlProxy}]
-    [-Credential <PSCredential>]
-    [-Version <int>]
-    [<CommonParameter>]
+ 
+Get-TfsInstallationPath     [-ComputerName <string>]
+     [-Component <TfsComponent>]
+     [-Version <int>]
+     [-Credential <PSCredential>]
+ # Use session
+ 
+Get-TfsInstallationPath     -Session <PSSession>
+     [-Component <TfsComponent>]
+     [-Version <int>]
+     [-Credential <PSCredential>]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}
@@ -77,8 +74,8 @@ Gets the root folder (the BaseInstallationPath) of TFS in the local server where
 PS> Get-TfsInstallationPath -Computer SPTFSSRV -Version 2015 -Component SharepointExtensions -Credentials (Get-Credentials)
 ```
 
-Gets the location where the SharePoint Extensions have been installed in the remote server SPTFSSRV, prompting for admin credentials to be 
-used for establishing a PS Remoting session to the server
+Gets the location where the SharePoint Extensions have been installed in the remote server SPTFSSRV, prompting for admin credentials to 
+be used for establishing a PS Remoting session to the server
 
 
 [Go to top](#get-tfsinstallationpath)

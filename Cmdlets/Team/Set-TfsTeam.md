@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Set-TfsTeam
+description: 
 parent: Team
-grand_parent: Cmdlets
+breadcrumbs: [Team]
 ---
 ## Set-TfsTeam
 {: .no_toc}
@@ -10,13 +11,14 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Set-TfsTeam
-    [<CommonParameter>]
+
+Set-TfsTeam     [-WhatIf]
+     [-Confirm]
 
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}

@@ -1,8 +1,9 @@
 ---
 layout: cmdlet
 title: Get-TfsWorkItem
+description: 
 parent: WorkItem
-grand_parent: Cmdlets
+breadcrumbs: [WorkItem]
 ---
 ## Get-TfsWorkItem
 {: .no_toc}
@@ -10,13 +11,12 @@ grand_parent: Cmdlets
 
 
 ```powershell
-Get-TfsWorkItem
-    [<CommonParameter>]
 
+Get-TfsWorkItem
 ```
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}
