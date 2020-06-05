@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using System.Security;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 
@@ -26,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <para type="input">System.String</para>
     /// <para type="input">System.Uri</para>
 
-    [Cmdlet(VerbsCommunications.Connect, "TfsConfigurationServer", DefaultParameterSetName="Explicit credentials")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsConfigurationServer", DefaultParameterSetName="Prompt for credential")]
     [WindowsOnly]
     public partial class ConnectConfigurationServer: BaseCmdlet
     {
@@ -40,17 +41,49 @@ namespace TfsCmdlets.Cmdlets.Connection
 		[ValidateNotNull]
 		public object Server { get; set; }
 
-        /// <summary>HELP_PARAM_CREDENTIAL</summary>
-		[Parameter(ParameterSetName="Explicit credentials")]
-		public object Credential { get; set; }
+        /// <summary>
+        /// HELP_PARAM_CACHED_CREDENTIALS
+        /// </summary>
+        [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
+        public SwitchParameter Cached { get; set; }
 
-        /// <summary>HELP_PARAM_INTERACTIVE</summary>
-		[Parameter(ParameterSetName="Prompt for credentials", Mandatory=true)]
-		public SwitchParameter Interactive { get; set; }
+        /// <summary>
+        /// HELP_PARAM_USER_NAME
+        /// </summary>
+        [Parameter(ParameterSetName = "User name and password", Mandatory = true, Position = 1)]
+        public string UserName { get; set; }
 
-        /// <summary>HELP_PARAM_PASSTHRU</summary>
-		[Parameter]
-		public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PASSWORD
+        /// </summary>
+        [Parameter(ParameterSetName = "User name and password", Position = 2)]
+        public SecureString Password { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_CREDENTIAL
+        /// </summary>
+        [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
+        [ValidateNotNull]
+        public object Credential { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
+        /// </summary>
+        [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
+        [Alias("Pat", "PersonalAccessToken")]
+        public string AccessToken { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_INTERACTIVE
+        /// </summary>
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        public SwitchParameter Interactive { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Passthru { get; set; }
 
         partial void DoProcessRecord();
 

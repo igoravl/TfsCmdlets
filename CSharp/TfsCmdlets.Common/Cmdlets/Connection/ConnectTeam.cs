@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <summary>
     /// Connects to a team.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "TfsTeam", DefaultParameterSetName = "Explicit credentials")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsTeam", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(WebApiTeam))]
     public class ConnectTeam : BaseCmdlet
     {
@@ -20,18 +20,6 @@ namespace TfsCmdlets.Cmdlets.Connection
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull()]
         public object Team { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIALS
@@ -52,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         public SecureString Password { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_CREDENTIAL_OBJECT
+        /// HELP_PARAM_CREDENTIAL
         /// </summary>
         [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
         [ValidateNotNull]
@@ -66,10 +54,22 @@ namespace TfsCmdlets.Cmdlets.Connection
         public string AccessToken { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_CREDENTIAL_INTERACTIVE
+        /// HELP_PARAM_INTERACTIVE
         /// </summary>
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER

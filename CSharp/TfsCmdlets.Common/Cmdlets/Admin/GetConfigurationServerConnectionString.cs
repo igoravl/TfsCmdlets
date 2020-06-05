@@ -10,6 +10,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// Gets the configuration server database connection string.
     /// </summary>
     /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationserverconnectionstring/">Online version:</related>
+    /// <related>Get-TfsInstallationPath</related>
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
     [OutputType(typeof(string))]
     [WindowsOnly]
@@ -35,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.Admin
 
         /// <summary>
         /// The TFS version number, represented by the year in its name. For e.g. TFS 2015, use "2015".
-        /// When ommitted, will default to the newest installed version of TFS / Azure DevOps Server
+        /// When omitted, will default to the newest installed version of TFS / Azure DevOps Server
         /// </summary>
 		[Parameter()]
         [ValidateSet("2005", "2008", "2010", "2012", "2013", "2015", "2017", "2018", "2019", "2020")]

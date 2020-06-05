@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <summary>
     /// Connects to a Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Explicit credentials")]
+    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
     public class ConnectTeamProject : BaseCmdlet
     {
@@ -21,10 +21,10 @@ namespace TfsCmdlets.Cmdlets.Connection
         public object Project { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
+        /// HELP_PARAM_INTERACTIVE
         /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        public SwitchParameter Interactive { get; set; }
 
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIALS
@@ -59,10 +59,10 @@ namespace TfsCmdlets.Cmdlets.Connection
         public string AccessToken { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_INTERACTIVE
+        /// HELP_PARAM_COLLECTION
         /// </summary>
-        [Parameter(ParameterSetName = "Prompt for credential")]
-        public SwitchParameter Interactive { get; set; }
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER

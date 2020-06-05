@@ -6,8 +6,7 @@
             "createTemporaryIntegratedConsole": true,
             "type": "PowerShell",
             "request": "launch",
-            "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Build"
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "(.NET) Windows PowerShell",

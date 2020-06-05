@@ -45,6 +45,9 @@ Properties {
     # Wix packaging
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
+
+    # Documentation generation
+    $RootUrl = 'https://tfscmdlets.dev/Cmdlets'
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -101,7 +104,9 @@ Task GenerateHelp {
     $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
     $helpFile = Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml"
 
-    exec { & $xmldocExePath "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\net462\TfsCmdlets.PSDesktop.dll`"" | Write-Verbose }
+    exec { & $xmldocExePath `
+        "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\net462\TfsCmdlets.PSDesktop.dll`"" `
+        -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
     $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
@@ -133,7 +138,7 @@ Task CopyStaticFiles {
 
     foreach($p in @('Core', 'Desktop'))
     {
-        Get-ChildItem -Path (Join-Path $SolutionDir 'TfsCmdlets.PSDesktop.dll-Help.xml') -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
+        Get-ChildItem -Path (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml") -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
     }
 }
 
@@ -243,6 +248,10 @@ Task Clean {
         Write-Verbose "Removing $NugetPackagesDir..."
         Remove-Item $NugetPackagesDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+
+    Get-ChildItem (Join-Path $SolutionDir '*/bin') -Directory | Remove-Item -Recurse
+    Get-ChildItem (Join-Path $SolutionDir '*/obj') -Directory | Remove-Item -Recurse
+
 } 
 
 Task PackageModule -Depends Build {
@@ -374,103 +383,10 @@ Task PackageDocs -Depends GenerateDocs {
     Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir -Force | Write-Verbose
 }
 
-Task GenerateDocs {
+Task GenerateDocs -Depends Build {
 
-    Get-Module TfsCmdlets | Remove-Module
-    Import-Module (Join-Path $ModuleDir 'TfsCmdlets.psd1') -Force
+    exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1')}
 
-    Get-Module BuildDoc | Remove-Module
-    Import-Module (Join-Path $RootProjectDir 'BuildDoc.psm1')
-
-    if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
-
-    # Magic callback that does the munging
-    $callback = {
-        if ($args[0].Groups[0].Value.StartsWith('\')) {
-            # Escaped tag; strip escape character and return
-            $args[0].Groups[0].Value.Remove(0, 1)
-        } else {
-            # Look up the help and generate the Markdown
-            ConvertCommandHelp (Get-Help $args[0].Groups[1].Value) $cmdList
-        }
-    }
-
-    $i = 0
-    $re = [Regex]"\\?{%\s*(.*?)\s*%}"
-    $cmds = Get-Command -Module TfsCmdlets
-    $cmdList = $cmds | Select-Object -ExpandProperty Name
-    $cmdCount = $cmds.Count
-    $origBufSize = $Host.UI.RawUI.BufferSize
-    $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
-    $moduleAssembly = [AppDomain]::CurrentDomain.GetAssemblies() | Where-Object FullName -like 'TfsCmdlets.PS*'
-    $subModules = @{}
-
-    foreach($t in $moduleAssembly.GetTypes() | `
-        Where-Object { $_.GetCustomAttributes([System.Management.Automation.CmdletAttribute], $true) })
-    {
-        $subModuleNamespace = $t.FullName.SubString(0, $t.FullName.Length - $t.Name.Length - 1)
-        $subModulePath = $t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', '/')
-
-        if(-not $subModules.ContainsKey($subModuleNamespace))
-        {
-            $subModules[$subModuleNamespace] = [PSCustomObject] @{
-                Namespace = $subModuleNamespace
-                Path = $subModulePath
-                Commands = @()
-            }
-        }
-
-        $attr = $t.GetCustomAttributes([System.Management.Automation.CmdletAttribute], $true)[0]
-
-        $subModules[$subModuleNamespace].Commands += [PSCustomObject]@{
-            Name = "$($attr.VerbName)-$($attr.NounName)"
-            Type = $t
-        }
-    }
-
-    foreach($m in $subModules.Values)
-    {
-        $subModuleOutputDir = (Join-Path $DocsDir $m.Path)
-
-        if (-not (Test-Path $subModuleOutputDir -PathType Container))
-        {
-            Write-Verbose "Creating sub-module folder '$subModuleOutputDir'"
-            New-Item $subModuleOutputDir -ItemType Directory | Out-Null
-        }
-
-        $subModuleCommands = $m.Commands.Name
-
-        foreach($c in $subModuleCommands)
-        {
-            $i++ 
-
-            $cmd = Get-Command $c -Module TfsCmdlets
-
-            Write-Verbose "Generating help for $($m.Path)/$($cmd.Name) ($i of $cmdCount)"
-
-            try
-            {
-                $Host.UI.RawUI.BufferSize = $expandedBufSize
-
-                # Generate the readme
-                $readme = ConvertCommandHelp -Help (Get-Help $cmd) -CmdList $cmdList
-
-                # Output to the appropriate stream
-                Write-Verbose "Writing $OutputFile"
-                $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
-                $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-                [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
-            }
-            catch
-            {
-                Write-Warning $_
-            }
-            finally
-            {
-                $Host.UI.RawUI.BufferSize = $origBufSize
-            }
-        }
-    }
 }
 
 Task GenerateNuspec {
