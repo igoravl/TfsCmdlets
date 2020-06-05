@@ -37,5 +37,3 @@ compress_html:
   startings: []
   blanklines: false
   profile: false
-
-theme: jekyll-theme-minimal
