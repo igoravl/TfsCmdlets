@@ -25,7 +25,7 @@ Disconnect-TfsTeam
 
 ### Detailed Description 
 
-The Disconnect-TfsTeam cmdlet removes the connection previously set by its counterpart [Connect-TfsTeam](/Cmdlets/Connection/Connect-TfsTeam). Therefore, cmdlets relying on a "default team" as provided by "[Get-TfsTeam](/Cmdlets/Team/Get-TfsTeam) -Current" will no longer work after a call to this cmdlet, unless their -Team argument is provided or a new call to [Connect-TfsTeam](/Cmdlets/Connection/Connect-TfsTeam) is made.
+The Disconnect-TfsTeam cmdlet removes the connection previously set by its counterpart [Connect-TfsTeam](https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeam). Therefore, cmdlets relying on a "default team" as provided by "[Get-TfsTeam](https://tfscmdlets.dev/Cmdlets/Team/Get-TfsTeam) -Current" will no longer work after a call to this cmdlet, unless their -Team argument is provided or a new call to [Connect-TfsTeam](https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeam) is made.
 
 [Go to top](#disconnect-tfsteam)
 

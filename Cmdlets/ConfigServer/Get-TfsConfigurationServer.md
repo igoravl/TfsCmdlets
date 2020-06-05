@@ -34,8 +34,8 @@ Get-TfsConfigurationServer
 | Parameter | Description |
 |:----------|-------------|
  | Server | Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. |
- | Current | Returns the configuration server specified in the last call to [Connect-TfsConfigurationServer](/Cmdlets/Connection/Connect-TfsConfigurationServer) (i.e. the "current" configuration server) |
- | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
+ | Current | Returns the configuration server specified in the last call to [Connect-TfsConfigurationServer](https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsConfigurationServer) (i.e. the "current" configuration server) |
+ | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](https://tfscmdlets.dev/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
  
 [Go to top](#get-tfsconfigurationserver)
 

@@ -28,9 +28,9 @@ Start-TfsIdentitySync [[-Server] <object>]
 
 | Parameter | Description |
 |:----------|-------------|
- | Server | Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the [Get-TfsConfigurationServer](/Cmdlets/ConfigServer/Get-TfsConfigurationServer) cmdlet. |
+ | Server | Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the [Get-TfsConfigurationServer](https://tfscmdlets.dev/Cmdlets/ConfigServer/Get-TfsConfigurationServer) cmdlet. |
  | Wait | Waits until the job finishes running. If omitted, the identity sync job will run asynchronously. |
- | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
+ | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](https://tfscmdlets.dev/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
  | WhatIf | Shows what would happen if the cmdlet runs. The cmdlet is not run. |
  | Confirm | Prompts you for confirmation before running the cmdlet. |
  

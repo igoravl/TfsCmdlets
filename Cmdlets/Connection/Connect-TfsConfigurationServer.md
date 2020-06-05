@@ -10,18 +10,31 @@ grand_parent: Cmdlets
 Connects to a configuration server.
 
 ```powershell
-# Explicit credentials
+# Prompt for credential
 Connect-TfsConfigurationServer
     [-Server] <object>
-    [-Credential <object>]
+    -Cached
+    [-Passthru] [<CommonParameters>]Connect-TfsConfigurationServer
+    [-Server] <object>
+    [-UserName] <string> [[-Password] <Secure
+    [<CommonParameter>]
+
+
+# Cached credentials
+[<CommonParameters>]Connect-TfsConfigurationServer
+    [-Server] <object>
+    -Credential <object>
     [-Passthru]
     [<CommonParameter>]
 
 
-# Prompt for credentials
+# User name and password
 Connect-TfsConfigurationServer
     [-Server] <object>
-    -Interactive
+    -AccessToken <string>
+    [-Passthru] [<CommonParameters>]Connect-TfsConfigurationServer
+    [-Server] <object>
+    [-Interactive]
     [-Passthru]
     [<CommonParameter>]
 
@@ -45,7 +58,11 @@ A TFS Configuration Server represents the server that is running Team Foundation
 | Parameter | Description |
 |:----------|-------------|
  | Server | Specifies either a URL/name of the Team Foundation Server to connect to, or a previously initialized TfsConfigurationServer object. When using a URL, it must be fully qualified. To connect to a Team Foundation Server instance by using its name, it must have been previously registered. |
- | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
+ | Cached | HELP_PARAM_CACHED_CREDENTIALS |
+ | UserName | HELP_PARAM_USER_NAME |
+ | Password | HELP_PARAM_PASSWORD |
+ | Credential | Specifies a user account that has permission to perform this action. To provide a user name and password, a Personal Access Token, and/or to open a input dialog to enter your credentials, call [Get-TfsCredential](https://tfscmdlets.dev/Cmdlets/Connection/Get-TfsCredential) with the appropriate arguments and pass its return to this argument. |
+ | AccessToken | HELP_PARAM_PERSONAL_ACCESS_TOKEN |
  | Interactive | Prompts for user credentials. Can be used for any Team Foundation Server or Azure DevOps account - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build). Currently it is only supported in Windows PowerShell. |
  | Passthru | Returns the results of the command. By default, this cmdlet does not generate any output. |
  
@@ -71,19 +88,19 @@ The output type is the type of the objects that the cmdlet emits.
 
 
 #### Example 1
-```
+```powershell
 PS> Connect-TfsConfigurationServer -Server http://vsalm:8080/tfs
 ```
 
 Connects to the TFS server specified by the URL in the Server argument
 
 #### Example 2
-```
+```powershell
 PS> Connect-TfsConfigurationServer -Server vsalm
 ```
 
 Connects to a previously registered TFS server by its user-defined name "vsalm". For more information, see 
-[Get-TfsRegisteredConfigurationServer](/Cmdlets/ConfigServer/Get-TfsRegisteredConfigurationServer)
+[Get-TfsRegisteredConfigurationServer](https://tfscmdlets.dev/Cmdlets/ConfigServer/Get-TfsRegisteredConfigurationServer)
 
 
 [Go to top](#connect-tfsconfigurationserver)

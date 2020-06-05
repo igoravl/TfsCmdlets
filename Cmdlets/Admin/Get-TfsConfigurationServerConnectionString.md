@@ -55,7 +55,7 @@ The output type is the type of the objects that the cmdlet emits.
 
 ### Related Topics
 
-* [Get-TfsInstallationPath](/Cmdlets/Admin/Get-TfsInstallationPath)
+* [Get-TfsInstallationPath](https://tfscmdlets.dev/Cmdlets/Admin/Get-TfsInstallationPath)
 
 
 [Go to top](#get-tfsconfigurationserverconnectionstring)

@@ -66,14 +66,14 @@ The output type is the type of the objects that the cmdlet emits.
 
 
 #### Example 1
-```
+```powershell
 PS> Get-TfsInstallationPath -Version 2017
 ```
 
 Gets the root folder (the BaseInstallationPath) of TFS in the local server where the cmdlet is being run
 
 #### Example 2
-```
+```powershell
 PS> Get-TfsInstallationPath -Computer SPTFSSRV -Version 2015 -Component SharepointExtensions -Credentials (Get-Credentials)
 ```
 

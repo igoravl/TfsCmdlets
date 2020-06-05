@@ -25,7 +25,7 @@ Disconnect-TfsTeamProject
 
 ### Detailed Description 
 
-The Disconnect-TfsTeamProject cmdlet removes the connection previously set by its counterpart [Connect-TfsTeamProject](/Cmdlets/Connection/Connect-TfsTeamProject). Therefore, cmdlets relying on a "default team project" as provided by "[Get-TfsTeamProject](/Cmdlets/TeamProject/Get-TfsTeamProject) -Current" will no longer work after a call to this cmdlet, unless their -Project argument is provided or a new call to [Connect-TfsTeamProject](/Cmdlets/Connection/Connect-TfsTeamProject) is made.
+The Disconnect-TfsTeamProject cmdlet removes the connection previously set by its counterpart [Connect-TfsTeamProject](https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeamProject). Therefore, cmdlets relying on a "default team project" as provided by "[Get-TfsTeamProject](https://tfscmdlets.dev/Cmdlets/TeamProject/Get-TfsTeamProject) -Current" will no longer work after a call to this cmdlet, unless their -Project argument is provided or a new call to [Connect-TfsTeamProject](https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeamProject) is made.
 
 [Go to top](#disconnect-tfsteamproject)
 
