@@ -1,3 +1,43 @@
-theme: jekyll-theme-cayman
-exclude: ['vendor']
-highlighter: rouge
+search_tokenizer_separator: /[\s/]+/
+
+##########################################
+
+#url: "https://tfscmdlets.dev"
+permalink: pretty
+exclude: ["vendor", "node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
+
+# Set a path/url to a logo that will be displayed instead of the title
+#logo: "/assets/images/logo.png"
+
+# Enable or disable the site search
+search_enabled: true
+
+# Set the search token separator for hyphenated-word search:
+search_tokenizer_separator: /[\s/]+/
+
+# Enable or disable heading anchors
+heading_anchors: true
+
+# Aux links for the upper right navigation
+aux_links:
+  "TfsCmdlets on GitHub":
+    - "https://github.com/igoravl/tfscmdlets/"
+  "Downloads":
+    - "https://github.com/igoravl/tfscmdlets/releases/"
+
+# Footer content appears at the bottom of every page's main content
+footer_content: "Copyright &copy; 2014-2020 Igor Abade V. Leite. Distributed by an <a href=\"https://github.com/igoravl/tfscmdlets/tree/master/LICENSE.md\">MIT license.</a>"
+
+# Color scheme currently only supports "dark" or nil (default)
+color_scheme: nil
+
+plugins:
+  - jekyll-seo-tag
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: []
+  blanklines: false
+  profile: false
