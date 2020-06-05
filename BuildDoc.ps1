@@ -152,80 +152,34 @@ Function CommandUrl($cmd) {
     return "$RootUrl/$path/$cmd"
 }
 
-Function Syntax($help, $cmd)
-{
+Function Syntax($help, $cmd) {
     $showParameterSets = ($cmd.ParameterSets.Count -gt 1)
 
-    Write-Output "`r`n"
+    foreach ($ps in $cmd.ParameterSets) {
 
-    foreach($ps in $cmd.ParameterSets)
-    {
-        if($showParameterSets)
-        {
+        if ($showParameterSets) {
             Write-Output "# $($ps.Name)`r`n"
         }
 
-        Write-Output "$($cmd.Name)`r`n"
+        Write-Output "`r`n$($cmd.Name)"
 
-        foreach($p in $ps.Parameters | Where-Object Name -NotIn $CommonParameters)
-        {
+        foreach ($p in $ps.Parameters | Where-Object Name -NotIn $CommonParameters) {
             $helpParam = ($help.parameters.parameter | Where-Object name -eq $p.Name)
             $paramOut = "-$($p.Name)"
             
-            if($p.ParameterType.Name -ne 'SwitchParameter')
-            {
+            if ($p.ParameterType.Name -ne 'SwitchParameter') {
                 $paramOut += " <$($helpParam.parameterValue)>"
             }
 
             $required = ($helpParam.required -and [bool]::Parse($helpParam.required))
 
-            if(-not $required)
-            {
+            if (-not $required) {
                 $paramOut = "[$paramOut]"
             }
 
             Write-Output "    $paramOut`r`n"
         }
     }
-}
-
-Function Syntax_Old($help, $cmd) {
-    $syntaxes = ($help.syntax | Out-String).Trim().Replace('`r', '').Replace('`n', '').Replace(' <SwitchParameter>', '').Split([Environment]::NewLine, [StringSplitOptions]::RemoveEmptyEntries)
-    $i = 0
-    $output = ''
-
-    if($syntaxes | Where-Object { $_ -notlike "$($cmd.Name)*"})
-    {
-        $temp = @()
-        for($j=0; $j -le $syntaxes.Count-2; $j += 2)
-        {
-            $temp += $syntaxes[$j] + $syntaxes[$j+1]
-        }
-        $syntaxes = $temp
-    }
-
-    foreach ($syntax in $syntaxes) {
-        if ($syntaxes.Length -gt 1) {
-            if ($i -gt 0) {
-                $output += [Environment]::NewLine + [Environment]::NewLine 
-            }
-
-            $output += "# " + $($cmd.ParameterSets[$i++].Name + [Environment]::NewLine)
-        }
-
-        $tokens = $syntax.Substring(0, $syntax.Length-21) -split ' (?=\[?-)'
-        $output += $tokens[0] + "`r`n"
-
-        for($j = 1; $j -lt $tokens.Count; $j++)
-        {
-            $output += (' '*4) + $tokens[$j] + "`r`n"
-        }
-
-        $output += (' '*4) + "[<CommonParameter>]`r`n"
-
-    }
-
-    return $output
 }
 
 Function Parameters($cmd, $help, $top) {
@@ -309,8 +263,9 @@ function ConvertCommandHelp($help, $cmdList) {
 ---
 layout: $Layout
 title: $cmdName
+description: $($help.Synopsis)
 parent: $subModuleName
-grand_parent: Cmdlets
+breadcrumbs: [$($t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', ','))]
 ---
 ## $cmdName
 {: .no_toc}
@@ -322,7 +277,7 @@ $(Syntax $help $cmd)
 ``````
 
 ### Table of Contents
-{: .no_toc}
+{: .no_toc .text-delta}
 
 1. TOC
 {:toc}
@@ -530,5 +485,5 @@ foreach ($m in $subModules.Values) {
     }
 
     Write-Progress -Activity "Generating help files" -Completed
-    $Host.UI.RawUI.BufferSize = $origBufSize
+    #$Host.UI.RawUI.BufferSize = $origBufSize
 }

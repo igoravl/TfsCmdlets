@@ -56,7 +56,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs, UnitTests {
 }
 
 Task Test -Depends Build, UnitTests, AllTests {
@@ -383,7 +383,7 @@ Task PackageDocs -Depends GenerateDocs {
     Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir -Force | Write-Verbose
 }
 
-Task GenerateDocs -Depends Build {
+Task GenerateDocs {
 
     exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1')}
 
