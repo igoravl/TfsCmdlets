@@ -10,8 +10,12 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveGitRepository : BaseCmdlet
     {
-
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        /// <summary>
+        /// Specifies the repository to be deleted. Value can be the name or ID of a Git repository, 
+        /// as well as a Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository object representing a Git
+        /// repository.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [SupportsWildcards()]
         [Alias("Name")]
         public object Repository { get; set; }
@@ -36,22 +40,15 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                 Project = repo.ProjectReference.Name;
             }
 
-            var (tpc, tp) = this.GetCollectionAndProject();
+            var repos = this.GetCollectionOf<GitRepository>();
             var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-            //        var reposToDelete = Get - TfsGitRepository - Name Repository - Project Project - Collection Collection
-            //            }
 
-            //        foreach (repo in reposToDelete)
-            //        {
-            //            if (ShouldProcess(repo.Name, $"Delete Git repository from Team Project {{tp}.Name}"))
-            //            {
-            //                client.DeleteRepositoryAsync(repo.Id).Wait()
-            //                }
-            //        }
-            //    }
-            //}
+            foreach (var r in repos)
+            {
+                if (!ShouldProcess($"Team Project [{r.ProjectReference.Name}]", $"Delete Git repository [{r.Name}]")) {continue;}
 
-            //    */
+                client.DeleteRepositoryAsync(r.Id).Wait();
+            }
         }
     }
 }

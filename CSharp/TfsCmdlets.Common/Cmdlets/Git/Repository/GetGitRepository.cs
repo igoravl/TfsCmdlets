@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     public class GetGitRepository : BaseCmdlet<GitRepository>
     {
         /// <summary>
-        /// Specifies the name or ID (a GUID) of a Git repository. Wildcards are supported. 
+        /// Specifies the name or ID of a Git repository. Wildcards are supported. 
         /// When omitted, all Git repositories in the supplied team project are returned.
         /// </summary>
         [Parameter(Position = 0)]
