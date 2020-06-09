@@ -7,6 +7,8 @@ namespace TfsCmdlets.Extensions
     {
         internal static bool IsLike(this string input, string pattern)
         {
+            if(string.IsNullOrEmpty(pattern)) return false;
+            
             return WildcardPattern
                 .Get(pattern, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant)
                 .IsMatch(input);
