@@ -21,13 +21,16 @@ namespace TfsCmdlets.Cmdlets
     /// </summary>
     public abstract class BaseCmdlet : PSCmdlet
     {
+        /// <summary>
+        /// The service provider injected in this cmdlet instance
+        /// </summary>
         protected static ICmdletServiceProvider Provider => ServiceManager.Provider;
 
         /// <summary>
         /// Returns the PowerShell command name of this cmdlet
         /// </summary>
         /// <value>The name of the this, as defined by the [Cmdlet] attribute. If the attribute is missing, returns the class name.</value>
-        internal string CommandName
+        internal virtual string CommandName
         {
             get
             {
@@ -47,12 +50,20 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
+        /// Performs execution of the command. Must be overriden in derived classes.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            throw new NotImplementedException("You must override ProcessRecord");
+        }
+
+        /// <summary>
         /// Executes a PowerShell script in the current session context
         /// </summary>
         /// <param name="script">A string containing a valid PS script</param>
         /// <param name="arguments">Arguments passed to the script, represented as an array named <c>$args</c></param>
         /// <returns>The output of the script, if any</returns>
-        protected object InvokeScript(string script, params object[] arguments)
+        protected virtual object InvokeScript(string script, params object[] arguments)
         {
             return InvokeCommand.InvokeScript(script, arguments);
         }
@@ -64,7 +75,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="arguments">Arguments passed to the script, represented as an array named <c>$args</c></param>
         /// <typeparam name="T">The expected type of the objects outputted by the script</typeparam>
         /// <returns>The output of the script, if any</returns>
-        protected T InvokeScript<T>(string script, params object[] arguments)
+        protected virtual T InvokeScript<T>(string script, params object[] arguments)
         {
             var obj = InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
 
@@ -76,7 +87,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>An instance of Connection containing either a TfsConfigurationServer (Windows) or VssConnection (Core) object</returns>
-        internal TfsConnection GetServer(ParameterDictionary parameters = null)
+        internal virtual TfsConnection GetServer(ParameterDictionary parameters = null)
         {
            return Provider.GetServer(this, parameters);
         }
@@ -86,7 +97,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>An instance of Connection containing either a TfsTeamProjectCollection (Windows) or VssConnection (Core) object</returns>
-        internal TfsConnection GetCollection(ParameterDictionary parameters = null)
+        internal virtual TfsConnection GetCollection(ParameterDictionary parameters = null)
         {
            return Provider.GetCollection(this, parameters);
         }
@@ -97,7 +108,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>A tuple consisting of an instance of Connection (containing either a TfsTeamProjectCollection (Windows) 
         ///     or VssConnection (Core) object) and an instance of TeamProject</returns>
-        internal (TfsConnection, WebApiTeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
+        internal virtual (TfsConnection, WebApiTeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
         {
            return Provider.GetCollectionAndProject(this, parameters);
         }
@@ -109,7 +120,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>A tuple consisting of an instance of Connection (containing either a TfsTeamProjectCollection (Windows) 
         ///     or VssConnection (Core) object), an instance of TeamProject and an instance of WebApiTeam</returns>
-        internal (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
+        internal virtual (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
         {
            return Provider.GetCollectionProjectAndTeam(this, parameters);
         }
@@ -121,7 +132,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <typeparam name="T">The type of the API client</typeparam>
         /// <returns>An instance of the requested API client</returns>
-        protected T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
+        protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where T : VssHttpClientBase
         {
             return Provider.GetInstanceOf<TfsConnection>(this, parameters, scope.ToString()).GetClient<T>();
@@ -132,19 +143,24 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <typeparam name="T">The type of the requested service.static Must derive from IService</typeparam>
         /// <returns>An instance of T, as provided by the current service provider</returns>
-        protected T GetService<T>() where T : IService
+        protected virtual T GetService<T>() where T : IService
         {
             return Provider.GetService<T>(this);
         }
 
-        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected virtual TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
         {
             return Provider.GetInstanceOf<TObj>(this, parameters, userState);
         }
 
-        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected virtual IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
         {
             return Provider.GetCollectionOf<TObj>(this, parameters, userState);
+        }
+
+        protected virtual string GetCurrentDirectory()
+        {
+            return this.SessionState.Path.CurrentFileSystemLocation.Path;
         }
 
         protected void Log(string message, string commandName = null, bool force = false)
@@ -205,7 +221,7 @@ namespace TfsCmdlets.Cmdlets
                 return;
             }
 
-            throw new NotSupportedException("this cmdlet requires Windows PowerShell. It will not work on PowerShell Core.");
+            throw new NotSupportedException($"This cmdlet requires Windows PowerShell. It will not work on PowerShell Core.{Environment.NewLine}");
         }
     }
 }
