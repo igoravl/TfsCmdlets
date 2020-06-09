@@ -1,58 +1,84 @@
+using System;
 using System.Management.Automation;
+using TfsCmdlets.Extensions;
+using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
+    /// <summary>
+    /// Creates a new build/pipeline definition folder
+    /// </summary>
+    /// <remarks>
+    /// Folders are created recursively - i.e. when specifying a path like '\foo\bar\baz', if any of 
+    /// the parent folders (foo, foo\bar) does not exist, it is automatically created before creating any
+    /// child folders.
+    /// </remarks>
     [Cmdlet(VerbsCommon.New, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
-    public class NewBuildDefinitionFolder : BaseCmdlet
+    [OutputType(typeof(WebApiFolder))]
+    public class NewBuildDefinitionFolder : BaseCmdlet<WebApiFolder>
     {
-        /*
-                # Specifies the folder path
-                [Parameter(Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-                [Alias("Path")]
-                public object Folder { get; set; }
-
-                # Description of the new build folder
-                [Parameter()]
-                public string Description { get; set; }
-
-                [Parameter()]
-                public object Project { get; set; }
-
-                [Parameter()]
-                public object Collection { get; set; }
-
-                [Parameter()]
-                public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// Specifies the path of the new pipeline/build folder, including its name, 
+        /// separated by backslashes (\).
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Path")]
+        public object Folder { get; set; }
 
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the description of the new build/pipeline folder.
         /// </summary>
+        /// <value></value>
+        [Parameter()]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
+        
+        /// <inheritdoc/>
         protected override void ProcessRecord()
+        {
+            if(string.IsNullOrEmpty(Folder as string))
             {
-                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                throw new ArgumentException($"Invalid folder name '{Folder}'");
+            }
 
-                if(! ShouldProcess(tp.Name, $"Create build folder "{Folder}""))
-                {
-                    return
-                }
+            var (_, tp) = GetCollectionAndProject();
 
-                var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+            if(!ShouldProcess($"Team Project '{tp.Name}'", $"Create build folder '{Folder}'")) 
+            {
+                return;
+            }
+            
+            var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
-                newFolder = new Microsoft.TeamFoundation.Build.WebApi.Folder() -Property @{
-                    Description = Description
-                }
+            var newFolder = new WebApiFolder() {
+                Description = Description
+            };
 
-                Folder = Folder.ToString().Trim("\")
+            var folder = ((string) Folder).Trim('\\');
+            var result = client.CreateFolderAsync(newFolder, tp.Name, $@"\{Folder}")
+                .GetResult($"Error creating folder '{Folder}'");
 
-                task = client.CreateFolderAsync(newFolder, tp.Name, $"\{Folder}"); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error creating folder "Folder"" task.Exception.InnerExceptions })
-
-                if(Passthru)
-                {
-                    WriteObject(result); return;
-                }
+            if(Passthru)
+            {
+                WriteObject(result);
             }
         }
-        */
     }
 }

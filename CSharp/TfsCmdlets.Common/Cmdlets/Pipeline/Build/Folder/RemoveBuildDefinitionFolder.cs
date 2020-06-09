@@ -1,83 +1,100 @@
+using System;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Build.WebApi;
+using TfsCmdlets.Extensions;
+using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
+    /// <summary>
+    /// Deletes one or more build/pipeline definition folders.
+    /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
-    public class RemoveBuildDefinitionFolder : BaseCmdlet
+    [OutputType(typeof(WebApiFolder))]
+    public class RemoveBuildDefinitionFolder : BaseCmdlet<WebApiFolder>
     {
-        /*
-                # Specifies the folder path
-                [Parameter(Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-                [Alias("Path")]
-                [SupportsWildcards()]
-                public object Folder { get; set; }
+        /// <summary>
+        /// Specifies the path of the pipeline/build folder to delete, including its name, 
+        /// separated by backslashes (\). Wildcards are supperted.
+        /// </summary>
+        [Parameter(Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true, Mandatory=true)]
+        [Alias("Path")]
+        [SupportsWildcards()]
+        public object Folder { get; set; }
 
-                # Remove folders recursively
-                [Parameter()]
-                public SwitchParameter Recurse { get; set; }
+        /// <summary>
+        /// Removes folders recursively. When omitted, folders with subfolders cannot be deleted.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Recurse { get; set; }
 
-                # Remove folder containing builds
-                [Parameter()]
-                public SwitchParameter Force { get; set; }
+        /// <summary>
+        /// Forces the exclusion of folders containing build/pipelines definitions. When omitted, 
+        /// only empty folders can be deleted.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            var folders = GetCollectionOf<WebApiFolder>();
+
+            foreach(var f in folders)
             {
-                folders = Get-TfsBuildFolder -Folder Folder -Project Project -Collection Collection
-
-                foreach(f in folders)
+                if(!ShouldProcess($"Team Project '{f.Project.Name}'", $"Remove folder '{f.Path}'"))
                 {
-                    if(! ShouldProcess(f.Project.Name, $"Remove folder "{{f}.Path}""))
-                    {
-                        continue
-                    }
-
-                    if(! Recurse.IsPresent)
-                    {
-                        this.Log($"Recurse argument not set. Check if folder "{{f}.Path}" has sub-folders");
-
-                        path = $"{{f}.Path.TrimEnd("\"})\**"
-                        subFolders = (Get-TfsBuildFolder -Folder path -Project Project -Collection Collection)
-
-                        if(subFolders.Count -gt 0)
-                        {
-                            _throw new Exception($"Folder "{{f}.Path}" has $(subFolders.Count) sub-folder(s). To delete it, use the -Recurse argument.")
-                        }
-
-                        this.Log($"Folder "{{f}.Path}" has no sub-folders");
-                    }
-
-                    if(f.Project.Name) {Project = f.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-                    var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
-
-                    if(! Force.IsPresent)
-                    {
-                        this.Log($"Force argument not set. Check if folder "{{f}.Path}" has build definitions");
-
-                        task = client.GetDefinitionsAsync2(tp.Name, string]null, [string]null, [string]null, [Microsoft.TeamFoundation.Build.WebApi.DefinitionQueryOrder.None, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching build definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
-
-                        if(result.Count -gt 0)
-                        {
-                            _throw new Exception($"Folder "{{f}.Path}" has $(result.Count) build definition(s). To delete it, use the -Force argument.")
-                        }
-
-                        this.Log($"Folder "{{f}.Path}" has no build definitions");
-                    }
-
-                    task = client.DeleteFolderAsync(tp.Name, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
+                    continue;
                 }
+
+                if(!Recurse)
+                {
+                    this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
+
+                    var path = $@"{f.Path.TrimEnd('\\')}\**";
+                    var subFolders = GetCollectionOf<WebApiFolder>(new ParameterDictionary(){
+                        ["Folder"] = path
+                    }).ToList();
+
+                    if(subFolders.Count > 0)
+                    {
+                        throw new Exception($"Folder '{f.Path}' has {subFolders.Count} folder(s) under it. To delete it, use the -Recurse argument.");
+                    }
+                }
+
+                var (_, tp) = GetCollectionAndProject();
+                var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+
+                if(!Force)
+                {
+                    this.Log($"Force argument not set. Check if folder '{f.Path}' has build definitions");
+
+                    var result = client.GetDefinitionsAsync2(tp.Name, null, null, null, DefinitionQueryOrder.None, null, null, null, null, f.Path)
+                        .GetResult($"Error fetching build definitions in folder '{f.Path}'").ToList();
+
+                    if(result.Count > 0)
+                    {
+                        throw new Exception($"Folder '{f.Path}' has {result.Count} build definition(s) under it. To delete it, use the -Force argument.");
+                    }
+                }
+
+                client.DeleteFolderAsync(tp.Name, f.Path).Wait();
             }
         }
-        */
     }
 }

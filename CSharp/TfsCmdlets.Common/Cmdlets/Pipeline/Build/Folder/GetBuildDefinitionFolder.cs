@@ -1,56 +1,122 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Build.WebApi;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
+    /// <summary>
+    /// Gets one or more build/pipeline definition folders in a team project.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsBuildDefinitionFolder")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Build.WebApi.Folder))]
-    public class GetBuildDefinitionFolder: BaseCmdlet
+    [OutputType(typeof(WebApiFolder))]
+    public class GetBuildDefinitionFolder: BaseCmdlet<WebApiFolder>
     {
-/*
-        # Specifies the folder path
+        /// <summary>
+        /// Specifies the folder path. Wildcards are supported. 
+        /// When omitted, all build/pipeline folders in the supplied team project are returned.
+        /// </summary>
         [Parameter(Position=0)]
         [Alias("Path")]
         [SupportsWildcards()]
-        public object Folder { get; set; } = "**",
+        public object Folder { get; set; } = "**";
 
-        # Query order
+        /// <summary>
+        /// Specifies the query order. When omitted, defaults to None.
+        /// </summary>
         [Parameter()]
-        [Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder]
-        QueryOrder = Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder.None,
+        public FolderQueryOrder QueryOrder {get;set;} = FolderQueryOrder.None;
 
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        /// <value></value>
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        /// <value></value>
         [Parameter()]
         public object Collection { get; set; }
-    
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
+    }
+
+    [Exports(typeof(WebApiFolder))]
+    internal class BuildFolderDataService : BaseDataService<WebApiFolder>
     {
-        if (Folder is Microsoft.TeamFoundation.Build.WebApi.Folder) { this.Log("Input item is of type Microsoft.TeamFoundation.Build.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
-
-        if(Folder.Project.Name) {Project = Folder.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
-
-        if(_IsWildCard Folder)
+        protected override IEnumerable<WebApiFolder> DoGetItems(object userState)
         {
-            task = client.GetFoldersAsync(tp.Name, "\", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
-            WriteObject(result | Where-Object { (_.Path -Like Folder) || (_.Name -like Folder) }); return;
+            var folder = GetParameter<object>("Folder");
+            var queryOrder = GetParameter<FolderQueryOrder>("QueryOrder");
+
+            while(true) switch(folder)
+            {
+                case PSObject pso:
+                {
+                    folder = pso.BaseObject;
+                    continue;
+                }
+                case WebApiFolder f:
+                {
+                    yield return f;
+                    yield break;
+                }
+                case string s when s.IsWildcard():
+                {
+                    var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+                    var (_, tp) = GetCollectionAndProject();
+                    var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
+                        .GetResult($"Error getting folders matching {s}");
+
+                    foreach(var i in folders.Where(f => f.Path.IsLike(s) || GetFolderName(f).IsLike(s) )) yield return i;
+
+                    yield break;
+                }
+                case string s:
+                {
+                    var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+                    var (_, tp) = GetCollectionAndProject();
+                    var f = client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
+                        .GetResult($"Error getting folders matching {s}").FirstOrDefault();
+
+                    if(f != null) yield return f;
+
+                    yield break;
+                }
+                default:
+                {
+                    throw new ArgumentException($"Invalid or non-existent pipeline folder '{folder}'");
+                }
+            }
         }
 
-        
-        task = client.GetFoldersAsync(tp.Name, $"\{{Folder}.Trim("\"})", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching build folders" task.Exception.InnerExceptions })
-        
-        WriteObject(result); return;
+        private static string GetFolderName(WebApiFolder folder)
+        {
+            return folder.Path.Equals(@"\")?
+                @"\":
+                folder.Path.Substring(folder.Path.LastIndexOf(@"\")+1);
+        }
     }
-}
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+
+    /*
+
+
+            if(_IsWildCard Folder)
+            {
+                task = client.GetFoldersAsync(tp.Name, "\", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
+                WriteObject(result | Where-Object { (_.Path -Like Folder) || (_.Name -like Folder) }); return;
+            }
+
+
+            task = client.GetFoldersAsync(tp.Name, $"\{{Folder}.Trim("\"})", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching build folders" task.Exception.InnerExceptions })
+
+            WriteObject(result); return;
+        }
     }
+    */
 }
