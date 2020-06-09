@@ -1,21 +1,5 @@
-/*
-.SYNOPSIS
-    Short description
-.DESCRIPTION
-    Long description
-.EXAMPLE
-    PS C:> <example usage>
-    Explanation of what the example does
-.INPUTS
-    Inputs (if any)
-.OUTPUTS
-    Output (if any)
-.NOTES
-    General notes
-*/
-
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Management.Automation;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
@@ -23,49 +7,106 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {
-    [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi", DefaultParameterSetName = "URL call")]
+    /// <summary>
+    /// Invoke an Azure DevOps REST API
+    /// </summary>
+    [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi")]
     public class InvokeRestApi : BaseCmdlet
     {
-        [Parameter(Mandatory = true, Position = 0, ParameterSetName = "URL call")]
+        /// <summary>
+        /// Specifies the path of the REST API to call. Tipically it is the portion of the URL after 
+        /// the name of the collection/organization, i.e. in the URL 
+        /// https://dev.azure.com/{organization}/_apis/projects?api-version=5.1 the path is 
+        /// "/_apis/projects".
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0)]
         [ValidateNotNullOrEmpty]
         public string Path { get; set; }
 
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        /// Specifies the HTTP method to call the API endpoint. When omitted, defaults to "GET".
+        /// </summary>
+        [Parameter()]
         public string Method { get; set; } = "GET";
 
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        /// Specifies the request body to send to the API endpoint. Tipically contains the JSON payload 
+        /// required by the API.
+        /// </summary>
+        [Parameter()]
         [Alias("Content")]
         public string Body { get; set; }
 
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        ///  Specifies the request body content type to send to the API. When omitted, defaults to
+        /// "application/json".
+        /// </summary>
+        [Parameter()]
         public string RequestContentType { get; set; } = "application/json";
 
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        ///  Specifies the response body content type returned by the API. When omitted, defaults to
+        /// "application/json".
+        /// </summary>
+        [Parameter()]
         public string ResponseContentType { get; set; } = "application/json";
 
-        [Parameter(ParameterSetName = "URL call")]
-        public Dictionary<string, string> AdditionalHeaders { get; set; }
+        /// <summary>
+        /// Specifies a hashtable with additional HTTP headers to send to the API endpoint.
+        /// </summary>
+        [Parameter()]
+        public Hashtable AdditionalHeaders { get; set; }
 
-        [Parameter(ParameterSetName = "URL call")]
-        public Dictionary<string, string> QueryParameters { get; set; }
+        /// <summary>
+        /// Specifies a hashtable with additional query parameters to send to the API endpoint.
+        /// </summary>
+        [Parameter()]
+        public Hashtable QueryParameters { get; set; }
 
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        /// Specifies the desired API version. When omitted, defaults to "4.1".
+        /// </summary>
+        [Parameter()]
         public string ApiVersion { get; set; } = "4.1";
 
-        [Parameter(ParameterSetName = "URL call")]
-        public object Team { get; set; }
-
-        [Parameter(ParameterSetName = "URL call")]
-        public object Project { get; set; }
-
-        [Parameter(ParameterSetName = "URL call")]
+        /// <summary>
+        /// Specifies an alternate host name for APIs not hosted in "dev.azure.com", 
+        /// e.g. "vsaex.dev.azure.com" or "vssps.dev.azure.com".
+        /// </summary>
+        [Parameter()]
         public string UseHost { get; set; }
 
-        [Parameter] public object Collection { get; set; }
+        /// <summary>
+        /// Returns the API response as an unparsed string. If omitted, JSON responses will be 
+        /// parsed, converted and returned as objects (via ConvertFrom-Json).
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Raw { get; set; }
 
-        [Parameter] public SwitchParameter Raw { get; set; }
+        /// <summary>
+        /// Returns the System.Threading.Tasks.Task object used to issue the asynchronous call to the API. 
+        /// The caller is responsible for finishing the asynchronous call by e.g. accessing the Result property.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter AsTask { get; set; }
 
-        [Parameter] public SwitchParameter AsTask { get; set; }
+        /// <summary>
+        ///  HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter()]
+        public object Team { get; set; }
+
+        /// <summary>
+        ///  HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
@@ -113,7 +154,9 @@ namespace TfsCmdlets.Cmdlets.RestApi
             var client = this.GetService<IRestApiService>();
             var task = client.InvokeAsync(collection, Path, Method, Body,
                 RequestContentType, ResponseContentType,
-                AdditionalHeaders, QueryParameters, ApiVersion);
+                AdditionalHeaders.ToDictionary<string,string>(), 
+                QueryParameters.ToDictionary<string,string>(), 
+                ApiVersion);
 
             this.Log($"Actual URL called: {client.Uri}");
 
