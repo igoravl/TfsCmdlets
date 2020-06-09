@@ -210,3 +210,7 @@ _Pvt_Extensions/
 ModelManifest.xml
 
 TfsCmdlets.PSDesktop.xml
+
+# JetBrains Rider project
+
+CSharp/.idea/**
