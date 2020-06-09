@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// <para type="input">System.Uri</para>
 
     [Cmdlet(VerbsCommunications.Connect, "TfsConfigurationServer", DefaultParameterSetName="Prompt for credential")]
-    [WindowsOnly]
+    [DesktopOnly]
     public partial class ConnectConfigurationServer: BaseCmdlet
     {
         /// <summary>

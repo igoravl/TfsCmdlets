@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <related>Get-TfsInstallationPath</related>
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
     [OutputType(typeof(string))]
-    [WindowsOnly]
+    [DesktopOnly]
     public class GetConfigurationServerConnectionString : BaseCmdlet
     {
         /// <summary>

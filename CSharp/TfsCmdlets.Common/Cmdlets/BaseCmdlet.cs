@@ -200,7 +200,7 @@ namespace TfsCmdlets.Cmdlets
         ///     NotSupportedException when running on PowerShell Core.</throws>
         private void CheckWindowsOnly()
         {
-            if (EnvironmentUtil.PSEdition.Equals("Desktop") || GetType().GetCustomAttribute<WindowsOnlyAttribute>() == null)
+            if (EnvironmentUtil.PSEdition.Equals("Desktop") || GetType().GetCustomAttribute<DesktopOnlyAttribute>() == null)
             {
                 return;
             }

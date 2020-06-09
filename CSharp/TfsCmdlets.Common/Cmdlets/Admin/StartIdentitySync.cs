@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     ///   Triggers an Identity Sync server job.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    [WindowsOnly]
+    [DesktopOnly]
     public partial class StartIdentitySync : BaseCmdlet
     {
         /// <summary>

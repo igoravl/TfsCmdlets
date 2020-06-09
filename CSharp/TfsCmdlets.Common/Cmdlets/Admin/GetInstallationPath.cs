@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </example>
     [Cmdlet(VerbsCommon.Get, "TfsInstallationPath", DefaultParameterSetName = "Use computer name")]
     [OutputType(typeof(string))]
-    [WindowsOnly]
+    [DesktopOnly]
     public class GetInstallationPath : BaseCmdlet
     {
         /// <summary>

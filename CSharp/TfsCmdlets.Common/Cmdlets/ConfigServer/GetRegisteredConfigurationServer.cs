@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsRegisteredConfigurationServer")]
     [OutputType("Microsoft.TeamFoundation.Client.RegisteredConfigurationServer")]
-    [WindowsOnly]
+    [DesktopOnly]
     public partial class GetRegisteredConfigurationServer : BaseCmdlet
     {
         /// <summary>
