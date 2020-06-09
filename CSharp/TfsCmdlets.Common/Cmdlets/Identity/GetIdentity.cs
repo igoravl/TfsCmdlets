@@ -1,91 +1,99 @@
-/*
-.SYNOPSIS
-    Short description
-.DESCRIPTION
-    Long description
-.EXAMPLE
-    PS C:> <example usage>
-    Explanation of what the example does
-.INPUTS
-    Inputs (if any)
-.OUTPUTS
-    Output (if any)
-.NOTES
-    General notes
-*/
-
+using System;
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.Identity;
+using TfsCmdlets.Extensions;
+using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Cmdlets.Identity
 {
+    /// <summary>
+    /// Gets one or more identities that represents either users or groups in Azure DevOps.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    public class GetIdentity: BaseCmdlet
+    public partial class GetIdentity : BaseCmdlet
     {
-/*
-        [Parameter(Position=0,Mandatory=true,ParameterSetName="Get Identity")]
+        /// <summary>
+        /// Specifies the user or group to be retrieved. Supported values are: 
+        /// User/group name, email, or ID
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Get Identity")]
         public object Identity { get; set; }
 
-        [Parameter(ParameterSetName="Get Identity")]
+        /// <summary>
+        /// Specifies that group membership information should be included 
+        /// in the identity (applies only to groups)
+        /// </summary>
+        [Parameter(ParameterSetName = "Get Identity")]
         public SwitchParameter QueryMembership { get; set; }
 
-        [Parameter(Mandatory=true,ParameterSetName="Get current user")]
+        /// <summary>
+        /// Returns an identity representing the user currently logged in to
+        /// the Azure DevOps / TFS instance
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Get current user")]
         public SwitchParameter Current { get; set; }
 
-        [Parameter(ValueFromPipeline=true)]
+        /// <summary>
+        /// HELP_PARAM_SERVER
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
         public object Server { get; set; }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
+        /// <inheritdoc/>
         protected override void ProcessRecord()
-    {
-        if(ParameterSetName == "Get current user")
         {
-            srv = Get-TfsConfigurationServer -Current
-
-            if(! srv)
+            if (Current)
             {
-                return
+                var srv = GetServer();
+
+                if (srv == null) return;
+
+                WriteObject(srv.AuthorizedIdentity);
+
+                return;
             }
 
-            Identity = srv.AuthorizedIdentity.TeamFoundationId
-        }
-        else
-        {
-            if (Identity is Microsoft.VisualStudio.Services.Identity.Identity) { this.Log("Input item is of type Microsoft.VisualStudio.Services.Identity.Identity; returning input item immediately, without further processing."; WriteObject(Identity }); return;);
-            _GetServer
-        }
-        
-        client = Get-TfsRestClient "Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient" -Server srv
+            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);
+            var qm = this.QueryMembership? TfsQueryMembership.Direct: TfsQueryMembership.None;
 
-        if(QueryMembership.IsPresent)
-        {
-            qm = Microsoft.VisualStudio.Services.Identity.QueryMembership.Direct
-        }
-        else
-        {
-            qm = Microsoft.VisualStudio.Services.Identity.QueryMembership.None
-        }
+            while (true) switch(Identity)
+            {
+                case PSObject pso:
+                {
+                    Identity = pso.BaseObject;
+                    continue;
+                }
+                case object o when o.GetType().IsAssignableFrom(IdentityType):
+                {
+                    WriteObject(o);
+                    return;
+                }
+                case string s when s.IsGuid():
+                {
+                    Identity = new Guid(s);
+                    continue;
+                }
+                case Guid g:
+                {
+                    this.Log($"Finding identity with ID [{Identity}] and QueryMembership={qm}");
 
-        if(_TestGuid Identity)
-        {
-            this.Log($"Finding identity with ID [{Identity}] and QueryMembership=qm");
-            task = client.ReadIdentityAsync([guid]Identity); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving information from identity [{Identity}]" task.Exception.InnerExceptions })
-        }
-        else
-        {
-            this.Log($"Finding identity with account name [{Identity}] and QueryMembership=qm");
-            task = client.ReadIdentitiesAsync(Microsoft.VisualStudio.Services.Identity.IdentitySearchFilter.AccountName, [string]Identity, "None", qm); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving information from identity [{Identity}]" task.Exception.InnerExceptions })
-        }
+                    var result = client.ReadIdentityAsync(g)
+                        .GetResult($"Error retrieving information from identity [{Identity}]");
 
-        WriteObject(result); return;
-    }
-}
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+                    WriteObject(result);
+                    return;
+                }
+                case string s:
+                {
+                    this.Log($"Finding identity with account name [{Identity}] and QueryMembership={qm}");
+                    
+                    var result = client.ReadIdentitiesAsync(IdentitySearchFilter.AccountName, s, ReadIdentitiesOptions.None, qm)
+                        .GetResult($"Error retrieving information from identity [{Identity}]");
+
+                    WriteObject(result, true);
+                    return;
+                }
+            }
+        }
     }
 }
