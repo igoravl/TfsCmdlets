@@ -56,7 +56,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs, UnitTests {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
 }
 
 Task Test -Depends Build, UnitTests, AllTests {
@@ -97,6 +97,8 @@ Task BuildLibrary {
             throw "Error building solution"
         }
     }
+
+    Copy-Item (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/')
 }
 
 Task GenerateHelp {
