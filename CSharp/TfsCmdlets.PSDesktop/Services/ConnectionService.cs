@@ -35,8 +35,8 @@ namespace TfsCmdlets.Services
                     case null:
                     {
                         Logger.Log($"Get currently connected {connectionType}");
-                        result = ((Connection) CurrentConnections.Get(connectionType));
-                        break;
+                        yield return ((Connection) CurrentConnections.Get(connectionType));
+                        yield break;
                     }
                     case Uri uri:
                     {

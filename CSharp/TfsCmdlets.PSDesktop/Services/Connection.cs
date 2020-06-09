@@ -8,7 +8,7 @@ namespace TfsCmdlets.Services
 {
     public partial class Connection
     {
-        public static implicit operator TfsConnection(Connection c) => c.InnerConnection;
+        public static implicit operator TfsConnection(Connection c) => c?.InnerConnection;
         public static implicit operator Connection(TfsConnection c) => new Connection(c);
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
@@ -36,6 +36,28 @@ namespace TfsCmdlets.Services
         internal TeamFoundationIdentity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
 
         internal Guid ServerId => InnerConnection.InstanceId;
+
+        internal virtual T GetService<T>() => InnerConnection.GetService<T>();
+
+        internal virtual string DisplayName
+        {
+            get
+            {
+                if(InnerConnection == null) return null;
+
+                if(InnerConnection.Uri.Segments.Length > 1 && 
+                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
+                {
+                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1];
+                }
+                else if(InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
+                {
+                    return InnerConnection.Uri.Host.Substring(InnerConnection.Uri.Host.IndexOf('.'));
+                }
+
+                return InnerConnection.Uri.AbsoluteUri;
+            }
+        }
 
         public object GetClientFromType(Type type)
         {

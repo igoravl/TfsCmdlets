@@ -18,6 +18,28 @@ namespace TfsCmdlets.Services
 
         internal Guid ServerId => InnerConnection.ServerId;
 
+        internal virtual T GetService<T>() where T : IVssClientService => InnerConnection.GetService<T>();
+
+        internal virtual string DisplayName
+        {
+            get
+            {
+                if(InnerConnection == null) return null;
+
+                if(InnerConnection.Uri.Segments.Length > 1 && 
+                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
+                {
+                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1];
+                }
+                else if(InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
+                {
+                    return InnerConnection.Uri.Host.Substring(InnerConnection.Uri.Host.IndexOf('.'));
+                }
+
+                return InnerConnection.Uri.AbsoluteUri;
+            }
+        }
+
         partial void DoConnect()
         {
             if (BaseObject is VssConnection vss)
