@@ -10,10 +10,21 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     public class GlobalList
     {
+        /// <summary>
+        /// Converts a GlobalList to an XElement
+        /// </summary>
         public static explicit operator XElement(GlobalList gl) => gl.ToXml();
         
+        /// <summary>
+        /// Converts an XElement to a GlobalList
+        /// </summary>
         public static explicit operator GlobalList(XElement el) => FromXml(el);
 
+        /// <summary>
+        /// Creates an instance of GlobalList from an XElement containing a &lt;GLOBALLIST&gt; element
+        /// </summary>
+        /// <param name="el">An XML element containing a global list definition</param>
+        /// <returns>An instance of GlobalList</returns>
         public static GlobalList FromXml(XElement el)
         {
             return new GlobalList(el.Attribute("name").Value, 
