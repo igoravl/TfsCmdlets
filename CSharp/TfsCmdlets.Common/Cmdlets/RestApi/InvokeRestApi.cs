@@ -170,20 +170,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
             var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             var responseType = result.Content.Headers.ContentType.MediaType;
 
-            if (Raw)
-            {
-                var o = new PSObject(result);
-
-                o.AddNoteProperty("ResponseBody", responseBody);
-
-                if (responseType.Equals("application/json"))
-                    o.AddNoteProperty("ResponseObject", PSJsonConverter.Deserialize(responseBody));
-
-                WriteObject(o);
-                return;
-            }
-
-            WriteObject(responseType.Equals("application/json")
+            WriteObject(!Raw && responseType.Equals("application/json")
                 ? PSJsonConverter.Deserialize(responseBody)
                 : responseBody);
         }

@@ -72,6 +72,19 @@ namespace TfsCmdlets.Cmdlets
         /// Executes a PowerShell script in the current session context
         /// </summary>
         /// <param name="script">A string containing a valid PS script</param>
+        /// <param name="variables">Variables passed to the script</param>
+        /// <returns>The output of the script, if any</returns>
+        protected virtual object InvokeScript(string script, Dictionary<string,object> variables)
+        {
+            var sb = ScriptBlock.Create(script);
+
+            return sb.InvokeWithContext(null, variables.Select(kvp=>new PSVariable(kvp.Key, kvp.Value)).ToList());
+        }
+
+        /// <summary>
+        /// Executes a PowerShell script in the current session context
+        /// </summary>
+        /// <param name="script">A string containing a valid PS script</param>
         /// <param name="arguments">Arguments passed to the script, represented as an array named <c>$args</c></param>
         /// <typeparam name="T">The expected type of the objects outputted by the script</typeparam>
         /// <returns>The output of the script, if any</returns>

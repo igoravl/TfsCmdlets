@@ -9,7 +9,7 @@ namespace TfsCmdlets.Extensions
     {
         internal static Dictionary<K, V> ToDictionary<K, V>(this Hashtable table)
         {
-            return table
+            return table?
               .Cast<DictionaryEntry>()
               .ToDictionary(kvp => (K)kvp.Key, kvp => (V)kvp.Value);
         }
