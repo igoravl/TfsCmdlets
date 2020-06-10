@@ -3,6 +3,7 @@ Function prompt {
     $defaultPsPrompt = "$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) "
 
     $escBgBlue = "$([char]0x1b)[44m"
+    $escBgCyan = "$([char]0x1b)[46m"
     $escBgMagenta = "$([char]0x1b)[45m"
     $escBgGray = "$([char]0x1b)[40;1m"
 
@@ -30,11 +31,11 @@ Function prompt {
 
         if ($serverName -like '*.visualstudio.com') {
             $tpcName = $serverName.SubString(0, $serverName.IndexOf('.'))
-            $promptPrefix = "${escBgBlue}${escFgWhite}[$tpcName.visualstudio.com"
+            $promptPrefix = "${escBgCyan}${escFgWhite}[$tpcName.visualstudio.com"
         }
         elseif ($serverName -eq 'dev.azure.com') {
             $tpcName = $tpc.Uri.Segments[1]
-            $promptPrefix = "${escBgBlue}${escFgWhite}[dev.azure.com > $tpcName"
+            $promptPrefix = "${escBgCyan}${escFgWhite}[dev.azure.com > $tpcName"
         }
         else {
             $promptPrefix = "${escBgMagenta}${escFgWhite}[$($tpc.Uri.Host)"
