@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Management.Automation;
 using TfsCmdlets.Extensions;
 
@@ -20,7 +21,9 @@ namespace TfsCmdlets.Cmdlets.Shell
 
             if (EnterShell.PrevPrompt != null)
             {
-                this.InvokeScript("Set-Content function:prompt $args[0]", EnterShell.PrevPrompt);
+                this.InvokeScript("Set-Content function:prompt $OldPrompt", new Dictionary<string,object>() {
+                    ["OldPrompt"] = EnterShell.PrevPrompt
+                });
             }
 
             EnterShell.IsInShell = false;
