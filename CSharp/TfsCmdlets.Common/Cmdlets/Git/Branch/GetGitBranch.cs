@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// <summary>
     /// Gets information from one or more branches in a remote Git repository.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGitBranch")]
+    [Cmdlet(VerbsCommon.Get, "TfsGitBranch", DefaultParameterSetName="Get by name")]
     [OutputType(typeof(GitBranchStats))]
     public class GetGitBranch : BaseCmdlet<GitBranchStats>
     {
@@ -19,10 +19,17 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 
         /// When omitted, all branches are returned.
         /// </summary>
-        [Parameter(Position=0)]
+        [Parameter(Position=0, ParameterSetName="Get by name")]
+        [ValidateNotNullOrEmpty]
         [Alias("RefName")]
         [SupportsWildcards()]
         public object Branch { get; set; } = "*";
+
+        /// <summary>
+        /// Returns the default branch in the given repository.
+        /// </summary>
+        [Parameter(Mandatory=true, ParameterSetName="Get default")]
+        public SwitchParameter Default { get; set; }
 
         /// <summary>
         /// HELP_PARAM_GIT_REPOSITORY
@@ -49,6 +56,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         protected override IEnumerable<GitBranchStats> DoGetItems(object userState)
         {
             var branch = GetParameter<object>("Branch");
+            var defaultBranch = GetParameter<bool>("Default");
             var repo = GetInstanceOf<GitRepository>();
             OverrideParameter("Project", repo.ProjectReference.Name);
 
@@ -59,11 +67,28 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
             }
 
             var client = GetClient<GitHttpClient>();
-            string branchName;
+            string branchName = null;
+            bool done = false;
 
-            switch(branch)
+            while (!done) switch(branch)
             {
-                case null: 
+                case string s when defaultBranch:
+                case null:
+                {
+                    if(repo.DefaultBranch == null)
+                    {
+                        throw new Exception($"Repository {repo.Name} does not have a default branch set.");
+                    }
+
+                    branchName = repo.DefaultBranch.Substring("refs/heads/".Length);
+                    done = true;
+                    break;
+                }
+                case PSObject pso:
+                {
+                    branch = pso.BaseObject;
+                    continue;
+                }
                 case string s when string.IsNullOrEmpty(s):
                 {
                     throw new ArgumentNullException("Branch", "Branch argument is required.");
@@ -71,11 +96,13 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 case GitBranchStats gbs:
                 {
                     branchName = gbs.Name;
+                    done = true;
                     break;
                 }
                 case string s:
                 {
                     branchName = s;
+                    done = true;
                     break;
                 }
                 default:
