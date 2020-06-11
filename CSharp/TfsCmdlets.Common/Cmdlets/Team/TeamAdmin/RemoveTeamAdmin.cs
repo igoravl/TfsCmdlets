@@ -1,62 +1,69 @@
+using System;
 using System.Management.Automation;
 using TfsCmdlets.HttpClient;
+using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
+    /// <summary>
+    /// Removes an administrator from a team.
+    /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     [OutputType(typeof(TeamAdmins))]
     public class RemoveTeamAdmin : BaseCmdlet
     {
-        /*
-                # Specifies the board name(s). Wildcards accepted
-                [Parameter(Position=0,ValueFromPipeline=true)]
-                [Alias("Name")]
-                [Alias("User")]
-                public object Identity { get; set; }
+        /// <summary>
+        /// Specifies the administrator to remove from the team.
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true)]
+        public object Admin { get; set; }
 
-                [Parameter()]
-                public object Team { get; set; }
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter(Position = 1)]
+        public object Team { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            if (Admin is TeamAdmin ta)
             {
-                if(Identity.TeamId && Identity.ProjectId)
-                {
-                    Project = Identity.ProjectId 
-                    t = Get-TfsTeam -Team Identity.TeamId -Project Project -Collection Collection
+                Team = ta.TeamId;
+                Project = ta.ProjectId;
+            }
 
-                    tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-                }
-                else
-                {
-                    t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-                }
+            var (_, _, t) = GetCollectionProjectAndTeam();
+            var admin = GetItem<TfsIdentity>(new { Identity = Admin });
 
-                id = Get-TfsIdentity -Identity Identity -Collection tpc
+            if (!ShouldProcess($"Team '{t.Name}'",
+                $"Remove administrator '{admin.DisplayName} ({admin.UniqueName})'"))
+            {
+                return;
+            }
 
-                var client = GetClient<TfsCmdlets.TeamAdminHttpClient>();
+            var client = GetClient<TeamAdminHttpClient>();
 
-                this.Log($"Removing {{id}.IdentityType} "$(id.DisplayName) ($(id.Properties["Account"]))" from team "$(t.Name)"");
+            this.Log($"Removing administrator '{admin.DisplayName} ({admin.UniqueName})' from team '{t.Name}'");
 
-                if(! ShouldProcess(t.Name, $"Remove administrator "{{id}.DisplayName} ($(id.Properties["Account"]))""))
-                {
-                    return
-                }
-
-                if(! ([bool] client.RemoveTeamAdmin(tp.Name, t.Id, id.Id).success))
-                {
-                    throw new Exception("Error removing team administrator")
-                }
+            if (!client.RemoveTeamAdmin(t.ProjectName, t.Id, admin.Id))
+            {
+                throw new Exception("Error removing team administrator");
             }
         }
-        */
     }
 }

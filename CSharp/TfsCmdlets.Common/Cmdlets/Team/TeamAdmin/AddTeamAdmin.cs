@@ -1,49 +1,73 @@
 using System.Management.Automation;
 using TfsCmdlets.HttpClient;
+using TfsTeamAdmin = TfsCmdlets.Cmdlets.Team.TeamAdmin.TeamAdmin;
+using TfsIdentity = TfsCmdlets.Services.Identity;
+using System;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
+    /// <summary>
+    /// Adds a new administrator to a team.
+    /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsTeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(TeamAdmins))]
     public class AddTeamAdmin : BaseCmdlet
     {
-        /*
-                # Specifies the board name(s). Wildcards accepted
-                [Parameter(Position=0)]
-                [Alias("Name")]
-                [Alias("User")]
-                public object Identity { get; set; }
+        /// <summary>
+        /// Specifies the administrator to add to the given team.
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true)]
+        public object Admin { get; set; }
 
-                [Parameter(ValueFromPipeline=true)]
-                public object Team { get; set; }
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter(Position = 1)]
+        public object Team { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            var (_, _, t) = GetCollectionProjectAndTeam();
+            var admin = GetItem<TfsIdentity>(new {Identity = Admin});
+
+            if(admin.IsContainer)
             {
-                t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-
-                id = Get-TfsIdentity -Identity Identity -Collection tpc
-
-                var client = GetClient<TfsCmdlets.TeamAdminHttpClient>();
-
-                this.Log($"Adding {{id}.IdentityType} "$(id.DisplayName) ($(id.Properties["Account"]))" to team "$(t.Name)"");
-
-                if(! ShouldProcess(t.Name, $"Add administrator "{{id}.DisplayName} ($(id.Properties["Account"]))""))
-                {
-                    return
-                }
-
-                WriteObject(client.AddTeamAdmin(tp.Name, t.Id, id.Id)); return;
+                throw new ArgumentException($"'{admin.DisplayName}' is a group. Only users can be added as administrators.");
             }
+
+            if(!ShouldProcess($"Team '{t.Name}'", 
+                $"Add administrator '{admin.DisplayName} ({admin.UniqueName})'"))
+            {
+                return;
+            }
+
+            this.Log($"Adding administrator '{admin.DisplayName} ({admin.UniqueName})' to team '{t.Name}'");
+
+            var client = GetClient<TeamAdminHttpClient>();
+            var result = client.AddTeamAdmin(t.ProjectName, t.Id, admin.Id); 
+
+            if(Passthru) WriteObject(new TeamAdmin(admin, t));
         }
-        */
     }
 }

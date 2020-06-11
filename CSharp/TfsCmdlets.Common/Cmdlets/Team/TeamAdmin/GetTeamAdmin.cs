@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// </summary>    
     [Cmdlet(VerbsCommon.Get, "TfsTeamAdmin")]
     [OutputType(typeof(WebApiIdentity))]
-    public class GetTeamAdmin : BaseCmdlet<TfsTeamAdmin>
+    public class GetTeamAdmin : BaseCmdlet
     {
         /// <summary>
         /// HELP_PARAM_TEAM
@@ -41,6 +41,14 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<TfsTeamAdmin>();
+        }
     }
 
     [Exports(typeof(TeamAdmin))]

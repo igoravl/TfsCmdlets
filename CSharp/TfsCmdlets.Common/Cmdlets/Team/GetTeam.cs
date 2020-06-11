@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
-    public class GetTeam : BaseCmdlet<Team>
+    public class GetTeam : BaseCmdlet
     {
         /// <summary>
         /// Specifies the team to return. Accepted values are its name, its ID, or a
@@ -65,6 +65,14 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get default team")]
         public SwitchParameter Default { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<Team>();
+        }
     }
 
     [Exports(typeof(Team))]
