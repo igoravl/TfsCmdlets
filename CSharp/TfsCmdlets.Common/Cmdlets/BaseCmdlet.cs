@@ -35,7 +35,7 @@ namespace TfsCmdlets.Cmdlets
             get
             {
                 var attr = GetType().GetCustomAttribute<CmdletAttribute>();
-                return attr == null ? GetType().Name : $"{attr.VerbName}-{Consts.DEFAULT_PREFIX}{attr.NounName}";
+                return attr == null ? GetType().Name : $"{attr.VerbName}-{attr.NounName}";
             }
         }
 
