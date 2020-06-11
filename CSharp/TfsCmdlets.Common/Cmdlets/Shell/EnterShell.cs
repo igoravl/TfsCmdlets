@@ -7,18 +7,30 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
+    /// <summary>
+    /// Activates the Azure DevOps Shell
+    /// </summary>
     [Cmdlet(VerbsCommon.Enter, "TfsShell")]
     public class EnterShell : BaseCmdlet
     {
+        /// <summary>
+        /// Specifies the shell window title. If omitted, defaults to "Azure DevOps Shell".
+        /// </summary>
         [Parameter()]
         public string WindowTitle { get; set; } = "Azure DevOps Shell";
 
+        /// <summary>
+        /// Do not clear the host screen when activating the Azure DevOps Shell. When set, the
+        /// prompt is enabled without clearing the screen.
+        /// </summary>
         [Parameter()]
         public SwitchParameter DoNotClearHost { get; set; }
 
-        internal static bool IsInShell {get;set;}
-        internal static string PrevShellTitle {get;set;}
-        internal static ScriptBlock PrevPrompt {get;set;}
+        /// <summary>
+        /// Do not show the version banner when activating the Azure DevOps Shell.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter NoLogo { get; set; }
 
         /// <summary>
         /// Performs execution of the command
@@ -46,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Shell
 
             this.InvokeCommand.InvokeScript(promptCode, false, PipelineResultTypes.None, null);
 
-            if (!DoNotClearHost.IsPresent)
+            if (!DoNotClearHost)
             {
                 this.InvokeScript("Clear-Host");
             }
@@ -54,12 +66,16 @@ namespace TfsCmdlets.Cmdlets.Shell
             var manifest = MyInvocation.MyCommand.Module;
             var privateData = (Hashtable)manifest.PrivateData;
 
-            WriteObject($"TfsCmdlets: {manifest.Description}");
-            WriteObject($"Version {privateData["Build"]}");
-            WriteObject($"Azure DevOps Client Library version {privateData["TfsClientVersion"]}");
+            if (!NoLogo)
+            {
+                WriteObject($"TfsCmdlets: {manifest.Description}");
+                WriteObject($"Version {privateData["Build"]}");
+                WriteObject($"Azure DevOps Client Library version {privateData["TfsClientVersion"]}");
+            }
+
             // WriteObject($"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
 
-            var profileDir = Path.GetDirectoryName((string)((PSObject) this.GetVariableValue("PROFILE")).BaseObject);
+            var profileDir = Path.GetDirectoryName((string)((PSObject)this.GetVariableValue("PROFILE")).BaseObject);
             var profilePath = Path.Combine(profileDir, "TfsCmdlets_Profile.ps1");
 
             if (File.Exists(profilePath))
@@ -70,7 +86,7 @@ namespace TfsCmdlets.Cmdlets.Shell
                 {
                     this.InvokeScript($". '{profilePath}'");
                 }
-                catch(CmdletInvocationException ex)
+                catch (CmdletInvocationException ex)
                 {
                     WriteWarning($"Error loading profile {profilePath}: {ex.Message}");
                     WriteWarning($"{ex.ErrorRecord.InvocationInfo.PositionMessage}");
@@ -78,12 +94,20 @@ namespace TfsCmdlets.Cmdlets.Shell
                 }
 
                 sw.Stop();
-                WriteObject($"Loading TfsCmdlets profile took {sw.ElapsedMilliseconds}ms.");
+
+                if (!NoLogo)
+                {
+                    WriteObject($"Loading TfsCmdlets profile took {sw.ElapsedMilliseconds}ms.");
+                }
             }
 
             IsInShell = true;
 
             WriteObject("");
         }
+
+        internal static bool IsInShell { get; set; }
+        internal static string PrevShellTitle { get; set; }
+        internal static ScriptBlock PrevPrompt { get; set; }
     }
 }
