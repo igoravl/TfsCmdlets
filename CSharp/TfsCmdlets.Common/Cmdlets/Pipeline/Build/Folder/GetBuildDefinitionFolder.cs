@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsBuildDefinitionFolder")]
     [OutputType(typeof(WebApiFolder))]
-    public class GetBuildDefinitionFolder: BaseCmdlet<WebApiFolder>
+    public class GetBuildDefinitionFolder: BaseCmdlet
     {
         /// <summary>
         /// Specifies the folder path. Wildcards are supported. 
@@ -44,6 +44,14 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         /// <value></value>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<WebApiFolder>();
+        }
     }
 
     [Exports(typeof(WebApiFolder))]

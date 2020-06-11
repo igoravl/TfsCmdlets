@@ -9,8 +9,15 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
     [OutputType(typeof(Microsoft.TeamFoundation.Server.TemplateHeader))]
-    partial class GetProcessTemplate : BaseCmdlet<TemplateHeader>
+    partial class GetProcessTemplate
     {
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<TemplateHeader>();
+        }
     }
 
     [Exports(typeof(TemplateHeader))]

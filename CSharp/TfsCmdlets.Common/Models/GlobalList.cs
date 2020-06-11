@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace TfsCmdlets.Cmdlets.GlobalList
+namespace TfsCmdlets.Models
 {
     /// <summary>
     /// Represents a Team Foundation Server global lists
@@ -83,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 
         public GlobalListCollection(XDocument doc)
         {
-            AddRange(doc.Descendants("GLOBALLIST").Cast<GlobalList>());
+            AddRange(doc.Descendants("GLOBALLIST").Select(el => new GlobalList(el)));
         }
 
         public override string ToString()
@@ -93,7 +93,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 
         public XDocument ToXml()
         {
-            return CreateDocument(this.Cast<XElement>());
+            return CreateDocument(this.Select(gl => gl.ToXml()));
         }
 
         private XDocument CreateDocument(params object[] content)

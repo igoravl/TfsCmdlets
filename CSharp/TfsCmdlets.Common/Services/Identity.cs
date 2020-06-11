@@ -29,6 +29,8 @@ namespace TfsCmdlets.Services
 
         internal TfsIdentity InnerIdentity => this.BaseObject as TfsIdentity;
 
+        internal Guid Id => InnerIdentity.Id;
+
         internal string DisplayName => InnerIdentity.DisplayName;
 
         internal bool IsContainer => InnerIdentity.IsContainer;

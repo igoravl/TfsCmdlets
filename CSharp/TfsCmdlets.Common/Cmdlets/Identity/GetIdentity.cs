@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Identity
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
     [OutputType(typeof(WebApiIdentity))]
-    public partial class GetIdentity : BaseCmdlet<TfsIdentity>
+    public partial class GetIdentity : BaseCmdlet
     {
         /// <summary>
         /// Specifies the user or group to be retrieved. Supported values are: 
@@ -45,6 +45,14 @@ namespace TfsCmdlets.Cmdlets.Identity
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Server { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<TfsIdentity>();
+        }
     }
 
     [Exports(typeof(TfsIdentity))]

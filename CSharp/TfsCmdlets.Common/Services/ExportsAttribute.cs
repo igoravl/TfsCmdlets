@@ -2,6 +2,7 @@
 
 namespace TfsCmdlets.Services
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     internal class ExportsAttribute : Attribute
     {
         public Type Exports { get; set; }

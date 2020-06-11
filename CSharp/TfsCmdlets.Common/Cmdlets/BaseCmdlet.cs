@@ -180,6 +180,11 @@ namespace TfsCmdlets.Cmdlets
             return this.SessionState.Path.CurrentFileSystemLocation.Path;
         }
 
+        protected void WriteItems<T>(object parameters = null) where T: class
+        {
+            WriteObject(GetItems<T>(parameters), true);
+        }
+
         protected void Log(string message, string commandName = null, bool force = false)
         {
             if (!IsVerbose) return;

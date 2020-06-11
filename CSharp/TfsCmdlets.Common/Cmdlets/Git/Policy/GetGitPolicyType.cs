@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitPolicyType")]
     [OutputType(typeof(PolicyType))]
-    public class GetGitPolicyType : BaseCmdlet<PolicyType>
+    public class GetGitPolicyType: BaseCmdlet
     {
         /// <summary>
         /// Specifies the display name or ID of the policy type. Wildcards are supported.
@@ -35,6 +35,14 @@ namespace TfsCmdlets.Cmdlets.Policy
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<PolicyType>();
+        }
     }
 
     [Exports(typeof(PolicyType))]

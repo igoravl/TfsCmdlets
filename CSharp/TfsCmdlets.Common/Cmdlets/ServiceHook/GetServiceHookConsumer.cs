@@ -19,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookConsumer")]
     [OutputType(typeof(Consumer))]
-    public class GetServiceHookConsumer : BaseCmdlet<Consumer>
+    public class GetServiceHookConsumer : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name or ID of the service hook consumer to return. Wildcards are supported. 
@@ -37,6 +37,14 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         /// <value></value>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<Consumer>();
+        }
     }
 
     [Exports(typeof(Consumer))]

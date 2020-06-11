@@ -12,6 +12,10 @@ namespace TfsCmdlets.Services
 {
     internal abstract class BaseService : IService
     {
+        private ParameterDictionary _parms;
+
+        public ParameterDictionary Parameters {get;set;}
+
         private ILogger _logger;
 
         public ICmdletServiceProvider Provider { get; set; }
@@ -19,48 +23,20 @@ namespace TfsCmdlets.Services
         public BaseCmdlet Cmdlet { get; set; }
 
         protected ILogger Logger => _logger ??= new LoggerImpl(Cmdlet);
-    }
-
-    internal abstract class BaseDataService<T> : BaseService, IDataService<T> where T: class
-    {
-        private ParameterDictionary _parameters;
-        
-        protected abstract IEnumerable<T> DoGetItems();
-
-        public T GetItem(object parameters = null) 
-        {
-            var items = GetItems(parameters)?.ToList()?? new List<T>();
-            if(items == null || items.Count == 0) return null;//throw new Exception($"Invalid or non-existent {ItemName} '{ItemFilter}'");
-
-            return items[0];
-        }
-
-        public IEnumerable<T> GetItems(object parameters = null)
-        {
-            _parameters = new ParameterDictionary(parameters, Cmdlet);
-            return DoGetItems();
-        }
 
         protected TParam GetParameter<TParam>(string name, TParam defaultValue = default(TParam))
         {
-            if(_parameters == null) return defaultValue;
+            if (Parameters == null) return defaultValue;
 
-            return _parameters.Get<TParam>(name, defaultValue) ?? defaultValue;
+            return Parameters.Get<TParam>(name, defaultValue) ?? defaultValue;
         }
 
-        protected void OverrideParameter(string name, object value)
-        {
-            if(_parameters == null) return;
-
-            _parameters[name] = value;
-        }
-
-        protected TObj GetItem<TObj>(object parameters = null) where TObj: class
+        protected TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetItem<TObj>(Cmdlet, parameters);
         }
 
-        protected IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj: class
+        protected IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetItems<TObj>(Cmdlet, parameters);
         }
@@ -88,18 +64,37 @@ namespace TfsCmdlets.Services
         protected TClient GetClient<TClient>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where TClient : VssHttpClientBase
         {
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["ConnectionType"] = scope
             };
 
             var conn = Provider.GetItem<TfsConnection>(Cmdlet, pd);
 
-            if(conn == null)
+            if (conn == null)
             {
                 throw new ArgumentException($"No TFS connection information available. Either supply a valid -{scope} argument or use one of the Connect-Tfs* cmdlets prior to invoking this cmdlet.");
             }
 
             return conn.GetClient<TClient>();
+        }
+    }
+
+    internal abstract class BaseDataService<T> : BaseService, IDataService<T> where T : class
+    {
+        protected abstract IEnumerable<T> DoGetItems();
+
+        public T GetItem()
+        {
+            var items = GetItems()?.ToList() ?? new List<T>();
+            if (items == null || items.Count == 0) return null;
+
+            return items[0];
+        }
+
+        public IEnumerable<T> GetItems()
+        {
+            return DoGetItems();
         }
     }
 }

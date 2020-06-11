@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
-    public class GetGitBranchPolicy : BaseCmdlet<PolicyConfiguration>
+    public class GetGitBranchPolicy : BaseCmdlet
     {
         /// <summary>
         /// Specifies the policy type of the branch policy to return. Wildcards are supported. 
@@ -48,6 +48,14 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<PolicyConfiguration>();
+        }
     }
 
     [Exports(typeof(PolicyConfiguration))]
@@ -56,7 +64,6 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         protected override IEnumerable<PolicyConfiguration> DoGetItems()
         {
             var repo = this.GetItem<GitRepository>();
-            OverrideParameter("Project", repo.ProjectReference.Name);
 
             var branch = $"refs/heads/{GetItem<GitBranchStats>().Name}";
             var policyType = GetParameter<object>("PolicyType");

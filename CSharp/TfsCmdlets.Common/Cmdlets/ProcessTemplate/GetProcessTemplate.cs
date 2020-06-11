@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsProcessTemplate")]
     [DesktopOnly]
-    public partial class GetProcessTemplate
+    public partial class GetProcessTemplate: BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of the process template(s) to be returned. Wildcards supported. 

@@ -8,15 +8,17 @@ namespace TfsCmdlets.Services
 {
     internal interface IService
     {
-        ICmdletServiceProvider Provider { get; set;  }
+        ICmdletServiceProvider Provider { get; set; }
 
         BaseCmdlet Cmdlet { get; set; }
+
+        ParameterDictionary Parameters { get; set; }
     }
 
-    internal interface IDataService<out T>: IService where T: class
+    internal interface IDataService<out T> : IService where T : class
     {
-        T GetItem(object overriddenParameters = null);
+        T GetItem();
 
-        IEnumerable<T> GetItems(object overriddenParameters = null);
+        IEnumerable<T> GetItems();
     }
 }

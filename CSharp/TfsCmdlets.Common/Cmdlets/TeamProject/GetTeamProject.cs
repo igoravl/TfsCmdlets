@@ -19,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProject", DefaultParameterSetName = "Get by project")]
     [OutputType(typeof(WebApiTeamProject))]
-    public class GetTeamProject : BaseCmdlet<WebApiTeamProject>
+    public class GetTeamProject : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of a Team Project. Wildcards are supported. 
@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         {
             try
             {
-                base.ProcessRecord();
+                WriteItems<WebApiTeamProject>();
             }
             catch
             {

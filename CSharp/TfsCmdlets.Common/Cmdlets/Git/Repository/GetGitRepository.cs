@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitRepository")]
     [OutputType(typeof(GitRepository))]
-    public class GetGitRepository : BaseCmdlet<GitRepository>
+    public class GetGitRepository : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name or ID of a Git repository. Wildcards are supported. 
@@ -35,6 +35,14 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+        
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<GitRepository>();
+        }
     }
 
     [Exports(typeof(GitRepository))]

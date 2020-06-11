@@ -12,15 +12,15 @@ namespace TfsCmdlets.Services
 {
     internal class CmdletServiceProviderImpl : ICmdletServiceProvider
     {
-        private readonly Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, IService>> _factories =
-            new Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, IService>>();
+        private readonly Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, object, IService>> _factories =
+            new Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, object, IService>>();
 
         internal CmdletServiceProviderImpl()
         {
             RegisterFactories();
         }
 
-        public T GetService<T>(BaseCmdlet BaseCmdlet) where T : IService
+        public T GetService<T>(BaseCmdlet BaseCmdlet, object parameters = null) where T : IService
         {
             var serviceType = typeof(T);
 
@@ -29,11 +29,11 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return (T) _factories[serviceType](this, BaseCmdlet);
+            return (T)_factories[serviceType](this, BaseCmdlet, parameters);
         }
 
         public TObj GetItem<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
-            where TObj: class
+            where TObj : class
         {
             var serviceType = typeof(TObj);
 
@@ -42,11 +42,11 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IDataService<TObj>) _factories[serviceType](this, BaseCmdlet)).GetItem(overriddenParameters);
+            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet, overriddenParameters)).GetItem();
         }
 
         public IEnumerable<TObj> GetItems<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
-            where TObj: class
+            where TObj : class
         {
             var serviceType = typeof(TObj);
 
@@ -55,12 +55,13 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
             }
 
-            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet)).GetItems(overriddenParameters);
+            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet, overriddenParameters)).GetItems();
         }
 
         public TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["ConnectionType"] = ClientScope.Server
             };
 
@@ -76,7 +77,8 @@ namespace TfsCmdlets.Services
 
         public TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["ConnectionType"] = ClientScope.Collection
             };
 
@@ -94,7 +96,8 @@ namespace TfsCmdlets.Services
         {
             var tpc = GetCollection(cmdlet, parameters);
 
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["Collection"] = tpc
             };
 
@@ -112,7 +115,8 @@ namespace TfsCmdlets.Services
         {
             var (tpc, tp) = GetCollectionAndProject(cmdlet, parameters);
 
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["Collection"] = tpc,
                 ["Project"] = tp
             };
@@ -132,26 +136,30 @@ namespace TfsCmdlets.Services
             foreach (var type in GetType().Assembly.GetTypes()
                 .Where(t => t.GetCustomAttributes<ExportsAttribute>().Any()))
             {
-                var attr = type.GetCustomAttribute<ExportsAttribute>();
+                var attrs = type.GetCustomAttributes<ExportsAttribute>();
 
-                if (attr.Singleton)
+                foreach (var attr in attrs)
                 {
-                    if (!(Activator.CreateInstance(type) is IService svc)) continue;
-                    svc.Provider = this;
-                    _factories.Add(attr.Exports, (prv, ctx) => svc);
-                }
-                else
-                {
-                    _factories.Add(attr.Exports, delegate(ICmdletServiceProvider prv, BaseCmdlet ctx)
+                    if (attr.Singleton)
                     {
-                        if (!(Activator.CreateInstance(type) is IService svc))
-                            throw new Exception($"Error instantiating {type.FullName}");
+                        if (!(Activator.CreateInstance(type) is IService svc)) continue;
+                        svc.Provider = this;
+                        _factories.Add(attr.Exports, (prv, ctx, op) => svc);
+                    }
+                    else
+                    {
+                        _factories.Add(attr.Exports, delegate (ICmdletServiceProvider prv, BaseCmdlet ctx, object overriddenParameters)
+                        {
+                            if (!(Activator.CreateInstance(type) is IService svc))
+                                throw new Exception($"Error instantiating {type.FullName}");
 
-                        svc.Provider = prv;
-                        svc.Cmdlet = ctx;
-                        return svc;
+                            svc.Provider = prv;
+                            svc.Parameters = new ParameterDictionary(overriddenParameters, ctx);
+                            svc.Cmdlet = ctx;
+                            return svc;
 
-                    });
+                        });
+                    }
                 }
             }
         }

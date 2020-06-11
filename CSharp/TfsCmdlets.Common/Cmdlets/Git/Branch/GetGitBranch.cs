@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranch", DefaultParameterSetName="Get by name")]
     [OutputType(typeof(GitBranchStats))]
-    public class GetGitBranch : BaseCmdlet<GitBranchStats>
+    public class GetGitBranch : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 
@@ -48,6 +48,14 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<GitBranchStats>();
+        }
     }
 
     [Exports(typeof(GitBranchStats))]
@@ -58,7 +66,6 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
             var branch = GetParameter<object>("Branch");
             var defaultBranch = GetParameter<bool>("Default");
             var repo = GetItem<GitRepository>();
-            OverrideParameter("Project", repo.ProjectReference.Name);
 
             if (repo.Size == 0)
             {

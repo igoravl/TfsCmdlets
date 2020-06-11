@@ -9,7 +9,7 @@ namespace TfsCmdlets.Services
 {
     internal interface ICmdletServiceProvider
     {
-        TService GetService<TService>(BaseCmdlet cmdlet) where TService : IService;
+        TService GetService<TService>(BaseCmdlet cmdlet, object parameters = null) where TService : IService;
 
         TObj GetItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
