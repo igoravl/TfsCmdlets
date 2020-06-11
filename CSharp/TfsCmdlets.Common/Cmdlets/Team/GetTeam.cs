@@ -1,37 +1,16 @@
-/*
-
-.SYNOPSIS
-    Gets information about one or more teams.
-
-.PARAMETER Project
-    Specifies either the name of the Team Project or a previously initialized Microsoft.TeamFoundation.WorkItemTracking.Client.Project object to connect to. If omitted, it defaults to the connection opened by Connect-TfsTeamProject (if any). 
-
-For more details, see the Get-TfsTeamProject cmdlet.
-
-.PARAMETER Collection
-    Specifies either a URL/name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object. 
-
-When using a URL, it must be fully qualified. The format of this string is as follows: 
-
-http[s]://<ComputerName>:<Port>/[<TFS-vDir>/]<CollectionName> 
-
-Valid values for the Transport segment of the URI are HTTP and HTTPS. If you specify a connection URI with a Transport segment, but do not specify a port, the session is created with standards ports: 80 for HTTP and 443 for HTTPS. 
-
-To connect to a Team Project Collection by using its name, a TfsConfigurationServer object must be supplied either via -Server argument or via a previous call to the Connect-TfsConfigurationServer cmdlet. 
-
-For more details, see the Get-TfsTeamProjectCollection cmdlet.
-
-.INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
-*/
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
+    /// <summary>
+    /// Gets information about one or more teams.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
     public class GetTeam : BaseCmdlet
@@ -47,14 +26,29 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter(ParameterSetName = "Get by team")]
         public SwitchParameter IncludeSettings { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by team")]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter(ParameterSetName = "Get by team")]
         public object Collection { get; set; }
 
+        /// <summary>
+        /// Returns the team specified in the last call to Connect-TfsTeam (i.e. the "current" team)
+        /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
+
+        /// <summary>
+        /// Returns the default team in the given team project.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Get default team")]
+        public SwitchParameter Default { get; set; }
 
         /// <summary>
         /// Performs execution of the command
@@ -63,12 +57,8 @@ namespace TfsCmdlets.Cmdlets.Team
         {
             if (Current)
             {
-                try
-                {
-                    WriteObject(this.GetItems<WebApiTeam>(), true);
-                    return;
-                }
-                finally { }
+                WriteObject(CurrentConnections.Team);
+                return;
             }
 
             if (!IncludeMembers && !IncludeSettings)
@@ -106,6 +96,73 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 WriteObject(pso);
             }
+        }
+    }
+
+    [Exports(typeof(WebApiTeam))]
+    internal class TeamDataService : BaseDataService<WebApiTeam>
+    {
+        protected override IEnumerable<WebApiTeam> DoGetItems()
+        {
+            var team = GetParameter<object>("Team");
+            var current = GetParameter<bool>("Current");
+            var includeMembers = GetParameter<bool>("IncludeMembers");
+            var includeSettings = GetParameter<bool>("IncludeSettings");
+            var defaultTeam = GetParameter<bool>("Default");
+
+            var (tpc, tp) = Cmdlet.GetCollectionAndProject();
+            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+
+            while (true) switch (team)
+                {
+                    case PSObject pso:
+                        {
+                            team = pso.BaseObject;
+                            continue;
+                        }
+                    case Guid g:
+                        {
+                            team = g.ToString();
+                            continue;
+                        }
+                    case object o when defaultTeam:
+                        {
+                            Logger.Log("Get default team");
+                            team = tp.DefaultTeam.Id;
+                            defaultTeam = false;
+                            continue;
+                        }
+                    case object o when current:
+                        {
+                            Logger.Log("Get currently connected team");
+                            yield return CurrentConnections.Team;
+                            yield break;
+                        }
+                    case WebApiTeam t:
+                        {
+                            yield return t;
+                            yield break;
+                        }
+                    case string s when !s.IsWildcard():
+                        {
+                            yield return client.GetTeamAsync(tp.Name, s).GetResult($"Error getting team '{s}'");
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            foreach (var repo in client.GetTeamsAsync(tp.Name)
+                                .GetResult($"Error getting team(ies) '{s}'")
+                                .Where(r => r.Name.IsLike(s)))
+                            {
+                                yield return repo;
+                            }
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException(nameof(team));
+                        }
+                }
         }
     }
 }
