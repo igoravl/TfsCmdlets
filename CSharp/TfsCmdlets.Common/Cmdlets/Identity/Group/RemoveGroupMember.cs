@@ -1,4 +1,8 @@
+using Microsoft.VisualStudio.Services.Identity.Client;
 using System.Management.Automation;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
+using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
@@ -9,13 +13,13 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     public class RemoveGroupMember : BaseCmdlet
     {
         /// <summary>
-        /// Specifies the member (user or group) to add to the given group.
+        /// Specifies the member (user or group) to remove from the given group.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public object Member { get; set; }
 
         /// <summary>
-        /// Specifies the group to which the member is added.
+        /// Specifies the group from which the member is removed.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         public object Group { get; set; }
@@ -31,34 +35,32 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         protected override void ProcessRecord()
         {
-            /*
-            var group = GetItem
-            tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-
-            gi = Get-TfsIdentity -Identity Group -Collection tpc
-            ui = Get-TfsIdentity -Identity Identity -Collection tpc
-
-            if(! gi)
+            var member = GetItem<TfsIdentity>(new
             {
-                throw new Exception($"Invalid or non-existent group "{Group}"")
+                Identity = Member
+            });
+
+            ErrorUtil.ThrowIfNotFound(member, nameof(member), Member);
+
+            var group = GetItem<TfsIdentity>(new
+            {
+                Identity = Group
+            });
+
+            ErrorUtil.ThrowIfNotFound(group, nameof(group), Group);
+
+            var client = GetClient<IdentityHttpClient>();
+
+            if (!ShouldProcess(group.DisplayName,
+                $"Remove member '{member.DisplayName} ({member.UniqueName})'"))
+            {
+                return;
             }
 
-            if(! ui)
-            {
-                throw new Exception($"Invalid or non-existent identity "{Identity}"")
-            }
+            this.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");
 
-            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
-
-            this.Log($"Removing {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" from group "$(gi.DisplayName)"");
-
-            if(! ShouldProcess(gi.DisplayName, $"Remove member "{{ui}.DisplayName} ($(ui.Properties["Account"]))""))
-            {
-                return
-            }
-
-            task = client.RemoveMemberFromGroupAsync(gi.Descriptor, ui.Descriptor); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error removing member "{{ui}.DisplayName}" from group "$(gi.DisplayName)"" task.Exception.InnerExceptions })
-        */
+            client.RemoveMemberFromGroupAsync(group.Descriptor, member.Descriptor)
+                .GetResult($"Error removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");
         }
     }
 }
