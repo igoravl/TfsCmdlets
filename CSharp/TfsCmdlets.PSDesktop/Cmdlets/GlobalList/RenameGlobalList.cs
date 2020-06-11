@@ -5,6 +5,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 {
     partial class RenameGlobalList
     {
+        /// <inheritdoc/>
         protected override void ProcessRecord()
         {
             var list = GetItem<TfsGlobalList>();
