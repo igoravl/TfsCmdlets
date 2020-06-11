@@ -2,6 +2,9 @@ using System;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using TfsIdentity = TfsCmdlets.Services.Identity;
+using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Cmdlets.Identity
@@ -10,7 +13,8 @@ namespace TfsCmdlets.Cmdlets.Identity
     /// Gets one or more identities that represents either users or groups in Azure DevOps.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
-    public partial class GetIdentity : BaseCmdlet
+    [OutputType(typeof(WebApiIdentity))]
+    public partial class GetIdentity : BaseCmdlet<TfsIdentity>
     {
         /// <summary>
         /// Specifies the user or group to be retrieved. Supported values are: 
@@ -20,11 +24,14 @@ namespace TfsCmdlets.Cmdlets.Identity
         public object Identity { get; set; }
 
         /// <summary>
-        /// Specifies that group membership information should be included 
-        /// in the identity (applies only to groups)
+        /// Specifies how group membership information should be processed  
+        /// when the returned identity is a group. "Direct" fetches direct members (both users 
+        /// and groups) of the group. "Expanded" expands contained groups recursively and returns 
+        /// their contained users. "None" is the fastest option as it fetches no membership 
+        /// information. When omitted, defaults to Direct.
         /// </summary>
         [Parameter(ParameterSetName = "Get Identity")]
-        public SwitchParameter QueryMembership { get; set; }
+        public TfsQueryMembership QueryMembership { get; set; } = TfsQueryMembership.Direct;
 
         /// <summary>
         /// Returns an identity representing the user currently logged in to
@@ -38,60 +45,67 @@ namespace TfsCmdlets.Cmdlets.Identity
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Server { get; set; }
+    }
 
-        /// <inheritdoc/>
-        protected override void ProcessRecord()
+    [Exports(typeof(TfsIdentity))]
+    internal partial class IdentityDataService : BaseDataService<TfsIdentity>
+    {
+        protected override System.Collections.Generic.IEnumerable<Services.Identity> DoGetItems()
         {
-            if (Current)
+            var current = GetParameter<bool>("Current");
+            var queryMembership = GetParameter<TfsQueryMembership>("QueryMembership");
+            var identity = GetParameter<object>("Identity");
+
+            if (current)
             {
                 var srv = GetServer();
+                if (srv == null) yield break;
 
-                if (srv == null) return;
-
-                WriteObject(srv.AuthorizedIdentity);
-
-                return;
+                identity = srv.AuthorizedIdentity.UniqueName;
             }
 
             var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);
-            var qm = this.QueryMembership? TfsQueryMembership.Direct: TfsQueryMembership.None;
+            var qm = queryMembership;
 
-            while (true) switch(Identity)
+            while (true) switch(identity)
             {
                 case PSObject pso:
                 {
-                    Identity = pso.BaseObject;
+                    identity = pso.BaseObject;
                     continue;
                 }
-                case object o when o.GetType().IsAssignableFrom(IdentityType):
+                case WebApiIdentity i:
                 {
-                    WriteObject(o);
-                    return;
+                    yield return new TfsIdentity(i);
+                    yield break;
                 }
                 case string s when s.IsGuid():
                 {
-                    Identity = new Guid(s);
+                    identity = new Guid(s);
                     continue;
                 }
                 case Guid g:
                 {
-                    this.Log($"Finding identity with ID [{Identity}] and QueryMembership={qm}");
+                    Logger.Log($"Finding identity with ID [{g}] and QueryMembership={qm}");
 
                     var result = client.ReadIdentityAsync(g)
-                        .GetResult($"Error retrieving information from identity [{Identity}]");
+                        .GetResult($"Error retrieving information from identity [{identity}]");
 
-                    WriteObject(result);
-                    return;
+                    yield return new TfsIdentity(result);
+                    yield break;
                 }
                 case string s:
                 {
-                    this.Log($"Finding identity with account name [{Identity}] and QueryMembership={qm}");
+                    Logger.Log($"Finding identity with account name [{identity}] and QueryMembership={qm}");
                     
                     var result = client.ReadIdentitiesAsync(IdentitySearchFilter.AccountName, s, ReadIdentitiesOptions.None, qm)
-                        .GetResult($"Error retrieving information from identity [{Identity}]");
+                        .GetResult($"Error retrieving information from identity [{identity}]");
 
-                    WriteObject(result, true);
-                    return;
+                    foreach(var i in result) yield return new TfsIdentity(i);
+                    yield break;
+                }
+                default: {
+                    throw new ArgumentException($"Invalid or non-existent idehtity {identity}");
                 }
             }
         }
