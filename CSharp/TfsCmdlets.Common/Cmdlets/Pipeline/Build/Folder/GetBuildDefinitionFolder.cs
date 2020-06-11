@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     [Exports(typeof(WebApiFolder))]
     internal class BuildFolderDataService : BaseDataService<WebApiFolder>
     {
-        protected override IEnumerable<WebApiFolder> DoGetItems(object userState)
+        protected override IEnumerable<WebApiFolder> DoGetItems()
         {
             var folder = GetParameter<object>("Folder");
             var queryOrder = GetParameter<FolderQueryOrder>("QueryOrder");

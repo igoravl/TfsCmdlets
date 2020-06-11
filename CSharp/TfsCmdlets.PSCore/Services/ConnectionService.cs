@@ -10,9 +10,9 @@ namespace TfsCmdlets.Services
     [Exports(typeof(Connection))]
     internal class ConnectionService : BaseDataService<Connection>
     {
-        protected override IEnumerable<Connection> DoGetItems(object userState)
+        protected override IEnumerable<Connection> DoGetItems()
         {
-            var connectionType = (string) userState;
+            var connectionType = GetParameter<string>("ConnectionType");
             var connection = GetParameter<object>(connectionType);
 
             VssConnection result = null;

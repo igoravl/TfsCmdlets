@@ -40,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     [Exports(typeof(GitRepository))]
     internal partial class GitRepositoryDataService : BaseDataService<GitRepository>
     {
-        protected override IEnumerable<GitRepository> DoGetItems(object userState)
+        protected override IEnumerable<GitRepository> DoGetItems()
         {
             var (_, tp) = GetCollectionAndProject();
             var repository = GetParameter<object>("Repository");

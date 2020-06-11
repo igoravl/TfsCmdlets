@@ -40,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.Policy
     [Exports(typeof(PolicyType))]
     internal class PolicyTypeDataServiceImpl : BaseDataService<PolicyType>
     {
-        protected override IEnumerable<PolicyType> DoGetItems(object userState)
+        protected override IEnumerable<PolicyType> DoGetItems()
         {
             var policyType = GetParameter<object>("PolicyType");
 

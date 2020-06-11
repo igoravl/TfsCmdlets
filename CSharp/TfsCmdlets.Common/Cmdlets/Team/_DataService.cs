@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Team
     [Exports(typeof(WebApiTeam))]
     internal class TeamDataService : BaseDataService<WebApiTeam>
     {
-        protected override IEnumerable<WebApiTeam> DoGetItems(object userState)
+        protected override IEnumerable<WebApiTeam> DoGetItems()
         {
             var team = GetParameter<object>("Team");
             var current = GetParameter<bool>("Current");

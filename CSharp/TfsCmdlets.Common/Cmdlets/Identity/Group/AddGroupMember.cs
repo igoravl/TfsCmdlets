@@ -1,56 +1,55 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.Identity;
+using TfsCmdlets.Extensions;
+using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
+    /// <summary>
+    /// Adds group members to an Azure DevOps group.
+    /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsGroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     public class AddGroupMember : BaseCmdlet
     {
-        /*
-                # Specifies the board name(s). Wildcards accepted
-                [Parameter(Position=0)]
-                [Alias("Name")]
-                [Alias("Member")]
-                [Alias("User")]
-                public object Identity { get; set; }
+        /// <summary>
+        /// Specifies the member (user or group) to add to the given group.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public object Member { get; set; }
 
-                [Parameter(ValueFromPipeline=true)]
-                public object Group { get; set; }
+        /// <summary>
+        /// Specifies the group to which the member is added.
+        /// </summary>
+        [Parameter(Position = 1, Mandatory = true)]
+        public object Group { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
-            {
-                tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
+        {
+            var member = GetInstanceOf<TfsIdentity>(new {
+                Identity = Member
+            });
 
-                gi = Get-TfsIdentity -Identity Group -Collection tpc
-                ui = Get-TfsIdentity -Identity Identity -Collection tpc
+            var group = GetInstanceOf<TfsIdentity>(new {
+                Identity = Group
+            });
 
-                if(! gi)
-                {
-                    throw new Exception($"Invalid or non-existent group "{Group}"")
-                }
+            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
 
-                if(! ui)
-                {
-                    throw new Exception($"Invalid or non-existent identity "{Identity}"")
-                }
+            this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to group '{group.DisplayName}'");
 
-                var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+            if (!ShouldProcess($"Group '{group.DisplayName}'", $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;
 
-                this.Log($"Adding {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" to group "$(gi.DisplayName)"");
-
-                if(! ShouldProcess(gi.DisplayName, $"Add member "{{ui}.DisplayName} ($(ui.Properties["Account"]))""))
-                {
-                    return
-                }
-
-                task = client.AddMemberToGroupAsync(gi.Descriptor, ui.Descriptor); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error adding member "{{ui}.DisplayName}" to group "$(gi.DisplayName)"" task.Exception.InnerExceptions })
-            }
+            client.AddMemberToGroupAsync((IdentityDescriptor)group.Descriptor, (IdentityDescriptor)member.Descriptor)
+                .GetResult($"Error adding member '{member.DisplayName}' to group '{group.DisplayName}'");
         }
-        */
     }
 }

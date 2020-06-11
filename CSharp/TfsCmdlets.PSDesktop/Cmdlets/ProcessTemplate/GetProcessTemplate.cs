@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     [Exports(typeof(TemplateHeader))]
     internal class ProcessTemplateDataService : BaseDataService<TemplateHeader>
     {
-        protected override IEnumerable<TemplateHeader> DoGetItems(object userState)
+        protected override IEnumerable<TemplateHeader> DoGetItems()
         {
             var process = GetParameter<object>("ProcessTemplate");
 

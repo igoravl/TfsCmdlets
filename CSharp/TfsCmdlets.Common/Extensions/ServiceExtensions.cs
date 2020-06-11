@@ -16,14 +16,14 @@ namespace TfsCmdlets.Extensions
         //     return _provider.GetService<T>(cmdlet);
         // }
 
-        // internal static T GetInstanceOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
+        // internal static T GetInstanceOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null) where T : class
         // {
-        //     return _provider.GetInstanceOf<T>(cmdlet, overriddenParameters, userState);
+        //     return _provider.GetInstanceOf<T>(cmdlet, overriddenParameters);
         // }
 
-        // internal static IEnumerable<T> GetCollectionOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null, object userState = null) where T : class
+        // internal static IEnumerable<T> GetCollectionOf<T>(this Cmdlet cmdlet, ParameterDictionary overriddenParameters = null) where T : class
         // {
-        //     return _provider.GetCollectionOf<T>(cmdlet, overriddenParameters, userState);
+        //     return _provider.GetCollectionOf<T>(cmdlet, overriddenParameters);
         // }
 
         // internal static T GetClient<T>(this Cmdlet cmdlet) where T : VssHttpClientBase

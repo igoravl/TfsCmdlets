@@ -7,13 +7,13 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
 {
-    public interface ICmdletServiceProvider
+    internal interface ICmdletServiceProvider
     {
         TService GetService<TService>(BaseCmdlet cmdlet) where TService : IService;
 
-        TObj GetInstanceOf<TObj>(BaseCmdlet cmdlet, ParameterDictionary parameters = null, object userState = null) where TObj : class;
+        TObj GetInstanceOf<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
-        IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet cmdlet, ParameterDictionary parameters = null, object userState = null) where TObj : class;
+        IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
         TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 

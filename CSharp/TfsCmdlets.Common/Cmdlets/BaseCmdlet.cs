@@ -24,7 +24,7 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// The service provider injected in this cmdlet instance
         /// </summary>
-        protected static ICmdletServiceProvider Provider => ServiceManager.Provider;
+        private protected static ICmdletServiceProvider Provider => ServiceManager.Provider;
 
         /// <summary>
         /// Returns the PowerShell command name of this cmdlet
@@ -145,10 +145,14 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <typeparam name="T">The type of the API client</typeparam>
         /// <returns>An instance of the requested API client</returns>
-        protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
+        private protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where T : VssHttpClientBase
         {
-            return Provider.GetInstanceOf<TfsConnection>(this, parameters, scope.ToString()).GetClient<T>();
+            var pd = new ParameterDictionary(parameters) {
+                ["ConnectionType"] = scope
+            };
+            
+            return Provider.GetInstanceOf<TfsConnection>(this, pd).GetClient<T>();
         }
 
         /// <summary>
@@ -156,19 +160,19 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <typeparam name="T">The type of the requested service.static Must derive from IService</typeparam>
         /// <returns>An instance of T, as provided by the current service provider</returns>
-        protected virtual T GetService<T>() where T : IService
+        private protected virtual T GetService<T>() where T : IService
         {
             return Provider.GetService<T>(this);
         }
 
-        protected virtual TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected virtual TObj GetInstanceOf<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetInstanceOf<TObj>(this, parameters, userState);
+            return Provider.GetInstanceOf<TObj>(this, parameters);
         }
 
-        protected virtual IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj : class
+        protected virtual IEnumerable<TObj> GetCollectionOf<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetCollectionOf<TObj>(this, parameters, userState);
+            return Provider.GetCollectionOf<TObj>(this, parameters);
         }
 
         protected virtual string GetCurrentDirectory()

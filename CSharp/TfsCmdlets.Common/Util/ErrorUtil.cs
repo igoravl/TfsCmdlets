@@ -10,5 +10,13 @@ namespace TfsCmdlets.Util
         {
             throw new NotSupportedException("This cmdlet is not supported on PowerShell Core");
         }
+
+        internal static void ThrowIfNotFound(object data, string name, object searchCriteria)
+        {
+            if(data == null)
+            {
+                throw new ArgumentException($"Invalid or non-existent {name} '{searchCriteria}'");
+            }
+        }
     }
 }

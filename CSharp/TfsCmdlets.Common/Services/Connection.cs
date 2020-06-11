@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Services
 {
+    /// <summary>
+    /// Encapsulates the platform-specific connection object
+    /// </summary>
     public partial class Connection: PSObject
     {
-        public Connection(object obj) : base(obj) { }
+        internal Connection(object obj) : base(obj) { }
 
         internal virtual Uri Uri => InnerConnection.Uri;
 

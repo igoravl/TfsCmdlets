@@ -13,7 +13,7 @@ namespace TfsCmdlets.Services
     [Exports(typeof(VssClientCredentials))]
     internal class CredentialsService : BaseDataService<VssClientCredentials>
     {
-        protected override IEnumerable<VssClientCredentials> DoGetItems(object userState)
+        protected override IEnumerable<VssClientCredentials> DoGetItems()
         {
             var credential = GetParameter<object>("Credential");
             var userName = GetParameter<string>("UserName");

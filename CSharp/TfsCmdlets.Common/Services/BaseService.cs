@@ -25,20 +25,20 @@ namespace TfsCmdlets.Services
     {
         private ParameterDictionary _parameters;
         
-        protected abstract IEnumerable<T> DoGetItems(object userState);
+        protected abstract IEnumerable<T> DoGetItems();
 
-        public T GetInstanceOf(ParameterDictionary parameters = null, object userState = null) 
+        public T GetInstanceOf(object parameters = null) 
         {
-            var items = GetCollectionOf(parameters, userState)?.ToList()?? new List<T>();
+            var items = GetCollectionOf(parameters)?.ToList()?? new List<T>();
             if(items == null || items.Count == 0) return null;//throw new Exception($"Invalid or non-existent {ItemName} '{ItemFilter}'");
 
             return items[0];
         }
 
-        public IEnumerable<T> GetCollectionOf(ParameterDictionary parameters = null, object userState = null)
+        public IEnumerable<T> GetCollectionOf(object parameters = null)
         {
             _parameters = new ParameterDictionary(parameters, Cmdlet);
-            return DoGetItems(userState);
+            return DoGetItems();
         }
 
         protected TParam GetParameter<TParam>(string name, TParam defaultValue = default(TParam))
@@ -55,14 +55,19 @@ namespace TfsCmdlets.Services
             _parameters[name] = value;
         }
 
-        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj: class
+        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null) where TObj: class
         {
-            return Provider.GetInstanceOf<TObj>(Cmdlet, parameters, userState);
+            return Provider.GetInstanceOf<TObj>(Cmdlet, parameters);
         }
 
-        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null, object userState = null) where TObj: class
+        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null) where TObj: class
         {
-            return Provider.GetCollectionOf<TObj>(Cmdlet, parameters, userState);
+            return Provider.GetCollectionOf<TObj>(Cmdlet, parameters);
+        }
+
+        protected Connection GetServer(ParameterDictionary parameters = null)
+        {
+            return Provider.GetServer(Cmdlet, parameters);
         }
 
         protected Connection GetCollection(ParameterDictionary parameters = null)
@@ -83,7 +88,18 @@ namespace TfsCmdlets.Services
         protected TClient GetClient<TClient>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where TClient : VssHttpClientBase
         {
-            return Provider.GetInstanceOf<TfsConnection>(Cmdlet, parameters, scope.ToString()).GetClient<TClient>();
+            var pd = new ParameterDictionary(parameters) {
+                ["ConnectionType"] = scope
+            };
+
+            var conn = Provider.GetInstanceOf<TfsConnection>(Cmdlet, pd);
+
+            if(conn == null)
+            {
+                throw new ArgumentException($"No TFS connection information available. Either supply a valid -{scope} argument or use one of the Connect-Tfs* cmdlets prior to invoking this cmdlet.");
+            }
+
+            return conn.GetClient<TClient>();
         }
     }
 }

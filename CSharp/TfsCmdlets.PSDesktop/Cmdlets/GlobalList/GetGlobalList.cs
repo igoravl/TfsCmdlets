@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Exports(typeof(TfsGlobalList))]
     internal class GlobalListDataService : BaseDataService<TfsGlobalList>
     {
-        protected override IEnumerable<TfsGlobalList> DoGetItems(object userState)
+        protected override IEnumerable<TfsGlobalList> DoGetItems()
         {
             var tpc = GetCollection();
             var store = tpc.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();

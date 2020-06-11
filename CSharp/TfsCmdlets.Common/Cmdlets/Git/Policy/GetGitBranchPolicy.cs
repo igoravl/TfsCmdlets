@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     [Exports(typeof(PolicyConfiguration))]
     internal class GitBranchPolicyDataServiceImpl : BaseDataService<PolicyConfiguration>
     {
-        protected override IEnumerable<PolicyConfiguration> DoGetItems(object userState)
+        protected override IEnumerable<PolicyConfiguration> DoGetItems()
         {
             var repo = this.GetInstanceOf<GitRepository>();
             OverrideParameter("Project", repo.ProjectReference.Name);

@@ -6,17 +6,17 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {
-    public interface IService
+    internal interface IService
     {
         ICmdletServiceProvider Provider { get; set;  }
 
         BaseCmdlet Cmdlet { get; set; }
     }
 
-    public interface IDataService<out T>: IService where T: class
+    internal interface IDataService<out T>: IService where T: class
     {
-        T GetInstanceOf(ParameterDictionary overriddenParameters = null, object filter = null);
+        T GetInstanceOf(object overriddenParameters = null);
 
-        IEnumerable<T> GetCollectionOf(ParameterDictionary overriddenParameters = null, object userState = null);
+        IEnumerable<T> GetCollectionOf(object overriddenParameters = null);
     }
 }

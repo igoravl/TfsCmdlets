@@ -4,14 +4,14 @@ namespace TfsCmdlets.Cmdlets
 {
     public abstract class BaseCmdlet<T>: BaseCmdlet where T: class
     {
-        protected T GetInstanceOf(ParameterDictionary parameters = null, object userState = null)
+        private protected T GetInstanceOf(ParameterDictionary parameters = null)
         {
-            return Provider.GetInstanceOf<T>(this, parameters, userState);
+            return Provider.GetInstanceOf<T>(this, parameters);
         }
 
-        protected IEnumerable<T> GetCollectionOf(ParameterDictionary parameters = null, object userState = null)
+        private protected IEnumerable<T> GetCollectionOf(ParameterDictionary parameters = null)
         {
-            return Provider.GetCollectionOf<T>(this, parameters, userState);
+            return Provider.GetCollectionOf<T>(this, parameters);
         }
 
         protected override void ProcessRecord()

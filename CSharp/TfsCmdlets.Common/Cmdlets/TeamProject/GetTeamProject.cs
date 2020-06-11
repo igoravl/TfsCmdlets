@@ -60,7 +60,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     [Exports(typeof(WebApiTeamProject))]
     internal class TeamProjectService: BaseDataService<WebApiTeamProject>
     {
-        protected override IEnumerable<WebApiTeamProject> DoGetItems(object userState)
+        protected override IEnumerable<WebApiTeamProject> DoGetItems()
         {
             var project = GetParameter<object>("Project");
             var current = GetParameter<bool>("Current");

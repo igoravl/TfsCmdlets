@@ -7,72 +7,70 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class ParameterDictionary: Dictionary<string, object>
+    internal class ParameterDictionary : Dictionary<string, object>
     {
-        public ParameterDictionary()
+        internal ParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
         }
 
-        public ParameterDictionary(ParameterDictionary other)
+        internal ParameterDictionary(object original)
             : this()
         {
-            if(other == null || other.Count == 0) return;
-
-            foreach(var kvp in other)
+            switch(original)
             {
-                Add(kvp.Key, kvp.Value);
+                case null: return;
+                case ParameterDictionary pd: {
+                    pd.ForEach(kvp=>Add(kvp.Key, kvp.Value));
+                    break;
+                }
+                case Cmdlet cmdlet: {
+                    cmdlet.GetType()
+                        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                        .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null)
+                        .ForEach(pi =>
+                            Add(pi.Name,
+                                pi.PropertyType == typeof(SwitchParameter) ?
+                                    ((SwitchParameter)pi.GetValue(cmdlet)).ToBool() :
+                                    pi.GetValue(cmdlet)));
+
+                    if (cmdlet is PSCmdlet psCmdlet)
+                    {
+                        Add("ParameterSetName", psCmdlet.ParameterSetName);
+                    }
+                    break;
+                }
+                default: {
+                    original.GetType().GetProperties(BindingFlags.Instance|BindingFlags.Public).ForEach(prop=>Add(prop.Name, prop.GetValue(original)));
+                    break;
+                }
             }
         }
 
-        public ParameterDictionary(ParameterDictionary original, ParameterDictionary mergeWith)
+        internal ParameterDictionary(object original, object mergeWith)
             : this(original)
         {
-            Merge(mergeWith);
+            Merge(new ParameterDictionary(mergeWith));
         }
 
-        public ParameterDictionary(ParameterDictionary original, Cmdlet mergeWith)
-            : this(original, new ParameterDictionary(mergeWith))
+        internal T Get<T>(string name, T defaultValue = default)
         {
-        }
-
-        public ParameterDictionary(Cmdlet cmdlet): this()
-        {
-            cmdlet
-                .GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null)
-                .ForEach(pi => 
-                    Add(
-                        pi.Name, 
-                        pi.PropertyType == typeof(SwitchParameter)? 
-                            ((SwitchParameter) pi.GetValue(cmdlet)).ToBool() : 
-                            pi.GetValue(cmdlet)));
-
-            if (cmdlet is PSCmdlet psCmdlet)
-            {
-                Add("ParameterSetName", psCmdlet.ParameterSetName);
-            }
-        }
-
-        public T Get<T>(string name, T defaultValue = default)
-        {
-            if(!ContainsKey(name)) return defaultValue;
+            if (!ContainsKey(name)) return defaultValue;
 
             var val = this[name];
 
-            if(val is PSObject obj)
+            if (val is PSObject obj)
             {
                 val = obj.BaseObject;
             }
 
-            return (T) val;
+            return (T)val;
         }
 
-        public void Merge(ParameterDictionary other)
+        internal void Merge(ParameterDictionary other)
         {
-            if(other == null || other.Count == 0) return;
-            
+            if (other == null || other.Count == 0) return;
+
             foreach (var kvp in other.Where(kvp => !ContainsKey(kvp.Key)))
             {
                 Add(kvp.Key, kvp.Value);

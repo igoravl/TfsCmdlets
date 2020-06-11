@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     [Exports(typeof(GitBranchStats))]
     internal partial class GitBranchStatsDataServiceImpl : BaseDataService<GitBranchStats>
     {
-        protected override IEnumerable<GitBranchStats> DoGetItems(object userState)
+        protected override IEnumerable<GitBranchStats> DoGetItems()
         {
             var branch = GetParameter<object>("Branch");
             var defaultBranch = GetParameter<bool>("Default");
