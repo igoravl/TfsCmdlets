@@ -46,9 +46,12 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
             this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to group '{group.DisplayName}'");
 
-            if (!ShouldProcess($"Group '{group.DisplayName}'", $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;
+            if (!ShouldProcess($"Group '{group.DisplayName}'", 
+                $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;
 
-            client.AddMemberToGroupAsync((IdentityDescriptor)group.Descriptor, (IdentityDescriptor)member.Descriptor)
+            client.AddMemberToGroupAsync(
+                (IdentityDescriptor)group.Descriptor, 
+                (IdentityDescriptor)member.Descriptor)
                 .GetResult($"Error adding member '{member.DisplayName}' to group '{group.DisplayName}'");
         }
     }
