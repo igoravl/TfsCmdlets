@@ -1,4 +1,6 @@
+using System;
 using System.Management.Automation;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
@@ -7,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     [DesktopOnly]
-    public partial class RemoveGlobalList : BaseGlobalListCmdlet
+    public class RemoveGlobalList : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of global list to be deleted. Wildcards are supported.
@@ -22,5 +24,24 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            var list = GetItem<Models.GlobalList>();
+
+            if (list == null)
+            {
+                throw new ArgumentException($"Invalid or non-existent global list '{GlobalList}'");
+            }
+
+            var tpc = GetCollection();
+
+            if (!ShouldProcess($"Team Project Collection '{tpc.DisplayName}'", $"Delete global list '{list.Name}'")) return;
+
+            GetService<IGlobalListService>().Remove(new[]{list.Name});
+        }
     }
 }

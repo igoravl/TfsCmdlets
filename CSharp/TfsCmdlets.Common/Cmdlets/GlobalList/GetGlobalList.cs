@@ -1,5 +1,6 @@
+using TfsCmdlets.Services;
+using System.Collections.Generic;
 using System.Management.Automation;
-using TfsGlobalList = TfsCmdlets.Cmdlets.GlobalList.GlobalList;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
@@ -7,9 +8,9 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// Gets the contents of one or more Global Lists.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGlobalList")]
-    [OutputType(typeof(TfsGlobalList))]
+    [OutputType(typeof(Models.GlobalList))]
     [DesktopOnly]
-    public partial class GetGlobalList : BaseCmdlet<TfsGlobalList>
+    public class GetGlobalList : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of the global list. Wildcards supported. 
@@ -25,5 +26,22 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            WriteItems<Models.GlobalList>();
+        }
+    }
+
+    [Exports(typeof(Models.GlobalList))]
+    internal class GlobalListDataService : BaseDataService<Models.GlobalList>
+    {
+        protected override IEnumerable<Models.GlobalList> DoGetItems()
+        {
+            return Provider.GetService<IGlobalListService>(Cmdlet, Parameters).Export();
+        }
     }
 }

@@ -1,5 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using System.Xml;
+using System.Xml.Linq;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
@@ -19,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </notes>
     [Cmdlet(VerbsData.Import, "TfsGlobalList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [DesktopOnly]
-    public partial class ImportGlobalList : BaseGlobalListCmdlet
+    public class ImportGlobalList : BaseCmdlet
     {
         /// <summary>
         /// XML document object containing one or more global list definitions.
@@ -39,5 +45,77 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter()]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            bool done = false;
+            XDocument doc = null;
+
+            while (!done) switch (InputObject)
+                {
+                    case PSObject pso:
+                        {
+                            InputObject = pso.BaseObject;
+                            continue;
+                        }
+                    case string s:
+                        {
+                            doc = XDocument.Parse(s);
+                            done = true;
+                            break;
+                        }
+                    case XmlDocument xmlDoc:
+                        {
+                            doc = xmlDoc.ToXDocument();
+                            done = true;
+                            break;
+                        }
+                    case XDocument xDoc:
+                        {
+                            doc = new XDocument(xDoc);
+                            done = true;
+                            break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException("Supplied input object is not a valid XML document");
+                        }
+                }
+
+            var importList = new Models.GlobalListCollection(doc);
+            var existingLists = GetItems<Models.GlobalList>(new { GlobalList = "*" });
+            var operations = new Dictionary<string, string>();
+
+            foreach (var list in importList)
+            {
+                operations.Add(list.Name, existingLists.Any(l => l.Name.Equals(list.Name, StringComparison.OrdinalIgnoreCase)) ?
+                    "Overwrite" : "Import");
+            }
+
+            var tpc = GetCollection();
+
+            foreach (var kvp in operations)
+            {
+                if (ShouldProcess($"Team Project Collection [{tpc.DisplayName}]",
+                    $"{kvp.Value} global list [{kvp.Key}]")) continue;
+
+                // Remove skipped list from import list
+
+                importList.RemoveAll(l => l.Name.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (importList.Count == 0) return;
+
+            if (!Force && operations.ContainsValue("Overwrite"))
+            {
+                var listNames = string.Join(", ", operations.Where(kvp => kvp.Value.Equals("Overwrite")).Select(kvp => $"'{kvp.Key}'"));
+                throw new Exception($"Global List(s) {listNames} already exist. To overwrite an existing list, use the -Force switch.");
+            }
+
+            GetService<IGlobalListService>().Import(importList);
+        }
     }
 }

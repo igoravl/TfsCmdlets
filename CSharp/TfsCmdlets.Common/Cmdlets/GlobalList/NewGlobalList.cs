@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
@@ -9,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(PSCustomObject))]
     [DesktopOnly]
-    public partial class NewGlobalList : BaseGlobalListCmdlet
+    public class NewGlobalList : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of the new global list.
@@ -41,5 +43,30 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter()]
         public SwitchParameter Passthru { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            var newList = new Models.GlobalList(GlobalList, Items).ToXml();
+            var existingList = GetItem<Models.GlobalList>();
+            var tpc = GetCollection();
+
+            if (!ShouldProcess($"Team Project Collection [{tpc.DisplayName}]", 
+                $"{(existingList != null? "Overwrite": "Create")} global list [{GlobalList}]")) return;
+
+            if (!Force && existingList != null)
+            {
+                throw new Exception($"Global List '{GlobalList}' already exist. To overwrite an existing list, use the -Force switch.");
+            }
+
+            GetService<IGlobalListService>().Import(newList);
+
+            if(Passthru)
+            {
+                WriteObject(newList);
+            }
+        }
     }
 }

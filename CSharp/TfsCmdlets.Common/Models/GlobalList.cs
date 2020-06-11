@@ -13,22 +13,24 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Converts a GlobalList to an XElement
         /// </summary>
-        public static explicit operator XElement(GlobalList gl) => gl.ToXml();
+        public static implicit operator XElement(GlobalList gl) => gl.ToXml();
         
         /// <summary>
         /// Converts an XElement to a GlobalList
         /// </summary>
-        public static explicit operator GlobalList(XElement el) => FromXml(el);
+        public static implicit operator GlobalList(XElement el) => new GlobalList(el);
+
+        public GlobalList() {}
 
         /// <summary>
         /// Creates an instance of GlobalList from an XElement containing a &lt;GLOBALLIST&gt; element
         /// </summary>
         /// <param name="el">An XML element containing a global list definition</param>
         /// <returns>An instance of GlobalList</returns>
-        public static GlobalList FromXml(XElement el)
+        public GlobalList(XElement el)
         {
-            return new GlobalList(el.Attribute("name").Value, 
-                el.Descendants("LISTITEM").Select(li => li.Attribute("value").Value));
+            Name = el.Attribute("name").Value;
+            Items = el.Descendants("LISTITEM").Select(li => li.Attribute("value").Value).ToList();
         }
 
         /// <summary>
@@ -47,12 +49,10 @@ namespace TfsCmdlets.Cmdlets.GlobalList
             Items = new List<string>(items);
         }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
         public override string ToString()
         {
-            return $"{Name} ({Items.Count} item(s))";
+            return ToXml().ToString();
         }
 
         /// <summary>
@@ -64,4 +64,50 @@ namespace TfsCmdlets.Cmdlets.GlobalList
             return new XElement("GLOBALLIST", new XAttribute("name", Name), Items.Select(i => new XElement("LISTITEM", new XAttribute("value", i))));
         }
     }
+
+    public class GlobalListCollection: List<GlobalList>
+    {
+        private static readonly XNamespace _glNs = "http://schemas.microsoft.com/VisualStudio/2005/workitemtracking/globallists";
+
+        public static implicit operator XDocument(GlobalListCollection list) => list.ToXml();
+
+        public static implicit operator GlobalListCollection(XDocument doc) => new GlobalListCollection(doc);
+
+        public GlobalListCollection(): base() {}
+
+        public GlobalListCollection(IEnumerable<GlobalList> items): base(items) {}
+
+        public GlobalListCollection(GlobalList item): base() => Add(item);
+
+        public GlobalListCollection(string xml): this(XDocument.Parse(xml)) {}
+
+        public GlobalListCollection(XDocument doc)
+        {
+            AddRange(doc.Descendants("GLOBALLIST").Cast<GlobalList>());
+        }
+
+        public override string ToString()
+        {
+            return ToXml().ToString();
+        }
+
+        public XDocument ToXml()
+        {
+            return CreateDocument(this.Cast<XElement>());
+        }
+
+        private XDocument CreateDocument(params object[] content)
+        {
+            return new XDocument(
+                new XElement(_glNs + "GLOBALLISTS",
+                    new XAttribute(XNamespace.Xmlns + "gl", _glNs.NamespaceName), content));
+        }
+    }
+
+/*
+
+
+
+
+*/
 }

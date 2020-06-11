@@ -1,5 +1,5 @@
 using System.Management.Automation;
-using TfsGlobalList = TfsCmdlets.Cmdlets.GlobalList.GlobalList;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsData.Export, "TfsGlobalList")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public partial class ExportGlobalList : BaseGlobalListCmdlet
+    public class ExportGlobalList : BaseCmdlet
     {
         /// <summary>
         /// Specifies the name of the global list to be exported. Wildcards are supported. 
@@ -47,5 +47,15 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Collection { get; set; }
+
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            var result = GetItems<Models.GlobalList>();
+
+            WriteObject(result.ToString());
+        }
     }
 }
