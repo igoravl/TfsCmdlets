@@ -28,12 +28,12 @@ namespace TfsCmdlets.Cmdlets.Team
         public object Team { get; set; } = "*";
 
         /// <summary>
-        /// Gets team members (fills the Members property with a list of
+        /// Do not get team members (fills the Members property with a list of
         /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects).
-        /// When omitted, only basic team information (such as name, description and ID) are returned.
+        /// When present, only basic team information (such as name, description and ID) are returned.
         /// </summary>
         [Parameter]
-        public SwitchParameter QueryMembership { get; set; }
+        public SwitchParameter DoNotQueryMembership { get; set; }
 
         /// <summary>
         /// Gets the team's backlog settings (fills the Settings property with a
@@ -82,7 +82,7 @@ namespace TfsCmdlets.Cmdlets.Team
         {
             var team = GetParameter<object>(nameof(GetTeam.Team));
             var current = GetParameter<bool>(nameof(GetTeam.Current));
-            var includeMembers = GetParameter<bool>(nameof(GetTeam.QueryMembership));
+            var includeMembers = !GetParameter<bool>(nameof(GetTeam.DoNotQueryMembership));
             var includeSettings = GetParameter<bool>(nameof(GetTeam.IncludeSettings));
             var defaultTeam = GetParameter<bool>(nameof(GetTeam.Default));
 

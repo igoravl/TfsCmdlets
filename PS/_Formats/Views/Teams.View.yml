@@ -7,4 +7,4 @@ TableControl:
   Name: 
   Description:
   Members: 
-    ScriptBlock: $_.Members.Identity.Count
+    ScriptBlock: $_.TeamMembers.Count

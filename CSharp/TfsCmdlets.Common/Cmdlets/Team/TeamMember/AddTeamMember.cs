@@ -1,56 +1,67 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.Identity;
+using TfsCmdlets.Extensions;
 using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
+    /// <summary>
+    /// Adds new members to a team.
+    /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(TeamAdmins))]
     public class AddTeamMember : BaseCmdlet
     {
-        /*
-                # Specifies the board name(s). Wildcards accepted
-                [Parameter(Position=0)]
-                [Alias("Name")]
-                [Alias("Member")]
-                [Alias("User")]
-                public object Identity { get; set; }
+        /// <summary>
+        /// Specifies the member (user or group) to add to the given team.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public object Member { get; set; }
 
-                [Parameter(ValueFromPipeline=true)]
-                public object Team { get; set; }
+        /// <summary>
+        /// Specifies the team to which the member is added.
+        /// </summary>
+        [Parameter(Position = 1)]
+        public object Team { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
-            {
-                t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+        {
+            var member = GetItem<Models.Identity>(new {
+                Identity = Member
+            });
 
-                gi = Get-TfsIdentity -Identity t.Id -Collection tpc
-                ui = Get-TfsIdentity -Identity Identity -Collection tpc
+            var (_, _, t) = GetCollectionProjectAndTeam();
 
-                if(! ui)
-                {
-                    throw new Exception($"Invalid or non-existent identity "{Identity}"")
-                }
+            var group = GetItem<Models.Identity>(new {
+                Identity = t.Id
+            });
 
-                var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
 
-                this.Log($"Adding {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" to team "$(t.Name)"");
+            this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to team '{group.DisplayName}'");
 
-                if(! ShouldProcess(t.Name, $"Add member "{{ui}.DisplayName} ($(ui.Properties["Account"]))""))
-                {
-                    return
-                }
+            if (!ShouldProcess($"Team '{group.DisplayName}'", 
+                $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;
 
-                task = client.AddMemberToGroupAsync(gi.Descriptor, ui.Descriptor); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error adding team member "{{ui}.DisplayName}" to team "$(t.Name)"" task.Exception.InnerExceptions })
-            }
+            client.AddMemberToGroupAsync(
+                (IdentityDescriptor)group.Descriptor, 
+                (IdentityDescriptor)member.Descriptor)
+                .GetResult($"Error adding member '{member.DisplayName}' to team '{group.DisplayName}'");
         }
-        */
     }
 }

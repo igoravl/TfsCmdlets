@@ -1,23 +1,40 @@
+using System;
 using System.Management.Automation;
+using TfsCmdlets.Extensions;
+using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
+    /// <summary>
+    /// Gets the members of a team.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamMember")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    public class GetTeamMember: BaseCmdlet
+    public class GetTeamMember : BaseCmdlet
     {
-/*
-        # Specifies the board name(s). Wildcards accepted
-        [Parameter(Position=0)]
-        [SupportsWildcards()]
-        public object Identity { get; set; } = "*";
-
-        [Parameter(ValueFromPipeline=true)]
+        /// <summary>
+        /// Specifies the team from which to get its members.
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         public object Team { get; set; }
 
-        [Parameter()]
-        public object Project { get; set; }
+        /// <summary>
+        /// Specifies the member (user or group) to get from the given team. Wildcards are supported.
+        /// When omitted, all team members are returned.
+        /// </summary>
+        [Parameter(Position = 1)]
+        [ValidateNotNullOrEmpty]
+        public string Member { get; set; } = "*";
 
+        /// <summary>
+        /// Recursively expands all member groups, returning the users and/or groups contained in them
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Recurse { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
 
@@ -25,35 +42,31 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
-    {
-        if(Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam)
         {
-            Project = Team.ProjectId
-        }
+            var (_, _, t) = GetCollectionProjectAndTeam();
 
-        t = Get-TfsTeam -Team Team -Project Project -Collection Collection -IncludeMembers
-
-        tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-
-        this.Log($"Returning team members from team "{{t}.Name}"");
-
-        foreach(member in t.Members)
-        {
-            i = Get-TfsIdentity -Identity member.Identity.Id -Collection Collection
-
-            if ((i.DisplayName -like Identity) || (i.Properties["Account"] -like Identity))
+            var group = GetItem<Models.Identity>(new
             {
-                Write-Output i | `
-                    Add-Member -Name TeamId -MemberType NoteProperty -Value t.Id -PassThru | `
-                    Add-Member -Name ProjectId -MemberType NoteProperty -Value t.ProjectId -PassThru
+                Identity = t.Id,
+                QueryMembership = (Recurse? TfsQueryMembership.Expanded: TfsQueryMembership.Direct)
+            });
+
+            if (group == null) throw new ArgumentException($"Invalid or non-existent team '{Team}'");
+
+            this.Log($"Returning members from team '{t.Name}'");
+
+            foreach(var memberId in group.MemberIds)
+            {
+                var member = GetItem<Models.Identity>(new {
+                    Identity = memberId
+                });
+
+                if (member.DisplayName.IsLike(Member) || 
+                    member.UniqueName.IsLike(Member))
+                {
+                    WriteObject(member);
+                }
             }
         }
-    }
-}
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

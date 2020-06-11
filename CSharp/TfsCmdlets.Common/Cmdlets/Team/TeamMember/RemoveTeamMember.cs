@@ -1,64 +1,73 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.Identity.Client;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
+    /// <summary>
+    /// Removes a member from a team.
+    /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class RemoveTeamMember : BaseCmdlet
     {
-        /*
-                # Specifies the board name(s). Wildcards accepted
-                [Parameter(Position=0,ValueFromPipeline=true)]
-                [Alias("Name")]
-                [Alias("User")]
-                [Alias("Member")]
-                public object Identity { get; set; }
+        /// <summary>
+        /// Specifies the member (user or group) to remove from the given team.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        public object Member { get; set; }
 
-                [Parameter()]
-                public object Team { get; set; }
+        /// <summary>
+        /// Specifies the team from which the member is removed.
+        /// </summary>
+        [Parameter(Position = 1)]
+        public object Team { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            var member = GetItem<Models.Identity>(new
             {
-                if(Identity.TeamId && Identity.ProjectId)
-                {
-                    Project = Identity.ProjectId 
-                    t = Get-TfsTeam -Team Identity.TeamId -Project Project -Collection Collection
+                Identity = Member
+            });
 
-                    tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-                }
-                else
-                {
-                    t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-                }
+            ErrorUtil.ThrowIfNotFound(member, nameof(member), Member);
 
-                gi = Get-TfsIdentity -Identity t.Id -Collection tpc
-                ui = Get-TfsIdentity -Identity Identity -Collection tpc
+            var (_, _, t) = GetCollectionProjectAndTeam();
 
-                if(! ui)
-                {
-                    throw new Exception($"Invalid or non-existent identity "{Identity}"")
-                }
+            var group = GetItem<Models.Identity>(new
+            {
+                Identity = t.Id
+            });
 
-                var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+            ErrorUtil.ThrowIfNotFound(group, nameof(group), Team);
 
-                this.Log($"Removing {{ui}.IdentityType} "$(ui.DisplayName) ($(ui.Properties["Account"]))" from team "$(t.Name)"");
+            var client = GetClient<IdentityHttpClient>();
 
-                if(! ShouldProcess(t.Name, $"Remove member "{{ui}.DisplayName} ($(ui.Properties["Account"]))""))
-                {
-                    return
-                }
-
-                task = client.RemoveMemberFromGroupAsync(gi.Descriptor, ui.Descriptor); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error removing team member "{{ui}.DisplayName}" from team "$(t.Name)"" task.Exception.InnerExceptions })
+            if (!ShouldProcess($"Team '{t.Name}'",
+                $"Remove member '{member.DisplayName} ({member.UniqueName})'"))
+            {
+                return;
             }
+
+            this.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from team '{t.Name}'");
+
+            client.RemoveMemberFromGroupAsync(group.Descriptor, member.Descriptor)
+                .GetResult($"Error removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");
         }
-        */
     }
 }
