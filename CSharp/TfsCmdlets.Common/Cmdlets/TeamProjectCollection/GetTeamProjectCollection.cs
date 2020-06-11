@@ -84,7 +84,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
             try
             {
                 WriteObject(this.GetItems<TfsCmdlets.Services.Connection>(new {
-                    ConnectionType = "Collection"
+                    ConnectionType = ClientScope.Collection
                 }), true);
             }
             catch

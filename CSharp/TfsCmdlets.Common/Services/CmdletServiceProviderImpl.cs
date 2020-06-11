@@ -60,7 +60,7 @@ namespace TfsCmdlets.Services
         public TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters) {
-                ["ConnectionType"] = "Server"
+                ["ConnectionType"] = ClientScope.Server
             };
 
             var srv = GetItem<TfsConnection>(cmdlet, pd);
@@ -76,7 +76,7 @@ namespace TfsCmdlets.Services
         public TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters) {
-                ["ConnectionType"] = "Collection"
+                ["ConnectionType"] = ClientScope.Collection
             };
 
             var tpc = GetItem<TfsConnection>(cmdlet, pd);

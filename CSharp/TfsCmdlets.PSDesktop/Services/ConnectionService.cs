@@ -12,7 +12,7 @@ namespace TfsCmdlets.Services
     {
         protected override IEnumerable<Connection> DoGetItems()
         {
-            var connectionType = GetParameter<string>("ConnectionType");
+            var connectionType = GetParameter<ClientScope>("ConnectionType").ToString();
             var connection = GetParameter<object>(connectionType);
 
             TfsConnection result = null;
