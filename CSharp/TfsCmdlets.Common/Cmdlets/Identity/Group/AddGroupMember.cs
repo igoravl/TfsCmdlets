@@ -34,11 +34,11 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         protected override void ProcessRecord()
         {
-            var member = GetInstanceOf<TfsIdentity>(new {
+            var member = GetItem<TfsIdentity>(new {
                 Identity = Member
             });
 
-            var group = GetInstanceOf<TfsIdentity>(new {
+            var group = GetItem<TfsIdentity>(new {
                 Identity = Group
             });
 

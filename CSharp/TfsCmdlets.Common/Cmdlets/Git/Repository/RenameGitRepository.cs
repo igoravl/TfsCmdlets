@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                 Project = repo.ProjectReference.Name;
             }
 
-            var repoToRename = GetInstanceOf<GitRepository>();
+            var repoToRename = GetItem<GitRepository>();
             var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
             if (!ShouldProcess($"Team Project [{repoToRename.ProjectReference.Name}]",

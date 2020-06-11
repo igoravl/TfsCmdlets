@@ -152,7 +152,7 @@ namespace TfsCmdlets.Cmdlets
                 ["ConnectionType"] = scope
             };
             
-            return Provider.GetInstanceOf<TfsConnection>(this, pd).GetClient<T>();
+            return Provider.GetItem<TfsConnection>(this, pd).GetClient<T>();
         }
 
         /// <summary>
@@ -165,14 +165,14 @@ namespace TfsCmdlets.Cmdlets
             return Provider.GetService<T>(this);
         }
 
-        protected virtual TObj GetInstanceOf<TObj>(object parameters = null) where TObj : class
+        protected virtual TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetInstanceOf<TObj>(this, parameters);
+            return Provider.GetItem<TObj>(this, parameters);
         }
 
-        protected virtual IEnumerable<TObj> GetCollectionOf<TObj>(object parameters = null) where TObj : class
+        protected virtual IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetCollectionOf<TObj>(this, parameters);
+            return Provider.GetItems<TObj>(this, parameters);
         }
 
         protected virtual string GetCurrentDirectory()

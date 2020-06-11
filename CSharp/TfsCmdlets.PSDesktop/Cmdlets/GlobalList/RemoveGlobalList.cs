@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <inheritdoc/>
         protected override void ProcessRecord()
         {
-            var list = GetInstanceOf<TfsGlobalList>();
+            var list = GetItem<TfsGlobalList>();
 
             if(list == null) 
             {

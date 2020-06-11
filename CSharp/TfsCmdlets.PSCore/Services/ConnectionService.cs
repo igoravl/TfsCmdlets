@@ -42,7 +42,7 @@ namespace TfsCmdlets.Services
                     case Uri uri:
                     {
                         Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
-                        result = new VssConnection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                        result = new VssConnection(uri, Provider.GetItem<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):

@@ -27,15 +27,15 @@ namespace TfsCmdlets.Services
         
         protected abstract IEnumerable<T> DoGetItems();
 
-        public T GetInstanceOf(object parameters = null) 
+        public T GetItem(object parameters = null) 
         {
-            var items = GetCollectionOf(parameters)?.ToList()?? new List<T>();
+            var items = GetItems(parameters)?.ToList()?? new List<T>();
             if(items == null || items.Count == 0) return null;//throw new Exception($"Invalid or non-existent {ItemName} '{ItemFilter}'");
 
             return items[0];
         }
 
-        public IEnumerable<T> GetCollectionOf(object parameters = null)
+        public IEnumerable<T> GetItems(object parameters = null)
         {
             _parameters = new ParameterDictionary(parameters, Cmdlet);
             return DoGetItems();
@@ -55,14 +55,14 @@ namespace TfsCmdlets.Services
             _parameters[name] = value;
         }
 
-        protected TObj GetInstanceOf<TObj>(ParameterDictionary parameters = null) where TObj: class
+        protected TObj GetItem<TObj>(ParameterDictionary parameters = null) where TObj: class
         {
-            return Provider.GetInstanceOf<TObj>(Cmdlet, parameters);
+            return Provider.GetItem<TObj>(Cmdlet, parameters);
         }
 
-        protected IEnumerable<TObj> GetCollectionOf<TObj>(ParameterDictionary parameters = null) where TObj: class
+        protected IEnumerable<TObj> GetItems<TObj>(ParameterDictionary parameters = null) where TObj: class
         {
-            return Provider.GetCollectionOf<TObj>(Cmdlet, parameters);
+            return Provider.GetItems<TObj>(Cmdlet, parameters);
         }
 
         protected Connection GetServer(ParameterDictionary parameters = null)
@@ -92,7 +92,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = scope
             };
 
-            var conn = Provider.GetInstanceOf<TfsConnection>(Cmdlet, pd);
+            var conn = Provider.GetItem<TfsConnection>(Cmdlet, pd);
 
             if(conn == null)
             {

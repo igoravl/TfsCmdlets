@@ -49,9 +49,9 @@ namespace TfsCmdlets.Services
                         }
 
                         if (connectionType.Equals("Server"))
-                            result = new TfsConfigurationServer(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                            result = new TfsConfigurationServer(uri, Provider.GetItem<VssClientCredentials>(Cmdlet));
                         else
-                            result = new TfsTeamProjectCollection(uri, Provider.GetInstanceOf<VssClientCredentials>(Cmdlet));
+                            result = new TfsTeamProjectCollection(uri, Provider.GetItem<VssClientCredentials>(Cmdlet));
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):

@@ -40,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                 Project = repo.ProjectReference.Name;
             }
 
-            var repos = this.GetCollectionOf<GitRepository>();
+            var repos = this.GetItems<GitRepository>();
             var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
             foreach (var r in repos)

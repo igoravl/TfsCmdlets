@@ -19,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 
             var store = tpc.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
 
-            if(!Force && GetCollectionOf<TfsGlobalList>().Any())
+            if(!Force && GetItems<TfsGlobalList>().Any())
             {
                 throw new Exception($"Global List '{GlobalList}' already exists. To overwrite an existing list, use the -Force switch.");
             }
@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 
             if(Passthru)
             {
-                WriteObject(GetInstanceOf<TfsGlobalList>());
+                WriteObject(GetItem<TfsGlobalList>());
             }
         }
     }

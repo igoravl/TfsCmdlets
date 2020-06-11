@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         protected override void ProcessRecord()
         {
-            var group = GetInstanceOf<TfsIdentity>(new
+            var group = GetItem<TfsIdentity>(new
             {
                 Identity = Group,
                 QueryMembership = (Recurse? TfsQueryMembership.Expanded: TfsQueryMembership.Direct)
@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
             foreach(var memberId in group.MemberIds)
             {
-                var member = GetInstanceOf<TfsIdentity>(new {
+                var member = GetItem<TfsIdentity>(new {
                     Identity = memberId
                 });
 

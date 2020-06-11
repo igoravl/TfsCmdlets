@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
                         }
                 }
 
-            var existingLists = GetCollectionOf<TfsGlobalList>(new ParameterDictionary(){["GlobalList"]="*"}).ToList();
+            var existingLists = GetItems<TfsGlobalList>(new ParameterDictionary(){["GlobalList"]="*"}).ToList();
             var operations = new Dictionary<string, string>();
 
             foreach (XElement list in doc.Root.Descendants("GLOBALLIST"))

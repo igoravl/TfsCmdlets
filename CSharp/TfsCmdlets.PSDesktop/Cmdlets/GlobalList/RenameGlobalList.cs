@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     {
         protected override void ProcessRecord()
         {
-            var list = GetInstanceOf<TfsGlobalList>();
+            var list = GetItem<TfsGlobalList>();
 
             if(list == null)
             {
@@ -28,8 +28,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
             }
             catch (Exception ex)
             {
-                if((GetInstanceOf<TfsGlobalList>(new ParameterDictionary(){["GlobalList"] = NewName}) != null) &&
-                    (GetInstanceOf<TfsGlobalList>() != null))
+                if((GetItem<TfsGlobalList>(new ParameterDictionary(){["GlobalList"] = NewName}) != null) &&
+                    (GetItem<TfsGlobalList>() != null))
                 {
                     Remove(NewName);
                 }

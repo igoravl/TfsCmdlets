@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         {
             var branch = GetParameter<object>("Branch");
             var defaultBranch = GetParameter<bool>("Default");
-            var repo = GetInstanceOf<GitRepository>();
+            var repo = GetItem<GitRepository>();
             OverrideParameter("Project", repo.ProjectReference.Name);
 
             if (repo.Size == 0)

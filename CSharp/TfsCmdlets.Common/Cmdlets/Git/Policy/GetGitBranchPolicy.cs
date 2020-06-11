@@ -55,10 +55,10 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     {
         protected override IEnumerable<PolicyConfiguration> DoGetItems()
         {
-            var repo = this.GetInstanceOf<GitRepository>();
+            var repo = this.GetItem<GitRepository>();
             OverrideParameter("Project", repo.ProjectReference.Name);
 
-            var branch = $"refs/heads/{GetInstanceOf<GitBranchStats>().Name}";
+            var branch = $"refs/heads/{GetItem<GitBranchStats>().Name}";
             var policyType = GetParameter<object>("PolicyType");
 
             while(true) switch(policyType)

@@ -4,19 +4,19 @@ namespace TfsCmdlets.Cmdlets
 {
     public abstract class BaseCmdlet<T>: BaseCmdlet where T: class
     {
-        private protected T GetInstanceOf(ParameterDictionary parameters = null)
+        private protected T GetItem(ParameterDictionary parameters = null)
         {
-            return Provider.GetInstanceOf<T>(this, parameters);
+            return Provider.GetItem<T>(this, parameters);
         }
 
-        private protected IEnumerable<T> GetCollectionOf(ParameterDictionary parameters = null)
+        private protected IEnumerable<T> GetItems(ParameterDictionary parameters = null)
         {
-            return Provider.GetCollectionOf<T>(this, parameters);
+            return Provider.GetItems<T>(this, parameters);
         }
 
         protected override void ProcessRecord()
         {
-            WriteObject(GetCollectionOf(), true);
+            WriteObject(GetItems(), true);
         }
     }
 }

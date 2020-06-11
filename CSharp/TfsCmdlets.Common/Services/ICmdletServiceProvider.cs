@@ -11,9 +11,9 @@ namespace TfsCmdlets.Services
     {
         TService GetService<TService>(BaseCmdlet cmdlet) where TService : IService;
 
-        TObj GetInstanceOf<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
+        TObj GetItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
-        IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
+        IEnumerable<TObj> GetItems<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
         TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 

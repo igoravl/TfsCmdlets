@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         /// </summary>
         protected override void ProcessRecord()
         {
-            var folders = GetCollectionOf<WebApiFolder>();
+            var folders = GetItems<WebApiFolder>();
 
             foreach(var f in folders)
             {
@@ -67,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                     this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
 
                     var path = $@"{f.Path.TrimEnd('\\')}\**";
-                    var subFolders = GetCollectionOf<WebApiFolder>(new ParameterDictionary(){
+                    var subFolders = GetItems<WebApiFolder>(new ParameterDictionary(){
                         ["Folder"] = path
                     }).ToList();
 

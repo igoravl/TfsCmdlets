@@ -15,8 +15,8 @@ namespace TfsCmdlets.Services
 
     internal interface IDataService<out T>: IService where T: class
     {
-        T GetInstanceOf(object overriddenParameters = null);
+        T GetItem(object overriddenParameters = null);
 
-        IEnumerable<T> GetCollectionOf(object overriddenParameters = null);
+        IEnumerable<T> GetItems(object overriddenParameters = null);
     }
 }

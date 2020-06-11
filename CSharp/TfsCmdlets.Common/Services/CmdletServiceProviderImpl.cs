@@ -31,7 +31,7 @@ namespace TfsCmdlets.Services
             return (T) _factories[serviceType](this, BaseCmdlet);
         }
 
-        public TObj GetInstanceOf<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
+        public TObj GetItem<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
             where TObj: class
         {
             var serviceType = typeof(TObj);
@@ -41,10 +41,10 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IDataService<TObj>) _factories[serviceType](this, BaseCmdlet)).GetInstanceOf(overriddenParameters);
+            return ((IDataService<TObj>) _factories[serviceType](this, BaseCmdlet)).GetItem(overriddenParameters);
         }
 
-        public IEnumerable<TObj> GetCollectionOf<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
+        public IEnumerable<TObj> GetItems<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
             where TObj: class
         {
             var serviceType = typeof(TObj);
@@ -54,7 +54,7 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
             }
 
-            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet)).GetCollectionOf(overriddenParameters);
+            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet)).GetItems(overriddenParameters);
         }
 
         public TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
@@ -63,7 +63,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = "Server"
             };
 
-            var srv = GetInstanceOf<TfsConnection>(cmdlet, pd);
+            var srv = GetItem<TfsConnection>(cmdlet, pd);
 
             if (srv == null)
             {
@@ -79,7 +79,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = "Collection"
             };
 
-            var tpc = GetInstanceOf<TfsConnection>(cmdlet, pd);
+            var tpc = GetItem<TfsConnection>(cmdlet, pd);
 
             if (tpc == null)
             {
@@ -97,7 +97,7 @@ namespace TfsCmdlets.Services
                 ["Collection"] = tpc
             };
 
-            var tp = GetInstanceOf<WebApiTeamProject>(cmdlet, pd);
+            var tp = GetItem<WebApiTeamProject>(cmdlet, pd);
 
             if (tp == null)
             {
@@ -116,7 +116,7 @@ namespace TfsCmdlets.Services
                 ["Project"] = tp
             };
 
-            var team = GetInstanceOf<WebApiTeam>(cmdlet, pd);
+            var team = GetItem<WebApiTeam>(cmdlet, pd);
 
             if (team == null)
             {

@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         protected override void ProcessRecord()
         {
-            var lists = this.GetCollectionOf<TfsGlobalList>();
+            var lists = this.GetItems<TfsGlobalList>();
             var root = CreateDocument(lists.Select(l=>l.ToXml()));
 
             WriteObject(root.ToString());

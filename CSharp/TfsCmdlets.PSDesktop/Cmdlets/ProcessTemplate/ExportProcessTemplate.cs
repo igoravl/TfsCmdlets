@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         {
             var tpc = GetCollection();
             var processTemplateSvc = tpc.GetService<Microsoft.TeamFoundation.Server.IProcessTemplates>();
-            IList<TemplateHeader> templates = GetCollectionOf<TemplateHeader>().ToList();
+            IList<TemplateHeader> templates = GetItems<TemplateHeader>().ToList();
 
             if (templates.Count == 0) return;
 

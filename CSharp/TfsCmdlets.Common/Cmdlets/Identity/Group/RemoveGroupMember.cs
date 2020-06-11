@@ -32,7 +32,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         protected override void ProcessRecord()
         {
             /*
-            var group = GetInstanceOf
+            var group = GetItem
             tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
 
             gi = Get-TfsIdentity -Identity Group -Collection tpc
