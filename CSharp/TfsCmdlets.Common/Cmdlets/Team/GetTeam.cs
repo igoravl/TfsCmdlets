@@ -15,15 +15,29 @@ namespace TfsCmdlets.Cmdlets.Team
     [OutputType(typeof(WebApiTeam))]
     public class GetTeam : BaseCmdlet
     {
+        /// <summary>
+        /// Specifies the team to return. Accepted values are its name, its ID, or a 
+        /// Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported. 
+        /// When omitted, all teams in the given team project are returned.
+        /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by team")]
         [Alias("Name")]
         [SupportsWildcards()]
         public object Team { get; set; } = "*";
 
-        [Parameter(ParameterSetName = "Get by team")]
-        public SwitchParameter IncludeMembers { get; set; }
+        /// <summary>
+        /// Gets team members (fills the Members property with a list of 
+        /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects). 
+        /// When omitted, only basic team information (such as name, description and ID) are returned.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter QueryMembership { get; set; }
 
-        [Parameter(ParameterSetName = "Get by team")]
+        /// <summary>
+        /// Gets the team's backlog settings (fills the Settings property with a 
+        /// Microsoft.TeamFoundation.Work.WebApi.TeamSetting object)
+        /// </summary>
+        [Parameter()]
         public SwitchParameter IncludeSettings { get; set; }
 
         /// <summary>
@@ -61,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 return;
             }
 
-            if (!IncludeMembers && !IncludeSettings)
+            if (!QueryMembership && !IncludeSettings)
             {
                 WriteObject(this.GetItems<WebApiTeam>(), true);
                 return;
@@ -75,7 +89,7 @@ namespace TfsCmdlets.Cmdlets.Team
             {
                 var pso = new PSObject(t);
 
-                if (IncludeMembers)
+                if (QueryMembership)
                 {
                     this.Log($"Retrieving team membership information for team '{t.Name}'");
 
@@ -86,7 +100,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 }
 
-                if (IncludeSettings.IsPresent)
+                if (IncludeSettings)
                 {
                     this.Log($"Retrieving team settings for team '{t.Name}'");
 
@@ -118,11 +132,13 @@ namespace TfsCmdlets.Cmdlets.Team
                     case PSObject pso:
                         {
                             team = pso.BaseObject;
+
                             continue;
                         }
                     case Guid g:
                         {
                             team = g.ToString();
+
                             continue;
                         }
                     case object o when defaultTeam:
@@ -130,22 +146,29 @@ namespace TfsCmdlets.Cmdlets.Team
                             Logger.Log("Get default team");
                             team = tp.DefaultTeam.Id;
                             defaultTeam = false;
+
                             continue;
                         }
                     case object o when current:
                         {
                             Logger.Log("Get currently connected team");
-                            yield return CurrentConnections.Team;
-                            yield break;
+
+                            if (CurrentConnections.Team == null) yield break;
+                            team = ((WebApiTeam)CurrentConnections.Team).Id;
+                            current = false;
+
+                            continue;
                         }
                     case WebApiTeam t:
                         {
                             yield return t;
+
                             yield break;
                         }
                     case string s when !s.IsWildcard():
                         {
                             yield return client.GetTeamAsync(tp.Name, s).GetResult($"Error getting team '{s}'");
+
                             yield break;
                         }
                     case string s:
@@ -156,11 +179,12 @@ namespace TfsCmdlets.Cmdlets.Team
                             {
                                 yield return repo;
                             }
+ 
                             yield break;
                         }
                     default:
                         {
-                            throw new ArgumentException(nameof(team));
+                            throw new ArgumentException($"Invalid or non-existent team {team}");
                         }
                 }
         }
