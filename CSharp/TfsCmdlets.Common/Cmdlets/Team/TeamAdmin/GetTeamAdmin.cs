@@ -1,7 +1,6 @@
 using System.Management.Automation;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using TfsTeamAdmin = TfsCmdlets.Cmdlets.Team.TeamAdmin.TeamAdmin;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 using System.Linq;
@@ -66,7 +65,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
             foreach (var member in team.TeamMembers.Where(m => m.IsTeamAdmin))
             {
-                var a = new TeamAdmin(GetItem<TfsIdentity>(new
+                var a = new TeamAdmin(GetItem<Models.Identity>(new
                 {
                     Identity = member.Identity.Id
                 }), team);

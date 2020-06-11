@@ -1,7 +1,6 @@
 using System;
 using System.Management.Automation;
 using TfsCmdlets.HttpClient;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
@@ -48,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
             }
 
             var (_, _, t) = GetCollectionProjectAndTeam();
-            var admin = GetItem<TfsIdentity>(new { Identity = Admin });
+            var admin = GetItem<Models.Identity>(new { Identity = Admin });
 
             if (!ShouldProcess($"Team '{t.Name}'",
                 $"Remove administrator '{admin.DisplayName} ({admin.UniqueName})'"))

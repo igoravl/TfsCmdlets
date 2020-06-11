@@ -2,16 +2,16 @@ using System;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Extensions;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
     /// <summary>
     /// Represents a Team Adminstrator
     /// </summary>
-    public class TeamAdmin: TfsIdentity
+    public class TeamAdmin: Models.Identity
     {
-        internal TeamAdmin(TfsIdentity admin, WebApiTeam team) : base(admin)
+        internal TeamAdmin(Models.Identity admin, WebApiTeam team)
+            : base((Microsoft.VisualStudio.Services.Identity.Identity)admin.BaseObject)
         {
             this.AddNoteProperty(nameof(TeamId), team.Id);
             this.AddNoteProperty(nameof(ProjectId), team.ProjectId);

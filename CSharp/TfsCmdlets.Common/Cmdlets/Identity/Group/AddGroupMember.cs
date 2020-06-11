@@ -1,7 +1,6 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using TfsCmdlets.Extensions;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
@@ -34,11 +33,11 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         protected override void ProcessRecord()
         {
-            var member = GetItem<TfsIdentity>(new {
+            var member = GetItem<Models.Identity>(new {
                 Identity = Member
             });
 
-            var group = GetItem<TfsIdentity>(new {
+            var group = GetItem<Models.Identity>(new {
                 Identity = Group
             });
 

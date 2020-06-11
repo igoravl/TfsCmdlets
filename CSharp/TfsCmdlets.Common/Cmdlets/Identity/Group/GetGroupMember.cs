@@ -1,7 +1,6 @@
 using System;
 using System.Management.Automation;
 using TfsCmdlets.Extensions;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
@@ -44,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         protected override void ProcessRecord()
         {
-            var group = GetItem<TfsIdentity>(new
+            var group = GetItem<Models.Identity>(new
             {
                 Identity = Group,
                 QueryMembership = (Recurse? TfsQueryMembership.Expanded: TfsQueryMembership.Direct)
@@ -56,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
             foreach(var memberId in group.MemberIds)
             {
-                var member = GetItem<TfsIdentity>(new {
+                var member = GetItem<Models.Identity>(new {
                     Identity = memberId
                 });
 

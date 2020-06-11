@@ -15,7 +15,7 @@ namespace TfsCmdlets.Services
         // TODO: internal VssConnection ConfigurationServer => IsHosted ? InnerConnection : InnerConnection.ParentConnection;
         internal VssConnection ConfigurationServer => InnerConnection;
 
-        internal Identity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
+        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
 
         internal Guid ServerId => InnerConnection.ServerId;
 

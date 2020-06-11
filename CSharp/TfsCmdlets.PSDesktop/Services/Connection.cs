@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.TeamFoundation.Client;
-using Microsoft.TeamFoundation.Framework.Client;
 
 namespace TfsCmdlets.Services
 {
     public partial class Connection
     {
         public static implicit operator TfsConnection(Connection c) => c?.InnerConnection;
+
         public static implicit operator Connection(TfsConnection c) => new Connection(c);
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
@@ -21,7 +21,7 @@ namespace TfsCmdlets.Services
                 {
                     var srv = tpc.ConfigurationServer;
 
-                    if(srv == null)
+                    if (srv == null)
                     {
                         srv = new TfsConfigurationServer(tpc.Uri, tpc.ClientCredentials);
                     }
@@ -33,7 +33,7 @@ namespace TfsCmdlets.Services
             }
         }
 
-        internal TeamFoundationIdentity AuthorizedIdentity => InnerConnection.AuthorizedIdentity;
+        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
 
         internal Guid ServerId => InnerConnection.InstanceId;
 
@@ -43,14 +43,14 @@ namespace TfsCmdlets.Services
         {
             get
             {
-                if(InnerConnection == null) return null;
+                if (InnerConnection == null) return null;
 
-                if(InnerConnection.Uri.Segments.Length > 1 && 
-                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
+                if (InnerConnection.Uri.Segments.Length > 1 &&
+                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
                 {
-                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length-1];
+                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1];
                 }
-                else if(InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
+                else if (InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
                 {
                     return InnerConnection.Uri.Host.Substring(InnerConnection.Uri.Host.IndexOf('.'));
                 }
@@ -62,8 +62,8 @@ namespace TfsCmdlets.Services
         public object GetClientFromType(Type type)
         {
             var m = InnerConnection.GetType()
-                .GetMethods(BindingFlags.Public|BindingFlags.Instance)
-                .Where(m=>m.Name.Equals("GetClient")).FirstOrDefault();
+                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                .Where(m => m.Name.Equals("GetClient")).FirstOrDefault();
 
             return m?
                 .MakeGenericMethod(type)
@@ -78,7 +78,7 @@ namespace TfsCmdlets.Services
             {
                 tpc.EnsureAuthenticated();
             }
-            else if(BaseObject is TfsConfigurationServer srv)
+            else if (BaseObject is TfsConfigurationServer srv)
             {
                 srv.EnsureAuthenticated();
             }

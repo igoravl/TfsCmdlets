@@ -1,7 +1,6 @@
 using System.Management.Automation;
 using TfsCmdlets.HttpClient;
 using TfsTeamAdmin = TfsCmdlets.Cmdlets.Team.TeamAdmin.TeamAdmin;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 using System;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
@@ -49,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         protected override void ProcessRecord()
         {
             var (_, _, t) = GetCollectionProjectAndTeam();
-            var admin = GetItem<TfsIdentity>(new {Identity = Admin});
+            var admin = GetItem<Models.Identity>(new {Identity = Admin});
 
             if(admin.IsContainer)
             {

@@ -3,7 +3,6 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
-using TfsIdentity = TfsCmdlets.Services.Identity;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
@@ -51,14 +50,14 @@ namespace TfsCmdlets.Cmdlets.Identity
         /// </summary>
         protected override void ProcessRecord()
         {
-            WriteItems<TfsIdentity>();
+            WriteItems<Models.Identity>();
         }
     }
 
-    [Exports(typeof(TfsIdentity))]
-    internal partial class IdentityDataService : BaseDataService<TfsIdentity>
+    [Exports(typeof(Models.Identity))]
+    internal partial class IdentityDataService : BaseDataService<Models.Identity>
     {
-        protected override System.Collections.Generic.IEnumerable<Services.Identity> DoGetItems()
+        protected override System.Collections.Generic.IEnumerable<Models.Identity> DoGetItems()
         {
             var current = GetParameter<bool>("Current");
             var queryMembership = GetParameter<TfsQueryMembership>("QueryMembership");
@@ -84,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.Identity
                 }
                 case WebApiIdentity i:
                 {
-                    yield return new TfsIdentity(i);
+                    yield return new Models.Identity(i);
                     yield break;
                 }
                 case string s when s.IsGuid():
@@ -96,10 +95,10 @@ namespace TfsCmdlets.Cmdlets.Identity
                 {
                     Logger.Log($"Finding identity with ID [{g}] and QueryMembership={qm}");
 
-                    var result = client.ReadIdentityAsync(g)
+                    var result = client.ReadIdentityAsync(g, qm)
                         .GetResult($"Error retrieving information from identity [{identity}]");
 
-                    yield return new TfsIdentity(result);
+                    yield return new Models.Identity(result);
                     yield break;
                 }
                 case string s:
@@ -109,7 +108,7 @@ namespace TfsCmdlets.Cmdlets.Identity
                     var result = client.ReadIdentitiesAsync(IdentitySearchFilter.AccountName, s, ReadIdentitiesOptions.None, qm)
                         .GetResult($"Error retrieving information from identity [{identity}]");
 
-                    foreach(var i in result) yield return new TfsIdentity(i);
+                    foreach(var i in result) yield return new Models.Identity(i);
                     yield break;
                 }
                 default: {
