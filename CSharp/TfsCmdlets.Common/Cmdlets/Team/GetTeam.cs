@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
+using Microsoft.TeamFoundation.Work.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
@@ -13,31 +15,31 @@ namespace TfsCmdlets.Cmdlets.Team
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
-    public class GetTeam : BaseCmdlet
+    public class GetTeam : BaseCmdlet<Team>
     {
         /// <summary>
-        /// Specifies the team to return. Accepted values are its name, its ID, or a 
-        /// Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported. 
+        /// Specifies the team to return. Accepted values are its name, its ID, or a
+        /// Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported.
         /// When omitted, all teams in the given team project are returned.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by team")]
         [Alias("Name")]
-        [SupportsWildcards()]
+        [SupportsWildcards]
         public object Team { get; set; } = "*";
 
         /// <summary>
-        /// Gets team members (fills the Members property with a list of 
-        /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects). 
+        /// Gets team members (fills the Members property with a list of
+        /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects).
         /// When omitted, only basic team information (such as name, description and ID) are returned.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter QueryMembership { get; set; }
 
         /// <summary>
-        /// Gets the team's backlog settings (fills the Settings property with a 
+        /// Gets the team's backlog settings (fills the Settings property with a
         /// Microsoft.TeamFoundation.Work.WebApi.TeamSetting object)
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter IncludeSettings { get; set; }
 
         /// <summary>
@@ -63,130 +65,106 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get default team")]
         public SwitchParameter Default { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            if (Current)
-            {
-                WriteObject(CurrentConnections.Team);
-                return;
-            }
-
-            if (!QueryMembership && !IncludeSettings)
-            {
-                WriteObject(this.GetItems<WebApiTeam>(), true);
-                return;
-            }
-
-            var (tpc, tp) = this.GetCollectionAndProject();
-            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
-            var workClient = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
-
-            foreach (var t in this.GetItems<WebApiTeam>())
-            {
-                var pso = new PSObject(t);
-
-                if (QueryMembership)
-                {
-                    this.Log($"Retrieving team membership information for team '{t.Name}'");
-
-                    var members = client.GetTeamMembersWithExtendedPropertiesAsync(tp.Name, t.Name)
-                        .GetResult($"Error retrieving membership information for team {t.Name}");
-
-                    pso.AddNoteProperty("Members", members);
-
-                }
-
-                if (IncludeSettings)
-                {
-                    this.Log($"Retrieving team settings for team '{t.Name}'");
-
-                    var ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(tp.Name, t.Name);
-                    pso.AddNoteProperty("Settings", workClient.GetTeamSettingsAsync(ctx).GetResult($"Error retrieving settings for team {t.Name}"));
-                }
-
-                WriteObject(pso);
-            }
-        }
     }
 
-    [Exports(typeof(WebApiTeam))]
-    internal class TeamDataService : BaseDataService<WebApiTeam>
+    [Exports(typeof(Team))]
+    internal class TeamDataService : BaseDataService<Team>
     {
-        protected override IEnumerable<WebApiTeam> DoGetItems()
+        protected override IEnumerable<Team> DoGetItems()
         {
-            var team = GetParameter<object>("Team");
-            var current = GetParameter<bool>("Current");
-            var includeMembers = GetParameter<bool>("IncludeMembers");
-            var includeSettings = GetParameter<bool>("IncludeSettings");
-            var defaultTeam = GetParameter<bool>("Default");
+            var team = GetParameter<object>(nameof(GetTeam.Team));
+            var current = GetParameter<bool>(nameof(GetTeam.Current));
+            var includeMembers = GetParameter<bool>(nameof(GetTeam.QueryMembership));
+            var includeSettings = GetParameter<bool>(nameof(GetTeam.IncludeSettings));
+            var defaultTeam = GetParameter<bool>(nameof(GetTeam.Default));
 
-            var (tpc, tp) = Cmdlet.GetCollectionAndProject();
-            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TeamHttpClient>();
+            var (_, tp) = Cmdlet.GetCollectionAndProject();
+            var client = GetClient<TeamHttpClient>();
 
             while (true) switch (team)
+            {
+                case PSObject pso:
                 {
-                    case PSObject pso:
-                        {
-                            team = pso.BaseObject;
-
-                            continue;
-                        }
-                    case Guid g:
-                        {
-                            team = g.ToString();
-
-                            continue;
-                        }
-                    case object o when defaultTeam:
-                        {
-                            Logger.Log("Get default team");
-                            team = tp.DefaultTeam.Id;
-                            defaultTeam = false;
-
-                            continue;
-                        }
-                    case object o when current:
-                        {
-                            Logger.Log("Get currently connected team");
-
-                            if (CurrentConnections.Team == null) yield break;
-                            team = ((WebApiTeam)CurrentConnections.Team).Id;
-                            current = false;
-
-                            continue;
-                        }
-                    case WebApiTeam t:
-                        {
-                            yield return t;
-
-                            yield break;
-                        }
-                    case string s when !s.IsWildcard():
-                        {
-                            yield return client.GetTeamAsync(tp.Name, s).GetResult($"Error getting team '{s}'");
-
-                            yield break;
-                        }
-                    case string s:
-                        {
-                            foreach (var repo in client.GetTeamsAsync(tp.Name)
-                                .GetResult($"Error getting team(ies) '{s}'")
-                                .Where(r => r.Name.IsLike(s)))
-                            {
-                                yield return repo;
-                            }
- 
-                            yield break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent team {team}");
-                        }
+                    team = pso.BaseObject;
+                    continue;
                 }
+                case Guid g:
+                {
+                    team = g.ToString();
+                    continue;
+                }
+                case {} when defaultTeam:
+                {
+                    Logger.Log("Get default team");
+                    team = tp.DefaultTeam.Id.ToString();
+                    defaultTeam = false;
+                    continue;
+                }
+                case null:
+                case {} when current:
+                {
+                    Logger.Log("Get currently connected team");
+
+                    if (CurrentConnections.Team == null) yield break;
+                    team = CurrentConnections.Team.Id;
+                    current = false;
+                    continue;
+                }
+                case WebApiTeam t:
+                {
+                    team = t.Id.ToString();
+                    continue;
+                }
+                case string s when !s.IsWildcard():
+                {
+                    var result = client.GetTeamAsync(tp.Name, s)
+                        .GetResult($"Error getting team '{s}'");
+                    yield return CreateTeamObject(result, includeMembers, includeSettings);
+                    yield break;
+                }
+                case string s:
+                {
+                    foreach (var result in client.GetTeamsAsync(tp.Name)
+                        .GetResult($"Error getting team(s) '{s}'")
+                        .Where(t => t.Name.IsLike(s)))
+                    {
+                        yield return CreateTeamObject(result, includeMembers, includeSettings);
+                    }
+                    yield break;
+                }
+                default:
+                {
+                    throw new ArgumentException($"Invalid or non-existent team {team}");
+                }
+            }
+        }
+
+        private Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers, bool includeSettings)
+        {
+            var team = new Team(innerTeam);
+
+            if (includeMembers)
+            {
+                var client = GetClient<TeamHttpClient>();
+                Logger.Log($"Retrieving team membership information for team '{team.Name}'");
+
+                var members = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
+                    .GetResult($"Error retrieving membership information for team {team.Name}");
+
+                team.TeamMembers = members;
+            }
+
+            if (includeSettings)
+            {
+                Logger.Log($"Retrieving team settings for team '{team.Name}'");
+
+                var workClient = GetClient<WorkHttpClient>();
+                var ctx = new TeamContext(team.ProjectName, team.Name);
+                team.Settings = workClient.GetTeamSettingsAsync(ctx)
+                    .GetResult($"Error retrieving settings for team {team.Name}");
+            }
+            
+            return team;
         }
     }
 }

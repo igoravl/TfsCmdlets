@@ -55,12 +55,12 @@ namespace TfsCmdlets.Services
             _parameters[name] = value;
         }
 
-        protected TObj GetItem<TObj>(ParameterDictionary parameters = null) where TObj: class
+        protected TObj GetItem<TObj>(object parameters = null) where TObj: class
         {
             return Provider.GetItem<TObj>(Cmdlet, parameters);
         }
 
-        protected IEnumerable<TObj> GetItems<TObj>(ParameterDictionary parameters = null) where TObj: class
+        protected IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj: class
         {
             return Provider.GetItems<TObj>(Cmdlet, parameters);
         }

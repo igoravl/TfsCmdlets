@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
+using TfsCmdlets.Cmdlets.Team;
 using TfsConnection = TfsCmdlets.Services.Connection;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
@@ -116,7 +117,7 @@ namespace TfsCmdlets.Services
                 ["Project"] = tp
             };
 
-            var team = GetItem<WebApiTeam>(cmdlet, pd);
+            var team = GetItem<Team>(cmdlet, pd);
 
             if (team == null)
             {

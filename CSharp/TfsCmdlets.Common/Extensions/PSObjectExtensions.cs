@@ -8,5 +8,16 @@ namespace TfsCmdlets.Extensions
         {
             obj.Properties.Add(new PSNoteProperty(name, value));
         }
+        
+        internal static PSPropertyInfo GetProperty(this PSObject obj, string name)
+        {
+            if (obj.Properties[name] == null)
+            {
+                AddNoteProperty(obj, name, null);
+            }
+
+            return obj.Properties[name];
+        }
+
     }
 }

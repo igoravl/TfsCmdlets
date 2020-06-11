@@ -1,64 +1,73 @@
 using System.Management.Automation;
+using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
+using TfsTeamAdmin = TfsCmdlets.Cmdlets.Team.TeamAdmin.TeamAdmin;
+using TfsIdentity = TfsCmdlets.Services.Identity;
+using TfsCmdlets.Services;
+using TfsCmdlets.Util;
+using System.Linq;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
+    /// <summary>
+    /// Gets the administrators of a team.
+    /// </summary>    
     [Cmdlet(VerbsCommon.Get, "TfsTeamAdmin")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    public class GetTeamAdmin: BaseCmdlet
+    [OutputType(typeof(WebApiIdentity))]
+    public class GetTeamAdmin : BaseCmdlet<TfsTeamAdmin>
     {
-/*
-        # Specifies the board name(s). Wildcards accepted
-        [Parameter(Position=0)]
-        [SupportsWildcards()]
-        public object Identity { get; set; } = "*";
-
-        [Parameter(ValueFromPipeline=true)]
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         public object Team { get; set; }
 
+        /// <summary>
+        /// Specifies the administrator to get from the given team. Wildcards are supported.
+        /// When omitted, all administrators are returned.
+        /// </summary>
+        [Parameter(Position = 1)]
+        [SupportsWildcards()]
+        public string Admin { get; set; } = "*";
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter()]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-    {
-        if(Team is Microsoft.TeamFoundation.Core.WebApi.WebApiTeam)
-        {
-            Project = Team.ProjectId
-        }
-
-        t = Get-TfsTeam -Team Team -Project Project -Collection Collection -IncludeMembers
-
-        tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-
-        this.Log($"Returning team admins from team "{{t}.Name}"");
-
-        foreach(member in t.Members)
-        {
-            if(! member.IsTeamAdmin)
-            {
-            continue
-            }
-
-            i = Get-TfsIdentity -Identity member.Identity.Id -Collection Collection
-
-            if ((i.DisplayName -like Identity) || (i.Properties["Account"] -like Identity))
-            {
-                Write-Output i | `
-                    Add-Member -Name TeamId -MemberType NoteProperty -Value t.Id -PassThru | `
-                    Add-Member -Name ProjectId -MemberType NoteProperty -Value t.ProjectId -PassThru
-            }
-        }
     }
-}
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+
+    [Exports(typeof(TeamAdmin))]
+    internal class TeamAdminDataService : BaseDataService<TfsTeamAdmin>
+    {
+        protected override System.Collections.Generic.IEnumerable<TfsTeamAdmin> DoGetItems()
+        {
+            var admin = GetParameter<string>(nameof(GetTeamAdmin.Admin));
+            var team = GetItem<Team>(new
+            {
+                QueryMembership = true
+            });
+
+            ErrorUtil.ThrowIfNotFound(team, nameof(team), GetParameter<object>(nameof(GetTeamAdmin.Team)));
+
+            foreach (var member in team.TeamMembers.Where(m => m.IsTeamAdmin))
+            {
+                var a = new TeamAdmin(GetItem<TfsIdentity>(new
+                {
+                    Identity = member.Identity.Id
+                }), team);
+
+                if (a.DisplayName.IsLike(admin) || a.UniqueName.IsLike(admin))
+                {
+                    yield return a;
+                }
+            }
+        }
     }
 }
