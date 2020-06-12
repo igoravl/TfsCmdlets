@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.TeamFoundation.Core.WebApi;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 using Microsoft.VisualStudio.Services.Client;
 using TfsCmdlets.Cmdlets;
-using TfsConnection = TfsCmdlets.Services.Connection;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
 {
@@ -15,13 +14,13 @@ namespace TfsCmdlets.Services
 
         IEnumerable<TObj> GetItems<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
-        TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
+        Models.Connection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        (TfsConnection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
+        (Models.Connection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
+        (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
 
-        TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
+        Models.Connection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null);
         
     }
 }

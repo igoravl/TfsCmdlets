@@ -6,7 +6,7 @@ using Microsoft.TeamFoundation.Work.WebApi;
 using TfsCmdlets.Extensions;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
-namespace TfsCmdlets.Cmdlets.Team
+namespace TfsCmdlets.Models
 {
     public class Team: PSObject
     {

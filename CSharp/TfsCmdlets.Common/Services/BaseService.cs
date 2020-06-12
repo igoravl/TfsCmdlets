@@ -6,14 +6,11 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
-using TfsConnection = TfsCmdlets.Services.Connection;
 
 namespace TfsCmdlets.Services
 {
     internal abstract class BaseService : IService
     {
-        private ParameterDictionary _parms;
-
         public ParameterDictionary Parameters {get;set;}
 
         private ILogger _logger;
@@ -41,22 +38,22 @@ namespace TfsCmdlets.Services
             return Provider.GetItems<TObj>(Cmdlet, parameters);
         }
 
-        protected Connection GetServer(ParameterDictionary parameters = null)
+        protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
             return Provider.GetServer(Cmdlet, parameters);
         }
 
-        protected Connection GetCollection(ParameterDictionary parameters = null)
+        protected Models.Connection GetCollection(ParameterDictionary parameters = null)
         {
             return Provider.GetCollection(Cmdlet, parameters);
         }
 
-        protected (Connection, TeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
+        protected (Models.Connection, TeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
         {
             return Provider.GetCollectionAndProject(Cmdlet, parameters);
         }
 
-        protected (Connection, TeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
+        protected (Models.Connection, TeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
         {
             return Provider.GetCollectionProjectAndTeam(Cmdlet, parameters);
         }
@@ -69,7 +66,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = scope
             };
 
-            var conn = Provider.GetItem<TfsConnection>(Cmdlet, pd);
+            var conn = Provider.GetItem<Models.Connection>(Cmdlet, pd);
 
             if (conn == null)
             {

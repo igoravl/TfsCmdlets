@@ -5,7 +5,6 @@ using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Cmdlets.Team;
-using TfsConnection = TfsCmdlets.Services.Connection;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
@@ -58,14 +57,14 @@ namespace TfsCmdlets.Services
             return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet, overriddenParameters)).GetItems();
         }
 
-        public TfsConnection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public Models.Connection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters)
             {
                 ["ConnectionType"] = ClientScope.Server
             };
 
-            var srv = GetItem<TfsConnection>(cmdlet, pd);
+            var srv = GetItem<Models.Connection>(cmdlet, pd);
 
             if (srv == null)
             {
@@ -75,14 +74,14 @@ namespace TfsCmdlets.Services
             return srv;
         }
 
-        public TfsConnection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public Models.Connection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters)
             {
                 ["ConnectionType"] = ClientScope.Collection
             };
 
-            var tpc = GetItem<TfsConnection>(cmdlet, pd);
+            var tpc = GetItem<Models.Connection>(cmdlet, pd);
 
             if (tpc == null)
             {
@@ -92,7 +91,7 @@ namespace TfsCmdlets.Services
             return tpc;
         }
 
-        public (TfsConnection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public (Models.Connection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var tpc = GetCollection(cmdlet, parameters);
 
@@ -111,7 +110,7 @@ namespace TfsCmdlets.Services
             return (tpc, tp);
         }
 
-        public (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var (tpc, tp) = GetCollectionAndProject(cmdlet, parameters);
 
@@ -121,7 +120,7 @@ namespace TfsCmdlets.Services
                 ["Project"] = tp
             };
 
-            var team = GetItem<Team>(cmdlet, pd);
+            var team = GetItem<Models.Team>(cmdlet, pd);
 
             if (team == null)
             {

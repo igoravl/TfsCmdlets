@@ -83,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         {
             try
             {
-                WriteObject(this.GetItems<TfsCmdlets.Services.Connection>(new {
+                WriteObject(this.GetItems<Models.Connection>(new {
                     ConnectionType = ClientScope.Collection
                 }), true);
             }

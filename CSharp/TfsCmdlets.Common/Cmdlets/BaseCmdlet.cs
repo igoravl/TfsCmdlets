@@ -3,16 +3,14 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
-using Microsoft.VisualStudio.Services.Client;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
+using TfsCmdlets.Models;
 using TfsCmdlets.Util;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using TfsConnection = TfsCmdlets.Services.Connection;
 using Microsoft.VisualStudio.Services.WebApi;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets
 {
@@ -100,7 +98,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>An instance of Connection containing either a TfsConfigurationServer (Windows) or VssConnection (Core) object</returns>
-        internal virtual TfsConnection GetServer(ParameterDictionary parameters = null)
+        internal virtual Models.Connection GetServer(ParameterDictionary parameters = null)
         {
            return Provider.GetServer(this, parameters);
         }
@@ -110,7 +108,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>An instance of Connection containing either a TfsTeamProjectCollection (Windows) or VssConnection (Core) object</returns>
-        internal virtual TfsConnection GetCollection(ParameterDictionary parameters = null)
+        internal virtual Models.Connection GetCollection(ParameterDictionary parameters = null)
         {
            return Provider.GetCollection(this, parameters);
         }
@@ -121,7 +119,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>A tuple consisting of an instance of Connection (containing either a TfsTeamProjectCollection (Windows) 
         ///     or VssConnection (Core) object) and an instance of TeamProject</returns>
-        internal virtual (TfsConnection, WebApiTeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
+        internal virtual (Models.Connection, WebApiTeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
         {
            return Provider.GetCollectionAndProject(this, parameters);
         }
@@ -133,7 +131,7 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
         /// <returns>A tuple consisting of an instance of Connection (containing either a TfsTeamProjectCollection (Windows) 
         ///     or VssConnection (Core) object), an instance of TeamProject and an instance of WebApiTeam</returns>
-        internal virtual (TfsConnection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
+        internal virtual (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
         {
            return Provider.GetCollectionProjectAndTeam(this, parameters);
         }
@@ -152,7 +150,7 @@ namespace TfsCmdlets.Cmdlets
                 ["ConnectionType"] = scope
             };
             
-            return Provider.GetItem<TfsConnection>(this, pd).GetClient<T>();
+            return Provider.GetItem<Models.Connection>(this, pd).GetClient<T>();
         }
 
         /// <summary>

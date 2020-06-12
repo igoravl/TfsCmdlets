@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
 {

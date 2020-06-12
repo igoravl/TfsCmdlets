@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.TeamFoundation.Core.WebApi;
-using TfsCmdlets.Services;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets
 {

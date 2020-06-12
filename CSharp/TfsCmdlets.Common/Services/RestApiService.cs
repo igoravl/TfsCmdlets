@@ -9,7 +9,7 @@ namespace TfsCmdlets.Services
 {
     internal interface IRestApiService : IService
     {
-        Task<HttpResponseMessage> InvokeAsync(Connection connection, string path,
+        Task<HttpResponseMessage> InvokeAsync(Models.Connection connection, string path,
             string method = "GET",
             string body = null,
             string requestContentType = "application/json",
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Services
 
         Uri IRestApiService.Uri => _client?.Uri;
         
-        Task<HttpResponseMessage> IRestApiService.InvokeAsync(Connection connection, string path,
+        Task<HttpResponseMessage> IRestApiService.InvokeAsync(Models.Connection connection, string path,
             string method,
             string body,
             string requestContentType,

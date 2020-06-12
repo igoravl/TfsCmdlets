@@ -3,7 +3,7 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.WebApi;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Models
 {
     public partial class Connection
     {

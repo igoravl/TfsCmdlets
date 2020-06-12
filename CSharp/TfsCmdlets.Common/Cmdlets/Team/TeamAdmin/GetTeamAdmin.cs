@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         protected override System.Collections.Generic.IEnumerable<TfsTeamAdmin> DoGetItems()
         {
             var admin = GetParameter<string>(nameof(GetTeamAdmin.Admin));
-            var team = GetItem<Team>(new
+            var team = GetItem<Models.Team>(new
             {
                 QueryMembership = true
             });

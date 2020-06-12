@@ -71,14 +71,14 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         protected override void ProcessRecord()
         {
-            WriteItems<Team>();
+            WriteItems<Models.Team>();
         }
     }
 
-    [Exports(typeof(Team))]
-    internal class TeamDataService : BaseDataService<Team>
+    [Exports(typeof(Models.Team))]
+    internal class TeamDataService : BaseDataService<Models.Team>
     {
-        protected override IEnumerable<Team> DoGetItems()
+        protected override IEnumerable<Models.Team> DoGetItems()
         {
             var team = GetParameter<object>(nameof(GetTeam.Team));
             var current = GetParameter<bool>(nameof(GetTeam.Current));
@@ -147,9 +147,9 @@ namespace TfsCmdlets.Cmdlets.Team
             }
         }
 
-        private Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers, bool includeSettings)
+        private Models.Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers, bool includeSettings)
         {
-            var team = new Team(innerTeam);
+            var team = new Models.Team(innerTeam);
 
             if (includeMembers)
             {
