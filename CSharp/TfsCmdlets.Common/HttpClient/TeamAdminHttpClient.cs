@@ -154,6 +154,10 @@ namespace TfsCmdlets.HttpClient
         /// Team Foundation Id
         /// </summary>
         public string TeamFoundationId { get; set; }
+
+        /// <summary>
+        /// Entity Id
+        /// </summary>
         public string EntityId { get; set; }
 
         /// <summary>

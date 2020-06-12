@@ -10,36 +10,61 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.HttpClient
 {
+    /// <summary>
+    /// Generic HTTP Client, used by the Invoke-TfsRestApi cmdlet
+    /// </summary>
     public class GenericHttpClient : VssHttpClientBase
     {
         #region Constructors and fields
 
         private static string _Host;
 
+        /// <summary>
+        /// Creates a new instance of the GenericHttpClient class
+        /// </summary>
         public GenericHttpClient(Uri baseUrl, VssCredentials credentials) : base(SetHost(baseUrl), credentials)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the GenericHttpClient class
+        /// </summary>
         public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings) : base(SetHost(baseUrl), credentials, settings)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the GenericHttpClient class
+        /// </summary>
         public GenericHttpClient(Uri baseUrl, VssCredentials credentials, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, handlers)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the GenericHttpClient class
+        /// </summary>
         public GenericHttpClient(Uri baseUrl, HttpMessageHandler pipeline, bool disposeHandler) : base(SetHost(baseUrl), pipeline, disposeHandler)
         {
         }
 
+        /// <summary>
+        /// Creates a new instance of the GenericHttpClient class
+        /// </summary>
         public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, settings, handlers)
         {
         }
 
         #endregion
 
+        /// <summary>
+        /// Gets the API URL
+        /// </summary>
         public Uri Uri { get; private set; }
 
+        /// <summary>
+        /// Specifies an alternate host name for APIs not hosted in "dev.azure.com"
+        /// </summary>
+        /// <param name="host">An alternate host, such as "vsaex.dev.azure.com" or "vssps.dev.azure.com".</param>
         public static void UseHost(string host)
         {
             _Host = host;
@@ -169,6 +194,9 @@ namespace TfsCmdlets.HttpClient
             return Send(msg, userState);
         }
 
+        /// <summary>
+        /// Invokes a REST API asynchronously
+        /// </summary>
         public async Task<HttpResponseMessage> InvokeAsync(
             HttpMethod method,
             string apiPath,
@@ -194,6 +222,9 @@ namespace TfsCmdlets.HttpClient
             return await SendAsync(msg, userState);
         }
 
+        /// <summary>
+        /// Invokes a REST API asynchronously
+        /// </summary>
         public T PostForm<T>(
             string formPath,
             Dictionary<string,string> formData,
