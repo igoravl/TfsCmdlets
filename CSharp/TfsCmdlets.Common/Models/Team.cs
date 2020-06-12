@@ -8,9 +8,19 @@ using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
 namespace TfsCmdlets.Models
 {
+    /// <summary>
+    /// Encapsulates a WebApiTeam object
+    /// </summary>
     public class Team: PSObject
     {
+        /// <summary>
+        /// Converts to WebApiTeam
+        /// </summary>
         public static implicit operator WebApiTeam(Team c) => c.InnerTeam;
+
+        /// <summary>
+        /// Converts from WebApiTeam
+        /// </summary>
         public static implicit operator Team(WebApiTeam c) => new Team(c);
 
         internal Team(WebApiTeam t) : base(t)

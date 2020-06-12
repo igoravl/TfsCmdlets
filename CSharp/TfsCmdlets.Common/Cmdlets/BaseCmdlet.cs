@@ -163,26 +163,41 @@ namespace TfsCmdlets.Cmdlets
             return Provider.GetService<T>(this);
         }
 
+        /// <summary>
+        /// Gets one item of the specified type
+        /// </summary>
         protected virtual TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetItem<TObj>(this, parameters);
         }
 
+        /// <summary>
+        /// Gets one or more items of the specified type
+        /// </summary>
         protected virtual IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetItems<TObj>(this, parameters);
         }
 
+        /// <summary>
+        /// Gets the current directory in PowerShell
+        /// </summary>
         protected virtual string GetCurrentDirectory()
         {
             return this.SessionState.Path.CurrentFileSystemLocation.Path;
         }
 
+        /// <summary>
+        /// Outputs items to PowerShell
+        /// </summary>
         protected void WriteItems<T>(object parameters = null) where T: class
         {
             WriteObject(GetItems<T>(parameters), true);
         }
 
+        /// <summary>
+        /// Log a message
+        /// </summary>
         protected void Log(string message, string commandName = null, bool force = false)
         {
             if (!IsVerbose) return;
@@ -195,6 +210,9 @@ namespace TfsCmdlets.Cmdlets
             this.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
         }
 
+        /// <summary>
+        /// Log the parameters passed to the cmdlet
+        /// </summary>
         protected void LogParameters()
         {
             if (!IsVerbose) return;
