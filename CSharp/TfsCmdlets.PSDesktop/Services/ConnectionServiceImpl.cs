@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.TeamFoundation.Client;
+using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.VisualStudio.Services.Client;
+using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
@@ -58,9 +62,25 @@ namespace TfsCmdlets.Services
                         connection = new Uri(uri);
                         continue;
                     }
-                    case string _:
+                    case string s:
                     {
-                        throw new NotImplementedException("Connect to server by name is currently not supported.");
+                        var srv = GetServer();
+
+                        if(srv.IsHosted)
+                        {
+                            connection = VssConnectionHelper.GetOrganizationUrlAsync(s);
+                            continue;
+                        }
+
+                        var configSrv = (TfsConfigurationServer)srv.InnerConnection;
+                        var tpcList = configSrv.CatalogNode.QueryChildren(new[]{CatalogResourceTypes.ProjectCollection}, false, CatalogQueryOptions.None);
+
+                        foreach(var tpc in tpcList.Where(t => t.Resource.DisplayName.IsLike(s)))
+                        {
+                            yield return configSrv.GetTeamProjectCollection(new Guid(tpc.Resource.Properties["InstanceId"]));
+                        }
+
+                        yield break;
                     }
                     default:
                     {
