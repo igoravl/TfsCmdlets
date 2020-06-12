@@ -2,7 +2,7 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Models
 {
     /// <summary>
     /// Encapsulates the platform-specific connection object

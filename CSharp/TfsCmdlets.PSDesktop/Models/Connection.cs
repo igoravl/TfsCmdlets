@@ -3,12 +3,18 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.TeamFoundation.Client;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Models
 {
-    public partial class Connection
+    partial class Connection
     {
+        /// <summary>
+        /// Converts a Connection object to a TfsConnection-derived object
+        /// </summary>
         public static implicit operator TfsConnection(Connection c) => c?.InnerConnection;
 
+        /// <summary>
+        /// Converts a TfsConnection-derived object to a Connection object
+        /// </summary>
         public static implicit operator Connection(TfsConnection c) => new Connection(c);
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
@@ -59,6 +65,9 @@ namespace TfsCmdlets.Services
             }
         }
 
+        /// <summary>
+        /// Gets a client of the given type
+        /// </summary>
         public object GetClientFromType(Type type)
         {
             var m = InnerConnection.GetType()
