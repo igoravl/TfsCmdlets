@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.VisualStudio.Services.Client;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
 {
     [Exports(typeof(Connection))]
-    internal class ConnectionService : BaseDataService<Connection>
+    internal class ConnectionServiceImpl : BaseDataService<Connection>
     {
         protected override IEnumerable<Connection> DoGetItems()
         {

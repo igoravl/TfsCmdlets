@@ -12,7 +12,11 @@ namespace TfsCmdlets.Services
         public GlobalListCollection Export()
         {
             var tpc = GetCollection();
+
+#pragma warning disable CS0618
             var store = tpc.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
+#pragma warning restore CS0618
+
             var doc = store.ExportGlobalLists().ToXDocument();
 
             doc.Descendants("GLOBALLIST")
@@ -25,7 +29,11 @@ namespace TfsCmdlets.Services
         public void Import(GlobalListCollection lists)
         {
             var tpc = GetCollection();
+
+#pragma warning disable CS0618
             var store = tpc.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
+#pragma warning restore CS0618
+
             store.ImportGlobalLists(lists.ToString());
         }
 
@@ -45,7 +53,10 @@ namespace TfsCmdlets.Services
             );
 
             var tpc = GetCollection();
+
+#pragma warning disable CS0618
             var store = tpc.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
+#pragma warning restore CS0618
 
             store.SendUpdatePackage(doc.ToXmlDocument().DocumentElement, out var _, false);
         }
