@@ -2,6 +2,9 @@
 
 namespace TfsCmdlets
 {
+    /// <summary>
+    /// Custom assembly resolver
+    /// </summary>
     public partial class AssemblyResolver
     {
         partial void RegisterEventHandler()
