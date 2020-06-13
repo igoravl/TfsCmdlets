@@ -77,7 +77,10 @@ namespace TfsCmdlets.Services
 
                         foreach(var tpc in tpcList.Where(t => t.Resource.DisplayName.IsLike(s)))
                         {
-                            yield return configSrv.GetTeamProjectCollection(new Guid(tpc.Resource.Properties["InstanceId"]));
+                            var uri = configSrv.GetTeamProjectCollection(new Guid(tpc.Resource.Properties["InstanceId"])).Uri;
+                            yield return connectionType.Equals("Server")?
+                                ((TfsConnection) new TfsConfigurationServer(uri, Provider.GetItem<VssClientCredentials>(Cmdlet))):
+                                ((TfsConnection) new TfsTeamProjectCollection(uri, Provider.GetItem<VssClientCredentials>(Cmdlet)));
                         }
 
                         yield break;

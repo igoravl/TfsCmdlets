@@ -1,3 +1,9 @@
 - ScriptProperty:
     Name: Name
-    GetScriptBlock: if($this.ParentConnection) { return $this.Collection.Name } else { return $this.Uri.Host }
+    GetScriptBlock: if($this.ParentConnection) { return $this.CollectionInfo.Name } else { return $this.Uri.Host }
+- ScriptProperty:
+    Name: CollectionInfo
+    GetScriptBlock:  |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'CollectionInfo', {
+            Invoke-TfsRestApi "_apis/projectCollections/$($_.ServerId)" -Collection $_
+        })
