@@ -71,7 +71,14 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         protected override void ProcessRecord()
         {
-            WriteItems<Models.Team>();
+            try
+            {
+                WriteItems<Models.Team>();
+            }
+            catch
+            {
+                if (!Current) throw;
+            }
         }
     }
 
