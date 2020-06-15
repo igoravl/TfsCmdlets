@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for New-Area and New-Iteration
     /// </summary>
-    public abstract class NewClassificationNode : BaseCmdlet
+    public abstract class NewClassificationNode : BaseNewCmdlet<ClassificationNode>
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)
@@ -78,35 +78,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public object Collection { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
-
-        /// <summary>
         /// Allows the cmdlet to create parent nodes if they're missing.
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
-
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            var (_, tp) = GetCollectionAndProject();
-            var nodePath = NodeUtil.NormalizeNodePath(Node, tp.Name, StructureGroup.ToString(), false, false, true);
-
-            if (!ShouldProcess($"Team Project {tp.Name}", $"Create node '{nodePath}'")) return;
-
-            var newNode = NewItem<ClassificationNode>();
-
-            if (Passthru)
-            {
-                WriteObject(newNode);
-            }
-        }
     }
 
     partial class ClassificationNodeDataService
@@ -122,6 +97,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             var client = GetClient<WorkItemTrackingHttpClient>();
             var parentPath = Path.GetDirectoryName(nodePath);
             var nodeName = Path.GetFileName(nodePath);
+
+            if (!ShouldProcess($"Team Project {tp.Name}", $"Create node '{nodePath}'")) return null;
 
             if (!TestItem<ClassificationNode>(new { Node = parentPath }))
             {
