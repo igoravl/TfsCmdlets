@@ -32,22 +32,22 @@ namespace TfsCmdlets.Services
 
         protected TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetItem<TObj>(Cmdlet, parameters);
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).GetItem();
         }
 
         protected IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetItems<TObj>(Cmdlet, parameters);
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).GetItems();
         }
 
         protected virtual TObj NewItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.NewItem<TObj>(Cmdlet, parameters);
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).NewItem();
         }
 
         protected virtual bool TestItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.TestItem<TObj>(Cmdlet, parameters);
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).TestItem();
         }
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
@@ -77,7 +77,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = scope
             };
 
-            var conn = Provider.GetItem<Models.Connection>(Cmdlet, pd);
+            var conn = Provider.GetDataService<Models.Connection>(Cmdlet, pd).GetItem();
 
             if (conn == null)
             {

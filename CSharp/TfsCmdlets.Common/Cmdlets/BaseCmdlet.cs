@@ -151,7 +151,7 @@ namespace TfsCmdlets.Cmdlets
                 ["ConnectionType"] = scope
             };
 
-            return Provider.GetItem<Models.Connection>(this, pd).GetClient<T>();
+            return Provider.GetDataService<Models.Connection>(this, pd).GetItem().GetClient<T>();
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected virtual TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetItem<TObj>(this, parameters);
+            return Provider.GetDataService<TObj>(this, parameters).GetItem();
         }
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected virtual bool TestItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.TestItem<TObj>(this, parameters);
+            return Provider.GetDataService<TObj>(this, parameters).TestItem();
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected virtual IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetItems<TObj>(this, parameters);
+            return Provider.GetDataService<TObj>(this, parameters).GetItems();
         }
 
         /// <summary>
@@ -193,7 +193,15 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected virtual TObj NewItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.NewItem<TObj>(this, parameters);
+            return Provider.GetDataService<TObj>(this, parameters).NewItem();
+        }
+
+        /// <summary>
+        /// Removes an item of the specified type
+        /// </summary>
+        protected virtual void RemoveItem<TObj>(object parameters = null) where TObj : class
+        {
+            Provider.GetDataService<TObj>(this, parameters).RemoveItem();
         }
 
         /// <summary>

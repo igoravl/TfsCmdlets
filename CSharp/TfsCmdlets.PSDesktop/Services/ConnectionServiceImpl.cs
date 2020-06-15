@@ -52,9 +52,9 @@ namespace TfsCmdlets.Services
                         }
 
                         if (connectionType.Equals("Server"))
-                            result = new TfsConfigurationServer(uri, Provider.GetItem<VssClientCredentials>(Cmdlet));
+                            result = new TfsConfigurationServer(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem());
                         else
-                            result = new TfsTeamProjectCollection(uri, Provider.GetItem<VssClientCredentials>(Cmdlet));
+                            result = new TfsTeamProjectCollection(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem());
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):
@@ -79,8 +79,8 @@ namespace TfsCmdlets.Services
                         {
                             var uri = configSrv.GetTeamProjectCollection(new Guid(tpc.Resource.Properties["InstanceId"])).Uri;
                             yield return connectionType.Equals("Server")?
-                                ((TfsConnection) new TfsConfigurationServer(uri, Provider.GetItem<VssClientCredentials>(Cmdlet))):
-                                ((TfsConnection) new TfsTeamProjectCollection(uri, Provider.GetItem<VssClientCredentials>(Cmdlet)));
+                                ((TfsConnection) new TfsConfigurationServer(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem())):
+                                ((TfsConnection) new TfsTeamProjectCollection(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem()));
                         }
 
                         yield break;

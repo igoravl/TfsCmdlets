@@ -44,34 +44,6 @@ namespace TfsCmdlets.Services
             return dataService;
         }
 
-        public TObj GetItem<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
-            where TObj : class
-        {
-            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
-            return dataService.GetItem();
-        }
-
-        public bool TestItem<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
-            where TObj : class
-        {
-            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
-
-            return dataService.TestItem();
-        }
-
-        public TObj NewItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class
-        {
-            var dataService = GetDataService<TObj>(cmdlet, parameters);
-            return dataService.NewItem();
-        }
-
-        public IEnumerable<TObj> GetItems<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
-            where TObj : class
-        {
-            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
-            return dataService.GetItems();
-        }
-
         public Models.Connection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters)
@@ -79,7 +51,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = ClientScope.Server
             };
 
-            var srv = GetItem<Models.Connection>(cmdlet, pd);
+            var srv = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
 
             if (srv == null)
             {
@@ -96,7 +68,7 @@ namespace TfsCmdlets.Services
                 ["ConnectionType"] = ClientScope.Collection
             };
 
-            var tpc = GetItem<Models.Connection>(cmdlet, pd);
+            var tpc = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
 
             if (tpc == null)
             {
@@ -115,7 +87,7 @@ namespace TfsCmdlets.Services
                 ["Collection"] = tpc
             };
 
-            var tp = GetItem<WebApiTeamProject>(cmdlet, pd);
+            var tp = GetDataService<WebApiTeamProject>(cmdlet, pd).GetItem();
 
             if (tp == null)
             {
@@ -135,7 +107,7 @@ namespace TfsCmdlets.Services
                 ["Project"] = tp
             };
 
-            var team = GetItem<Models.Team>(cmdlet, pd);
+            var team = GetDataService<Models.Team>(cmdlet, pd).GetItem();
 
             if (team == null)
             {

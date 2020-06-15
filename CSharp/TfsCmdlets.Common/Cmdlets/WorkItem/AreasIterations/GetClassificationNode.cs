@@ -43,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// </summary>
     /// <example>
     ///   <code>Get-TfsIteration</code>
-    ///   <para>Returns all aiterations in the currently connected Team Project (as defined by a previous call to Connect-TfsTeamProject)</para>
+    ///   <para>Returns all iterations in the currently connected Team Project (as defined by a previous call to Connect-TfsTeamProject)</para>
     /// </example>
     /// <example>
     ///   <code>Get-TfsIteration '\\**\\Support' -Project Tailspin</code>
