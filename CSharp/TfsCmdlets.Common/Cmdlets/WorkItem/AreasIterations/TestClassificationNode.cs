@@ -1,25 +1,70 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    [Cmdlet(VerbsDiagnostic.Test, "TfsClassificationNode")]
-    public class TestClassificationNode: BaseCmdlet
+    /// <summary>
+    /// Determines whether the specified Work Area exist.
+    /// </summary>
+    [Cmdlet(VerbsDiagnostic.Test, "TfsArea")]
+    public class TestArea : TestClassificationNode
     {
-/*
-        [Parameter(ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-        [Alias("Area")]
-        [Alias("Iteration")]
-        [Alias("Path")]
+        /// <summary>
+        /// HELP_PARAM_AREA
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Area", "Path")]
         [SupportsWildcards()]
-        public object Node { get; set; }
+        public override string Node { get; set; }
 
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+    }
+
+    /// <summary>
+    /// Determines whether the specified Iteration exist.
+    /// </summary>
+    [Cmdlet(VerbsDiagnostic.Test, "TfsIteration")]
+    public class TestIteration : TestClassificationNode
+    {
+        /// <summary>
+        /// HELP_PARAM_ITERATION
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Iteration", "Path")]
+        [SupportsWildcards()]
+        public override string Node { get; set; }
+
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
+    }
+
+    /// <summary>
+    /// Base implementation for Test-Area and Test-Iteration
+    /// </summary>
+    public abstract class TestClassificationNode : BaseCmdlet
+    {
+        /// <summary>
+        /// Specifies the name and/or path of the node (area or iteration)
+        /// </summary>
+        public virtual string Node { get; set; }
+
+        /// <summary>
+        /// Indicates the type of structure (area or iteration)
+        /// </summary>
         [Parameter()]
-        [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
-        StructureGroup,
+        protected abstract TreeStructureGroup StructureGroup { get; }
 
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter()]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
 
@@ -27,28 +72,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
-    {
-        if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
-        
-        try
         {
-            WriteObject((Get-TfsClassificationNode @PSBoundParameters).Count -gt 0); return;
+            WriteObject(TestItem<ClassificationNode>());
         }
-        catch
-        {
-            this.Log($"Error testing node "{Node}": {_.Exception}");
-            
-            WriteObject(false); return;
-        }
-    }
-}
-
-Set-Alias -Name Test-TfsArea -Value Test-TfsClassificationNode
-Set-Alias -Name Test-TfsIteration -Value Test-TfsClassificationNode
-*/
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
     }
 }

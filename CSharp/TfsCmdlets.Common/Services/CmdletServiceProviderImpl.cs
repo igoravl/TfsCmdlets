@@ -31,8 +31,7 @@ namespace TfsCmdlets.Services
             return (T)_factories[serviceType](this, BaseCmdlet, parameters);
         }
 
-        public TObj GetItem<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
-            where TObj : class
+        public IDataService<TObj> GetDataService<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters) where TObj : class
         {
             var serviceType = typeof(TObj);
 
@@ -41,20 +40,36 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet, overriddenParameters)).GetItem();
+            var dataService = ((IDataService<TObj>)_factories[serviceType](this, baseCmdlet, overriddenParameters));
+            return dataService;
         }
 
-        public IEnumerable<TObj> GetItems<TObj>(BaseCmdlet BaseCmdlet, object overriddenParameters)
+        public TObj GetItem<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
             where TObj : class
         {
-            var serviceType = typeof(TObj);
+            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
+            return dataService.GetItem();
+        }
 
-            if (!_factories.ContainsKey(serviceType))
-            {
-                throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
-            }
+        public bool TestItem<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
+            where TObj : class
+        {
+            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
 
-            return ((IDataService<TObj>)_factories[serviceType](this, BaseCmdlet, overriddenParameters)).GetItems();
+            return dataService.TestItem();
+        }
+
+        public TObj NewItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class
+        {
+            var dataService = GetDataService<TObj>(cmdlet, parameters);
+            return dataService.NewItem();
+        }
+
+        public IEnumerable<TObj> GetItems<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters)
+            where TObj : class
+        {
+            var dataService = GetDataService<TObj>(baseCmdlet, overriddenParameters);
+            return dataService.GetItems();
         }
 
         public Models.Connection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)

@@ -104,7 +104,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     }
 
     [Exports(typeof(ClassificationNode))]
-    internal class ClassificationNodeDataService : BaseDataService<ClassificationNode>
+    internal partial class ClassificationNodeDataService : BaseDataService<ClassificationNode>
     {
         protected override IEnumerable<ClassificationNode> DoGetItems()
         {

@@ -10,7 +10,13 @@ namespace TfsCmdlets.Services
     {
         TService GetService<TService>(BaseCmdlet cmdlet, object parameters = null) where TService : IService;
 
+        IDataService<TObj> GetDataService<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters) where TObj : class;
+
         TObj GetItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
+
+        TObj NewItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
+
+        bool TestItem<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 
         IEnumerable<TObj> GetItems<TObj>(BaseCmdlet cmdlet, object parameters = null) where TObj : class;
 

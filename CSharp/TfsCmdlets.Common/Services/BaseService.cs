@@ -11,13 +11,15 @@ namespace TfsCmdlets.Services
 {
     internal abstract class BaseService : IService
     {
-        public ParameterDictionary Parameters {get;set;}
-
-        private ILogger _logger;
-
         public ICmdletServiceProvider Provider { get; set; }
 
         public BaseCmdlet Cmdlet { get; set; }
+
+        public ParameterDictionary Parameters { get; set; }
+
+        // Protected members
+
+        private ILogger _logger;
 
         protected ILogger Logger => _logger ??= new LoggerImpl(Cmdlet);
 
@@ -38,6 +40,15 @@ namespace TfsCmdlets.Services
             return Provider.GetItems<TObj>(Cmdlet, parameters);
         }
 
+        protected virtual TObj NewItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.NewItem<TObj>(Cmdlet, parameters);
+        }
+
+        protected virtual bool TestItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.TestItem<TObj>(Cmdlet, parameters);
+        }
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
             return Provider.GetServer(Cmdlet, parameters);
@@ -75,23 +86,10 @@ namespace TfsCmdlets.Services
 
             return conn.GetClient<TClient>();
         }
-    }
 
-    internal abstract class BaseDataService<T> : BaseService, IDataService<T> where T : class
-    {
-        protected abstract IEnumerable<T> DoGetItems();
-
-        public T GetItem()
+        protected void Log(string message, string commandName = null, bool force = false)
         {
-            var items = GetItems()?.ToList() ?? new List<T>();
-            if (items == null || items.Count == 0) return null;
-
-            return items[0];
-        }
-
-        public IEnumerable<T> GetItems()
-        {
-            return DoGetItems();
+            Logger.Log(message, commandName, force);
         }
     }
 }

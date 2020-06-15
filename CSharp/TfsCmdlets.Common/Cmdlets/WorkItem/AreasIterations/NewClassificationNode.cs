@@ -1,103 +1,148 @@
-/*
-.SYNOPSIS
-
-.DESCRIPTION
-
-.EXAMPLE
-
-.INPUTS
-
-.OUTPUTS
-
-.NOTES
-
-*/
-
+using System;
+using System.IO;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    [Cmdlet(VerbsCommon.New, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    /// <summary>
+    /// Creates a new Work Item Area in the given Team Project.
+    /// </summary>
+    [Cmdlet(VerbsCommon.New, "TfsArea", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
-    public class NewClassificationNode : BaseCmdlet
+    public class NewArea : NewClassificationNode
     {
-        /*
-                [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-                [Alias("Area")]
-                [Alias("Iteration")]
-                [Alias("Path")]
-                public string Node { get; set; }
+        /// <summary>
+        /// Specifies the path of the new Area. When supplying a path, use a backslash ("\\") 
+        /// between the path segments. Leading and trailing backslashes are optional. 
+        /// The last segment in the path will be the area name.
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Area", "Path")]
+        public override string Node { get; set; }
 
-                [Parameter()]
-                [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
-                StructureGroup,
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+    }
 
-                [Parameter()]
-                public object Project { get; set; }
+    /// <summary>
+    /// Creates a new Iteration in the given Team Project.
+    /// </summary>
+    [Cmdlet(VerbsCommon.New, "TfsIteration", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [OutputType(typeof(WorkItemClassificationNode))]
+    public class NewIteration : NewClassificationNode
+    {
+        /// <summary>
+        /// Specifies the path of the new Iteration. When supplying a path, use a backslash ("\\") 
+        /// between the path segments. Leading and trailing backslashes are optional. 
+        /// The last segment in the path will be the iteration name.
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Iteration", "Path")]
+        public override string Node { get; set; }
 
-                [Parameter()]
-                public object Collection { get; set; }
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+    }
 
-                [Parameter()]
-                public SwitchParameter Passthru { get; set; }
+    /// <summary>
+    /// Base implementation for New-Area and New-Iteration
+    /// </summary>
+    public abstract class NewClassificationNode : BaseCmdlet
+    {
+        /// <summary>
+        /// Specifies the name and/or path of the node (area or iteration)
+        /// </summary>
+        public virtual string Node { get; set; }
 
-                [Parameter()]
-                public SwitchParameter Force { get; set; }
+        /// <summary>
+        /// Indicates the type of structure (area or iteration)
+        /// </summary>
+        [Parameter()]
+        protected abstract TreeStructureGroup StructureGroup { get; }
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
+
+        /// <summary>
+        /// Allows the cmdlet to create parent nodes if they're missing.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
+
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            var (_, tp) = GetCollectionAndProject();
+            var nodePath = NodeUtil.NormalizeNodePath(Node, tp.Name, StructureGroup.ToString(), false, false, true);
+
+            if (!ShouldProcess($"Team Project {tp.Name}", $"Create node '{nodePath}'")) return;
+
+            var newNode = NewItem<ClassificationNode>();
+
+            if (Passthru)
             {
-                if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
-
-                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-                Node = _NormalizeNodePath Node -Project tp.Name -Scope StructureGroup
-
-                if(! ShouldProcess(tp.Name, $"Create node "{Node}""))
-                {
-                    return
-                }
-
-                var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-
-                parentPath = (Split-Path Node -Parent)
-                nodeName = (Split-Path Node -Leaf)
-
-                if(! (Test-TfsClassificationNode -Node parentPath -StructureGroup StructureGroup -Project Project))
-                {
-                    this.Log($"Parent node "{parentPath}" does not exist");
-
-                    if(! Force.IsPresent)
-                    {
-                        _throw new Exception($"Parent node "{parentPath}" does not exist. Check the path or use -Force the create any missing parent nodes.")
-                    }
-
-                    this.Log($"Creating missing parent path "{parentPath}"");
-
-                    PSBoundParameters["Node"] = parentPath
-                    PSBoundParameters["StructureGroup"] = StructureGroup
-
-                    New-TfsClassificationNode @PSBoundParameters
-                }
-
-                patch = new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode() -Property @{
-                    Name = nodeName
-                }
-
-                task = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath, $"Error creating node {node}"); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
-
-                if (Passthru)
-                {
-                    WriteObject(node); return;
-                }
+                WriteObject(newNode);
             }
         }
+    }
 
-        Set-Alias -Name New-TfsArea -Value New-TfsClassificationNode
-        Set-Alias -Name New-TfsIteration -Value New-TfsClassificationNode
-        */
+    partial class ClassificationNodeDataService
+    {
+        protected override ClassificationNode DoNewItem()
+        {
+            var node = GetParameter<string>(nameof(NewClassificationNode.Node));
+            var structureGroup = GetParameter<TreeStructureGroup>("StructureGroup");
+            var force = GetParameter<bool>(nameof(NewClassificationNode.Force));
+
+            var (_, tp) = GetCollectionAndProject();
+            var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, structureGroup.ToString(), false, false, true);
+            var client = GetClient<WorkItemTrackingHttpClient>();
+            var parentPath = Path.GetDirectoryName(nodePath);
+            var nodeName = Path.GetFileName(nodePath);
+
+            if (!TestItem<ClassificationNode>(new { Node = parentPath }))
+            {
+                if (!force)
+                {
+                    this.Log($"Parent node '{parentPath}' does not exist");
+                    throw new Exception($"Parent node '{parentPath}' does not exist. Check the path or use -Force the create any missing parent nodes.");
+                }
+
+                NewItem<ClassificationNode>(new { Node = parentPath });
+            }
+
+            var patch = new WorkItemClassificationNode()
+            {
+                Name = nodeName
+            };
+
+            var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
+                .GetResult($"Error creating node {nodePath}");
+
+            return new ClassificationNode(result, tp.Name, client);
+        }
     }
 }

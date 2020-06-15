@@ -72,11 +72,11 @@ namespace TfsCmdlets.Cmdlets
         /// <param name="script">A string containing a valid PS script</param>
         /// <param name="variables">Variables passed to the script</param>
         /// <returns>The output of the script, if any</returns>
-        protected virtual object InvokeScript(string script, Dictionary<string,object> variables)
+        protected virtual object InvokeScript(string script, Dictionary<string, object> variables)
         {
             var sb = ScriptBlock.Create(script);
 
-            return sb.InvokeWithContext(null, variables.Select(kvp=>new PSVariable(kvp.Key, kvp.Value)).ToList());
+            return sb.InvokeWithContext(null, variables.Select(kvp => new PSVariable(kvp.Key, kvp.Value)).ToList());
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace TfsCmdlets.Cmdlets
         /// <returns>An instance of Connection containing either a TfsConfigurationServer (Windows) or VssConnection (Core) object</returns>
         internal virtual Models.Connection GetServer(ParameterDictionary parameters = null)
         {
-           return Provider.GetServer(this, parameters);
+            return Provider.GetServer(this, parameters);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace TfsCmdlets.Cmdlets
         /// <returns>An instance of Connection containing either a TfsTeamProjectCollection (Windows) or VssConnection (Core) object</returns>
         internal virtual Models.Connection GetCollection(ParameterDictionary parameters = null)
         {
-           return Provider.GetCollection(this, parameters);
+            return Provider.GetCollection(this, parameters);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace TfsCmdlets.Cmdlets
         ///     or VssConnection (Core) object) and an instance of TeamProject</returns>
         internal virtual (Models.Connection, WebApiTeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
         {
-           return Provider.GetCollectionAndProject(this, parameters);
+            return Provider.GetCollectionAndProject(this, parameters);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace TfsCmdlets.Cmdlets
         ///     or VssConnection (Core) object), an instance of TeamProject and an instance of WebApiTeam</returns>
         internal virtual (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
         {
-           return Provider.GetCollectionProjectAndTeam(this, parameters);
+            return Provider.GetCollectionProjectAndTeam(this, parameters);
         }
 
         /// <summary>
@@ -146,10 +146,11 @@ namespace TfsCmdlets.Cmdlets
         private protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where T : VssHttpClientBase
         {
-            var pd = new ParameterDictionary(parameters) {
+            var pd = new ParameterDictionary(parameters)
+            {
                 ["ConnectionType"] = scope
             };
-            
+
             return Provider.GetItem<Models.Connection>(this, pd).GetClient<T>();
         }
 
@@ -172,11 +173,27 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
+        /// Checks if specified item exists
+        /// </summary>
+        protected virtual bool TestItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.TestItem<TObj>(this, parameters);
+        }
+
+        /// <summary>
         /// Gets one or more items of the specified type
         /// </summary>
         protected virtual IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetItems<TObj>(this, parameters);
+        }
+
+        /// <summary>
+        /// Creates a new item of the specified type
+        /// </summary>
+        protected virtual TObj NewItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.NewItem<TObj>(this, parameters);
         }
 
         /// <summary>
@@ -190,7 +207,7 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// Outputs items to PowerShell
         /// </summary>
-        protected void WriteItems<T>(object parameters = null) where T: class
+        protected void WriteItems<T>(object parameters = null) where T : class
         {
             WriteObject(GetItems<T>(parameters), true);
         }

@@ -26,7 +26,7 @@ namespace TfsCmdlets.Util
             {
                 path = Regex.Replace(path, @"[/|\\]+", separator.ToString()).Trim(' ', separator);
 
-                if (path.StartsWith(projectName))
+                if (path.Equals(projectName) || path.StartsWith($"{projectName}{separator}"))
                 {
                     if (Regex.IsMatch(path, $@"^{projectName}\{separator}{scope}\{separator}"))
                     {
@@ -41,7 +41,7 @@ namespace TfsCmdlets.Util
                         path = "";
                     }
                 }
-                else if (path.StartsWith(scope))
+                else if (path.Equals(scope) || path.StartsWith($"{scope}{separator}"))
                 {
                     if (Regex.IsMatch(path, $@"^{scope}{separator}"))
                     {
@@ -56,11 +56,11 @@ namespace TfsCmdlets.Util
                 newPath.Append(path);
             }
 
-            if (includeTrailingSeparator && !newPath[newPath.Length - 1].Equals(separator))
+            if (includeTrailingSeparator && newPath.Length > 0 && !newPath[newPath.Length - 1].Equals(separator))
             {
                 newPath.Append(separator);
             }
-            else if (!includeTrailingSeparator && newPath[newPath.Length - 1].Equals(separator))
+            else if (!includeTrailingSeparator && newPath.Length > 0 && newPath[newPath.Length - 1].Equals(separator))
             {
                 newPath.Remove(newPath.Length - 1, 1);
             }
