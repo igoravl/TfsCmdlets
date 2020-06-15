@@ -36,11 +36,11 @@ namespace TfsCmdlets.Services
 
         protected virtual T DoNewItem() => throw new NotImplementedException(nameof(DoNewItem));
 
-        private T DoRenameItem(T item, string newName) => throw new NotImplementedException(nameof(DoRenameItem));
+        protected virtual T DoRenameItem(T item, string newName) => throw new NotImplementedException(nameof(DoRenameItem));
 
-        private void DoRemoveItem() => throw new NotImplementedException(nameof(DoRemoveItem));
+        protected virtual void DoRemoveItem() => throw new NotImplementedException(nameof(DoRemoveItem));
 
-        private T DoSetItem(T item) => throw new NotImplementedException(nameof(DoSetItem));
+        protected virtual T DoSetItem(T item) => throw new NotImplementedException(nameof(DoSetItem));
 
     }
 }

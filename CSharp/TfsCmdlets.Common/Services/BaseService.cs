@@ -49,6 +49,7 @@ namespace TfsCmdlets.Services
         {
             return Provider.GetDataService<TObj>(Cmdlet, parameters).TestItem();
         }
+        
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
             return Provider.GetServer(Cmdlet, parameters);
@@ -85,6 +86,16 @@ namespace TfsCmdlets.Services
             }
 
             return conn.GetClient<TClient>();
+        }
+
+        protected bool ShouldProcess(string target, string action)
+        {
+            return Cmdlet.ShouldProcess(target, action);
+        }
+
+        protected bool ShouldContinue(string query, string caption = "Confirm")
+        {
+            return Cmdlet.ShouldContinue(query, caption);
         }
 
         protected void Log(string message, string commandName = null, bool force = false)

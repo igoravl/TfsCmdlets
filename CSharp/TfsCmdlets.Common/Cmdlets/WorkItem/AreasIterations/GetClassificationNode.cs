@@ -151,7 +151,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 }
 
             var client = GetClient<WorkItemTrackingHttpClient>();
-            int depth = 0;
+            int depth = 1;
 
             if (path.IsWildcard())
             {

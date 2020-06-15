@@ -1,6 +1,9 @@
+using System;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -70,6 +73,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public object MoveTo { get; set; } = "\\";
 
         /// <summary>
+        /// Removes node(s) recursively.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Recurse { get; set; }
+
+        /// <summary>
         /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
@@ -86,53 +95,47 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// </summary>
         protected override void ProcessRecord()
         {
-            var (_, tp) = GetCollectionAndProject();
+            RemoveItem<ClassificationNode>();
+        }
+    }
+
+    partial class ClassificationNodeDataService
+    {
+        protected override void DoRemoveItem()
+        {
             var nodes = GetItems<ClassificationNode>();
+            var moveTo = GetParameter<object>(nameof(RemoveClassificationNode.MoveTo));
+            var recurse = GetParameter<bool>(nameof(RemoveClassificationNode.Recurse));
+            var structureGroup = GetParameter<TreeStructureGroup>("StructureGroup");
+            var structureGroupName = structureGroup.ToString().TrimEnd('s');
+            var moveToNode = GetItem<ClassificationNode>(new {
+                Node = moveTo
+            });
 
-            foreach(var n in nodes)
+            if (moveToNode == null)
             {
-                if (!ShouldProcess($"Team Project {tp.Name}", $"Delete {StructureGroup} '{n.RelativePath}'")) continue;
-
-                RemoveItem<ClassificationNode>(new {Node = n});
+                throw new Exception($"Invalid or non-existent node '{moveTo}'. To remove nodes, supply a valid node in the -MoveTo argument");
             }
 
-        }
-        /*
-                /// <summary>
-                /// Performs execution of the command
-                /// </summary>
-                protected override void ProcessRecord()
-                    {
-                        if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
+            this.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");
 
-                        nodes = Get-TfsClassificationNode -Node Node -StructureGroup StructureGroup -Project Project -Collection Collection
-                        moveToNode =  Get-TfsClassificationNode -Node MoveTo -StructureGroup StructureGroup -Project Project -Collection Collection
+            var (_, tp) = this.GetCollectionAndProject();
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
-                        if(! moveToNode)
-                        {
-                            throw new Exception($"Invalid or non-existent node "{MoveTo}". To remove nodes, supply a valid node in the -MoveTo argument")
-                        }
+            foreach (var node in nodes)
+            {
+                if (!ShouldProcess($"Team Project '{tp.Name}'", $"Remove {structureGroupName} '{node.RelativePath}'")) continue;
 
-                        this.Log($"Remove nodes and move orphaned work items no node "{{moveToNode}.FullPath}"");
-
-                        tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-                        var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-
-                        foreach(node in nodes)
-                        {
-                            if(! (ShouldProcess(node.TeamProject, $"Remove node {{node}.RelativePath}")))
-                            {
-                                continue
-                            }
-
-                            task = client.DeleteClassificationNodeAsync(node.TeamProject,StructureGroup,node.RelativePath,moveToNode.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error removing node "{{node}.FullPath}"" task.Exception.InnerExceptions })
-                        }
-                    }
+                if(node.ChildCount > 0 && !recurse && !ShouldContinue($"The {structureGroupName} at '{node.RelativePath}' " +
+                    "has children and the Recurse parameter was not specified. If you continue, all children will be removed with " +
+                    "the item. Are you sure you want to continue?"))
+                {
+                    continue;
                 }
 
-                Set-Alias -Name Remove-TfsArea -Value Remove-TfsClassificationNode
-                Set-Alias -Name Remove-TfsIteration -Value Remove-TfsClassificationNode
-                */
+                client.DeleteClassificationNodeAsync(node.TeamProject, structureGroup, node.RelativePath, moveToNode.Id)
+                    .Wait($"Error removing node '{node.FullPath}'");
+            }
+        }
     }
 }

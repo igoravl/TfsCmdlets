@@ -20,5 +20,17 @@ namespace TfsCmdlets.Extensions
                 throw new Exception($"{errorMessage?? "Error invoking async operation"}: {ex.Message}", ex);
             }
         }
+
+        internal static void Wait(this Task task, string errorMessage = null)
+        {
+            try
+            {
+                task.Wait();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"{errorMessage?? "Error invoking async operation"}: {ex.Message}", ex);
+            }
+        }
     }
 }
