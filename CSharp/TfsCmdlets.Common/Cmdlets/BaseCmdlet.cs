@@ -205,6 +205,14 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
+        /// Renames an item of the specified type
+        /// </summary>
+        protected virtual TObj RenameItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.GetDataService<TObj>(this, parameters).RenameItem();
+        }
+
+        /// <summary>
         /// Gets the current directory in PowerShell
         /// </summary>
         protected virtual string GetCurrentDirectory()

@@ -50,6 +50,11 @@ namespace TfsCmdlets.Services
             return Provider.GetDataService<TObj>(Cmdlet, parameters).TestItem();
         }
         
+        protected virtual TObj RenameItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).RenameItem();
+        }
+        
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
             return Provider.GetServer(Cmdlet, parameters);

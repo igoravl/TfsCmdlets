@@ -26,7 +26,7 @@ namespace TfsCmdlets.Services
 
         public void RemoveItem() => DoRemoveItem();
 
-        public T RenameItem(T item, string newName) => DoRenameItem(item, newName);
+        public T RenameItem() => DoRenameItem();
 
         public T SetItem(T item) => DoSetItem(item);
 
@@ -36,7 +36,7 @@ namespace TfsCmdlets.Services
 
         protected virtual T DoNewItem() => throw new NotImplementedException(nameof(DoNewItem));
 
-        protected virtual T DoRenameItem(T item, string newName) => throw new NotImplementedException(nameof(DoRenameItem));
+        protected virtual T DoRenameItem() => throw new NotImplementedException(nameof(DoRenameItem));
 
         protected virtual void DoRemoveItem() => throw new NotImplementedException(nameof(DoRemoveItem));
 

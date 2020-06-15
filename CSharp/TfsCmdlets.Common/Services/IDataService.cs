@@ -18,7 +18,7 @@ namespace TfsCmdlets.Services
 
         T SetItem(T item);
 
-        T RenameItem(T item, string newName);
+        T RenameItem();
 
         bool TestItem();
     }

@@ -32,71 +32,129 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 */
 
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    [Cmdlet(VerbsCommon.Rename, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    /// <summary>
+    /// Renames a Work Area.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Rename, "TfsArea", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
-    public class RenameClassificationNode : BaseCmdlet
+    public class RenameAreaNode : RenameClassificationNode
     {
-        /*
-                [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-                [ValidateScript({(_ is string]) || (_ is [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode])}) 
-                [Alias("Area")]
-                [Alias("Iteration")]
-                [Alias("Path")]
-                public object Node { get; set; }
+        /// <summary>
+        /// HELP_PARAM_AREA
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty]
+        [Alias("Path", "Area")]
+        public override object Node { get; set; }
 
-                [Parameter(Mandatory=true, Position=1)]
-                public string NewName { get; set; }
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+    }
 
-                [Parameter()]
-                [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup]
-                StructureGroup,
+    /// <summary>
+    /// Renames a Iteration.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Rename, "TfsIteration", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [OutputType(typeof(WorkItemClassificationNode))]
+    public class RenameIterationNode : RenameClassificationNode
+    {
+        /// <summary>
+        /// HELP_PARAM_ITERATION
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty]
+        [Alias("Path", "Iteration")]
+        public override object Node { get; set; }
 
-                [Parameter()]
-                public object Project { get; set; }
+        /// <inheritdoc/>
+        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
+    }
 
-                [Parameter()]
-                public object Collection { get; set; }
+    /// <summary>
+    /// Base implementation for Rename-Area and Rename-Iteration
+    /// </summary>
+    public abstract class RenameClassificationNode : BaseCmdlet
+    {
+        /// <summary>
+        /// Specifies the name and/or path of the node (area or iteration).
+        /// </summary>
+        public virtual object Node { get; set; }
 
-                [Parameter()]
-                public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// Indicates the type of structure (area or iteration).
+        /// </summary>
+        [Parameter()]
+        protected abstract TreeStructureGroup StructureGroup { get; }
+
+        /// <summary>
+        /// HELP_PARAM_NEWNAME
+        /// </summary>
+        [Parameter(Position = 1, Mandatory = true)]
+        [ValidateNotNullOrEmpty]
+        public string NewName { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
 
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord()
+        {
+            var result = RenameItem<ClassificationNode>();
+
+            if (Passthru)
             {
-                if(! (PSBoundParameters.ContainsKey("StructureGroup"))){if (MyInvocation.InvocationName -like "*Area"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Areas}elseif (MyInvocation.InvocationName -like "*Iteration"){StructureGroup = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.Iterations}else{throw new Exception("Invalid or missing StructureGroup argument"}};PSBoundParameters["StructureGroup"] = StructureGroup)
-
-                tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-                var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-
-                nodeToRename = Get-TfsClassificationNode -Node Node -StructureGroup StructureGroup -Project Project -Collection Collection
-
-                if(! ShouldProcess(nodeToRename.FullPath, $"Rename node to "{NewName}""))
-                {
-                    return
-                }
-
-                patch = new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode() -Property @{
-                    Name = NewName
-                }
-
-                task = client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath.SubString(1)); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error renaming node {node}" task.Exception.InnerExceptions })
-
-                if (Passthru)
-                {
-                    WriteObject(result); return;
-                }
+                WriteObject(result);
             }
         }
+    }
 
-        Set-Alias -Name Rename-TfsArea -Value Rename-TfsClassificationNode
-        Set-Alias -Name Rename-TfsIteration -Value Rename-TfsClassificationNode
-        */
+    partial class ClassificationNodeDataService
+    {
+        protected override ClassificationNode DoRenameItem()
+        {
+            var (_, tp) = GetCollectionAndProject();
+            var client = GetClient<WorkItemTrackingHttpClient>();
+            var nodeToRename = GetItem<ClassificationNode>();
+            var structureGroup = GetParameter<TreeStructureGroup>("StructureGroup");
+            var structureGroupName = structureGroup.ToString().TrimEnd('s');
+            var newName = GetParameter<string>(nameof(RenameClassificationNode.NewName));
+
+            if (!ShouldProcess($"{structureGroupName} '{nodeToRename.FullPath}'", $"Rename to '{newName}'"))
+            {
+                return null;
+            }
+
+            var patch = new WorkItemClassificationNode()
+            {
+                Name = newName
+            };
+
+            return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath.Substring(1))
+                .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, client);
+        }
     }
 }
