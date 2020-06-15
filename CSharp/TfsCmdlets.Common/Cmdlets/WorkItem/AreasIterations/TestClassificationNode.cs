@@ -1,6 +1,6 @@
 using System.Management.Automation;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
+namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     [Cmdlet(VerbsDiagnostic.Test, "TfsClassificationNode")]
     public class TestClassificationNode: BaseCmdlet

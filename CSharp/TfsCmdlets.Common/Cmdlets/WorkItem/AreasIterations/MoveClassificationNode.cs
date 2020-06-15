@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
+namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     [Cmdlet(VerbsCommon.Move, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]

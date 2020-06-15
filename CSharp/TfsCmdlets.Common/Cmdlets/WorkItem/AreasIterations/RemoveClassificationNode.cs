@@ -35,7 +35,7 @@ For more details, see the Get-TfsTeamProjectCollection cmdlet.
 
 using System.Management.Automation;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.ClassificationNode
+namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     [Cmdlet(VerbsCommon.Remove, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     public class RemoveClassificationNode : BaseCmdlet
