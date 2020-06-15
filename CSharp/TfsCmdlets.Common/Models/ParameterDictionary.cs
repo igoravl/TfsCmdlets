@@ -7,14 +7,14 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace TfsCmdlets.Cmdlets
 {
-    internal class ParameterDictionary : Dictionary<string, object>
+    public class ParameterDictionary : Dictionary<string, object>
     {
-        internal ParameterDictionary()
+        public ParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
         }
 
-        internal ParameterDictionary(object original)
+        public ParameterDictionary(object original)
             : this()
         {
             switch(original)
@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets
                 }
                 case Cmdlet cmdlet: {
                     cmdlet.GetType()
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                        .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                         .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null)
                         .ForEach(pi =>
                             Add(pi.Name,
@@ -47,13 +47,13 @@ namespace TfsCmdlets.Cmdlets
             }
         }
 
-        internal ParameterDictionary(object original, object mergeWith)
+        public ParameterDictionary(object original, object mergeWith)
             : this(original)
         {
             Merge(new ParameterDictionary(mergeWith));
         }
 
-        internal T Get<T>(string name, T defaultValue = default)
+        public T Get<T>(string name, T defaultValue = default)
         {
             if (!ContainsKey(name)) return defaultValue;
 
@@ -67,7 +67,7 @@ namespace TfsCmdlets.Cmdlets
             return (T)val;
         }
 
-        internal void Merge(ParameterDictionary other)
+        public void Merge(ParameterDictionary other)
         {
             if (other == null || other.Count == 0) return;
 
