@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
@@ -131,11 +132,21 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                             done = true;
                             break;
                         }
-                    case string s when !string.IsNullOrEmpty(s):
+                    case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
                         {
                             path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString(), true, false, true, false, true);
                             done = true;
                             break;
+                        }
+                    case string s when !string.IsNullOrEmpty(s):
+                        {
+                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString(), false, false, true, false, false);
+                            done = true;
+                            break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent node {node}");
                         }
                 }
 

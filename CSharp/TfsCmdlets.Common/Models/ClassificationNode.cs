@@ -30,7 +30,15 @@ namespace TfsCmdlets.Models
 
         internal TreeStructureGroup StructureGroup => (TreeStructureGroup)InnerNode.StructureType;
 
+        internal string TeamProject => Path.Substring(1, Path.IndexOf('\\', 2)-1);
+
+        internal string FullPath => Path.Replace($@"\{TeamProject}\{StructureGroup.ToString().TrimEnd('s')}", $@"\{TeamProject}");
+
         internal string Path => InnerNode.Path;
+
+        internal string Name => InnerNode.Name;
+
+        internal int Id => InnerNode.Id;
 
         /// <summary>
         /// Get a node's relative path
@@ -57,8 +65,6 @@ namespace TfsCmdlets.Models
             }
 
             if (node.ChildCount == 0) yield break;
-
-            WebApiNode result;
 
             foreach (var c in node.Children.Select(n => new ClassificationNode(n, ProjectName, _client)))
             {
