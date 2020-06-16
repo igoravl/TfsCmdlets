@@ -6,6 +6,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
 {
@@ -96,6 +97,11 @@ namespace TfsCmdlets.Services
         protected bool ShouldProcess(string target, string action)
         {
             return Cmdlet.ShouldProcess(target, action);
+        }
+
+        protected bool ShouldProcess(WebApiTeamProject target, string action)
+        {
+            return Cmdlet.ShouldProcess($"Team Project '{target.Name}'", action);
         }
 
         protected bool ShouldContinue(string query, string caption = "Confirm")
