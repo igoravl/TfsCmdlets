@@ -28,7 +28,7 @@ namespace TfsCmdlets.Services
 
         public T RenameItem() => DoRenameItem();
 
-        public T SetItem(T item) => DoSetItem(item);
+        public T SetItem() => DoSetItem();
 
         // Protected members
 
@@ -40,7 +40,6 @@ namespace TfsCmdlets.Services
 
         protected virtual void DoRemoveItem() => throw new NotImplementedException(nameof(DoRemoveItem));
 
-        protected virtual T DoSetItem(T item) => throw new NotImplementedException(nameof(DoSetItem));
-
-    }
+        protected virtual T DoSetItem() => throw new NotImplementedException(nameof(DoSetItem));
+   }
 }

@@ -111,7 +111,12 @@ namespace TfsCmdlets.Cmdlets.Team
                 case {} when defaultTeam:
                 {
                     Logger.Log("Get default team");
-                    team = tp.DefaultTeam.Id.ToString();
+                    var projectClient = GetClient<ProjectHttpClient>();
+                    var props = projectClient
+                        .GetProjectPropertiesAsync(tp.Id)
+                        .GetResult("Error retrieving project's default team");
+                    team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
+                        .FirstOrDefault()?.Value;
                     defaultTeam = false;
                     continue;
                 }

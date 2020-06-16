@@ -31,6 +31,13 @@ namespace TfsCmdlets.Services
             return Parameters.Get<TParam>(name, defaultValue) ?? defaultValue;
         }
 
+        protected bool HasParameter(string name)
+        {
+            if (Parameters == null) return false;
+
+            return Parameters.ContainsKey(name) && (Cmdlet == null || Cmdlet.MyInvocation.BoundParameters.ContainsKey(name));
+        }
+
         protected TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetDataService<TObj>(Cmdlet, parameters).GetItem();
@@ -54,6 +61,11 @@ namespace TfsCmdlets.Services
         protected virtual TObj RenameItem<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetDataService<TObj>(Cmdlet, parameters).RenameItem();
+        }
+        
+        protected virtual TObj SetItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.GetDataService<TObj>(Cmdlet, parameters).SetItem();
         }
         
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
@@ -102,6 +114,11 @@ namespace TfsCmdlets.Services
         protected bool ShouldProcess(WebApiTeamProject target, string action)
         {
             return Cmdlet.ShouldProcess($"Team Project '{target.Name}'", action);
+        }
+
+        protected bool ShouldProcess(WebApiTeam target, string action)
+        {
+            return Cmdlet.ShouldProcess($"Team '{target.Name}'", action);
         }
 
         protected bool ShouldContinue(string query, string caption = "Confirm")

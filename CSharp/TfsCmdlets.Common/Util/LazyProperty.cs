@@ -22,22 +22,30 @@ namespace TfsCmdlets.Util
         public static object Get(PSObject obj, string property, ScriptBlock sb)
         {
             var propertyBag = obj.Properties.FirstOrDefault(
-                p => p.Name.Equals("__PropertyBag"))?.Value as Dictionary<string,object>;
+                p => p.Name.Equals("__PropertyBag"))?.Value as Dictionary<string, object>;
 
-            if(propertyBag == null)
+            if (propertyBag == null)
             {
-                propertyBag = new Dictionary<string,object>();
+                propertyBag = new Dictionary<string, object>();
                 obj.AddNoteProperty("__PropertyBag", propertyBag);
             }
 
-            if(propertyBag.ContainsKey(property))
+            if (propertyBag.ContainsKey(property))
             {
                 return propertyBag[property];
             }
 
-            var value = propertyBag[property] = sb.InvokeWithContext(null, new List<PSVariable>(){
-                new PSVariable("_", obj)
-            });
+            object value;
+
+            try
+            {
+                value = propertyBag[property] = sb.InvokeWithContext(null, new List<PSVariable>(){
+                    new PSVariable("_", obj)});
+            }
+            catch(Exception ex)
+            {
+                value = ex;
+            }
 
             return value;
         }

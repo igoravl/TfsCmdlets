@@ -19,6 +19,8 @@ namespace TfsCmdlets.Models
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
 
+        internal object GetService(Type serviceType) => InnerConnection.GetService(serviceType);
+
         internal TfsConnection ConfigurationServer
         {
             get
