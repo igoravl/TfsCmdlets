@@ -4,6 +4,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
 using TfsCmdlets.Extensions;
+using System.Linq;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -17,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// <summary>
         /// HELP_PARAM_AREA
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards()]
         [ValidateNotNullOrEmpty]
         [Alias("Path", "Area")]
@@ -37,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// <summary>
         /// HELP_PARAM_ITERATION
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards()]
         [ValidateNotNullOrEmpty]
         [Alias("Path", "Iteration")]
@@ -103,7 +104,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     {
         protected override void DoRemoveItem()
         {
-            var nodes = GetItems<ClassificationNode>();
+            var nodes = GetItems<ClassificationNode>().OrderByDescending(n=>n.Path).ToList();
             var moveTo = GetParameter<object>(nameof(RemoveClassificationNode.MoveTo));
             var recurse = GetParameter<bool>(nameof(RemoveClassificationNode.Recurse));
             var structureGroup = GetParameter<TreeStructureGroup>("StructureGroup");
