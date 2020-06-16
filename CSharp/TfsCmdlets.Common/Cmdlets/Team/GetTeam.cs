@@ -83,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.Team
     }
 
     [Exports(typeof(Models.Team))]
-    internal class TeamDataService : BaseDataService<Models.Team>
+    internal partial class TeamDataService : BaseDataService<Models.Team>
     {
         protected override IEnumerable<Models.Team> DoGetItems()
         {
