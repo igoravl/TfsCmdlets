@@ -1,40 +1,19 @@
-/*
-
-.SYNOPSIS
-    Gets the contents of one or more work items.
-
-.PARAMETER Project
-    Specifies either the name of the Team Project or a previously initialized Microsoft.TeamFoundation.WorkItemTracking.Client.Project object to connect to. If omitted, it defaults to the connection opened by Connect-TfsTeamProject (if any). 
-
-For more details, see the Get-TfsTeamProject cmdlet.
-
-.PARAMETER Collection
-    Specifies either a URL/name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object. 
-
-When using a URL, it must be fully qualified. The format of this string is as follows: 
-
-http[s]://<ComputerName>:<Port>/[<TFS-vDir>/]<CollectionName> 
-
-Valid values for the Transport segment of the URI are HTTP and HTTPS. If you specify a connection URI with a Transport segment, but do not specify a port, the session is created with standards ports: 80 for HTTP and 443 for HTTPS. 
-
-To connect to a Team Project Collection by using its name, a TfsConfigurationServer object must be supplied either via -Server argument or via a previous call to the Connect-TfsConfigurationServer cmdlet. 
-
-For more details, see the Get-TfsTeamProjectCollection cmdlet.
-
-.INPUTS
-    Microsoft.TeamFoundation.WorkItemTracking.Client.Project
-    System.String
-*/
-
+using System;
+using System.Collections;
 using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
+    /// <summary>
+    /// Gets the contents of one or more work items.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName="Query by text")]
-    //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
+    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
     public class GetWorkItem: BaseCmdlet
     {
-/*
+        /// <summary>
+        /// HELP_PARAM_WORKITEM
+        /// </summary>
         [Parameter(Position=0, Mandatory=true, ParameterSetName="Query by revision")]
         [Parameter(Position=0, Mandatory=true, ParameterSetName="Query by date")]
         [Alias("id")]
@@ -46,18 +25,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public int Revision { get; set; }
 
         [Parameter(Mandatory=true, ParameterSetName="Query by date")]
-        public datetime AsOf { get; set; }
+        public DateTime AsOf { get; set; }
 
         [Parameter(Mandatory=true, ParameterSetName="Query by WIQL")]
-        [Alias("WIQL")]
-        [Alias("QueryText")]
-        [Alias("SavedQuery")]
-        [Alias("QueryPath")]
+        [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
         public string Query { get; set; }
 
-        # [Parameter(Mandatory=true, ParameterSetName="Query by filter")]
-        # [string[]]
-        # Fields,
+        // # [Parameter(Mandatory=true, ParameterSetName="Query by filter")]
+        // # [string[]]
+        // # Fields,
 
         [Parameter(Mandatory=true, ParameterSetName="Query by filter")]
         public string Filter { get; set; }
@@ -66,14 +42,20 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public string Text { get; set; }
 
         [Parameter()]
-        public hashtable Macros { get; set; }
+        public Hashtable Macros { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter(ValueFromPipeline=true)]
         public object Project { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
-
+/*
     protected override void BeginProcessing()
     {
         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"

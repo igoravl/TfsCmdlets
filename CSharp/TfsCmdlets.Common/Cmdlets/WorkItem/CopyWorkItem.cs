@@ -1,13 +1,4 @@
 /*
-.SYNOPSIS
-Creates a copy of a work item, optionally changing its type
-
-.DESCRIPTION
-Use this cmdlet to create a copy of a work item (using its latest saved state/revision data) that is of the specified work item type. By default, the copy retains the same type of the original work item, unless the Type argument is specified
-
-.PARAMETER WorkItem
-Specifies the work item to be copied. Can be either a work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
-
 .PARAMETER Type
 Specifies the new type for the copy of the original work item. It can be provided as either a string representing the work item type name (e.g. "Bug" or "Task") or an instance of Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType. When an instance of WorkItemType is provided, the team project from where that WorkItemType object was retrieved will be used to define where to copy the work item into, unless the Project argument is specified 
 
@@ -18,26 +9,13 @@ Includes attachments as part of the copy process. By default, only field values 
 Includes work item links as part of the copy process. By default, only field values are copied
 
 .PARAMETER Project
-Specified the team project where the work item will be copied into. If omitted, the copy will be created in the same team project of the source work item. The value provided to this argument takes precedence over both the source team project and the team project of an instance of WorkItemType provided to the Type argument
 
-.PARAMETER Collection
-Specifies either a URL/name of the Team Project Collection to connect to, or a previously initialized TfsTeamProjectCollection object. 
-
-When using a URL, it must be fully qualified. The format of this string is as follows: 
-
-http[s]://<ComputerName>:<Port>/[<TFS-vDir>/]<CollectionName> 
-
-Valid values for the Transport segment of the URI are HTTP and HTTPS. If you specify a connection URI with a Transport segment, but do not specify a port, the session is created with standards ports: 80 for HTTP and 443 for HTTPS. 
-
-To connect to a Team Project Collection by using its name, a TfsConfigurationServer object must be supplied either via -Server argument or via a previous call to the Connect-TfsConfigurationServer cmdlet. 
-
-For more details, see the Get-TfsTeamProjectCollection cmdlet.
 
 .PARAMETER SkipSave
 Leaves the new work item in a "dirty" (unsaved) state, by not calling its Save() method. It is useful for when subsequents changes need to be made to the work item object before saving it. In that case, it is up to the user to later invoke the Save() method on the new work item object to persist the copy.
 
 .PARAMETER Passthru
-Returns the results of the command. It takes one of the following values: Original (returns the original work item), Copy (returns the newly created work item copy) or None.
+
 
 .INPUTS
 Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem
@@ -59,97 +37,120 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
+    /// <summary>
+    /// Creates a copy of a work item, optionally changing its type.
+    /// </summary>
+    /// <remarks>
+    /// Use this cmdlet to create a copy of a work item (using its latest saved state/revision data) 
+    /// that is of the specified work item type. By default, the copy retains the same type of the 
+    /// original work item, unless the Type argument is specified
+    /// </remarks>
     [Cmdlet(VerbsCommon.Copy, "TfsWorkItem")]
-    //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem))]
-    public class CopyWorkItem: BaseCmdlet
+    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
+    public class CopyWorkItem : BaseCmdlet
     {
-/*
-        [Parameter(ValueFromPipeline=true)]
+        /// <summary>
+        /// HELP_PARAM_WORKITEM
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
         [Parameter()]
-        public object Type,
+        public object Type { get; set; }
 
         [Parameter()]
-        public object Project,
+        public SwitchParameter IncludeAttachments { get; set; }
 
         [Parameter()]
-        [SwitchParameter] 
-        IncludeAttachments,
+        public SwitchParameter IncludeLinks { get; set; }
 
         [Parameter()]
-        [SwitchParameter] 
-        IncludeLinks,
+        public SwitchParameter SkipSave { get; set; }
 
+        /// <summary>
+        /// Specified the team project where the work item will be copied into. When omitted, 
+		/// the copy will be created in the same team project of the source work item. 
+		/// The value provided to this argument takes precedence over both the source team project 
+		/// and the team project of an instance of WorkItemType provided to the Type argument.
+        /// </summary>
         [Parameter()]
-        [SwitchParameter] 
-        SkipSave,
+        public object DestinationProject { get; set; }
 
-        [Parameter()]
-		[ValidateSet("Original", "Copy", "None")]
-        public string Passthru { get; set; } = "Copy",
-
+		/// <summary>
+		/// HELP_PARAM_COLLECTION
+		/// </summary>
+		/// <value></value>
         [Parameter()]
         public object Collection { get; set; }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-    {
-		wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
-		#store = wi.Store
+		/// <summary>
+		/// Returns the results of the command. It takes one of the following values: 
+		/// Original (returns the original work item), Copy (returns the newly created work item copy) 
+		/// or None.
+		/// </summary>
+        [Parameter()]
+        [ValidateSet("Original", "Copy", "None")]
+        public string Passthru { get; set; } = "Copy";
 
-		if(Type)
-		{
-			if (Project)
-			{
-				tp = Project
-			}
-			else
-			{
-				tp = wi.Project
-			}
-			witd = Get-TfsWorkItemType -Type Type -Project tp -Collection wi.Store.TeamProjectCollection
-		}
-		else
-		{
-			witd = wi.Type
-		}
+        /*
+                /// <summary>
+                /// Performs execution of the command
+                /// </summary>
+                protected override void ProcessRecord()
+            {
+                wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
+                #store = wi.Store
 
-		flags = Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.None
+                if(Type)
+                {
+                    if (Project)
+                    {
+                        tp = Project
+                    }
+                    else
+                    {
+                        tp = wi.Project
+                    }
+                    witd = Get-TfsWorkItemType -Type Type -Project tp -Collection wi.Store.TeamProjectCollection
+                }
+                else
+                {
+                    witd = wi.Type
+                }
 
-		if (IncludeAttachments)
-		{
-			flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyFiles
-		}
+                flags = Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.None
 
-		if (IncludeLinks)
-		{
-			flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyLinks
-		}
+                if (IncludeAttachments)
+                {
+                    flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyFiles
+                }
 
-		copy = wi.Copy(witd, flags)
+                if (IncludeLinks)
+                {
+                    flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyLinks
+                }
 
-		if(! SkipSave)
-		{
-			copy.Save()
-		}
+                copy = wi.Copy(witd, flags)
 
-		if (Passthru = = "Original")
-		{
-			WriteObject(wi); return;
-		}
-		
-		if(Passthru = = "Copy")
-		{
-			WriteObject(copy); return;
-		}
-    }
-}
-*/
+                if(! SkipSave)
+                {
+                    copy.Save()
+                }
+
+                if (Passthru = = "Original")
+                {
+                    WriteObject(wi); return;
+                }
+
+                if(Passthru = = "Copy")
+                {
+                    WriteObject(copy); return;
+                }
+            }
+        }
+        */
         /// <summary>
         /// Performs execution of the command
         /// </summary>

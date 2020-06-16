@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     ///   <para>Returns all area paths in the currently connected Team Project (as defined by a previous call to Connect-TfsTeamProject)</para>
     /// </example>
     /// <example>
-    ///   <code>Get-TfsArea '\\**\\Support' -Project Tailspin</code>
+    ///   <code>Get-TfsArea '\**\Support' -Project Tailspin</code>
     ///   <para>Performs a recursive search and returns all area paths named 'Support' that may exist in a team project called Tailspin</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "TfsArea")]
@@ -46,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     ///   <para>Returns all iterations in the currently connected Team Project (as defined by a previous call to Connect-TfsTeamProject)</para>
     /// </example>
     /// <example>
-    ///   <code>Get-TfsIteration '\\**\\Support' -Project Tailspin</code>
+    ///   <code>Get-TfsIteration '\**\Support' -Project Tailspin</code>
     ///   <para>Performs a recursive search and returns all iterations named 'Support' that may exist in a team project called Tailspin</para>
     /// </example>
     [Cmdlet(VerbsCommon.Get, "TfsIteration")]

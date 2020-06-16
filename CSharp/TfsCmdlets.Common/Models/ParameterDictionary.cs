@@ -7,13 +7,22 @@ using Microsoft.VisualStudio.Services.Common;
 
 namespace TfsCmdlets.Cmdlets
 {
+    /// <summary>
+    /// Represents a collection of cmdlet arguments
+    /// </summary>
     public class ParameterDictionary : Dictionary<string, object>
     {
+        /// <summary>
+        /// Creates an empty dictionary
+        /// </summary>
         public ParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
         }
 
+        /// <summary>
+        /// Creates a new dictionary, copying the properties of supplied object
+        /// </summary>
         public ParameterDictionary(object original)
             : this()
         {
@@ -47,12 +56,21 @@ namespace TfsCmdlets.Cmdlets
             }
         }
 
+        /// <summary>
+        /// Creates a new dictionary, copying the properties of supplied object and merging it
+        /// with another. 
+        /// </summary>
+        /// <see cref="ParameterDictionary.Merge(ParameterDictionary)"/>
         public ParameterDictionary(object original, object mergeWith)
             : this(original)
         {
             Merge(new ParameterDictionary(mergeWith));
         }
 
+        /// <summary>
+        /// Returns the value of a property. When the property is missing, returns an
+        /// optionally supplied default value.
+        /// </summary>
         public T Get<T>(string name, T defaultValue = default)
         {
             if (!ContainsKey(name)) return defaultValue;
@@ -67,6 +85,10 @@ namespace TfsCmdlets.Cmdlets
             return (T)val;
         }
 
+        /// <summary>
+        /// Merges this instance with another one. Only parameters present in the other collection
+        /// that are also missing from this one are merged, i.e conflicting properties are skipped.
+        /// </summary>
         public void Merge(ParameterDictionary other)
         {
             if (other == null || other.Count == 0) return;
