@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for New-Area and New-Iteration
     /// </summary>
-    public abstract class NewClassificationNode : BaseNewCmdlet<ClassificationNode>
+    public abstract class NewClassificationNode : NewCmdletBase<ClassificationNode>
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)
@@ -64,18 +64,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// </summary>
         [Parameter()]
         protected abstract TreeStructureGroup StructureGroup { get; }
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
 
         /// <summary>
         /// Allows the cmdlet to create parent nodes if they're missing.
