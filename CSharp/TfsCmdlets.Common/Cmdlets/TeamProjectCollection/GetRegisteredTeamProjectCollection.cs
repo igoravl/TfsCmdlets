@@ -13,8 +13,11 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
+    /// <summary>
+    /// Gets one or more Team Project Collection addresses registered in the current computer.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsRegisteredTeamProjectCollection")]
-    //[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]
+    /*[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]*/
     public class GetRegisteredTeamProjectCollection: BaseCmdlet
     {
 /*

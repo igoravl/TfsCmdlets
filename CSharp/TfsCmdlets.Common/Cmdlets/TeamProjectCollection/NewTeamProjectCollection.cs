@@ -13,8 +13,11 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
+    /// <summary>
+    /// Creates a new team project collection.
+    /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    //[OutputType(typeof(Microsoft.TeamFoundation.Client.TfsTeamProjectCollection))]
+    [OutputType(typeof(Models.Connection))]
     public class NewTeamProjectCollection : BaseCmdlet
     {
         /*

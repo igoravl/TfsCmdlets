@@ -47,6 +47,9 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
+    /// <summary>
+    /// Gets one of more team project collections (organizations in Azure DevOps).
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProjectCollection", DefaultParameterSetName = "Get by collection")]
     [OutputType(typeof(VssConnection))]
     public class GetTeamProjectCollection : BaseCmdlet
