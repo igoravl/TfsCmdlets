@@ -29,6 +29,12 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public object Project { get; set; } = "*";
 
         /// <summary>
+        /// Lists deleted team projects present in the "recycle bin"
+        /// </summary>
+        [Parameter(ParameterSetName = "Get by project")]
+        public SwitchParameter Deleted { get; set; }
+
+        /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(ValueFromPipeline = true, Position = 1, ParameterSetName = "Get by project")]
@@ -62,8 +68,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     {
         protected override IEnumerable<WebApiTeamProject> DoGetItems()
         {
-            var project = GetParameter<object>("Project");
-            var current = GetParameter<bool>("Current");
+            var project = GetParameter<object>(nameof(GetTeamProject.Project));
+            var current = GetParameter<bool>(nameof(GetTeamProject.Current));
+            var deleted = GetParameter<bool>(nameof(GetTeamProject.Deleted));
 
             if (project == null || current)
             {
@@ -91,17 +98,23 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                             project = g.ToString();
                             break;
                         }
-                    case string s when !s.IsWildcard():
+                    case string s when !s.IsWildcard() && !deleted:
                         {
                             yield return client.GetProject(s, true).GetResult($"Error getting team project '{project}'");
                             yield break;
                         }
                     case string s:
                         {
-                            var tpRefs = client.GetProjects().GetResult($"Error getting team project(s) '{project}'");
+                            var stateFilter = deleted? ProjectState.Deleted: ProjectState.All;
+                            var tpRefs = client.GetProjects(stateFilter).GetResult($"Error getting team project(s) '{project}'");
 
                             foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
+                                if(deleted)
+                                {
+                                    yield return new WebApiTeamProject(tpRef);
+                                    continue;
+                                }
                                 yield return client.GetProject(tpRef.Id.ToString(), true).GetResult($"Error getting team project '{tpRef.Id}'");
                             }
 
