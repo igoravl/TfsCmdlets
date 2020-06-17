@@ -67,6 +67,18 @@ namespace TfsCmdlets.Services
         {
             return Provider.GetDataService<TObj>(Cmdlet, parameters).SetItem();
         }
+
+        
+        /// <summary>
+        /// Returns an instance of the specified service
+        /// </summary>
+        /// <typeparam name="T">The type of the requested service.static Must derive from IService</typeparam>
+        /// <returns>An instance of T, as provided by the current service provider</returns>
+        protected virtual T GetService<T>() where T : IService
+        {
+            return Provider.GetService<T>(Cmdlet);
+        }
+
         
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {

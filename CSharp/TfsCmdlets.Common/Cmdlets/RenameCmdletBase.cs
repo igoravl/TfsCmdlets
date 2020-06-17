@@ -30,7 +30,7 @@ namespace TfsCmdlets.Cmdlets
         /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public object Project { get; set; }
+        public virtual object Project { get; set; }
 
         /// <summary>
         /// HELP_PARAM_COLLECTION

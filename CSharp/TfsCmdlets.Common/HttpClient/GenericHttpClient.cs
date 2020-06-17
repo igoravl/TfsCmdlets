@@ -225,6 +225,34 @@ namespace TfsCmdlets.HttpClient
         /// <summary>
         /// Invokes a REST API asynchronously
         /// </summary>
+        public async Task<T> InvokeAsync<T>(
+            HttpMethod method,
+            string apiPath,
+            string content = null,
+            string requestMediaType = "application/json",
+            string responseMediaType = "application/json",
+            IDictionary<string, string> additionalHeaders = null,
+            IDictionary<string, string> queryParameters = null,
+            string apiVersion = "1.0",
+            object userState = null)
+        {
+            HttpContent httpContent = null;
+
+            if (!string.IsNullOrWhiteSpace(content))
+            {
+                httpContent = new StringContent(content, Encoding.UTF8, requestMediaType);
+            }
+
+            var msg = CreateMessage(method, apiPath, apiVersion,
+                additionalHeaders, queryParameters,
+                responseMediaType, null, httpContent);
+
+            return await SendAsync<T>(msg, userState);
+        }
+
+        /// <summary>
+        /// Invokes a REST API asynchronously
+        /// </summary>
         public T PostForm<T>(
             string formPath,
             Dictionary<string,string> formData,
