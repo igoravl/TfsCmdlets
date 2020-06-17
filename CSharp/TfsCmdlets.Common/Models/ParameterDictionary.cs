@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets
                 case Cmdlet cmdlet: {
                     cmdlet.GetType()
                         .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                        .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null)
+                        .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any())
                         .ForEach(pi =>
                             Add(pi.Name,
                                 pi.PropertyType == typeof(SwitchParameter) ?
