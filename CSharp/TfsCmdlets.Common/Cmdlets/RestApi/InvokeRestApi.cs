@@ -1,15 +1,41 @@
 using System;
 using System.Collections;
 using System.Management.Automation;
+using System.Net.Http;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.HttpClient;
 using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {
     /// <summary>
-    /// Invoke an Azure DevOps REST API
+    /// Invoke an Azure DevOps REST API.
     /// </summary>
+    /// <remarks>
+    /// Invoke-TfsRestApi can automatically parse an example URL from 
+    /// https://docs.microsoft.com/en-us/rest/api/azure/devops/ and replace its various tokens 
+    /// (such as {organization}, {project} and {team}) as long as collection / project / team 
+    /// information are available via either the their respective arguments in this command or the 
+    /// corresponding Connect-Tfs* cmdlet. HTTP method and API version are also automatically extracted 
+    /// from the supplied example, when available.
+    /// </remarks>
+    /// <example>
+    ///   <code>Invoke-TfsRestApi -Method GET -Path /_apis/projects -ApiVersion 4.1 -Collection DefaultCollection</code>
+    ///   <para>Calls a REST API that lists all team projects in a TFS collection named DefaultCollection</para>
+    /// </example>
+    /// <example>
+    ///   <code>Invoke-TfsRestApi 'GET https://extmgmt.dev.azure.com/{organization}/_apis/extensionmanagement/installedextensions?api-version=5.1-preview.1'</code>
+    ///   <para>Calls the API described by an example extracted from the docs.microsoft.com web site. 
+    ///     HTTP method, host name and API version are all set based on the supplied values; 
+    ///     Tokens {organization}, {project} and {team} are properly replaced with the corresponding 
+    ///     values provided by the current connection context (via previous calls to 
+    ///     Connect-TfsTeamProjectCollection, Connect-TfsTeamProject and/or Connect-TfsTeam).</para>
+    /// </example>
+    /// <example>
+    ///   <code>Invoke-TfsRestApi 'GET https://{instance}/{collection}/_apis/process/processes?api-version=4.1' -Collection http://vsalm:8080/tfs/DefaultCollection</code>
+    ///   <para>Calls an API in a TFS instance, parsing the example provided by the docs.microsoft.com web site.</para>
+    /// </example>
     [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi")]
     public class InvokeRestApi : BaseCmdlet
     {
@@ -113,52 +139,82 @@ namespace TfsCmdlets.Cmdlets.RestApi
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (Path.IsLike("*{project}*"))
+            if (Path.Contains(" "))
             {
-                //TODO: Team / TP
+                var tokens = Path.Split(' ');
 
-                //if (Team.Project)
-                //{
-                //    Project = Team.Project
-                //};
-
-                //tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-                //Path = Path.Replace("{project}", tp.Guid)
-
-                //this.Log($"Replace token {{project}} in URL with [{tp.Guid}]");
-            }
-
-            if (Path.IsLike("*{team}*"))
-            {
-                //TODO: Team
-                //t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-                //Path = Path.Replace("{team}", t.Id)
-
-                //this.Log($"Replace token {team} in URL with "{{t}.Id}"");
-            }
-
-            var collection = this.GetCollection();
-
-            if(Uri.IsWellFormedUriString(Path, UriKind.Absolute))
-            {
-                var uri = new Uri(Path);
-
-                if(uri.AbsoluteUri.StartsWith(collection.Uri.AbsoluteUri))
+                if (IsHttpMethod(tokens[0]))
                 {
-                    Path = Path.Substring(collection.Uri.AbsoluteUri.Length);
+                    Method = tokens[0];
+                    Path = Path.Substring(tokens[0].Length+1);
                 }
             }
 
-            this.Log($"Calling API '{Path}', version 'ApiVersion', via {Method}");
+            var tpc = this.GetCollection();
+
+            Path = Path.Replace("https://{instance}/{collection}/", "http://tfs/");
+
+            if (Uri.TryCreate(Path, UriKind.Absolute, out var uri))
+            {
+                var host = uri.Host;
+
+                if (host.EndsWith(".dev.azure.com"))
+                {
+                    UseHost = host;
+                }
+
+                Path = uri.AbsolutePath.Replace("%7Borganization%7D/", "");
+
+                if (uri.AbsoluteUri.StartsWith(tpc.Uri.AbsoluteUri))
+                {
+                    Path = Path.Substring(tpc.Uri.AbsoluteUri.Length);
+                }
+
+                var query = uri.ParseQueryString();
+
+                if(query["api-version"] != null)
+                {
+                    ApiVersion = query["api-version"];
+                }
+            }
+
+            if (Path.Contains("%7Bproject%7D") || Path.Contains("%7BprojectId%7D"))
+            {
+                var (_, tp) = GetCollectionAndProject();
+
+                Path = Path
+                    .Replace("%7Bproject%7D", tp.Id.ToString())
+                    .Replace("%7BprojectId%7D", tp.Id.ToString());
+
+                this.Log($"Replace token {{project[Id]}} in URL with [{tp.Id}]");
+            }
+
+            if (Path.Contains("%7Bteam%7D") || Path.Contains("%7BteamId%7D"))
+            {
+                var (_, _, t) = GetCollectionProjectAndTeam();
+
+                Path = Path
+                    .Replace("%7Bteam%7D", t.Id.ToString())
+                    .Replace("%7BteamId%7D", t.Id.ToString());
+
+                this.Log($"Replace token {{team}} in URL with [{t.Id}]");
+            }
+
+            this.Log($"Path '{Path}', version '{ApiVersion}'");
+
+            if(tpc.IsHosted && !string.IsNullOrEmpty(UseHost))
+            {
+                GenericHttpClient.UseHost(UseHost);
+            }
 
             var client = this.GetService<IRestApiService>();
-            var task = client.InvokeAsync(collection, Path, Method, Body,
+            var task = client.InvokeAsync(tpc, Path, Method, Body,
                 RequestContentType, ResponseContentType,
-                AdditionalHeaders.ToDictionary<string,string>(), 
-                QueryParameters.ToDictionary<string,string>(), 
+                AdditionalHeaders.ToDictionary<string, string>(),
+                QueryParameters.ToDictionary<string, string>(),
                 ApiVersion);
 
-            this.Log($"Actual URL called: {client.Uri}");
+            this.Log($"{Method} {client.Uri.AbsoluteUri}");
 
             if (AsTask)
             {
@@ -173,6 +229,19 @@ namespace TfsCmdlets.Cmdlets.RestApi
             WriteObject(!Raw && responseType.Equals("application/json")
                 ? PSJsonConverter.Deserialize(responseBody)
                 : responseBody);
+        }
+
+        private bool IsHttpMethod(string method)
+        {
+            try
+            {
+                var m = new HttpMethod(method);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
