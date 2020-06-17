@@ -25,7 +25,7 @@ namespace TfsCmdlets.Services
 
         public void Log(string message, string commandName = null, bool force = false)
         {
-            // TODO: if (!IsVerbose(cmdlet)) return;
+            if (!Cmdlet.IsVerbose) return;
 
             if (string.IsNullOrEmpty(commandName)) commandName = Cmdlet.CommandName;
 
@@ -34,7 +34,7 @@ namespace TfsCmdlets.Services
 
         public void LogParameters()
         {
-            // TODO: if (!IsVerbose(cmdlet)) return;
+            if (!Cmdlet.IsVerbose) return;
 
             var parms = new ParameterDictionary(Cmdlet);
 

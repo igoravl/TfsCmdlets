@@ -23,51 +23,54 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter()]
         public object Collection { get; set; }
 
-        /*
-                /// <summary>
-                /// Performs execution of the command
-                /// </summary>
-                protected override void ProcessRecord()
-                    {
-                        ids = @()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
 
-                        foreach(wi in WorkItem)
-                        {
-                            if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-                            {
-                                id = WorkItem.Id
-                            }
-                            elseif (WorkItem is int)
-                            {
-                                id = WorkItem
-                            }
-                            else
-                            {
-                                throw new Exception($"Invalid work item ""{WorkItem}"". Supply either a WorkItem object or one or more integer ID numbers")
-                            }
+        // /// <summary>
+        // /// Performs execution of the command
+        // /// </summary>
+        // protected override void ProcessRecord()
+        //     {
+        //         ids = @()
 
-                            if (ShouldProcess($"{{wi}.WorkItemType} id ("$(wi.Title)")", "Remove work item"))
-                            {
-                                ids += id
-                            }
-                        }
+        //         foreach(wi in WorkItem)
+        //         {
+        //             if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
+        //             {
+        //                 id = WorkItem.Id
+        //             }
+        //             elseif (WorkItem is int)
+        //             {
+        //                 id = WorkItem
+        //             }
+        //             else
+        //             {
+        //                 throw new Exception($"Invalid work item ""{WorkItem}"". Supply either a WorkItem object or one or more integer ID numbers")
+        //             }
 
-                        if (ids.Count -gt 0)
-                        {
-                            tpc = Get-TfsTeamProjectCollection Collection
-                            store = tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
+        //             if (ShouldProcess($"{{wi}.WorkItemType} id ("$(wi.Title)")", "Remove work item"))
+        //             {
+        //                 ids += id
+        //             }
+        //         }
 
-                            errors = store.DestroyWorkItems([int[]] ids)
+        //         if (ids.Count -gt 0)
+        //         {
+        //             tpc = Get-TfsTeamProjectCollection Collection
+        //             store = tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
 
-                            if (errors && (errors.Count -gt 0))
-                            {
-                                errors | Write-Error $"Error {{_}.Id}: $(_.Exception.Message)"
+        //             errors = store.DestroyWorkItems([int[]] ids)
 
-                                throw new Exception("Error destroying one or more work items")
-                            }
-                        }
-                    }
-                }
-                */
+        //             if (errors && (errors.Count -gt 0))
+        //             {
+        //                 errors | Write-Error $"Error {{_}.Id}: $(_.Exception.Message)"
+
+        //                 throw new Exception("Error destroying one or more work items")
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

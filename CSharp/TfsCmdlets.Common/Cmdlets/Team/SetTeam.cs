@@ -231,56 +231,56 @@ namespace TfsCmdlets.Cmdlets.Team
                 isDirty = true;
             }
 
-            if(isDirty) workClient.UpdateTeamSettingsAsync(iterationPatch, ctx)
-                .GetResult("Error applying iteration and/or board settings");
+            if (isDirty) workClient.UpdateTeamSettingsAsync(iterationPatch, ctx)
+                 .GetResult("Error applying iteration and/or board settings");
 
-            /*
+            // TODO: Finish migration
 
-                                if (BacklogVisibilities && ShouldProcess(Team, $"Set the team"s backlog visibilities to {_DumpObj {BacklogVisibilities}}"))
-                                {
-                                    this.Log($"Setting backlog iteration to {BacklogVisibilities}");
-                                    patch.BacklogVisibilities = _NewDictionary @([string], [bool]) BacklogVisibilities
+            //         if (BacklogVisibilities && ShouldProcess(Team, $"Set the team"s backlog visibilities to {_DumpObj {BacklogVisibilities}}"))
+            //         {
+            //             this.Log($"Setting backlog iteration to {BacklogVisibilities}");
+            //             patch.BacklogVisibilities = _NewDictionary @([string], [bool]) BacklogVisibilities
 
-                                    isDirty = true
-                                }
+            //             isDirty = true
+            //         }
 
-                                if (DefaultIterationMacro && ShouldProcess(Team, $"Set the team"s default iteration macro to {DefaultIterationMacro}"))
-                                {
-                                    this.Log($"Setting default iteration macro to {DefaultIterationMacro}");
-                                    patch.DefaultIterationMacro = DefaultIterationMacro
+            //         if (DefaultIterationMacro && ShouldProcess(Team, $"Set the team"s default iteration macro to {DefaultIterationMacro}"))
+            //         {
+            //             this.Log($"Setting default iteration macro to {DefaultIterationMacro}");
+            //             patch.DefaultIterationMacro = DefaultIterationMacro
 
-                                    isDirty = true
-                                }
+            //             isDirty = true
+            //         }
 
-                                if (WorkingDays && ShouldProcess(Team, $"Set the team"s working days to {_DumpObj {WorkingDays}}"))
-                                {
-                                    this.Log($"Setting working days to {{WorkingDays}|ConvertTo=-Json -Compress}");
-                                    patch.WorkingDays = WorkingDays
+            //         if (WorkingDays && ShouldProcess(Team, $"Set the team"s working days to {_DumpObj {WorkingDays}}"))
+            //         {
+            //             this.Log($"Setting working days to {{WorkingDays}|ConvertTo=-Json -Compress}");
+            //             patch.WorkingDays = WorkingDays
 
-                                    isDirty = true
-                                }
+            //             isDirty = true
+            //         }
 
-                                if(BugsBehavior && ShouldProcess(Team, $"Set the team"s bugs behavior to {_DumpObj {BugsBehavior}}"))
-                                {
-                                    this.Log($"Setting bugs behavior to {_DumpObj {BugsBehavior}}");
-                                    patch.BugsBehavior = BugsBehavior
+            //         if(BugsBehavior && ShouldProcess(Team, $"Set the team"s bugs behavior to {_DumpObj {BugsBehavior}}"))
+            //         {
+            //             this.Log($"Setting bugs behavior to {_DumpObj {BugsBehavior}}");
+            //             patch.BugsBehavior = BugsBehavior
 
-                                    isDirty = true
-                                }
+            //             isDirty = true
+            //         }
 
-                                if(isDirty)
-                                {
-                                    task = client.UpdateTeamSettingsAsync(patch, ctx)
-                                    result = task.Result; if(task.IsFaulted) { _throw new Exception("Error applying iteration settings" task.Exception.InnerExceptions })
-                                }
+            //         if(isDirty)
+            //         {
+            //             task = client.UpdateTeamSettingsAsync(patch, ctx)
+            //             result = task.Result; if(task.IsFaulted) { _throw new Exception("Error applying iteration settings" task.Exception.InnerExceptions })
+            //         }
 
-                                if(Passthru.IsPresent)
-                                {
-                                    WriteObject(t); return;
-                                }
-                            }
-                        }
-                        */
+            //         if(Passthru.IsPresent)
+            //         {
+            //             WriteObject(t); return;
+            //         }
+            //     }
+            // }
+
             return GetItem<Models.Team>();
         }
     }

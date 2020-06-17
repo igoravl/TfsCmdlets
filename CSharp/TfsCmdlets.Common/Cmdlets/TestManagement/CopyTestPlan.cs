@@ -67,150 +67,148 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         [Parameter()]
         public string RelatedLinkComment { get; set; }
 
-		/// <summary>
-		/// HELP_PARAM_PROJECT
-		/// </summary>
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
         [Parameter()]
         public object Project { get; set; }
 
-		/// <summary>
-		/// HELP_PARAM_COLLECTION
-		/// </summary>
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
         [Parameter()]
         public object Collection { get; set; }
 
-		/// <summary>
-		/// HELP_PARAM_PASSTHRU
-		/// </summary>
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
         [Parameter()]
         [ValidateSet("Original", "Copy", "None")]
         public string Passthru { get; set; } = "None";
 
-        /*
-
-            protected override void BeginProcessing()
-            {
-                #_ImportRequiredAssembly -AssemblyName "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
-                #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.TestManagement.WebApi"
-                ns = "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
-            }
-
-                /// <summary>
-                /// Performs execution of the command
-                /// </summary>
-                protected override void ProcessRecord()
-            {
-                plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
-
-                if(! plan)
-                {
-                    throw new Exception($"Invalid or non-existent test plan {TestPlan}")
-                }
-
-                destTp = Get-TfsTeamProject -Project DestinationProject -Collection Collection
-
-                if(! destTp)
-                {
-                    throw new Exception($"Invalid or non-existent team project {DestinationProject}")
-                }
-
-                if (! Project)
-                {
-                    Project = plan.Project.Name
-                }
-
-                tp = this.GetProject();
-
-                if(! tp)
-                {
-                    throw new Exception($"Invalid or non-existent team project {Project}")
-                }
-
-                if (! NewName)
-                {
-                    if(tp.Name != destTp.Name)
-                    {
-                        NewName = plan.Name
-                    }
-                    else
-                    {
-                        NewName = $"{{plan}.Name} (cloned $(DateTime.Now.ToShortDateString()))"
-                    }
-                }
-
-                if (! AreaPath)
-                {
-                    AreaPath = destTp.Name
-                }
-
-                if (! IterationPath)
-                {
-                    IterationPath = destTp.Name
-                }
-
-                tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-                client = Get-TfsRestClient $"{ns}.TestPlanHttpClient" -Collection tpc
-
-                cloneParams = New-Object $"{ns}.CloneTestPlanParams" -Property @{
-                    sourceTestPlan = New-Object $"{ns}.SourceTestPlanInfo" -Property @{
-                        Id = plan.Id
-                    };
-                    destinationTestPlan = New-Object $"{ns}.DestinationTestPlanCloneParams" -Property @{
-                        Project = destTp.Name;
-                        Name = NewName;
-                        AreaPath = AreaPath;
-                        Iteration = IterationPath
-                    };
-                    cloneOptions = new Microsoft.TeamFoundation.TestManagement.WebApi.CloneOptions() -Property @{
-                        RelatedLinkComment = RelatedLinkComment;
-                        CopyAllSuites = CopyAllSuites.IsPresent;
-                        CopyAncestorHierarchy = CopyAncestorHierarchy;
-                        DestinationWorkItemType = DestinationWorkItemType;
-                        CloneRequirements = CloneRequirements;
-                        OverrideParameters = _NewDictionary @([string],[string]) @{
-                            "System.AreaPath" = AreaPath;
-                            "System.IterationPath" = IterationPath
-                        }
-                    }
-                }
-
-                task = client.CloneTestPlanAsync(cloneParams, tp.Name, DeepClone.IsPresent)
-
-                result = task.Result; if(task.IsFaulted) { _throw new Exception("Error cloning test plan" task.Exception.InnerExceptions })
-
-                opInfo = result
-
-                do
-                {
-                    Start-Sleep -Seconds 1
-                    opInfo = client.GetCloneInformationAsync(tp.Name, opInfo.CloneOperationResponse.opId)
-                }
-                while (opInfo.CloneOperationResponse.CloneOperationState -match "Queued|InProgress")
-
-                if (opInfo.CloneOperationResponse.CloneOperationState == "Failed")
-                {
-                    throw new Exception($"Error cloning test plan "{{plan}.Name}": $(opInfo.CloneOperationResponse.Message)")
-                }
-                else
-                {
-                    copy = opInfo.DestinationTestPlan	
-                }
-
-                if (Passthru = = "Original")
-                {
-                    WriteObject(plan); return;
-                }
-
-                if(Passthru = = "Copy")
-                {
-                    WriteObject(copy); return;
-                }
-            }
-        }
-        */
         /// <summary>
         /// Performs execution of the command
         /// </summary>
         protected override void ProcessRecord() => throw new System.NotImplementedException();
+
+        //     protected override void BeginProcessing()
+        //     {
+        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
+        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.TestManagement.WebApi"
+        //         ns = "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
+        //     }
+
+        //         /// <summary>
+        //         /// Performs execution of the command
+        //         /// </summary>
+        //         protected override void ProcessRecord()
+        //     {
+        //         plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
+
+        //         if(! plan)
+        //         {
+        //             throw new Exception($"Invalid or non-existent test plan {TestPlan}")
+        //         }
+
+        //         destTp = Get-TfsTeamProject -Project DestinationProject -Collection Collection
+
+        //         if(! destTp)
+        //         {
+        //             throw new Exception($"Invalid or non-existent team project {DestinationProject}")
+        //         }
+
+        //         if (! Project)
+        //         {
+        //             Project = plan.Project.Name
+        //         }
+
+        //         tp = this.GetProject();
+
+        //         if(! tp)
+        //         {
+        //             throw new Exception($"Invalid or non-existent team project {Project}")
+        //         }
+
+        //         if (! NewName)
+        //         {
+        //             if(tp.Name != destTp.Name)
+        //             {
+        //                 NewName = plan.Name
+        //             }
+        //             else
+        //             {
+        //                 NewName = $"{{plan}.Name} (cloned $(DateTime.Now.ToShortDateString()))"
+        //             }
+        //         }
+
+        //         if (! AreaPath)
+        //         {
+        //             AreaPath = destTp.Name
+        //         }
+
+        //         if (! IterationPath)
+        //         {
+        //             IterationPath = destTp.Name
+        //         }
+
+        //         tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
+        //         client = Get-TfsRestClient $"{ns}.TestPlanHttpClient" -Collection tpc
+
+        //         cloneParams = New-Object $"{ns}.CloneTestPlanParams" -Property @{
+        //             sourceTestPlan = New-Object $"{ns}.SourceTestPlanInfo" -Property @{
+        //                 Id = plan.Id
+        //             };
+        //             destinationTestPlan = New-Object $"{ns}.DestinationTestPlanCloneParams" -Property @{
+        //                 Project = destTp.Name;
+        //                 Name = NewName;
+        //                 AreaPath = AreaPath;
+        //                 Iteration = IterationPath
+        //             };
+        //             cloneOptions = new Microsoft.TeamFoundation.TestManagement.WebApi.CloneOptions() -Property @{
+        //                 RelatedLinkComment = RelatedLinkComment;
+        //                 CopyAllSuites = CopyAllSuites.IsPresent;
+        //                 CopyAncestorHierarchy = CopyAncestorHierarchy;
+        //                 DestinationWorkItemType = DestinationWorkItemType;
+        //                 CloneRequirements = CloneRequirements;
+        //                 OverrideParameters = _NewDictionary @([string],[string]) @{
+        //                     "System.AreaPath" = AreaPath;
+        //                     "System.IterationPath" = IterationPath
+        //                 }
+        //             }
+        //         }
+
+        //         task = client.CloneTestPlanAsync(cloneParams, tp.Name, DeepClone.IsPresent)
+
+        //         result = task.Result; if(task.IsFaulted) { _throw new Exception("Error cloning test plan" task.Exception.InnerExceptions })
+
+        //         opInfo = result
+
+        //         do
+        //         {
+        //             Start-Sleep -Seconds 1
+        //             opInfo = client.GetCloneInformationAsync(tp.Name, opInfo.CloneOperationResponse.opId)
+        //         }
+        //         while (opInfo.CloneOperationResponse.CloneOperationState -match "Queued|InProgress")
+
+        //         if (opInfo.CloneOperationResponse.CloneOperationState == "Failed")
+        //         {
+        //             throw new Exception($"Error cloning test plan "{{plan}.Name}": $(opInfo.CloneOperationResponse.Message)")
+        //         }
+        //         else
+        //         {
+        //             copy = opInfo.DestinationTestPlan	
+        //         }
+
+        //         if (Passthru = = "Original")
+        //         {
+        //             WriteObject(plan); return;
+        //         }
+
+        //         if(Passthru = = "Copy")
+        //         {
+        //             WriteObject(copy); return;
+        //         }
+        //     }
+        // }
     }
 }

@@ -50,40 +50,43 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter()]
         public SwitchParameter Passthru { get; set; }
 
-        /*
-                /// <summary>
-                /// Performs execution of the command
-                /// </summary>
-                protected override void ProcessRecord()
-                    {
-                        if(ShouldProcess(Type, "Create work item of specified type"))
-                        {
-                            wit = Get-TfsWorkItemType -Type Type -Project Project -Collection Collection
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
 
-                            wi = wit.NewWorkItem()
+        // /// <summary>
+        // /// Performs execution of the command
+        // /// </summary>
+        // protected override void ProcessRecord()
+        //     {
+        //         if(ShouldProcess(Type, "Create work item of specified type"))
+        //         {
+        //             wit = Get-TfsWorkItemType -Type Type -Project Project -Collection Collection
 
-                            if (Title)
-                            {
-                                wi.Title = Title
-                            }
+        //             wi = wit.NewWorkItem()
 
-                            foreach(field in Fields)
-                            {
-                                wi.Fields[field.Key] = field.Value
-                            }
+        //             if (Title)
+        //             {
+        //                 wi.Title = Title
+        //             }
 
-                            if (! SkipSave.IsPresent)
-                            {
-                                wi.Save()
-                            }
+        //             foreach(field in Fields)
+        //             {
+        //                 wi.Fields[field.Key] = field.Value
+        //             }
 
-                            if (Passthru)
-                            {
-                                WriteObject(wi); return;
-                            }
-                        }
-                    }
-                }
-                */
+        //             if (! SkipSave.IsPresent)
+        //             {
+        //                 wi.Save()
+        //             }
+
+        //             if (Passthru)
+        //             {
+        //                 WriteObject(wi); return;
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

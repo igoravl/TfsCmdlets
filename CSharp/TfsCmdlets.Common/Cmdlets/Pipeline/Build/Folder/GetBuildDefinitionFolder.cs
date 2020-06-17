@@ -110,21 +110,4 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                 folder.Path.Substring(folder.Path.LastIndexOf(@"\")+1);
         }
     }
-
-    /*
-
-
-            if(_IsWildCard Folder)
-            {
-                task = client.GetFoldersAsync(tp.Name, "\", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
-                WriteObject(result | Where-Object { (_.Path -Like Folder) || (_.Name -like Folder) }); return;
-            }
-
-
-            task = client.GetFoldersAsync(tp.Name, $"\{{Folder}.Trim("\"})", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching build folders" task.Exception.InnerExceptions })
-
-            WriteObject(result); return;
-        }
-    }
-    */
 }

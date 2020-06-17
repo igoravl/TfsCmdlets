@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            throw new NotImplementedException("You must override ProcessRecord");
+            throw new InvalidOperationException("You must override ProcessRecord");
         }
 
         /// <summary>
@@ -288,7 +288,7 @@ namespace TfsCmdlets.Cmdlets
             );
         }
 
-        private bool IsVerbose
+        internal bool IsVerbose
         {
             get
             {
