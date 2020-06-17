@@ -1,14 +1,13 @@
 ViewSelectedBy: 
-  - Microsoft.TeamFoundation.Server.TemplateHeader
+  - Microsoft.TeamFoundation.Core.WebApi.Process
 GroupBy: 
   Label: Collection
   PropertyName: Collection
 TableControl: 
   Name: 
-    Width: 50
-  State: 
-    Width: 15
-  TemplateId: 
-    Width: 15
-    Label: Template Id
+  Type: 
   Description:
+    Width: 30
+  IsDefault:
+    Label: "Default?"
+    Width: 8

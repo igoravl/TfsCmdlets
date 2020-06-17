@@ -1,36 +1,46 @@
-// using System.Management.Automation;
+using System;
+using System.IO;
+using IOPath = System.IO.Path;
+using System.Management.Automation;
+using Microsoft.TeamFoundation.Server;
+using System.IO.Compression;
+using System.Xml.Linq;
 
-// namespace TfsCmdlets.Cmdlets.ProcessTemplate
-// {
-//     internal class ImportProcessTemplate_Legacy
-//     {
-    //     /// <inheritdoc/>
-    //     protected override void ProcessRecord()
-    //     {
-    //         // if (! (Test-Path (Join-Path SourcePath "ProcessTemplate.xml")))
-    //         // {
-    //         //     throw new Exception($"Invalid path. Source path ""{SourcePath}"" must be a directory and must contain a file named ProcessTemplate.xml.")
-    //         // }
+namespace TfsCmdlets.Cmdlets.ProcessTemplate
+{
+    partial class ImportProcessTemplate
+    {
+        /// <inheritdoc/>
+        protected override void ProcessRecord()
+        {
+            var dir = ResolvePath(this.Path, ".");
+            var processXmlFile = ResolvePath(dir, "ProcessTemplate.xml");
 
-    //         // tpc = Get-TfsTeamProjectCollection Collection
-    //         // processTemplateSvc = tpc.GetService([type]"Microsoft.TeamFoundation.Server.IProcessTemplates")
+            if(!File.Exists(processXmlFile))
+            {
+                throw new ArgumentException($"Invalid path. Source path '{Path}' must be a directory and must contain a file named ProcessTemplate.xml.");
+            }
 
-    //         // tempFile = New-TemporaryFile
-    //         // zipFile = $"{tempFile}.zip"
-    //         // Rename-Item tempFile -NewName (Split-Path zipFile -Leaf)
+            var tpc = GetCollection();
 
-    //         // Compress-Archive -Path $"{SourcePath}/**" -DestinationPath zipFile -Force
+            var doc = XDocument.Load(processXmlFile);
+            var name = doc.Element("ProcessTemplate").Element("metadata").Element("name").Value;
+            var desc = doc.Element("ProcessTemplate").Element("metadata").Element("description").Value;
+            var metadata = doc.Element("ProcessTemplate").Element("metadata").ToString();
 
-    //         // ptFile = (Join-Path SourcePath "ProcessTemplate.xml")
-    //         // ptXml = [xml] (Get-Content ptFile)
+            if(!ShouldProcess(tpc.DisplayName, $"Import process template '{name}' from '{Path}'")) return;
 
-    //         // name = ptXml.ProcessTemplate.metadata.name
-    //         // description = ptXml.ProcessTemplate.metadata.description
-    //         // metadata = ptXml.ProcessTemplate.metadata.OuterXml
+            var processTemplateSvc = tpc.GetService<IProcessTemplates>();
 
-    //         // processTemplateSvc.AddUpdateTemplate(name, description, metadata, State, zipFile);
+            var tempFile = IOPath.GetTempFileName();
+            var zipFile = $"{tempFile}.zip";
+            File.Move(tempFile, IOPath.GetFileName(zipFile));
 
-    //         // Remove-Item zipFile
-    //     }
-//     }
-// }
+            ZipFile.CreateFromDirectory(dir, zipFile);
+
+            processTemplateSvc.AddUpdateTemplate(name, desc, metadata, State, zipFile);
+
+            File.Delete(zipFile);
+        }
+    }
+}

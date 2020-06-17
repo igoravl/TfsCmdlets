@@ -111,6 +111,11 @@ namespace TfsCmdlets.Services
             return Cmdlet.ShouldProcess(target, action);
         }
 
+        protected bool ShouldProcess(Models.Connection target, string action)
+        {
+            return Cmdlet.ShouldProcess($"Team Project Collection '{target.DisplayName}'", action);
+        }
+
         protected bool ShouldProcess(WebApiTeamProject target, string action)
         {
             return Cmdlet.ShouldProcess($"Team Project '{target.Name}'", action);

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using TfsCmdlets.Services;
+using System.IO;
 
 namespace TfsCmdlets.Cmdlets
 {
@@ -225,6 +226,21 @@ namespace TfsCmdlets.Cmdlets
         protected virtual string GetCurrentDirectory()
         {
             return this.SessionState.Path.CurrentFileSystemLocation.Path;
+        }
+
+        /// <summary>
+        /// Gets the current directory in PowerShell
+        /// </summary>
+        protected virtual string ResolvePath(string basePath, string path)
+        {
+            var relativePath = Path.Combine(basePath, path);
+
+            if(!Path.IsPathRooted(relativePath))
+            {
+                relativePath = Path.Combine(GetCurrentDirectory(), relativePath);
+            }
+
+            return Path.GetFullPath(relativePath);
         }
 
         /// <summary>

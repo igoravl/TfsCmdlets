@@ -1,0 +1,3 @@
+- ScriptProperty:
+    Name: Collection
+    GetScriptBlock: return ((($this.Url -split '/_apis/')[0]) -split '/')[-1]

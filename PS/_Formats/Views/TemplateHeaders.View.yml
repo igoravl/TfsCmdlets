@@ -1,0 +1,14 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Server.TemplateHeader
+GroupBy: 
+  Label: Collection
+  PropertyName: Collection
+TableControl: 
+  Name: 
+    Width: 50
+  State: 
+    Width: 15
+  TemplateId: 
+    Width: 15
+    Label: Template Id
+  Description:
