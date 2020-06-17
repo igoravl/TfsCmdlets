@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     }
 
     [Exports(typeof(WebApiTeamProject))]
-    internal class TeamProjectService: BaseDataService<WebApiTeamProject>
+    internal partial class TeamProjectDataService: BaseDataService<WebApiTeamProject>
     {
         protected override IEnumerable<WebApiTeamProject> DoGetItems()
         {
