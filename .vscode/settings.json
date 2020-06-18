@@ -16,7 +16,8 @@
         "**/[Pp]ackages": true,
         "**/*.user": true,
         "out": true,
-        "**/TfsCmdlets.PSDesktop.xml": true
+        "**/TfsCmdlets.PSDesktop.xml": true,
+        ".idea": true
     },
     "search.usePCRE2": true
 }
