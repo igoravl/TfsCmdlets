@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     public partial class ExportProcessTemplate : BaseCmdlet
     {
         /// <summary>
-        /// Specifies the name of the process template(s) to be exported. Wildcards supported. 
+        /// Specifies the name of the process template(s) to be exported. Wildcards are supported. 
         /// When omitted, all process templates in the given project collection are exported.
         /// </summary>
         [Parameter(Position = 0)]

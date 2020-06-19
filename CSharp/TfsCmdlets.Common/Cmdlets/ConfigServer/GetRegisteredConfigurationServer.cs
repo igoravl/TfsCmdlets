@@ -11,8 +11,8 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     public partial class GetRegisteredConfigurationServer : BaseCmdlet
     {
         /// <summary>
-        ///   Specifies the name of a registered server. When omitted, all registered servers are returned. 
-        ///   Wildcards are permitted.
+        /// Specifies the name of a registered server. Wildcards are supported. 
+        /// When omitted, all registered servers are returned. 
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("Name")]

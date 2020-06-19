@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     public class GetGlobalList : BaseCmdlet
     {
         /// <summary>
-        /// Specifies the name of the global list. Wildcards supported. 
+        /// Specifies the name of the global list. Wildcards are supported. 
         /// When omitted, defaults to all global lists in the supplied team project collection.
         /// </summary>
         [Parameter(Position = 0)]

@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     public partial class GetProcessTemplate : GetCmdletBase<WebApiProcess>
     {
         /// <summary>
-        /// Specifies the name of the process template(s) to be returned. Wildcards supported. 
+        /// Specifies the name of the process template(s) to be returned. Wildcards are supported. 
         /// When omitted, all process templates in the given project collection are returned.
         /// </summary>
         [Parameter(Position = 0)]
