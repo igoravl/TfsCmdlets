@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Management.Automation;
+using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -8,8 +9,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// Gets the contents of one or more work items.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName="Query by text")]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    public class GetWorkItem: BaseCmdlet
+    [OutputType(typeof(WebApiWorkItem))]
+    public class GetWorkItem: GetCmdletBase<WebApiWorkItem>
     {
         /// <summary>
         /// HELP_PARAM_WORKITEM
@@ -20,6 +21,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
+        /// <summary>
+        /// Specifies a work item revision number to retrieve. When omitted, returns
+        /// the latest revision of the work item.
+        /// </summary>
         [Parameter(ParameterSetName="Query by revision")]
         [Alias("rev")]
         public int Revision { get; set; }
@@ -27,6 +32,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(Mandatory=true, ParameterSetName="Query by date")]
         public DateTime AsOf { get; set; }
 
+        /// <summary>
+        /// Specifies a query written in WIQL (Work Item Query Language)
+        /// </summary>
         [Parameter(Mandatory=true, ParameterSetName="Query by WIQL")]
         [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
         public string Query { get; set; }

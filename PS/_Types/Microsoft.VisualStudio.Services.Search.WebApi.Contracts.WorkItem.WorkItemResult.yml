@@ -1,0 +1,31 @@
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: $this.Project.Name
+
+- ScriptProperty:
+    Name: Id
+    GetScriptBlock: $this.Fields['system.id']
+
+- ScriptProperty:
+    Name: Revision
+    GetScriptBlock: $this.Fields['system.rev']
+
+- ScriptProperty:
+    Name: WorkItemType
+    GetScriptBlock: $this.Fields['system.workitemtype']
+
+- ScriptProperty:
+    Name: State
+    GetScriptBlock: $this.Fields['system.state']
+
+- ScriptProperty:
+    Name: ChangedDate
+    GetScriptBlock: $this.Fields['system.changeddate']
+
+- ScriptProperty:
+    Name: AssignedTo
+    GetScriptBlock: $this.Fields['system.assignedto']
+
+- ScriptProperty:
+    Name: Title
+    GetScriptBlock: $this.Fields['system.title']
