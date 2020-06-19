@@ -24,11 +24,6 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         [Alias("Name")]
         [SupportsWildcards()]
         public string ProcessTemplate { get; set; } = "*";
-
-        /// <summary>
-        /// Hide base property Project
-        /// </summary>
-        private new object Project { get; set; }
     }
 
     [Exports(typeof(WebApiProcess))]

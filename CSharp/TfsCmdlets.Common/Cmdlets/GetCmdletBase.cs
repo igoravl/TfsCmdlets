@@ -21,12 +21,6 @@ namespace TfsCmdlets.Cmdlets
         where T : class
     {
         /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
-
-        /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter()]
