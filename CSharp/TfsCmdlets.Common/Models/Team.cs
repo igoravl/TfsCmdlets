@@ -13,6 +13,8 @@ namespace TfsCmdlets.Models
     /// </summary>
     public class Team: PSObject
     {
+        private WebApiTeam InnerTeam => BaseObject as WebApiTeam;
+        
         /// <summary>
         /// Converts to WebApiTeam
         /// </summary>
@@ -27,8 +29,6 @@ namespace TfsCmdlets.Models
         {
         }
 
-        internal WebApiTeam InnerTeam => BaseObject as WebApiTeam;
-        
         internal string Name => InnerTeam.Name;
         
         internal Guid Id => InnerTeam.Id;

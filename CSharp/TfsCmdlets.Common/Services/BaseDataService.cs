@@ -6,19 +6,7 @@ namespace TfsCmdlets.Services
 {
     internal abstract class BaseDataService<T> : BaseService, IDataService<T> where T : class
     {
-        public T GetItem()
-        {
-            var items = GetItems()?.ToList() ?? new List<T>();
-            if (items == null || items.Count == 0) return null;
-
-            return items[0];
-        }
-
-        public bool TestItem()
-        {
-            try { return GetItem() != null; }
-            catch { return false; }
-        }
+        public T GetItem() => GetItems()?.FirstOrDefault();
 
         public IEnumerable<T> GetItems() => DoGetItems();
 
@@ -29,6 +17,12 @@ namespace TfsCmdlets.Services
         public T RenameItem() => DoRenameItem();
 
         public T SetItem() => DoSetItem();
+
+        public bool TestItem()
+        {
+            try { return GetItem() != null; }
+            catch { return false; }
+        }
 
         // Protected members
 

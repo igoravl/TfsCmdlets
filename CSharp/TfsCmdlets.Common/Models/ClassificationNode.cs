@@ -16,6 +16,8 @@ namespace TfsCmdlets.Models
     {
         private readonly WorkItemTrackingHttpClient _client;
 
+        private WorkItemClassificationNode InnerNode => (WorkItemClassificationNode)BaseObject;
+
         internal ClassificationNode(WorkItemClassificationNode n,
             string projectName, WorkItemTrackingHttpClient client) : base(n)
         {
@@ -23,8 +25,6 @@ namespace TfsCmdlets.Models
             _client = client;
             FixNodePath();
         }
-
-        private WorkItemClassificationNode InnerNode => (WorkItemClassificationNode)BaseObject;
 
         internal string ProjectName { get; set; }
 

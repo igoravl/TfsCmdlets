@@ -64,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     }
 
     [Exports(typeof(WebApiTeamProject))]
-    internal partial class TeamProjectDataService: BaseDataService<WebApiTeamProject>
+    internal partial class TeamProjectDataService : BaseDataService<WebApiTeamProject>
     {
         protected override IEnumerable<WebApiTeamProject> DoGetItems()
         {
@@ -85,8 +85,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
             var tpc = GetCollection();
             var client = GetClient<ProjectHttpClient>();
 
-            while (true)
-                switch (project)
+            while (true) switch (project)
                 {
                     case WebApiTeamProject tp:
                         {
@@ -105,12 +104,12 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                         }
                     case string s:
                         {
-                            var stateFilter = deleted? ProjectState.Deleted: ProjectState.All;
+                            var stateFilter = deleted ? ProjectState.Deleted : ProjectState.All;
                             var tpRefs = client.GetProjects(stateFilter).GetResult($"Error getting team project(s) '{project}'");
 
                             foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
-                                if(deleted)
+                                if (deleted)
                                 {
                                     yield return new WebApiTeamProject(tpRef);
                                     continue;
@@ -120,6 +119,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                             yield break;
                         }
+                    default:
+                    {
+                        throw new ArgumentException($"Invalid or non-existent team project {project}");
+                    }
                 }
         }
     }

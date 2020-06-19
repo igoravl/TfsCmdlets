@@ -99,15 +99,19 @@ namespace TfsCmdlets.Services
 
         public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
         {
-            var (tpc, tp) = GetCollectionAndProject(cmdlet, parameters);
+            var parms = new ParameterDictionary(cmdlet, parameters);
 
-            var pd = new ParameterDictionary(parameters)
+            if(parms.Get<object>("Team") is WebApiTeam t)
             {
-                ["Collection"] = tpc,
-                ["Project"] = tp
-            };
+                parms["Project"] = t.ProjectId;
+            }
 
-            var team = GetDataService<Models.Team>(cmdlet, pd).GetItem();
+            var (tpc, tp) = GetCollectionAndProject(cmdlet, parms);
+
+            parms["Collection"] = tpc;
+            parms["Project"] = tp;
+
+            var team = GetDataService<Models.Team>(cmdlet, parms).GetItem();
 
             if (team == null)
             {
