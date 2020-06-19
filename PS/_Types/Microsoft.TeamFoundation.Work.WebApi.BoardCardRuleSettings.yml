@@ -1,0 +1,28 @@
+- ScriptProperty:
+    Name: Board
+    GetScriptBlock: ([uri] $this.Links.Links.board.Href).Segments[-1]
+- ScriptProperty:
+    Name: Team
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Team', {
+            $u = [uri] $_.Links.Links.board.Href
+            $teamId = $u.Segments[-5].TrimEnd('/')
+            $projId = $u.Segments[-6].TrimEnd('/')
+            $t = Get-TfsTeam -Team $teamId -Project $projId
+            return $t.Name
+        })
+- ScriptProperty:
+    Name: Project
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Project', {
+            $u = [uri] $_.Links.Links.board.Href
+            $projId = $u.Segments[-6].TrimEnd('/')
+            $tp = Get-TfsTeamProject -Project $projId
+            return $tp.Name
+        })
+- ScriptProperty: 
+    Name: CardRules
+    GetScriptBlock: $this.rules['fill']
+- ScriptProperty: 
+    Name: TagRules
+    GetScriptBlock: $this.rules['tagStyle']

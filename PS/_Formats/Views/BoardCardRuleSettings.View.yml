@@ -4,9 +4,10 @@ GroupBy:
   ScriptBlock: $_.Project + '/' + $_.Team
   CustomControlName: TeamProjects-Teams
 TableControl: 
-  'Board name': 
-    ScriptBlock: ([uri] $_.Links.Links.board.Href).Segments[-1]
-  'Card Style Rules': 
-    ScriptBlock: $_.rules['fill'].Name -join ', '
-  'Tag Color Rules': 
-    ScriptBlock: $_.rules['tagStyle'].Name -join ', '
+  Board: 
+  CardRules: 
+    Label: "Card Rules"
+    ScriptBlock: return "{$($_.CardRules.Name -join ', ')}"
+  TagRules: 
+    Label: "Tag Rules"
+    ScriptBlock: return "{$($_.TagRules.Name -join ', ')}"

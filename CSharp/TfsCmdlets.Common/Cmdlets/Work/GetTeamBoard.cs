@@ -4,6 +4,7 @@ using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
+using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
@@ -14,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Work
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamBoard")]
     [OutputType(typeof(Board))]
-    public class GetTeamBoard : GetCmdletBase<Models.Board>
+    public class GetTeamBoard : GetCmdletBase<WebApiBoard>
     {
         /// <summary>
         /// Specifies the board name. Wildcards are supported. When omitted, returns all boards in 
@@ -38,10 +39,10 @@ namespace TfsCmdlets.Cmdlets.Work
         public object Project { get; set; }
     }
 
-    [Exports(typeof(Models.Board))]
-    internal partial class BoardDataService : BaseDataService<Models.Board>
+    [Exports(typeof(WebApiBoard))]
+    internal partial class BoardDataService : BaseDataService<WebApiBoard>
     {
-        protected override IEnumerable<Models.Board> DoGetItems()
+        protected override IEnumerable<WebApiBoard> DoGetItems()
         {
             var board = GetParameter<object>(nameof(GetTeamBoard.Board));
             var (_, tp, t) = GetCollectionProjectAndTeam();
@@ -55,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Work
                         }
                     case Board b:
                         {
-                            yield return new Models.Board(b, tp.Name, t.Name);
+                            yield return b;
                             yield break;
                         }
                     case Guid g:
@@ -72,10 +73,8 @@ namespace TfsCmdlets.Cmdlets.Work
                                 .GetResult("Error getting team boards")
                                 .Where(b => b.Name.IsLike(s)))
                             {
-                                yield return new Models.Board(
-                                    client.GetBoardAsync(ctx, b.Id.ToString())
-                                    .GetResult($"Error getting board '{b.Name}'"), 
-                                    tp.Name, t.Name);
+                                yield return client.GetBoardAsync(ctx, b.Id.ToString())
+                                    .GetResult($"Error getting board '{b.Name}'");
                             }
 
                             yield break;
@@ -85,10 +84,8 @@ namespace TfsCmdlets.Cmdlets.Work
                             var ctx = new TeamContext(tp.Name, t.Name);
                             var client = GetClient<WorkHttpClient>();
 
-                            yield return new Models.Board(
-                                client.GetBoardAsync(ctx, s)
-                                .GetResult($"Error getting board 's'"), 
-                                    tp.Name, t.Name);
+                            yield return client.GetBoardAsync(ctx, s)
+                                .GetResult($"Error getting board 's'");
 
                             yield break;
                         }
