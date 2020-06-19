@@ -1,0 +1,13 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration
+GroupBy: 
+  ScriptBlock: $_.Project + '/' + $_.Team
+  CustomControlName: TeamProjects-Teams
+TableControl: 
+  Name: 
+  Type:
+  Id:
+  WorkItemTypes:
+    Label: "Work Item Types"
+  IsHidden:
+    Label: "Is Hidden?"

@@ -28,12 +28,12 @@ namespace TfsCmdlets.Cmdlets.Team
         public object Team { get; set; } = "*";
 
         /// <summary>
-        /// Do not get team members (fills the Members property with a list of
+        /// Get team members (fills the Members property with a list of
         /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects).
-        /// When present, only basic team information (such as name, description and ID) are returned.
+        /// When omitted, only basic team information (such as name, description and ID) are returned.
         /// </summary>
         [Parameter]
-        public SwitchParameter DoNotQueryMembership { get; set; }
+        public SwitchParameter QueryMembership { get; set; }
 
         /// <summary>
         /// Gets the team's backlog settings (fills the Settings property with a
@@ -89,7 +89,7 @@ namespace TfsCmdlets.Cmdlets.Team
         {
             var team = GetParameter<object>(nameof(GetTeam.Team));
             var current = GetParameter<bool>(nameof(GetTeam.Current));
-            var includeMembers = !GetParameter<bool>(nameof(GetTeam.DoNotQueryMembership));
+            var includeMembers = GetParameter<bool>(nameof(GetTeam.QueryMembership));
             var includeSettings = GetParameter<bool>(nameof(GetTeam.IncludeSettings));
             var defaultTeam = GetParameter<bool>(nameof(GetTeam.Default));
 
@@ -97,69 +97,75 @@ namespace TfsCmdlets.Cmdlets.Team
             var client = GetClient<TeamHttpClient>();
 
             while (true) switch (team)
-            {
-                case PSObject pso:
                 {
-                    team = pso.BaseObject;
-                    continue;
-                }
-                case Guid g:
-                {
-                    team = g.ToString();
-                    continue;
-                }
-                case {} when defaultTeam:
-                {
-                    Logger.Log("Get default team");
-                    var projectClient = GetClient<ProjectHttpClient>();
-                    var props = projectClient
-                        .GetProjectPropertiesAsync(tp.Id)
-                        .GetResult("Error retrieving project's default team");
-                    team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
-                        .FirstOrDefault()?.Value;
-                    defaultTeam = false;
-                    continue;
-                }
-                case null:
-                case {} when current:
-                {
-                    Logger.Log("Get currently connected team");
+                    case PSObject pso:
+                        {
+                            team = pso.BaseObject;
+                            continue;
+                        }
+                    case Guid g:
+                        {
+                            team = g.ToString();
+                            continue;
+                        }
+                    case { } when defaultTeam:
+                        {
+                            Logger.Log("Get default team");
+                            var projectClient = GetClient<ProjectHttpClient>();
+                            var props = projectClient
+                                .GetProjectPropertiesAsync(tp.Id)
+                                .GetResult("Error retrieving project's default team");
+                            team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
+                                .FirstOrDefault()?.Value;
+                            defaultTeam = false;
+                            continue;
+                        }
+                    case null:
+                    case { } when current:
+                        {
+                            Logger.Log("Get currently connected team");
 
-                    if (CurrentConnections.Team == null) yield break;
-                    team = CurrentConnections.Team.Id;
-                    current = false;
-                    continue;
+                            if (CurrentConnections.Team == null) yield break;
+                            team = CurrentConnections.Team.Id;
+                            current = false;
+                            continue;
+                        }
+                    case WebApiTeam t:
+                        {
+                            if (includeMembers || includeSettings)
+                            {
+                                team = t.Id.ToString();
+                                continue;
+                            }
+
+                            yield return CreateTeamObject(t);
+                            yield break;
+                        }
+                    case string s when !s.IsWildcard():
+                        {
+                            var result = client.GetTeamAsync(tp.Name, s)
+                                .GetResult($"Error getting team '{s}'");
+                            yield return CreateTeamObject(result, includeMembers, includeSettings);
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            foreach (var result in client.GetTeamsAsync(tp.Name)
+                                .GetResult($"Error getting team(s) '{s}'")
+                                .Where(t => t.Name.IsLike(s)))
+                            {
+                                yield return CreateTeamObject(result, includeMembers, includeSettings);
+                            }
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent team {team}");
+                        }
                 }
-                case WebApiTeam t:
-                {
-                    team = t.Id.ToString();
-                    continue;
-                }
-                case string s when !s.IsWildcard():
-                {
-                    var result = client.GetTeamAsync(tp.Name, s)
-                        .GetResult($"Error getting team '{s}'");
-                    yield return CreateTeamObject(result, includeMembers, includeSettings);
-                    yield break;
-                }
-                case string s:
-                {
-                    foreach (var result in client.GetTeamsAsync(tp.Name)
-                        .GetResult($"Error getting team(s) '{s}'")
-                        .Where(t => t.Name.IsLike(s)))
-                    {
-                        yield return CreateTeamObject(result, includeMembers, includeSettings);
-                    }
-                    yield break;
-                }
-                default:
-                {
-                    throw new ArgumentException($"Invalid or non-existent team {team}");
-                }
-            }
         }
 
-        private Models.Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers, bool includeSettings)
+        private Models.Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers = false, bool includeSettings = false)
         {
             var team = new Models.Team(innerTeam);
 
@@ -183,7 +189,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 team.Settings = workClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");
             }
-            
+
             return team;
         }
     }

@@ -1,5 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Work.WebApi;
+using WebApiBacklogLevelConfiguration = Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
+using TfsCmdlets.Services;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
@@ -7,65 +15,68 @@ namespace TfsCmdlets.Cmdlets.Work
     /// Gets information about one or more backlogs of the given team.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamBacklog")]
-    [OutputType(typeof(BacklogLevelConfiguration))]
-    public class GetTeamBacklog : BaseCmdlet
+    [OutputType(typeof(WebApiBacklogLevelConfiguration))]
+    public class GetTeamBacklogConfiguration : GetCmdletBase<Models.BacklogLevelConfiguration>
     {
+        [Parameter(Position=0)]
+        [Alias("Name")]
+        [SupportsWildcards()]
+        public object Backlog { get; set; } = "*";
+
         /// <summary>
-        /// Performs execution of the command
+        /// HELP_PARAM_TEAM
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(ValueFromPipeline=true)]
+        public object Team { get; set; }
 
-        //         [Parameter(Position=0)]
-        //         [Alias("Name")]
-        //         [ValidateScript({(_ is string]) || (_ is [Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration])}) 
-        //         [SupportsWildcards()]
-        //         public object Backlog { get; set; } = "*";
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public virtual object Project { get; set; }
+    }
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Team { get; set; }
+    [Exports(typeof(Models.BacklogLevelConfiguration))]
+    internal partial class BacklogLevelConfigurationDataService : BaseDataService<Models.BacklogLevelConfiguration>
+    {
+        protected override IEnumerable<Models.BacklogLevelConfiguration> DoGetItems()
+        {
+            var backlog = GetParameter<object>(nameof(GetTeamBacklogConfiguration.Backlog));
+            var (_, tp, t) = GetCollectionProjectAndTeam();
 
-        //         [Parameter()]
-        //         public object Project { get; set; }
+            while(true) switch(backlog)
+            {
+                case PSObject pso:
+                {
+                    backlog = pso.BaseObject;
+                    continue;
+                }
+                case WebApiBacklogLevelConfiguration b:
+                {
+                    yield return new Models.BacklogLevelConfiguration(b, tp.Name, t.Name);
+                    yield break;
+                }
+                case string s:
+                {
+                    var client = GetClient<WorkHttpClient>();
+                    var ctx = new TeamContext(tp.Name, t.Name);
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+                    var result = client.GetBacklogsAsync(ctx)
+                        .GetResult($"Error getting backlogs")
+                        .Where(b => b.Name.IsLike(s) || b.Id.IsLike(s));
 
-        //     protected override void BeginProcessing()
-        //     {
-        //         # #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
-        //         # #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.WebApi"
-        //     }
+                    foreach(var b in result)
+                    {
+                        yield return new Models.BacklogLevelConfiguration(b, tp.Name, t.Name);
+                    }
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void ProcessRecord()
-        //     {
-        //         if (Backlog is Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration) { this.Log("Input item is of type Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration; returning input item immediately, without further processing."; WriteObject(Backlog }); return;);
-        //         t = Get-TfsTeam -Team Team -Project Project -Collection Collection
-        //         if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        //         var client = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
-        //         ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(@(tp.Name, t.Name))
-
-        //         if (! Backlog.ToString().Contains("*"))
-        //         {
-        //             this.Log($"Get backlog "{Backlog}"");
-        //             task = client.GetBacklogAsync(ctx, Backlog)
-
-        //             result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error getting backlog "{Backlog}"" task.Exception.InnerExceptions })
-        //         }
-        //         else
-        //         {
-        //             this.Log($"Get all backlogs matching "{Backlog}"");
-        //             task = client.GetBacklogsAsync(ctx)
-        //             result = task.Result; if(task.IsFaulted) { _throw new Exception("Error enumerating backlogs" task.Exception.InnerExceptions })
-
-        //             result = result | Where-Object Name -like Backlog
-        //         }
-
-        //         WriteObject(result); return;
-        //     }
-        // }
+                    yield break;
+                }
+                default:
+                {
+                    throw new ArgumentException($"Invalid or non-existent backlog '{backlog}'");
+                }
+            }
+        }
     }
 }
