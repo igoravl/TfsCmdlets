@@ -1,77 +1,102 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Work
 {
+    /// <summary>
+    /// Gets one or more team boards.
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamBoard")]
     [OutputType(typeof(Board))]
-    public class GetTeamBoard : BaseCmdlet
+    public class GetTeamBoard : GetCmdletBase<Models.Board>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the board name. Wildcards are supported. When omitted, returns all boards in 
+        /// the given team.
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0)]
+        [SupportsWildcards()]
+        [Alias("Name")]
+        public object Board { get; set; } = "*";
 
-        //         # Specifies the board name(s). Wildcards accepted
-        //         [Parameter(Position=0)]
-        //         [SupportsWildcards()]
-        //         [Alias("Name")]
-        //         public object Board { get; set; } = "*";
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public object Team { get; set; }
 
-        //         [Parameter()]
-        //         public SwitchParameter SkipDetails { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+    }
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Team { get; set; }
+    [Exports(typeof(Models.Board))]
+    internal partial class BoardDataService : BaseDataService<Models.Board>
+    {
+        protected override IEnumerable<Models.Board> DoGetItems()
+        {
+            var board = GetParameter<object>(nameof(GetTeamBoard.Board));
+            var (_, tp, t) = GetCollectionProjectAndTeam();
 
-        //         [Parameter()]
-        //         public object Project { get; set; }
+            while (true) switch (board)
+                {
+                    case PSObject pso:
+                        {
+                            board = pso.BaseObject;
+                            continue;
+                        }
+                    case Board b:
+                        {
+                            yield return new Models.Board(b, tp.Name, t.Name);
+                            yield break;
+                        }
+                    case Guid g:
+                        {
+                            board = g.ToString();
+                            continue;
+                        }
+                    case string s when !s.IsGuid():
+                        {
+                            var ctx = new TeamContext(tp.Name, t.Name);
+                            var client = GetClient<WorkHttpClient>();
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+                            foreach (var b in client.GetBoardsAsync(ctx)
+                                .GetResult("Error getting team boards")
+                                .Where(b => b.Name.IsLike(s)))
+                            {
+                                yield return new Models.Board(
+                                    client.GetBoardAsync(ctx, b.Id.ToString())
+                                    .GetResult($"Error getting board '{b.Name}'"), 
+                                    tp.Name, t.Name);
+                            }
 
-        //     protected override void BeginProcessing()
-        //     {
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.VisualStudio.Services.WebApi"
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Work.WebApi"
-        //     }
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            var ctx = new TeamContext(tp.Name, t.Name);
+                            var client = GetClient<WorkHttpClient>();
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void ProcessRecord()
-        //     {
-        //         if (Board is Microsoft.TeamFoundation.Work.WebApi.Board) { this.Log("Input item is of type Microsoft.TeamFoundation.Work.WebApi.Board; returning input item immediately, without further processing."; WriteObject(Board }); return;);
+                            yield return new Models.Board(
+                                client.GetBoardAsync(ctx, s)
+                                .GetResult($"Error getting board 's'"), 
+                                    tp.Name, t.Name);
 
-        //         t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-
-        //         var client = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
-
-        //         ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(tp.Name, t.Name)
-
-        //         this.Log($"Getting boards matching "{Board}" in team "{t.Name}"");
-
-        //         task = client.GetBoardsAsync(ctx); result = task.Result; if(task.IsFaulted) { _throw new Exception("Error retrieving team boards" task.Exception.InnerExceptions })
-
-        //         boardRefs = result | Where-Object Name -like Board
-
-        //         this.Log($"Found {{boardRefs}.Count} boards matching "Board" in team "$(t.Name)"");
-
-        //         if(SkipDetails.IsPresent)
-        //         {
-        //             this.Log("SkipDetails switch is present. Returning board references without details");
-        //             WriteObject(boardRefs); return;
-        //         }
-
-        //         foreach(b in boardRefs)
-        //         {
-        //             this.Log($"Fetching details for board "{{b}.Name}"");
-
-        //             task = client.GetBoardAsync(ctx, b.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception("Error fetching board data" task.Exception.InnerExceptions })
-        //             Write-Output result
-        //         }
-        //     }
-        // }
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent board '{board}'");
+                        }
+                }
+        }
     }
 }
