@@ -18,6 +18,11 @@ namespace TfsCmdlets.Cmdlets.Work
     [OutputType(typeof(WebApiBacklogLevelConfiguration))]
     public class GetTeamBacklogLevel : GetCmdletBase<Models.BacklogLevelConfiguration>
     {
+        [Parameter(Position=0)]
+        [Alias("Name")]
+        [SupportsWildcards()]
+        public object Backlog { get; set; } = "*";
+
         /// <summary>
         /// Specifies one or more backlog level configurations to be returned. Valid values 
         /// are the name (e.g. "Stories") or the ID (e.g. "Microsoft.RequirementCategory") of the 
