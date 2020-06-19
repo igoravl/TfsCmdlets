@@ -1,61 +1,105 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
 {
     /// <summary>
-    /// Gets one or more release definition folders.
+    /// Gets one or more Release/pipeline definition folders in a team project.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsReleaseDefinitionFolder")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder))]
-    public class GetReleaseDefinitionFolder : BaseCmdlet
+    [OutputType(typeof(WebApiFolder))]
+    public class GetReleaseDefinitionFolder : GetCmdletBase<WebApiFolder>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the folder path. Wildcards are supported. 
+        /// When omitted, all Release/pipeline folders in the supplied team project are returned.
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0)]
+        [Alias("Path")]
+        [SupportsWildcards()]
+        public object Folder { get; set; } = "**";
 
-        //         # Specifies the folder path
-        //         [Parameter(Position=0)]
-        //         [Alias("Path")]
-        //         [SupportsWildcards()]
-        //         public object Folder { get; set; } = "**",
+        /// <summary>
+        /// Specifies the query order. When omitted, defaults to None.
+        /// </summary>
+        [Parameter()]
+        public FolderPathQueryOrder QueryOrder { get; set; } = FolderPathQueryOrder.None;
 
-        //         # Query order
-        //         [Parameter()]
-        //         [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder]
-        //         QueryOrder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder.None,
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public object Project { get; set; }
+    }
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Project { get; set; }
+    [Exports(typeof(WebApiFolder))]
+    internal partial class ReleaseFolderDataService : BaseDataService<WebApiFolder>
+    {
+        //TODO: Inject TeamProject
+        //TODO: Use NormalizePath
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+        protected override IEnumerable<WebApiFolder> DoGetItems()
+        {
+            var folder = GetParameter<object>("Folder");
+            var queryOrder = GetParameter<FolderPathQueryOrder>("QueryOrder");
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void ProcessRecord()
-        //     {
-        //         if (Folder is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder) { this.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder; returning input item immediately, without further processing."; WriteObject(Folder }); return;);
+            while (true) switch (folder)
+                {
+                    case PSObject pso:
+                        {
+                            folder = pso.BaseObject;
+                            continue;
+                        }
+                    case WebApiFolder f:
+                        {
+                            yield return f;
+                            yield break;
+                        }
+                    case string s when s.IsWildcard():
+                        {
+                            var client = GetClient<ReleaseHttpClient>();
+                            var (_, tp) = GetCollectionAndProject();
+                            var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
+                                .GetResult($"Error getting folders matching {s}");
 
-        //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+                            foreach (var i in folders
+                                .Where(f => f.Path.IsLike(s) || GetFolderName(f).IsLike(s)))
+                            {
+                                yield return i;
+                            }
 
-        //         var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            var client = GetClient<ReleaseHttpClient>();
+                            var (_, tp) = GetCollectionAndProject();
+                            var f = client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
+                                .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 
-        //         if(_IsWildCard Folder)
-        //         {
-        //             task = client.GetFoldersAsync(tp.Name, "\", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
-        //             result = result | Where-Object { (_.Path -Like Folder) || (_.Name -like Folder) }
-        //         }
-        //         else
-        //         {
-        //             task = client.GetFoldersAsync(tp.Name, $"\{{Folder}.Trim("\"})", QueryOrder); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching build folders" task.Exception.InnerExceptions })
-        //         }
+                            if (f != null) yield return f;
 
-        //         WriteObject(result | Add-Member -Name Project -MemberType NoteProperty -PassThru -Value (new Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference() -Property @{); return;
-        //             Name = tp.Name
-        //         })
-        //     }
-        // }
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent pipeline folder '{folder}'");
+                        }
+                }
+        }
+
+        private static string GetFolderName(WebApiFolder folder)
+        {
+            return folder.Path.Equals(@"\") ?
+                @"\" :
+                folder.Path.Substring(folder.Path.LastIndexOf(@"\") + 1);
+        }
     }
 }

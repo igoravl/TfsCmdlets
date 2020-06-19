@@ -28,7 +28,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         /// <summary>
         /// Specifies the description of the new build/pipeline folder.
         /// </summary>
-        /// <value></value>
         [Parameter()]
         public string Description { get; set; }
 
