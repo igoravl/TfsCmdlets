@@ -14,6 +14,10 @@ namespace TfsCmdlets.Cmdlets.Work
     [OutputType(typeof(BoardCardRuleSettings))]
     public class GetTeamBoardCardRule : GetCmdletBase<BoardCardRuleSettings>
     {
+        /// <summary>
+        /// Specifies the board name. Wildcards are supported. When omitted, returns card rules 
+        /// for all boards in the given team.
+        /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards()]
         public object Board { get; set; } = "*";
