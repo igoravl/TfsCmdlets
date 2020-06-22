@@ -40,11 +40,6 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
             while (!done) switch (Project)
                 {
-                    case PSObject pso:
-                        {
-                            Project = pso.BaseObject;
-                            continue;
-                        }
                     case TeamProjectReference tpRef:
                         {
                             projs.Add(tpRef);

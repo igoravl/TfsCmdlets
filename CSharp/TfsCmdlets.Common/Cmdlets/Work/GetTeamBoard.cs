@@ -49,11 +49,6 @@ namespace TfsCmdlets.Cmdlets.Work
 
             while (true) switch (board)
                 {
-                    case PSObject pso:
-                        {
-                            board = pso.BaseObject;
-                            continue;
-                        }
                     case Board b:
                         {
                             yield return b;

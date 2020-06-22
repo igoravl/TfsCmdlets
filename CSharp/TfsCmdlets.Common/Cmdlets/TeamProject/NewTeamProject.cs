@@ -67,11 +67,6 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
             while(!done) switch(processTemplate)
             {
-                case PSObject pso:
-                {
-                    processTemplate = pso.BaseObject;
-                    continue;
-                }
                 case WebApiProcess p:
                 {
                     template = p;

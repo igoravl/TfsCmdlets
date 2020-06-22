@@ -87,12 +87,6 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 
             while (true) switch (process)
                 {
-                    case PSObject pso:
-                        {
-                            process = pso.BaseObject;
-
-                            continue;
-                        }
                     case TemplateHeader th:
                         {
                             yield return th;

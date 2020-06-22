@@ -98,11 +98,6 @@ namespace TfsCmdlets.Cmdlets.Team
 
             while (true) switch (team)
                 {
-                    case PSObject pso:
-                        {
-                            team = pso.BaseObject;
-                            continue;
-                        }
                     case Guid g:
                         {
                             team = g.ToString();

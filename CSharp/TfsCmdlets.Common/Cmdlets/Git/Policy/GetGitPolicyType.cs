@@ -56,11 +56,6 @@ namespace TfsCmdlets.Cmdlets.Policy
             {
                 switch (policyType)
                 {
-                    case PSObject pso:
-                        {
-                            policyType = pso.BaseObject;
-                            continue;
-                        }
                     case PolicyType pt:
                         {
                             yield return pt;

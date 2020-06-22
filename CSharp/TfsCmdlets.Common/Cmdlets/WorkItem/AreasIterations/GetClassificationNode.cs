@@ -116,11 +116,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
             while (!done) switch (node)
                 {
-                    case PSObject pso:
-                        {
-                            node = pso.BaseObject;
-                            continue;
-                        }
                     case WorkItemClassificationNode n:
                         {
                             yield return new ClassificationNode(n, tp.Name, null);

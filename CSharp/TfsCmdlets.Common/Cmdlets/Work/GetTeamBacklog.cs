@@ -52,11 +52,6 @@ namespace TfsCmdlets.Cmdlets.Work
 
             while(true) switch(backlog)
             {
-                case PSObject pso:
-                {
-                    backlog = pso.BaseObject;
-                    continue;
-                }
                 case WebApiBacklogLevelConfiguration b:
                 {
                     yield return new Models.BacklogLevelConfiguration(b, tp.Name, t.Name);

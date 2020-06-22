@@ -53,11 +53,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
 
             while (true) switch (folder)
                 {
-                    case PSObject pso:
-                        {
-                            folder = pso.BaseObject;
-                            continue;
-                        }
                     case WebApiFolder f:
                         {
                             yield return f;

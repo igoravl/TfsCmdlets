@@ -63,11 +63,6 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
                             repository = tp.Name;
                             continue;
                         }
-                    case PSObject o:
-                        {
-                            repository = o.BaseObject;
-                            continue;
-                        }
                     case GitRepository repo:
                         {
                             yield return repo;

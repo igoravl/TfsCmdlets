@@ -91,11 +91,6 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                     done = true;
                     break;
                 }
-                case PSObject pso:
-                {
-                    branch = pso.BaseObject;
-                    continue;
-                }
                 case string s when string.IsNullOrEmpty(s):
                 {
                     throw new ArgumentNullException("Branch", "Branch argument is required.");

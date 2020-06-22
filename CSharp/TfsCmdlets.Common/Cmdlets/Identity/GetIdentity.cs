@@ -76,11 +76,6 @@ namespace TfsCmdlets.Cmdlets.Identity
 
             while (true) switch(identity)
             {
-                case PSObject pso:
-                {
-                    identity = pso.BaseObject;
-                    continue;
-                }
                 case WebApiIdentity i:
                 {
                     yield return new Models.Identity(i);

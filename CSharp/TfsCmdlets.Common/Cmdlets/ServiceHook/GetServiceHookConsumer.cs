@@ -56,11 +56,6 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
 
             while (true) switch (consumer)
                 {
-                    case PSObject pso:
-                        {
-                            consumer = pso.BaseObject;
-                            continue;
-                        }
                     case Consumer c:
                         {
                             yield return c;

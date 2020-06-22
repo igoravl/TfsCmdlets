@@ -36,11 +36,6 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 
             while (true) switch (process)
                 {
-                    case PSObject pso:
-                        {
-                            process = pso.BaseObject;
-                            continue;
-                        }
                     case WebApiProcess p:
                         {
                             yield return p;
