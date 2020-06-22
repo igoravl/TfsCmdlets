@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
     public class RemoveReleaseDefinitionFolder : RemoveCmdletBase<WebApiFolder>
     {
         /// <summary>
-        /// Specifies the path of the release folder to delete. Wildcards are supperted.
+        /// Specifies the path of the release folder to delete. Wildcards are supported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true)]
         [Alias("Path")]
