@@ -23,14 +23,30 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies the names and the corresponding values for the fields to
         /// be set in the work item.
         /// </summary>
-        [Parameter(Position = 1)]
+        [Parameter(Position = 1, ParameterSetName = "Set work item")]
         public Hashtable Fields { get; set; }
 
-        [Parameter()]
+        [Parameter(ParameterSetName = "Set work item")]
         public SwitchParameter BypassRules { get; set; }
 
-        [Parameter()]
+        [Parameter(ParameterSetName = "Set work item")]
         public SwitchParameter SkipSave { get; set; }
+
+        [Parameter(ParameterSetName="Set board status")]
+        public object Board { get; set; }
+
+        [Parameter(ParameterSetName="Set board status")]
+        public object Column { get; set; }
+
+        [Parameter(ParameterSetName="Set board status")]
+        public object Lane { get; set; }
+
+        [Parameter(ParameterSetName="Set board status")]
+        [ValidateSet("Doing", "Done")]
+        public string ColumnStage { get; set; }
+
+        [Parameter(ParameterSetName="Set board status")]
+        public object Team { get; set; }
 
         /// <summary>
         /// HELP_PARAM_COLLECTION
@@ -38,7 +54,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <value></value>
         [Parameter()]
         public object Collection { get; set; }
+    }
 
+    partial class WorkItemDataService
+    {
+
+    }
         /// <summary>
         /// Performs execution of the command
         /// </summary>
@@ -89,5 +110,93 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         //         WriteObject(wi); return;
         //     }
         // }
+
+        /////////////// BOARD STATUS  //////////////////
+
+        
+        // protected override void ProcessRecord()
+        //     {
+        //         if ((! Column) && (! ColumnStage) && (! Lane))
+        //         {
+        //             throw new Exception("Supply a value to at least one of the following arguments: Column, ColumnStage, Lane")
+        //         }
+
+        //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
+        //         {
+        //             tp = WorkItem.Project
+        //             tpc = WorkItem.Store.TeamProjectCollection
+        //         }
+        //         else
+        //         {
+        //             tp = this.GetProject();
+        //             tpc = tp.Store.TeamProjectCollection
+        //             WorkItem = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
+        //         }
+
+        //         t = Get-TfsTeam -Team Team -Project tp -Collection tpc
+        //         id = [int] WorkItem.Id
+        //         rev = WorkItem.Revision
+
+        //         # Get the Kanban board column/lane field info
+
+        //         b = Get-TfsBoard -Board Board -Team t -Project tp -Collection tpc
+
+        //         if (! b)
+        //         {
+        //             throw new Exception($"Invalid or non-existent board "{Board}" in team "Team"")
+        //         }
+
+        //         processMessages = @()
+
+        //         ops = @(
+        //             @{
+        //                 Operation = "Test";
+        //                 Path = "/rev";
+        //                 Value = rev.ToString()
+        //             }
+
+        //         if (Column)
+        //         {
+        //             ops += @{
+        //                 Operation = "Add";
+        //                 Path = $"/fields/{{b}.Fields.ColumnField.ReferenceName}";
+        //                 Value = Column
+        //             }
+
+        //             processMessages += $"Board Column="{Column}""
+        //         }
+
+        //         if (Lane)
+        //         {
+        //             ops += @{
+        //                 Operation = "Add";
+        //                 Path = $"/fields/{{b}.Fields.RowField.ReferenceName}";
+        //                 Value = Lane
+        //             }
+
+        //             processMessages += $"Board Lane="{Lane}""
+        //         }
+
+        //         if (ColumnStage)
+        //         {
+        //             ops += @{
+        //                 Operation = "Add";
+        //                 Path = $"/fields/{{b}.Fields.DoneField.ReferenceName}";
+        //                 Value = (ColumnStage = = "Done") 
+        //             }
+
+        //             processMessages += $"Board Stage (Doing/Done)="{ColumnStage}""
+        //         }
+
+        //         if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
+        //         {
+        //             patch = _GetJsonPatchDocument ops
+        //             var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+        //             wi = client.UpdateWorkItemAsync(patch, id).Result
+        //             WriteObject(wi); return;
+        //         }
+        //     }
+        // }
+
     }
 }
