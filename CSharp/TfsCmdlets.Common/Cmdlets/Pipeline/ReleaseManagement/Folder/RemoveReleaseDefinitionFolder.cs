@@ -1,86 +1,79 @@
+using System;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
+using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
 {
-    [Cmdlet(VerbsCommon.Remove, "TfsReleaseDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder))]
-    public class RemoveReleaseDefinitionFolder : BaseCmdlet
+    /// <summary>
+    /// Deletes one or more release definition folders.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Remove, "TfsReleaseDefinitionFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [OutputType(typeof(WebApiFolder))]
+    public class RemoveReleaseDefinitionFolder : RemoveCmdletBase<WebApiFolder>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the path of the release folder to delete. Wildcards are supperted.
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, Mandatory = true)]
+        [Alias("Path")]
+        [SupportsWildcards()]
+        public object Folder { get; set; }
 
-        //         # Specifies the folder path
-        //         [Parameter(Position=0, ValueFromPipeline=true, ValueFromPipelineByPropertyName=true)]
-        //         [Alias("Path")]
-        //         [SupportsWildcards()]
-        //         public object Folder { get; set; }
+        /// <summary>
+        /// Removes folders recursively. When omitted, folders with subfolders cannot be deleted.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Recurse { get; set; }
 
-        //         # Remove folders recursively
-        //         [Parameter()]
-        //         public SwitchParameter Recurse { get; set; }
+        /// <summary>
+        /// Forces the exclusion of folders containing release definitions definitions. When omitted, 
+        /// only empty folders can be deleted.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
+    }
 
-        //         # Remove folder containing Releases
-        //         [Parameter()]
-        //         public SwitchParameter Force { get; set; }
+    partial class ReleaseFolderDataService
+    {
+        protected override void DoRemoveItem()
+        {
+            var folders = GetItems<WebApiFolder>();
+            var recurse = GetParameter<bool>(nameof(RemoveReleaseDefinitionFolder.Recurse));
+            var force = GetParameter<bool>(nameof(RemoveReleaseDefinitionFolder.Force));
+            var (_, tp) = GetCollectionAndProject();
 
-        //         [Parameter()]
-        //         public object Project { get; set; }
+            foreach (var f in folders)
+            {
+                if (!ShouldProcess(tp, $"Remove release folder '{f.Path}'"))
+                {
+                    continue;
+                }
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+                if (!recurse)
+                {
+                    this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void ProcessRecord()
-        //     {
-        //         folders = Get-TfsReleaseDefinitionFolder -Folder Folder -Project Project -Collection Collection
+                    var subFolders = GetItems<WebApiFolder>(new ParameterDictionary()
+                    {
+                        ["Folder"] = $@"{f.Path}\**"
+                    }).ToList();
 
-        //         foreach(f in folders)
-        //         {
-        //             if(! ShouldProcess(f.Project.Name, $"Remove folder "{{f}.Path}""))
-        //             {
-        //                 continue
-        //             }
+                    if (subFolders.Count > 0)
+                    {
+                        throw new Exception($"Folder '{f.Path}' has {subFolders.Count} folder(s) under it. To delete it, use the -Recurse argument.");
+                    }
+                }
 
-        //             if(! Recurse.IsPresent)
-        //             {
-        //                 this.Log($"Recurse argument not set. Check if folder "{{f}.Path}" has sub-folders");
+                if (!force && !ShouldContinue($"Are you sure you want to delete folder '{f.Path}' and all of its contents?")) continue;
 
-        //                 path = $"{{f}.Path.TrimEnd("\"})\**"
-        //                 subFolders = (Get-TfsReleaseDefinitionFolder -Folder path -Project Project -Collection Collection)
-
-        //                 if(subFolders.Count -gt 0)
-        //                 {
-        //                     _throw new Exception($"Folder "{{f}.Path}" has $(subFolders.Count) sub-folder(s). To delete it, use the -Recurse argument.")
-        //                 }
-
-        //                 this.Log($"Folder "{{f}.Path}" has no sub-folders");
-        //             }
-
-        //             if(f.Project.Name) {Project = f.Project.Name}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        //             var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient>();
-
-        //             if(! Force.IsPresent)
-        //             {
-        //                 this.Log($"Force argument not set. Check if folder "{{f}.Path}" has release definitions");
-
-        //                 task = client.GetReleaseDefinitionsAsync(tp.Name, string]null, [Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Contracts.ReleaseDefinitionExpands.None, [string]null, null, null, null, null, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error fetching release definitions in folder "{{f}.Path}"" task.Exception.InnerExceptions })
-
-        //                 if(result.Count -gt 0)
-        //                 {
-        //                     _throw new Exception($"Folder "{{f}.Path}" has $(result.Count) release definition(s). To delete it, use the -Force argument.")
-        //                 }
-
-        //                 this.Log($"Folder "{{f}.Path}" has no release definitions");
-        //             }
-
-        //             task = client.DeleteFolderAsync(tp.Name, f.Path); result = task.Result; if(task.IsFaulted) { _throw new Exception( task.Exception.InnerExceptions })
-        //         }
-        //     }
-        // }
+                GetClient<ReleaseHttpClient>()
+                    .DeleteFolderAsync(tp.Name, f.Path)
+                    .Wait();
+            }
+        }
     }
 }
