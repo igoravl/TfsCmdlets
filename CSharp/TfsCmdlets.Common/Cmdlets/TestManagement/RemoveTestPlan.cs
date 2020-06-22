@@ -1,63 +1,51 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.TestManagement
 {
     /// <summary>
     /// Deletes one or more test plans.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTestPlan", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveTestPlan : BaseCmdlet
+    [Cmdlet(VerbsCommon.Remove, "TfsTestPlan", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    public class RemoveTestPlan : RemoveCmdletBase<TestPlan>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies one or more test plans to delete. Wildcards are supported.
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [SupportsWildcards]
+        [Alias("Id", "Name")]
+        [ValidateNotNull()]
+        public object TestPlan { get; set; }
 
-        //         [Parameter(Position=0, Mandatory=true, ValueFromPipeline=true)]
-        //         [Alias("id")]
-        //         [ValidateNotNull()]
-        //         public object TestPlan { get; set; }
+        /// <summary>
+        /// Forces the deletion of test plans with test suites and/or test cases. 
+        /// When omitted, only empty test plans can be deleted.
+        /// </summary>
+        public SwitchParameter Force { get; set; }
+    }
 
-        //         [Parameter()]
-        // public object Project,
+    partial class TestPlanDataService
+    {
+        protected override void DoRemoveItem()
+        {
+            var plans = GetItems<TestPlan>();
+            var force = GetParameter<bool>(nameof(RemoveTestPlan.Force));
+            var (_, tp) = GetCollectionAndProject();
+            var client = GetClient<TestPlanHttpClient>();
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+            foreach (var plan in plans)
+            {
+                if (!ShouldProcess(tp, $"Delete test plan '{plan.Name}'")) continue;
 
-        //     protected override void BeginProcessing()
-        //     {
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.TestManagement.WebApi"
-        //         ns = "Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi"
-        //     }
+                var hasChildren = true; // TODO: Get children
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void ProcessRecord()
-        //     {
-        //         plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
+                if (hasChildren && !force & !ShouldContinue($"Are you sure you want to delete test plan '{plan.Name}' and all of its contents?")) continue;
 
-        //         if(! plan)
-        //         {
-        //             throw new Exception($"Invalid or non-existent test plan {TestPlan}")
-        //         }
-
-        //         if (! Project)
-        //         {
-        //             Project = plan.Project.Name
-        //         }
-
-        //         GET_TEAM_PROECT(tp,tpc)
-        //         client = Get-TfsRestClient $"{ns}.TestPlanHttpClient" -Collection tpc
-
-        //         if (ShouldProcess($"Plan {{plan}.Id} ("$(plan.Name)")", "Remove test plan"))
-        //         {
-        //             task = client.DeleteTestPlanAsync(tp.Name, plan.Id)
-
-        //             result = task.Result; if(task.IsFaulted) { _throw new Exception("Error deleting test plan" task.Exception.InnerExceptions })
-        //         }
-        //     }
-        // }
+                client.DeleteTestPlanAsync(tp.Name, plan.Id)
+                    .Wait($"Error deleting test plan '{plan.Name}'");
+            }
+        }
     }
 }
