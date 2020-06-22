@@ -1,6 +1,7 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
@@ -29,7 +30,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
 
     partial class ReleaseFolderDataService
     {
-        //TODO: Use NormalizePath
         protected override WebApiFolder DoNewItem()
         {
             var (_, tp) = GetCollectionAndProject();
@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
             var newFolder = new WebApiFolder()
             {
                 Description = description,
-                Path = $@"\{folder.ToString().Trim('\\')}"
+                Path = NodeUtil.NormalizeNodePath(folder, tp.Name)
             };
 
             return client.CreateFolderAsync(newFolder, tp.Name)

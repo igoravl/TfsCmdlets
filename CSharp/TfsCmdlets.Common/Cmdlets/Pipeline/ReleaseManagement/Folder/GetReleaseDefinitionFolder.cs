@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
+using TfsCmdlets.Util;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
@@ -66,6 +67,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
                         {
                             var client = GetClient<ReleaseHttpClient>();
                             var (_, tp) = GetCollectionAndProject();
+                            s = NodeUtil.NormalizeNodePath(s, tp.Name);
                             var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
                                 .GetResult($"Error getting folders matching {s}");
 
@@ -81,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
                         {
                             var client = GetClient<ReleaseHttpClient>();
                             var (_, tp) = GetCollectionAndProject();
-                            var f = client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
+                            var f = client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
                                 .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 
                             if (f != null) yield return f;
