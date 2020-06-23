@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for Get-Area and Get-Iteration
     /// </summary>
-    public abstract class GetClassificationNode : CmdletBase
+    public abstract class GetClassificationNode : GetCmdletBase<ClassificationNode>
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)
@@ -83,24 +83,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public object Project { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
-
-        /// <summary>
         /// Indicates the type of structure (area or iteration)
         /// </summary>
         [Parameter()]
         protected abstract TreeStructureGroup StructureGroup { get; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            WriteItems<ClassificationNode>();
-        }
     }
 
     [Exports(typeof(ClassificationNode))]
