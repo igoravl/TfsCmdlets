@@ -55,13 +55,13 @@ namespace TfsCmdlets.Models
         internal IEnumerable<WorkItemClassificationNode> Children => InnerNode.Children;
 
         internal IEnumerable<ClassificationNode> GetChildren(string pattern = "**", bool recurse = true) =>
-            GetNodesRecursively(this, pattern, recurse);
+            GetNodesRecursively(this, pattern);
 
-        private IEnumerable<ClassificationNode> GetNodesRecursively(ClassificationNode node, string pattern, bool recurse)
+        private IEnumerable<ClassificationNode> GetNodesRecursively(ClassificationNode node, string pattern)
         {
             if (node.ChildCount == 0 && _client != null)
             {
-                node = new ClassificationNode(_client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, recurse ? 1 : 2)
+                node = new ClassificationNode(_client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, 2)
                         .GetResult($"Error retrieving {StructureGroup} from path '{node.RelativePath}'"),
                     ProjectName, _client);
             }
@@ -72,7 +72,7 @@ namespace TfsCmdlets.Models
             {
                 if(c.Path.IsLike(pattern)) yield return c;
 
-                foreach (var n in GetNodesRecursively(c, pattern, true))
+                foreach (var n in GetNodesRecursively(c, pattern))
                 {
                     yield return n;
                 }
