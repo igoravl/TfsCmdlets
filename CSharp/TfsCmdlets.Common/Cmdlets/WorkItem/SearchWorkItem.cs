@@ -28,7 +28,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies the maximum quantity of results. Supports between 1 and 1000 results. 
         /// When omitted, defaults to 100. Currently this cmdlet does not support result pagination.
         /// </summary>
-        /// <value></value>
         [Parameter()]
         [ValidateRange(1, 1000)]
         public int Results { get; set; } = 100;
