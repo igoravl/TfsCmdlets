@@ -81,7 +81,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             var force = GetParameter<bool>(nameof(NewClassificationNode.Force));
 
             var (_, tp) = GetCollectionAndProject();
-            var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, structureGroup.ToString(), false, false, true);
+            var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true);
             var client = GetClient<WorkItemTrackingHttpClient>();
             var parentPath = Path.GetDirectoryName(nodePath);
             var nodeName = Path.GetFileName(nodePath);

@@ -115,13 +115,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                         }
                     case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
                         {
-                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString(), true, false, true, false, true);
+                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), true, false, true, false, true);
                             done = true;
                             break;
                         }
                     case string s when !string.IsNullOrEmpty(s):
                         {
-                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString(), false, false, true, false, false);
+                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true, false, false);
                             done = true;
                             break;
                         }

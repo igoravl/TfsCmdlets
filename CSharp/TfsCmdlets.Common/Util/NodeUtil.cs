@@ -14,7 +14,6 @@ namespace TfsCmdlets.Util
         {
             // Log "Normalizing path 'Path' with arguments (_DumpObj PSBoundParameters)"
 
-            scope = scope.TrimEnd('s');
 
             var newPath = new StringBuilder();
 
