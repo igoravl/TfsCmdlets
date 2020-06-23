@@ -1,6 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
@@ -46,11 +52,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(Mandatory = true, ParameterSetName = "Query by filter")]
         public string Filter { get; set; }
 
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by text")]
-        public string Text { get; set; }
-
         [Parameter()]
         public Hashtable Macros { get; set; }
+
+        /// <summary>
+        /// Opens the specified work item in the default web browser.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter ShowWindow { get; set; }
 
         /// <summary>
         /// HELP_PARAM_PROJECT
@@ -60,71 +69,118 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
     }
 
+    [Exports(typeof(WebApiWorkItem))]
     internal partial class WorkItemDataService : BaseDataService<WebApiWorkItem>
     {
+        protected override IEnumerable<WebApiWorkItem> DoGetItems()
+        {
+            var workItem = GetParameter<object>(nameof(GetWorkItem.WorkItem));
+            var revision = GetParameter<int>(nameof(GetWorkItem.Revision));
+            var asOf = GetParameter<DateTime?>(nameof(GetWorkItem.AsOf));
+            var query = GetParameter<string>(nameof(GetWorkItem.Query));
+            var showWindow = GetParameter<bool>(nameof(GetWorkItem.ShowWindow));
 
+            var (_, tp) = GetCollectionAndProject();
+            var client = GetClient<WorkItemTrackingHttpClient>();
+
+            var done = false;
+
+            while (!done) switch (workItem)
+                {
+                    case WebApiWorkItem wi when showWindow:
+                        {
+                            workItem = (int)wi.Id;
+                            continue;
+                        }
+                    case WorkItemReference wiRef:
+                        {
+                            workItem = wiRef.Id;
+                            continue;
+                        }
+                    case int id when asOf > DateTime.MinValue:
+                        {
+                            yield return client.GetWorkItemAsync(tp.Name, id, null, asOf) //, new[]{"System.AssignedTo"})
+                                .GetResult($"Error getting work item '{id}'");
+                            yield break;
+                        }
+                    case int id when showWindow:
+                        {
+                            var wi = client.GetWorkItemAsync(tp.Name, id)
+                                .GetResult($"Error getting work item '{id}'");
+                            dynamic link = wi.Links.Links["html"];
+                            Process.Start(link.Href);
+                            yield break;
+                        }
+                    case int id:
+                        {
+                            if (revision > 0)
+                                yield return client.GetRevisionAsync(tp.Name, id, revision)
+                                    .GetResult($"Error getting work item '{id}'");
+                            else
+                                yield return client.GetWorkItemAsync(tp.Name, id)
+                                    .GetResult($"Error getting work item '{id}'");
+
+                            yield break;
+                        }
+                    case null when !string.IsNullOrEmpty(query) && query.StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase):
+                        {
+                            var result = client.QueryByWiqlAsync(new Wiql() { Query = query }, tp.Name)
+                                .GetResult($"Error running work item query '{query}'");
+
+                            foreach (var wiRef in result.WorkItems)
+                            {
+                                yield return client.GetWorkItemAsync(tp.Name, wiRef.Id) //, new[]{"System.AssignedTo"})
+                                    .GetResult($"Error getting work item '{wiRef.Id}'");
+                            }
+
+                            yield break;
+                        }
+                    case null when !string.IsNullOrEmpty(query):
+                        {
+                            var savedQuery = client.GetQueryAsync(tp.Name, query, QueryExpand.Wiql)
+                                .GetResult($"Error running work item query '{query}'");
+                            query = savedQuery.Wiql;
+                            continue;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent work item '{workItem}'");
+                        }
+                }
+
+            // switch(ParameterSetName)
+            // {
+            //     "Query by revision" {
+            //         WriteObject(_GetWorkItemByRevision WorkItem Revision store); return;
+            //     }
+
+            //     "Query by date" {
+            //         WriteObject(_GetWorkItemByDate WorkItem AsOf store); return;
+            //     }
+
+            //     "Query by text" {
+            //         localMacros = @{TfsQueryText=Text}
+            //         Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS @TfsQueryText OR [System.Description] CONTAINS @TfsQueryText"
+            //         WriteObject(_GetWorkItemByWiql Wiql localMacros tp store ); return;
+            //     }
+
+            //     "Query by filter" {
+            //         Wiql = $"SELECT * FROM WorkItems WHERE {Filter}"
+            //         WriteObject(_GetWorkItemByWiql Wiql Macros tp store ); return;
+            //     }
+
+            //     "Query by WIQL" {
+            // 		this.Log($"Get-TfsWorkItem: Running query by WIQL. Query: {Query}");
+            //         WriteObject(_GetWorkItemByWiql Query Macros tp store ); return;
+            //     }
+
+            //     "Query by saved query" {
+            //         WriteObject(_GetWorkItemBySavedQuery StoredQueryPath Macros tp store ); return;
+            //     }
+            // }
+        }
     }
 
-    //     protected override void BeginProcessing()
-    //     {
-    //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
-    //     }
-
-    //         /// <summary>
-    //         /// Performs execution of the command
-    //         /// </summary>
-    //         protected override void ProcessRecord()
-    //     {
-    //         if (Project)
-    //         {
-    //             tp = this.GetProject();
-    //             tpc = tp.Store.TeamProjectCollection
-    //             store = tp.Store
-    //         }
-    //         else
-    //         {
-    //             tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-    //             store = tpc.GetService([type]"Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
-    //         }
-
-    //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-    //         {
-    //             if ((! Revision) && (! AsOf))
-    //             {
-    //                 WriteObject(WorkItem); return;
-    //             }
-    //         }
-
-    //         switch(ParameterSetName)
-    //         {
-    //             "Query by revision" {
-    //                 WriteObject(_GetWorkItemByRevision WorkItem Revision store); return;
-    //             }
-
-    //             "Query by date" {
-    //                 WriteObject(_GetWorkItemByDate WorkItem AsOf store); return;
-    //             }
-
-    //             "Query by text" {
-    //                 localMacros = @{TfsQueryText=Text}
-    //                 Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS @TfsQueryText OR [System.Description] CONTAINS @TfsQueryText"
-    //                 WriteObject(_GetWorkItemByWiql Wiql localMacros tp store ); return;
-    //             }
-
-    //             "Query by filter" {
-    //                 Wiql = $"SELECT * FROM WorkItems WHERE {Filter}"
-    //                 WriteObject(_GetWorkItemByWiql Wiql Macros tp store ); return;
-    //             }
-
-    //             "Query by WIQL" {
-    // 				this.Log($"Get-TfsWorkItem: Running query by WIQL. Query: {Query}");
-    //                 WriteObject(_GetWorkItemByWiql Query Macros tp store ); return;
-    //             }
-
-    //             "Query by saved query" {
-    //                 WriteObject(_GetWorkItemBySavedQuery StoredQueryPath Macros tp store ); return;
-    //             }
-    //         }
     //     }
     // }
 

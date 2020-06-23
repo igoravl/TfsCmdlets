@@ -1,0 +1,30 @@
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: ($this.Fields['System.AreaPath'] -split '\\')[0]
+- ScriptProperty:
+    Name: Id
+    GetScriptBlock: ([uri]$this.Url).Segments[-1]
+- ScriptProperty:
+    Name: Revision
+    GetScriptBlock: $this.Rev
+- ScriptProperty:
+    Name: WorkItemType
+    GetScriptBlock: $this.Fields['System.WorkItemType']
+- ScriptProperty:
+    Name: State
+    GetScriptBlock: $this.Fields['System.State']
+- ScriptProperty:
+    Name: ChangedDate
+    GetScriptBlock: $this.Fields['System.ChangedDate']
+- ScriptProperty:
+    Name: AssignedTo
+    GetScriptBlock: $this.Fields['System.AssignedTo'].DisplayName
+- ScriptProperty:
+    Name: AreaPath
+    GetScriptBlock: $this.Fields['System.AreaPath']
+- ScriptProperty:
+    Name: IterationPath
+    GetScriptBlock: $this.Fields['System.IterationPath']
+- ScriptProperty:
+    Name: Title
+    GetScriptBlock: $this.Fields['System.Title']

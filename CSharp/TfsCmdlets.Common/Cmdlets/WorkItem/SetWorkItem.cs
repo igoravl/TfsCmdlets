@@ -32,20 +32,20 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(ParameterSetName = "Set work item")]
         public SwitchParameter SkipSave { get; set; }
 
-        [Parameter(ParameterSetName="Set board status")]
+        [Parameter(ParameterSetName = "Set board status")]
         public object Board { get; set; }
 
-        [Parameter(ParameterSetName="Set board status")]
+        [Parameter(ParameterSetName = "Set board status")]
         public object Column { get; set; }
 
-        [Parameter(ParameterSetName="Set board status")]
+        [Parameter(ParameterSetName = "Set board status")]
         public object Lane { get; set; }
 
-        [Parameter(ParameterSetName="Set board status")]
+        [Parameter(ParameterSetName = "Set board status")]
         [ValidateSet("Doing", "Done")]
         public string ColumnStage { get; set; }
 
-        [Parameter(ParameterSetName="Set board status")]
+        [Parameter(ParameterSetName = "Set board status")]
         public object Team { get; set; }
 
         /// <summary>
@@ -60,143 +60,137 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     {
 
     }
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+    // /// <summary>
+    // /// Performs execution of the command
+    // /// </summary>
+    // protected override void ProcessRecord()
+    //     {
+    //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
+    //         {
+    //             tpc = WorkItem.Store.TeamProjectCollection
+    //             id = WorkItem.Id
+    //         }
+    //         else
+    //         {
+    //             tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
+    //             id = (Get-TfsWorkItem -WorkItem WorkItem -Collection Collection).Id
+    //         }
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void ProcessRecord()
-        //     {
-        //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-        //         {
-        //             tpc = WorkItem.Store.TeamProjectCollection
-        //             id = WorkItem.Id
-        //         }
-        //         else
-        //         {
-        //             tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-        //             id = (Get-TfsWorkItem -WorkItem WorkItem -Collection Collection).Id
-        //         }
+    //         if (BypassRules)
+    //         {
+    //             store = new Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore(tpc, Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags.BypassRules)
+    //         }
+    //         else
+    //         {
+    //             store = tpc.GetService([type]"Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
+    //         }
 
-        //         if (BypassRules)
-        //         {
-        //             store = new Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore(tpc, Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags.BypassRules)
-        //         }
-        //         else
-        //         {
-        //             store = tpc.GetService([type]"Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
-        //         }
+    //         wi = store.GetWorkItem(id)
 
-        //         wi = store.GetWorkItem(id)
+    //         Fields = _FixAreaIterationValues -Fields Fields -ProjectName wi.Project.Name
 
-        //         Fields = _FixAreaIterationValues -Fields Fields -ProjectName wi.Project.Name
+    //         if(ShouldProcess($"Set work item fields {{Fields}.Keys -join ", "} to $(Fields.Values -join ", "), respectively"))
+    //         {
+    //             foreach(fldName in Fields.Keys)
+    //             {
+    //                 wi.Fields[fldName].Value = Fields[fldName]
+    //             }
 
-        //         if(ShouldProcess($"Set work item fields {{Fields}.Keys -join ", "} to $(Fields.Values -join ", "), respectively"))
-        //         {
-        //             foreach(fldName in Fields.Keys)
-        //             {
-        //                 wi.Fields[fldName].Value = Fields[fldName]
-        //             }
+    //             if(! SkipSave)
+    //             {
+    //                 wi.Save()
+    //             }
+    //         }
 
-        //             if(! SkipSave)
-        //             {
-        //                 wi.Save()
-        //             }
-        //         }
+    //         WriteObject(wi); return;
+    //     }
+    // }
 
-        //         WriteObject(wi); return;
-        //     }
-        // }
+    /////////////// BOARD STATUS  //////////////////
 
-        /////////////// BOARD STATUS  //////////////////
 
-        
-        // protected override void ProcessRecord()
-        //     {
-        //         if ((! Column) && (! ColumnStage) && (! Lane))
-        //         {
-        //             throw new Exception("Supply a value to at least one of the following arguments: Column, ColumnStage, Lane")
-        //         }
+    // protected override void ProcessRecord()
+    //     {
+    //         if ((! Column) && (! ColumnStage) && (! Lane))
+    //         {
+    //             throw new Exception("Supply a value to at least one of the following arguments: Column, ColumnStage, Lane")
+    //         }
 
-        //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-        //         {
-        //             tp = WorkItem.Project
-        //             tpc = WorkItem.Store.TeamProjectCollection
-        //         }
-        //         else
-        //         {
-        //             tp = this.GetProject();
-        //             tpc = tp.Store.TeamProjectCollection
-        //             WorkItem = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
-        //         }
+    //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
+    //         {
+    //             tp = WorkItem.Project
+    //             tpc = WorkItem.Store.TeamProjectCollection
+    //         }
+    //         else
+    //         {
+    //             tp = this.GetProject();
+    //             tpc = tp.Store.TeamProjectCollection
+    //             WorkItem = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
+    //         }
 
-        //         t = Get-TfsTeam -Team Team -Project tp -Collection tpc
-        //         id = [int] WorkItem.Id
-        //         rev = WorkItem.Revision
+    //         t = Get-TfsTeam -Team Team -Project tp -Collection tpc
+    //         id = [int] WorkItem.Id
+    //         rev = WorkItem.Revision
 
-        //         # Get the Kanban board column/lane field info
+    //         # Get the Kanban board column/lane field info
 
-        //         b = Get-TfsBoard -Board Board -Team t -Project tp -Collection tpc
+    //         b = Get-TfsBoard -Board Board -Team t -Project tp -Collection tpc
 
-        //         if (! b)
-        //         {
-        //             throw new Exception($"Invalid or non-existent board "{Board}" in team "Team"")
-        //         }
+    //         if (! b)
+    //         {
+    //             throw new Exception($"Invalid or non-existent board "{Board}" in team "Team"")
+    //         }
 
-        //         processMessages = @()
+    //         processMessages = @()
 
-        //         ops = @(
-        //             @{
-        //                 Operation = "Test";
-        //                 Path = "/rev";
-        //                 Value = rev.ToString()
-        //             }
+    //         ops = @(
+    //             @{
+    //                 Operation = "Test";
+    //                 Path = "/rev";
+    //                 Value = rev.ToString()
+    //             }
 
-        //         if (Column)
-        //         {
-        //             ops += @{
-        //                 Operation = "Add";
-        //                 Path = $"/fields/{{b}.Fields.ColumnField.ReferenceName}";
-        //                 Value = Column
-        //             }
+    //         if (Column)
+    //         {
+    //             ops += @{
+    //                 Operation = "Add";
+    //                 Path = $"/fields/{{b}.Fields.ColumnField.ReferenceName}";
+    //                 Value = Column
+    //             }
 
-        //             processMessages += $"Board Column="{Column}""
-        //         }
+    //             processMessages += $"Board Column="{Column}""
+    //         }
 
-        //         if (Lane)
-        //         {
-        //             ops += @{
-        //                 Operation = "Add";
-        //                 Path = $"/fields/{{b}.Fields.RowField.ReferenceName}";
-        //                 Value = Lane
-        //             }
+    //         if (Lane)
+    //         {
+    //             ops += @{
+    //                 Operation = "Add";
+    //                 Path = $"/fields/{{b}.Fields.RowField.ReferenceName}";
+    //                 Value = Lane
+    //             }
 
-        //             processMessages += $"Board Lane="{Lane}""
-        //         }
+    //             processMessages += $"Board Lane="{Lane}""
+    //         }
 
-        //         if (ColumnStage)
-        //         {
-        //             ops += @{
-        //                 Operation = "Add";
-        //                 Path = $"/fields/{{b}.Fields.DoneField.ReferenceName}";
-        //                 Value = (ColumnStage = = "Done") 
-        //             }
+    //         if (ColumnStage)
+    //         {
+    //             ops += @{
+    //                 Operation = "Add";
+    //                 Path = $"/fields/{{b}.Fields.DoneField.ReferenceName}";
+    //                 Value = (ColumnStage = = "Done") 
+    //             }
 
-        //             processMessages += $"Board Stage (Doing/Done)="{ColumnStage}""
-        //         }
+    //             processMessages += $"Board Stage (Doing/Done)="{ColumnStage}""
+    //         }
 
-        //         if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
-        //         {
-        //             patch = _GetJsonPatchDocument ops
-        //             var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-        //             wi = client.UpdateWorkItemAsync(patch, id).Result
-        //             WriteObject(wi); return;
-        //         }
-        //     }
-        // }
+    //         if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
+    //         {
+    //             patch = _GetJsonPatchDocument ops
+    //             var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+    //             wi = client.UpdateWorkItemAsync(patch, id).Result
+    //             WriteObject(wi); return;
+    //         }
+    //     }
+    // }
 
-    }
 }

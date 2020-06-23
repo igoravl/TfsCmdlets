@@ -1,4 +1,5 @@
 ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem
   - Microsoft.VisualStudio.Services.Search.WebApi.Contracts.WorkItem.WorkItemResult
 TableControl: 
   Id: 
