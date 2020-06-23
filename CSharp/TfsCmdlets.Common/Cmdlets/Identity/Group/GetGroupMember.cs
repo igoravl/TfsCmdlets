@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var group = GetItem<Models.Identity>(new
             {

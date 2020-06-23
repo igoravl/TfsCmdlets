@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             bool done = false;
             XDocument doc = null;

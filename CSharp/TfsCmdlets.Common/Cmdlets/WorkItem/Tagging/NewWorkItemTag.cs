@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0,ValueFromPipeline=true)]
         //         [Alias("Name")]
@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
 

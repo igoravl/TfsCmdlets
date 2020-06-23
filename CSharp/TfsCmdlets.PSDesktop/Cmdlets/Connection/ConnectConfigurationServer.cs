@@ -11,7 +11,8 @@ namespace TfsCmdlets.Cmdlets.Connection
     [OutputType(typeof(TfsConfigurationServer))]
     partial class ConnectConfigurationServer: CmdletBase
     {
-        partial void DoProcessRecord()
+        /// <inheritdoc/>
+        protected override void DoProcessRecord()
         {
             var srv = this.GetServer();
             srv.Connect();

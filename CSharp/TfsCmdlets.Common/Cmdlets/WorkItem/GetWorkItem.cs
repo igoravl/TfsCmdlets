@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
@@ -14,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// <summary>
     /// Gets the contents of one or more work items.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName = "Query by text")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName = "Query by revision")]
     [OutputType(typeof(WebApiWorkItem))]
     public class GetWorkItem : GetCmdletBase<WebApiWorkItem>
     {
@@ -23,6 +24,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date")]
+        [Parameter(Position = 0, ParameterSetName = "Get deleted")]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
@@ -45,10 +47,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
         public string Query { get; set; }
 
-        // # [Parameter(Mandatory=true, ParameterSetName="Query by filter")]
-        // # [string[]]
-        // # Fields,
-
         [Parameter(Mandatory = true, ParameterSetName = "Query by filter")]
         public string Filter { get; set; }
 
@@ -58,8 +56,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// Opens the specified work item in the default web browser.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = "Query by revision")]
         public SwitchParameter ShowWindow { get; set; }
+
+        /// <summary>
+        /// Gets deleted work items.
+        /// </summary>
+        [Parameter(ParameterSetName = "Get deleted")]
+        public SwitchParameter Deleted { get; set; }
 
         /// <summary>
         /// HELP_PARAM_PROJECT
@@ -79,6 +83,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             var asOf = GetParameter<DateTime?>(nameof(GetWorkItem.AsOf));
             var query = GetParameter<string>(nameof(GetWorkItem.Query));
             var showWindow = GetParameter<bool>(nameof(GetWorkItem.ShowWindow));
+            var deleted = GetParameter<bool>(nameof(GetWorkItem.Deleted));
 
             var (_, tp) = GetCollectionAndProject();
             var client = GetClient<WorkItemTrackingHttpClient>();
@@ -89,7 +94,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 {
                     case WebApiWorkItem wi when showWindow:
                         {
-                            workItem = (int)wi.Id;
+                            workItem = new[] { (int)wi.Id };
                             continue;
                         }
                     case WorkItemReference wiRef:
@@ -97,29 +102,73 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             workItem = wiRef.Id;
                             continue;
                         }
-                    case int id when asOf > DateTime.MinValue:
-                        {
-                            yield return client.GetWorkItemAsync(tp.Name, id, null, asOf) //, new[]{"System.AssignedTo"})
-                                .GetResult($"Error getting work item '{id}'");
-                            yield break;
-                        }
-                    case int id when showWindow:
-                        {
-                            var wi = client.GetWorkItemAsync(tp.Name, id)
-                                .GetResult($"Error getting work item '{id}'");
-                            dynamic link = wi.Links.Links["html"];
-                            Process.Start(link.Href);
-                            yield break;
-                        }
                     case int id:
                         {
-                            if (revision > 0)
-                                yield return client.GetRevisionAsync(tp.Name, id, revision)
-                                    .GetResult($"Error getting work item '{id}'");
-                            else
-                                yield return client.GetWorkItemAsync(tp.Name, id)
-                                    .GetResult($"Error getting work item '{id}'");
+                            workItem = new[] { id };
+                            continue;
+                        }
+                    case object[] wis:
+                        {
+                            var list = new List<int>();
+                            foreach (var o in wis)
+                            {
+                                switch (o)
+                                {
+                                    case int i: list.Add(i); break;
+                                    case WebApiWorkItem wi: list.Add((int)wi.Id); break;
+                                }
+                            }
+                            workItem = list.ToArray();
+                            continue;
+                        }
+                    case int[] ids:
+                        {
+                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, client);
 
+                            yield break;
+                        }
+                    case null when deleted:
+                    case object o when deleted:
+                        {
+                            IEnumerable<WorkItemDeleteReference> result;
+
+                            if (workItem is int[] ids)
+                            {
+                                result = client.GetDeletedWorkItemsAsync(ids)
+                                    .GetResult($"Error getting deleted work items {string.Join(", ", ids)}");
+                            }
+                            else
+                            {
+                                var refs = client.GetDeletedWorkItemShallowReferencesAsync(tp.Name)
+                                    .GetResult($"Error getting references for deleted work items")
+                                    .Select(r => (int)r.Id)
+                                    .ToList();
+
+                                if (refs.Count == 0) yield break;
+
+                                result = client.GetDeletedWorkItemsAsync(refs)
+                                    .GetResult($"Error getting deleted work items");
+                            }
+
+                            foreach (var wi in result)
+                            {
+                                yield return new WebApiWorkItem()
+                                {
+                                    Id = wi.Id,
+                                    Fields = new Dictionary<string, object>()
+                                    {
+                                        ["System.WorkItemType"] = wi.Type,
+                                        ["System.Title"] = wi.Name,
+                                        ["System.AreaPath"] = wi.Project,
+                                        ["System.IterationPath"] = wi.Project,
+                                        ["System.ChangedDate"] = wi.DeletedDate,
+                                        ["DeletedBy"] = wi.DeletedBy,
+                                        ["DeletedDate"] = wi.DeletedDate,
+                                        ["WorkItemDeleteReference"] = wi
+                                    },
+                                    Url = wi.Url
+                                };
+                            }
                             yield break;
                         }
                     case null when !string.IsNullOrEmpty(query) && query.StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase):
@@ -129,8 +178,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
                             foreach (var wiRef in result.WorkItems)
                             {
-                                yield return client.GetWorkItemAsync(tp.Name, wiRef.Id) //, new[]{"System.AssignedTo"})
-                                    .GetResult($"Error getting work item '{wiRef.Id}'");
+                                yield return FetchWorkItem(wiRef.Id, 0, DateTime.MinValue, client);
                             }
 
                             yield break;
@@ -147,189 +195,26 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             throw new ArgumentException($"Invalid or non-existent work item '{workItem}'");
                         }
                 }
+        }
 
-            // switch(ParameterSetName)
-            // {
-            //     "Query by revision" {
-            //         WriteObject(_GetWorkItemByRevision WorkItem Revision store); return;
-            //     }
-
-            //     "Query by date" {
-            //         WriteObject(_GetWorkItemByDate WorkItem AsOf store); return;
-            //     }
-
-            //     "Query by text" {
-            //         localMacros = @{TfsQueryText=Text}
-            //         Wiql = "SELECT * FROM WorkItems WHERE [System.Title] CONTAINS @TfsQueryText OR [System.Description] CONTAINS @TfsQueryText"
-            //         WriteObject(_GetWorkItemByWiql Wiql localMacros tp store ); return;
-            //     }
-
-            //     "Query by filter" {
-            //         Wiql = $"SELECT * FROM WorkItems WHERE {Filter}"
-            //         WriteObject(_GetWorkItemByWiql Wiql Macros tp store ); return;
-            //     }
-
-            //     "Query by WIQL" {
-            // 		this.Log($"Get-TfsWorkItem: Running query by WIQL. Query: {Query}");
-            //         WriteObject(_GetWorkItemByWiql Query Macros tp store ); return;
-            //     }
-
-            //     "Query by saved query" {
-            //         WriteObject(_GetWorkItemBySavedQuery StoredQueryPath Macros tp store ); return;
-            //     }
-            // }
+        private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, WorkItemTrackingHttpClient client)
+        {
+            try{
+            if (revision > 0)
+                return client.GetRevisionAsync(id, revision)
+                    .GetResult($"Error getting work item '{id}'");
+            else if (asOf.HasValue && asOf.Value > DateTime.MinValue)
+                return client.GetWorkItemAsync(id, null, asOf)
+                    .GetResult($"Error getting work item '{id}'");
+            else
+                return client.GetWorkItemAsync(id)
+                    .GetResult($"Error getting work item '{id}'");
+            }
+            catch(Exception ex)
+            {
+                Cmdlet.WriteError(new ErrorRecord(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id));
+                return null;
+            }
         }
     }
-
-    //     }
-    // }
-
-    // Function _GetWorkItemByRevision(WorkItem, Revision, store)
-    // {
-    //     if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-    //     {
-    //         ids = @(WorkItem.Id)
-    //     }
-    //     elseif (WorkItem is int)
-    //     {
-    //         ids = @(WorkItem)
-    //     }
-    //     elseif (WorkItem is int[])
-    //     {
-    //         ids = WorkItem
-    //     }
-    //     else
-    //     {
-    //         throw new Exception($"Invalid work item ""{WorkItem}"". Supply either a WorkItem object or one or more integer ID numbers")
-    //     }
-
-    //     if (Revision is int && Revision -gt 0)
-    //     {
-    //         foreach(id in ids)
-    //         {
-    //             store.GetWorkItem(id, Revision)
-    //         }
-    //     }
-    //     elseif (Revision is int[])
-    //     {
-    //         if (ids.Count != Revision.Count)
-    //         {
-    //             throw new Exception("When supplying a list of IDs and Revisions, both must have the same number of elements")
-    //         }
-    //         for(i = 0; i -le ids.Count-1; i++)
-    //         {
-    //             store.GetWorkItem(ids[i], Revision[i])
-    //         }
-    //     }
-    //     else
-    //     {
-    //         foreach(id in ids)
-    //         {
-    //             store.GetWorkItem(id)
-    //         }
-    //     }
-    // }
-
-    // Function _GetWorkItemByDate(WorkItem, AsOf, store)
-    // {
-    //     if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-    //     {
-    //         ids = @(WorkItem.Id)
-    //     }
-    //     elseif (WorkItem is int)
-    //     {
-    //         ids = @(WorkItem)
-    //     }
-    //     elseif (WorkItem is int[])
-    //     {
-    //         ids = WorkItem
-    //     }
-    //     else
-    //     {
-    //         throw new Exception($"Invalid work item ""{WorkItem}"". Supply either a WorkItem object or one or more integer ID numbers")
-    //     }
-
-    //     if (AsOf is datetime[])
-    //     {
-    //         if (ids.Count != AsOf.Count)
-    //         {
-    //             throw new Exception("When supplying a list of IDs and Changed Dates (AsOf), both must have the same number of elements")
-    //         }
-    //         for(i = 0; i -le ids.Count-1; i++)
-    //         {
-    //             store.GetWorkItem(ids[i], AsOf[i])
-    //         }
-    //     }
-    //     else
-    //     {
-    //         foreach(id in ids)
-    //         {
-    //             store.GetWorkItem(id, AsOf)
-    //         }
-    //     }
-    // }
-
-    // Function _GetWorkItemByWiql(QueryText, Macros, Project, store)
-    // {
-    // 	if (QueryText -notlike "select*")
-    // 	{
-    // 		q = Get-TfsWorkItemQueryItem -ItemType Query -Query QueryText -Project Project
-
-    // 		if (! q)
-    // 		{
-    // 			throw new Exception($"Work item query "{QueryText}" is invalid or non-existent.")
-    // 		}
-
-    // 		if (q.Count -gt 1)
-    // 		{
-    // 			throw new Exception($"Ambiguous query name "{QueryText}". {q.Count} queries were found matching the specified name/pattern:`n`n - " + (q -join "`n - "))
-    // 		}
-
-    // 		QueryText = q.QueryText
-    // 	}
-
-    //     if (! Macros && ((QueryText -match $"@project") || ({QueryText} -match "@me")))
-    //     {
-    //         Macros = @{}
-    //     }
-
-    //     if (QueryText -match "@project")
-    //     {
-    // 		if (! Project)
-    // 		{
-    // 			Project = Get-TfsTeamProject -Current
-    // 		}
-
-    //         if (! Macros.ContainsKey("Project"))
-    //         {
-    //             Macros["Project"] = Project.Name
-    //         }
-    //     }
-
-    //     if (QueryText -match "@me")
-    //     {
-    //         user = null
-    //         store.TeamProjectCollection.GetAuthenticatedIdentity([ref] user)
-    //         Macros["Me"] = user.DisplayName
-    //     }
-
-    // 	this.Log($"Get-TfsWorkItem: Running query {QueryText}");
-
-    //     wis = store.Query(QueryText, Macros)
-
-    //     # foreach(wi in wis)
-    //     # {
-    //     #     if(Fields)
-    //     #     {
-    //     #         foreach(f in Fields)
-    //     #         {
-    //     #             wi | Add-Member -Name (_GetEncodedFieldName f.ReferenceName) -MemberType ScriptProperty -Value `
-    //     #                 {f.Value}.GetNewClosure() `
-    //     #                 {param(Value) f.Value = Value}.GetNewClosure()
-    //     #         }
-    //     #     }
-    //     # }
-
-    //     WriteObject(wis); return;
-    // }
 }

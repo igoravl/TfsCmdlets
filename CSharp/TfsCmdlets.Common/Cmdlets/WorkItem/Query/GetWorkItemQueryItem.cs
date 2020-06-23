@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
         
         //         [Parameter(Position=0)]
         //         [ValidateNotNull()]
@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         if (Item is Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem) { this.Log("Input item is of type Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem; returning input item immediately, without further processing."; WriteObject(Item }); return;);
 

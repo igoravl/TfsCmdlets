@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter()]
         //         [Alias("Name")]
@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         types = Get-TfsWorkItemType -Name WorkItemType -Project Project -Collection Collection
 

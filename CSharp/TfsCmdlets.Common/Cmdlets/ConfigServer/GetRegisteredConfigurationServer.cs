@@ -17,15 +17,5 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("Name")]
         public string Server { get; set; } = "*";
-
-        partial void DoProcessRecord();
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            DoProcessRecord();
-        }
     }
 }

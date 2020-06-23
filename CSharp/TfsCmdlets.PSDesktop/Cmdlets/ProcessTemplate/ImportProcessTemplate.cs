@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     partial class ImportProcessTemplate
     {
         /// <inheritdoc/>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var dir = ResolvePath(this.Path, ".");
             var processXmlFile = ResolvePath(dir, "ProcessTemplate.xml");

@@ -63,7 +63,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     // /// <summary>
     // /// Performs execution of the command
     // /// </summary>
-    // protected override void ProcessRecord()
+    // protected override void DoProcessRecord()
     //     {
     //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
     //         {
@@ -109,7 +109,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /////////////// BOARD STATUS  //////////////////
 
 
-    // protected override void ProcessRecord()
+    // protected override void DoProcessRecord()
     //     {
     //         if ((! Column) && (! ColumnStage) && (! Lane))
     //         {

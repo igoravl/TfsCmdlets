@@ -137,7 +137,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             if (Path.Contains(" "))
             {

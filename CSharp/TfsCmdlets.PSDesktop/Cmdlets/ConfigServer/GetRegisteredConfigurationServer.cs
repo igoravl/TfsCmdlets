@@ -10,7 +10,8 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// </summary>
     partial class GetRegisteredConfigurationServer
     {
-        partial void DoProcessRecord()
+        /// <inheritdoc/>
+        protected override void DoProcessRecord()
         {
             if (Server.Equals("localhost", StringComparison.OrdinalIgnoreCase) || Server.Equals("."))
             {

@@ -80,7 +80,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             const string cmd = "_GetInstallationPath -Version $args[0] -Component $args[1]";
             const string localTemplate = "{0}";

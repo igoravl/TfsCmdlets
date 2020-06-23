@@ -79,7 +79,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var (tpc, tp) = this.GetCollectionAndProject();
 

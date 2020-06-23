@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(ValueFromPipeline=true, Position=0)]
         //         [SupportsWildcards()]
@@ -46,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         if(ParameterSetName == "Export to output stream")
         //         {

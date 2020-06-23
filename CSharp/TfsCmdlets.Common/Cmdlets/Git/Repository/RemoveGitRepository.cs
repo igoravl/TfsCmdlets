@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository repo)
             {

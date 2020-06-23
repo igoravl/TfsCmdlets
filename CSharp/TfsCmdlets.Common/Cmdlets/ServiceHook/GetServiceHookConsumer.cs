@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             WriteItems<Consumer>();
         }

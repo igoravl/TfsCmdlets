@@ -71,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             WriteObject(TestItem<ClassificationNode>());
         }

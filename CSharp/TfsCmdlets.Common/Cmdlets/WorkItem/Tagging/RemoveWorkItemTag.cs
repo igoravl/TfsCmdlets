@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0,ValueFromPipeline=true)]
         //         [SupportsWildcards()]
@@ -35,7 +35,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         tags = Get-TfsWorkItemTag -Tag Tag -Project Project -Collection Collection
 

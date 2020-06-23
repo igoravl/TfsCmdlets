@@ -17,7 +17,7 @@ namespace TfsCmdlets.Extensions
             }
             catch (Exception ex)
             {
-                throw new Exception($"{errorMessage?? "Error invoking async operation"}: {ex.Message}: {ex.InnerException?.Message}", ex);
+                throw new Exception($"{errorMessage?? "Error invoking async operation"} ({ex.Message}. {ex.InnerException?.Message})", ex);
             }
         }
 
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Extensions
             }
             catch (Exception ex)
             {
-                throw new Exception($"{errorMessage?? "Error invoking async operation"}: {ex.Message}: {ex.InnerException?.Message}", ex);
+                throw new Exception($"{errorMessage?? "Error invoking async operation"} ({ex.Message}. {ex.InnerException?.Message})", ex);
             }
         }
     }

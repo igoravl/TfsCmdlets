@@ -32,15 +32,5 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Get by server")]
         public object Credential { get; set; }
-
-        partial void DoProcessRecord();
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            DoProcessRecord();
-        }
     }
 }

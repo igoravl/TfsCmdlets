@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             WriteItems<GitRepository>();
         }

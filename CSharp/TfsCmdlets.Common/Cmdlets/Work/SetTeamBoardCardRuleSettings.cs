@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Work
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter()]
         //         public object Board { get; set; }
@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Work
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         Write-Verbose $"Getting card rules for team {Team}"
 

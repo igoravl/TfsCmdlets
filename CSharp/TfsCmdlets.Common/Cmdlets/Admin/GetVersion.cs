@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var tpc = this.GetCollection();
             ServerVersion serverVersion = null;

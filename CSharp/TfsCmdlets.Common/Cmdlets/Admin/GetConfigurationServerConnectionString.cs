@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             const string cmd = "_GetConnectionString -Version $args[0]";
             const string localTemplate = "{0}";

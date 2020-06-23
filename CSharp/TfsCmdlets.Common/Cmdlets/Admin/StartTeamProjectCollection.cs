@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
         // public object Collection,
@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         if(ShouldProcess(Collection, "Start team project collection"))
         //         {

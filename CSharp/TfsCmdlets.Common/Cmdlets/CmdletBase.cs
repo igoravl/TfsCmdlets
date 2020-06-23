@@ -49,11 +49,11 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
-        /// Performs execution of the command. Must be overriden in derived classes.
+        /// Performs execution of the command. 
         /// </summary>
-        protected override void ProcessRecord()
+        protected sealed override void ProcessRecord()
         {
-            throw new InvalidOperationException("You must override ProcessRecord");
+            DoProcessRecord();
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ namespace TfsCmdlets.Cmdlets
         {
             var relativePath = Path.Combine(basePath, path);
 
-            if(!Path.IsPathRooted(relativePath))
+            if (!Path.IsPathRooted(relativePath))
             {
                 relativePath = Path.Combine(GetCurrentDirectory(), relativePath);
             }
@@ -317,5 +317,10 @@ namespace TfsCmdlets.Cmdlets
 
             throw new NotSupportedException($"This cmdlet requires Windows PowerShell. It will not work on PowerShell Core.{Environment.NewLine}");
         }
+
+        /// <summary>
+        /// Performs execution of the command. Must be overriden in derived classes.
+        /// </summary>
+        protected virtual void DoProcessRecord() => throw new InvalidOperationException("You must override ProcessRecord");
     }
 }

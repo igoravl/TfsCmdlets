@@ -38,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             try
             {

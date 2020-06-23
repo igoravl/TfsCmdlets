@@ -47,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var newList = new Models.GlobalList(GlobalList, Items).ToXml();
             var existingList = GetItem<Models.GlobalList>();

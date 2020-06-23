@@ -46,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var provider = ParameterSetName == "Get by collection" ? this.GetCollection() : this.GetServer();
 

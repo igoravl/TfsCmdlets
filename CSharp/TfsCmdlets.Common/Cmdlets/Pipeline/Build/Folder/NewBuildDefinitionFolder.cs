@@ -50,7 +50,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         public SwitchParameter Passthru { get; set; }
         
         /// <inheritdoc/>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             if(string.IsNullOrEmpty(Folder as string))
             {

@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var (_, _, t) = GetCollectionProjectAndTeam();
 

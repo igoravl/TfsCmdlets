@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0, Mandatory=true, ValueFromPipeline=true)]
         //         [Alias("id")]
@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
         //         latestRev = wi.Revisions.Count - 1

@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0, Mandatory=true, ValueFromPipeline=true)]
         //         [Alias("Id")]
@@ -40,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         sourceWi = Get-TfsWorkItem -WorkItem SourceWorkItem -Collection Collection -Project Project
         //         targetWi = Get-TfsWorkItem -WorkItem TargetWorkItem -Collection Collection -Project Project

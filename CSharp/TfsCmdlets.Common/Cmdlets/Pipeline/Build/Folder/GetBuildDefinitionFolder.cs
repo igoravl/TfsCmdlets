@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             WriteItems<WebApiFolder>();
         }

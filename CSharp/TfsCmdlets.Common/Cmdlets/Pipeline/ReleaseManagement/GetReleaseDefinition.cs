@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0)]
         //         [SupportsWildcards()]
@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         if (Definition is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition) { this.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition; returning input item immediately, without further processing."; WriteObject(Definition }); return;);
 

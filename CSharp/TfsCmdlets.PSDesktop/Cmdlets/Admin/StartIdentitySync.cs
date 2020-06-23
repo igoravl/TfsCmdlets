@@ -5,9 +5,7 @@ namespace TfsCmdlets.Cmdlets.Admin
 {
     partial class StartIdentitySync
     {
-        partial void DoProcessRecord()
-        {
-            throw new NotImplementedException();
-        }
+        /// <inheritdoc/>
+        protected override void DoProcessRecord() => throw new NotImplementedException();
     }
 }

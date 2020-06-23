@@ -89,7 +89,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
 
         //     protected override void BeginProcessing()
         //     {
@@ -101,7 +101,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         //         /// <summary>
         //         /// Performs execution of the command
         //         /// </summary>
-        //         protected override void ProcessRecord()
+        //         protected override void DoProcessRecord()
         //     {
         //         plan = Get-TfsTestPlan -TestPlan TestPlan -Project Project -Collect Collection
 

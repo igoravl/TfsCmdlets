@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord() => throw new System.NotImplementedException();
         
         //         [Parameter(Mandatory=true, Position=0)]
         // public object BuildDefinition,
@@ -47,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
         // /// <summary>
         // /// Performs execution of the command
         // /// </summary>
-        // protected override void ProcessRecord()
+        // protected override void DoProcessRecord()
         //     {
         //         if(ShouldProcess(BuildDefinition, "Queue new build"))
         //         {

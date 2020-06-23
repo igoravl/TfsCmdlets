@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Shell
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             if(!EnterShell.IsInShell) return;
 

@@ -45,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void DoProcessRecord()
         {
             var (_, _, t) = GetCollectionProjectAndTeam();
             var admin = GetItem<Models.Identity>(new {Identity = Admin});
