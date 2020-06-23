@@ -1,116 +1,147 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
     /// <summary>
     /// Gets the definition of one or more work item saved queries.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsWorkItemQueryItem")]
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemQuery")]
     [OutputType(typeof(QueryHierarchyItem))]
-    public class GetWorkItemQueryItem : CmdletBase
+    public class GetWorkItemQuery : GetWorkItemQueryItemBase
     {
+        /// <summary>
+        /// Specifies one or more saved queries to return. Wildcards supported. 
+        /// When omitted, returns all saved queries in the given scope of the given team project.
+        /// </summary>
+        [Parameter(Position = 0)]
+        [ValidateNotNull()]
+        [SupportsWildcards()]
+        [Alias("Path")]
+        public object Query { get; set; } = "**";
+
+        /// <inheritdoc/>
+        protected override string ItemType => "Query";
+    }
+
+    /// <summary>
+    /// Gets the definition of one or more work item saved queries.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "TfsWorkItemQueryFolder")]
+    [OutputType(typeof(QueryHierarchyItem))]
+    public class GetWorkItemQueryFolder : GetWorkItemQueryItemBase
+    {
+        /// <summary>
+        /// Specifies one or more saved queries to return. Wildcards supported. 
+        /// When omitted, returns all saved queries in the given scope of the given team project.
+        /// </summary>
+        /// <value></value>
+        [Parameter(Position = 0)]
+        [ValidateNotNull()]
+        [SupportsWildcards()]
+        [Alias("Path")]
+        public object Folder { get; set; } = "**";
+
+        /// <inheritdoc/>
+        protected override string ItemType => "Folder";
+    }
+
+    /// <summary>
+    /// Base implementation for Get-WorkItemQuery and Get-WorkItemQueryFolder
+    /// </summary>
+    public abstract class GetWorkItemQueryItemBase : GetCmdletBase<QueryHierarchyItem>
+    {
+        /// <summary>
+        /// Indicates the type of item (query or folder)
+        /// </summary>
+        [Parameter()]
+        protected abstract string ItemType { get; }
 
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the scope of the returned item. Personal refers to the 
+        /// "My Queries" folder", whereas Shared refers to the "Shared Queries" 
+        /// folder. When omitted defaults to "Both", effectively searching for items 
+        /// in both scopes.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
-        
-        //         [Parameter(Position=0)]
-        //         [ValidateNotNull()]
-        //         [SupportsWildcards()]
-        //         [Alias("Path")]
-        //         [Alias("Folder")]
-        //         [Alias("Query")]
-        //         public object Item { get; set; } = "*/**",
+        [Parameter()]
+        [ValidateSet("Personal", "Shared", "Both")]
+        public string Scope { get; set; } = "Both";
 
-        //         [Parameter()]
-        //         [ValidateSet("Personal", "Shared", "Both")]
-        //         public string Scope { get; set; } = "Both",
+        /// <summary>
+        /// Returns deleted items.
+        /// </summary>
+        /// <value></value>
+        [Parameter()]
+        public SwitchParameter Deleted { get; set; }
+    }
 
-        //         [Parameter()]
-        //         [ValidateSet("Folder", "Query", "Both")]
-        //         public string ItemType { get; set; }
+    [Exports(typeof(QueryHierarchyItem))]
+    internal class QueryHierarchyItemDataService : BaseDataService<QueryHierarchyItem>
+    {
+        protected override IEnumerable<QueryHierarchyItem> DoGetItems()
+        {
+            var item = GetParameter<object>("Query", GetParameter<object>("Folder"));
+            var itemType = GetParameter<string>("ItemType");
+            var scope = GetParameter<string>(nameof(GetWorkItemQuery.Scope));
 
-        //         [Parameter()]
-        //         public SwitchParameter IncludeDeleted { get; set; }
+            var (_, tp) = GetCollectionAndProject();
+            var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Project { get; set; }
+            while (true) switch (item)
+                {
+                    case string s:
+                        {
+                            var result = client.GetQueriesAsync(tp.Name, QueryExpand.All, 2)
+                                .GetResult("Error getting work item query items")
+                                .Where(q => scope.Equals("Both") || q.IsPublic == scope.Equals("Shared"))
+                                .ToList();
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+                            foreach (var q in result)
+                            {
+                                var path = NodeUtil.NormalizeNodePath(s, tp.Name, q.Name, includeScope: true, separator: '/');
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         if (Item is Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem) { this.Log("Input item is of type Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem; returning input item immediately, without further processing."; WriteObject(Item }); return;);
+                                foreach (var q1 in GetItemsRecursively(q, path, tp.Name, itemType.Equals("Query"), client))
+                                {
+                                    yield return q1;
+                                }
+                            }
+                            yield break;
 
-        //         if(! (PSBoundParameters.ContainsKey("ItemType"))){if (MyInvocation.InvocationName -like "*Folder"){ItemType = "Folder"}elseif (MyInvocation.InvocationName -like "*Query"){ItemType = "Query"}else{throw new Exception("Invalid or missing ItemType argument"}};PSBoundParameters["ItemType"] = ItemType)
+                        }
+                    default: throw new ArgumentException($"Invalid or non-exixtent query/folder '{item}'");
+                }
+        }
 
-        //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+        private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, WorkItemTrackingHttpClient client)
+        {
+            if(item.HasChildren?? false && (item.Children == null || item.Children.ToList().Count == 0))
+            {
+                this.Log($"Fetching child nodes for node '{item.Path}'");
 
-        //         var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+                item = client.GetQueryAsync(projectName, item.Path, QueryExpand.All, 2, false)
+                    .GetResult( $"Error retrieving folder from path '{item.Path}'");
+            }
 
-        //         task = client.GetQueriesAsync(tp.Name, "All", 2); result = task.Result; if(task.IsFaulted) { _throw new Exception( "Error fetching work item query items" task.Exception.InnerExceptions })
+            if(item.Children == null) yield break;
 
-        //         this.Log($"Getting {{ItemType}.ToLower(}) items matching "Item"");
+            foreach(var c in item.Children)
+            {
+                var isFolder = c.IsFolder?? false;
 
-        //         foreach(i in result)
-        //         {
-        //             _GetQueryItemRecursively -Pattern Item -Item i -ItemType ItemType -Scope Scope -IncludeDeleted IncludeDeleted.IsPresent -Project tp.Name -Client Client
-        //         }
-        //     }
-        // }
+                if((c.Path.IsLike(pattern) || c.Name.IsLike(pattern)) && (!isFolder == queriesOnly)) yield return c;
 
-        // Set-Alias -Name Get-TfsWorkItemQueryFolder -Value Get-TfsWorkItemQueryItem
-        // Set-Alias -Name Get-TfsWorkItemQuery -Value Get-TfsWorkItemQueryItem
+                if(!isFolder) continue;
 
-        // Function _GetQueryItemRecursively(Pattern, Item, ItemType, Scope, Project, Client, Depth = 2, IncludeDeleted)
-        // {
-        //     this.Log($"Found {{Item}.ItemType} "$(Item.Path)" (IsPublic=$(Item.IsPublic),HasChildren=$(Item.HasChildren))");
-
-        //     if(Item.HasChildren && (Item.Children.Count == 0))
-        //     {
-        //         this.Log($"Fetching child nodes for node "{{Item}.Path}"");
-
-        //         task = client.GetQueryAsync(Project, Item.Path, "All", Depth, IncludeDeleted); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error retrieving {StructureGroup} from path "{Item.RelativePath}"" task.Exception.InnerExceptions })
-
-        //         Item = result
-        //     }
-
-        //     if((ItemType != "Both") && (Item.ItemType != ItemType))
-        //     {
-        //         this.Log($"Skipping item. "{{Item}.Path}" is "$(Item.ItemType)" but item type being queried for is "ItemType".");
-        //     }
-        //     elseif ((Scope = = "Both") || `
-        //             ((Scope = = "Shared") && Item.IsPublic) || `
-        //             ((Scope = = "Personal") && (! Item.IsPublic)))
-        //     {
-        //         if(Item.Path -like Pattern)
-        //         {
-        //             this.Log($""{{Item}.Path}" matches pattern "Pattern". Returning node.");
-
-        //             Item | Add-Member -MemberType NoteProperty -Name Project -Value Project
-        //             Write-Output Item
-        //         }
-        //         else
-        //         {
-        //             this.Log($"Skipping item. "{{Item}.Path}" does not match pattern "Pattern".");
-        //         }
-        //     }
-        //     else
-        //     {
-        //         this.Log($"Skipping item. "{{Item}.Path}" does not match scope "Scope".");
-        //     }
-
-        //     foreach(c in Item.Children)
-        //     {
-        //         PSBoundParameters["Item"] = c
-        //         _GetQueryItemRecursively @PSBoundParameters
-        //     }
-        // }
+                foreach(var c1 in GetItemsRecursively(c, pattern, projectName, queriesOnly, client))
+                    yield return c1;
+            }
+       }
     }
 }
