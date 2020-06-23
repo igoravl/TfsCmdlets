@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     /// </summary>
     [Cmdlet(VerbsData.Export, "TfsWorkItemType")]
     [OutputType(typeof(XmlDocument))]
-    public class ExportWorkItemType : BaseCmdlet
+    public class ExportWorkItemType : CmdletBase
     {
 
         /// <summary>

@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.Shell
     /// Deactivates the Azure DevOps Shell
     /// </summary>
     [Cmdlet(VerbsCommon.Exit, "TfsShell")]
-    public class ExitShell : BaseCmdlet
+    public class ExitShell : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

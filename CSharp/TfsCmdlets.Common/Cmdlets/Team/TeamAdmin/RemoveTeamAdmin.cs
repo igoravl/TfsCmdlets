@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     [OutputType(typeof(TeamAdmins))]
-    public class RemoveTeamAdmin : BaseCmdlet
+    public class RemoveTeamAdmin : CmdletBase
     {
         /// <summary>
         /// Specifies the administrator to remove from the team.

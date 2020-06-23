@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsData.Export, "TfsGlobalList")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class ExportGlobalList : BaseCmdlet
+    public class ExportGlobalList : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the global list to be exported. Wildcards are supported. 

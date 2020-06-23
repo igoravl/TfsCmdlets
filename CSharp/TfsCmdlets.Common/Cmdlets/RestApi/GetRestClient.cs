@@ -21,7 +21,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsRestClient", DefaultParameterSetName = "Get by collection")]
     [OutputType(typeof(VssHttpClientBase))]
-    public class GetRestClient : BaseCmdlet
+    public class GetRestClient : CmdletBase
     {
         /// <summary>
         /// Specifies the full type name (optionally including its assembly name) of the HTTP Client 

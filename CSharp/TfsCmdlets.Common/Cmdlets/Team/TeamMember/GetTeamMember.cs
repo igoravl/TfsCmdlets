@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamMember")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    public class GetTeamMember : BaseCmdlet
+    public class GetTeamMember : CmdletBase
     {
         /// <summary>
         /// Specifies the team from which to get its members.

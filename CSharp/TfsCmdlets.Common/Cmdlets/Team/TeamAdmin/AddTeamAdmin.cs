@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsTeamAdmin", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(TeamAdmins))]
-    public class AddTeamAdmin : BaseCmdlet
+    public class AddTeamAdmin : CmdletBase
     {
         /// <summary>
         /// Specifies the administrator to add to the given team.

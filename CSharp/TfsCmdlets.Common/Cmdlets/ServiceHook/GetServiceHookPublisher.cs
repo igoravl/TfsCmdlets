@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
 {
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookPublisher")]
     [OutputType(typeof(Publisher))]
-    public class GetServiceHookPublisher : BaseCmdlet
+    public class GetServiceHookPublisher : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

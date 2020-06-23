@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// unless their -Server argument is provided or a new call to Connect-TfsConfigurationServer is made.
     /// </remarks>
     [Cmdlet(VerbsCommunications.Disconnect, "TfsConfigurationServer")]
-    public class DisconnectConfigurationServer : BaseCmdlet
+    public class DisconnectConfigurationServer : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

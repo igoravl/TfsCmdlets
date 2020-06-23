@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class SetGlobalList : BaseCmdlet
+    public class SetGlobalList : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the global list to be changed.

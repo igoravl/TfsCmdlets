@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// </summary>
     [Cmdlet("Get", "TfsCredential", DefaultParameterSetName = "Cached credentials")]
     [OutputType("Microsoft.VisualStudio.Services.Client.VssClientCredentials")]
-    public class GetCredential : BaseCmdlet
+    public class GetCredential : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIALS

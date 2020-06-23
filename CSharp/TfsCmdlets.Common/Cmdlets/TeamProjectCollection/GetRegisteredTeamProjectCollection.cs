@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsRegisteredTeamProjectCollection")]
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]
-    public class GetRegisteredTeamProjectCollection : BaseCmdlet
+    public class GetRegisteredTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

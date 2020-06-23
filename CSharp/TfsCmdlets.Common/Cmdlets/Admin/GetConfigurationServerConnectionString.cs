@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetConfigurationServerConnectionString : BaseCmdlet
+    public class GetConfigurationServerConnectionString : CmdletBase
     {
         /// <summary>
         /// Specifies the name of a Team Foundation Server application tier from which to 

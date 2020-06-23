@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTagDefinition))]
-    public class NewWorkItemTag : BaseCmdlet
+    public class NewWorkItemTag : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

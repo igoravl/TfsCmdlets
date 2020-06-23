@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServer", DefaultParameterSetName = "Get by server")]
     [DesktopOnly]
-    public partial class GetConfigurationServer : BaseCmdlet
+    public partial class GetConfigurationServer : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_SERVER

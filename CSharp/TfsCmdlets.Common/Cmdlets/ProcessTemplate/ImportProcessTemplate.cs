@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     /// </summary>
     [Cmdlet(VerbsData.Import, "TfsProcessTemplate", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [DesktopOnly]
-    public partial class ImportProcessTemplate : BaseCmdlet
+    public partial class ImportProcessTemplate : CmdletBase
     {
         /// <summary>
         /// Specifies the folder containing the process template to be imported. This folder must contain 

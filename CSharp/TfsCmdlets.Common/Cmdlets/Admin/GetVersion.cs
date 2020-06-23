@@ -20,7 +20,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
-    public class GetVersion : BaseCmdlet
+    public class GetVersion : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

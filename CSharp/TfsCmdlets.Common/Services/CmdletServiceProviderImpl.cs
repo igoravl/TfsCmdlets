@@ -11,15 +11,15 @@ namespace TfsCmdlets.Services
 {
     internal class CmdletServiceProviderImpl : ICmdletServiceProvider
     {
-        private readonly Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, object, IService>> _factories =
-            new Dictionary<Type, Func<ICmdletServiceProvider, BaseCmdlet, object, IService>>();
+        private readonly Dictionary<Type, Func<ICmdletServiceProvider, CmdletBase, object, IService>> _factories =
+            new Dictionary<Type, Func<ICmdletServiceProvider, CmdletBase, object, IService>>();
 
         internal CmdletServiceProviderImpl()
         {
             RegisterFactories();
         }
 
-        public T GetService<T>(BaseCmdlet BaseCmdlet, object parameters = null) where T : IService
+        public T GetService<T>(CmdletBase CmdletBase, object parameters = null) where T : IService
         {
             var serviceType = typeof(T);
 
@@ -28,10 +28,10 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            return (T)_factories[serviceType](this, BaseCmdlet, parameters);
+            return (T)_factories[serviceType](this, CmdletBase, parameters);
         }
 
-        public IDataService<TObj> GetDataService<TObj>(BaseCmdlet baseCmdlet, object overriddenParameters) where TObj : class
+        public IDataService<TObj> GetDataService<TObj>(CmdletBase CmdletBase, object overriddenParameters) where TObj : class
         {
             var serviceType = typeof(TObj);
 
@@ -40,11 +40,11 @@ namespace TfsCmdlets.Services
                 throw new ArgumentException($"Invalid service {serviceType.FullName}");
             }
 
-            var dataService = ((IDataService<TObj>)_factories[serviceType](this, baseCmdlet, overriddenParameters));
+            var dataService = ((IDataService<TObj>)_factories[serviceType](this, CmdletBase, overriddenParameters));
             return dataService;
         }
 
-        public Models.Connection GetServer(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public Models.Connection GetServer(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters)
             {
@@ -61,7 +61,7 @@ namespace TfsCmdlets.Services
             return srv;
         }
 
-        public Models.Connection GetCollection(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public Models.Connection GetCollection(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
             var pd = new ParameterDictionary(parameters)
             {
@@ -78,7 +78,7 @@ namespace TfsCmdlets.Services
             return tpc;
         }
 
-        public (Models.Connection, WebApiTeamProject) GetCollectionAndProject(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public (Models.Connection, WebApiTeamProject) GetCollectionAndProject(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
             var tpc = GetCollection(cmdlet, parameters);
 
@@ -97,7 +97,7 @@ namespace TfsCmdlets.Services
             return (tpc, tp);
         }
 
-        public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(BaseCmdlet cmdlet, ParameterDictionary parameters = null)
+        public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
             var parms = new ParameterDictionary(cmdlet, parameters);
 
@@ -138,7 +138,7 @@ namespace TfsCmdlets.Services
                     }
                     else
                     {
-                        _factories.Add(attr.Exports, delegate (ICmdletServiceProvider prv, BaseCmdlet ctx, object overriddenParameters)
+                        _factories.Add(attr.Exports, delegate (ICmdletServiceProvider prv, CmdletBase ctx, object overriddenParameters)
                         {
                             if (!(Activator.CreateInstance(type) is IService svc))
                                 throw new Exception($"Error instantiating {type.FullName}");

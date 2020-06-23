@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [DesktopOnly]
-    public partial class StartIdentitySync : BaseCmdlet
+    public partial class StartIdentitySync : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_SERVER

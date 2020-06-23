@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Models.Connection))]
-    public class NewTeamProjectCollection : BaseCmdlet
+    public class NewTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

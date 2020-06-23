@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItemType")]
     //[OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType))]
-    public class GetWorkItemType : BaseCmdlet
+    public class GetWorkItemType : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

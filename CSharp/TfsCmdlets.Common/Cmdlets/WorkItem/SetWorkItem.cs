@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsWorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    public class SetWorkItem : BaseCmdlet
+    public class SetWorkItem : CmdletBase
     {
         /// <summary>
         /// Specifies a work item. Valid values are the work item ID or an instance of

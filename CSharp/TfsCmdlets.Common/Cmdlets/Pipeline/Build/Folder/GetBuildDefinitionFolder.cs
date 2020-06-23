@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsBuildDefinitionFolder")]
     [OutputType(typeof(WebApiFolder))]
-    public class GetBuildDefinitionFolder: BaseCmdlet
+    public class GetBuildDefinitionFolder: CmdletBase
     {
         /// <summary>
         /// Specifies the folder path. Wildcards are supported. 

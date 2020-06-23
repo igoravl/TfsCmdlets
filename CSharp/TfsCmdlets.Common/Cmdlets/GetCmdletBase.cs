@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets
     /// <summary>
     /// Abstract class from which and TfsCmdlets cmdlets derive
     /// </summary>
-    public abstract class GetCmdletBase<T> : BaseCmdlet
+    public abstract class GetCmdletBase<T> : CmdletBase
         where T : class
     {
         /// <summary>

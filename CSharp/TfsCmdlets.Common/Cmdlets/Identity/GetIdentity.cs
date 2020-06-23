@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Identity
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
     [OutputType(typeof(WebApiIdentity))]
-    public partial class GetIdentity : BaseCmdlet
+    public partial class GetIdentity : CmdletBase
     {
         /// <summary>
         /// Specifies the user or group to be retrieved. Supported values are: 

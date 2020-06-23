@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     [Cmdlet(VerbsData.Dismount, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     [OutputType(typeof(string))]
 	[DesktopOnly]
-    public partial class DismountTeamProjectCollection : BaseCmdlet
+    public partial class DismountTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Specifies the collection to detach.

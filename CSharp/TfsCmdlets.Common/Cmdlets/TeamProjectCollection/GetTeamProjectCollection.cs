@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProjectCollection", DefaultParameterSetName = "Get by collection")]
     [OutputType(typeof(VssConnection))]
-    public class GetTeamProjectCollection : BaseCmdlet
+    public class GetTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// </remarks>
     [Cmdlet(VerbsCommon.Copy, "TfsWorkItem")]
     [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    public class CopyWorkItem : BaseCmdlet
+    public class CopyWorkItem : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_WORKITEM

@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </notes>
     [Cmdlet(VerbsData.Import, "TfsGlobalList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [DesktopOnly]
-    public class ImportGlobalList : BaseCmdlet
+    public class ImportGlobalList : CmdletBase
     {
         /// <summary>
         /// XML document object containing one or more global list definitions.

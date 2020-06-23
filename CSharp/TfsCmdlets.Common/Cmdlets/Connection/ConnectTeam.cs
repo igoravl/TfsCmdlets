@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeam", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(WebApiTeam))]
-    public class ConnectTeam : BaseCmdlet
+    public class ConnectTeam : CmdletBase
     {
         /// <summary>
         ///   Specifies the name of the Team, its ID (a GUID), or a 

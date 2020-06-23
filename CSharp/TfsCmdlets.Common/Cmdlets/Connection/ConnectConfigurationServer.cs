@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Connection
 
     [Cmdlet(VerbsCommunications.Connect, "TfsConfigurationServer", DefaultParameterSetName="Prompt for credential")]
     [DesktopOnly]
-    public partial class ConnectConfigurationServer: BaseCmdlet
+    public partial class ConnectConfigurationServer: CmdletBase
     {
         /// <summary>
         ///   Specifies either a URL/name of the Team Foundation Server to connect to, or a previously 

@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItemLink")]
     // [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.Client.Link))]
-    public class GetWorkItemLink: BaseCmdlet
+    public class GetWorkItemLink: CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

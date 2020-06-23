@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class RemoveGlobalList : BaseCmdlet
+    public class RemoveGlobalList : CmdletBase
     {
         /// <summary>
         /// Specifies the name of global list to be deleted. Wildcards are supported.

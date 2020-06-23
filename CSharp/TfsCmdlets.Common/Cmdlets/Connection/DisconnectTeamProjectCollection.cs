@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// Connect-TfsTeam is made.
     /// </remarks>
     [Cmdlet(VerbsCommunications.Disconnect, "TfsTeamProjectCollection")]
-    public class DisconnectTeamProjectCollection : BaseCmdlet
+    public class DisconnectTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

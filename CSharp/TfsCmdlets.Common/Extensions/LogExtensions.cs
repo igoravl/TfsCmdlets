@@ -10,7 +10,7 @@ namespace TfsCmdlets.Extensions
 {
     internal static class LogExtensions
     {
-        // internal static void Log(this BaseCmdlet cmdlet, string message, string commandName = null, bool force = false)
+        // internal static void Log(this CmdletBase cmdlet, string message, string commandName = null, bool force = false)
         // {
         //     if (!IsVerbose(cmdlet, force)) return;
 
@@ -22,7 +22,7 @@ namespace TfsCmdlets.Extensions
         //     cmdlet.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
         // }
 
-        // internal static void LogParameters(this BaseCmdlet cmdlet)
+        // internal static void LogParameters(this CmdletBase cmdlet)
         // {
         //     if (!IsVerbose(cmdlet)) return;
 
@@ -41,7 +41,7 @@ namespace TfsCmdlets.Extensions
         //                 );
         // }
 
-        //private static string GetLogSiteName(BaseCmdlet cmdlet)
+        //private static string GetLogSiteName(CmdletBase cmdlet)
         //{
             //var cs = new Stack();
             //var callStack = cmdlet.InvokeCommand.InvokeScript("Get-PSCallStack").Select(o => o.BaseObject as CallStackFrame).Skip(1);
@@ -80,7 +80,7 @@ namespace TfsCmdlets.Extensions
         //    return !string.IsNullOrEmpty(commandInfo.Name) ? commandInfo.Name : frame.FunctionName;
         //}
 
-        private static bool IsVerbose(BaseCmdlet cmdlet, bool force = false)
+        private static bool IsVerbose(CmdletBase cmdlet, bool force = false)
         {
             if (force) return true;
 

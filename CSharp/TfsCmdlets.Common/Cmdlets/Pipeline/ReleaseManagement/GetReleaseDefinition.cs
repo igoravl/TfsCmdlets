@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsReleaseDefinition")]
     [OutputType(typeof(ReleaseDefinition))]
-    public class GetReleaseDefinition : BaseCmdlet
+    public class GetReleaseDefinition : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

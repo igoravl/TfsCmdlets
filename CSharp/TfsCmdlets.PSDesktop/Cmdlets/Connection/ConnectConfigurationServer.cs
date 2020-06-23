@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     ///  Connects to a configuration server.
     /// </summary>
     [OutputType(typeof(TfsConfigurationServer))]
-    partial class ConnectConfigurationServer: BaseCmdlet
+    partial class ConnectConfigurationServer: CmdletBase
     {
         partial void DoProcessRecord()
         {

@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(GitRepository))]
-    public class RenameGitRepository : BaseCmdlet
+    public class RenameGitRepository : CmdletBase
     {
         /// <summary>
         /// Specifies the repository to be renamed. Value can be the name or ID of a Git repository, 

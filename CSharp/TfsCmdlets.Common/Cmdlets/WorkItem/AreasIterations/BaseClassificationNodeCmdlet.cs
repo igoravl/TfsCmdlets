@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for all area/iteration cmdlets
     /// </summary>
-    public abstract class BaseClassificationNodeCmdlet : BaseCmdlet
+    public abstract class BaseClassificationNodeCmdlet : CmdletBase
     {
         protected private abstract TreeStructureGroup StructureGroup { get; }
     }

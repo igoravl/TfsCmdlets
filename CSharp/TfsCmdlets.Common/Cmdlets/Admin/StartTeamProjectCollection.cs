@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Starts an offline team project collection and make it online.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    public class StartTeamProjectCollection : BaseCmdlet
+    public class StartTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

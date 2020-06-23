@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// Undeletes one or more team projects. 
     /// </summary>
     [Cmdlet(VerbsCommon.Undo, "TfsTeamProjectRemoval", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    public class UndoTeamProjectRemoval : BaseCmdlet
+    public class UndoTeamProjectRemoval : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the Team Project to undelete.

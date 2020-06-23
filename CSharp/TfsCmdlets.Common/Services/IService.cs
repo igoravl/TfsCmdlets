@@ -6,7 +6,7 @@ namespace TfsCmdlets.Services
     {
         ICmdletServiceProvider Provider { get; set; }
 
-        BaseCmdlet Cmdlet { get; set; }
+        CmdletBase Cmdlet { get; set; }
 
         ParameterDictionary Parameters { get; set; }
     }

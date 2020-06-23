@@ -37,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
     ///   <para>Calls an API in a TFS instance, parsing the example provided by the docs.microsoft.com web site.</para>
     /// </example>
     [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi")]
-    public class InvokeRestApi : BaseCmdlet
+    public class InvokeRestApi : CmdletBase
     {
         /// <summary>
         /// Specifies the path of the REST API to call. Tipically it is the portion of the URL after 

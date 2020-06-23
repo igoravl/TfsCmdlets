@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     /// </example>
     [Cmdlet(VerbsData.Export, "TfsProcessTemplate")]
     [DesktopOnly]
-    public partial class ExportProcessTemplate : BaseCmdlet
+    public partial class ExportProcessTemplate : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the process template(s) to be exported. Wildcards are supported. 

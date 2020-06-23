@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsWorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    public class NewWorkItem : BaseCmdlet
+    public class NewWorkItem : CmdletBase
     {
         /// <summary>
         /// Specifies the type of the work item.

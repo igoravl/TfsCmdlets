@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     /// Deletes one or more work item tags.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveWorkItemTag : BaseCmdlet
+    public class RemoveWorkItemTag : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

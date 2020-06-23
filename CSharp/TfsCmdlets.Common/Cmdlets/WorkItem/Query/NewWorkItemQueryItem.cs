@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsWorkItemQueryItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(QueryHierarchyItem))]
-    public class NewWorkItemQueryItem : BaseCmdlet
+    public class NewWorkItemQueryItem : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

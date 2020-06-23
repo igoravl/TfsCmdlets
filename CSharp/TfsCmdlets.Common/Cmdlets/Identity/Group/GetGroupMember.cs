@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGroupMember")]
     [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    public class GetGroupMember : BaseCmdlet
+    public class GetGroupMember : CmdletBase
     {
         /// <summary>
         /// Specifies the group fom which to get its members.

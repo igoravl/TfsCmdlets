@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     /// Adds a link between two work items.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsWorkItemLink")]
-    public class AddWorkItemLink : BaseCmdlet
+    public class AddWorkItemLink : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

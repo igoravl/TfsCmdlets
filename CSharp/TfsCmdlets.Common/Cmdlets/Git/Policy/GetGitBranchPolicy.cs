@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
-    public class GetGitBranchPolicy : BaseCmdlet
+    public class GetGitBranchPolicy : CmdletBase
     {
         /// <summary>
         /// Specifies the policy type of the branch policy to return. Wildcards are supported. 

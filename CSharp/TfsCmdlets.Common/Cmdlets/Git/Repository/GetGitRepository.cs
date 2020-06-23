@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitRepository")]
     [OutputType(typeof(GitRepository))]
-    public class GetGitRepository : BaseCmdlet
+    public class GetGitRepository : CmdletBase
     {
         /// <summary>
         /// Specifies the name or ID of a Git repository. Wildcards are supported. 

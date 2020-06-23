@@ -14,7 +14,7 @@ namespace TfsCmdlets.Services
     {
         public ICmdletServiceProvider Provider { get; set; }
 
-        public BaseCmdlet Cmdlet { get; set; }
+        public CmdletBase Cmdlet { get; set; }
 
         public ParameterDictionary Parameters { get; set; }
 

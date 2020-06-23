@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets
     /// <summary>
     /// Abstract class from which and TfsCmdlets cmdlets derive
     /// </summary>
-    public abstract class BaseCmdlet : PSCmdlet
+    public abstract class CmdletBase : PSCmdlet
     {
         /// <summary>
         /// The service provider injected in this cmdlet instance

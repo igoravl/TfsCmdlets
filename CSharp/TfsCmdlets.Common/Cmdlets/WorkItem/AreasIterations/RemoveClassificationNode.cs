@@ -51,7 +51,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for Remove-Area and Remove-Iteration
     /// </summary>
-    public abstract class RemoveClassificationNode : BaseCmdlet
+    public abstract class RemoveClassificationNode : CmdletBase
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration).

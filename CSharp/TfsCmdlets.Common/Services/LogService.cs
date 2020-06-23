@@ -16,9 +16,9 @@ namespace TfsCmdlets.Services
 
     internal class LoggerImpl : ILogger
     {
-        private BaseCmdlet Cmdlet { get; set; }
+        private CmdletBase Cmdlet { get; set; }
         
-        internal LoggerImpl(BaseCmdlet cmdlet)
+        internal LoggerImpl(CmdletBase cmdlet)
         {
             Cmdlet = cmdlet;
         }

@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Git.Repository
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsGitRepository", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
-    public class NewGitRepository : BaseCmdlet
+    public class NewGitRepository : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the new repository

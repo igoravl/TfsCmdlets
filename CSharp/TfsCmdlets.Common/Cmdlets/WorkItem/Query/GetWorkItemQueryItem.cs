@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItemQueryItem")]
     [OutputType(typeof(QueryHierarchyItem))]
-    public class GetWorkItemQueryItem : BaseCmdlet
+    public class GetWorkItemQueryItem : CmdletBase
     {
 
         /// <summary>

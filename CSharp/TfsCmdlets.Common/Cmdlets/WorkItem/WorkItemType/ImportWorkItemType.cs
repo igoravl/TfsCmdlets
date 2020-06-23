@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     /// Imports a work item type definition into a team project.
     /// </summary>
     [Cmdlet(VerbsData.Import, "TfsWorkItemType", ConfirmImpact = ConfirmImpact.Medium)]
-    public class ImportWorkItemType : BaseCmdlet
+    public class ImportWorkItemType : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

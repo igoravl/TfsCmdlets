@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for Get-Area and Get-Iteration
     /// </summary>
-    public abstract class GetClassificationNode : BaseCmdlet
+    public abstract class GetClassificationNode : CmdletBase
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)

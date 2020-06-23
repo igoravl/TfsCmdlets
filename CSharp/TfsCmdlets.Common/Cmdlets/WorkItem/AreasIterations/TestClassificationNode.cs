@@ -43,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for Test-Area and Test-Iteration
     /// </summary>
-    public abstract class TestClassificationNode : BaseCmdlet
+    public abstract class TestClassificationNode : CmdletBase
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)

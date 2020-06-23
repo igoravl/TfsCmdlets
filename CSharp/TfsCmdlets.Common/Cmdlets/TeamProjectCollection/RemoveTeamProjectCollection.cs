@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Deletes a team project collection.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveTeamProjectCollection : BaseCmdlet
+    public class RemoveTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

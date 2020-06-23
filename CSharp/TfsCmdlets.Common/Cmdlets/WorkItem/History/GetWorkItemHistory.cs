@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItemHistory")]
     [OutputType(typeof(PSCustomObject))]
-    public class GetWorkItemHistory : BaseCmdlet
+    public class GetWorkItemHistory : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

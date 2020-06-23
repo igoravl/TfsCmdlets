@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     [Cmdlet(VerbsCommon.Get, "TfsInstallationPath", DefaultParameterSetName = "Use computer name")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetInstallationPath : BaseCmdlet
+    public class GetInstallationPath : CmdletBase
     {
         /// <summary>
         /// The machine name of the server where the TFS component is installed. 

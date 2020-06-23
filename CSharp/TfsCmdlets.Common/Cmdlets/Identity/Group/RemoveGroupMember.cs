@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// Removes a member from an Azure DevOps group.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
-    public class RemoveGroupMember : BaseCmdlet
+    public class RemoveGroupMember : CmdletBase
     {
         /// <summary>
         /// Specifies the member (user or group) to remove from the given group.

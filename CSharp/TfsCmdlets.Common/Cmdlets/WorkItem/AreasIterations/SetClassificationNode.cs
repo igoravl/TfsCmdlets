@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     [Cmdlet(VerbsCommon.Set, "TfsClassificationNode", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
-    public class SetClassificationNode : BaseCmdlet
+    public class SetClassificationNode : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

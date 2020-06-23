@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 	/// </example>
     [Cmdlet(VerbsCommon.Copy, "TfsTestPlan")]
     [OutputType(typeof(TestPlan))]
-    public class CopyTestPlan : BaseCmdlet
+    public class CopyTestPlan : CmdletBase
     {
         [Parameter(ValueFromPipeline = true)]
         [Alias("id")]

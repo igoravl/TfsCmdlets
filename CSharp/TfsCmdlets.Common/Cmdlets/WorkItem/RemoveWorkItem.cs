@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// Deletes a work item from a team project collection.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsWorkItem", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveWorkItem : BaseCmdlet
+    public class RemoveWorkItem : CmdletBase
     {
         /// <summary>
         /// Specifies a work item. Valid values are the work item ID or an instance of

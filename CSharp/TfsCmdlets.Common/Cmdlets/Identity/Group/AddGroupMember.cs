@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// Adds group members to an Azure DevOps group.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "TfsGroupMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    public class AddGroupMember : BaseCmdlet
+    public class AddGroupMember : CmdletBase
     {
         /// <summary>
         /// Specifies the member (user or group) to add to the given group.

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
     /// Queues a XAML Build.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "TfsXamlBuild", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    public class StartXamlBuild : BaseCmdlet
+    public class StartXamlBuild : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

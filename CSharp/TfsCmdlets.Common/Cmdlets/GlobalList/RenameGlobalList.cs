@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class RenameGlobalList : BaseCmdlet
+    public class RenameGlobalList : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the global lsit to be renamed.

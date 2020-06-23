@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
-    public class GetTeam : BaseCmdlet
+    public class GetTeam : CmdletBase
     {
         /// <summary>
         /// Specifies the team to return. Accepted values are its name, its ID, or a

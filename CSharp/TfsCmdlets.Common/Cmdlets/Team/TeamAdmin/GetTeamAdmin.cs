@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// </summary>    
     [Cmdlet(VerbsCommon.Get, "TfsTeamAdmin")]
     [OutputType(typeof(WebApiIdentity))]
-    public class GetTeamAdmin : BaseCmdlet
+    public class GetTeamAdmin : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_TEAM

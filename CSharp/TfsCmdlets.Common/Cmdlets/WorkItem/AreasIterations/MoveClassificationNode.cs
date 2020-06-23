@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Base implementation for Move-Area and Move-Iteration
     /// </summary>
-    public abstract class MoveClassificationNode : BaseCmdlet
+    public abstract class MoveClassificationNode : CmdletBase
     {
         /// <summary>
         /// Specifies the name and/or path of the node (area or iteration)

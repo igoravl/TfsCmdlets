@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(PSCustomObject))]
     [DesktopOnly]
-    public class NewGlobalList : BaseCmdlet
+    public class NewGlobalList : CmdletBase
     {
         /// <summary>
         /// Specifies the name of the new global list.

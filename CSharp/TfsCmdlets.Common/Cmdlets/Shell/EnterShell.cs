@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Shell
     /// Activates the Azure DevOps Shell
     /// </summary>
     [Cmdlet(VerbsCommon.Enter, "TfsShell")]
-    public class EnterShell : BaseCmdlet
+    public class EnterShell : CmdletBase
     {
         /// <summary>
         /// Specifies the shell window title. If omitted, defaults to "Azure DevOps Shell".

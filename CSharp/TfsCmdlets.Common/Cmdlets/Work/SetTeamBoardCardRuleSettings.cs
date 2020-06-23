@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.Work
 {
     [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(BoardCardRuleSettings))]
-    public class SetTeamBoardCardRuleSetting : BaseCmdlet
+    public class SetTeamBoardCardRuleSetting : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     [Cmdlet(VerbsCommon.Get, "TfsRegisteredConfigurationServer")]
     [OutputType("Microsoft.TeamFoundation.Client.RegisteredConfigurationServer")]
     [DesktopOnly]
-    public partial class GetRegisteredConfigurationServer : BaseCmdlet
+    public partial class GetRegisteredConfigurationServer : CmdletBase
     {
         /// <summary>
         /// Specifies the name of a registered server. Wildcards are supported. 

@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// Removes a member from a team.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
-    public class RemoveTeamMember : BaseCmdlet
+    public class RemoveTeamMember : CmdletBase
     {
         /// <summary>
         /// Specifies the member (user or group) to remove from the given team.

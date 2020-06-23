@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
 {
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookNotificationHistory")]
     [OutputType(typeof(Notification))]
-    public class GetServiceHookNotificationHistory : BaseCmdlet
+    public class GetServiceHookNotificationHistory : CmdletBase
     {
         /// <summary>
         /// Performs execution of the command

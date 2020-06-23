@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// </remarks>
     [Cmdlet(VerbsCommon.New, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiFolder))]
-    public class NewBuildDefinitionFolder : BaseCmdlet
+    public class NewBuildDefinitionFolder : CmdletBase
     {
         /// <summary>
         /// Specifies the path of the new pipeline/build folder, including its name, 

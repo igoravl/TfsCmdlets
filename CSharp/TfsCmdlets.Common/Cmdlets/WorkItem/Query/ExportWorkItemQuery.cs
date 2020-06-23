@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
     [Cmdlet(VerbsData.Export, "TfsWorkItemQuery", DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(XmlDocument))]
-    public class ExportWorkItemQuery : BaseCmdlet
+    public class ExportWorkItemQuery : CmdletBase
     {
 
         /// <summary>
