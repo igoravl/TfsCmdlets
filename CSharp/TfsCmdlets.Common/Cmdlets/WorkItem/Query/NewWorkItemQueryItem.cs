@@ -68,7 +68,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         //             IsFolder = (ItemType = = "Folder")
         //         }
 
-        //         this.Log($"New-TfsWorkItemQuery: Creating query "{queryName}" in folder "queryPath"");
+        //         this.Log($"New-TfsWorkItemQuery: Creating query '{queryName}' in folder "queryPath"");
 
         //         task = client.CreateQueryAsync(newItem, tp.Name, Item); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error creating new {ItemType}" task.Exception.InnerExceptions })
 

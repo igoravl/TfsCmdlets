@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
         //         var client = GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2>();
 
-        //         task = client.GetReleaseDefinitionsAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error getting release definition "{Definition}"" task.Exception.InnerExceptions })
+        //         task = client.GetReleaseDefinitionsAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error getting release definition '{Definition}'" task.Exception.InnerExceptions })
 
         //         WriteObject(result | Where-Object Name -Like Definition); return;
         //     }

@@ -47,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         //             }
         //             else
         //             {
-        //                 throw new Exception($"Invalid work item ""{WorkItem}"". Supply either a WorkItem object or one or more integer ID numbers")
+        //                 throw new Exception($"Invalid work item "'{WorkItem}'". Supply either a WorkItem object or one or more integer ID numbers")
         //             }
 
         //             if (ShouldProcess($"{{wi}.WorkItemType} id ("$(wi.Title)")", "Remove work item"))

@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.Work
         //             boards = @(Board)
         //         }
 
-        //         t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team "{Team}"."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
+        //         t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team '{Team}'."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
         //         var client = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
 
         //         foreach(boardName in boards)
@@ -87,7 +87,7 @@ namespace TfsCmdlets.Cmdlets.Work
 
         //             ctx = new Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext(tp.Name, t.Name)
 
-        //             task = client.GetBoardCardRuleSettingsAsync(ctx,boardName); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving card rule settings for board "{Board}"" task.Exception.InnerExceptions })
+        //             task = client.GetBoardCardRuleSettingsAsync(ctx,boardName); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving card rule settings for board '{Board}'" task.Exception.InnerExceptions })
 
         //             Write-Output result `
         //                 | Add-Member -Name "Team" -MemberType NoteProperty -Value t.Name -PassThru `

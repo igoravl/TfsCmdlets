@@ -138,7 +138,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
     //         if (! b)
     //         {
-    //             throw new Exception($"Invalid or non-existent board "{Board}" in team "Team"")
+    //             throw new Exception($"Invalid or non-existent board '{Board}' in team "Team"")
     //         }
 
     //         processMessages = @()
@@ -158,7 +158,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //                 Value = Column
     //             }
 
-    //             processMessages += $"Board Column="{Column}""
+    //             processMessages += $"Board Column='{Column}'"
     //         }
 
     //         if (Lane)
@@ -169,7 +169,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //                 Value = Lane
     //             }
 
-    //             processMessages += $"Board Lane="{Lane}""
+    //             processMessages += $"Board Lane='{Lane}'"
     //         }
 
     //         if (ColumnStage)
@@ -180,7 +180,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //                 Value = (ColumnStage = = "Done") 
     //             }
 
-    //             processMessages += $"Board Stage (Doing/Done)="{ColumnStage}""
+    //             processMessages += $"Board Stage (Doing/Done)='{ColumnStage}'"
     //         }
 
     //         if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
