@@ -231,7 +231,7 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// Gets the current directory in PowerShell
         /// </summary>
-        protected virtual string ResolvePath(string basePath, string path)
+        protected virtual string ResolvePath(string basePath, string path = null)
         {
             var relativePath = Path.Combine(basePath, path);
 
