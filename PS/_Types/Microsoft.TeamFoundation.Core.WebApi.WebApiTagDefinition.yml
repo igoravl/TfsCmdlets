@@ -1,0 +1,7 @@
+- ScriptProperty:
+    Name: Project
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Project', {
+            $tp = Get-TfsTeamProject ([uri]$_.Url).Segments[-3].TrimEnd("/")
+            return $tp.Name
+        })

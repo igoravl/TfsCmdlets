@@ -1,58 +1,51 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
     /// <summary>
     /// Deletes one or more work item tags.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveWorkItemTag : CmdletBase
+    [Cmdlet(VerbsCommon.Remove, "TfsWorkItemTag", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    public class RemoveWorkItemTag : RemoveCmdletBase<WebApiTagDefinition>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies one or more tags to delete. Wildcards are supported.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory=true)]
+        [SupportsWildcards()]
+        [Alias("Name")]
+        public object Tag { get; set; }
 
-        //         [Parameter(Position=0,ValueFromPipeline=true)]
-        //         [SupportsWildcards()]
-        //         [Alias("Name")]
-        // public object Tag = "*";
+        /// <summary>
+        /// Allows the cmdlet to delete active tags (currently associated with work items).
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force {get;set;}
+    }
 
-        //         [Parameter()]
-        //         public SwitchParameter IncludeInactive { get; set; }
+    partial class WorkItemTagDataService
+    {
+        protected override void DoRemoveItem()
+        {
+            var tags = GetItems<WebApiTagDefinition>(new{IncludeInactive=true});
+            var force = GetParameter<bool>(nameof(RemoveWorkItemTag.Force));
 
-        //         [Parameter()]
-        //         public object Project { get; set; }
+            var (_, tp) = GetCollectionAndProject();
+            var client = GetClient<TaggingHttpClient>();
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+            foreach(var t in tags)
+            {
+                if(!ShouldProcess(tp, $"Delete {((bool)t.Active? "active": "inactive")} work item tag '{t.Name}'")) continue;
 
-        //     protected override void BeginProcessing()
-        //     {
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
-        //     }
+                if(((bool)t.Active) && !force && !ShouldContinue($"The tag '{t.Name}' is currently in use. "  +
+                    "Are you sure you want to remove this tag?"))
+                {
+                    continue;
+                }
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void DoProcessRecord()
-        //     {
-        //         tags = Get-TfsWorkItemTag -Tag Tag -Project Project -Collection Collection
-
-        //         foreach(t in tags)
-        //         {
-        //             if(t.TeamProject) {Project = t.TeamProject}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        //             if(! ShouldProcess(tp.Name, $"Delete work item tag [{{t}.Name}]"))
-        //             {
-        //                 continue
-        //             }
-
-        //             var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
-
-        //             task = client.DeleteTagAsync(tp.Guid, t.Id); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error deleting work item tag [{{t}.Name}]"" task.Exception.InnerExceptions })
-        //         }
-        //     }
-        // }
+                client.DeleteTagAsync(tp.Id, t.Id);
+            }
+        }
     }
 }

@@ -1,5 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
@@ -8,48 +12,74 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsWorkItemTag")]
     [OutputType(typeof(WebApiTagDefinition))]
-    public class GetWorkItemTag : CmdletBase
+    public class GetWorkItemTag : GetCmdletBase<WebApiTagDefinition>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies one or more tags to returns. Wildcards are supported. 
+        /// When omitted, returns all existing tags in the given project.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0)]
+        [SupportsWildcards()]
+        [Alias("Name")]
+        public object Tag { get; set; } = "*";
 
+        /// <summary>
+        /// Includes tags not associated to any work items.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter IncludeInactive { get; set; }
 
-        //         [Parameter(Position=0)]
-        //         [SupportsWildcards()]
-        //         [Alias("Name")]
-        //         public object Tag = "*";
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        /// <value></value>
+        [Parameter(ValueFromPipeline = true)]
+        public object Project { get; set; }
+    }
 
-        //         [Parameter()]
-        //         public SwitchParameter IncludeInactive { get; set; }
+    [Exports(typeof(WebApiTagDefinition))]
+    internal partial class WorkItemTagDataService : BaseDataService<WebApiTagDefinition>
+    {
+        protected override IEnumerable<WebApiTagDefinition> DoGetItems()
+        {
+            var tag = GetParameter<object>(nameof(GetWorkItemTag.Tag));
+            var includeInactive = GetParameter<bool>(nameof(GetWorkItemTag.IncludeInactive));
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Project { get; set; }
+            while (true) switch (tag)
+                {
+                    case WebApiTagDefinition t:
+                        {
+                            yield return t;
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            tag = new[] { s };
+                            continue;
+                        }
+                    case IEnumerable<string> tags:
+                        {
+                            var (_, tp) = GetCollectionAndProject();
+                            var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+                            var result = client.GetTagsAsync(tp.Id, includeInactive)
+                                .GetResult($"Error getting work item tag(s) '{string.Join(", ", tags)}'");
 
-        //     protected override void BeginProcessing()
-        //     {
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.Core.WebApi"
-        //     }
+                            foreach (var r in result)
+                            {
+                                foreach (var t in tags)
+                                {
+                                    if (r.Name.IsLike(t)) yield return r;
+                                }
+                            }
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         if (Tag is Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition) { this.Log("Input item is of type Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition; returning input item immediately, without further processing."; WriteObject(Tag }); return;);
-
-        //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        //         var client = GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
-
-        //         task = client.GetTagsAsync(tp.Guid, IncludeInactive.IsPresent); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error retrieving work item tag "{Tag}"" task.Exception.InnerExceptions })
-
-        //         WriteObject(result | Where-Object Name -like Tag | Add-Member -Name TeamProject -MemberType NoteProperty -Value TP.Name -PassThru); return;
-        //     }
-        // }
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent tag '{tag}'");
+                        }
+                }
+        }
     }
 }

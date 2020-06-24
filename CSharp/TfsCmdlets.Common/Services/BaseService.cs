@@ -138,9 +138,16 @@ namespace TfsCmdlets.Services
             return Cmdlet.ShouldProcess($"Team '{target.Name}'", action);
         }
 
-        protected bool ShouldContinue(string query, string caption = "Confirm")
+        private bool yesToAll, noToAll;
+
+        protected bool ShouldContinue(string query, string caption = "Confirm", bool hasSecurityImpact = false)
         {
-            return Cmdlet.ShouldContinue(query, caption);
+            return Cmdlet.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
+        }
+
+        protected bool ShouldContinue(string query, ref bool yesToAll, ref bool noToAll, string caption = "Confirm", bool hasSecurityImpact = false)
+        {
+            return Cmdlet.ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
         }
 
         protected void Log(string message, string commandName = null, bool force = false)
