@@ -24,6 +24,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Alias("Path")]
         public string Query { get; set; }
 
+        /// <summary>
+        /// Specifies the query definition text in WIQL (Work Item Query Language).
+        /// </summary>
         [Parameter()]
         [Alias("Definition")]
         public string Wiql { get; set; }
@@ -52,6 +55,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         protected override string ItemType => "Folder";
     }
 
+    /// <summary>
+    /// Base implementation for New-WorkItemQuery and New-WorkItemQueryFolder
+    /// </summary>
     public abstract class NewWorkItemQueryItemCmdletBase : NewCmdletBase<QueryHierarchyItem>
     {
         /// <summary>
