@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// HELP_PARAM_NEWNAME
         /// </summary>
-        [Parameter(Position = 1, ValueFromPipelineByPropertyName = true)]
+        [Parameter(Position = 1, Mandatory=true)]
         public string NewName { get; set; }
 
         /// <summary>
