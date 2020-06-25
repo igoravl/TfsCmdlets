@@ -29,9 +29,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter()]
         public Hashtable Fields { get; set; }
 
-        [Parameter()]
-        public SwitchParameter SkipSave { get; set; }
-
         /// <summary>
         /// HELP_PARAM_PROJECT
         /// </summary>
