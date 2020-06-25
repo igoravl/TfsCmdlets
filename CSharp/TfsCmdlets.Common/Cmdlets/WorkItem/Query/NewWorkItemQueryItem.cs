@@ -1,85 +1,132 @@
+using System;
+using System.IO;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
     /// <summary>
     /// Create a new work items query in the given Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsWorkItemQueryItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.New, "TfsWorkItemQuery", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(QueryHierarchyItem))]
-    public class NewWorkItemQueryItem : CmdletBase
+    public class NewWorkItemQuery : NewWorkItemQueryItemCmdletBase
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies one or more saved queries to return. Wildcards supported. 
+        /// When omitted, returns all saved queries in the given scope of the given team project.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0)]
+        [ValidateNotNull()]
+        [Alias("Path")]
+        public string Query { get; set; }
 
-        //         [Parameter(Position=0)]
-        //         [ValidateNotNull()]
-        //         [Alias("Path")]
-        //         [Alias("Folder")]
-        //         [Alias("Query")]
-        //         public object Item { get; set; }
+        [Parameter()]
+        [Alias("Definition")]
+        public string Wiql { get; set; }
 
-        //         [Parameter()]
-        //         [ValidateSet("Personal", "Shared")]
-        //         public string Scope { get; set; } = "Personal",
+        /// <inheritdoc/>
+        protected override string ItemType => "Query";
+    }
 
-        //         [Parameter()]
-        //         [ValidateSet("Folder", "Query")]
-        //         public string ItemType { get; set; }
+    /// <summary>
+    /// Create a new work items query in the given Team Project.
+    /// </summary>
+    [Cmdlet(VerbsCommon.New, "TfsWorkItemQueryFolder", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [OutputType(typeof(QueryHierarchyItem))]
+    public class NewWorkItemQueryFolder : NewWorkItemQueryItemCmdletBase
+    {
+        /// <summary>
+        /// Specifies one or more saved queries to return. Wildcards supported. 
+        /// When omitted, returns all saved queries in the given scope of the given team project.
+        /// </summary>
+        [Parameter(Position = 0)]
+        [ValidateNotNull()]
+        [Alias("Path")]
+        public string Folder { get; set; }
 
-        //         [Parameter()]
-        //         [Alias("Definition")]
-        //         public string Wiql { get; set; }
+        /// <inheritdoc/>
+        protected override string ItemType => "Folder";
+    }
 
-        //         [Parameter(ValueFromPipeline=true)]
-        //         public object Project { get; set; }
+    public abstract class NewWorkItemQueryItemCmdletBase : NewCmdletBase<QueryHierarchyItem>
+    {
+        /// <summary>
+        /// Specifies the scope of the returned item. Personal refers to the 
+        /// "My Queries" folder", whereas Shared refers to the "Shared Queries" 
+        /// folder. When omitted defaults to "Both", effectively searching for items 
+        /// in both scopes.
+        /// </summary>
+        [Parameter()]
+        [ValidateSet("Personal", "Shared")]
+        public string Scope { get; set; } = "Personal";
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+        /// <summary>
+        /// Allow the cmdlet to overwrite an existing item.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
 
-        //         [Parameter()]
-        //         public SwitchParameter Force { get; set; }
+        /// <summary>
+        /// Indicates the type of item (query or folder)
+        /// </summary>
+        [Parameter()]
+        protected abstract string ItemType { get; }
+    }
 
-        //         [Parameter()]
-        //         public SwitchParameter Passthru { get; set; }
+    partial class WorkItemQueryDataService
+    {
+        protected override QueryHierarchyItem DoNewItem()
+        {
+            var itemType = GetParameter<string>("ItemType").ToLower();
+            var isFolder = itemType.Equals("folder");
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void DoProcessRecord()
-        //     {
-        //         if(! (PSBoundParameters.ContainsKey("ItemType"))){if (MyInvocation.InvocationName -like "*Folder"){ItemType = "Folder"}elseif (MyInvocation.InvocationName -like "*Query"){ItemType = "Query"}else{throw new Exception("Invalid or missing ItemType argument"}};PSBoundParameters["ItemType"] = ItemType)
+            var item = isFolder? GetParameter<string>("Folder"): GetParameter<string>("Query");
+            var wiql = GetParameter<string>("Wiql");
+            var scope = GetParameter<string>("Scope").Equals("Personal") ? "My Queries" : "Shared Queries";
+            var force = GetParameter<bool>("Force");
+            var (_, tp) = GetCollectionAndProject();
 
-        //         if (! ShouldProcess(queryName, $"Create work item {ItemType} "Item""))
-        //         {
-        //             return
-        //         }
+            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, scope, includeScope: true, separator: '/');
+            var queryName = Path.GetFileName(fullPath);
+            var parentPath = Path.GetDirectoryName(fullPath);
 
-        //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
+            var existingItem = GetItem<QueryHierarchyItem>();
 
-        //         var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+            if(existingItem != null && isFolder)
+            {
+                Log("Folder already exists.");
 
+                if(!force) throw new Exception($"A folder with the specified name '{fullPath}' already exists.");
 
-        //         newItem = new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem() -Property @{
-        //             Path = Item
-        //             IsFolder = (ItemType = = "Folder")
-        //         }
+                return existingItem;
+            }
 
-        //         this.Log($"New-TfsWorkItemQuery: Creating query '{queryName}' in folder "queryPath"");
+            if (!ShouldProcess(tp, $"{(existingItem == null ? "Create" : "Overwrite")} " +
+                $"work item {itemType} '{fullPath}'")) return null;
 
-        //         task = client.CreateQueryAsync(newItem, tp.Name, Item); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error creating new {ItemType}" task.Exception.InnerExceptions })
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
-        //         if (Passthru || SkipSave)
-        //         {
-        //             WriteObject(result); return;
-        //         }
-        //     }
-        // }
+            var newItem = new QueryHierarchyItem()
+            {
+                Name = queryName,
+                Path = parentPath,
+                IsFolder = isFolder,
+                Wiql = wiql
+            };
 
-        // Set-Alias -Name New-TfsWorkItemQueryFolder -Value New-TfsWorkItemQueryItem
-        // Set-Alias -Name New-TfsWorkItemQuery -Value New-TfsWorkItemQueryItem
+            var parentFolder = GetItem<QueryHierarchyItem>(new{Folder=parentPath, ItemType="Folder"})??
+                NewItem<QueryHierarchyItem>(new {Folder=parentPath, ItemType="Folder"});
+
+            this.Log($"Creating query '{queryName}' in folder '{parentPath}'");
+
+            var result = client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
+                .GetResult($"Error creating new work item {itemType} '{fullPath}'");
+
+            return result;
+        }
     }
 }

@@ -94,12 +94,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     }
 
     [Exports(typeof(QueryHierarchyItem))]
-    internal class QueryHierarchyItemDataService : BaseDataService<QueryHierarchyItem>
+    internal partial class WorkItemQueryDataService : BaseDataService<QueryHierarchyItem>
     {
         protected override IEnumerable<QueryHierarchyItem> DoGetItems()
         {
-            var item = GetParameter<object>("Query", GetParameter<object>("Folder"));
-            var itemType = GetParameter<string>("ItemType");
+            var itemType = GetParameter<string>("ItemType").ToLower();
+            var isFolder = itemType.Equals("folder");
+
+            var item = isFolder ? GetParameter<string>("Folder") : GetParameter<string>("Query");
             var scope = GetParameter<string>(nameof(GetWorkItemQuery.Scope));
 
             var (_, tp) = GetCollectionAndProject();
@@ -110,17 +112,23 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
                     case string s:
                         {
                             var result = client.GetQueriesAsync(tp.Name, QueryExpand.All, 2)
-                                .GetResult("Error getting work item query items")
+                                .GetResult("Error getting work item query root folders")
                                 .Where(q => scope.Equals("Both") || q.IsPublic == scope.Equals("Shared"))
                                 .ToList();
 
-                            foreach (var q in result)
+                            foreach (var rootFolder in result)
                             {
-                                var path = NodeUtil.NormalizeNodePath(s, tp.Name, q.Name, includeScope: true, separator: '/');
-
-                                foreach (var q1 in GetItemsRecursively(q, path, tp.Name, itemType.Equals("Query"), client))
+                                if (rootFolder.Name.Equals(s) && isFolder)
                                 {
-                                    yield return q1;
+                                    yield return rootFolder;
+                                    yield break;
+                                }
+
+                                var path = NodeUtil.NormalizeNodePath(s, tp.Name, rootFolder.Name, includeScope: true, separator: '/');
+
+                                foreach (var c in GetItemsRecursively(rootFolder, path, tp.Name, itemType.Equals("query"), client))
+                                {
+                                    yield return c;
                                 }
                             }
                             yield break;
@@ -132,7 +140,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 
         private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, WorkItemTrackingHttpClient client)
         {
-            if (item.HasChildren ?? false && (item.Children == null || item.Children.ToList().Count == 0))
+            if (!(item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0))
             {
                 this.Log($"Fetching child nodes for node '{item.Path}'");
 
@@ -147,11 +155,18 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
                 var isFolder = c.IsFolder ?? false;
 
                 if ((c.Path.IsLike(pattern) || c.Name.IsLike(pattern)) && (!isFolder == queriesOnly)) yield return c;
+            }
+
+            foreach (var c in item.Children)
+            {
+                var isFolder = c.IsFolder ?? false;
 
                 if (!isFolder) continue;
 
                 foreach (var c1 in GetItemsRecursively(c, pattern, projectName, queriesOnly, client))
+                {
                     yield return c1;
+                }
             }
         }
     }
