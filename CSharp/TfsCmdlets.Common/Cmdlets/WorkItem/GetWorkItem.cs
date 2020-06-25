@@ -22,12 +22,66 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// HELP_PARAM_WORKITEM
         /// </summary>
+        /// <seealso cref="Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem">
+        /// A WorkItem object
+        /// </seealso>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date")]
         [Parameter(Position = 0, ParameterSetName = "Get deleted")]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string Title { get; set; } // System.Title                                    Minha primeira estória
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string Description { get; set; } // System.Description                              <div>Alterando o histórico</div>
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string AreaPath { get; set; } // System.AreaPath                                 TfsCmdlets
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string IterationPath { get; set; } // System.IterationPath                            TfsCmdlets
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string WorkItemType { get; set; } // System.WorkItemType                             User Story
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string State { get; set; } // System.State                                    New
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string Reason { get; set; } // System.Reason                                   New
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string ValueArea { get; set; } // Microsoft.VSTS.Common.ValueArea                 Business
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string BoardColumn { get; set; } // System.BoardColumn                              New
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public bool BoardColumnDone { get; set; } // System.BoardColumnDone                          False
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public object CreatedBy { get; set; } // System.CreatedBy                                Microsoft.VisualStudio.Services.WebApi.IdentityRef
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public DateTime CreatedDate { get; set; } // System.CreatedDate                              22/06/2020 19:41:19
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public object ChangedBy { get; set; } // System.ChangedBy                                Microsoft.VisualStudio.Services.WebApi.IdentityRef
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public DateTime ChangedDate { get; set; } // System.ChangedDate                              24/06/2020 06:16:20
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public DateTime StateChangeDate { get; set; } // Microsoft.VSTS.Common.StateChangeDate           22/06/2020 19:41:19
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public int Priority { get; set; } // Microsoft.VSTS.Common.Priority                  2
+
+        [Parameter(ParameterSetName = "Simple query")]
+        public string[] Tags { get; set; } // System.Tags
 
         /// <summary>
         /// Specifies a work item revision number to retrieve. When omitted, returns
@@ -50,7 +104,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(Mandatory = true, ParameterSetName = "Query by filter")]
         public string Filter { get; set; }
 
-        [Parameter()]
+        [Parameter(ParameterSetName="Query by WIQL")]
         public Hashtable Macros { get; set; }
 
         /// <summary>
@@ -62,15 +116,20 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// Gets deleted work items.
         /// </summary>
-        [Parameter(ParameterSetName = "Get deleted")]
+        [Parameter(ParameterSetName = "Get deleted", Mandatory=true)]
         public SwitchParameter Deleted { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter()]
+        public object Team { get; set; }
 
         /// <summary>
         /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Project { get; set; }
-
     }
 
     [Exports(typeof(WebApiWorkItem))]
@@ -199,18 +258,19 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, WorkItemTrackingHttpClient client)
         {
-            try{
-            if (revision > 0)
-                return client.GetRevisionAsync(id, revision)
-                    .GetResult($"Error getting work item '{id}'");
-            else if (asOf.HasValue && asOf.Value > DateTime.MinValue)
-                return client.GetWorkItemAsync(id, null, asOf)
-                    .GetResult($"Error getting work item '{id}'");
-            else
-                return client.GetWorkItemAsync(id)
-                    .GetResult($"Error getting work item '{id}'");
+            try
+            {
+                if (revision > 0)
+                    return client.GetRevisionAsync(id, revision)
+                        .GetResult($"Error getting work item '{id}'");
+                else if (asOf.HasValue && asOf.Value > DateTime.MinValue)
+                    return client.GetWorkItemAsync(id, null, asOf)
+                        .GetResult($"Error getting work item '{id}'");
+                else
+                    return client.GetWorkItemAsync(id)
+                        .GetResult($"Error getting work item '{id}'");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Cmdlet.WriteError(new ErrorRecord(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id));
                 return null;
