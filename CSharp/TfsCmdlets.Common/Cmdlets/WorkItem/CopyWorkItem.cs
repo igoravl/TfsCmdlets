@@ -35,7 +35,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter SkipSave { get; set; }
 
         /// <summary>
-        /// Specified the team project where the work item will be copied into. When omitted, 
+        /// Specifies the team project where the work item will be copied into. When omitted, 
 		/// the copy will be created in the same team project of the source work item. 
 		/// The value provided to this argument takes precedence over both the source team project 
 		/// and the team project of an instance of WorkItemType provided to the Type argument.
@@ -46,7 +46,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
-        /// <value></value>
         [Parameter()]
         public object Collection { get; set; }
 
