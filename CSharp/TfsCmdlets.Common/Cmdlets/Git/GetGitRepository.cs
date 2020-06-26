@@ -102,7 +102,7 @@ namespace TfsCmdlets.Cmdlets.Git
                         }
                     default:
                         {
-                            throw new ArgumentException(nameof(Repository));
+                            throw new ArgumentException(nameof(GetGitRepository.Repository));
                         }
                 }
             }
