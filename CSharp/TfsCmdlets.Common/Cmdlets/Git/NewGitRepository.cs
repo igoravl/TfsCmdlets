@@ -3,7 +3,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
 
-namespace TfsCmdlets.Cmdlets.Git.Repository
+namespace TfsCmdlets.Cmdlets.Git
 {
     /// <summary>
     /// Creates a new Git repository in a team project.

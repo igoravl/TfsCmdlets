@@ -2,7 +2,7 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
 
-namespace TfsCmdlets.Cmdlets.Git.Repository
+namespace TfsCmdlets.Cmdlets.Git
 {
     /// <summary>
     /// Deletes one or more Git repositories from a team project.

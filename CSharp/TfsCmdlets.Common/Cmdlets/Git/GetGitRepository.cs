@@ -6,7 +6,7 @@ using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
-namespace TfsCmdlets.Cmdlets.Git.Repository
+namespace TfsCmdlets.Cmdlets.Git
 {
     /// <summary>
     /// Gets information from one or more Git repositories in a team project.

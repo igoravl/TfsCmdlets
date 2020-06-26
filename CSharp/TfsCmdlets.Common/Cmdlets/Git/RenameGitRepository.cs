@@ -2,7 +2,7 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Extensions;
 
-namespace TfsCmdlets.Cmdlets.Git.Repository
+namespace TfsCmdlets.Cmdlets.Git
 {
     /// <summary>
     /// Renames a Git repository in a team project.
