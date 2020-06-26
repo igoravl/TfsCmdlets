@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     public class GetCredential : CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_CACHED_CREDENTIALS
+        /// HELP_PARAM_CACHED_CREDENTIAL
         /// </summary>
         [Parameter(ParameterSetName = "Cached credentials")]
         public SwitchParameter Cached { get; set; }

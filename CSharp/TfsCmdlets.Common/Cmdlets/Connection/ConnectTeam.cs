@@ -22,7 +22,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         public object Team { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_CACHED_CREDENTIALS
+        /// HELP_PARAM_CACHED_CREDENTIAL
         /// </summary>
         [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
         public SwitchParameter Cached { get; set; }
