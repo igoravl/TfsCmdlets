@@ -1,6 +1,5 @@
 ---
 title: Documentation
-nav_order: -900
+layout: module
 has_children: true
-layout: default
 ---

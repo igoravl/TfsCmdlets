@@ -1,5 +1,16 @@
-{%- if include.text contains "System." or include.text contains "Microsoft." -%}
-[{{include.text}}](https://docs.microsoft.com/en-us/dotnet/api/{{include.text}})
-{%- else -%}
-{{include.text}}
+{%- if include.text -%}
+
+{%- assign class_pattern = "((Microsoft\.TeamFoundation(\.\w+)+)|(Microsoft\.VisualStudio(\.\w+)+)|(System(\.\w+)+))" -%}
+{%- assign cmdlet_pages = site.pages | where: "layout", "cmdlet" -%}
+{%- assign text=include.text | regex_replace: class_pattern, "[\1](https://docs.microsoft.com/en-us/dotnet/api/\1)" -%}
+{%- for p in cmdlet_pages -%}
+    {%- unless p.title == page.title -%}
+        {% capture cmdlet_pattern %}\b({{p.title | replace: "-", "\-"}})\b{% endcapture %}
+        {% capture cmdlet_replacement %}[{{p.title}}]({{p.url}}){% endcapture %}
+        {%- assign text = text | regex_replace: cmdlet_pattern, cmdlet_replacement %}
+    {% endunless %}
+{%- endfor -%}
+
+{{ text }}
+
 {%- endif -%}

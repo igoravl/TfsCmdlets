@@ -2,8 +2,8 @@
 title: Connect-TfsTeamProjectCollection
 breadcrumbs: [ "Connection" ]
 parent: "Connection"
-description: "Connects to a TFS team project collection or Azure DevOps organization."
-remarks: "The Connect-TfsTeamProjectCollection cmdlet connects to a TFS Team Project Collection or Azure DevOps organization. That connection can be later reused by other TfsCmdlets commands until it's closed by a call to Disconnect-TfsTeamProjectCollection."
+description: 
+remarks: 
 parameterSets: 
   "_All_": [ AccessToken, Cached, Collection, Credential, Interactive, Passthru, Password, Server, UserName ] 
   "Cached credentials":  
@@ -139,14 +139,6 @@ outputs:
     description: 
 notes: 
 relatedLinks: 
-  - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeamProjectCollection"
 aliases: 
 examples: 
-  - title: "----------  EXAMPLE 1  ----------" 
-    code: "PS> Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection" 
-    remarks: "Connects to a collection called \"DefaultCollection\" in a TF server called \"tfs\" using the cached credentials of the logged-on user" 
-  - title: "----------  EXAMPLE 2  ----------" 
-    code: "PS> Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Interactive" 
-    remarks: "Connects to a collection called \"DefaultCollection\" in a Team Foundation server called \"tfs\", firstly prompting the user for credentials (it ignores the cached credentials for the currently logged-in user). It's equivalent to the command:Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Credential (Get-TfsCredential -Interactive)"
 ---

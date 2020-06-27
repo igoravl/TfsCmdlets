@@ -1,0 +1,35 @@
+{%- assign page_url_segments = page.url | split: "/"%}
+{%- assign page_id = page_url_segments[-1] -%}
+{%- assign folders = site.pages | where: "parent", page_id | where: "has_children", "true" | sort: "title", "last" -%}
+{%- assign commands = site.pages | where: "parent", page_id | where_exp: "page", "page.has_children != true" | sort: "title", "last" -%}
+
+{% if page.has_toc != false %}
+{%- if commands.size > 0 -%}
+<ul>
+    {% for child in commands %}
+    {% if child.parent == page_id and child.title != page.title %}
+    <li>
+        <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.description %}<br/>
+        <em class="fs-3">{{ child.description }}</em>{% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+
+{%- if folders.size > 0 -%}
+<h2 class="text-delta">Sub-folders</h2>
+<ul>
+    {% for child in folders %}
+    {% if child.parent == page_id and child.title != page.title %}
+    <li>
+        <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.summary %} -
+        {{ child.summary }}{% endif %}
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endif %}
+
+{% endif %}

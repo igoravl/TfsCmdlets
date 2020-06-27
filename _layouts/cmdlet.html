@@ -1,5 +1,5 @@
 ---
-layout: process_markdown.html
+layout: process_markdown
 ---
 
 # {{page.title}}
@@ -37,7 +37,7 @@ layout: process_markdown.html
 {% if page.remarks %}
 ## Description
 
-{{ page.remarks }}
+{% include cmdlet_autolink.html text=page.remarks %}
 
 [[Go to top](#{{page.title|slugify}})]
 {: .fs-2}
@@ -50,7 +50,7 @@ layout: process_markdown.html
 ### {{example.title | replace: "-", "" | strip | capitalize}}
 {: .no_toc}
 
-{{example.remarks}}
+{% include cmdlet_autolink.html text=example.remarks %}
 
 ```powershell
 {{example.code}}
@@ -81,7 +81,8 @@ layout: process_markdown.html
 {% for input in page.inputs %}
 ### {% include cmdlet_autolink.html text=input.type %}
 {: .no_toc }
-{{input.description}}
+
+{% include cmdlet_autolink.html text=input.description %}
 {% endfor %}
 {% endif %}
 
@@ -90,7 +91,8 @@ layout: process_markdown.html
 {% for output in page.outputs %}
 ### {% include cmdlet_autolink.html text=output.type %}
 {: .no_toc }
-{{output.description}}
+
+{% include cmdlet_autolink.html text=output.description %}
 {% endfor %}
 {% endif %}
 

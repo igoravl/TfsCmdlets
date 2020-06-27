@@ -42,7 +42,7 @@ compress_html:
 defaults:
   -
     scope:
-      path: "docs"
+      path: "docs/cmdlets"
     values:
       layout: "cmdlet"
       nav_exclude: true
