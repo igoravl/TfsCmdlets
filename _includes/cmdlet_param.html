@@ -1,0 +1,9 @@
+{%-assign name=param[0]-%}
+{%-if param[1].position-%}{%assign hasPosition=true%}{%else%}{%assign hasPosition=false%}{%endif%}
+{%-if param[1].required-%}{%assign required=true%}{%else%}{%assign required=false%}{%endif%}
+{%-if required-%}{%assign optional=false%}{%else%}{%assign optional=true%}{%endif%}
+{%-capture openingBracket-%}{%if hasPosition or optional%}[{%endif%}{%-endcapture-%}
+{%-capture closingNameBracket-%}{%if hasPosition and required %}]{%endif%}{%-endcapture-%}
+{%-capture closingBracket-%}{%if optional %}]{%endif%}{%-endcapture-%}
+{%-capture type-%}{%unless param[1].type == "SwitchParameter"%} <{{param[1].type}}>{%endunless%}{%-endcapture-%}
+{{"    "}}{{openingBracket}}-{{name}}{{closingNameBracket}}{{type}}{{closingBracket}}

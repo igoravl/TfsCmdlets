@@ -1,8 +1,8 @@
-{%- assign bcpath = '/Cmdlets' -%}
+{%- assign bcpath = '/docs/cmdlets' -%}
 <nav class="breadcrumb-nav">
     <ol class="breadcrumb-nav-list">
         <li class="breadcrumb-nav-list-item"><a href="/">Home</a></li>
-        <li class="breadcrumb-nav-list-item"><a href="/Cmdlets">Cmdlets</a></li>
+        <li class="breadcrumb-nav-list-item"><a href="/docs/cmdlets">Documentation</a></li>
         {% for b in page.breadcrumbs %}
             {%- capture bcpath -%}{{bcpath}}/{{b}}{%- endcapture -%}
         <li class="breadcrumb-nav-list-item"><a href="{{ bcpath }}">{{ b }}</a></li>

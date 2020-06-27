@@ -1,0 +1,5 @@
+{%- if include.text contains "System." or include.text contains "Microsoft." -%}
+[{{include.text}}](https://docs.microsoft.com/en-us/dotnet/api/{{include.text}})
+{%- else -%}
+{{include.text}}
+{%- endif -%}

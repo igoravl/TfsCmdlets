@@ -43,9 +43,9 @@
     @include fs-3;
   }
 
-  .navigation-list-child-list {
-    display: none;
-  }
+  // .navigation-list-child-list {
+  //   display: none;
+  // }
 
   &.active {
     .navigation-list-child-list {

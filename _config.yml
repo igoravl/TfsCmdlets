@@ -29,6 +29,7 @@ color_scheme: nil
 
 plugins:
   - jekyll-seo-tag
+  - jekyll-regex-replace
 
 compress_html:
   clippings: all
@@ -37,3 +38,12 @@ compress_html:
   startings: []
   blanklines: false
   profile: false
+
+defaults:
+  -
+    scope:
+      path: "docs"
+    values:
+      layout: "cmdlet"
+      nav_exclude: true
+

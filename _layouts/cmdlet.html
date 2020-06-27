@@ -1,5 +1,107 @@
 ---
-layout: default
+layout: process_markdown.html
 ---
 
-{{ content }}
+# {{page.title}}
+{: .no_toc}
+
+{{page.description}}
+
+-----
+
+## Table of Contents
+{: .no_toc .text-delta}
+
+1. TOC
+{:toc}
+
+-----
+
+{% if page.parameters %}
+## Syntax
+
+{% for paramset in page.parameterSets %}{%unless paramset[0] == "_All_"%}
+{%unless paramset[0] == "__AllParameterSets"%}### {{ paramset[0] }}
+{: .no_toc}
+{%endunless%}
+```bash
+{{page.title}}
+{%for param in paramset[1]%}{%include cmdlet_param.html%}
+{%endfor%}```
+{%endunless%}{% endfor %}
+
+[[Go to top](#{{page.title|slugify}})]
+{: .fs-2}
+{% endif %}
+
+{% if page.remarks %}
+## Description
+
+{{ page.remarks }}
+
+[[Go to top](#{{page.title|slugify}})]
+{: .fs-2}
+{% endif %}
+
+{% if page.examples %}
+## Examples
+
+{% for example in page.examples %}
+### {{example.title | replace: "-", "" | strip | capitalize}}
+{: .no_toc}
+
+{{example.remarks}}
+
+```powershell
+{{example.code}}
+```
+{%endfor%}
+{% endif %}
+
+{% if page.parameters %}
+## Parameters
+
+{% for paramName in page.parameterSets._AllParameterSets %}{% for parm in page.parameters %}{% if parm.name == paramName %}
+<a name="{{paramName|slugify}}"></a><span class="param fs-4">-{{parm.name}}</span> {%if parm.aliases %}_(Aliases: {{parm.aliases | join: ', '}})_{%endif%}
+
+{{parm.description}}
+
+|----------------------------|-------------------------------|
+| Type                       | **{{parm.type}}**
+| Position                   | {%unless parm.position%}(Named){%endunless%}{{parm.position}}
+| Default Value              | {%unless parm.defaultValue%}(N/A){%endunless%}{%if parm.type=="SwitchParameter"%}(N/A){%else%}{{parm.defaultValue}}{%endif%}
+| Accept pipeline input      | {%unless parm.pipelineInput%}False{%endunless%}{{parm.pipelineInput | capitalize}}
+| Accept wildcard characters | {{parm.globbing | capitalize}}
+{%endif%}{%endfor%}{%endfor%}
+
+{% endif %}
+
+{% if page.inputs %}
+## Inputs
+{% for input in page.inputs %}
+### {% include cmdlet_autolink.html text=input.type %}
+{: .no_toc }
+{{input.description}}
+{% endfor %}
+{% endif %}
+
+{% if page.outputs %}
+## Outputs
+{% for output in page.outputs %}
+### {% include cmdlet_autolink.html text=output.type %}
+{: .no_toc }
+{{output.description}}
+{% endfor %}
+{% endif %}
+
+{% if page.notes %}
+## Notes
+{% endif %}
+
+{% if page.aliases %}
+## Aliases
+{% endif %}
+
+{% if page.relatedLinks %}
+## Related Links
+{% endif %}

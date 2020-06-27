@@ -3,12 +3,17 @@
 //
 // stylelint-disable selector-no-qualifying-type, declaration-block-semicolon-newline-after,declaration-block-single-line-max-declarations, selector-no-type, selector-max-type
 
-code {
+code, .param, .highlighter-rouge {
   padding: 0.2em 0.15em;
   font-weight: 400;
   background-color: $code-background-color;
   border: $border $border-color;
   border-radius: $border-radius;
+}
+
+.param {
+  font-weight: bold;
+  font-family: $mono-font-family;
 }
 
 pre.highlight,

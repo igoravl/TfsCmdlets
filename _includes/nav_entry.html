@@ -1,0 +1,23 @@
+{%- if include.recurse -%}
+{%- capture active -%}{%- unless page.url == "/" -%}{% if include.url contains page.url %} active{% endif %}{%- endunless -%}{%- endcapture -%}
+{%- else -%}
+    {%- capture active -%}{% if include.url == page.url %} active{% endif %}{%- endcapture -%}
+{%- endif -%}
+
+<li class="navigation-list-item{{active}}">
+    <a href="{{include.url}}" class="navigation-list-link{{active}}">{{include.text}}</a>
+    {% if include.recurse %}
+    <ul class="navigation-list-child-list">
+        {%- assign site_pages = site.html_pages | sort: "url" -%}
+        {%- for p in site_pages -%}
+            {%- unless p.url contains "-" -%}
+                {%- capture page_path -%}{{include.url}}{{p.basename|default:p.title}}/{%- endcapture -%}
+                {%- assign recurse_children = page.url contains p.url -%}
+                {%- if p.url == page_path -%}
+                    {%- include nav_entry.html url=p.url text=p.title recurse=true -%}
+                {%- endif -%}
+            {%- endunless -%}
+        {%- endfor -%}
+    </ul>
+    {% endif %}
+</li>

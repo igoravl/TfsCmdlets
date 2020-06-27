@@ -1,3 +1,13 @@
+{%- assign pages_list = site.html_pages | sort:"nav_order" -%}
+
+<nav role="navigation" aria-label="Main navigation">
+  <ul class="navigation-list">
+    {% include nav_entry.html url="/" text="Home" %}
+    {% include nav_entry.html url="/docs/" text="Documentation" recurse="true" %}
+  </ul>
+</nav>
+
+<!--
 <nav role="navigation" aria-label="Main navigation">
   <ul class="navigation-list">
     {%- assign pages_list = site.html_pages | sort:"nav_order" -%}
@@ -38,3 +48,4 @@
     {%- endfor -%}
   </ul>
 </nav>
+-->

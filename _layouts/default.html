@@ -59,21 +59,6 @@ layout: table_wrappers
               {{ content }}
             {% endif %}
 
-          {% if page.has_children == true and page.has_toc != false %}
-            <hr>
-            <h2 class="text-delta">Table of contents</h2>
-            {% assign children_list = site.pages | sort: "nav_order", "last" %}
-            <ul>
-              {% for child in children_list %}
-                {% if child.parent == page.title and child.title != page.title %}
-                <li>
-                  <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.summary %} - {{ child.summary }}{% endif %}
-                </li>
-                {% endif %}
-              {% endfor %}
-            </ul>
-          {% endif %}
-
           {% if site.footer_content != nil %}
             <hr>
             <footer role="contentinfo">
