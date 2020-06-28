@@ -5,9 +5,6 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Connection
 {
-    /// <summary>
-    ///  Connects to a configuration server.
-    /// </summary>
     [OutputType(typeof(TfsConfigurationServer))]
     partial class ConnectConfigurationServer: CmdletBase
     {

@@ -13,9 +13,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
     partial class ExportProcessTemplate
     {
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
+        /// <inheritdoc/>
         protected override void DoProcessRecord()
         {
             var tpc = GetCollection();
