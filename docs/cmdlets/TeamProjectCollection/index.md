@@ -1,5 +1,5 @@
 ---
 layout: module
-title: Team Project Collection
+title: Team Project Collections
 ---
 
