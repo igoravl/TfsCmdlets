@@ -1,5 +1,17 @@
-{%- if page.layout == 'cmdlet' -%}
-    {% include breadcrumbs_cmdlet.html %}
-{%- else -%}
-    {% include breadcrumbs_page.html %}
-{%- endif -%}
+{%- assign path_segments = page.url | split: "/" %}
+
+<nav class="breadcrumb-nav">
+    <ol class="breadcrumb-nav-list">
+        {%- for segment in path_segments -%}
+        {%- capture bcpath -%}{{bcpath}}{{segment}}/{%- endcapture -%}
+        {%- assign p = site.pages | where: "url", bcpath | first -%}
+        <li class="breadcrumb-nav-list-item">
+            {%- if forloop.last -%}
+            <span>{{ p.title }}</span>
+            {%- else -%}
+            <a href="{{p.url}}">{{p.title}}</a>
+            {%- endif -%}
+        </li>
+        {%- endfor -%}
+    </ol>
+</nav>
