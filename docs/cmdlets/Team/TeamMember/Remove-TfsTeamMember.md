@@ -1,4 +1,4 @@
----
+﻿---
 title: Remove-TfsTeamMember
 breadcrumbs: [ "Team", "TeamMember" ]
 parent: "Team.TeamMember"

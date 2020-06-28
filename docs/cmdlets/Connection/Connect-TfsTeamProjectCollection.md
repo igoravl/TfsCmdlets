@@ -1,4 +1,4 @@
----
+﻿---
 title: Connect-TfsTeamProjectCollection
 breadcrumbs: [ "Connection" ]
 parent: "Connection"
@@ -141,7 +141,7 @@ notes:
 relatedLinks: 
   - text: "Online Version:" 
     uri: "https://tfscmdlets.dev/Cmdlets/Connection/Connect-TfsTeamProjectCollection"
-aliases: [ ctfs ]
+aliases: 
 examples: 
   - title: "----------  EXAMPLE 1  ----------" 
     code: "PS> Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection" 

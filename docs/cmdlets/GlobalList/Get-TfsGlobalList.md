@@ -1,4 +1,4 @@
----
+﻿---
 title: Get-TfsGlobalList
 breadcrumbs: [ "GlobalList" ]
 parent: "GlobalList"

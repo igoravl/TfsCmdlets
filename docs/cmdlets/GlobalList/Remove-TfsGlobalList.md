@@ -1,4 +1,4 @@
----
+﻿---
 title: Remove-TfsGlobalList
 breadcrumbs: [ "GlobalList" ]
 parent: "GlobalList"

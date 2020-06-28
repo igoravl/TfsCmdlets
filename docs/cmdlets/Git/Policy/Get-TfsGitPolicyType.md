@@ -1,36 +1,38 @@
----
-title: Get-TfsTeamBoardCardRule
-breadcrumbs: [ "Work" ]
-parent: "Work"
-description: "Gets one or more team board card rules."
+﻿---
+title: Get-TfsGitPolicyType
+breadcrumbs: [ "Git", "Policy" ]
+parent: "Git.Policy"
+description: "Gets one or more Git branch policies supported by the given team project."
 remarks: 
 parameterSets: 
-  "_All_": [ Board, Collection, Project, Team ] 
+  "_All_": [ Collection, PolicyType, Project ] 
   "__AllParameterSets":  
-    Board: 
+    PolicyType: 
       type: "object"  
       position: "0"  
     Collection: 
       type: "object"  
     Project: 
-      type: "object"  
-    Team: 
       type: "object" 
 parameters: 
-  - name: "Board" 
-    description: "Specifies the board name. Wildcards are supported. When omitted, returns card rules for all boards in the given team." 
+  - name: "PolicyType" 
+    description: "Specifies the display name or ID of the policy type. Wildcards are supported. When omitted, all policy types supported by the given team project are returned." 
     globbing: false 
     position: 0 
     type: "object" 
+    aliases: [ Name ] 
     defaultValue: "*" 
-  - name: "Team" 
-    description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet." 
+  - name: "Name" 
+    description: "Specifies the display name or ID of the policy type. Wildcards are supported. When omitted, all policy types supported by the given team project are returned.This is an alias of the PolicyType parameter." 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
+    position: 0 
     type: "object" 
+    aliases: [ Name ] 
+    defaultValue: "*" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet." 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any)." 
@@ -38,14 +40,14 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet."
+    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet."
 outputs: 
-  - type: "Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings" 
+  - type: "Microsoft.TeamFoundation.Policy.WebApi.PolicyType" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Work/Get-TfsTeamBoardCardRule"
+    uri: "https://tfscmdlets.dev/Cmdlets/Git/Policy/Get-TfsGitPolicyType"
 aliases: 
 examples: 
 ---

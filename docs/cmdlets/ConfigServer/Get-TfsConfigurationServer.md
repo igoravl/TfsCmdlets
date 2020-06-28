@@ -1,8 +1,8 @@
----
+﻿---
 title: Get-TfsConfigurationServer
 breadcrumbs: [ "ConfigServer" ]
 parent: "ConfigServer"
-description: "Gets information about a configuration server.Gets information about a configuration server."
+description: "Gets information about a configuration server."
 remarks: 
 parameterSets: 
   "_All_": [ Credential, Current, Server ] 

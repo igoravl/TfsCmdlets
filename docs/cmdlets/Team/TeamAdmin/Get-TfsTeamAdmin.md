@@ -1,4 +1,4 @@
----
+﻿---
 title: Get-TfsTeamAdmin
 breadcrumbs: [ "Team", "TeamAdmin" ]
 parent: "Team.TeamAdmin"

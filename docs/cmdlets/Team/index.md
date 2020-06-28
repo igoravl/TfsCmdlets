@@ -1,5 +1,5 @@
 ---
 layout: module
-title: Team
+title: Teams, Backlogs and Boards
 ---
 

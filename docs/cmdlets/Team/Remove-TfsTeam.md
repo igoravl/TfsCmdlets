@@ -1,4 +1,4 @@
----
+﻿---
 title: Remove-TfsTeam
 breadcrumbs: [ "Team" ]
 parent: "Team"

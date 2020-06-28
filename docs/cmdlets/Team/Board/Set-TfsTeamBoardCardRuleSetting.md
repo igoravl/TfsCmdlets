@@ -1,7 +1,7 @@
----
+﻿---
 title: Set-TfsTeamBoardCardRuleSetting
-breadcrumbs: [ "Work" ]
-parent: "Work"
+breadcrumbs: [ "Team", "Board" ]
+parent: "Team.Board"
 description: 
 remarks: 
 parameterSets: 

@@ -1,13 +1,13 @@
----
-title: Get-TfsTeamBacklogLevel
-breadcrumbs: [ "Work" ]
-parent: "Work"
-description: "Gets information about one or more backlog levels of a given team."
+﻿---
+title: Get-TfsTeamBoard
+breadcrumbs: [ "Team", "Board" ]
+parent: "Team.Board"
+description: "Gets one or more team boards."
 remarks: 
 parameterSets: 
-  "_All_": [ Backlog, Collection, Project, Team ] 
+  "_All_": [ Board, Collection, Project, Team ] 
   "__AllParameterSets":  
-    Backlog: 
+    Board: 
       type: "object"  
       position: "0"  
     Collection: 
@@ -17,15 +17,15 @@ parameterSets:
     Team: 
       type: "object" 
 parameters: 
-  - name: "Backlog" 
-    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wilcards are supported. When omitted, returns all backlogs levels of the given team." 
+  - name: "Board" 
+    description: "Specifies the board name. Wildcards are supported. When omitted, returns all boards in the given team." 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name ] 
     defaultValue: "*" 
   - name: "Name" 
-    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wilcards are supported. When omitted, returns all backlogs levels of the given team.This is an alias of the Backlog parameter." 
+    description: "Specifies the board name. Wildcards are supported. When omitted, returns all boards in the given team.This is an alias of the Board parameter." 
     globbing: false 
     position: 0 
     type: "object" 
@@ -48,12 +48,12 @@ inputs:
   - type: "System.Object" 
     description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet."
 outputs: 
-  - type: "Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration" 
+  - type: "Microsoft.TeamFoundation.Work.WebApi.Board" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Work/Get-TfsTeamBacklogLevel"
+    uri: "https://tfscmdlets.dev/Cmdlets/Team/Board/Get-TfsTeamBoard"
 aliases: 
 examples: 
 ---

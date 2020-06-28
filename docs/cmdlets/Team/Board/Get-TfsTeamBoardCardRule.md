@@ -1,8 +1,8 @@
----
-title: Get-TfsTeamBoard
-breadcrumbs: [ "Work" ]
-parent: "Work"
-description: "Gets one or more team boards."
+﻿---
+title: Get-TfsTeamBoardCardRule
+breadcrumbs: [ "Team", "Board" ]
+parent: "Team.Board"
+description: "Gets one or more team board card rules."
 remarks: 
 parameterSets: 
   "_All_": [ Board, Collection, Project, Team ] 
@@ -18,18 +18,10 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "Board" 
-    description: "Specifies the board name. Wildcards are supported. When omitted, returns all boards in the given team." 
+    description: "Specifies the board name. Wildcards are supported. When omitted, returns card rules for all boards in the given team." 
     globbing: false 
     position: 0 
     type: "object" 
-    aliases: [ Name ] 
-    defaultValue: "*" 
-  - name: "Name" 
-    description: "Specifies the board name. Wildcards are supported. When omitted, returns all boards in the given team.This is an alias of the Board parameter." 
-    globbing: false 
-    position: 0 
-    type: "object" 
-    aliases: [ Name ] 
     defaultValue: "*" 
   - name: "Team" 
     description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet." 
@@ -48,12 +40,12 @@ inputs:
   - type: "System.Object" 
     description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet."
 outputs: 
-  - type: "Microsoft.TeamFoundation.Work.WebApi.Board" 
+  - type: "Microsoft.TeamFoundation.Work.WebApi.BoardCardRuleSettings" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Work/Get-TfsTeamBoard"
+    uri: "https://tfscmdlets.dev/Cmdlets/Team/Board/Get-TfsTeamBoardCardRule"
 aliases: 
 examples: 
 ---

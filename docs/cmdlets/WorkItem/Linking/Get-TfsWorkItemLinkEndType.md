@@ -1,4 +1,4 @@
----
+﻿---
 title: Get-TfsWorkItemLinkEndType
 breadcrumbs: [ "WorkItem", "Linking" ]
 parent: "WorkItem.Linking"

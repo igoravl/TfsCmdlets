@@ -1,8 +1,8 @@
----
+﻿---
 title: Connect-TfsConfigurationServer
 breadcrumbs: [ "Connection" ]
 parent: "Connection"
-description: "Connects to a configuration server.Connects to a configuration server."
+description: "Connects to a configuration server."
 remarks: "A TFS Configuration Server represents the server that is running Team Foundation Server. On a database level, it is represented by the Tfs_Configuration database. Operations that should be performed on a server level (such as setting server-level permissions) require a connection to a TFS configuration server. Internally, this connection is represented by an instance of the Microsoft.TeamFoundation.Client.TfsConfigurationServer. NOTE: Currently it is only supported in Windows PowerShell."
 parameterSets: 
   "_All_": [ AccessToken, Cached, Credential, Interactive, Passthru, Password, Server, UserName ] 

@@ -1,4 +1,4 @@
----
+﻿---
 title: Get-TfsConfigurationServerConnectionString
 breadcrumbs: [ "Admin" ]
 parent: "Admin"

@@ -1,4 +1,4 @@
----
+﻿---
 title: Get-TfsRegisteredTeamProjectCollection
 breadcrumbs: [ "TeamProjectCollection" ]
 parent: "TeamProjectCollection"

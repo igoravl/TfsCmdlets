@@ -1,8 +1,8 @@
----
+﻿---
 title: Get-TfsRegisteredConfigurationServer
 breadcrumbs: [ "ConfigServer" ]
 parent: "ConfigServer"
-description: "Gets one or more Team Foundation Server addresses registered in the current computer.Gets one or more Team Foundation Server addresses registered in the current computer."
+description: "Gets one or more Team Foundation Server addresses registered in the current computer."
 remarks: 
 parameterSets: 
   "_All_": [ Server ] 
