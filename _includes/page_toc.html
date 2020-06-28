@@ -1,35 +1,51 @@
-{%- assign page_url_segments = page.url | split: "/"%}
-{%- assign page_id = page_url_segments[-1] -%}
-{%- assign folders = site.pages | where: "parent", page_id | where: "has_children", "true" | sort: "title", "last" -%}
-{%- assign commands = site.pages | where: "parent", page_id | where_exp: "page", "page.has_children != true" | sort: "title", "last" -%}
+{%- assign cmdlet_pages = site.pages | where: "layout", "cmdlet" | sort: "url" -%}
+{%- assign module_pages = site.pages | where: "layout", "module" | sort: "url" -%}
+{%- assign page_level = page.url | split: "/" | size -%}
+{%- assign page_children_level = page_level | plus: 1 -%}
+{%- assign page_grand_children_level = page_level | plus: 2 -%}
 
-{% if page.has_toc != false %}
-{%- if commands.size > 0 -%}
-<ul>
-    {% for child in commands %}
-    {% if child.parent == page_id and child.title != page.title %}
-    <li>
-        <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.description %}<br/>
-        <em class="fs-3">{{ child.description }}</em>{% endif %}
-    </li>
-    {% endif %}
-    {% endfor %}
-</ul>
+{%- if page.has_toc != false -%}
 
-{%- if folders.size > 0 -%}
-<h2 class="text-delta">Sub-folders</h2>
-<ul>
-    {% for child in folders %}
-    {% if child.parent == page_id and child.title != page.title %}
-    <li>
-        <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>{% if child.summary %} -
-        {{ child.summary }}{% endif %}
-    </li>
-    {% endif %}
-    {% endfor %}
-</ul>
-{% endif %}
+    {%- for child in cmdlet_pages -%}
+        {%- assign child_level = child.url | split: "/" | size -%}
+        {%- if child.url contains page.url and child_level == page_children_level -%}{%- assign is_child = true -%}{%- else -%}{%- assign is_child = false -%}{%- endif -%}
+        {%- if is_child -%}
+            {%- unless has_ul -%}
+                {%- assign has_ul = true -%}
+                <ul>
+            {%- endunless -%}
+            <li>
+                <a href="{{ child.url | absolute_url }}">{{ child.title }}</a>
+                {%- if child.description -%}<br /><em class="fs-3">{{ child.description }}</em>{%- endif -%}
+            </li>
+        {%- endif -%}
+    {%- endfor -%}
 
-{% endif %}
+    {%- if has_ul -%}
+    </ul>
+    {%- endif -%}
 
-{% endif %}
+    {%- assign has_ul = false -%}
+
+    {%- for child in module_pages -%}
+        {%- assign child_level = child.url | split: "/" | size -%}
+        {%- if child.url contains page.url and child_level == page_children_level -%}{%- assign is_child = true -%}{%- else -%}{%- assign is_child = false -%}{%- endif -%}
+        {%- if is_child -%}
+            <a href="{{ child.url | absolute_url }}">
+                <h2>{{ child.title }}</h2>
+            </a>
+            <ul>
+            {%- for grand_child in cmdlet_pages -%}
+                {%- assign grand_child_level = grand_child.url | split: "/" | size -%}
+                {%- if grand_child.url contains child.url and grand_child_level == page_grand_children_level -%}{%- assign is_grand_child = true -%}{%- else -%}{%- assign is_grand_child = false -%}{%- endif -%}
+                {%- if is_grand_child -%}
+                    <li>
+                        <a href="{{ grand_child.url | absolute_url }}">{{ grand_child.title }}</a>
+                        {%- if grand_child.description -%}<br /><em class="fs-3">{{ grand_child.description }}</em>{%- endif -%}
+                    </li>
+                {%- endif -%}
+            {%- endfor -%}
+            </ul>
+        {%- endif -%}
+    {%- endfor -%}
+{%- endif -%}
