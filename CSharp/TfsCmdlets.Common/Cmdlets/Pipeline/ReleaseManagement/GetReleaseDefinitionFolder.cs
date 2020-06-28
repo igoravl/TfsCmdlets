@@ -9,7 +9,7 @@ using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 {
     /// <summary>
     /// Gets one or more Release/pipeline definition folders in a team project.

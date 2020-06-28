@@ -4,7 +4,7 @@ using TfsCmdlets.Extensions;
 using TfsCmdlets.Util;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Release.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 {
     /// <summary>
     /// Creates a new release definition folder.

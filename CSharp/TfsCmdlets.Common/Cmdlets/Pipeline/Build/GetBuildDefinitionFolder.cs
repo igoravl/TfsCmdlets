@@ -7,7 +7,7 @@ using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.Build
 {
     /// <summary>
     /// Gets one or more build/pipeline definition folders in a team project.
