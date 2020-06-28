@@ -2,7 +2,7 @@
 
 {%- assign class_pattern = "((Microsoft\.TeamFoundation(\.\w+)+)|(Microsoft\.VisualStudio(\.\w+)+)|(System(\.\w+)+))" -%}
 {%- assign cmdlet_pages = site.pages | where: "layout", "cmdlet" -%}
-{%- assign text=include.text | regex_replace: class_pattern, "[\1](https://docs.microsoft.com/en-us/dotnet/api/\1)" -%}
+{%- assign text=include.text | regex_replace: class_pattern, "[\1](https://docs.microsoft.com/en-us/dotnet/api/\1){:target='_blank'}" -%}
 {%- for p in cmdlet_pages -%}
     {%- unless p.title == page.title -%}
         {% capture cmdlet_pattern %}\b({{p.title | replace: "-", "\-"}})\b{% endcapture %}
