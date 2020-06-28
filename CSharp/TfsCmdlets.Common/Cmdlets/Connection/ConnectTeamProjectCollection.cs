@@ -29,8 +29,9 @@ namespace TfsCmdlets.Cmdlets.Connection
     ///   <code>Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Interactive</code>
     ///   <para>Connects to a collection called "DefaultCollection" in a Team Foundation server called 
     ///         "tfs", firstly prompting the user for credentials (it ignores the cached credentials for 
-    ///         the currently logged-in user). It's equivalent to the command:</para>
-    ///   <code>Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection -Credential (Get-TfsCredential -Interactive)</code>
+    ///         the currently logged-in user). It's equivalent to the command: `Connect-TfsTeamProjectCollection 
+    ///         -Collection http://tfs:8080/tfs/DefaultCollection -Credential (Get-TfsCredential -Interactive)`
+    ///   </para>
     /// </example>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(VssConnection))]
