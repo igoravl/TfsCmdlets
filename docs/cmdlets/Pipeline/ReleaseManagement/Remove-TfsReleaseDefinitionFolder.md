@@ -1,45 +1,54 @@
 ---
-title: Get-TfsBuildDefinitionFolder
-breadcrumbs: [ "Pipeline", "Build", "Folder" ]
-parent: "Pipeline.Build.Folder"
-description: "Gets one or more build/pipeline definition folders in a team project."
+title: Remove-TfsReleaseDefinitionFolder
+breadcrumbs: [ "Pipeline", "ReleaseManagement" ]
+parent: "Pipeline.ReleaseManagement"
+description: "Deletes one or more release definition folders."
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Folder, Project, QueryOrder ] 
+  "_All_": [ Collection, Folder, Force, Project, Recurse ] 
   "__AllParameterSets":  
     Folder: 
       type: "object"  
       position: "0"  
+      required: true  
     Collection: 
       type: "object"  
+    Force: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
-    QueryOrder: 
-      type: "FolderQueryOrder" 
+    Recurse: 
+      type: "SwitchParameter" 
 parameters: 
   - name: "Folder" 
-    description: "Specifies the folder path. Wildcards are supported. When omitted, all build/pipeline folders in the supplied team project are returned." 
+    description: "Specifies the path of the release folder to delete. Wildcards are supported." 
+    required: true 
     globbing: false 
+    pipelineInput: "true (ByValue, ByPropertyName)" 
     position: 0 
     type: "object" 
     aliases: [ Path ] 
-    defaultValue: "**" 
   - name: "Path" 
-    description: "Specifies the folder path. Wildcards are supported. When omitted, all build/pipeline folders in the supplied team project are returned.This is an alias of the Folder parameter." 
+    description: "Specifies the path of the release folder to delete. Wildcards are supported.This is an alias of the Folder parameter." 
+    required: true 
     globbing: false 
+    pipelineInput: "true (ByValue, ByPropertyName)" 
     position: 0 
     type: "object" 
     aliases: [ Path ] 
-    defaultValue: "**" 
-  - name: "QueryOrder" 
-    description: "Specifies the query order. When omitted, defaults to None.Possible values: None, FolderAscending, FolderDescending" 
+  - name: "Recurse" 
+    description: "Removes folders recursively. When omitted, folders with subfolders cannot be deleted." 
     globbing: false 
-    type: "FolderQueryOrder" 
-    defaultValue: "None" 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "Force" 
+    description: "Forces the exclusion of folders containing release definitions definitions. When omitted, only empty folders can be deleted." 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet." 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any)." 
@@ -47,14 +56,14 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet."
+    description: "Specifies the path of the release folder to delete. Wildcards are supported."
 outputs: 
-  - type: "Microsoft.TeamFoundation.Build.WebApi.Folder" 
+  - type: "Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/Build/Folder/Get-TfsBuildDefinitionFolder"
+    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/ReleaseManagement/Remove-TfsReleaseDefinitionFolder"
 aliases: 
 examples: 
 ---

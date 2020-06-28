@@ -1,7 +1,7 @@
 ---
 title: New-TfsBuildDefinitionFolder
-breadcrumbs: [ "Pipeline", "Build", "Folder" ]
-parent: "Pipeline.Build.Folder"
+breadcrumbs: [ "Pipeline", "Build" ]
+parent: "Pipeline.Build"
 description: "Creates a new build/pipeline definition folder"
 remarks: "Folders are created recursively - i.e. when specifying a path like '\\foo\\bar\\baz', if any of the parent folders (foo, foo\\bar) does not exist, it is automatically created before creating any child folders."
 parameterSets: 
@@ -59,7 +59,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/Build/Folder/New-TfsBuildDefinitionFolder"
+    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/Build/New-TfsBuildDefinitionFolder"
 aliases: 
 examples: 
 ---

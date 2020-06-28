@@ -1,7 +1,7 @@
 ---
 title: Remove-TfsBuildDefinitionFolder
-breadcrumbs: [ "Pipeline", "Build", "Folder" ]
-parent: "Pipeline.Build.Folder"
+breadcrumbs: [ "Pipeline", "Build" ]
+parent: "Pipeline.Build"
 description: "Deletes one or more build/pipeline definition folders."
 remarks: 
 parameterSets: 
@@ -63,7 +63,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/Build/Folder/Remove-TfsBuildDefinitionFolder"
+    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/Build/Remove-TfsBuildDefinitionFolder"
 aliases: 
 examples: 
 ---
