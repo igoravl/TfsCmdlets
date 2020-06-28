@@ -18,6 +18,7 @@ Function _GenerateHelp($cmd, $moduleName, $modulePath) {
 ---
 title: $cmdName
 breadcrumbs: [ $( ($parent | ForEach-Object { """$_""" }) -join ', ' ) ]
+parent: $(_Text $moduleName)
 description: $(_Text $description)
 remarks: $(_Text $remarks)
 parameterSets: $(_GenerateParameterSets $cmd)
