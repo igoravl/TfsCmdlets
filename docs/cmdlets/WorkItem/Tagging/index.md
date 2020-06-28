@@ -1,5 +1,5 @@
 ---
 layout: module
-title: Global Lists
+title: Tags
 ---
 

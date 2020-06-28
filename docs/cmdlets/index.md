@@ -1,5 +1,4 @@
 ---
-layout: default
+layout: module
 title: Cmdlets
-has_children: true
 ---
