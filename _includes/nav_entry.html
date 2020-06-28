@@ -6,11 +6,13 @@
     <ul class="navigation-list-child-list">
         {%- assign folder_pages = site.pages | where_exp: "p", "p.layout != 'cmdlet'" | sort: "url" -%}
         {%- for p in folder_pages -%}
+            {%- assign page_level = p.url | split: "/" | size -%}
+            {% if page_level == 4 %}{% assign recurse=false %}{% else %}{% assign recurse=true %}{% endif %}
             {%- assign entry_url_segments = p.url | split: "/"%}
             {%- assign entry_name = entry_url_segments[-1] -%}
             {%- capture expected_path -%}{{include.url}}{{entry_name}}/{%- endcapture -%}
             {%- if p.url == expected_path -%}
-                {% include nav_entry.html url=p.url text=p.title recurse=true %}
+                {% include nav_entry.html url=p.url text=p.title recurse=recurse %}
             {%- endif -%}
         {%- endfor -%}
     </ul>
