@@ -1,5 +1,5 @@
 ---
 title: Documentation
-layout: module
+layout: default
 has_children: true
 ---

@@ -1,8 +1,7 @@
 ---
 layout: module
-title: Administration
+title: Git
 parent: Cmdlets
 has_children: true
 ---
 
-Lorem Ipsum
