@@ -4,8 +4,9 @@ using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
+using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 
-namespace TfsCmdlets.Cmdlets.Work
+namespace TfsCmdlets.Cmdlets.Team.Board
 {
     /// <summary>
     /// Gets one or more team board card rules.
@@ -40,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Work
     {
         protected override IEnumerable<BoardCardRuleSettings> DoGetItems()
         {
-            var boards = GetItems<Board>();
+            var boards = GetItems<WebApiBoard>();
             var (_, tp, t) = GetCollectionProjectAndTeam();
             var ctx = new TeamContext(tp.Name, t.Name);
             var client = GetClient<WorkHttpClient>();

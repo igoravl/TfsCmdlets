@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Work.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Work
+namespace TfsCmdlets.Cmdlets.Team.Board
 {
     [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(BoardCardRuleSettings))]

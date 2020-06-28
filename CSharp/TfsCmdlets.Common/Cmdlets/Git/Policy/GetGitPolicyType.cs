@@ -6,7 +6,7 @@ using Microsoft.TeamFoundation.Policy.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
-namespace TfsCmdlets.Cmdlets.Policy
+namespace TfsCmdlets.Cmdlets.Git.Policy
 {
     /// <summary>
     /// Gets one or more Git branch policies supported by the given team project.

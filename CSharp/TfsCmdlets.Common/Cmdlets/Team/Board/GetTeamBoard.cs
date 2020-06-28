@@ -8,13 +8,13 @@ using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
-namespace TfsCmdlets.Cmdlets.Work
+namespace TfsCmdlets.Cmdlets.Team.Board
 {
     /// <summary>
     /// Gets one or more team boards.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamBoard")]
-    [OutputType(typeof(Board))]
+    [OutputType(typeof(WebApiBoard))]
     public class GetTeamBoard : GetCmdletBase<WebApiBoard>
     {
         /// <summary>
@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.Work
 
             while (true) switch (board)
                 {
-                    case Board b:
+                    case WebApiBoard b:
                         {
                             yield return b;
                             yield break;

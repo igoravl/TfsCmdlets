@@ -9,7 +9,7 @@ using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
 
-namespace TfsCmdlets.Cmdlets.Work
+namespace TfsCmdlets.Cmdlets.Team.Backlog
 {
     /// <summary>
     /// Gets information about one or more backlog levels of a given team.
