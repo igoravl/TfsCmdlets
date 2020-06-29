@@ -1,8 +1,8 @@
 ViewSelectedBy: 
-  - Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemType
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType
 GroupBy: 
-  ScriptBlock: $_.Store.TeamProjectCollection.DisplayName + " / " + $_.Project.Name
-  CustomControlName: TeamProjects-GroupingFormat
+  Label: Team Project
+  PropertyName: Project
 TableControl: 
   Name: 
     Width: 30
