@@ -8,6 +8,109 @@ Param
     $Layout = 'cmdlet'
 )
 
+Function _GenerateHelp($cmd, $moduleName, $modulePath) {
+    $cmdName = $cmd.details.name
+    $description = $cmd.details.description.InnerText
+    $remarks = $cmd.description.InnerText
+    $parent = $moduleName -split '\.'
+
+    @"
+---
+title: $cmdName
+breadcrumbs: [ $( ($parent | ForEach-Object { """$_""" }) -join ', ' ) ]
+parent: $(_Text $moduleName)
+description: $(_Text $description)
+remarks: $(_Text $remarks)
+parameterSets: $(_GenerateParameterSets $cmd)
+parameters: $(_GenerateParameters $cmd)
+inputs: $(_GenerateInput $cmd)
+outputs: $(_GenerateOutput $cmd)
+notes: $(_GenerateNotes $cmd)
+relatedLinks: $(_GenerateLinks $cmd)
+aliases: $(_GenerateAliases $cmd)
+examples: $(_GenerateExamples $cmd)
+---
+"@ | Out-File (Join-Path $modulePath "$cmdName.md") -Encoding utf8
+
+}
+
+Function _GenerateParameterSets($cmd) {
+    Write-Output "`n  `"_All_`": [ $(($cmd.parameters.parameter | `
+        Where-Object {($_.aliases -split',') -notcontains $_.name} | `
+        Select-Object -ExpandProperty name | `
+        Sort-Object) -join ', ') ]"
+    foreach ($syntax in $cmd.syntax.syntaxItem) {
+        Write-Output "`n  $(_Text $syntax.parameterSet): "
+        foreach($param in $syntax.parameter) {
+            Write-Output "`n    $($param.name):"
+            Write-Output "`n      type: $(_Text $param.parameterValue.InnerText) "
+            if($param.position -ne 'named') {Write-Output "`n      position: $(_Text $param.position) "}
+            if($param.required -eq 'true') {Write-Output "`n      required: true "}
+        }
+    }
+}
+
+Function _GenerateParameters($cmd) {
+    foreach ($p in $cmd.parameters.parameter) {
+        Write-Output "`r`n  - name: $(_Text $p.name)"
+        Write-Output "`r`n    description: $(_Text $p.description.InnerText)"
+        if($p.required -eq "true") {Write-Output "`r`n    required: $($p.required)"}
+        Write-Output "`r`n    globbing: $($p.globbing)"
+        if($p.pipelineInput -ne "false") {Write-Output "`r`n    pipelineInput: $(_Text $p.pipelineInput)"}
+        if($p.position -ne "named") {Write-Output "`r`n    position: $($p.position)"}
+        Write-Output "`r`n    type: $(_Text $p.parameterValue.InnerText)"
+        if($p.aliases) {Write-Output "`r`n    aliases: [ $($p.aliases) ]"}
+        if($p.defaultValue) {Write-Output "`r`n    defaultValue: $(_Text $p.defaultValue)"}
+    }
+}
+
+Function _GenerateInput($cmd) {
+    foreach ($i in $cmd.inputTypes.inputType) {
+        Write-Output "`n  - type: $(_Text $i.type.name)"
+        Write-Output "`n    description: $(_Text $i.description.InnerText)"
+    }
+}
+
+Function _GenerateOutput($cmd) {
+    foreach ($o in $cmd.returnValues.returnValue) {
+        Write-Output "`n  - type: $(_Text $o.type.name)"
+        Write-Output "`n    description: $(_Text $o.description.InnerText)"
+    }
+}
+
+Function _GenerateNotes($cmd) { }
+
+Function _GenerateLinks($cmd) {
+    foreach ($link in $cmd.relatedLinks.navigationLink) {
+        Write-Output "`n  - text: $(_Text $link.linkText)"
+        Write-Output "`n    uri: $(_Text $link.uri)"
+    }
+}
+
+Function _GenerateAliases($cmd) {
+    $aliases = (Get-Alias | Where-Object ResolvedCommandName -eq $cmd.details.name).name
+
+    if(-not $aliases) {return}
+
+    Write-Output "[ $($aliases -join ', ') ]"
+}
+
+Function _GenerateExamples($cmd) {
+    foreach ($ex in $cmd.examples.example) {
+        Write-Output "`n  - title: $(_Text $ex.title)"
+        Write-Output "`n    code: $(_Text $ex.code)"
+        Write-Output "`n    remarks: $(_Text $ex.remarks.InnerText)"
+    }
+}
+
+Function _Text($text) {
+    if (-not $text) { return }
+
+    return """$($text.Replace('\', '\\').Replace('"', '\"'))"""
+}
+
+### Main script ###
+
 if (-not $RootProjectDir) { $RootProjectDir = $PSScriptRoot }
 if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir 'out/module') }
 if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs') }
@@ -19,471 +122,18 @@ $CommonParameters = @('ErrorAction', 'WarningAction', 'InformationAction',
     'Verbose', 'Debug', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 
     'OutVariable', 'OutBuffer', 'PipelineVariable')
 
-## Table Builder Functions -----------------------------------------------------
+$doc = [xml] (Get-Content (Join-Path $ModuleDir 'TfsCmdlets.PSDesktop.dll-Help.xml'))
 
-function Table ([Parameter(Position = 0)]$Content) {
+foreach ($cmd in $doc.helpItems.command) {
+    $moduleName = $cmd.Module
 
-    $table = [PSCustomObject] @{
-        Columns = (& $Content | Where-Object Type -eq 'Header' | Select-Object -ExpandProperty Cells)
-        Rows    = (& $Content | Where-Object Type -eq 'Row').Cells
+    #if($moduleName -notin "Admin", "Connection") {continue}
+
+    $modulePath = (Join-Path $DocsDir ($moduleName -replace '\.', '/'))
+
+    if (-not (Test-Path $modulePath)) {
+        New-Item $modulePath -ItemType Directory | Out-Null
     }
 
-    return $table
-}
-
-function Header ([Parameter(Position = 0)][ScriptBlock]$Cells) {
-    return Row $Cells 'Header'
-}
-
-function Row ([Parameter(Position = 0)][ScriptBlock]$Cells, [Parameter(Position = 1)]$Type = 'Row') {
-    $row = [PSCustomObject] @{
-        Type  = $Type
-        Cells = (& $Cells)
-    }
-
-    return $row
-}
-
-function HeaderCell ([Parameter(Position = 0)]$Name, 
-    [Parameter(Position = 1)][ValidateSet('Left', 'Center', 'Right')]$Align = 'Left',
-    $Width = 50) {
-
-    return [PSCustomObject] @{
-        Name      = $Name
-        Alignment = $Align
-        Width     = $Width
-    }
-}
-
-function Cell ([Parameter(Position = 0)]$Content, 
-    [Parameter(Position = 1)][ValidateSet('Left', 'Center', 'Right')]$Align = 'Left',
-    $Width = 50) {
-
-    return [PSCustomObject] @{
-        Content   = $Content
-        Alignment = $Align
-        Width     = $Width
-    }
-}
-
-## Markdown conversion Functions -----------------------------------------------------
-
-Function PadCenter([string]$InputObject, [int]$Width, [string]$PadWith) {
-    $spaces = $Width - $InputObject.Length
-    $padLeft = $spaces / 2 + $InputObject.Length
-
-    return $InputObject.PadLeft($padLeft, $PadWith).PadRight($Width, $PadWith)
-}
-
-Function SplitAndPad([Parameter(ValueFromPipeline = $true)][string]$InputObject, [int]$Width = 30, [string]$Alignment = 'Left') {
-
-    $tokens = $InputObject -split ' '
-    $currentLine = ''
-
-    foreach ($token in $tokens) {
-
-        if ("${currentLine}${token}".Length -gt $Width) {
-            switch ($Alignment) {
-                'Left' { Write-Output $currentLine.TrimEnd().PadRight($Width, ' '); break }
-                'Right' { Write-Output $currentLine.TrimEnd().PadLeft($Width, ' '); break }
-                'Center' { Write-Output (PadCenter -Input $currentLine.TrimEnd() -Width $Width -PadWith ' '); break }
-            }
-
-            $currentLine = ''
-            continue
-        }
-        
-        $currentLine += "$token "
-    }
-
-    if ($currentLine.Length) {
-        switch ($Alignment) {
-            'Left' { Write-Output $currentLine.TrimEnd().PadRight($Width, ' ') }
-            'Right' { Write-Output $currentLine.TrimEnd().PadLeft($Width, ' ') }
-            'Center' { Write-Output (PadCenter -Input $currentLine.TrimEnd() -Width $Width -PadWith ' ') }
-        }
-    }
-}
-
-function MakeHeaderDelimeter($cell) {
-
-    switch ($cell.Alignment) {
-        'Left' {
-            return ':-----'
-        }
-        'Right' {
-            return '-----:'
-        }
-        'Center' {
-            return ':----:'
-        }
-    }
-}
-
-function MdRow($cells) {
-    $row = "|" + ($cells -join '|') + "|`r`n"
-    return $row
-}
-
-Function AutoLink([Parameter(ValueFromPipeline = $true)]$doc, $cmdName) {
-
-    Process {
-
-        # Process links to MSDN class documentation
-
-        $doc = $doc -replace '(?<ClassName>(Microsoft\.TeamFoundation(\.\w+)+)|(Microsoft\.VisualStudio(\.\w+)+)|(System(\.\w+)+))', '[${ClassName}](https://docs.microsoft.com/en-us/dotnet/api/${ClassName})'
-
-        # Process links between TfsCmdlets functions
-
-        $cmdList = Get-Command -Module TfsCmdlets | Where-Object Name -ne $cmdName | Select-Object -ExpandProperty Name
-
-        foreach ($cmd in $cmdList) {
-            $doc = $doc -replace "\b(?<CmdletName>$cmd)\b", "[$cmd]($(CommandUrl $cmd))"
-        }
-
-        return $doc
-    }
-}
-
-Function CommandUrl($cmd) {
-    $t = (Get-Command $cmd).ImplementingType
-    $path = $t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', '/')
-
-    return "$RootUrl/$path/$cmd"
-}
-
-Function Syntax($help, $cmd) {
-    $showParameterSets = ($cmd.ParameterSets.Count -gt 1)
-
-    foreach ($ps in $cmd.ParameterSets) {
-
-        if ($showParameterSets) {
-            Write-Output "# $($ps.Name)`r`n"
-        }
-
-        Write-Output "`r`n$($cmd.Name)"
-
-        foreach ($p in $ps.Parameters | Where-Object Name -NotIn $CommonParameters) {
-            $helpParam = ($help.parameters.parameter | Where-Object name -eq $p.Name)
-            $paramOut = "-$($p.Name)"
-            
-            if ($p.ParameterType.Name -ne 'SwitchParameter') {
-                $paramOut += " <$($helpParam.parameterValue)>"
-            }
-
-            $required = ($helpParam.required -and [bool]::Parse($helpParam.required))
-
-            if (-not $required) {
-                $paramOut = "[$paramOut]"
-            }
-
-            Write-Output "    $paramOut`r`n"
-        }
-    }
-}
-
-Function Parameters($cmd, $help, $top) {
-
-    $params = ($cmd.Parameters.Values | Where-Object Name -NotIn $commonParameters)
-
-    if (-not $params.Count) { return }
-
-    Write-Output @"
-### Parameters
-
-| Parameter | Description |
-|:----------|-------------|
-
-"@
-
-    foreach ($cmdParam in $params) {
-
-        $paramName = ($cmdParam.Name | Out-String).Trim()
-
-        switch ($paramName) {
-            'WhatIf' {
-                $paramDesc = 'Shows what would happen if the cmdlet runs. The cmdlet is not run.'
-                break
-            }
-            'Confirm' {
-                $paramDesc = 'Prompts you for confirmation before running the cmdlet.'
-                break
-            }
-            default {
-                $param = $help.Parameters.Parameter | Where-Object Name -eq $cmdParam.Name
-
-                if ($param) {
-                    $paramType = ($param.type.name | Out-String).Trim()
-                    $paramDesc = ($param.description | Out-String).Trim()
-                }
-                else {
-                    $paramType = ($cmdParam.Type | Out-String).Trim()
-                }
-            
-                if ($paramType -eq 'SwitchParameter') {
-                    $paramType = 'Switch'
-                }
-            
-                if ($paramDesc) {
-                    $paramDesc = ($paramDesc -split "`r?`n" | ForEach-Object { $_.Trim() }) -join ' '
-                }
-                else {
-                    $paramDesc = '_N/A_'
-                }
-            }
-        }
-
-        Write-Output "| $paramName | $paramDesc |`r`n"
-    }
-
-    Write-Output "`r`n[Go to top]($top)`r`n"
-}
-
-## Get-Help Parsers ------------------------------------------------------------
-
-function ConvertCommandHelp($help, $cmdList) {
-
-    try {
-        $cmd = Get-Command $help.Name -Module TfsCmdlets
-    }
-    catch {
-        throw $_
-    }
-
-    $cmdName = $help.Name
-    $cmd = (Get-Command $cmdName)
-    $t = $cmd.ImplementingType
-    $subModuleName = $t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', '/')
-
-    # Document template
-
-    $top = "#$($cmdName.ToLower())"
-    
-    return @"
----
-layout: $Layout
-title: $cmdName
-description: $($help.Synopsis)
-parent: $subModuleName
-breadcrumbs: [$($t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', ','))]
----
-## $cmdName
-{: .no_toc}
-
-$($help.Synopsis)
-
-``````powershell
-$(Syntax $help $cmd)
-``````
-
-### Table of Contents
-{: .no_toc .text-delta}
-
-1. TOC
-{:toc}
-
------
-$(Description $cmd $help $top)$(Parameters $cmd $help $top)$(InputTypes $cmd $help $top)$(OutputTypes $cmd $help $top)$(Notes $cmd $help $top)$(Examples $cmd $help $top)$(Aliases $cmd $help $top)$(Related $cmd $help $top)
-
-"@ | AutoLink -CmdName $cmdName
-
-}
-
-Function Description($cmd, $help, $top) {
-
-    if (-not $help.description) { return }
-
-    return @"
-
-### Detailed Description 
-
-$(($help.description | Select-Object -ExpandProperty Text) -join "`r`n`r`n")
-
-[Go to top]($top)
-
-"@
-}
-
-Function InputTypes($cmd, $help, $top) {
-
-    if (-not $help.inputTypes) { return }
-
-    return @"
-
-### Inputs
-
-The input type is the type of the objects that you can pipe to the cmdlet.
-
-$($help.inputTypes.inputType.type.name -split "`n" | ForEach-Object {'* ' + $_})
-
-[Go to top]($top)
-
-"@
-}
-
-Function OutputTypes($cmd, $help, $top) {
-
-    if (-not $cmd.OutputType) { return }
-
-    return @"
-
-### Outputs
-
-The output type is the type of the objects that the cmdlet emits.
-
-$($cmd.OutputType | Select-Object -ExpandProperty Name | ForEach-Object {"* $_`r`n"})
-[Go to top]($top)
-
-"@  
-}
-
-Function Notes($cmd, $help, $top) {
-
-    if (-not $help.alertSet) { return }
-    
-    return @"
-
-### Notes
-
-$($help.alertSet.alert | Select-Object -ExpandProperty Text) -join "`r`n`r`n")
-
-[Go to top]($top)
-
-"@
-}
-
-Function Examples($cmd, $help, $top) {
-
-    if (-not $help.examples) { return }
-
-    $Examples = ''
-
-    for ($i = 0; $i -lt $help.examples.example.Length; ++$i) {
-        $example = $help.examples.example[$i]
-        $Examples += "`r`n"
-        $Examples += "#### Example $($i + 1)`r`n"
-        $Examples += '```powershell' + "`r`n"
-        $Examples += ($example.code | Out-String).Trim() + "`r`n"
-        $Examples += '```' + "`r`n"
-        $Examples += "`r`n"
-        $Examples += ($example.remarks | Out-String).Trim() + "`r`n"
-    }
-
-    return @"
-
-### Examples
-
-$Examples
-
-[Go to top]($top)
-
-"@
-}
-
-Function Aliases  ($cmd, $help, $top) { 
-
-    $Aliases = (Get-Alias | Where-Object ResolvedCommandName -eq $cmdName | Select-Object -ExpandProperty Name)
-
-    if (-not $Aliases) { return }
-
-    return @"
-
-### Aliases
-
-The following abbreviations are aliases for this cmdlet:
-
-$Aliases
-    
-[Go to top]($top)
-
-"@    
-}
-
-Function Related  ($cmd, $help, $top) { 
-
-    return @"
-
-### Related Topics
-
-$($help.relatedLinks.navigationLink | Where-Object linkText -ne 'Online version:' | ForEach-Object { "* $($_.linkText)$(if ($_.uri) { " [$($_.uri)]($($_.uri))" })`r`n"})
-
-[Go to top]($top)
-"@ 
-}
-
-# Main script
-
-Import-Module (Join-Path $ModuleDir 'TfsCmdlets.psd1') -Force
-
-if (-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
-
-$i = 0
-$top = ''
-$cmds = Get-Command -Module TfsCmdlets
-$cmdList = $cmds | Select-Object -ExpandProperty Name
-$cmdCount = $cmds.Count
-$origBufSize = $Host.UI.RawUI.BufferSize
-$expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
-$moduleAssembly = [AppDomain]::CurrentDomain.GetAssemblies() | Where-Object FullName -like 'TfsCmdlets.PS*'
-$subModules = @{ }
-
-foreach ($t in $moduleAssembly.GetTypes() | 
-    Where-Object { $_.GetCustomAttributes([System.Management.Automation.CmdletAttribute], $true) } | 
-    Sort-Object { $_.FullName } ) {
-
-    $subModuleNamespace = $t.FullName.SubString(0, $t.FullName.Length - $t.Name.Length - 1)
-    $subModulePath = $t.FullName.SubString(19, $t.FullName.Length - $t.Name.Length - 20).Replace('.', '/')
-
-    if (-not $subModules.ContainsKey($subModuleNamespace)) {
-        $subModules[$subModuleNamespace] = [PSCustomObject] @{
-            Namespace = $subModuleNamespace
-            Path      = $subModulePath
-            Commands  = @()
-        }
-    }
-
-    $attr = $t.GetCustomAttributes([System.Management.Automation.CmdletAttribute], $true)[0]
-
-    $subModules[$subModuleNamespace].Commands += [PSCustomObject]@{
-        Name = "$($attr.VerbName)-$($attr.NounName)"
-        Type = $t
-    }
-}
-
-foreach ($m in $subModules.Values) {
-    $subModuleOutputDir = (Join-Path $DocsDir $m.Path)
-
-    if (-not (Test-Path $subModuleOutputDir -PathType Container)) {
-        Write-Verbose "Creating sub-module folder '$subModuleOutputDir'"
-        New-Item $subModuleOutputDir -ItemType Directory | Out-Null
-    }
-
-    $subModuleCommands = $m.Commands.Name
-
-    foreach ($c in $subModuleCommands) {
-        $i++ 
-
-        $cmd = Get-Command $c -Module TfsCmdlets
-
-        Write-Progress -Activity "Generating help files" -Status "$($m.Path)/$($cmd.Name) ($i of $cmdCount)" -PercentComplete ($i / $cmdCount * 100)
-
-        try {
-            #$Host.UI.RawUI.BufferSize = $expandedBufSize
-
-            # Generate the readme
-            $readme = ConvertCommandHelp -Help (Get-Help $cmd) -CmdList $cmdList
-
-            # Output to the appropriate stream
-            Write-Verbose "Writing $OutputFile"
-            $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
-            $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-            [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
-        }
-        catch {
-            Write-Warning $_
-        }
-    }
-
-    Write-Progress -Activity "Generating help files" -Completed
-    #$Host.UI.RawUI.BufferSize = $origBufSize
+    _GenerateHelp $cmd $moduleName $modulePath
 }
