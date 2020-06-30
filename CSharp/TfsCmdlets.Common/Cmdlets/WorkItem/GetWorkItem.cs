@@ -219,6 +219,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                                         ["System.WorkItemType"] = wi.Type,
                                         ["System.Title"] = wi.Name,
                                         ["System.AreaPath"] = wi.Project,
+                                        ["System.State"] = "<Deleted>",
                                         ["System.IterationPath"] = wi.Project,
                                         ["System.ChangedDate"] = wi.DeletedDate,
                                         ["DeletedBy"] = wi.DeletedBy,
