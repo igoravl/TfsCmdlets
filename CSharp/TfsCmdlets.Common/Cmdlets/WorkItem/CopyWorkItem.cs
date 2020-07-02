@@ -1,4 +1,7 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -7,41 +10,60 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// </summary>
     /// <remarks>
     /// Use this cmdlet to create a copy of a work item (using its latest saved state/revision data) 
-    /// that is of the specified work item type. By default, the copy retains the same type of the 
-    /// original work item, unless the Type argument is specified
+    /// that is of the specified work item type.
+    /// <br/>
+    /// By default, the copy retains the same type of the original work item, 
+    /// unless the Type argument is specified
     /// </remarks>
     [Cmdlet(VerbsCommon.Copy, "TfsWorkItem")]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
+    [OutputType(typeof(WebApiWorkItem))]
     public class CopyWorkItem : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_WORKITEM
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, Mandatory=true, Position = 0)]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
+        /// <summary>
+        /// Specifies the type of the new work item. When omitted, the type of the original 
+        /// work item is preserved.
+        /// </summary>
         [Parameter()]
-        public object Type { get; set; }
+        public object NewType { get; set; }
 
+        /// <summary>
+        /// Creates a duplicate of all attachments present in the source work item and 
+        /// adds them to the new work item.
+        /// </summary>
         [Parameter()]
         public SwitchParameter IncludeAttachments { get; set; }
 
+        /// <summary>
+        /// Creates a copy of all links present in the source work item and adds them to the new work item.
+        /// Only the links are copied; linked artifacts themselves are not copied. 
+        /// In other words, both the original and the copy work items point to the same linked
+        /// artifacts.
+        /// </summary>
         [Parameter()]
         public SwitchParameter IncludeLinks { get; set; }
-
-        [Parameter()]
-        public SwitchParameter SkipSave { get; set; }
 
         /// <summary>
         /// Specifies the team project where the work item will be copied into. When omitted, 
 		/// the copy will be created in the same team project of the source work item. 
-		/// The value provided to this argument takes precedence over both the source team project 
-		/// and the team project of an instance of WorkItemType provided to the Type argument.
         /// </summary>
         [Parameter()]
         public object DestinationProject { get; set; }
+
+        /// <summary>
+        /// Specifies the source team project from where the work item will be copied. 
+        /// When omitted, it defaults to the team project of the piped work item (if any),
+        /// or to the connection set by Connect-TfsTeamProject.
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
 
         /// <summary>
         /// HELP_PARAM_COLLECTION
@@ -61,62 +83,56 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        protected override void DoProcessRecord()
+        {
+            var wi = GetItem<WebApiWorkItem>();
+            WebApiWorkItemType wit;
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
-        //         #store = wi.Store
+            Project ??= wi.Fields["System.TeamProject"];
+            DestinationProject ??= Project;
 
-        //         if(Type)
-        //         {
-        //             if (Project)
-        //             {
-        //                 tp = Project
-        //             }
-        //             else
-        //             {
-        //                 tp = wi.Project
-        //             }
-        //             witd = Get-TfsWorkItemType -Type Type -Project tp -Collection wi.Store.TeamProjectCollection
-        //         }
-        //         else
-        //         {
-        //             witd = wi.Type
-        //         }
+            if(NewType != null)
+            {
+                wit = GetItem<WebApiWorkItemType>(new {Type = NewType});
+            }
+            else
+            {
+                wit = GetItem<WebApiWorkItemType>(new {WorkItem = wi});
+            }
 
-        //         flags = Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.None
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
-        //         if (IncludeAttachments)
-        //         {
-        //             flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyFiles
-        //         }
+            // var flags = WorkItemCopyFlags.None;
 
-        //         if (IncludeLinks)
-        //         {
-        //             flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyLinks
-        //         }
+            // if (IncludeAttachments)
+            // {
+            //     flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyFiles
+            // }
 
-        //         copy = wi.Copy(witd, flags)
+            // if (IncludeLinks)
+            // {
+            //     flags = flags -bor Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemCopyFlags.CopyLinks
+            // }
 
-        //         if(! SkipSave)
-        //         {
-        //             copy.Save()
-        //         }
+            // client.CreateWorkItemAsync()
 
-        //         if (Passthru = = "Original")
-        //         {
-        //             WriteObject(wi); return;
-        //         }
 
-        //         if(Passthru = = "Copy")
-        //         {
-        //             WriteObject(copy); return;
-        //         }
-        //     }
-        // }
+            // copy = wi.Copy(witd, flags)
+
+            // if(! SkipSave)
+            // {
+            //     copy.Save()
+            // }
+
+            // if (Passthru = = "Original")
+            // {
+            //     WriteObject(wi); return;
+            // }
+
+            // if(Passthru = = "Copy")
+            // {
+            //     WriteObject(copy); return;
+            // }
+        }
     }
 }
