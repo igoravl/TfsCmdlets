@@ -128,14 +128,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
         public string Query { get; set; }
 
+        [Parameter()]
+        [Parameter(Position = 0, ParameterSetName = "Query by filter")]
+        public string[] Fields { get; set; } = DefaultFields;
+
         /// <summary>
         /// Specifies a filter clause (the portion of a WIQL query after the WHERE keyword).
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Query by filter")]
         public string Where { get; set; }
-
-        [Parameter()]
-        public string[] Fields { get; set; } = DefaultFields;
 
         /// <summary>
         /// Fetches work items in "time-precision mode": search criteria in WIQL queries 
