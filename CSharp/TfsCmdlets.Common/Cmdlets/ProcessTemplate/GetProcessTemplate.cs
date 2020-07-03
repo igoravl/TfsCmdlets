@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         [Parameter(Position = 0)]
         [Alias("Name")]
         [SupportsWildcards()]
-        public string ProcessTemplate { get; set; } = "*";
+        public object ProcessTemplate { get; set; } = "*";
     }
 
     [Exports(typeof(WebApiProcess))]
