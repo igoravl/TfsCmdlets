@@ -271,20 +271,19 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected void LogParameters()
         {
-            if (!IsVerbose) return;
+            if (!this.IsVerbose) return;
 
             var parms = new ParameterDictionary(this);
 
-            if (parms.ContainsKey("Password") && parms["Password"] != null)
-            {
-                parms["Password"] = "***";
-            }
+            if (parms.ContainsKey("Password") && parms["Password"] != null) parms["Password"] = "***";
 
-            Log("ARGS: " + JObject.FromObject(parms)
-                .ToString(Formatting.None)
-                .Replace("\":", "\" = ")
-                .Replace(",\"", "; \"")
-                .Trim('{', '}')
+            Log($"Running cmdlet with parameter set '{parms.Get<string>("ParameterSetName")}' and the following arguments:");
+
+            Log(JObject.FromObject(parms)
+                    .ToString(Formatting.None)
+                    .Replace("\":", "\" = ")
+                    .Replace(",\"", "; \"")
+                    .Trim('{', '}')
             );
         }
 

@@ -40,7 +40,9 @@ namespace TfsCmdlets.Services
 
             if (parms.ContainsKey("Password") && parms["Password"] != null) parms["Password"] = "***";
 
-            Log("ARGS: " + JObject.FromObject(parms)
+            Log($"Running cmdlet with parameter set '{parms.Get<string>("ParameterSetName")}' and the following arguments:");
+
+            Log(JObject.FromObject(parms)
                     .ToString(Formatting.None)
                     .Replace("\":", "\" = ")
                     .Replace(",\"", "; \"")
