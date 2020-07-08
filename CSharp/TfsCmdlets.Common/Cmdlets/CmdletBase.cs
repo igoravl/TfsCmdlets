@@ -45,6 +45,7 @@ namespace TfsCmdlets.Cmdlets
         protected override void BeginProcessing()
         {
             CheckWindowsOnly();
+            CheckRequiredVersion();
             LogParameters();
         }
 
@@ -315,6 +316,32 @@ namespace TfsCmdlets.Cmdlets
             }
 
             throw new NotSupportedException($"This cmdlet requires Windows PowerShell. It will not work on PowerShell Core.{Environment.NewLine}");
+        }
+
+        /// <summary>
+        /// Check whether the currently connected server is of a minimum version
+        /// </summary>
+        /// <throws>
+        /// For cmdlets which require a certain version of TFS, a call to 
+        /// this method will throw a NotSupportedException when connected to 
+        /// an older server.
+        /// </throws>
+        private void CheckRequiredVersion()
+        {
+            var attr = GetType().GetCustomAttribute<RequiresVersionAttribute>();
+
+            if (attr == null)
+            {
+                return;
+            }
+
+            var version = GetItem<ServerVersion>();
+
+            if (version.Year < attr.Version || version.Update < attr.Update)
+            {
+                throw new NotSupportedException($"This cmdlet requires Team Foundation Server " +
+                    $"{attr.Version}{(attr.Update > 0 ? " Update" + attr.Update : "")} or later.{Environment.NewLine}");
+            }
         }
 
         /// <summary>

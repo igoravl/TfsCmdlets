@@ -51,5 +51,4 @@
         /// </summary>
         Collection
     }
-
 }

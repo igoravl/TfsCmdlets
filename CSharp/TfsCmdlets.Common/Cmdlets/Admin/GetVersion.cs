@@ -30,6 +30,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         public new object Collection { get; set; }
     }
 
+    [Exports(typeof(ServerVersion))]
     internal class VersionDataService: BaseDataService<ServerVersion>
     {
         protected override IEnumerable<ServerVersion> DoGetItems()
@@ -75,15 +76,15 @@ namespace TfsCmdlets.Cmdlets.Admin
 
                 var version = new Version(matches[0].Groups[1].Value);
 
-                if(!TfsVersionTable.TryGetServerVersion(version.Major, out serverVersion))
+                if(!TfsVersionTable.TryGetServerVersion(version, out serverVersion))
                 {
+                    var year = TfsVersionTable.GetYear(version.Major);
+
                     serverVersion = new ServerVersion {
                         Version = version,
-                        FriendlyVersion = (version.Major >= 17? $"Azure DevOps": "Team Foundation") + $" Server {TfsVersionTable.GetYear(version.Major)}",
+                        FriendlyVersion = (version.Major >= 17? $"Azure DevOps": "Team Foundation") + $" Server {year}",
                         IsHosted = false,
-                        LongVersion = version.ToString(),
-                        Sprint = "N/A",
-                        Update = "N/A"
+                        LongVersion = $"{version} (TFS {year}))"
                     };
                 }
 

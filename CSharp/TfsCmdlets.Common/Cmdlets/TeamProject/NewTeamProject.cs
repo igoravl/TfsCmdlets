@@ -15,6 +15,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProject", DefaultParameterSetName = "Get by project", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTeamProject))]
+    [RequiresVersion(2015)]
     public class NewTeamProject : NewCmdletBase<WebApiTeamProject>
     {
         /// <summary>
