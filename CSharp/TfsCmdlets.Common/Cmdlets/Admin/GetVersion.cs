@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Services.WebApi;
@@ -20,18 +21,18 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
-    public class GetVersion : CmdletBase
+    public class GetVersion : GetCmdletBase<ServerVersion>
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
+        public new object Collection { get; set; }
+    }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+    internal class VersionDataService: BaseDataService<ServerVersion>
+    {
+        protected override IEnumerable<ServerVersion> DoGetItems()
         {
             var tpc = this.GetCollection();
             ServerVersion serverVersion = null;
@@ -88,7 +89,7 @@ namespace TfsCmdlets.Cmdlets.Admin
 
             }
 
-            WriteObject(serverVersion);
+            yield return serverVersion;
         }
     }
 }
