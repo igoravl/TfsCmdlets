@@ -11,17 +11,17 @@ using TfsCmdlets.Util;
 namespace TfsCmdlets.Cmdlets.Connection
 {
     /// <summary>
-    /// Provides credentials to use when you connect to a Team Foundation Server or Azure DevOps organization.
+    /// Provides credentials to use when you connect to a Team Foundation Server 
+    /// or Azure DevOps organization.
     /// </summary>
-    [Cmdlet("Get", "TfsCredential", DefaultParameterSetName = "Cached credentials")]
+    [Cmdlet(VerbsCommon.New, "TfsCredential", DefaultParameterSetName = "Cached credentials")]
     [OutputType(typeof(VssCredentials))]
-    public class GetCredential : CmdletBase
+    public class NewCredential : CmdletBase
     {
         /// <summary>
         /// Specifies the URL of the server, collection or organization to connect to.
         /// </summary>
-        /// <value></value>
-        [Parameter(Position=0, Mandatory=true)]
+        [Parameter(Position = 0, Mandatory = true)]
         public Uri Url { get; set; }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
         /// </summary>
         [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
-        [Alias("Pat", "PersonalAccessToken")]
-        public string AccessToken { get; set; }
+        [Alias("Pat")]
+        public string PersonalAccessToken { get; set; }
 
         /// <summary>
         /// HELP_PARAM_INTERACTIVE
@@ -76,12 +76,12 @@ namespace TfsCmdlets.Cmdlets.Connection
     {
         protected override IEnumerable<VssCredentials> DoGetItems()
         {
-            var credential = GetParameter<object>("Credential");
-            var userName = GetParameter<string>("UserName");
-            var password = GetParameter<SecureString>("Password");
-            var accessToken = GetParameter<string>("AccessToken");
-            var interactive = GetParameter<bool>("Interactive");
-            var url = GetParameter<Uri>("Url");
+            var credential = GetParameter<object>(nameof(NewCredential.Credential));
+            var userName = GetParameter<string>(nameof(NewCredential.UserName));
+            var password = GetParameter<SecureString>(nameof(NewCredential.Password));
+            var accessToken = GetParameter<string>(nameof(NewCredential.PersonalAccessToken));
+            var interactive = GetParameter<bool>(nameof(NewCredential.Interactive));
+            var url = GetParameter<Uri>(nameof(NewCredential.Url));
 
             var parameterSetName = ConnectionMode.CachedCredentials;
 
@@ -106,7 +106,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                     {
                         Logger.Log("Using cached credentials");
 
-                        yield return new VssCredentials(true);
+                        yield return new VssClientCredentials(true);
                         yield break;
                     }
 
@@ -116,7 +116,11 @@ namespace TfsCmdlets.Cmdlets.Connection
 
                         netCred = new NetworkCredential(userName, password);
                         fedCred = new VssBasicCredential(netCred);
-                        winCred = new WindowsCredential(netCred);
+
+                        var credCache = new CredentialCache();
+                        credCache.Add(url, "Negotiate", netCred);
+                        credCache.Add(url, "NTLM", netCred);
+                        winCred = new WindowsCredential(credCache);
 
                         break;
                     }
@@ -168,7 +172,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                     {
                         Logger.Log("Using credential from supplied Personal Access Token");
 
-                        netCred = new NetworkCredential("dummy-pat-user", accessToken);
+                        netCred = new NetworkCredential(string.Empty, accessToken);
                         fedCred = new VssBasicCredential(netCred);
                         winCred = new WindowsCredential(netCred);
 
@@ -198,11 +202,20 @@ namespace TfsCmdlets.Cmdlets.Connection
 
             var promptType = allowInteractive ? CredentialPromptType.PromptIfNeeded : CredentialPromptType.DoNotPrompt;
 
-            if(allowInteractive)
-                yield return new VssClientCredentials(winCred, fedCred, CredentialPromptType.PromptIfNeeded);
-            else
-                yield return new VssCredentials(winCred, fedCred, CredentialPromptType.DoNotPrompt);
+            if ((parameterSetName == ConnectionMode.UserNamePassword ||
+                parameterSetName == ConnectionMode.CredentialObject) && !IsHosted(url))
+            {
+                yield return new VssClientCredentials(winCred, promptType);
+                yield break;
+            }
+
+            yield return new VssClientCredentials(winCred, fedCred, promptType);
         }
+
+        private bool IsHosted(Uri url) => (
+            url.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
+            url.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
+
 
         private enum ConnectionMode
         {

@@ -55,8 +55,8 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
         /// </summary>
         [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
-        [Alias("Pat", "PersonalAccessToken")]
-        public string AccessToken { get; set; }
+        [Alias("Pat")]
+        public string PersonalAccessToken { get; set; }
 
         /// <summary>
         /// HELP_PARAM_COLLECTION
