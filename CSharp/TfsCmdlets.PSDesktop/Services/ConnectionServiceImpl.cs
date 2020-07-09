@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.TeamFoundation.Client;
 using Microsoft.TeamFoundation.Framework.Common;
 using Microsoft.VisualStudio.Services.Client;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
@@ -52,9 +53,9 @@ namespace TfsCmdlets.Services
                         }
 
                         if (connectionType.Equals("Server"))
-                            result = new TfsConfigurationServer(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem());
+                            result = new TfsConfigurationServer(uri, Provider.GetDataService<VssCredentials>(Cmdlet, new{Url=uri}).GetItem());
                         else
-                            result = new TfsTeamProjectCollection(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem());
+                            result = new TfsTeamProjectCollection(uri, Provider.GetDataService<VssCredentials>(Cmdlet, new{Url=uri}).GetItem());
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):
@@ -79,8 +80,8 @@ namespace TfsCmdlets.Services
                         {
                             var uri = configSrv.GetTeamProjectCollection(new Guid(tpc.Resource.Properties["InstanceId"])).Uri;
                             yield return connectionType.Equals("Server")?
-                                ((TfsConnection) new TfsConfigurationServer(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem())):
-                                ((TfsConnection) new TfsTeamProjectCollection(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem()));
+                                ((TfsConnection) new TfsConfigurationServer(uri, Provider.GetDataService<VssCredentials>(Cmdlet, new{Url=uri}).GetItem())):
+                                ((TfsConnection) new TfsTeamProjectCollection(uri, Provider.GetDataService<VssCredentials>(Cmdlet, new{Url=uri}).GetItem()));
                         }
 
                         yield break;

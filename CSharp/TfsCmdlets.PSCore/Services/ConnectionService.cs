@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.Client;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Models;
 
@@ -41,7 +42,7 @@ namespace TfsCmdlets.Services
                     case Uri uri:
                     {
                         Logger.Log($"Get {connectionType} referenced by URL '{uri}'");
-                        result = new VssConnection(uri, Provider.GetDataService<VssClientCredentials>(Cmdlet).GetItem());
+                        result = new VssConnection(uri, Provider.GetDataService<VssCredentials>(Cmdlet, new{Url=uri}).GetItem());
                         break;
                     }
                     case string uri when Uri.IsWellFormedUriString(uri, UriKind.Absolute):
