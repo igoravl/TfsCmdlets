@@ -9,16 +9,19 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// Connects to a TFS team project collection or Azure DevOps organization. 
     /// </summary>
     /// <remarks>
-    ///   The Connect-TfsTeamProjectCollection cmdlet connects to a TFS Team Project Collection or 
-    ///   Azure DevOps organization. That connection can be later reused by other TfsCmdlets commands 
-    ///   until it's closed by a call to Disconnect-TfsTeamProjectCollection.
+    /// The Connect-TfsTeamProjectCollection cmdlet connects to a TFS Team Project Collection or 
+    /// Azure DevOps organization.
+    /// 
+    /// That connection can be later reused by other TfsCmdlets commands until it's closed 
+    /// by a call to Disconnect-TfsTeamProjectCollection.
     /// </remarks>
     /// <notes>
-    ///   Most cmdlets in the TfsCmdlets module require a Collection object to be provided via their 
-    ///   -Collection argument in order to access a TFS instance. Those cmdlets will use the connection 
-    ///   opened by Connect-TfsTeamProjectCollection as their "default connection". In other words, 
-    ///   TFS cmdlets (e.g. New-TfsWorkItem) that have a -Collection argument will use the connection 
-    ///   provided by Connect-TfsTeamProjectCollection by default.
+    /// Most cmdlets in the TfsCmdlets module require a Collection object to be provided via their 
+    /// -Collection argument in order to access a TFS instance. Those cmdlets will use the connection 
+    /// opened by Connect-TfsTeamProjectCollection as their "default connection".
+    /// 
+    /// In other words, TFS cmdlets (e.g. New-TfsWorkItem) that have a -Collection argument will use the connection 
+    /// provided by Connect-TfsTeamProjectCollection by default.
     /// </notes>
     /// <example>
     ///   <code>Connect-TfsTeamProjectCollection -Collection http://tfs:8080/tfs/DefaultCollection</code>
