@@ -19,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public override string Node { get; set; }
 
         /// <inheritdoc/>
-        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+        internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public override string Node { get; set; }
 
         /// <inheritdoc/>
-        protected override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
+        internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// Indicates the type of structure (area or iteration)
         /// </summary>
         [Parameter()]
-        protected abstract TreeStructureGroup StructureGroup { get; }
+        internal abstract TreeStructureGroup StructureGroup { get; }
 
         /// <summary>
         /// HELP_PARAM_PROJECT
