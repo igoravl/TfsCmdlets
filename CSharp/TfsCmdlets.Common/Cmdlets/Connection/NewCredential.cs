@@ -114,13 +114,23 @@ namespace TfsCmdlets.Cmdlets.Connection
                     {
                         Logger.Log("Using username/password credentials from UserName/Password arguments");
 
+                        if(!IsHosted(url))
+                        {
+                            yield return new VssClientCredentials(
+                                new WindowsCredential(
+                                    new NetworkCredential(userName, password)));
+                                    
+                            yield break;
+                        }
+
                         netCred = new NetworkCredential(userName, password);
                         fedCred = new VssBasicCredential(netCred);
 
-                        var credCache = new CredentialCache();
-                        credCache.Add(url, "Negotiate", netCred);
-                        credCache.Add(url, "NTLM", netCred);
-                        winCred = new WindowsCredential(credCache);
+                        // var credCache = new CredentialCache();
+                        // credCache.Add(url, "Negotiate", netCred);
+                        // credCache.Add(url, "NTLM", netCred);
+                        // winCred = new WindowsCredential(credCache);
+                        winCred = new WindowsCredential(netCred);
 
                         break;
                     }
