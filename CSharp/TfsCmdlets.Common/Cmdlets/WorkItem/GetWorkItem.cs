@@ -171,7 +171,26 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(ValueFromPipeline = true)]
         public object Project { get; set; }
 
-        private static readonly string[] DefaultFields = new[] { "System.AreaPath", "System.TeamProject", "System.IterationPath", "System.WorkItemType", "System.State", "System.Reason", "System.CreatedDate", "System.CreatedBy", "System.ChangedDate", "System.ChangedBy", "System.CommentCount", "System.Title", "System.BoardColumn", "System.BoardColumnDone", "Microsoft.VSTS.Common.StateChangeDate", "Microsoft.VSTS.Common.Priority", "Microsoft.VSTS.Common.ValueArea", "System.Description", "System.Tags" };
+        internal static readonly string[] DefaultFields = new[] {
+            "System.AreaPath",
+            "System.TeamProject",
+            "System.IterationPath",
+            "System.WorkItemType",
+            "System.State",
+            "System.Reason",
+            "System.CreatedDate",
+            "System.CreatedBy",
+            "System.ChangedDate",
+            "System.ChangedBy",
+            "System.CommentCount",
+            "System.Title",
+            "System.BoardColumn",
+            "System.BoardColumnDone",
+            "Microsoft.VSTS.Common.StateChangeDate",
+            "Microsoft.VSTS.Common.Priority",
+            "Microsoft.VSTS.Common.ValueArea",
+            "System.Description",
+            "System.Tags" };
     }
 
     [Exports(typeof(WebApiWorkItem))]
@@ -312,6 +331,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
         {
+            fields = FixWellKnownFields(fields).ToList();
+
             try
             {
                 if (revision > 0)
@@ -328,6 +349,22 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             {
                 Cmdlet.WriteError(new ErrorRecord(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id));
                 return null;
+            }
+        }
+
+        private IEnumerable<string> FixWellKnownFields(IEnumerable<string> fields)
+        {
+            foreach (var f in fields)
+            {
+                if (f.IndexOf('.') > 0)
+                {
+                    yield return f;
+                    continue;
+                }
+
+                yield return WellKnownFields.FirstOrDefault(s => 
+                    s.Equals($"System.{f}", StringComparison.OrdinalIgnoreCase) || 
+                    s.Equals($"Microsoft.VSTS.Common.{f}", StringComparison.OrdinalIgnoreCase)) ?? f;
             }
         }
 
@@ -433,6 +470,29 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             return query;
         }
+
+        private static readonly string[] WellKnownFields = new[] {
+            "System.Id",
+            "System.History",
+            "System.AreaPath",
+            "System.TeamProject",
+            "System.IterationPath",
+            "System.WorkItemType",
+            "System.State",
+            "System.Reason",
+            "System.CreatedDate",
+            "System.CreatedBy",
+            "System.ChangedDate",
+            "System.ChangedBy",
+            "System.CommentCount",
+            "System.Title",
+            "System.BoardColumn",
+            "System.BoardColumnDone",
+            "Microsoft.VSTS.Common.StateChangeDate",
+            "Microsoft.VSTS.Common.Priority",
+            "Microsoft.VSTS.Common.ValueArea",
+            "System.Description",
+            "System.Tags" };
 
         private static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new Dictionary<string, Tuple<string, string>>()
         {
