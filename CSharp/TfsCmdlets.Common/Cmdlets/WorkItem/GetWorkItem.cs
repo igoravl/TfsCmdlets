@@ -96,7 +96,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public string[] ValueArea { get; set; }
 
         /// <summary>
-        /// Specifies the Value Area (field 'System.BoardColumn') to look up for in a work item. 
+        /// Specifies the board column to look up for in a work item. 
         /// Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
@@ -107,7 +107,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies whether the work item is in the sub-column Doing or Done in a board.
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public bool[] BoardColumnDone { get; set; }
+        public bool BoardColumnDone { get; set; }
 
         /// <summary>
         /// Specifies the name or email of the user that created the work item.
@@ -413,6 +413,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         private IEnumerable<string> FixWellKnownFields(IEnumerable<string> fields)
         {
+            if (fields == null) yield break;
+
             foreach (var f in fields)
             {
                 if (f.IndexOf('.') > 0)
