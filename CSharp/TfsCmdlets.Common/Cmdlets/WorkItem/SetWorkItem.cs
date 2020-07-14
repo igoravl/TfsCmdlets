@@ -1,5 +1,16 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using TfsCmdlets.Extensions;
+using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -8,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsWorkItem", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    public class SetWorkItem : CmdletBase
+    public class SetWorkItem : SetCmdletBase<WebApiWorkItem>
     {
         /// <summary>
         /// Specifies a work item. Valid values are the work item ID or an instance of
@@ -20,177 +31,254 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public object WorkItem { get; set; }
 
         /// <summary>
-        /// Specifies the names and the corresponding values for the fields to
-        /// be set in the work item.
+        /// Specifies the title of the work item.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Set work item")]
-        public Hashtable Fields { get; set; }
-
-        [Parameter(ParameterSetName = "Set work item")]
-        public SwitchParameter BypassRules { get; set; }
-
-        [Parameter(ParameterSetName = "Set work item")]
-        public SwitchParameter SkipSave { get; set; }
-
-        [Parameter(ParameterSetName = "Set board status")]
-        public object Board { get; set; }
-
-        [Parameter(ParameterSetName = "Set board status")]
-        public object Column { get; set; }
-
-        [Parameter(ParameterSetName = "Set board status")]
-        public object Lane { get; set; }
-
-        [Parameter(ParameterSetName = "Set board status")]
-        [ValidateSet("Doing", "Done")]
-        public string ColumnStage { get; set; }
-
-        [Parameter(ParameterSetName = "Set board status")]
-        public object Team { get; set; }
+        [Parameter()]
+        public string Title { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
+        /// Specifies the description of the work item.
         /// </summary>
-        /// <value></value>
         [Parameter()]
-        public object Collection { get; set; }
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Specifies the area path of the work item.
+        /// </summary>
+        [Parameter()]
+        public string Area { get; set; }
+
+        /// <summary>
+        /// Specifies the iteration path of the work item.
+        /// </summary>
+        [Parameter()]
+        public string Iteration { get; set; }
+
+        /// <summary>
+        /// Specifies the work item type of the work item.
+        /// </summary>
+        [Parameter()]
+        [Alias("Type")]
+        public string WorkItemType { get; set; }
+
+        /// <summary>
+        /// Specifies the user this work item is assigned to.
+        /// </summary>
+        [Parameter()]
+        public object AssignedTo { get; set; }
+
+        /// <summary>
+        /// Specifies the state of the work item.
+        /// </summary>
+        [Parameter()]
+        public string State { get; set; }
+
+        /// <summary>
+        /// Specifies the reason (field 'System.Reason') of the work item. 
+        ///
+        /// </summary>
+        [Parameter()]
+        public string Reason { get; set; }
+
+        /// <summary>
+        /// Specifies the Value Area of the work item. 
+        ///
+        /// </summary>
+        [Parameter()]
+        public string ValueArea { get; set; }
+
+        /// <summary>
+        /// Specifies the board column of the work item. 
+        ///
+        /// </summary>
+        [Parameter()]
+        public string BoardColumn { get; set; }
+
+        /// <summary>
+        /// Specifies whether the work item is in the sub-column Doing or Done in a board.
+        /// </summary>
+        [Parameter()]
+        public bool BoardColumnDone { get; set; }
+
+        /// <summary>
+        /// Specifies the board lane of the work item
+        /// </summary>
+        [Parameter()]
+        public string BoardLane { get; set; }
+
+        /// <summary>
+        /// Specifies the priority of the work item.
+        /// </summary>
+        [Parameter()]
+        public int Priority { get; set; }
+
+        /// <summary>
+        /// Specifies the tags of the work item.
+        /// </summary>
+        [Parameter()]
+        public string[] Tags { get; set; }
+
+        /// <summary>
+        /// Specifies the names and the corresponding values for the fields to be set 
+        /// in the work item and whose values were not supplied in the other arguments 
+        /// to this cmdlet.
+        /// </summary>
+        [Parameter()]
+        public Hashtable Fields { get; set; }
+
+        /// <summary>
+        /// Bypasses any rule validation when saving the work item. Use it with caution, as this 
+        /// may leave the work item in an invalid state.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter BypassRules { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter()]
+        public object Team { get; set; }
     }
 
     partial class WorkItemDataService
     {
+        private static Dictionary<string, string> _parameterMap = new Dictionary<string, string>()
+        {
+            ["Area"] = "System.Area",
+            ["AssignedTo"] = "System.AssignedTo",
+            ["Description"] = "System.Description",
+            ["Iteration"] = "System.Iteration",
+            ["Priority"] = "Microsoft.VSTS.Common.Priority",
+            ["Reason"] = "System.Reason",
+            ["State"] = "System.State",
+            ["Tags"] = "System.Tags",
+            ["Title"] = "System.Title",
+            ["ValueArea"] = "Microsoft.VSTS.Common.ValueArea"
+        };
 
+        protected override WebApiWorkItem DoSetItem()
+        {
+            var wi = GetItem<WebApiWorkItem>();
+            var tpc = GetCollection();
+            var fields = GetParameter<Hashtable>(nameof(SetWorkItem.Fields), new Hashtable());
+            var bypassRules = GetParameter<bool>(nameof(SetWorkItem.BypassRules));
+            var boardColumn = GetParameter<string>(nameof(SetWorkItem.BoardColumn));
+            var boardColumnDone = GetParameter<bool>(nameof(SetWorkItem.BoardColumnDone));
+            var boardLane = GetParameter<string>(nameof(SetWorkItem.BoardLane));
+
+            foreach (var argName in _parameterMap.Keys.Where(f => HasParameter(f) && !fields.ContainsKey(f)))
+            {
+                fields.Add(_parameterMap[argName], GetParameter<object>(argName));
+            }
+
+            if (fields.Count > 0)
+            {
+                var patch = new JsonPatchDocument(){
+                new JsonPatchOperation() {
+                    Operation = Operation.Test,
+                    Path = "/rev",
+                    Value = wi.Rev
+                }
+            };
+
+                foreach (DictionaryEntry field in fields)
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = $"/fields/{field.Key}",
+                        Value = field.Value is IEnumerable<string> ?
+                            string.Join(";", (IEnumerable<string>)field.Value) :
+                            field.Value
+                    });
+                }
+
+                var client = GetClient<WorkItemTrackingHttpClient>();
+
+                wi = client.UpdateWorkItemAsync(patch, (int)wi.Id, false, bypassRules)
+                    .GetResult("Error updating work item");
+
+            }
+
+            // Change board status
+
+            if (HasParameter(nameof(SetWorkItem.BoardColumn)) ||
+                HasParameter(nameof(SetWorkItem.BoardColumnDone)) ||
+                HasParameter(nameof(SetWorkItem.BoardLane)))
+            {
+
+                var patch = new JsonPatchDocument(){
+                    new JsonPatchOperation() {
+                        Operation = Operation.Test,
+                        Path = "/rev",
+                        Value = wi.Rev
+                    }
+                };
+
+                var (_, tp, t) = GetCollectionProjectAndTeam();
+                var board = FindBoard((string)wi.Fields["System.WorkItemType"], tpc, tp, t);
+
+                if (HasParameter(nameof(SetWorkItem.BoardColumn)))
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = $"/fields/{board.Fields.ColumnField.ReferenceName}",
+                        Value = GetParameter<string>(nameof(SetWorkItem.BoardColumn))
+                    });
+                }
+
+                if (HasParameter(nameof(SetWorkItem.BoardLane)))
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = $"/fields/{board.Fields.RowField.ReferenceName}",
+                        Value = GetParameter<string>(nameof(SetWorkItem.BoardLane))
+                    });
+                }
+
+                if (HasParameter(nameof(SetWorkItem.BoardColumnDone)))
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = $"/fields/{board.Fields.DoneField.ReferenceName}",
+                        Value = GetParameter<bool>(nameof(SetWorkItem.BoardColumnDone))
+                    });
+                }
+
+                var client = GetClient<WorkItemTrackingHttpClient>();
+
+                wi = client.UpdateWorkItemAsync(patch, (int)wi.Id, false, bypassRules)
+                    .GetResult("Error updating work item");
+            }
+
+            return wi;
+        }
+
+        private WebApiBoard FindBoard(string workItemType, Models.Connection tpc, WebApiTeamProject tp, WebApiTeam team)
+        {
+            var boards = GetItems<WebApiBoard>(new
+            {
+                Board = "*",
+                Team = team,
+                Project = tp,
+                Collection = tpc
+            }).ToList();
+
+            foreach (WebApiBoard b in boards)
+            {
+                var keys = b.AllowedMappings.Values.SelectMany(o => o.Keys).ToList();
+
+                if (keys.Any(t => t.Equals(workItemType, StringComparison.OrdinalIgnoreCase)))
+                {
+                    return b;
+                }
+            }
+
+            throw new Exception("Unable to find a board belonging to team " +
+                $"'{team.Name}' that contains a mapping to the work item type '{workItemType}'");
+        }
     }
-    // /// <summary>
-    // /// Performs execution of the command
-    // /// </summary>
-    // protected override void DoProcessRecord()
-    //     {
-    //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-    //         {
-    //             tpc = WorkItem.Store.TeamProjectCollection
-    //             id = WorkItem.Id
-    //         }
-    //         else
-    //         {
-    //             tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-    //             id = (Get-TfsWorkItem -WorkItem WorkItem -Collection Collection).Id
-    //         }
-
-    //         if (BypassRules)
-    //         {
-    //             store = new Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore(tpc, Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStoreFlags.BypassRules)
-    //         }
-    //         else
-    //         {
-    //             store = tpc.GetService([type]"Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
-    //         }
-
-    //         wi = store.GetWorkItem(id)
-
-    //         Fields = _FixAreaIterationValues -Fields Fields -ProjectName wi.Project.Name
-
-    //         if(ShouldProcess($"Set work item fields {{Fields}.Keys -join ", "} to $(Fields.Values -join ", "), respectively"))
-    //         {
-    //             foreach(fldName in Fields.Keys)
-    //             {
-    //                 wi.Fields[fldName].Value = Fields[fldName]
-    //             }
-
-    //             if(! SkipSave)
-    //             {
-    //                 wi.Save()
-    //             }
-    //         }
-
-    //         WriteObject(wi); return;
-    //     }
-    // }
-
-    /////////////// BOARD STATUS  //////////////////
-
-
-    // protected override void DoProcessRecord()
-    //     {
-    //         if ((! Column) && (! ColumnStage) && (! Lane))
-    //         {
-    //             throw new Exception("Supply a value to at least one of the following arguments: Column, ColumnStage, Lane")
-    //         }
-
-    //         if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-    //         {
-    //             tp = WorkItem.Project
-    //             tpc = WorkItem.Store.TeamProjectCollection
-    //         }
-    //         else
-    //         {
-    //             tp = this.GetProject();
-    //             tpc = tp.Store.TeamProjectCollection
-    //             WorkItem = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
-    //         }
-
-    //         t = Get-TfsTeam -Team Team -Project tp -Collection tpc
-    //         id = [int] WorkItem.Id
-    //         rev = WorkItem.Revision
-
-    //         # Get the Kanban board column/lane field info
-
-    //         b = Get-TfsBoard -Board Board -Team t -Project tp -Collection tpc
-
-    //         if (! b)
-    //         {
-    //             throw new Exception($"Invalid or non-existent board '{Board}' in team "Team"")
-    //         }
-
-    //         processMessages = @()
-
-    //         ops = @(
-    //             @{
-    //                 Operation = "Test";
-    //                 Path = "/rev";
-    //                 Value = rev.ToString()
-    //             }
-
-    //         if (Column)
-    //         {
-    //             ops += @{
-    //                 Operation = "Add";
-    //                 Path = $"/fields/{{b}.Fields.ColumnField.ReferenceName}";
-    //                 Value = Column
-    //             }
-
-    //             processMessages += $"Board Column='{Column}'"
-    //         }
-
-    //         if (Lane)
-    //         {
-    //             ops += @{
-    //                 Operation = "Add";
-    //                 Path = $"/fields/{{b}.Fields.RowField.ReferenceName}";
-    //                 Value = Lane
-    //             }
-
-    //             processMessages += $"Board Lane='{Lane}'"
-    //         }
-
-    //         if (ColumnStage)
-    //         {
-    //             ops += @{
-    //                 Operation = "Add";
-    //                 Path = $"/fields/{{b}.Fields.DoneField.ReferenceName}";
-    //                 Value = (ColumnStage = = "Done") 
-    //             }
-
-    //             processMessages += $"Board Stage (Doing/Done)='{ColumnStage}'"
-    //         }
-
-    //         if (ShouldProcess($"{{WorkItem}.WorkItemType} id ("$(WorkItem.Title)")", "Set work item board status: $(processMessages -join ", ")"))
-    //         {
-    //             patch = _GetJsonPatchDocument ops
-    //             var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-    //             wi = client.UpdateWorkItemAsync(patch, id).Result
-    //             WriteObject(wi); return;
-    //         }
-    //     }
-    // }
-
 }
