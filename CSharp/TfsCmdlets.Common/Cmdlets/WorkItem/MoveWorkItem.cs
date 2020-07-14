@@ -1,4 +1,11 @@
 using System.Management.Automation;
+using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
+using TfsCmdlets.Models;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -6,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// Moves a work item to a different team project in the same collection.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "TfsWorkItem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
+    [OutputType(typeof(WebApiWorkItem))]
     public class MoveWorkItem : CmdletBase
     {
         /// <summary>
@@ -18,20 +25,39 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
+        /// <summary>
+        /// Specifies the team project where the work item will be moved to.
+        /// </summary>
         [Parameter(Mandatory = true, Position = 1)]
-        public object Destination { get; set; }
+        [Alias("Destination")]
+        public object Project { get; set; }
 
+        /// <summary>
+        /// Specifies the area path in the destination project where the work item will be moved to. 
+        /// When omitted, the work item is moved to the root area path in the destination project.
+        /// </summary>
         [Parameter()]
         public object Area { get; set; }
 
+        /// <summary>
+        /// Specifies the iteration path in the destination project where the work item will be moved to. 
+        /// When omitted, the work item is moved to the root iteration path in the destination project.
+        /// </summary>
         [Parameter()]
         public object Iteration { get; set; }
 
+        /// <summary>
+        /// Specifies a new state for the work item in the destination project. 
+        /// When omitted, it retains the current state.
+        /// </summary>
         [Parameter()]
-        public object State { get; set; }
+        public string State { get; set; }
 
+        /// <summary>
+        /// Specifies a comment to be added to the history
+        /// </summary>
         [Parameter()]
-        public object History { get; set; }
+        public string Comment { get; set; }
 
         /// <summary>
         /// HELP_PARAM_COLLECTION
@@ -48,116 +74,129 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
-        //     protected override void BeginProcessing()
-        //     {
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.Client"
-        //         #_ImportRequiredAssembly -AssemblyName "Microsoft.TeamFoundation.WorkItemTracking.WebApi"
-        //     }
+        protected override void DoProcessRecord()
+        {
+            var wis = GetItems<WebApiWorkItem>();
+            var (tpc, targetTp) = GetCollectionAndProject();
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void DoProcessRecord()
-        //     {
-        //         wi = Get-TfsWorkItem -WorkItem WorkItem -Collection Collection
+            string targetAreaPath;
+            string targetIterationPath;
 
-        //         targetTp = Get-TfsTeamProject -Project Destination -Collection Collection
-        //         tpc = targetTp.Store.TeamProjectCollection
+            if (Area != null)
+            {
+                var targetArea = GetItem<ClassificationNode>(new
+                {
+                    Node = Area,
+                    StructureGroup = TreeStructureGroup.Areas
+                });
 
-        //         if (Area)
-        //         {
-        //             targetArea = Get-TfsClassificationNode -StructureGroup Areas -Node Area -Project targetTp
+                if (targetArea == null)
+                {
+                    if (!ShouldProcess($"Team project '{targetTp.Name}'", $"Create area path {Area}"))
+                    {
+                        return;
+                    }
 
-        //             if (! targetArea)
-        //             {
-        //                 if (ShouldProcess($"Team Project "{{targetTp}.Name}"", "Create area path "Area""))
-        //                 {
-        //                     targetArea = New-TfsClassificationNode -StructureGroup Areas -Node Area -Project targetTp -Passthru
-        //                 }
-        //             }
+                    targetArea = NewItem<ClassificationNode>(new
+                    {
+                        Node = Area,
+                        StructureGroup = TreeStructureGroup.Areas
+                    });
+                }
 
-        //             this.Log($"Moving to area {{targetTp}.Name}$(targetArea.RelativePath)");
-        //         }
-        //         else
-        //         {
-        //             this.Log("Area not informed. Moving to root iteration.");
-        //             targetArea = Get-TfsClassificationNode -StructureGroup Areas -Node "" -Project targetTp
-        //         }
+                this.Log($"Moving to area {targetArea.Path}");
+                targetAreaPath = $"{targetTp.Name}{targetArea.RelativePath}";
+            }
+            else
+            {
+                this.Log("Area not informed. Moving to root iteration.");
+                targetAreaPath = targetTp.Name;
+            }
 
-        //         if (Iteration)
-        //         {
-        //             targetIteration = Get-TfsClassificationNode -StructureGroup Iterations -Node Iteration -Project targetTp
+            if (Iteration != null)
+            {
+                var targetIteration = GetItem<ClassificationNode>(new
+                {
+                    Node = Iteration,
+                    StructureGroup = TreeStructureGroup.Iterations
+                });
 
-        //             if (! targetIteration)
-        //             {
-        //                 if (ShouldProcess($"Team Project "{{targetTp}.Name}"", "Create iteration path "Iteration""))
-        //                 {
-        //                     targetIteration = New-TfsClassificationNode -StructureGroup Iterations -Node Iteration -Project targetTp -Passthru
-        //                 }
-        //             }
+                if (targetIteration == null)
+                {
+                    if (!ShouldProcess($"Team project '{targetTp.Name}'", $"Create iteration path {Iteration}"))
+                    {
+                        return;
+                    }
 
-        //             this.Log($"Moving to iteration {{targetTp}.Name}$(targetIteration.RelativePath)");
-        //         }
-        //         else
-        //         {
-        //             this.Log("Iteration not informed. Moving to root iteration.");
-        //             targetIteration = Get-TfsClassificationNode -StructureGroup Iterations -Node "" -Project targetTp
-        //         }
+                    targetIteration = NewItem<ClassificationNode>(new
+                    {
+                        Node = Iteration,
+                        StructureGroup = TreeStructureGroup.Iterations
+                    });
 
-        //         targetArea = $"{{targetTp}.Name}$(targetArea.RelativePath)"
-        //         targetIteration = $"{{targetTp}.Name}$(targetIteration.RelativePath)"
+                }
+                targetIterationPath = $"{targetTp.Name}{targetIteration.RelativePath}";
+            }
+            else
+            {
+                this.Log("Iteration not informed. Moving to root iteration.");
+                targetIterationPath = targetTp.Name;
+            }
 
-        //         patch = _GetJsonPatchDocument @(
-        //             @{
-        //                 Operation = "Add";
-        //                 Path = "/fields/System.TeamProject";
-        //                 Value = targetTp.Name
-        //             },
-        //             @{
-        //                 Operation = "Add";
-        //                 Path = "/fields/System.AreaPath";
-        //                 Value = targetArea
-        //             },
-        //             @{
-        //                 Operation = "Add";
-        //                 Path = "/fields/System.IterationPath";
-        //                 Value = targetIteration
-        //             }
+            foreach (var wi in wis)
+            {
+                if (!ShouldProcess($"Work item {wi.Id}", $"Move work item to team project '{targetTp.Name}'"))
+                {
+                    continue;
+                }
 
-        //         if (State)
-        //         {
-        //             patch.Add( @{
-        //                 Operation = "Add";
-        //                 Path = "/fields/System.State";
-        //                 Value = State
-        //             })
-        //         }
+                var patch = new JsonPatchDocument() {
+                    new JsonPatchOperation(){
+                                Operation = Operation.Add,
+                                Path = "/fields/System.TeamProject",
+                                Value = targetTp.Name
+                    },
+                    new JsonPatchOperation() {
+                                Operation = Operation.Add,
+                                Path = "/fields/System.AreaPath",
+                                Value = targetAreaPath
+                    },
+                    new JsonPatchOperation() {
+                                Operation = Operation.Add,
+                                Path = "/fields/System.IterationPath",
+                                Value = targetIterationPath
+                    }
+                };
 
-        //         if (History)
-        //         {
-        //             patch.Add( @{
-        //                 Operation = "Add";
-        //                 Path = "/fields/System.History";
-        //                 Value = History
-        //             })
-        //         }
+                if (!string.IsNullOrEmpty(State))
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = "/fields/System.State",
+                        Value = State
+                    });
+                }
 
-        //         if (ShouldProcess($"{{wi}.WorkItemType} $(wi.Id) ("$(wi.Title)")", 
-        //             $"Move work item to team project "{{targetTp}.Name}" under area path " +
-        //             $""{{targetArea}}" and iteration path "$(targetIteration)""))
-        //         {
-        //             var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
-        //             task = client.UpdateWorkItemAsync(patch, wi.Id)
+                if (!string.IsNullOrEmpty(Comment))
+                {
+                    patch.Add(new JsonPatchOperation()
+                    {
+                        Operation = Operation.Add,
+                        Path = "/fields/System.History",
+                        Value = Comment
+                    });
+                }
 
-        //             result = task.Result; if(task.IsFaulted) { _throw new Exception("Error moving work item" task.Exception.InnerExceptions })
+                var client = GetClient<WorkItemTrackingHttpClient>();
+                var result = client.UpdateWorkItemAsync(patch, (int)wi.Id)
+                    .GetResult("Error moving work item");
 
-        //             if(Passthru.IsPresent)
-        //             {
-        //                 WriteObject(Get-TfsWorkItem result.Id -Collection tpc); return;
-        //             }
-        //         }
-        //     }
-        // }
+                if (Passthru)
+                {
+                    WriteObject(GetItem<WebApiWorkItem>(new { WorkItem = (int)result.Id }));
+                }
+            }
+        }
     }
 }
