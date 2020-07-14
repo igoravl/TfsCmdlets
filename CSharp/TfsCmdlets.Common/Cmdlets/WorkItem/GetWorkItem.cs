@@ -441,9 +441,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             foreach (var kvp in SimpleQueryFields)
             {
-                var paramValue = GetParameter<object>(kvp.Key);
+                if (!HasParameter(kvp.Key)) continue;
 
-                if (paramValue == null) continue;
+                var paramValue = GetParameter<object>(kvp.Key);
 
                 if (hasCriteria)
                 {
@@ -465,6 +465,19 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             {
                                 var v = values[i];
                                 var op = ever ? "ever" : (v.IsWildcard() ? "contains" : "=");
+                                sb.Append($"{(i > 0 ? " OR " : "")}([{kvp.Value.Item2}] {op} '{v}')");
+                            }
+                            sb.Append(")");
+                            break;
+                        }
+                    case "LongText":
+                        {
+                            var values = ((IEnumerable<string>)paramValue).ToList();
+                            sb.Append("(");
+                            for (int i = 0; i < values.Count; i++)
+                            {
+                                var v = values[i];
+                                var op = ever ? "ever contains" : "contains";
                                 sb.Append($"{(i > 0 ? " OR " : "")}([{kvp.Value.Item2}] {op} '{v}')");
                             }
                             sb.Append(")");
@@ -497,10 +510,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                         }
                     case "Boolean":
                         {
-                            var values = (IEnumerable<bool>)paramValue;
-                            sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v})")));
-                            sb.Append(")");
+                            var v = (bool)paramValue;
+                            sb.Append($"([{kvp.Value.Item2}] = {v})");
                             break;
                         }
                     case "Project":
@@ -571,7 +582,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             ["Reason"] = new Tuple<string, string>("Text", "System.Reason"),
             ["State"] = new Tuple<string, string>("Text", "System.State"),
             ["StateChangeDate"] = new Tuple<string, string>("Date", "Microsoft.VSTS.Common.StateChangeDate"),
-            ["Tags"] = new Tuple<string, string>("Text", "System.Tags"),
+            ["Tags"] = new Tuple<string, string>("LongText", "System.Tags"),
             ["Title"] = new Tuple<string, string>("Text", "System.Title"),
             ["ValueArea"] = new Tuple<string, string>("Text", "Microsoft.VSTS.Common.ValueArea"),
             ["WorkItemType"] = new Tuple<string, string>("Text", "System.WorkItemType")
