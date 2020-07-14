@@ -110,6 +110,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                         {
                             Logger.Log("Using username/password credentials from UserName/Password arguments");
                             credential = new NetworkCredential(userName, password);
+                            parameterSetName = ConnectionMode.CredentialObject;
                             continue;
                         }
 
@@ -117,6 +118,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                         {
                             Logger.Log("Using credential from supplied Personal Access Token");
                             credential = new NetworkCredential(string.Empty, accessToken);
+                            parameterSetName = ConnectionMode.CredentialObject;
                             continue;
                         }
 
@@ -130,14 +132,12 @@ namespace TfsCmdlets.Cmdlets.Connection
                                         yield return cred;
                                         yield break;
                                     }
-
                                 case PSCredential cred:
                                     {
                                         Logger.Log("Using username/password credentials from supplied PSCredential object");
                                         netCred = cred.GetNetworkCredential();
                                         break;
                                     }
-
                                 case NetworkCredential cred:
                                     {
                                         Logger.Log("Using username/password credentials from supplied NetworkCredential object");
