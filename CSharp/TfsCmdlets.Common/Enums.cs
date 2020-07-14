@@ -1,4 +1,6 @@
-﻿namespace TfsCmdlets
+﻿using System;
+
+namespace TfsCmdlets
 {
     /// <summary>
     /// Indicates a TFS component
@@ -50,5 +52,15 @@
         /// Collection-level scope
         /// </summary>
         Collection
+    }
+
+    [Flags]
+    public enum CardRuleType
+    {
+        CardColor = 1,
+
+        TagColor = 2,
+
+        All = 3
     }
 }

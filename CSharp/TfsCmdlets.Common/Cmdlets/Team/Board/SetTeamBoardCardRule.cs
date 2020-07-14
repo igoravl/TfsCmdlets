@@ -1,12 +1,27 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Work.WebApi;
+using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 
 namespace TfsCmdlets.Cmdlets.Team.Board
 {
     [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(BoardCardRuleSettings))]
-    public class SetTeamBoardCardRuleSetting : CmdletBase
+    public class SetTeamBoardCardRuleSetting : SetCmdletBase<WebApiBoard>
     {
+        /// <summary>
+        /// Specifies the board name. Wildcards are supported. When omitted, returns card rules 
+        /// for all boards in the given team.
+        /// </summary>
+        [Parameter(Position = 0)]
+        [SupportsWildcards()]
+        public object Board { get; set; } = "*";
+
+        /// <summary>
+        /// HELP_PARAM_TEAM
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public object Team { get; set; }
+
         /// <summary>
         /// Performs execution of the command
         /// </summary>

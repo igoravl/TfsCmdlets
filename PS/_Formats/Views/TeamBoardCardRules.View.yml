@@ -1,0 +1,13 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Work.WebApi.Rule
+GroupBy:
+  Label: Board
+  PropertyName: BoardName
+TableControl: 
+  RuleType:
+    Label: "Rule Type"
+  Name: 
+  Filter: 
+  Settings:
+  IsEnabled:
+    Label: "Enabled?"
