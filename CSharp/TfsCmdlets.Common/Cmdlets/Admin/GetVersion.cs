@@ -56,8 +56,8 @@ namespace TfsCmdlets.Cmdlets.Admin
                 serverVersion = new ServerVersion {
                     Version = version,
                     LongVersion = $"{matches[0].Groups[1].Value} ({matches[0].Groups[2].Value})",
-                    Sprint = version.Minor.ToString(),
-                    FriendlyVersion = $"Azure DevOps Services, Sprint {version.Minor} ({matches[0].Groups[1].Value})",
+                    Update = version.Minor,
+                    FriendlyVersion = $"Azure DevOps Services, Sprint {version.Minor}",
                     IsHosted = true
                 };
             }

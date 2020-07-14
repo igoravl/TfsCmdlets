@@ -337,7 +337,7 @@ namespace TfsCmdlets.Cmdlets
 
             var version = GetItem<ServerVersion>();
 
-            if (version.Year < attr.Version || version.Update < attr.Update)
+            if (version.YearVersion < attr.Version || version.Update < attr.Update)
             {
                 throw new NotSupportedException($"This cmdlet requires Team Foundation Server " +
                     $"{attr.Version}{(attr.Update > 0 ? " Update" + attr.Update : "")} or later.{Environment.NewLine}");

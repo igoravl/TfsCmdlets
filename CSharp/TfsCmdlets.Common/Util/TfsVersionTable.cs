@@ -254,15 +254,14 @@ namespace TfsCmdlets.Util
         public bool IsHosted { get; set; }
 
         /// <summary>
-        /// Gets the number of the sprint currently deployed in an Azure DevOps Services organization
-        /// </summary>
-        public string Sprint { get; set; }
-
-        /// <summary>
-        /// Gets the version number of the Update installed on a server
+        /// Gets the version number of the Update installed on a server, or number of the sprint 
+        /// currently deployed in an Azure DevOps Services organization
         /// </summary>
         public decimal Update { get; set; }
 
-        public int Year => TfsVersionTable.GetYear(Version.Major);
+        /// <summary>
+        /// Gets the version of the server as its corresponding year (e.g. 2019 for version 17.*)
+        /// </summary>
+        public int YearVersion => TfsVersionTable.GetYear(Version.Major);
     }
 }
