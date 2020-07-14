@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -28,84 +27,136 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date")]
         [Parameter(Position = 0, ParameterSetName = "Get deleted")]
+        [SupportsWildcards]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
         /// <summary>
-        /// Specifies the title to find on a work item. Wildcards are supported. 
+        /// Specifies the title to look up for in a work item. Wildcards are supported. 
         /// When a wildcard is used, matches a portion of the title 
         /// (uses the operator "contains" in the WIQL query). Otherwise, matches the whole field 
         /// with the operator "=", unless -Ever is also specified. In that case, uses the operator 
         /// "was ever".
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] Title { get; set; } // System.Title                                    Minha primeira estória
+        [SupportsWildcards]
+        public string[] Title { get; set; }
 
         /// <summary>
-        /// Specifies the description to find on a work item. Wildcards are supported. 
+        /// Specifies the description to look up for in a work item. Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] Description { get; set; } // System.Description                              <div>Alterando o histórico</div>
+        [SupportsWildcards]
+        public string[] Description { get; set; }
 
         /// <summary>
-        /// Specifies the area path to find on a work item. Wildcards are supported. 
+        /// Specifies the area path to look up for in a work item. Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string AreaPath { get; set; } // System.AreaPath                                 TfsCmdlets
+        [SupportsWildcards]
+        public string AreaPath { get; set; }
 
         /// <summary>
-        /// Specifies the iteration path to find on a work item. Wildcards are supported. 
+        /// Specifies the iteration path to look up for in a work item. Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string IterationPath { get; set; } // System.IterationPath                            TfsCmdlets
+        [SupportsWildcards]
+        public string IterationPath { get; set; }
 
         /// <summary>
-        /// Specifies the work item type to find on a work item. Wildcards are supported. 
+        /// Specifies the work item type to look up for in a work item. Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
         [Alias("Type")]
-        public string[] WorkItemType { get; set; } // System.WorkItemType                             User Story
+        [SupportsWildcards]
+        public string[] WorkItemType { get; set; }
 
         /// <summary>
-        /// Specifies the state to find on a work item. Wildcards are supported. 
+        /// Specifies the state (field 'System.State') to look up for in a work item. Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] State { get; set; } // System.State                                    New
+        [SupportsWildcards]
+        public string[] State { get; set; }
 
+        /// <summary>
+        /// Specifies the reason (field 'System.Reason') to look up for in a work item. 
+        /// Wildcards are supported. 
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] Reason { get; set; } // System.Reason                                   New
+        [SupportsWildcards]
+        public string[] Reason { get; set; }
 
+        /// <summary>
+        /// Specifies the Value Area (field 'Microsoft.VSTS.Common.ValueArea') to look up for in a work item. 
+        /// Wildcards are supported. 
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] ValueArea { get; set; } // Microsoft.VSTS.Common.ValueArea                 Business
+        [SupportsWildcards]
+        public string[] ValueArea { get; set; }
 
+        /// <summary>
+        /// Specifies the Value Area (field 'System.BoardColumn') to look up for in a work item. 
+        /// Wildcards are supported. 
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] BoardColumn { get; set; } // System.BoardColumn                              New
+        [SupportsWildcards]
+        public string[] BoardColumn { get; set; }
 
+        /// <summary>
+        /// Specifies whether the work item is in the sub-column Doing or Done in a board.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public bool[] BoardColumnDone { get; set; } // System.BoardColumnDone                          False
+        public bool[] BoardColumnDone { get; set; }
 
+        /// <summary>
+        /// Specifies the name or email of the user that created the work item.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public object CreatedBy { get; set; } // System.CreatedBy                                Microsoft.VisualStudio.Services.WebApi.IdentityRef
+        public object[] CreatedBy { get; set; }
 
+        /// <summary>
+        ///  Specifies the date when the work item was created.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public DateTime[] CreatedDate { get; set; } // System.CreatedDate                              22/06/2020 19:41:19
+        public DateTime[] CreatedDate { get; set; }
 
+        /// <summary>
+        /// Specifies the name or email of the user that did the latest change to the work item.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public object ChangedBy { get; set; } // System.ChangedBy                                Microsoft.VisualStudio.Services.WebApi.IdentityRef
+        public object ChangedBy { get; set; }
 
+        /// <summary>
+        /// Specifies the date of the latest change to the work item.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public DateTime[] ChangedDate { get; set; } // System.ChangedDate                              24/06/2020 06:16:20
+        public DateTime[] ChangedDate { get; set; }
 
+        /// <summary>
+        /// Specifies the date of the most recent change to the state of the work item.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public DateTime[] StateChangeDate { get; set; } // Microsoft.VSTS.Common.StateChangeDate           22/06/2020 19:41:19
+        public DateTime[] StateChangeDate { get; set; }
 
+        /// <summary>
+        /// Specifies the priority of the work item.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public int[] Priority { get; set; } // Microsoft.VSTS.Common.Priority                  2
+        public int[] Priority { get; set; }
 
+        /// <summary>
+        /// Specifies the tags to look up for in a work item. When multiple tags are supplied, 
+        /// they are combined with an OR operator - in other works, returns  work items that 
+        /// contain ANY ofthe supplied tags.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
-        public string[] Tags { get; set; } // System.Tags
+        public string[] Tags { get; set; }
 
+        /// <summary>
+        /// Switches the query to historical query mode, by changing operators to 
+        /// "WAS EVER" where possible.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
         public SwitchParameter Ever { get; set; }
 
@@ -117,6 +168,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Alias("rev")]
         public int Revision { get; set; }
 
+        /// <summary>
+        /// Returns the field values as they were defined in the work item revision that
+        /// was the latest revision by the date specified.
+        /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
         [Parameter(Mandatory = true, ParameterSetName = "Query by date")]
         public DateTime AsOf { get; set; }
@@ -128,6 +183,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
         public string Query { get; set; }
 
+        /// <summary>
+        /// Specifies which fields should be retrieved. When omitted, defaults to a set of
+        /// standard fields that include Id, Title, Description, some state-related fields and more.
+        /// </summary>
         [Parameter()]
         [Parameter(Position = 0, ParameterSetName = "Query by filter")]
         public string[] Fields { get; set; } = DefaultFields;
