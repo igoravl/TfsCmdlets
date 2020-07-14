@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Windows PowerShell": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\PowerShell.exe",
+      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath)\""
+    }
+  }
+}

@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.WebApi.VssConnection
+TableControl: 
+  Name: 
+    Width: 30
+  ServerId: 
+    Width: 38
+    Label: Instance Id
+  Uri: 

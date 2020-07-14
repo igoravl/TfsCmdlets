@@ -1,0 +1,13 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Core.WebApi.Process
+GroupBy: 
+  Label: Collection
+  PropertyName: Collection
+TableControl: 
+  Name: 
+  Type: 
+  Description:
+    Width: 30
+  IsDefault:
+    Label: "Default?"
+    Width: 8

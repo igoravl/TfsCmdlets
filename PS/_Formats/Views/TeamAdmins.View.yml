@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - TfsCmdlets.TeamAdmin
+TableControl: 
+  AccountName: 
+    Label: Account Name
+  DisplayName: 
+    Label: Display Name
+  TeamFoundationId: 
+    Label: Id

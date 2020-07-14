@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer
+  - Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher
+TableControl: 
+  Id: 
+    Width: 20
+  Name: 
+    Width: 30
+  Description: 

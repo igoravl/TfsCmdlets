@@ -1,0 +1,14 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan
+GroupBy: 
+  Label: Team Project
+  PropertyName: Project.Name
+TableControl: 
+  Name:
+  Owner:
+    ScriptBlock: $_.Owner.DisplayName
+  StartDate: 
+    Label: Start Date
+  EndDate: 
+    Label: End Date
+  Description: 

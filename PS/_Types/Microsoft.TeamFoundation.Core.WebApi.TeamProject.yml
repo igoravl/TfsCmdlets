@@ -1,0 +1,16 @@
+- ScriptProperty:
+    Name: ProcessTemplate
+    GetScriptBlock: $this.Capabilities.processTemplate.templateName
+- ScriptProperty:
+    Name: Properties
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Properties', {
+            $projectClient = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient'
+            $props = $projectClient.GetProjectPropertiesAsync($_.Id).Result
+            $val = @{}
+            $props | % { $val.Add($_.Name, $_.Value) }
+            return $val
+        })
+
+
+

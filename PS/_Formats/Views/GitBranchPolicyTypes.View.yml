@@ -1,0 +1,6 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Policy.WebApi.PolicyType
+TableControl: 
+  DisplayName: 
+    Label: Display Name
+  Description: 

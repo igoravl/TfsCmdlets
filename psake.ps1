@@ -1,34 +1,38 @@
 # This script is a psake script file and should not be called directly. Use Build.ps1 instead.
-Framework '4.6'
+Framework '4.6.2'
 
 Properties {
 
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
-    $ProjectDir = Join-Path $SolutionDir 'Module'
-    $TestsDir = Join-Path $SolutionDir 'Tests'
+    $PSDir = Join-Path $RootProjectDir 'PS'
+    $SolutionDir = Join-Path $RootProjectDir 'CSharp'
+    $TestsDir = Join-Path $RootProjectDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
-    $OutDir = Join-Path $SolutionDir 'out'
+    $OutDir = Join-Path $RootProjectDir 'out'
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
     $DocsDir = Join-Path $OutDir 'docs'
     $ModuleDir = Join-Path $OutDir 'module'
     $PortableDir = Join-Path $OutDir 'portable'
-    $ModuleBinDir = (Join-Path $ModuleDir 'bin')
+    $ModuleBinDir = Join-Path $ModuleDir 'bin'
+
+    # Assembly generation
+    $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp3.1'}
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
-    $CompatiblePSEditions = @('Desktop') #, 'Core')
-    $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient','Microsoft.VisualStudio.Services.ServiceHooks.WebApi', 'Microsoft.VisualStudio.Services.Release.Client')
+    $CompatiblePSEditions = @('Desktop', 'Core')
+    $TfsPackageNames = @('Microsoft.TeamFoundationServer.ExtendedClient', 'Microsoft.VisualStudio.Services.ServiceHooks.WebApi', 'Microsoft.VisualStudio.Services.Release.Client')
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
     # Nuget packaging
-    $NugetExePath = Join-Path $SolutionDir 'BuildTools/nuget.exe'
-    $NugetPackagesDir = Join-Path $SolutionDir 'Packages'
+    $NugetExePath = Join-Path $RootProjectDir 'BuildTools/nuget.exe'
+    $NugetPackagesDir = Join-Path $RootProjectDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
 
@@ -40,28 +44,25 @@ Properties {
 
     # Wix packaging
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
-    $WixOutputPath = Join-Path $SolutionDir "Setup\bin\$Configuration"
+    $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
 
-    #7zip
-    $7zipExepath = Join-Path $SolutionDir 'BuildTools/7za.exe'
-
-    #gpp
-    $gppExePath =  Join-Path $SolutionDir 'BuildTools/gpp.exe'
+    # Documentation generation
+    $RootUrl = 'https://tfscmdlets.dev/Cmdlets'
 }
 
 Task Rebuild -Depends Clean, Build {
-
 }
 
-Task Package -Depends Build, Test, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
-
+Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, DownloadTfsNugetPackage, BuildLibrary, CopyFiles, CopyLibraries, GenerateTypesXml, UpdateModuleManifest {
-
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
 }
 
-Task CleanOutputDir {
+Task Test -Depends Build, UnitTests, AllTests {
+}
+
+Task CleanOutputDir -PreCondition { -not $Incremental } {
 
     Write-Verbose "Cleaning output path $ModuleDir"
     
@@ -73,204 +74,167 @@ Task CleanOutputDir {
     New-Item $ModuleDir -ItemType Directory -Force | Out-Null
 }
 
+Task CreateOutputDir {
+
+    if(-not (Test-Path $OutDir -PathType Container))
+    {
+        New-Item $OutDir -ItemType Directory | Write-Verbose
+    }
+}
+
 Task BuildLibrary {
 
-    $LibSolutionPath = (Join-Path $SolutionDir 'Lib/TfsCmdletsLib.sln')
-
-    exec { msbuild $LibSolutionPath /t:Restore`;Build /p:Configuration=$Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /v:d | Write-Verbose }
-}
-
-Task CopyFiles {
-
-    # Copy other module files to output dir
-
-    Write-Verbose "Copying module files to output folder"
-    Copy-Item -Path $ProjectDir\* -Destination $ModuleDir -Recurse -Force -Exclude *.ps1, *.yml
-
-    # Preprocess and copy PowerShell files to output dir
-
-    Write-Verbose "Preprocessing and copying PowerShell files to output folder"
-
-    Remove-Item -Path $ModuleDir\*.ps1 -Recurse -Force
-
-    Get-ChildItem -Path $ProjectDir\* -Include *.ps1 -Recurse | ForEach-Object {
-
-        $outputPath = (Join-Path $ModuleDir $_.FullName.SubString($ProjectDir.Length+1))
-        Write-Verbose "Preprocessing $($_.FullName)"
-        
-        $data = (& $gppExePath --include HelpText.h --include Defaults.h -I Include +z `"$($_.FullName)`")
-
-        $dirName = $_.Directory.FullName
-
-        if($dirName.Length -gt $ProjectDir.Length)
-        {
-            $dirName = $dirName.Substring($ProjectDir.Length+1)
-        }
-        else
-        {
-            $dirName = 'Module'
-        }
-
-        if(($Configuration -eq 'Release') -and ($dirName -ne 'Module'))
-        {
-            # Merge files (Release)
-            $outputPath = (Join-Path $ModuleDir "$dirName\$($dirName.Replace('\', '_')).ps1")
-        }
-
-        Write-Verbose "Copying preprocessed contents to $outputPath"
-
-        Add-Content -Path $outputPath -Value $data -Force
-    }
-
-    # Mark outputted files as read-only to prevent editing and eventual data loss during debugging sessions
-
-    Get-ChildItem -Path $ModuleDir\* -Include *.ps1 -Recurse | ForEach-Object { $_.Attributes = 'ReadOnly'}
-}
-
-Task CopyLibraries {
-
-    Write-Verbose "Copying TFS Client Object Model assemblies to output folder $TargetDir"
-
-    $TargetDir = (Join-Path $ModuleDir 'Lib')
-
-    if (-not (Test-Path $TargetDir -PathType Container)) 
+    foreach($p in @('Core', 'Desktop'))
     {
-        Write-Verbose "Creating output folder $TargetDir"
-        New-Item $TargetDir -ItemType Directory | Out-Null
-    }
-
-    foreach($d in (Get-ChildItem net4*, native -Directory -Recurse))
-    {
+        Write-Verbose "Build TfsCmdlets.PS$p"
         try
-        { 
-            foreach ($f in (Get-ChildItem "$d\*.dll" -Recurse -Exclude *.resources.dll))
-            {
-                $SrcPath = $f.FullName
-                $DstPath = Join-Path $TargetDir $f.Name
-
-                if (Test-Path $DstPath)
-                {
-                    $SrcFileInfo = Get-ChildItem $SrcPath
-                    $DstFileInfo = Get-ChildItem $DstPath
-
-                    if($SrcFileInfo.VersionInfo.FileVersion -le $DstFileInfo.VersionInfo.FileVersion)
-                    {
-                        continue
-                    }
-                }
-
-                Write-Verbose "Copying file $SrcPath to $DstPath"
-                Copy-Item $SrcPath $DstPath -Force 
-            }
-
-            $LibBinDir = (Join-Path $SolutionDir "Lib/TfsCmdletsLib/bin/$Configuration")
-
-            $f = Get-ChildItem $LibBinDir -Include TfsCmdletsLib.dll -Recurse
-
-            Copy-Item $f -Destination $TargetDir
-        } 
+        {
+            Exec { dotnet publish "$SolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
+        }
         catch
         {
-            Write-Warning "Error copying file $f to output folder $TargetDir : $_"
+            Get-Content $OutDir/MSBuild.log 
+            throw "Error building solution"
         }
-        finally 
-        {
-        }
+    }
+
+    Copy-Item (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/')
+}
+
+Task GenerateHelp {
+
+    $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
+    $helpFile = Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml"
+
+    exec { & $xmldocExePath `
+        "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\net462\TfsCmdlets.PSDesktop.dll`"" `
+        -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
+
+    $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
+    $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
+
+    foreach($token in $helpTokens.GetEnumerator())
+    {
+        $helpContents = $helpContents -replace $token.Key, $token.Value
+    }
+
+    $helpContents | Out-File $helpFile -Encoding utf8
+
+    if($helpContents -match 'HELP_[A-Z_]+')
+    {
+        Write-Warning 'Undefined tokens found in documentation:'
+        Get-Content $helpFile -Encoding utf8 | Select-String -Pattern 'HELP_[A-Z_]+' | Write-Warning
+    }
+}
+
+Task CopyFiles -Depends CleanOutputDir, CopyStaticFiles {
+
+}
+
+Task CopyStaticFiles {
+
+    Write-Verbose "Copying module files to output folder"
+
+    Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
+    Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
+
+    foreach($p in @('Core', 'Desktop'))
+    {
+        Get-ChildItem -Path (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml") -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
     }
 }
 
 Task GenerateTypesXml {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
+    $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Types') -Include '*.yml')
 
-    Export-PsTypesXml -InputDirectory (Join-Path $ProjectDir '_Types') -DestinationFile $outputFile | Write-Verbose
+    if (_IsUpToDate $inputFiles $outputFile)
+    {
+        Write-Verbose "Output file is up-to-date; skipping"
+        return
+    }
+
+    Export-PsTypesXml -InputDirectory (Join-Path $PSDir '_Types') -DestinationFile $outputFile | Write-Verbose
+}
+
+Task GenerateFormatXml {
+
+    $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Format.ps1xml')
+    $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Formats') -Recurse -Include '*.yml')
+
+    if (_IsUpToDate $inputFiles $outputFile)
+    {
+        Write-Verbose "Output file is up-to-date; skipping"
+        return
+    }
+
+    Export-PsFormatXml -InputDirectory (Join-Path $PSDir '_Formats') -DestinationFile $outputFile | Write-Verbose
 }
 
 Task UpdateModuleManifest {
 
-    $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
-    $functionList = (Get-ChildItem -Path $ProjectDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
-    $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object {"$($_.SubString($ModuleDir.Length+1))"})
-    $nugetOutput =  (& $NugetExePath List $TfsPackageNames[0] -PreRelease)
+    # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
+    # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.PSCore.deps.json') -Recurse)[0] | ConvertFrom-Json)
+    $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
 
-    if($nugetOutput)
+    $PrivateData = @{
+        Branch           = $VersionMetadata.BranchName
+        Build            = $BuildName
+        Commit           = $VersionMetadata.Sha
+        TfsClientVersion = $tfsOmNugetVersion
+        PreRelease       = $VersionMetadata.NugetPrereleaseTag
+        Version          = $VersionMetadata.FullSemVer
+    } + $TargetFrameworks
+
+    $manifestArgs = @{
+        Path                 = $ModuleManifestPath
+        # FileList             = $fileList
+        FunctionsToExport    = @()
+        ModuleVersion        = $FourPartVersion
+        CompatiblePSEditions = $CompatiblePSEditions
+        PrivateData          = $PrivateData
+    }
+
+    if ($nestedModuleList)
     {
-        $tfsOmNugetVersion = ($nugetOutput -split ' ')[1]
+        # Won't be available when building in Release
+        $manifestArgs['NestedModules'] = $nestedModuleList
     }
-    else
-    {
-        $tfsOmNugetVersion = 'offline-build-0.0.0'
-    }
-    
-    Write-Verbose @"
-Updating module manifest file $ModuleManifestPath with the following content:
 
-{
-    -Author '$ModuleAuthor'
-    -CompanyName '$ModuleAuthor'
-    -Copyright '$Copyright' 
-    -Description '$ModuleDescription'
-    -NestedModules @($(($nestedModuleList | ForEach-Object { "'$_'" }) -join ',')) 
-    -FileList @($(($fileList | ForEach-Object { "'$_'" }) -join ',')) 
-    -FunctionsToExport @($(($functionList | ForEach-Object { "'$_'" }) -join ',')) 
-    -ModuleVersion '$($VersionMetadata.NugetVersion)' 
-    -CompatiblePSEditions @($(($CompatiblePSEditions | ForEach-Object { "'$_'" }) -join ',')) 
-    -PrivateData @{
-        Branch = '$($VersionMetadata.BranchName)'
-        Build = '$BuildName'
-        Commit = '$($VersionMetadata.Commit)'
-        TfsClientVersion = '$tfsOmNugetVersion'
-        PreRelease = '$($VersionMetadata.NugetPrereleaseTag)'
-        Version = '$($VersionMetadata.FullSemVer)'
-    }
-}
-"@
+    Update-ModuleManifest @manifestArgs
 
-    Update-ModuleManifest -Path $ModuleManifestPath `
-        -NestedModules $nestedModuleList `
-        -FileList $fileList `
-        -FunctionsToExport $functionList `
-        -ModuleVersion $VersionMetadata.MajorMinorPatch `
-        -CompatiblePSEditions $CompatiblePSEditions `
-        -PrivateData @{
-            Branch = $VersionMetadata.BranchName
-            Build = $BuildName
-            Commit = $VersionMetadata.Sha
-            TfsClientVersion = $tfsOmNugetVersion
-            PreRelease = $VersionMetadata.NugetPrereleaseTag
-            Version = $VersionMetadata.FullSemVer
-        }
+    # Set RootModule manually to inject conditional loading logic
+
+    $rootModuleExpr = 'RootModule = if($PSEdition -eq "Core") { "Lib/Core/TfsCmdlets.PSCore.dll" } else { "Lib/Desktop/TfsCmdlets.PSDesktop.dll" }'
+    $manifestText = (Get-Content $ModuleManifestPath -Raw) -replace "RootModule = '.+?'", $rootModuleExpr
+    $manifestText | Out-File $ModuleManifestPath -Encoding utf8
+
+    Write-Verbose $manifestText
 }
 
-Task Test -Depends Build -PreCondition { -not $SkipTests } {
+Task UnitTests -PreCondition { -not $SkipTests }  {
 
-    exec {Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults.xml) -OutputFormat NUnitXml `
-        -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict}
+    #Exec { Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults-Unit.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') -EnableExit:$IsCI -ExcludeTag Correctness, Integration, PSCore, PSDesktop }
 }
 
-Task DownloadTfsNugetPackage {
+Task AllTests -PreCondition { -not $SkipTests } {
 
-    Write-Verbose "Restoring Nuget packages"
+    # Write-Output '= PowerShell Core ='
+    # Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Core.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSDesktop" }
 
-    $packageDir = (Join-Path $NugetPackagesDir $package)
-    # $packages = @('Newtonsoft.Json','Microsoft.AspNet.WebApi.Core','Microsoft.AspNet.WebApi.Client') + $TfsPackageNames
+    # Write-Output '= Windows PowerShell ='
+    # Exec { powershell.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Desktop.xml) -OutputFormat NUnitXml  -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSCore" }
+}
 
-    foreach($package in $TfsPackageNames) 
-    {
-        Write-Verbose "Restoring $package Nuget package (if needed)"
+Task RemoveEmptyFolders {
 
-        $packageDir = (Join-Path $NugetPackagesDir $package)
-
-        if (-not (Test-Path "$packageDir.*" -PathType Container))
-        {
-            Write-Verbose "$package not found. Downloading from Nuget.org"
-            & $NugetExePath Install $package -OutputDirectory packages -Verbosity Detailed -PreRelease -PackageSaveMode nuspec`;nupkg *>&1 | Write-Verbose
-        }
-        else
-        {
-            Write-Verbose "FOUND! Skipping..."
-        }
-    }
+    Get-ChildItem $ModuleDir -Recurse -Force -Directory | 
+    Sort-Object -Property FullName -Descending |
+    Where-Object { $($_ | Get-ChildItem -Force | Select-Object -First 1).Count -eq 0 } |
+    Remove-Item | Write-Verbose
 }
 
 Task Clean {
@@ -286,13 +250,17 @@ Task Clean {
         Write-Verbose "Removing $NugetPackagesDir..."
         Remove-Item $NugetPackagesDir -Recurse -Force -ErrorAction SilentlyContinue
     }
+
+    Get-ChildItem (Join-Path $SolutionDir '*/bin') -Directory | Remove-Item -Recurse
+    Get-ChildItem (Join-Path $SolutionDir '*/obj') -Directory | Remove-Item -Recurse
+
 } 
 
 Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    & $7zipExePath a (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") (Join-Path $OutDir 'Module\*') | Write-Verbose
+    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") -Force | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
@@ -327,7 +295,7 @@ Task PackageMsi -Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixProjectDir = Join-Path $SolutionDir 'Setup'
+    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
     $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
     $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
@@ -340,8 +308,8 @@ Task PackageMsi -Depends Build {
         & $NugetExePath Install Wix -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
     }
 
-    if(-not (Test-Path $WixObjDir)) { New-Item $WixObjDir -ItemType Directory | Write-Verbose }
-    if(-not (Test-Path $WixBinDir)) { New-Item $WixBinDir -ItemType Directory | Write-Verbose }
+    if (-not (Test-Path $WixObjDir)) { New-Item $WixObjDir -ItemType Directory | Write-Verbose }
+    if (-not (Test-Path $WixBinDir)) { New-Item $WixBinDir -ItemType Directory | Write-Verbose }
     
     $HeatArgs = @(
         'dir', $ModuleDir,
@@ -366,7 +334,7 @@ Task PackageMsi -Depends Build {
         "-d`"PRODUCTNAME=$ModuleName - $ModuleDescription`"",
         "-d`"AUTHOR=$ModuleAuthor`"",
         "-dSourceDir=$ModuleDir\",
-        "-dSolutionDir=$SolutionDir\",
+        "-dSolutionDir=$RootProjectDir\",
         "-dConfiguration=$Configuration"
         "-dOutDir=$WixBinDir\"
         "-dPlatform=x86",
@@ -407,82 +375,25 @@ Task PackageMsi -Depends Build {
     Write-Verbose "Light.exe $($LightArgs -join ' ')"
     & (Join-Path $WixToolsDir 'Light.exe') $LightArgs *>&1 | Write-Verbose
     
-    if(-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
+    if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
     Copy-Item "$WixOutputPath\*.msi" -Destination $MSIDir -Force
 }
 
 Task PackageDocs -Depends GenerateDocs {
 
-    #Compress-Archive -Path $DocsDir -CompressionLevel Optimal -DestinationPath (Join-Path $DocsDir "TfsCmdlets-docs-$($VersionMetadata.NugetVersion).zip") 
-    & $7zipExePath a (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") $DocsDir | Write-Verbose
+    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir -Force | Write-Verbose
 }
 
-Task GenerateDocs -Depends Build {
+Task GenerateDocs {
 
-    # # . (Join-Path $SolutionDir '..\BuildDoc.ps1' -Resolve) 
+    exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1')}
 
-    # if(-not (Test-Path $DocsDir)) { New-Item $DocsDir -ItemType Directory | Out-Null }
-
-    # $subModules = Get-ChildItem $ModuleDir -Directory | Select-Object -ExpandProperty Name
-
-    # # Magic callback that does the munging
-    # $callback = {
-    #     if ($args[0].Groups[0].Value.StartsWith('\')) {
-    #         # Escaped tag; strip escape character and return
-    #         $args[0].Groups[0].Value.Remove(0, 1)
-    #     } else {
-    #         # Look up the help and generate the Markdown
-    #         ConvertCommandHelp (Get-Help $args[0].Groups[1].Value) $cmdList
-    #     }
-    # }
-
-    # $i = 0
-    # $re = [Regex]"\\?{%\s*(.*?)\s*%}"
-    # $cmds = Get-Command -Module TfsCmdlets
-    # $cmdList = $cmds | Select-Object -ExpandProperty Name
-    # $cmdCount = $cmds.Count
-    # $origBufSize = $Host.UI.RawUI.BufferSize
-    # $expandedBufSize = New-Object Management.Automation.Host.Size (1000, 1000)
-
-    # foreach($m in $subModules)
-    # {
-    #     if (-not (Test-Path $subModuleOutputDir -PathType Container))
-    #     {
-    #         New-Item $subModuleOutputDir -ItemType Directory | Out-Null
-    #     }
-
-    #     $subModuleCommands = Get-ChildItem (Join-Path $ModuleDir $m) -Filter '*-Tfs*.ps1' | Select-Object -ExpandProperty BaseName
-    #     $subModuleOutputDir = Join-Path $DocsDir "doc\$m"
-
-    #     foreach($c in $subModuleCommands)
-    #     {
-    #         $i++ 
-
-    #         $cmd = Get-Command $c -Module TfsCmdlets
-
-    #         Write-Verbose "Generating help for $m/$($cmd.Name) ($i of $cmdCount)"
-
-    #         # $Host.UI.RawUI.BufferSize = $expandedBufSize
-
-    #         # Generate the readme
-    #         $readme = "{% $($cmd.Name) %}" | ForEach-Object { $re.Replace($_, $callback) }
-
-    #         # Output to the appropriate stream
-    #         $OutputFile = Join-Path $subModuleOutputDir "$c.md" 
-    #         $utf8Encoding = New-Object System.Text.UTF8Encoding($false)
-    #         [System.IO.File]::WriteAllLines($OutputFile, $readme, $utf8Encoding)
-
-    #         Write-Verbose "Writing $OutputFile"
-
-    #         # $Host.UI.RawUI.BufferSize = $origBufSize
-    #     }
-    # }
 }
 
 Task GenerateNuspec {
 
-    if(-not (Test-Path $NugetDir)) { New-Item $NugetDir -ItemType Directory | Out-Null }
+    if (-not (Test-Path $NugetDir)) { New-Item $NugetDir -ItemType Directory | Out-Null }
 
     $SourceManifest = Test-ModuleManifest -Path $ModuleManifestPath
 
@@ -514,21 +425,21 @@ Task GenerateLicenseFile {
  
     $outLicenseFile = Join-Path $ChocolateyToolsDir 'LICENSE.txt'
 
-    if(-not (Test-Path $ChocolateyToolsDir -PathType Container))
+    if (-not (Test-Path $ChocolateyToolsDir -PathType Container))
     {
         New-Item $ChocolateyToolsDir -Force -ItemType Directory | Write-Verbose
     }
     
-    Copy-Item $SolutionDir\LICENSE.md $outLicenseFile -Force -Recurse
+    Copy-Item $RootProjectDir\LICENSE.md $outLicenseFile -Force -Recurse
 
     $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
 
-    foreach($f in $specFiles)
+    foreach ($f in $specFiles)
     {
         $spec = [xml] (Get-Content $f -Raw -Encoding UTF8)
         $packageUrl = "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
 
-        if($spec.package.metadata.license)
+        if ($spec.package.metadata.license)
         {
             if ($spec.package.metadata.license.type -eq 'file')
             {
@@ -537,7 +448,7 @@ Task GenerateLicenseFile {
             }
             else
             {
-            $licenseText = "Please refer to https://spdx.org/licenses/$($spec.package.metadata.license.type).html for license information for this package."
+                $licenseText = "Please refer to https://spdx.org/licenses/$($spec.package.metadata.license.type).html for license information for this package."
             }
         }
         else
@@ -566,10 +477,10 @@ Task GenerateVerificationFile {
 
     $packageUrls = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse | ForEach-Object {
         $spec = [xml] (Get-Content $_ -Raw -Encoding UTF8); `
-        Write-Output "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
+            Write-Output "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
     }
 
-@"
+    @"
 VERIFICATION
 ============
 
@@ -582,4 +493,32 @@ $($packageUrls -join "`r`n")
 
 "@ | Out-File $outVerifyFile -Encoding Utf8
 
+}
+
+Function _IsUpToDate($Inputs, $Output)
+{
+    if (-not $Incremental -or (-not (Test-Path $Output)))
+    {
+        return $false
+    }
+
+    if ($Output -isnot [System.IO.FileSystemInfo])
+    {
+        $Output = Get-ChildItem $Output
+    }
+    
+    foreach ($input in $Inputs)
+    {
+        if ($input -isnot [System.IO.FileSystemInfo])
+        {
+            $input = Get-ChildItem $input
+        }
+
+        if ($input.LastWriteTimeUtc -gt $Output.LastWriteTimeUtc)
+        {
+            return $false
+        }
+    }
+
+    return $true
 }

@@ -1,0 +1,21 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem
+  - Microsoft.VisualStudio.Services.Search.WebApi.Contracts.WorkItem.WorkItemResult
+TableControl: 
+  Id: 
+    Width: 8
+  Revision: 
+    Width: 4
+    Label: Rev
+  WorkItemType: 
+    Width: 20
+    Label: Type
+  State: 
+    Width: 15
+  ChangedDate: 
+    Width: 20
+    Label: Changed
+  AssignedTo: 
+    Width: 25
+    Label: Assigned To
+  Title: 

@@ -1,0 +1,11 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Build.Client.BuildAgent
+TableControl: 
+  Name: 
+    Width: 30
+  MachineName: 
+    Width: 15
+    Label: Computer Name
+  Status: 
+    Width: 12
+  Uri:

@@ -1,0 +1,10 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Core.WebApi.TeamProject
+GroupBy: 
+  Label: Collection
+  PropertyName: Collection
+TableControl: 
+    Name: 
+    Description:
+    ProcessTemplate: 
+      Label: Process

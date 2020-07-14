@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Client.TfsTeamProjectCollection
+TableControl: 
+  Name: 
+    Width: 30
+  InstanceId: 
+    Width: 38
+    Label: Instance Id
+  Uri: 

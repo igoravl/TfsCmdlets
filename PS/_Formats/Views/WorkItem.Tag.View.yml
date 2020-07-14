@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Core.WebApi.WebApiTagDefinition
+GroupBy: 
+  Label: Team Project
+  PropertyName: Project
+TableControl: 
+  Name:
+    Width: 30
+  Active:

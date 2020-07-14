@@ -1,7 +1,0 @@
-{
-  "profiles": {
-    "TfsCmdletsLib": {
-      "commandName": "Executable"
-    }
-  }
-}

@@ -1,0 +1,3 @@
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: $this.ProjectReference.Name

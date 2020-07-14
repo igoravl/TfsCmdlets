@@ -1,0 +1,10 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Core.WebApi.WebApiTeam
+GroupBy: 
+  Label: Team Project
+  PropertyName: ProjectName
+TableControl: 
+  Name: 
+  Description:
+  Members: 
+    ScriptBlock: $_.TeamMembers.Count

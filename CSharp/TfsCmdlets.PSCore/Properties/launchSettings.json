@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PowerShell Core": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
+      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath)\""
+    }
+  }
+}

@@ -1,11 +1,12 @@
 . "$(Split-Path -Parent $MyInvocation.MyCommand.Path)\_TestSetup.ps1"
 
-$allFunctions = Get-Command -Module TfsCmdlets
+$allFunctions = Get-Command -Module TfsCmdlets | Where-Object CommandType -ne 'Alias' | Sort-Object { $_.Name }
+#$allAliases = Get-Command -Module TfsCmdlets | Where-Object CommandType -eq 'Alias'
 
-$destructiveVerbs = 'Dismount|Remove|Stop'
-$stateChangingVerbs = 'Import|Mount|Move|New|Rename|Set|Start'
-$passthruVerbs = '^Connect|Copy|^Move|New|Rename'
-$valueReturningVerbs = "Get|$passthruVerbs"
+$destructiveVerbs = '^Dismount|^Remove|^Stop'
+$stateChangingVerbs = '^Import|^Mount|^Move|^New|^Rename|^Set|^Start'
+$passthruVerbs = '^Connect|^Copy|^Move|^New|^Rename'
+$valueReturningVerbs = "^Get|$passthruVerbs"
 $cmdletBindingRegexExpr = '\[CmdletBinding.+\]'
 $cmdletBindingRegex = [regex] $cmdletBindingRegexExpr
 
@@ -13,19 +14,16 @@ $analyzerRules = Get-ScriptAnalyzerRule -Severity Warning
 
 $allFunctions | Foreach-Object {
 
-    Describe "$_" {
+    Describe "$_" -Tag 'Correctness' {
 
         $cmd = $_
         $cmdDefinitionPath = (Get-ChildItem (Join-Path $projectDir "$cmd.ps1") -Recurse).FullName
 
         Context 'Standard PSScriptAnalyzer Tests' {
 
-            $result = Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules
-
-            foreach($rule in $analyzerRules)
-            {
-                It "Should pass $rule" {
-                    $failure = $result | Where-Object RuleName -eq $rule.RuleName
+            Invoke-ScriptAnalyzer -Path $cmdDefinitionPath -IncludeRule $analyzerRules | ForEach-Object {
+                $result = $_
+                It "Should pass $($result.RuleName)" {
                     $locInfo = ($failure | Foreach-Object { "`n$($_.ScriptPath): $($_.Line)"}) -join ''
                     $locInfo | Should BeNullOrEmpty
                 }
@@ -36,8 +34,8 @@ $allFunctions | Foreach-Object {
 
             $cmdletBindingDefinition = $cmdletBindingRegex.Match($cmd.Definition).Value
 
-            It 'Functions should have the "Tfs/AzDev" standard prefix' {
-                $cmd.Noun.Substring(0, 3) | Should Match 'Tfs|AzDev'
+            It 'Functions should have the "Tfs/Azdo" standard prefix' {
+                $cmd.Noun.Substring(0, 3) | Should Match 'Tfs|Azdo'
             }
 
             It 'Functions should have [CmdletBinding()] annotation' {
@@ -77,14 +75,6 @@ $allFunctions | Foreach-Object {
 
             $cmdDocs = Get-Help $cmd.Name
 
-            It 'Functions should have minimal documentation (Synopsis, description, examples)' {
-                $missingSections = @()
-                if (-not $cmdDocs.Synopsis) { $missingSections += 'Synopsis' }
-                if (-not $cmdDocs.Description) { $missingSections += 'Description' }
-                if (-not $cmdDocs.Examples) { $missingSections += 'Examples' }
-                ($missingSections -join ', ') | Should BeNullOrEmpty
-            }
-
             It 'Pipeline parameters and input types should be properly set' {
                 $pipelineBoundParam = ($cmd.Parameters.Values | Where-Object {$_.Attributes | Where-Object { $_.ValueFromPipeline -eq $true }})
                 $inputDocs = $cmdDocs.inputTypes
@@ -95,17 +85,25 @@ $allFunctions | Foreach-Object {
                 }
             }
 
+            # It 'Functions should have minimal documentation (Synopsis, description, examples)' {
+            #     $missingSections = @()
+            #     if (-not $cmdDocs.Synopsis) { $missingSections += 'Synopsis' }
+            #     if (-not $cmdDocs.Description) { $missingSections += 'Description' }
+            #     if (-not $cmdDocs.Examples) { $missingSections += 'Examples' }
+            #     ($missingSections -join ', ') | Should BeNullOrEmpty
+            # }
+
             $parameterDocs = $cmdDocs.Parameters.parameter
 
-            It "Parameters should have a description" {
-                $paramsWithoutDesc = ($parameterDocs | Where-Object Name -NotIn @('WhatIf', 'Confirm') |  Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
-                $paramsWithoutDesc | Should BeNullOrEmpty
-            }
-
-            # if (($pdoc.defaultvalue -match '\*') )
-            # {
-            #     It " - Parameter $pName has a default value containing '*' and [SupportsWildcards()] attribute"
+            # It "Parameters should have a description" {
+            #     $paramsWithoutDesc = ($parameterDocs | Where-Object Name -NotIn @('WhatIf', 'Confirm') |  Where-Object description -eq $null | Select-Object -ExpandProperty Name) -join ', '
+            #     $paramsWithoutDesc | Should BeNullOrEmpty
             # }
+
+            if (($pdoc.defaultvalue -match '\*') )
+            {
+                It " - Parameter $pName has a default value containing '*' and [SupportsWildcards()] attribute"
+            }
         }
     }
 }

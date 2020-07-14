@@ -1,0 +1,11 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryFolder2
+GroupBy: 
+  Label: Folder
+  PropertyName: ParentPath
+TableControl: 
+  Name: 
+    Width: 30
+  Path: 
+    Label: Full Path

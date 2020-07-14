@@ -1,0 +1,10 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Build.WebApi.Folder
+  - Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder
+GroupBy: 
+  Label: Team Project
+  ScriptBlock: $_.Project.Name
+TableControl: 
+  Name: 
+  Description: 
+  Path: 

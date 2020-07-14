@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Client.TfsConfigurationServer
+TableControl:
+  Name:
+    Width: 20
+    PropertyName: Name
+  Uri:
+    PropertyName: Uri
+  Path:

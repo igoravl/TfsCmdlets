@@ -1,0 +1,11 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.Identity.Identity
+TableControl: 
+  AccountName: 
+    Label: Account Name
+  DisplayName: 
+    Label: Display Name
+  IdentityType: 
+    Label: Type
+  IsActive: 
+    Label: Active?

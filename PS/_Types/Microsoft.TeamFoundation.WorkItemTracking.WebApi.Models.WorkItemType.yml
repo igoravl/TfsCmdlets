@@ -1,0 +1,8 @@
+- ScriptProperty:
+    Name: Project
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Project', {
+            $url = [uri] $_.Url.SubString(0, $_.Url.IndexOf('/_apis/'))
+            $tp = Get-TfsTeamProject $url.Segments[2]
+            return $tp.Name
+        })

@@ -1,0 +1,18 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription
+TableControl: 
+  PublisherId: 
+    Label: Publisher
+    Width: 10
+  EventDescription: 
+    Width: 30
+    Label: Event
+  ConsumerId: 
+    Width: 10
+    Label: Consumer
+  ConsumerActionId: 
+    Width: 30
+    Label: Action
+  Status: 
+    Width: 16
+  Id:

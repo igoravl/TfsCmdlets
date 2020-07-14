@@ -1,0 +1,13 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.Build.Client.QueuedBuild
+TableControl: 
+  'Build Definition': 
+    ScriptBlock: $_.BuildDefinition.Name
+  'Build Number': 
+    ScriptBlock: $_.Build.BuildNumber
+  Status: 
+  Priority: 
+  QueueTime: 
+    Label: 'Date Queued'
+  RequestedBy: 
+    Label: Requested By

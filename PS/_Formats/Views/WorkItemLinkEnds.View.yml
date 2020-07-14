@@ -1,0 +1,16 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemLinkTypeEnd
+TableControl: 
+  Id: 
+    Width: 5
+  Name: 
+    Width: 15
+  OppositeEndName: 
+    Width: 15
+    Label: Opposite end
+  ImmutableName: 
+    Width: 60
+    Label: Immutable name
+  IsForwardLink: 
+    Width: 8
+    Label: Forward?

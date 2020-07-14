@@ -10,7 +10,14 @@
         "[Pp]ackages": true,
         "[Ss]etup/bin": true,
         "[Ss]etup/obj": true,
-        "out": true
+        "**/.vs": true,
+        "**/[Bb]in": true,
+        "**/[Oo]bj": true,
+        "**/[Pp]ackages": true,
+        "**/*.user": true,
+        "out": true,
+        "**/TfsCmdlets.PSDesktop.xml": true,
+        ".idea": true
     },
     "search.usePCRE2": true
 }

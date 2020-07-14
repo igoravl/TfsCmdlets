@@ -1,0 +1,14 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition
+  - Microsoft.TeamFoundation.WorkItemTracking.Client.QueryDefinition2
+GroupBy: 
+  Label: Folder
+  PropertyName: ParentPath
+TableControl: 
+  Name: 
+    Width: 20
+  QueryType: 
+    Width: 7
+    Label: Type
+  QueryText: 
+    Label: Definition

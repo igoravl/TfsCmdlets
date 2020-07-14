@@ -1,0 +1,27 @@
+Passthru: |
+  <Control>
+    <Name>TeamProjects-GroupingFormat</Name>
+    <CustomControl>
+      <CustomEntries>
+        <CustomEntry>
+          <CustomItem>
+            <Frame>
+              <LeftIndent>4</LeftIndent>
+              <CustomItem>
+                <Text>Collection: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Store.TeamProjectCollection.DisplayName</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+                <Text>  Team Project: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Project.Name</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+              </CustomItem>
+            </Frame>
+          </CustomItem>
+        </CustomEntry>
+      </CustomEntries>
+    </CustomControl>
+  </Control>
