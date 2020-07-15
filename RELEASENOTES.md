@@ -1,10 +1,62 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0-beta.11 (_21/Jan/2020_)
+## Version 2.0.0-beta.11 (_14/Jul/2020_)
 
 ### Improvements
 
-#### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`, `Get-TfsVersion`, `Invoke-TfsRestApi`
+#### PowerShell 7 (Core) support
+
+- Most cmdlets are now run in both Windows PowerShell and PowerShell 7;
+- Exception made to those cmdlets still relying on the old Client Object Model library (e.g. most cmdlets that operate on a configuration server level);
+- TfsCmdlets is expected to work on Linux and Mac, although it's been only lightly tested on Linux and have not been tested on a Mac **at all**.
+
+#### New cmdlets
+
+- Connect-TfsTeam
+- Disconnect-TfsTeam
+- Enter-TfsShell
+- Exit-TfsShell
+- Get-TfsReleaseDefinition
+- Get-TfsVersion
+- New-TfsProcessTemplate
+- New-TfsTestPlan
+- Remove-TfsWorkItemTag
+- Rename-TfsGlobalList
+- Rename-TfsTeamProject
+- Rename-TfsTestPlan
+- Search-TfsWorkItem
+- Undo-TfsTeamProjectRemoval
+
+#### Other improvements 
+
+- **Documentation site**: Published new [documentation site](https://tfscmdlets.dev) (**WORK IN PROGRESS**)
+- **Get-Help**: All cmdlets are now (most) properly documented. Examples are still missing in many of them, but all are guaranteed to have, at least, synopsis and parameter documentation.
+
+### Breaking Changes
+
+- TfsCmdlets won't run on earlier versions of PowerShell. Please use either **Windows PowerShell 5.1** or **PowerShell 7 (Core)**.
+- `Get-TfsCredential` renamed to `New-TfsCredential`
+- `Get-TfsPolicyType` renamed to `Get-GitTfsPolicyType`
+- `Get-TfsTeamBacklog` renamed to `Get-TfsTeamBacklogLevel`
+- `Get-TfsTeamBoardCardRuleSettings` renamed to `Get-TfsTeamBoardCardRule`
+- `Set-TfsTeamBoardCardRuleSettings` renamed to `Set-TfsTeamBoardCardRule`
+- Removed `Set-TfsArea`, since same result can be obtained by using either `Rename-TfsArea` or `Move-TfsArea`
+- Removed `Set-TfsWorkItemBoardStatus`, since same result can be obtained by using either `Set-TfsWorkItem`
+
+### Known issues
+
+- PowerShell Core **only supports PAT (Personal Access Token)** logins. All other authentication methods (username/password, credential object, interactive) will only work in Windows PowerShell;
+- Some cmdlets haven't been ported to .NET yet and thus will throw a `NotImplementedException` exception when first run.
+
+------------------------
+
+## Previous Versions
+
+### Version 2.0.0-beta.11 (_21/Jan/2020_)
+
+#### Improvements
+
+##### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`, `Get-TfsVersion`, `Invoke-TfsRestApi`
 
 The new `Enter-TfsShell` and `Exit-TfsShell` cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
 
@@ -12,19 +64,19 @@ The new `Enter-TfsShell` and `Exit-TfsShell` cmdlets streamline the invocation o
 
 Lastly, `Get-TfsVersion` returns version information on a given team project collection / organization. Currently, only Azure DevOps Services organizations are supported. Support for TFS and Azure DevOps Server will be added in a future release.
 
-#### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to REST API
+##### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to REST API
 
 In the process, they've been generalized and converted to aliases to their new "generic" counterparts (`*-TfsWorkItemQueryItem`), much like the Area/Iteration cmdlets.
 
-#### Convert PowerShell Format/Types XML files (*.Format.ps1xml, *.Types.ps1xml) to YAML
+##### Convert PowerShell Format/Types XML files (*.Format.ps1xml, *.Types.ps1xml) to YAML
 
 Now both **TfsCmdlets.Types.ps1xml** and **TfsCmdlets.Format.ps1xml** files are generated during build time from YAML files with [ps1xmlgen](https://github.com/igoravl/ps1xmlgen). That offers a much better experience to edit/mantain PowerShell's type/format XML files.
 
-#### Argument completers
+##### Argument completers
 
 This improvement is way overdue, but now we have the first set of argument completers. Any cmdlets with the arguments `-Server`, `-Collection` and `-Project` can be "Tab-completed".
 
-#### New aliases for Connect-* cmdlets
+##### New aliases for Connect-* cmdlets
 
 Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team you can use optionally use one of the aliases below:
 
@@ -39,7 +91,7 @@ Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team 
 * Connect-TfsTeam
   * ctfsteam
 
-### Bug fixes
+##### Bug fixes
 
 - Fix iteration processing in Set-TfsTeam ([72f0fc0](https://github.com/igoravl/TfsCmdlets/pull/98/commits/72f0fc0cdcba7d41c8341efd0b0304303058907e)), ([e15d1ee](https://github.com/igoravl/TfsCmdlets/pull/98/commits/e15d1ee0bff2e8a5bd20b26e11d1b41413eb79b9))
 - Fix build when in Release configuration ([6a795ce](https://github.com/igoravl/TfsCmdlets/pull/98/commits/6a795ce49331e37fbd7319f26c1e452d0135a7f6))
@@ -48,13 +100,9 @@ Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team 
 - Fix Azure DevOps Shell command prompt
 - Fix Disconnect-* issues
 
-### Known issues
+#### Known issues
 
 - Incremental build is currently disabled in the default Visual Studio Code Build task, as it's a bit inconsistent.
-
-------------------------
-
-## Previous Versions
 
 ### Version 2.0.0-beta.10 (_12/Sep/2019_)
 
