@@ -13,8 +13,8 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// </summary>
     /// <remarks>
     /// Service hook consumers are the services that can consume (receive) notifications triggered by 
-    /// Azure DevOps.false Examples of consumers available out-of-box with Azure DevOps are Microsoft Teams, 
-    /// Slack, Trello ou a generic WebHook consumer. Use this cmdlet to list the available consumers and get 
+    /// Azure DevOps. Examples of consumers available out-of-box with Azure DevOps are Microsoft Teams, 
+    /// Slack, Trello ou the generic WebHook consumer. Use this cmdlet to list the available consumers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookConsumer")]
