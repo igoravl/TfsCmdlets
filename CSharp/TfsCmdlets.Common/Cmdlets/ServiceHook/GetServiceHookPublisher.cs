@@ -1,36 +1,66 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
+    /// <summary>
+    /// Gets one or more service hook publishers.
+    /// </summary>
+    /// <remarks>
+    /// Service hook publishers are the components inside of Azure DevOps that can publish (send) notifications triggered by 
+    /// event such as "work item changed" or "build queued". Use this cmdlet to list the available publishers and get 
+    /// the ID of the desired one to be able to manage service hook subscriptions.
+    /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookPublisher")]
-    [OutputType(typeof(Publisher))]
-    public class GetServiceHookPublisher : CmdletBase
+    [OutputType(typeof(WebApiPublisher))]
+    public class GetServiceHookPublisher : GetCmdletBase<WebApiPublisher>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the name or ID of the service hook publisher to return. Wildcards are supported. 
+        /// When omitted, returns all service hook consumers currently supported the current by Azure DevOps organization / 
+        /// TFS collection.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0)]
+        [SupportsWildcards()]
+        [Alias("Name", "Id")]
+        public object Publisher { get; set; } = "*";
+    }
 
-        //         [Parameter(Position=0)]
-        //         [SupportsWildcards()]
-        //         [Alias("Name")]
-        //         [Alias("Id")]
-        //         public string Publisher { get; set; } = "*";
+    [Exports(typeof(WebApiPublisher))]
+    internal partial class ServiceHookPublisherDataService : BaseDataService<WebApiPublisher>
+    {
+        protected override IEnumerable<WebApiPublisher> DoGetItems()
+        {
+            var client = GetClient<ServiceHooksPublisherHttpClient>();
+            var publisher = GetParameter<object>(nameof(GetServiceHookPublisher.Publisher));
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+            while (true) switch (publisher)
+                {
+                    case WebApiPublisher p:
+                        {
+                            yield return p;
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            var result = client.GetPublishersAsync()
+                                .GetResult("Error getting service hook publishers")
+                                .Where(p => p.Name.IsLike(s) || p.Id.IsLike(s));
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-        //         var client = GetClient<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient>();
-
-        //         client.GetPublishersAsync().Result | Where-Object {(_Name -Like Publisher) || (_.Id -Like Publisher)}
-        //     }
-        // }
+                            foreach (var r in result) yield return r;
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent publisher '{publisher}'");
+                        }
+                }
+        }
     }
 }
