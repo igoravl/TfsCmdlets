@@ -19,5 +19,6 @@
         "**/TfsCmdlets.PSDesktop.xml": true,
         ".idea": true
     },
-    "search.usePCRE2": true
+    "search.usePCRE2": true,
+    "csharp.suppressDotnetRestoreNotification": true
 }
