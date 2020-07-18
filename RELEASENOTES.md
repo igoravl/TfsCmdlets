@@ -1,8 +1,16 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0-beta.11 (_14/Jul/2020_)
+## Version 2.0.0-beta.13 (_18/Jul/2020_)
 
-### Improvements
+See [release notes here](Docs/ReleaseNotes/2.0.0-beta.13.md).
+
+------------------------
+
+## Previous Versions
+
+### Version 2.0.0-beta.11 (_14/Jul/2020_)
+
+#### Improvements
 
 #### PowerShell 7 (Core) support
 
@@ -32,7 +40,7 @@
 - **Documentation site**: Published new [documentation site](https://tfscmdlets.dev) (**WORK IN PROGRESS**)
 - **Get-Help**: All cmdlets are now (most) properly documented. Examples are still missing in many of them, but all are guaranteed to have, at least, synopsis and parameter documentation.
 
-### Breaking Changes
+#### Breaking Changes
 
 - TfsCmdlets won't run on earlier versions of PowerShell. Please use either **Windows PowerShell 5.1** or **PowerShell 7 (Core)**.
 - `Get-TfsCredential` renamed to `New-TfsCredential`
@@ -43,14 +51,10 @@
 - Removed `Set-TfsArea`, since same result can be obtained by using either `Rename-TfsArea` or `Move-TfsArea`
 - Removed `Set-TfsWorkItemBoardStatus`, since same result can be obtained by using either `Set-TfsWorkItem`
 
-### Known issues
+#### Known issues
 
 - PowerShell Core **only supports PAT (Personal Access Token)** logins. All other authentication methods (username/password, credential object, interactive) will only work in Windows PowerShell;
 - Some cmdlets haven't been ported to .NET yet and thus will throw a `NotImplementedException` exception when first run.
-
-------------------------
-
-## Previous Versions
 
 ### Version 2.0.0-beta.11 (_21/Jan/2020_)
 
