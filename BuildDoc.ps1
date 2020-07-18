@@ -2,6 +2,7 @@
 Param
 (
     $RootProjectDir,
+    $CommonProjectDir,
     $ModuleDir,
     $DocsDir,
     $RootUrl,
@@ -112,6 +113,7 @@ Function _Text($text) {
 ### Main script ###
 
 if (-not $RootProjectDir) { $RootProjectDir = $PSScriptRoot }
+if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'CSharp/TfsCmdlets.Common/Cmdlets' ) }
 if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir 'out/module') }
 if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs') }
 if (-not $RootUrl) { $RootUrl = 'https://tfscmdlets.dev/Cmdlets/' }
@@ -135,5 +137,7 @@ foreach ($cmd in $doc.helpItems.command) {
         New-Item $modulePath -ItemType Directory | Out-Null
     }
 
-    _GenerateHelp $cmd $moduleName $modulePath
+     _GenerateHelp $cmd $moduleName $modulePath
 }
+
+Get-ChildItem $CommonProjectDir/index.md -Recurse -Verbose | ForEach-Object {Copy-Item $_ -Destination "$DocsDir$($_.FullName.Substring($CommonProjectDir.Length))" -Force}
