@@ -2,7 +2,7 @@
 
 ## Version 2.0.0-beta.13 (_18/Jul/2020_)
 
-See [release notes here](Docs/ReleaseNotes/2.0.0-beta.13.md).
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.13.md).
 
 ------------------------
 
