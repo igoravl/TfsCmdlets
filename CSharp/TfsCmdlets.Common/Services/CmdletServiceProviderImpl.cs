@@ -25,7 +25,7 @@ namespace TfsCmdlets.Services
 
             if (!_factories.ContainsKey(serviceType))
             {
-                throw new ArgumentException($"Invalid service {serviceType.FullName}");
+                throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
             }
 
             return (T)_factories[serviceType](this, CmdletBase, parameters);
@@ -37,7 +37,7 @@ namespace TfsCmdlets.Services
 
             if (!_factories.ContainsKey(serviceType))
             {
-                throw new ArgumentException($"Invalid service {serviceType.FullName}");
+                throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
             }
 
             var dataService = ((IDataService<TObj>)_factories[serviceType](this, CmdletBase, overriddenParameters));

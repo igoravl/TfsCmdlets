@@ -1,38 +1,72 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
+using TfsCmdlets.Services;
+using WebApiSubscription = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription;
+using WebApiServiceHookNotification = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Notification;
+using System;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
+    /// <summary>
+    /// Gets the notification history for a given service hook subscription
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookNotificationHistory")]
     [OutputType(typeof(Notification))]
-    public class GetServiceHookNotificationHistory : CmdletBase
+    public class GetServiceHookNotificationHistory : GetCmdletBase<WebApiServiceHookNotification>
     {
         /// <summary>
-        /// Performs execution of the command
+        /// Specifies the subscription to get the notification history from.
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
+        public object Subscription { get; set; }
 
-        //         [Parameter(Position=0, ValueFromPipeline=true, Mandatory=true)]
-        //         public object Subscription { get; set; }
+        /// <summary>
+        /// Specifies the beginning of a date interval to filter notifications on.
+        /// </summary>
+        [Parameter()]
+        public DateTime? From { get; set; }
 
-        //         [Parameter()]
-        //         public object Collection { get; set; }
+        /// <summary>
+        /// Specifies the end of a date interval to filter notifications on.
+        /// </summary>
+        [Parameter()]
+        public DateTime? To { get; set; }
 
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-        //         var client = GetClient<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient>();
+        /// <summary>
+        /// Specifies the notification status to filter on.
+        /// </summary>
+        [Parameter()]
+        public NotificationStatus Status { get; set; }
+    }
 
-        //         if (Subscription is Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription)
-        //         {
-        //             Subscription = Subscription.Id
-        //         }
+    [Exports(typeof(WebApiServiceHookNotification))]
+    internal class ServiceHookNotificationDataService : BaseDataService<WebApiServiceHookNotification>
+    {
+        protected override IEnumerable<WebApiServiceHookNotification> DoGetItems()
+        {
+            var subscription = GetItem<WebApiSubscription>();
+            var client = GetClient<ServiceHooksPublisherHttpClient>();
 
-        //         client.GetNotifications([guid] Subscription, null, null, null, null) | Select-Object -ExpandProperty Result
-        //     }
-        // }
+            var from = GetParameter<DateTime?>(nameof(GetServiceHookNotificationHistory.From));
+            var to = GetParameter<DateTime?>(nameof(GetServiceHookNotificationHistory.To));
+            var status = GetParameter<NotificationStatus?>(nameof(GetServiceHookNotificationHistory.Status));
+
+            var query = new NotificationsQuery()
+            {
+                SubscriptionIds = new[] { subscription.Id },
+                MinCreatedDate = from,
+                MaxCreatedDate = to,
+                Status = status
+            };
+
+            var result = client.QueryNotificationsAsync(query)
+                .GetResult("Error getting service hook notifications")
+                .Results;
+
+            foreach (var r in result) yield return r;
+        }
     }
 }

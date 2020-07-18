@@ -43,6 +43,7 @@ Properties {
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
+    $ThreePartVersion = $VersionMetadata.MajorMinorPatch
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
 
@@ -193,7 +194,7 @@ Task UpdateModuleManifest {
         Path                 = $ModuleManifestPath
         # FileList             = $fileList
         FunctionsToExport    = @()
-        ModuleVersion        = $FourPartVersion
+        ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
     }

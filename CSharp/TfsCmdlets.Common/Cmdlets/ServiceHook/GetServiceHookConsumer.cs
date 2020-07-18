@@ -5,6 +5,7 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
+using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {
@@ -13,12 +14,12 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// </summary>
     /// <remarks>
     /// Service hook consumers are the services that can consume (receive) notifications triggered by 
-    /// Azure DevOps.false Examples of consumers available out-of-box with Azure DevOps are Microsoft Teams, 
-    /// Slack, Trello ou a generic WebHook consumer. Use this cmdlet to list the available consumers and get 
+    /// Azure DevOps. Examples of consumers available out-of-box with Azure DevOps are Microsoft Teams, 
+    /// Slack, Trello ou the generic WebHook consumer. Use this cmdlet to list the available consumers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsServiceHookConsumer")]
-    [OutputType(typeof(Consumer))]
+    [OutputType(typeof(WebApiConsumer))]
     public class GetServiceHookConsumer : CmdletBase
     {
         /// <summary>
@@ -43,27 +44,27 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         /// </summary>
         protected override void DoProcessRecord()
         {
-            WriteItems<Consumer>();
+            WriteItems<WebApiConsumer>();
         }
     }
 
-    [Exports(typeof(Consumer))]
-    internal class ServiceHookConsumerDataService : BaseDataService<Consumer>
+    [Exports(typeof(WebApiConsumer))]
+    internal class ServiceHookConsumerDataService : BaseDataService<WebApiConsumer>
     {
-        protected override IEnumerable<Consumer> DoGetItems()
+        protected override IEnumerable<WebApiConsumer> DoGetItems()
         {
             var consumer = GetParameter<object>("Consumer");
 
             while (true) switch (consumer)
                 {
-                    case Consumer c:
+                    case WebApiConsumer c:
                         {
                             yield return c;
                             yield break;
                         }
                     case string s:
                         {
-                            var client = GetClient<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.ServiceHooksPublisherHttpClient>();
+                            var client = GetClient<ServiceHooksPublisherHttpClient>();
                             var result = client.GetConsumersAsync().GetResult("Error getting service hook consumers");
 
                             foreach(var shc in result.Where(c=>c.Name.IsLike(s) || c.Id.IsLike(s)))
