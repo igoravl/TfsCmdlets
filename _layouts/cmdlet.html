@@ -61,7 +61,7 @@ layout: process_markdown
 {% if page.parameters %}
 ## Parameters
 
-{% for paramName in page.parameterSets._AllParameterSets %}{% for parm in page.parameters %}{% if parm.name == paramName %}
+{% for paramName in page.parameterSets._All_ %}{% for parm in page.parameters %}{% if parm.name == paramName %}
 <a name="{{paramName|slugify}}"></a><span class="param fs-4">-{{parm.name}}</span> {%if parm.aliases %}_(Aliases: {{parm.aliases | join: ', '}})_{%endif%}
 
 {{parm.description}}
