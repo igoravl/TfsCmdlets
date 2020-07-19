@@ -54,12 +54,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter()]
         public string Iteration { get; set; }
 
-        /// <summary>
-        /// Specifies the work item type of the work item.
-        /// </summary>
-        [Parameter()]
-        [Alias("Type")]
-        public string WorkItemType { get; set; }
+        // TODO: Implement type-changing logic
+        // /// <summary>
+        // /// Specifies the work item type of the work item.
+        // /// </summary>
+        // [Parameter()]
+        // [Alias("Type")]
+        // public string WorkItemType { get; set; }
 
         /// <summary>
         /// Specifies the user this work item is assigned to.
