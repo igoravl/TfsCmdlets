@@ -11,7 +11,6 @@
     DotNetFrameworkVersion = '4.6.2'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
-    HelpInfoUri = "https://raw.githubusercontent.com/igoravl/TfsCmdlets/helpfiles/"
     AliasesToExport = '*'
     PrivateData = @{ 
         PSData = @{
@@ -22,8 +21,7 @@
             PreRelease = 'PreRelease'
             LicenseUri = 'https://github.com/igoravl/TfsCmdlets/blob/master/LICENSE.md'
             ProjectUri = 'https://github.com/igoravl/tfscmdlets/'
-            IconUri = 'https://raw.githubusercontent.com/igoravl/tfscmdlets/master/TfsCmdlets/resources/TfsCmdlets_Icon_32.png'
-            ReleaseNotes = 'https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md' 
+            IconUri = 'https://raw.githubusercontent.com/igoravl/TfsCmdlets/master/Assets/TfsCmdlets_Icon_32.png'
         }
         TfsClientVersion = 'TfsOmNugetVersion'
     }

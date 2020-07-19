@@ -188,6 +188,7 @@ Task UpdateModuleManifest {
         TfsClientVersion = $tfsOmNugetVersion
         PreRelease       = $VersionMetadata.NugetPrereleaseTag
         Version          = $VersionMetadata.FullSemVer
+        ReleaseNotes     = "https://github.com/igoravl/TfsCmdlets/blob/master/Docs/ReleaseNotes/$($VersionMetadata.SemVer).md"
     } + $TargetFrameworks
 
     $manifestArgs = @{
@@ -284,6 +285,19 @@ Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerif
 
     Copy-Item $ModuleDir $ChocolateyToolsDir\TfsCmdlets -Recurse -Force
     Copy-Item $NugetSpecPath -Destination $ChocolateyDir -Force
+
+    $NugetSpecPath = (Join-Path $ChocolateyDir (Split-Path $NugetSpecPath -Leaf))
+    $nuspec = (Get-Content $NugetSpecPath -Encoding utf8 -Raw)
+    $nuspecXml = ([xml] $nuspec)
+
+    $chocoExtras = @"
+    <docsUrl>https://tfscmdlets.dev</docsUrl> 
+    <bugTrackerUrl>https://github.com/igoravl/TfsCmdlets/issues</bugTrackerUrl>
+    <projectSourceUrl>$($nuspecXml.package.metadata.projectUrl)</projectSourceUrl>
+    <packageSourceUrl>$($nuspecXml.package.metadata.projectUrl)</packageSourceUrl>
+"@
+    
+    Set-Content $NugetSpecPath -Encoding utf8 -Value ($nuspec.Replace('<!-- choco-extras -->', $chocoExtras))
 
     $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $($VersionMetadata.NugetVersion)"
 
@@ -404,6 +418,7 @@ Task GenerateNuspec {
     <metadata>
         <id>$($SourceManifest.Name)</id>
         <title>$($SourceManifest.Name)</title>
+        <summary>TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Azure DevOps (Server 2019+ and Services) and Team Foundation Server.</summary>
         <version>0.0.0</version>
         <authors>$($SourceManifest.Author)</authors>
         <owners>$($SourceManifest.Author)</owners>
@@ -415,6 +430,7 @@ Task GenerateNuspec {
         <releaseNotes><![CDATA[$($SourceManifest.ReleaseNotes)]]></releaseNotes>
         <copyright>$($SourceManifest.Copyright)</copyright>
         <tags>$($SourceManifest.Tags -Join ' ')</tags>
+        <!-- choco-extras -->
     </metadata>
 </package>
 "@
