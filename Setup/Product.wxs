@@ -8,7 +8,7 @@
       Manufacturer="$(var.AUTHOR)"
       UpgradeCode="66e39e8c-5e29-47ca-b2c0-142978831346">
 
-        <Package InstallerVersion="405" Compressed="yes" InstallScope="perMachine" />
+        <Package InstallerVersion="405" Compressed="yes" InstallPrivileges="limited" InstallScope="perUser" Description="$(var.DESCRIPTION)"/>
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
         <Media Id="1" Cabinet="Setup.cab" EmbedCab="yes" />
 
@@ -16,8 +16,8 @@
 
         <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
-        <Property Id="WixAppFolder" Value="WixPerMachineFolder" />
-        <WixVariable Id="WixUISupportPerUser" Value="0" />
+        <Property Id="WixAppFolder" Value="WixPerUserFolder" />
+        <WixVariable Id="WixUISupportPerUser" Value="1" />
 
         <!--UI Settings-->
 
@@ -33,7 +33,7 @@
         <!--Directories-->
 
         <Directory Id="TARGETDIR" Name="SourceDir">
-            <Directory Id="ProgramFilesFolder">
+            <Directory Id="LocalAppDataFolder">
                 <Directory Id="INSTALLDIR" Name="$(var.PRODUCTNAME)">
                     <Directory Id="ModuleFolder" Name="TfsCmdlets" />
                 </Directory>
@@ -47,7 +47,7 @@
 
         <DirectoryRef Id="INSTALLDIR" FileSource="$(var.SourceDir)">
             <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}" KeyPath="yes">
-                <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last" Separator=";" System="yes" Permanent="no" Value="[INSTALLDIR]"/>
+                <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last" Separator=";" System="no" Permanent="no" Value="[INSTALLDIR]"/>
             </Component>
         </DirectoryRef>
 
@@ -63,7 +63,7 @@
         <!-- Custom Actions -->
 
         <SetProperty Action="SetxCmdLine0" Id="QtExecCmdLine" Before='CallSetx' Sequence='execute' Value='"setx.exe" TFSCMDLETS 1'>NOT Installed</SetProperty>
-        <SetProperty Action="SetxCmdLine1" Id="QtExecCmdLine" Before='CallSetx' Sequence='execute' Value='"setx.exe" TFSCMDLETS ""'>Installed AND NOT UPGRADINGPRODUCTCODE</SetProperty>
+        <SetProperty Action="SetxCmdLine1" Id="QtExecCmdLine" Before='CallSetx' Sequence='execute' Value='REG delete HKCU\Environment /F /V TFSCMDLETS'>Installed AND NOT UPGRADINGPRODUCTCODE</SetProperty>
         <CustomAction Id="CallSetx" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="immediate" Return="ignore"/>
         
         <InstallExecuteSequence>

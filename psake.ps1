@@ -346,7 +346,8 @@ Task PackageMsi -Depends Build {
     $CandleArgs = @(
         "-sw$WixSuppressedWarnings",
         "-dPRODUCTVERSION=$FourPartVersion",
-        "-d`"PRODUCTNAME=$ModuleName - $ModuleDescription`"",
+        "-d`"PRODUCTNAME=$ModuleName`"",
+        "-d`"DESCRIPTION=$ModuleDescription`"",
         "-d`"AUTHOR=$ModuleAuthor`"",
         "-dSourceDir=$ModuleDir\",
         "-dSolutionDir=$RootProjectDir\",
@@ -372,7 +373,7 @@ Task PackageMsi -Depends Build {
         "$WixObjDir\_ModuleComponent_dir.wxs"
     ) 
     Write-Verbose "Candle.exe $($CandleArgs -join ' ')"
-    & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose
+    Exec { & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose }
 
     $LightArgs = @(
         "-out", "$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi",
@@ -388,7 +389,7 @@ Task PackageMsi -Depends Build {
         "-wixprojectfile", "$WixProjectDir$WixProjectFileName", "$WixObjDir\Product.wixobj", "$WixObjDir\_ModuleComponent_dir.wixobj"
     )
     Write-Verbose "Light.exe $($LightArgs -join ' ')"
-    & (Join-Path $WixToolsDir 'Light.exe') $LightArgs *>&1 | Write-Verbose
+    Exec { & (Join-Path $WixToolsDir 'Light.exe') $LightArgs *>&1 | Write-Verbose }
     
     if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
