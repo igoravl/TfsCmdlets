@@ -138,6 +138,7 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
+    Copy-Item -Path $RootProjectDir\*.rtf -Destination $ModuleDir -Force
 
     foreach($p in @('Core', 'Desktop'))
     {

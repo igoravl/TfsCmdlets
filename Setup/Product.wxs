@@ -18,6 +18,7 @@
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
         <Property Id="WixAppFolder" Value="WixPerUserFolder" />
         <WixVariable Id="WixUISupportPerUser" Value="1" />
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.SourceDir)License.rtf" />
 
         <!--UI Settings-->
 
