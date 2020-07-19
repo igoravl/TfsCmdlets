@@ -14,10 +14,8 @@ namespace TfsCmdlets.Cmdlets.Admin
     ///   Azure DevOps Services organizations.
     /// </summary>
     /// <remarks>
-    ///   The Get-TfsVersion cmdlet retrieves version information from the supplied team project collection 
-    ///   or Azure DevOps organization. Currently supported platforms are Team Foundation Server 2015+, 
-    ///   Azure DevOps Server 2019+ and Azure DevOps Services. When available/applicable, detailed 
-    ///   information about installed updates, deployed sprints and so on are also provided.
+    /// The Get-TfsVersion cmdlet retrieves version information from the supplied team project collection or Azure DevOps organization. 
+    /// When available/applicable, detailed information about installed updates, deployed sprints and so on are also provided.
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]

@@ -27,7 +27,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date")]
         [Parameter(Position = 0, ParameterSetName = "Get deleted")]
-        [SupportsWildcards]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
@@ -275,16 +274,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             while (!done) switch (workItem)
                 {
-                    case WebApiWorkItem wi when showWindow:
-                        {
-                            workItem = new[] { (int)wi.Id };
-                            continue;
-                        }
-                    case WorkItemReference wiRef:
-                        {
-                            workItem = wiRef.Id;
-                            continue;
-                        }
                     case int id:
                         {
                             workItem = new[] { id };
@@ -303,12 +292,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             }
                             workItem = list.ToArray();
                             continue;
-                        }
-                    case int[] ids:
-                        {
-                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, fields, client);
-
-                            yield break;
                         }
                     case null when deleted:
                     case object o when deleted:
@@ -353,6 +336,22 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                                     Url = wi.Url
                                 };
                             }
+                            yield break;
+                        }
+                    case WebApiWorkItem wi when showWindow:
+                        {
+                            workItem = new[] { (int)wi.Id };
+                            continue;
+                        }
+                    case WorkItemReference wiRef:
+                        {
+                            workItem = wiRef.Id;
+                            continue;
+                        }
+                    case int[] ids:
+                        {
+                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, fields, client);
+
                             yield break;
                         }
                     case null when !string.IsNullOrEmpty(filter):
@@ -423,8 +422,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                     continue;
                 }
 
-                yield return WellKnownFields.FirstOrDefault(s => 
-                    s.Equals($"System.{f}", StringComparison.OrdinalIgnoreCase) || 
+                yield return WellKnownFields.FirstOrDefault(s =>
+                    s.Equals($"System.{f}", StringComparison.OrdinalIgnoreCase) ||
                     s.Equals($"Microsoft.VSTS.Common.{f}", StringComparison.OrdinalIgnoreCase)) ?? f;
             }
         }

@@ -1,76 +1,68 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using TfsCmdlets.Extensions;
+using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
+using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
     /// <summary>
     /// Deletes a work item from a team project collection.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsWorkItem", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
-    public class RemoveWorkItem : CmdletBase
+    [Cmdlet(VerbsCommon.Remove, "TfsWorkItem", SupportsShouldProcess = true)]
+    public class RemoveWorkItem : RemoveCmdletBase<WebApiWorkItem>
     {
         /// <summary>
-        /// Specifies a work item. Valid values are the work item ID or an instance of
-        /// Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem.
+        /// Specifies the work item to remove.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        /// <seealso cref="Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem">
+        /// A WorkItem object
+        /// </seealso>
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
+        /// Permanently deletes the work item, without sending it to the recycle bin.
         /// </summary>
         [Parameter()]
-        public object Collection { get; set; }
+        public SwitchParameter Destroy { get; set; }
 
         /// <summary>
-        /// Performs execution of the command
+        /// Deletes the work item without asking for confirmation
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
+    }
 
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void DoProcessRecord()
-        //     {
-        //         ids = @()
+    partial class WorkItemDataService
+    {
+        protected override void DoRemoveItem()
+        {
+            var wis = GetItems<WebApiWorkItem>();
+            var (tpc, tp) = GetCollectionAndProject();
+            var destroy = GetParameter<bool>(nameof(RemoveWorkItem.Destroy));
+            var force = GetParameter<bool>(nameof(RemoveWorkItem.Force));
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
-        //         foreach(wi in WorkItem)
-        //         {
-        //             if (WorkItem is Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItem)
-        //             {
-        //                 id = WorkItem.Id
-        //             }
-        //             elseif (WorkItem is int)
-        //             {
-        //                 id = WorkItem
-        //             }
-        //             else
-        //             {
-        //                 throw new Exception($"Invalid work item "'{WorkItem}'". Supply either a WorkItem object or one or more integer ID numbers")
-        //             }
+            foreach(var wi in wis)
+            {
+                if(!ShouldProcess(tpc, $"{(destroy? "Destroy": "Delete")} work item {wi.Id}")) continue;
 
-        //             if (ShouldProcess($"{{wi}.WorkItemType} id ("$(wi.Title)")", "Remove work item"))
-        //             {
-        //                 ids += id
-        //             }
-        //         }
+                if(destroy && !(force || ShouldContinue("Are you sure you want to destroy work item {wi.id}?"))) continue;
 
-        //         if (ids.Count -gt 0)
-        //         {
-        //             tpc = Get-TfsTeamProjectCollection Collection
-        //             store = tpc.GetService([type] "Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore")
-
-        //             errors = store.DestroyWorkItems([int[]] ids)
-
-        //             if (errors && (errors.Count -gt 0))
-        //             {
-        //                 errors | Write-Error $"Error {{_}.Id}: $(_.Exception.Message)"
-
-        //                 throw new Exception("Error destroying one or more work items")
-        //             }
-        //         }
-        //     }
-        // }
+                client.DeleteWorkItemAsync(tp.Name, (int) wi.Id, destroy)
+                    .GetResult($"Error {(destroy? "destroying": "deleting")} work item {wi.Id}");
+            }
+        }
     }
 }
