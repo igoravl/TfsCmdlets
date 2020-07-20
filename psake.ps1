@@ -138,7 +138,6 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
-    Copy-Item -Path $RootProjectDir\*.rtf -Destination $ModuleDir -Force
 
     foreach($p in @('Core', 'Desktop'))
     {
@@ -326,6 +325,9 @@ Task PackageMsi -Depends Build {
 
     if (-not (Test-Path $WixObjDir)) { New-Item $WixObjDir -ItemType Directory | Write-Verbose }
     if (-not (Test-Path $WixBinDir)) { New-Item $WixBinDir -ItemType Directory | Write-Verbose }
+
+    Copy-Item -Path $RootProjectDir\License.rtf -Destination $ModuleDir -Force
+    Copy-Item -Path $RootProjectDir\Assets\*.bmp -Destination $ModuleDir -Force
     
     $HeatArgs = @(
         'dir', $ModuleDir,

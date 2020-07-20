@@ -17,8 +17,11 @@
         <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
         <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
         <Property Id="WixAppFolder" Value="WixPerUserFolder" />
+
         <WixVariable Id="WixUISupportPerUser" Value="1" />
         <WixVariable Id="WixUILicenseRtf" Value="$(var.SourceDir)License.rtf" />
+        <WixVariable Id="WixUIDialogBmp" Value="$(var.SourceDir)Wix-01.bmp" />
+        <WixVariable Id="WixUIBannerBmp" Value="$(var.SourceDir)Wix-02.bmp" />
 
         <!--UI Settings-->
 
@@ -66,7 +69,7 @@
         <SetProperty Action="SetxCmdLine0" Id="QtExecCmdLine" Before='CallSetx' Sequence='execute' Value='"setx.exe" TFSCMDLETS 1'>NOT Installed</SetProperty>
         <SetProperty Action="SetxCmdLine1" Id="QtExecCmdLine" Before='CallSetx' Sequence='execute' Value='REG delete HKCU\Environment /F /V TFSCMDLETS'>Installed AND NOT UPGRADINGPRODUCTCODE</SetProperty>
         <CustomAction Id="CallSetx" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="immediate" Return="ignore"/>
-        
+
         <InstallExecuteSequence>
             <Custom Action='CallSetx' After='InstallFinalize' />
         </InstallExecuteSequence>
