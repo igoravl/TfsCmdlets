@@ -1,9 +1,10 @@
 using System;
-using System.IO;
+using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
+using System.Xml.Linq;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Admin.Registry
 {
@@ -16,27 +17,24 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
     /// </example>
     [Cmdlet(VerbsCommon.Get, "TfsRegistryValue")]
     [OutputType(typeof(object))]
-    [DesktopOnly]
-    public class GetInstallationPath : CmdletBase
+    public class GetRegistryValue : CmdletBase
     {
-        /// <summary>
-        /// Indicates the TFS component whose installation path is being searched for. 
-        /// For the main TFS installation directory, use BaseInstallation. When omitted, 
-        /// defaults to BaseInstallation.
-        /// </summary>
-        [Parameter(Position=0, Mandatory=true)]
+        [Parameter(Position = 0, Mandatory = true)]
         public string Path { get; set; }
+
+        [Parameter()]
+        public RegistryScope Scope { get; set; } = RegistryScope.Server;
 
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
-        [Parameter(ParameterSetName = "Get by collection")]
+        [Parameter()]
         public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER
         /// </summary>
-        [Parameter(ParameterSetName = "Get by server", Mandatory = true)]
+        [Parameter()]
         public object Server { get; set; }
 
         /// <summary>
@@ -44,40 +42,50 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
         /// </summary>
         protected override void DoProcessRecord()
         {
-            var provider = ParameterSetName == "Get by collection" ? this.GetCollection() : this.GetServer();
+            Models.Connection provider;
 
-            Type clientType;
-
-            if(TypeName.Contains(","))
+            switch (Scope)
             {
-                // Fully qualified - use Type.GetType
-                clientType = Type.GetType(TypeName);
-            }
-            else
-            {
-                // Not fully qualified - iterate over all loaded assemblies (may not find if assembly's not loaded yet)
-                clientType = AppDomain.CurrentDomain.GetAssemblies().Select(asm => asm.GetType(TypeName)).FirstOrDefault();
-
-                if(clientType == null)
-                {
-                    // Try to guess the assembly name from the class name
-                    var assemblyName = TypeName.Substring(0, TypeName.LastIndexOf("."));
-
-                    try
-                    {
-                        var asm = Assembly.LoadFrom(
-                            $"{this.MyInvocation.MyCommand.Module.ModuleBase}/Lib/{EnvironmentUtil.PSEdition}/{assemblyName}.dll");
-                        clientType = asm.GetType(TypeName);
-                    }
-                    finally {}
+                case RegistryScope.User: {
+                    throw new NotImplementedException("User scopes are currently not supported");
+                }
+                case RegistryScope.Collection: {
+                    provider = this.GetCollection();
+                    break;
+                }
+                case RegistryScope.Server: {
+                    provider = this.GetServer();
+                    break;
+                }
+                default: {
+                    throw new Exception($"Invalid scope {Scope}");
                 }
             }
 
-            if (clientType == null) throw new Exception($"Invalid or non-existent type '{TypeName}'. " +
-                "If the type name is correct, either provide the assembly name in the form of 'Type,Assembly' " +
-                "or check whether its assembly has been previously loaded");
+            var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
+    <s:Body>
+        <QueryRegistryEntries xmlns='http://microsoft.com/webservices/'>
+            <registryPathPattern>{Path}</registryPathPattern>
+        </QueryRegistryEntries>
+    </s:Body>
+</s:Envelope>";
 
-            WriteObject(provider.GetClientFromType(clientType));
+            var restApiService = GetService<IRestApiService>();
+
+            var result = restApiService.InvokeAsync(
+                provider,
+                "/Services/v3.0/RegistryService.asmx",
+                "POST",
+                soapEnvelope,
+                "application/soap+xml",
+                "application/soap+xml",
+                apiVersion: null).SyncResult();
+
+            var resultString = result.Content.ReadAsStringAsync().GetResult();
+            var resultXml = XDocument.Parse(resultString);
+            var value = resultXml.Descendants(XName.Get("QueryRegistryEntriesResult", "http://microsoft.com/webservices/")).FirstOrDefault().Value;
+
+            WriteObject(value);
         }
     }
 }

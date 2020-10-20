@@ -327,7 +327,7 @@ namespace TfsCmdlets.HttpClient
                     ResourceVersion = 1
                 },
                 routeValues,
-                new ApiResourceVersion(apiVersion),
+                string.IsNullOrEmpty(apiVersion)? null: new ApiResourceVersion(apiVersion),
                 content,
                 queryParameters,
                 mediaType);
