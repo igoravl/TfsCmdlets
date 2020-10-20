@@ -66,13 +66,27 @@ namespace TfsCmdlets.Cmdlets.Admin
                 var html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About) in TFS");
                 var matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
 
+                string versionText;
+
+                if (matches.Count == 0)
+                {
+                    this.Log("Using fallback detection (for Azure DevOps 2020+)");
+                    matches = (new Regex(@"""serviceVersion"":""(.+?) \((.+?)\)""")).Matches(html);
+                    versionText = matches[0].Groups[1].Value.Replace("M", "0.");
+                }
+                else
+                {
+                    versionText = matches[0].Groups[1].Value;
+                }
+
                 if (matches.Count == 0)
                 {
                     this.Log("Response does not contain 'Version' information");
+                    this.Log($"Returned HTML: {html}");
                     throw new Exception("Team Foundation Server version not found in response.");
                 }
 
-                var version = new Version(matches[0].Groups[1].Value);
+                var version = new Version(versionText);
 
                 if(!TfsVersionTable.TryGetServerVersion(version, out serverVersion))
                 {
