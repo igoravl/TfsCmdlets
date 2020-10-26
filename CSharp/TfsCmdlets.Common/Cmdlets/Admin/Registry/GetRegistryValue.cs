@@ -19,9 +19,16 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
     [OutputType(typeof(object))]
     public class GetRegistryValue : CmdletBase
     {
+        /// <summary>
+        /// Specifies the full path of the TFS Registry key
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public string Path { get; set; }
 
+        /// <summary>
+        /// Specifies the scope under which to search for the key. 
+        /// When omitted, defaults to the Server scope.
+        /// </summary>
         [Parameter()]
         public RegistryScope Scope { get; set; } = RegistryScope.Server;
 
