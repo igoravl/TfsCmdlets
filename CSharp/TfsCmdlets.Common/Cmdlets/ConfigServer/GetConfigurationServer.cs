@@ -10,7 +10,6 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     ///   Gets information about a configuration server.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServer", DefaultParameterSetName = "Get by server")]
-    [DesktopOnly]
     public partial class GetConfigurationServer : CmdletBase
     {
         /// <summary>
@@ -32,5 +31,11 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Get by server")]
         public object Credential { get; set; }
+        
+        /// <inheritdoc/>
+        protected override void DoProcessRecord()
+        {
+            WriteObject(this.GetServer());
+        }
     }
 }

@@ -13,7 +13,20 @@ namespace TfsCmdlets.Models
         internal VssConnection InnerConnection => this.BaseObject as VssConnection;
 
         // TODO: internal VssConnection ConfigurationServer => IsHosted ? InnerConnection : InnerConnection.ParentConnection;
-        internal VssConnection ConfigurationServer => InnerConnection;
+        internal VssConnection ConfigurationServer
+        {
+            get
+            {
+                try
+                {
+                    return InnerConnection.ParentConnection;
+                }
+                catch
+                {
+                    return InnerConnection;
+                }
+            }
+        }
 
         internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
 
