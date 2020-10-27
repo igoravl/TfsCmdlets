@@ -29,80 +29,72 @@ namespace TfsCmdlets.Cmdlets.Admin
     }
 
     [Exports(typeof(ServerVersion))]
-    internal class VersionDataService: BaseDataService<ServerVersion>
+    internal class VersionDataService : BaseDataService<ServerVersion>
     {
         protected override IEnumerable<ServerVersion> DoGetItems()
         {
             var tpc = this.GetCollection();
-            ServerVersion serverVersion = null;
+            var svc = this.GetService<IRestApiService>();
 
-            if (tpc.IsHosted)
+            this.Log("Trying Azure DevOps Services detection logic");
+
+            var result = svc.InvokeAsync(tpc, "/").SyncResult();
+            var html = result.Content.ReadAsStringAsync().GetResult("Error accessing Azure DevOps home page (/)");
+            var matches = (new Regex(@"""serviceVersion"":""(.+?)( \((.+?)\))?""")).Matches(html);
+
+            Version version; string versionText = null, longVersion = null;
+
+            if (matches.Count > 0)
             {
-                this.Log("Detected Azure DevOps Services organization");
-                var result = this.GetService<IRestApiService>().InvokeAsync(tpc, "/").SyncResult();
-                var html = result.Content.ReadAsStringAsync().GetResult();
-                var matches = (new Regex(@"""serviceVersion"":""(.+?) \((.+?)\)""")).Matches(html);
+                versionText = Regex.Replace(matches[0].Groups[1].Value, "[a-zA-Z]", "") + ".0";
 
-                if (matches.Count == 0)
+                this.Log($"Version text found: '{versionText}'");
+
+                version = new Version(versionText);
+
+                if(matches[0].Groups.Count == 4)
                 {
-                    this.Log("Response does not contain 'serviceVersion' information");
-                    throw new Exception("Azure DevOps Services version not found in response.");
+                    longVersion = $"{matches[0].Groups[1].Value}" + (
+                        !string.IsNullOrEmpty(matches[0].Groups[3].Value)? 
+                            $" ({matches[0].Groups[3].Value})": 
+                            ""
+                        );
                 }
 
-                var version = new Version(Regex.Replace(matches[0].Groups[1].Value, "[a-zA-Z]", "") + ".0");
-
-                serverVersion = new ServerVersion {
+                yield return new ServerVersion
+                {
                     Version = version,
-                    LongVersion = $"{matches[0].Groups[1].Value} ({matches[0].Groups[2].Value})",
+                    LongVersion = longVersion,
                     Update = version.Minor,
-                    FriendlyVersion = $"Azure DevOps Services, Sprint {version.Minor}",
-                    IsHosted = true
+                    FriendlyVersion = "Azure DevOps " + (tpc.IsHosted ? $"Services, Sprint {version.Minor}" : $"Server {TfsVersionTable.GetYear(version.Major)}"),
+                    IsHosted = tpc.IsHosted
                 };
+
+                yield break;
             }
-            else
+
+            this.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
+
+            result = svc.InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
+            html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About)");
+            matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
+
+            if (matches.Count == 0)
             {
-                this.Log("Detected Azure DevOps Server / TFS collection");
-                var result = this.GetService<IRestApiService>().InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
-                var html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About) in TFS");
-                var matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
+                this.Log("Response does not contain 'Version' information");
+                this.Log($"Returned HTML: {html}");
 
-                string versionText;
-
-                if (matches.Count == 0)
-                {
-                    this.Log("Using fallback detection (for Azure DevOps 2020+)");
-                    matches = (new Regex(@"""serviceVersion"":""(.+?) \((.+?)\)""")).Matches(html);
-                    versionText = matches[0].Groups[1].Value.Replace("M", "0.");
-                }
-                else
-                {
-                    versionText = matches[0].Groups[1].Value;
-                }
-
-                if (matches.Count == 0)
-                {
-                    this.Log("Response does not contain 'Version' information");
-                    this.Log($"Returned HTML: {html}");
-                    throw new Exception("Team Foundation Server version not found in response.");
-                }
-
-                var version = new Version(versionText);
-
-                if(!TfsVersionTable.TryGetServerVersion(version, out serverVersion))
-                {
-                    var year = TfsVersionTable.GetYear(version.Major);
-
-                    serverVersion = new ServerVersion {
-                        Version = version,
-                        FriendlyVersion = (version.Major >= 17? $"Azure DevOps": "Team Foundation") + $" Server {year}",
-                        IsHosted = false,
-                        LongVersion = $"{version} (TFS {year}))"
-                    };
-                }
-
+                throw new Exception("Team Foundation Server version not found in response.");
             }
 
-            yield return serverVersion;
+            versionText = matches[0].Groups[1].Value;
+
+            this.Log($"Version text found: '{versionText}'");
+
+            version = new Version(versionText);
+            longVersion = $"{version} (TFS {TfsVersionTable.GetYear(version.Major)}))";
+
+            yield return TfsVersionTable.GetServerVersion(version);
         }
     }
 }
