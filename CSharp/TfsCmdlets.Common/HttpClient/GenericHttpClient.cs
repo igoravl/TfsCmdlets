@@ -13,9 +13,12 @@ namespace TfsCmdlets.HttpClient
     /// <summary>
     /// Generic HTTP Client, used by the Invoke-TfsRestApi cmdlet
     /// </summary>
+    [ResourceArea(GenericHttpClient.RESOURCE_ID)]
     public class GenericHttpClient : VssHttpClientBase
     {
         #region Constructors and fields
+
+        internal const string RESOURCE_ID = "0A6383F5-F466-4A96-86AD-875088A9A106";
 
         private static string _Host;
 
@@ -327,7 +330,7 @@ namespace TfsCmdlets.HttpClient
                     ResourceVersion = 1
                 },
                 routeValues,
-                new ApiResourceVersion(apiVersion),
+                string.IsNullOrEmpty(apiVersion)? null: new ApiResourceVersion(apiVersion),
                 content,
                 queryParameters,
                 mediaType);

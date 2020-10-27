@@ -63,4 +63,13 @@ namespace TfsCmdlets
 
         All = 3
     }
+
+    public enum RegistryScope
+    {
+        User,
+
+        Collection,
+        
+        Server
+    }
 }
