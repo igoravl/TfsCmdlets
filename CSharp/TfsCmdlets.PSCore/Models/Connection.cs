@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
+using Microsoft.VisualStudio.Services.Location;
 using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Location;
 
 namespace TfsCmdlets.Models
 {
@@ -11,6 +13,7 @@ namespace TfsCmdlets.Models
         public static implicit operator Connection(VssConnection c) => new Connection(c);
 
         internal VssConnection InnerConnection => this.BaseObject as VssConnection;
+        private VssConnection _ParentConnection;
 
         // TODO: internal VssConnection ConfigurationServer => IsHosted ? InnerConnection : InnerConnection.ParentConnection;
         internal VssConnection ConfigurationServer
@@ -19,7 +22,7 @@ namespace TfsCmdlets.Models
             {
                 try
                 {
-                    return InnerConnection.ParentConnection;
+                    return _ParentConnection??= GetParentConnection();
                 }
                 catch
                 {
@@ -67,5 +70,14 @@ namespace TfsCmdlets.Models
             InnerConnection.Uri.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
 
         public object GetClientFromType(Type type) => InnerConnection.GetClient(type);
+
+        private VssConnection GetParentConnection()
+        {
+            var uri = new Uri(InnerConnection.GetService<ILocationService>()
+                .GetLocationData(Guid.Empty)
+                .LocationForCurrentConnection("LocationService2", LocationServiceConstants.ApplicationIdentifier));
+
+            return new VssConnection(uri, InnerConnection.Credentials, InnerConnection.Settings);
+        }
     }
 }
