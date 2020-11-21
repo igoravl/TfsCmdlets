@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Hard { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_FORCE
+        /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }

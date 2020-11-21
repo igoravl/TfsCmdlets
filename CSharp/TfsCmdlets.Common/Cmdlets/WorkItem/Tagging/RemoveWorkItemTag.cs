@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public object Tag { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_FORCE
+        /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter()]
         public SwitchParameter Force {get;set;}
