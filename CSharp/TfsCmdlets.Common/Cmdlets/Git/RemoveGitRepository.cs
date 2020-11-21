@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// Deletes one or more Git repositories from a team project.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
-    public class RemoveGitRepository : CmdletBase
+    public class RemoveGitRepository : RemoveCmdletBase<GitRepository>
     {
         /// <summary>
         /// Specifies the repository to be deleted. Value can be the name or ID of a Git repository, 
@@ -20,32 +20,25 @@ namespace TfsCmdlets.Cmdlets.Git
         [Alias("Name")]
         public object Repository { get; set; }
 
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()] public object Project { get; set; }
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
 
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()] public object Collection { get; set; }
+    }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+    partial class GitRepositoryDataService
+    {
+        protected override void DoRemoveItem()
         {
-            if (Repository is Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository repo)
-            {
-                Project = repo.ProjectReference.Name;
-            }
-
-            var repos = this.GetItems<GitRepository>();
+            var (_, tp) = GetCollectionAndProject();
             var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+
+            var repos = GetItems<GitRepository>();
+            var force = GetParameter<bool>(nameof(RemoveGitRepository.Force));
 
             foreach (var r in repos)
             {
-                if (!ShouldProcess($"Team Project [{r.ProjectReference.Name}]", $"Delete Git repository [{r.Name}]")) {continue;}
+                if (!ShouldProcess(tp, $"Delete Git repository [{r.Name}]")) continue;
+                if(!force && !ShouldContinue($"Are you sure you want to delete Git repository '{r.Name}'?")) continue;
 
                 client.DeleteRepositoryAsync(r.Id).Wait();
             }
