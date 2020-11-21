@@ -40,7 +40,7 @@
             "name": "(.NET) PowerShell 7",
             "type": "coreclr",
             "request": "launch",
-            "program": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "program": "pwsh.exe",
             "args": [
                 "-noexit",
                 "-command",

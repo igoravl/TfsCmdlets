@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsGitRepository", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
-    public class NewGitRepository : CmdletBase
+    public class NewGitRepository : NewCmdletBase<GitRepository>
     {
         /// <summary>
         /// Specifies the name of the new repository
@@ -19,33 +19,22 @@ namespace TfsCmdlets.Cmdlets.Git
         [Alias("Name")]
         public string Repository { get; set; }
 
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()]
-        public object Project { get; set; }
+    }
 
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
-
+    partial class GitRepositoryDataService
+    {
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord()
+        protected override GitRepository DoNewItem()
         {
-            if (!ShouldProcess(Repository, "Create Git repository")) return;
+            var (_, tp) = GetCollectionAndProject();
 
-            var (tpc, tp) = this.GetCollectionAndProject();
-            var client = GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
+            var repo = GetParameter<string>(nameof(NewGitRepository.Repository));
+
+            if (!ShouldProcess(tp, $"Create Git repository '{repo}'")) return null;
+
+            var client = GetClient<GitHttpClient>();
 
             var tpRef = new TeamProjectReference()
             {
@@ -55,16 +44,12 @@ namespace TfsCmdlets.Cmdlets.Git
 
             var repoToCreate = new GitRepository()
             {
-                Name = Repository,
+                Name = repo,
                 ProjectReference = tpRef
             };
 
-            var result = client.CreateRepositoryAsync(repoToCreate, tp.Name).GetResult("Error create Git repository");
-
-            if (Passthru)
-            {
-                WriteObject(result);
-            }
+            return client.CreateRepositoryAsync(repoToCreate, tp.Name)
+                .GetResult("Error creating Git repository");
         }
     }
 }
