@@ -40,34 +40,43 @@ namespace TfsCmdlets.Services
 
         protected TObj GetItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).GetItem();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).GetItem();
         }
 
         protected IEnumerable<TObj> GetItems<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).GetItems();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).GetItems();
         }
 
         protected virtual TObj NewItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).NewItem();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).NewItem();
         }
 
         protected virtual bool TestItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).TestItem();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).TestItem();
         }
         
         protected virtual TObj RenameItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).RenameItem();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).RenameItem();
+        }
+        
+        protected virtual void RemoveItem<TObj>(object parameters = null) where TObj : class
+        {
+            Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).RemoveItem();
         }
         
         protected virtual TObj SetItem<TObj>(object parameters = null) where TObj : class
         {
-            return Provider.GetDataService<TObj>(Cmdlet, parameters).SetItem();
+            return Provider.GetDataService<TObj>(Cmdlet, MergeParameters(parameters)).SetItem();
         }
 
+        private ParameterDictionary MergeParameters(object overridingParameters)
+        {
+            return new ParameterDictionary(this.Parameters, overridingParameters);
+        }
         
         /// <summary>
         /// Returns an instance of the specified service
@@ -82,22 +91,22 @@ namespace TfsCmdlets.Services
         
         protected Models.Connection GetServer(ParameterDictionary parameters = null)
         {
-            return Provider.GetServer(Cmdlet, parameters);
+            return Provider.GetServer(Cmdlet, MergeParameters(parameters));
         }
 
         protected Models.Connection GetCollection(ParameterDictionary parameters = null)
         {
-            return Provider.GetCollection(Cmdlet, parameters);
+            return Provider.GetCollection(Cmdlet, MergeParameters(parameters));
         }
 
         protected (Models.Connection, TeamProject) GetCollectionAndProject(ParameterDictionary parameters = null)
         {
-            return Provider.GetCollectionAndProject(Cmdlet, parameters);
+            return Provider.GetCollectionAndProject(Cmdlet, MergeParameters(parameters));
         }
 
         protected (Models.Connection, TeamProject, WebApiTeam) GetCollectionProjectAndTeam(ParameterDictionary parameters = null)
         {
-            return Provider.GetCollectionProjectAndTeam(Cmdlet, parameters);
+            return Provider.GetCollectionProjectAndTeam(Cmdlet, MergeParameters(parameters));
         }
 
         protected TClient GetClient<TClient>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
