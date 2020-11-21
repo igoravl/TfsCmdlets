@@ -136,7 +136,8 @@ Import-Module TfsCmdlets
 
 ## Contribution Guidelines
 
-Coming soon.
+- [Contributor Guide](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
 
 ## Additional Information
 
