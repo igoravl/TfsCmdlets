@@ -19,6 +19,9 @@ namespace TfsCmdlets.Cmdlets.Wiki
         [Alias("Name")]
         public object Wiki { get; set; }
 
+        /// <summary>
+        /// Deletes the provisioned ("project") Wiki of the specified Team Project.
+        /// </summary>
         [Parameter(ParameterSetName = "Remove Project Wiki")]
         public SwitchParameter ProjectWiki { get; set; }
     }

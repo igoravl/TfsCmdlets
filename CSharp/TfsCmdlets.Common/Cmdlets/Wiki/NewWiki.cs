@@ -14,15 +14,21 @@ namespace TfsCmdlets.Cmdlets.Wiki
     public class NewWiki : NewCmdletBase<WikiV2>
     {
         /// <summary>
-        /// Specifies the name of the new repository
+        /// Specifies the name of the new Wiki
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "Create Code Wiki")]
         [Alias("Name", "Id")]
         public string Wiki { get; set; }
 
+        /// <summary>
+        /// Specifies the name or ID of the Git repository to publish as a Wiki
+        /// </summary>
         [Parameter(Mandatory = true, Position = 1, ParameterSetName = "Create Code Wiki")]
         public object Repository { get; set; }
 
+        /// <summary>
+        /// Creates a provisioned ("project") Wiki in the specified Team Project.
+        /// </summary>
         [Parameter(ParameterSetName = "Provision Project Wiki")]
         public SwitchParameter ProjectWiki { get; set; }
     }

@@ -188,7 +188,7 @@ Task UpdateModuleManifest {
         TfsClientVersion = $tfsOmNugetVersion
         PreRelease       = $VersionMetadata.NugetPrereleaseTag
         Version          = $VersionMetadata.FullSemVer
-        ReleaseNotes     = "https://github.com/igoravl/TfsCmdlets/blob/master/Docs/ReleaseNotes/$($VersionMetadata.SemVer).md"
+        ReleaseNotes     = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
     } + $TargetFrameworks
 
     $manifestArgs = @{
@@ -198,6 +198,7 @@ Task UpdateModuleManifest {
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
+        ReleaseNotes         = 
     }
 
     if ($nestedModuleList)
