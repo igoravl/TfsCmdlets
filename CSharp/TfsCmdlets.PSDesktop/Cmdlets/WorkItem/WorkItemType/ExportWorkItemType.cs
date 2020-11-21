@@ -15,7 +15,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         {
             var (tpc, tp) = GetCollectionAndProject();
             var types = GetItems<WebApiWorkItemType>();
+
+#pragma warning disable CS0618
             var store = tpc.GetService<WorkItemStore>();
+#pragma warning restore CS0618
+
             var project = store.Projects[tp.Name];
 
             foreach (var t in types)
