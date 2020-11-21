@@ -29,8 +29,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Hard { get; set; }
 
         /// <summary>
-        /// Forces the exclusion of the team project. When omitted, the command prompts for 
-        /// confirmation prior to deleting the team project.
+        /// HELP_PARAM_FORCE
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }

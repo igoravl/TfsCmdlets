@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public object Tag { get; set; }
 
         /// <summary>
-        /// Allows the cmdlet to delete active tags (currently associated with work items).
+        /// HELP_PARAM_FORCE
         /// </summary>
         [Parameter()]
         public SwitchParameter Force {get;set;}
