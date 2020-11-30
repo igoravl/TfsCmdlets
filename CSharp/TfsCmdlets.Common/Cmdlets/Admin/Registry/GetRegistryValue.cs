@@ -11,6 +11,18 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
     /// <summary>
     ///   Gets the value of a given Team Foundation Server registry entry.
     /// </summary>
+    /// <remarks>
+    ///   This cmdlet retrieves the value of a given Team Foundation Server registry entry. 
+    ///   To get a value from the TFS Registry you must supply its path and its scope.
+    /// 
+    ///   Registry entries can be scoped to the server, to a collection or to a user. 
+    /// </remarks>
+    /// <notes>
+    ///   The registry is an internal, hierarchical database that TFS uses to store its 
+    ///   configuration and user-level settings and preferences.
+    /// 
+    ///   IMPORTANT: Retrieving user-scoped values is currently not supported.
+    /// </notes>
     /// <example>
     ///   <code>Get-TfsRegistryValue -Path '/Service/Integration/Settings/EmailEnabled'</code>
     ///   <para>Gets the current value of the 'EmailEnabled' key in the TFS Registry</para>
