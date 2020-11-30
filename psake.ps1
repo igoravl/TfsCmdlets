@@ -48,7 +48,7 @@ Properties {
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
 
     # Documentation generation
-    $RootUrl = 'https://tfscmdlets.dev/Cmdlets'
+    $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets'
 }
 
 Task Rebuild -Depends Clean, Build {
