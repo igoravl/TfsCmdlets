@@ -54,22 +54,46 @@ namespace TfsCmdlets
         Collection
     }
 
+    /// <summary>
+    /// Board card rule
+    /// </summary>
     [Flags]
     public enum CardRuleType
     {
+        /// <summary>
+        /// Card color rule type
+        /// </summary>
         CardColor = 1,
 
+        /// <summary>
+        /// Tag color rule type
+        /// </summary>
         TagColor = 2,
 
+        /// <summary>
+        /// All card rules (card and tag color)
+        /// </summary>
         All = 3
     }
 
+    /// <summary>
+    /// TFS Registry scope
+    /// </summary>
     public enum RegistryScope
     {
+        /// <summary>
+        /// User
+        /// </summary>
         User,
 
+        /// <summary>
+        /// Collection
+        /// </summary>
         Collection,
         
+        /// <summary>
+        /// Server
+        /// </summary>
         Server
     }
 }

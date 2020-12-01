@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     /// <summary>
     /// Deletes one or more Git repositories from a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsWiki", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.Remove, "TfsWiki", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, DefaultParameterSetName = "Remove code wiki")]
     public class RemoveWiki : RemoveCmdletBase<WikiV2>
     {
         /// <summary>
@@ -19,7 +19,10 @@ namespace TfsCmdlets.Cmdlets.Wiki
         [Alias("Name")]
         public object Wiki { get; set; }
 
-        [Parameter(ParameterSetName = "Remove Project Wiki")]
+        /// <summary>
+        /// Deletes the provisioned ("project") Wiki of the specified Team Project.
+        /// </summary>
+        [Parameter(ParameterSetName = "Remove Project Wiki", Mandatory=true)]
         public SwitchParameter ProjectWiki { get; set; }
     }
 

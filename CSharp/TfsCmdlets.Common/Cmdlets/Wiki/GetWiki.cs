@@ -24,8 +24,11 @@ namespace TfsCmdlets.Cmdlets.Wiki
         [Alias("Name", "Id")]
         public object Wiki { get; set; } = "*";
 
-
-        [Parameter(ParameterSetName = "Get Project Wiki")]
+        /// <summary>
+        /// Returns only provisioned ("project") Wikis. When omitted, returns all Wikis 
+        /// (both Project wikis and Code wikis).
+        /// </summary>
+        [Parameter(ParameterSetName = "Get Project Wiki", Mandatory=true)]
         public SwitchParameter ProjectWiki { get; set; }
 
         /// <summary>

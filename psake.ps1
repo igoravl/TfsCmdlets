@@ -48,7 +48,7 @@ Properties {
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
 
     # Documentation generation
-    $RootUrl = 'https://tfscmdlets.dev/Cmdlets'
+    $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets'
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -57,7 +57,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests, GenerateDocs {
 }
 
 Task Test -Depends Build, UnitTests, AllTests {
@@ -188,7 +188,6 @@ Task UpdateModuleManifest {
         TfsClientVersion = $tfsOmNugetVersion
         PreRelease       = $VersionMetadata.NugetPrereleaseTag
         Version          = $VersionMetadata.FullSemVer
-        ReleaseNotes     = "https://github.com/igoravl/TfsCmdlets/blob/master/Docs/ReleaseNotes/$($VersionMetadata.SemVer).md"
     } + $TargetFrameworks
 
     $manifestArgs = @{
@@ -198,6 +197,7 @@ Task UpdateModuleManifest {
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
+        ReleaseNotes     = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
     }
 
     if ($nestedModuleList)

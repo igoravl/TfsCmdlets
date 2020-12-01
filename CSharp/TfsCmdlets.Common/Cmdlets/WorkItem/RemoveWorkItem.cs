@@ -38,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter Destroy { get; set; }
 
         /// <summary>
-        /// Deletes the work item without asking for confirmation
+        /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }

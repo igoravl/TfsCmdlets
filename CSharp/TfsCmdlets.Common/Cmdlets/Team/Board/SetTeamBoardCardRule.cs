@@ -4,9 +4,12 @@ using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 
 namespace TfsCmdlets.Cmdlets.Team.Board
 {
+    /// <summary>
+    /// Set the card rule settings of the specified backlog board.
+    /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [OutputType(typeof(BoardCardRuleSettings))]
-    public class SetTeamBoardCardRuleSetting : SetCmdletBase<WebApiBoard>
+    public class SetTeamBoardCardRule : SetCmdletBase<WebApiBoard>
     {
         /// <summary>
         /// Specifies the board name. Wildcards are supported. When omitted, returns card rules 

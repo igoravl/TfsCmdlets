@@ -20,9 +20,11 @@ namespace TfsCmdlets.Cmdlets.Git
         [Alias("Name")]
         public object Repository { get; set; }
 
+        /// <summary>
+        /// HELP_PARAM_FORCE_REMOVE
+        /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
-
     }
 
     partial class GitRepositoryDataService

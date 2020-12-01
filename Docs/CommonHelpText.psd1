@@ -16,4 +16,5 @@
     "HELP_PARAM_GIT_REPOSITORY"        = "Specifies the target Git repository. Valid values are the name of the repository, its ID (a GUID), or a Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository object obtained by e.g. a call to Get-TfsGitRepository. When omitted, it default to the team project name (i.e. the default repository)."
     "HELP_PARAM_NEWNAME"               = "Specifies the new name of the item. Enter only a name - i.e., for items that support paths, do not enter a path and name."
     "HELP_PARAM_WORKITEM"              = "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem."
+    "HELP_PARAM_FORCE_REMOVE"          = "Forces the exclusion of the item. When omitted, the command prompts for confirmation prior to deleting the item."
 }
