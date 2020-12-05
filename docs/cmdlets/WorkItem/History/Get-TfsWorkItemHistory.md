@@ -2,7 +2,7 @@
 title: Get-TfsWorkItemHistory
 breadcrumbs: [ "WorkItem", "History" ]
 parent: "WorkItem.History"
-description: "Gets the history of changes of a work item."
+description: "Gets the history of changes of a work item. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -15,7 +15,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/WorkItem/History/Get-TfsWorkItemHistory"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/History/Get-TfsWorkItemHistory"
 aliases: 
 examples: 
 ---

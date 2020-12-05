@@ -2,7 +2,7 @@
 title: Import-TfsWorkItemType
 breadcrumbs: [ "WorkItem", "WorkItemType" ]
 parent: "WorkItem.WorkItemType"
-description: "Imports a work item type definition into a team project."
+description: "Imports a work item type definition into a team project. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/WorkItem/WorkItemType/Import-TfsWorkItemType"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/WorkItemType/Import-TfsWorkItemType"
 aliases: 
 examples: 
 ---

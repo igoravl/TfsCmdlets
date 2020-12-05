@@ -2,7 +2,7 @@
 title: Stop-TfsTeamProjectCollection
 breadcrumbs: [ "TeamProjectCollection" ]
 parent: "TeamProjectCollection"
-description: "Stops a team project collection and make it offline."
+description: "Stops a team project collection and make it offline. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/TeamProjectCollection/Stop-TfsTeamProjectCollection"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProjectCollection/Stop-TfsTeamProjectCollection"
 aliases: 
 examples: 
 ---

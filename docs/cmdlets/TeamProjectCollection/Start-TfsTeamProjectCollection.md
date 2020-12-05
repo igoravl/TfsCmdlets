@@ -2,7 +2,7 @@
 title: Start-TfsTeamProjectCollection
 breadcrumbs: [ "TeamProjectCollection" ]
 parent: "TeamProjectCollection"
-description: "Starts an offline team project collection and make it online."
+description: "Starts an offline team project collection and make it online. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/TeamProjectCollection/Start-TfsTeamProjectCollection"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProjectCollection/Start-TfsTeamProjectCollection"
 aliases: 
 examples: 
 ---

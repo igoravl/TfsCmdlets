@@ -2,7 +2,7 @@
 title: Remove-TfsTeamProjectCollection
 breadcrumbs: [ "TeamProjectCollection" ]
 parent: "TeamProjectCollection"
-description: "Deletes a team project collection."
+description: "Deletes a team project collection. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/TeamProjectCollection/Remove-TfsTeamProjectCollection"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProjectCollection/Remove-TfsTeamProjectCollection"
 aliases: 
 examples: 
 ---

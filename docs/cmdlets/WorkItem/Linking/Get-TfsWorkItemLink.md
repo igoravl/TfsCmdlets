@@ -2,7 +2,7 @@
 title: Get-TfsWorkItemLink
 breadcrumbs: [ "WorkItem", "Linking" ]
 parent: "WorkItem.Linking"
-description: "Gets the links in a work item."
+description: "Gets the links in a work item. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/WorkItem/Linking/Get-TfsWorkItemLink"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/Linking/Get-TfsWorkItemLink"
 aliases: 
 examples: 
 ---

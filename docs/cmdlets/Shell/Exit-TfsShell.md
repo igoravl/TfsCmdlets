@@ -2,7 +2,7 @@
 title: Exit-TfsShell
 breadcrumbs: [ "Shell" ]
 parent: "Shell"
-description: "Deactivates the Azure DevOps Shell"
+description: "Deactivates the Azure DevOps Shell "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Shell/Exit-TfsShell"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/Shell/Exit-TfsShell"
 aliases: 
 examples: 
 ---

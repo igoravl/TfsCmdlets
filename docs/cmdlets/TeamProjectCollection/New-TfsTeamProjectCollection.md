@@ -2,7 +2,7 @@
 title: New-TfsTeamProjectCollection
 breadcrumbs: [ "TeamProjectCollection" ]
 parent: "TeamProjectCollection"
-description: "Creates a new team project collection."
+description: "Creates a new team project collection. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -15,7 +15,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/TeamProjectCollection/New-TfsTeamProjectCollection"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProjectCollection/New-TfsTeamProjectCollection"
 aliases: 
 examples: 
 ---

@@ -2,7 +2,7 @@
 title: Get-TfsReleaseDefinition
 breadcrumbs: [ "Pipeline", "ReleaseManagement" ]
 parent: "Pipeline.ReleaseManagement"
-description: "Gets information from one or more release definitions in a team project."
+description: "Gets information from one or more release definitions in a team project. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -15,7 +15,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/Pipeline/ReleaseManagement/Get-TfsReleaseDefinition"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/Pipeline/ReleaseManagement/Get-TfsReleaseDefinition"
 aliases: 
 examples: 
 ---

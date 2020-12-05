@@ -2,7 +2,7 @@
 title: Get-TfsWorkItemLinkEndType
 breadcrumbs: [ "WorkItem", "Linking" ]
 parent: "WorkItem.Linking"
-description: "Gets the work item link end types of a team project collection."
+description: "Gets the work item link end types of a team project collection. "
 remarks: 
 parameterSets: 
   "_All_": [  ] 
@@ -13,7 +13,7 @@ outputs:
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/Cmdlets/WorkItem/Linking/Get-TfsWorkItemLinkEndType"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/Linking/Get-TfsWorkItemLinkEndType"
 aliases: 
 examples: 
 ---
