@@ -1,12 +1,16 @@
 # TfsCmdlets Release Notes
 
-### Version 2.0.0-rc.1 (_30/Nov/2020_)
+### Version 2.0.0-rc.3 (_19/Feb/2021_)
 
-See release notes [here](Docs/ReleaseNotes/2.0.0-rc.2.md).
+See release notes [here](Docs/ReleaseNotes/2.0.0-rc.3.md).
 
 ------------------------
 
 ## Previous Versions
+
+### Version 2.0.0-rc.2 (_30/Nov/2020_)
+
+See release notes [here](Docs/ReleaseNotes/2.0.0-rc.2.md).
 
 ### Version 2.0.0-rc.1 (_21/Nov/2020_)
 
