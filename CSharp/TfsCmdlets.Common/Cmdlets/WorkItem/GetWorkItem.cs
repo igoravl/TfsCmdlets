@@ -218,6 +218,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter Deleted { get; set; }
 
         /// <summary>
+        /// Gets information about all links and attachments in the work item. When omitted, only fields are retrieved.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter IncludeLinks { get; set; }
+
+        /// <summary>
         /// HELP_PARAM_TEAM
         /// </summary>
         [Parameter()]
@@ -266,6 +272,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             var showWindow = GetParameter<bool>(nameof(GetWorkItem.ShowWindow));
             var deleted = GetParameter<bool>(nameof(GetWorkItem.Deleted));
             var timePrecision = GetParameter<bool>(nameof(GetWorkItem.TimePrecision));
+            var includeLinks = GetParameter<bool>(nameof(GetWorkItem.IncludeLinks));
+
+            WorkItemExpand expand = (includeLinks? WorkItemExpand.Relations: WorkItemExpand.None);
 
             var (_, tp) = GetCollectionAndProject();
             var client = GetClient<WorkItemTrackingHttpClient>();
@@ -338,9 +347,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             }
                             yield break;
                         }
-                    case WebApiWorkItem wi when showWindow:
+                    case WebApiWorkItem wi when showWindow || (includeLinks && wi.Relations == null):
                         {
                             workItem = new[] { (int)wi.Id };
+                            continue;
+                        }
+                    case WebApiWorkItem wi:
+                        {
+                            yield return wi;
                             continue;
                         }
                     case WorkItemReference wiRef:
@@ -350,7 +364,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                         }
                     case int[] ids:
                         {
-                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, fields, client);
+                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, expand, fields, client);
 
                             yield break;
                         }
@@ -367,7 +381,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
                             foreach (var wiRef in result.WorkItems)
                             {
-                                yield return FetchWorkItem(wiRef.Id, 0, DateTime.MinValue, fields, client);
+                                yield return FetchWorkItem(wiRef.Id, 0, DateTime.MinValue, expand, fields, client);
                             }
 
                             yield break;
@@ -387,20 +401,27 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 }
         }
 
-        private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
+        private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
         {
-            fields = FixWellKnownFields(fields).ToList();
+            if (expand != WorkItemExpand.None)
+            {
+                fields = null;
+            }
+            else
+            {
+                fields = FixWellKnownFields(fields).ToList();
+            }
 
             try
             {
                 if (revision > 0)
-                    return client.GetRevisionAsync(id, revision)
+                    return client.GetRevisionAsync(id, revision, expand)
                         .GetResult($"Error getting work item '{id}'");
                 else if (asOf.HasValue && asOf.Value > DateTime.MinValue)
-                    return client.GetWorkItemAsync(id, fields, asOf)
+                    return client.GetWorkItemAsync(id, fields, asOf, expand)
                         .GetResult($"Error getting work item '{id}'");
                 else
-                    return client.GetWorkItemAsync(id, fields, null)
+                    return client.GetWorkItemAsync(id, fields, null, expand)
                         .GetResult($"Error getting work item '{id}'");
             }
             catch (Exception ex)
