@@ -232,7 +232,7 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// Gets the current directory in PowerShell
         /// </summary>
-        protected virtual string ResolvePath(string basePath, string path = null)
+        protected virtual string ResolvePath(string basePath, string path = "")
         {
             var relativePath = Path.Combine(basePath, path);
 
@@ -343,6 +343,21 @@ namespace TfsCmdlets.Cmdlets
                     $"{attr.Version}{(attr.Update > 0 ? " Update" + attr.Update : "")} or later.{Environment.NewLine}");
             }
         }
+
+        private bool yesToAll, noToAll;
+
+        /// <inheritdoc/>
+        protected bool ShouldContinue(string query, string caption = "Confirm", bool hasSecurityImpact = false)
+        {
+            return ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
+        }
+
+        /// <inheritdoc/>
+        protected bool ShouldContinue(string query, ref bool yesToAll, ref bool noToAll, string caption = "Confirm", bool hasSecurityImpact = false)
+        {
+            return ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
+        }
+
 
         /// <summary>
         /// Performs execution of the command. Must be overriden in derived classes.
