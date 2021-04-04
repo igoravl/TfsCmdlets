@@ -75,7 +75,7 @@ namespace TfsCmdlets.Services
 
         private ParameterDictionary MergeParameters(object overridingParameters)
         {
-            return new ParameterDictionary(this.Parameters, overridingParameters);
+            return new ParameterDictionary(overridingParameters, this.Parameters);
         }
         
         /// <summary>
