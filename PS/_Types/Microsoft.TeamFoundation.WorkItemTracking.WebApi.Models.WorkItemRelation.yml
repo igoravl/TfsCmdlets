@@ -1,0 +1,18 @@
+- ScriptProperty:
+    Name: LinkType
+    GetScriptBlock: if($this.Rel -eq 'AttachedFile') { 'Attachment' } else { $this.Attributes['name'] }
+- ScriptProperty:
+    Name: Comment
+    GetScriptBlock: $this.Attributes['comment']
+- ScriptProperty:
+    Name: Target
+    GetScriptBlock: |
+        if($this.Rel -eq 'AttachedFile')
+        { 
+          return $this.Attributes['name']
+        }
+        
+        $id = [int] ([uri] $this.Url).Segments[-1]
+        $wi = Get-TfsWorkItem -WorkItem $id
+
+        return "$($wi.WorkItemType) #$($id) (""$($wi.Title)"")"
