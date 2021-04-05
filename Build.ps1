@@ -132,6 +132,10 @@ try
     Write-Verbose "=== SET BUILD NAME ==="
 
     $GitVersionPath = Join-Path $RootProjectDir 'packages\gitversion.commandline\tools\GitVersion.exe'
+
+    Write-Output GitVersion:
+    & $GitVersionPath
+
     $VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $BuildName = $VersionMetadata.FullSemVer.Replace('+', "+$ProjectBuildNumber.")
