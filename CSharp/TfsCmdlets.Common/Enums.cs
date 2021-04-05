@@ -96,4 +96,23 @@ namespace TfsCmdlets
         /// </summary>
         Server
     }
+
+    /// <summary>
+    /// Work Item Link Type
+    /// </summary>
+    [Flags]
+    public enum WorkItemLinkType
+    {
+        All = 0,
+        Parent = 1,
+        Child = 2,
+        Related = 4,
+        Predecessor = 8,
+        Successor = 16,
+        Duplicate = 32,
+        DuplicateOf = 64,
+        Tests = 128,
+        TestedBy = 256, 
+    }
+
 }

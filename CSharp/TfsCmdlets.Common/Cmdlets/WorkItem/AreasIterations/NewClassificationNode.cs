@@ -46,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public override string Node { get; set; }
 
         /// <inheritdoc/>
-        internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+        internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
     }
 
     /// <summary>

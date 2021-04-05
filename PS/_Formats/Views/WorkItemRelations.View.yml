@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemRelation
+TableControl: 
+  LinkType: 
+    Width: 15
+    Label: Link Type
+  Target:
+  Comment: 
+    Width: 50

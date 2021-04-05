@@ -1,4 +1,5 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -23,6 +24,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         public object WorkItem { get; set; }
 
         /// <summary>
+        /// Returns only the specified link types. When omitted, returns all link types.
+        /// </summary>
+        [Parameter()]
+        public WorkItemLinkType LinkType { get; set; }
+
+        /// <summary>
         /// Includes attachment information alongside links. When omitted, only links are retrieved.
         /// </summary>
         [Parameter()]
@@ -36,12 +43,34 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         {
             var wi = this.GetItem<WebApiWorkItem>(new {
                 WorkItem = GetParameter<object>(nameof(GetWorkItemLink.WorkItem)),
-                IncludeLinks = true 
+                IncludeLinks = true
             });
 
+            var linkType = GetParameter<WorkItemLinkType>(nameof(GetWorkItemLink.LinkType));
+            var includeAll = (linkType == WorkItemLinkType.All);
             var includeAttachments = GetParameter<bool>(nameof(GetWorkItemLink.IncludeAttachments));
 
-            return wi.Relations.Where(l => includeAttachments || l.Rel != "AttachedFile");
+            List<string> filteredTypes = LINK_TYPES.Where(kvp => includeAll || ((kvp.Key & linkType) == kvp.Key)).Select(kvp => kvp.Value).ToList();
+
+            if (includeAttachments)
+            {
+                filteredTypes.Add("AttachedFile");
+            }
+
+            return wi.Relations.Where(l => filteredTypes.Contains(l.Rel));
         }
+
+        private static Dictionary<WorkItemLinkType, string> LINK_TYPES = new Dictionary<WorkItemLinkType, string>()
+        {
+            [WorkItemLinkType.Parent] = "System.LinkTypes.Hierarchy-Reverse",
+            [WorkItemLinkType.Child] = "System.LinkTypes.Hierarchy-Forward",
+            [WorkItemLinkType.Related] = "System.LinkTypes.Related",
+            [WorkItemLinkType.Predecessor] = "System.LinkTypes.Dependency-Reverse",
+            [WorkItemLinkType.Successor] = "System.LinkTypes.Dependency-Forward",
+            [WorkItemLinkType.Duplicate] = "System.LinkTypes.Duplicate-Forward",
+            [WorkItemLinkType.DuplicateOf] = "System.LinkTypes.Duplicate-Reverse",
+            [WorkItemLinkType.Tests] = "System.LinkTypes.TestedBy-Reverse",
+            [WorkItemLinkType.TestedBy] = "System.LinkTypes.TestedBy-Forward"
+        };
     }
 }

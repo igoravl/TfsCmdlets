@@ -24,8 +24,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <seealso cref="Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem">
         /// A WorkItem object
         /// </seealso>
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision")]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date")]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision", ValueFromPipeline = true)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date", ValueFromPipeline = true)]
         [Parameter(Position = 0, ParameterSetName = "Get deleted")]
         [Alias("id")]
         [ValidateNotNull()]
@@ -232,7 +232,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// <summary>
         /// HELP_PARAM_PROJECT
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter()]
         public object Project { get; set; }
 
         internal static readonly string[] DefaultFields = new[] {
@@ -360,6 +360,22 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                     case WorkItemReference wiRef:
                         {
                             workItem = wiRef.Id;
+                            continue;
+                        }
+                    case WorkItemRelation rel:
+                        {
+                            workItem = new Uri(rel.Url);
+                            continue;
+                        }
+                    case Uri url:
+                        {
+                            if(!url.LocalPath
+                                .Substring(0, url.LocalPath.Length - url.Segments[url.Segments.Length-1].Length)
+                                .EndsWith("/_apis/wit/workItems/", StringComparison.OrdinalIgnoreCase)) yield break;
+
+                            if(!int.TryParse(url.Segments[url.Segments.Length-1], out var id)) yield break;
+
+                            workItem = id;
                             continue;
                         }
                     case int[] ids:
