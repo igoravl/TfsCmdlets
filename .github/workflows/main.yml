@@ -29,7 +29,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Dump environment variables
-        run: dir env:
+        run: "dir env:"
         shell: pwsh
       - name: Build module
         run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
