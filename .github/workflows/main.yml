@@ -31,36 +31,36 @@ jobs:
       - name: Build module
         run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
         shell: pwsh
-      - name: Publish Chocolatey
-        uses: actions/upload-artifact@v2
-        with:
-          name: chocolatey
-          path: "**/out/Chocolatey/*.nupkg"
-      - name: Publish Nuget
-        uses: actions/upload-artifact@v2
-        with:
-          name: chocolatey
-          path: "**/out/Nuget/*.nupkg"
       - name: Publish Portable
         uses: actions/upload-artifact@v2
         with:
           name: portable
-          path: "**/out/Portable/*.zip"
-      - name: Publish Windows Installer (MSI)
-        uses: actions/upload-artifact@v2
-        with:
-          name: portable
-          path: "**/out/MSI/*.msi"
-      - name: Publish Docs
-        uses: actions/upload-artifact@v2
-        with:
-          name: portable
-          path: "**/out/docs/*.zip"
-      - name: Publish Docs
-        uses: actions/upload-artifact@v2
-        with:
-          name: portable
-          path: "**/out/docs/ReleaseNotes/**"
+          path: "out/Portable/*.zip"
+      # - name: Publish Chocolatey
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: chocolatey
+      #     path: "**/out/Chocolatey/*.nupkg"
+      # - name: Publish Nuget
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: chocolatey
+      #     path: "**/out/Nuget/*.nupkg"
+      # - name: Publish Windows Installer (MSI)
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: portable
+      #     path: "**/out/MSI/*.msi"
+      # - name: Publish Docs
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: portable
+      #     path: "**/out/docs/*.zip"
+      # - name: Publish Docs
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: portable
+      #     path: "**/out/docs/ReleaseNotes/**"
   GitHub_Packages:
     runs-on: ubuntu-latest
     steps:
