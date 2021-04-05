@@ -4,7 +4,7 @@ name: CI
 
 env:
   Config: Release
-  Debug: false
+  Debug: true
   
 # Controls when the action will run. 
 on:
