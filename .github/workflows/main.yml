@@ -13,8 +13,6 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -28,6 +26,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Dump environment variables
+        run: dir env:
+        shell: pwsh
       - name: Build module
         run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
         shell: pwsh
