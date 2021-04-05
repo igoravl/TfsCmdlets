@@ -4,7 +4,7 @@ name: CI
 
 env:
   Config: Release
-  Debug: false
+  Debug: ${{ false }}
   
 # Controls when the action will run. 
 on:
@@ -31,6 +31,7 @@ jobs:
       - name: Dump environment variables
         run: "dir env:"
         shell: pwsh
+        if: env.Debug 
       - name: Build module
         run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
         shell: pwsh
