@@ -29,6 +29,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Build module
-        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:${{ env.Debug }}
+        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
         shell: pwsh
         working-directory: 
