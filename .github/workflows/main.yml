@@ -50,12 +50,17 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: msi
-          path: "/out/MSI/*.msi"
+          path: "/out/msi/*"
       - name: Publish Docs
         uses: actions/upload-artifact@v2
         with:
           name: docs
           path: "out/docs/*.zip"
+      - name: Publish Release Notes
+        uses: actions/upload-artifact@v2
+        with:
+          name: releasenotes
+          path: "out/docs/ReleaseNotes/**"
   GitHub_Packages:
     runs-on: ubuntu-latest
     steps:
