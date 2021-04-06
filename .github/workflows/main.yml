@@ -36,6 +36,7 @@ jobs:
         shell: pwsh
         if: env.Debug 
       - name: Build module
+        id: build_module
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
@@ -75,10 +76,13 @@ jobs:
     needs: [ Build ]
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BUILD_NAME: ${{ needs.Build.build_module.outputs.BUILD_NAME }}
     steps:
       - name: Remove stale draft releases
         shell: pwsh
         run: |
+          echo $env:BUILD_NAME
+
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           Set-GitHubConfiguration -SuppressTelemetryReminder
           $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN | ? Draft -eq $true)
