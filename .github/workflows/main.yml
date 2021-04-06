@@ -118,10 +118,18 @@ jobs:
     steps:
       - name: Publish artifact
         run: echo TBD
-        
+
   Chocolatey:
     runs-on: ubuntu-latest
     needs: [ Release ]
     steps:
       - name: Publish artifact
         run: echo TBD
+
+  Announcement:
+    runs-on: ubuntu-latest
+    needs: [ Nuget, PSGallery, Chocolatey, Site ]
+    steps:
+      - name: Announce release
+        run: echo TBD
+        
