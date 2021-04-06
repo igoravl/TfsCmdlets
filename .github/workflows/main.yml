@@ -76,11 +76,13 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Remove stale draft releases
+        shell: pwsh
         run: |
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+          Set-GitHubConfiguration -SuppressTelemetryReminder
+
           $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN | ? Draft -eq $true)
-          Write-Output $releases
-        shell: pwsh
+          $releases | % { Remove-GitHubRelease -Release $_.Id -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN }
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
