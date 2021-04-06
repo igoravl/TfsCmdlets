@@ -68,9 +68,10 @@ jobs:
         with:
           name: releasenotes
           path: "out/docs/ReleaseNotes/**"
-  GitHub-Release:
+  GitHub-Draft-Release:
     runs-on: ubuntu-latest
     environment: githubrelease
+    needs: [Build]
     steps:
       - name: Create Release
         id: create_release
@@ -84,5 +85,5 @@ jobs:
             Changes in this Release
             - First Change
             - Second Change
-          draft: false
-          prerelease: false
+          draft: true
+          prerelease: true
