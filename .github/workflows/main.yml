@@ -68,12 +68,12 @@ jobs:
       #   with:
       #     name: releasenotes
       #     path: "out/docs/ReleaseNotes/**"
-  Staging-Release:
+  Staging:
     runs-on: ubuntu-latest
     environment: staging
     needs: [ Build ]
     steps:
-      - name: Create Release
+      - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -87,17 +87,18 @@ jobs:
             - Second Change
           draft: true
           prerelease: true
-  Production-Release: 
-    runs-on: windows-latest
+  Release: 
+    runs-on: ubuntu-latest
     environment: production
-    needs: [ Staging-Release ]
+    needs: [ Staging ]
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps: 
       - name: List releases
-        run: |
-          iwr "https://api.github.com/repos/igoravl/tfscmdlets/releases" -Method get -Headers @{
-            "Accept" = "application/vnd.github.v3+json" 
-            "Authorization" = "token $($env:GITHUB_TOKEN)"
-          }
-        shell: pwsh
+        run: echo TBD
+  Site:
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    steps:
+      - name: Publish documentation site
+        run: echo TBD
