@@ -68,10 +68,10 @@ jobs:
         with:
           name: releasenotes
           path: "out/docs/ReleaseNotes/**"
-  GitHub-Draft-Release:
+  Staging-Release:
     runs-on: ubuntu-latest
-    environment: githubrelease
-    needs: [Build]
+    environment: staging
+    needs: [ Build ]
     steps:
       - name: Create Release
         id: create_release
@@ -87,3 +87,10 @@ jobs:
             - Second Change
           draft: true
           prerelease: true
+  Production-Release: 
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [ Staging-Release ]
+    steps: 
+      - name: Publish GitHub Release
+        run: echo Publish release
