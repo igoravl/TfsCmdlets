@@ -88,7 +88,7 @@ jobs:
           draft: true
           prerelease: true
   Production-Release: 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     environment: production
     needs: [ Staging-Release ]
     env:
