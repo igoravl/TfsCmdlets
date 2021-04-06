@@ -35,39 +35,39 @@ jobs:
           '@
         shell: pwsh
         if: env.Debug 
-      - name: Build module
-        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
-        shell: pwsh
-      - name: Publish Nuget
-        uses: actions/upload-artifact@v2
-        with:
-          name: nuget
-          path: "out/Nuget/*.nupkg"
-      - name: Publish Chocolatey
-        uses: actions/upload-artifact@v2
-        with:
-          name: chocolatey
-          path: "out/Chocolatey/*.nupkg"
-      - name: Publish Portable
-        uses: actions/upload-artifact@v2
-        with:
-          name: portable
-          path: "out/Portable/*.zip"
-      - name: Publish MSI
-        uses: actions/upload-artifact@v2
-        with:
-          name: msi
-          path: "/out/msi/*"
-      - name: Publish Docs
-        uses: actions/upload-artifact@v2
-        with:
-          name: docs
-          path: "out/docs/*.zip"
-      - name: Publish Release Notes
-        uses: actions/upload-artifact@v2
-        with:
-          name: releasenotes
-          path: "out/docs/ReleaseNotes/**"
+      # - name: Build module
+      #   run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+      #   shell: pwsh
+      # - name: Publish Nuget
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: nuget
+      #     path: "out/Nuget/*.nupkg"
+      # - name: Publish Chocolatey
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: chocolatey
+      #     path: "out/Chocolatey/*.nupkg"
+      # - name: Publish Portable
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: portable
+      #     path: "out/Portable/*.zip"
+      # - name: Publish MSI
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: msi
+      #     path: "/out/msi/*"
+      # - name: Publish Docs
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: docs
+      #     path: "out/docs/*.zip"
+      # - name: Publish Release Notes
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: releasenotes
+      #     path: "out/docs/ReleaseNotes/**"
   Staging-Release:
     runs-on: ubuntu-latest
     environment: staging
@@ -91,6 +91,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging-Release ]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps: 
-      - name: Publish GitHub Release
-        run: echo Publish release
+      - name: List releases
+        run: |
+          iwr "https://api.github.com/repos/igoravl/tfscmdlets/releases" -Method get -Headers @{
+            "Accept" = "application/vnd.github.v3+json", 
+            "Authorization" = "token $($env:GITHUB_TOKEN)"
+          }
