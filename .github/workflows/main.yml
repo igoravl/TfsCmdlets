@@ -78,8 +78,8 @@ jobs:
       - name: Remove stale draft releases
         run: |
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
-          $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $token | ? Draft -eq $true)
-          $releases
+          $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN | ? Draft -eq $true)
+          Write-Output $releases
         shell: pwsh
       - name: Create Draft Release
         id: create_release
