@@ -29,7 +29,10 @@ jobs:
         shell: pwsh
         if: env.Debug 
       - name: Dump GitHub objects
-        run: echo "${{ toJSON(github) }}"
+        run: |
+          echo @'
+            ${{ toJSON(github) }}
+          '@
         shell: pwsh
         if: env.Debug 
       - name: Build module
