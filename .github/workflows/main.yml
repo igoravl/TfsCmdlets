@@ -80,9 +80,8 @@ jobs:
         run: |
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           Set-GitHubConfiguration -SuppressTelemetryReminder
-
           $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN | ? Draft -eq $true)
-          $releases | % { Remove-GitHubRelease -Release $_.Id -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN }
+          $releases | % { Remove-GitHubRelease -Release $_.Id -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN -Force }
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
