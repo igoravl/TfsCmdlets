@@ -19,6 +19,8 @@ on:
 jobs:
   Build:
     runs-on: windows-latest
+    outputs:
+      BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -35,11 +37,12 @@ jobs:
           '@
         shell: pwsh
         if: env.Debug 
-      - name: Build module
-        id: build_module
+      - build_module:
+        name: Build module
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+          
       # - name: Publish Nuget
       #   uses: actions/upload-artifact@v2
       #   with:
@@ -76,7 +79,7 @@ jobs:
     needs: [ Build ]
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      BUILD_NAME: ${{ needs.Build.build_module.outputs.BUILD_NAME }}
+      BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
       - name: Remove stale draft releases
         shell: pwsh
