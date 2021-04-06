@@ -35,9 +35,10 @@ jobs:
           '@
         shell: pwsh
         if: env.Debug 
-      # - name: Build module
-      #   run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
-      #   shell: pwsh
+      - name: Build module
+        shell: pwsh
+        run: |
+          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
       # - name: Publish Nuget
       #   uses: actions/upload-artifact@v2
       #   with:

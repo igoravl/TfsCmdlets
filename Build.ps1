@@ -148,6 +148,11 @@ try
         Write-Output "##vso[build.updatebuildnumber]$BuildName"
         $isCI = $true
     }
+    elseif ($env:GITHUB_ACTIONS)
+    {
+        Write-Output "::set-output name=BUILD_NAME::$BuildName"
+        $isCI = $true
+    }
 
     # Run Psake
 
