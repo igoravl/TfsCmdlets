@@ -107,9 +107,11 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps: 
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
       - name: List releases
         run: echo TBD
 
