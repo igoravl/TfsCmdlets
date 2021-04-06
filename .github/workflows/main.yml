@@ -28,6 +28,10 @@ jobs:
         run: "dir env:"
         shell: pwsh
         if: env.Debug 
+      - name: Dump GitHub objects
+        run: echo "${{ toJSON(github) }}"
+        shell: pwsh
+        if: env.Debug 
       - name: Build module
         run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
         shell: pwsh
@@ -61,8 +65,21 @@ jobs:
         with:
           name: releasenotes
           path: "out/docs/ReleaseNotes/**"
-  GitHub_Packages:
+  GitHub-Release:
     runs-on: ubuntu-latest
+    environment: githubrelease
     steps:
-      - name: Hello world!
-        run: echo Hello world
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
