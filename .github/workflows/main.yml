@@ -37,8 +37,8 @@ jobs:
           '@
         shell: pwsh
         if: env.Debug 
-      - build_module:
-        name: Build module
+      - name: Build module
+        id: build_module
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
