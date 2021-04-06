@@ -87,6 +87,7 @@ jobs:
             - Second Change
           draft: true
           prerelease: true
+
   Release: 
     runs-on: ubuntu-latest
     environment: production
@@ -96,9 +97,31 @@ jobs:
     steps: 
       - name: List releases
         run: echo TBD
+
   Site:
     runs-on: ubuntu-latest
     needs: [ Release ]
     steps:
-      - name: Publish documentation site
+      - name: Publish artifact
+        run: echo TBD
+
+  PSGallery:
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    steps:
+      - name: Publish artifact
+        run: echo TBD
+
+  Nuget:
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    steps:
+      - name: Publish artifact
+        run: echo TBD
+        
+  Chocolatey:
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    steps:
+      - name: Publish artifact
         run: echo TBD
