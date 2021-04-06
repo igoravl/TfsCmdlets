@@ -80,11 +80,10 @@ jobs:
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $token | ? Draft -eq $true)
           $releases
+        shell: pwsh
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
