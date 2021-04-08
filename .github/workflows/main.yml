@@ -8,14 +8,11 @@ env:
   
 # Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
   workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   Build:
     runs-on: windows-latest
@@ -42,37 +39,36 @@ jobs:
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
-          
-      # - name: Publish Nuget
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: nuget
-      #     path: "out/Nuget/*.nupkg"
-      # - name: Publish Chocolatey
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: chocolatey
-      #     path: "out/Chocolatey/*.nupkg"
-      # - name: Publish Portable
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: portable
-      #     path: "out/Portable/*.zip"
-      # - name: Publish MSI
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: msi
-      #     path: "/out/msi/*"
-      # - name: Publish Docs
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: docs
-      #     path: "out/docs/*.zip"
-      # - name: Publish Release Notes
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: releasenotes
-      #     path: "out/docs/ReleaseNotes/**"
+      - name: Publish Nuget
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuget
+          path: "out/Nuget/*.nupkg"
+      - name: Publish Chocolatey
+        uses: actions/upload-artifact@v2
+        with:
+          name: chocolatey
+          path: "out/Chocolatey/*.nupkg"
+      - name: Publish Portable
+        uses: actions/upload-artifact@v2
+        with:
+          name: portable
+          path: "out/Portable/*.zip"
+      - name: Publish MSI
+        uses: actions/upload-artifact@v2
+        with:
+          name: msi
+          path: "/out/msi/*"
+      - name: Publish Docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: "out/docs/*.zip"
+      - name: Publish Release Notes
+        uses: actions/upload-artifact@v2
+        with:
+          name: releasenotes
+          path: "out/docs/ReleaseNotes/**"
   Staging:
     runs-on: ubuntu-latest
     environment: staging
