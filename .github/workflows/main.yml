@@ -135,7 +135,7 @@ jobs:
         run: |
           cd site
           git checkout --track origin/gh-pages
-          unzip ../*.zip . -o
+          unzip -o ../*.zip
           git add *
           git commit -m "Publish version $BUILD_NAME"
           git push
