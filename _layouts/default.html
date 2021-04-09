@@ -25,6 +25,7 @@ layout: table_wrappers
         {% include nav.html %}
       </div>
       <footer class="site-footer">
+        <p class="text-small text-grey-dk-000 mb-4">{{ site.build_info }}</p>
         <p class="text-small text-grey-dk-000 mb-4">This site uses <a href="https://github.com/pmarsceill/just-the-docs">Just the Docs</a>, a documentation theme for Jekyll.</p>
       </footer>
     </div>
@@ -59,10 +60,9 @@ layout: table_wrappers
               {{ content }}
             {% endif %}
 
-          {% if site.footer_content or site.build_info %}
+          {% if site.footer_content %}
             <hr>
             <footer role="contentinfo">
-              <p class="text-small text-grey-dk-000 mb-0 right">{{ site.build_info }}</p>
               <p class="text-small text-grey-dk-000 mb-0">{{ site.footer_content }}</p>
             </footer>
           {% endif %}
