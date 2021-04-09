@@ -92,7 +92,7 @@ jobs:
         uses: actions/create-release@v1
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: Release ${{ BUILD_NAME }}
           body: |
             Changes in this Release
             - First Change
