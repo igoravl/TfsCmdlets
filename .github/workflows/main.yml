@@ -126,7 +126,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        path: site
+        with:
+          path: site
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
