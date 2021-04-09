@@ -136,6 +136,8 @@ jobs:
           cd site
           git checkout --track origin/gh-pages
           unzip -o ../*.zip
+          git config --local user.name "Igor Abade"
+          git config --local user.email igoravl@gmail.com
           git add *
           git commit -m "Publish version $BUILD_NAME"
           git push
