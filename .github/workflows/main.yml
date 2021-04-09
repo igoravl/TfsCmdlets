@@ -136,7 +136,7 @@ jobs:
           cd site
           git checkout --track origin/gh-pages
           unzip -o ../*.zip
-          sed -i "s/_BUILDVERSION_/${BUILDVERSION}/g" _config.yml
+          sed -i "s/_BUILDVERSION_/${BUILD_NAME}/g" _config.yml
           sed -i "s/_BUILDDATE_/$(date +%F)/g" _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
