@@ -59,9 +59,10 @@ layout: table_wrappers
               {{ content }}
             {% endif %}
 
-          {% if site.footer_content != nil %}
+          {% if site.footer_content or site.build_info %}
             <hr>
             <footer role="contentinfo">
+              <p class="text-small text-grey-dk-000 mb-0 right">{{ site.build_info }}</p>
               <p class="text-small text-grey-dk-000 mb-0">{{ site.footer_content }}</p>
             </footer>
           {% endif %}
