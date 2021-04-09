@@ -83,8 +83,6 @@ jobs:
       - name: Remove stale draft releases
         shell: pwsh
         run: |
-          echo $env:BUILD_NAME
-
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           Set-GitHubConfiguration -SuppressTelemetryReminder
           $releases = (Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN | ? Draft -eq $true)
@@ -127,6 +125,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           path: site
       - name: Download artifact
         uses: actions/download-artifact@v2
