@@ -104,6 +104,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
+    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     outputs:
