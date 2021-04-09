@@ -85,7 +85,8 @@ jobs:
         run: |
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           Set-GitHubConfiguration -SuppressTelemetryReminder
-          Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets -AccessToken $env:GITHUB_TOKEN `
+          Set-GitHubAuthentication -Credential (New-Object PSCredential "pat", $env:GITHUB_TOKEN) -SessionOnly
+          Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
           | Where-Object Draft -eq $true `
           | Remove-GitHubRelease -Force
       - name: Create Draft Release
