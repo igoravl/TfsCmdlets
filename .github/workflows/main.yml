@@ -34,7 +34,6 @@ jobs:
         if: env.Debug 
       - name: Build module
         id: build_module
-        if: ${{ false }}
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
@@ -145,6 +144,7 @@ jobs:
     needs: [ Release ]
     env:
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
+      RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -190,9 +190,7 @@ jobs:
 
           Expand-Archive portable/*.zip -DestinationPath Module/TfsCmdlets
 
-          $releaseNotes = @"
-          $($env:ReleaseNotes.Replace('\n', [Environment]::NewLine))
-          "@
+          $releaseNotes = $env:RELEASE_NOTES
 
           Publish-Module -Name Module/TfsCmdlets -NuGetApiKey $env:PSGALLERY_KEY -AllowPreRelease -ReleaseNotes $releaseNotes
 
