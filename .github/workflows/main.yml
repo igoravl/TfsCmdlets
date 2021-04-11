@@ -161,8 +161,7 @@ jobs:
           git checkout --track origin/gh-pages
           unzip -o ../../TfsCmdlets-Docs-*.zip
           popd
-          sed -i "s/_BUILDVERSION_/${BUILD_NAME}/g" _config.yml
-          sed -i "s/_BUILDDATE_/$(date +%F)/g" _config.yml
+          echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
           git add *
