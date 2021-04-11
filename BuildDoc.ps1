@@ -115,8 +115,8 @@ Function _Text($text) {
 if (-not $RootProjectDir) { $RootProjectDir = $PSScriptRoot }
 if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'CSharp/TfsCmdlets.Common/Cmdlets' ) }
 if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir 'out/module') }
-if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs') }
-if (-not $RootUrl) { $RootUrl = 'https://tfscmdlets.dev/Cmdlets/' }
+if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs/cmdlets') }
+if (-not $RootUrl) { $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets/' }
 
 $RootUrl = $RootUrl.TrimEnd('/')
 
