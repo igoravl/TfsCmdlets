@@ -75,7 +75,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: staging
     needs: [ Build ]
-    if: ${{ false }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
@@ -118,6 +117,7 @@ jobs:
           prerelease: true
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
+      RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
 
   Release: 
 
@@ -134,7 +134,7 @@ jobs:
           access_token: ${{ github.token }}
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
-      RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
+      RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
 
   Site:
 
