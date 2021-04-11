@@ -89,6 +89,9 @@ jobs:
             (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
           )
           Set-GitHubAuthentication -Credential $ghCreds -SessionOnly
+
+          #TODO: Limit scope to this pull request (filter by PR name)
+
           Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
           | Where-Object Draft -eq $true `
           | Remove-GitHubRelease -Force
@@ -143,9 +146,10 @@ jobs:
           name: docs
       - name: Publish site
         run: |
-          cd site && mkdir docs && cd docs
+          cd site && mkdir docs && pushd docs
           git checkout --track origin/gh-pages
           unzip -o ../../TfsCmdlets-Docs-*.zip
+          popd
           sed -i "s/_BUILDVERSION_/${BUILD_NAME}/g" _config.yml
           sed -i "s/_BUILDDATE_/$(date +%F)/g" _config.yml
           git config --local user.name "Igor Abade"
