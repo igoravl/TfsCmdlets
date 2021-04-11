@@ -18,7 +18,7 @@ By using TfsCmdlets, TFS administrators (even power users) can create scripts to
 
 TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
 
-![Azure DevOps Shell](Assets/TfsShell.png)
+![Azure DevOps Shell](assets/images/TfsShell.png)
 
 ## Quick start guide 
 
