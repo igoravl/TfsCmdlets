@@ -96,16 +96,24 @@ jobs:
           Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
           | Where-Object Draft -eq $true `
           | Remove-GitHubRelease -Force
+      - name: Download release notes
+        uses: actions/download-artifact@v2
+        with:
+          name: releasenotes
+      - name: Extract release notes
+        id: extract_release_notes
+        shell: pwsh
+        run: |
+          $fileName = (Get-ChildItem releasenotes/* | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
+          $releaseNotes = ((Get-Content $fileName -Encoding UTF8 -Raw) -Replace "`r?`n", '%0D')
+          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ env.BUILD_NAME }}
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
+          body: ${{ env.RELEASE_NOTES }}
           draft: true
           prerelease: true
     outputs:
@@ -124,16 +132,6 @@ jobs:
         uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
-      - name: Download release notes
-        uses: actions/download-artifact@v2
-        with:
-          name: releasenotes
-      - name: Extract release notes
-        id: extract_release_notes
-        shell: pwsh
-        run: |
-          $releaseNotes = ((Get-Content .\README.md -Encoding UTF8 -Raw) -Replace "`r?`n", '\n')
-          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
