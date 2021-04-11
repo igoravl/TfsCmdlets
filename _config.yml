@@ -23,7 +23,6 @@ aux_links:
 
 # Footer content appears at the bottom of every page's main content
 footer_content: "Copyright &copy; 2014-2021 Igor Abade V. Leite. Distributed by an <a href=\"https://github.com/igoravl/tfscmdlets/tree/master/LICENSE.md\">MIT license.</a>"
-build_info: TfsCmdlets v2.0.0-PullRequest0130.50. Last updated 2021-04-09.
 
 # Color scheme currently only supports "dark" or nil (default)
 color_scheme: nil
