@@ -47,3 +47,7 @@ defaults:
       layout: "cmdlet"
       nav_exclude: true
 
+build_info: TfsCmdlets v2.0.0-PullRequest0130.77, released 2021-04-11
+
+build_info: TfsCmdlets v2.0.0-PullRequest0130.78, released 2021-04-11
+
