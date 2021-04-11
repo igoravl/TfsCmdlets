@@ -84,7 +84,11 @@ jobs:
         run: |
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
           Set-GitHubConfiguration -SuppressTelemetryReminder
-          Set-GitHubAuthentication -Credential (New-Object PSCredential "pat", $env:GITHUB_TOKEN) -SessionOnly
+          $ghCreds = New-Object System.Management.Automation.PSCredential @(
+            "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly
           Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
           | Where-Object Draft -eq $true `
           | Remove-GitHubRelease -Force
