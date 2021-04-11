@@ -158,6 +158,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Publish artifact
         run: echo TBD
@@ -166,6 +167,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Publish artifact
         run: echo TBD
@@ -174,6 +176,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Publish artifact
         run: echo TBD
