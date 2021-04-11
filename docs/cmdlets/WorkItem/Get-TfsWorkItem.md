@@ -5,7 +5,7 @@ parent: "WorkItem"
 description: "Gets the contents of one or more work items. "
 remarks: 
 parameterSets: 
-  "_All_": [ AreaPath, AsOf, BoardColumn, BoardColumnDone, ChangedBy, ChangedDate, Collection, CreatedBy, CreatedDate, Deleted, Description, Ever, Fields, IterationPath, Priority, Project, Query, Reason, Revision, ShowWindow, State, StateChangeDate, Tags, Team, TimePrecision, Title, ValueArea, Where, WorkItem, WorkItemType ] 
+  "_All_": [ AreaPath, AsOf, BoardColumn, BoardColumnDone, ChangedBy, ChangedDate, Collection, CreatedBy, CreatedDate, Deleted, Description, Ever, Fields, IncludeLinks, IterationPath, Priority, Project, Query, Reason, Revision, ShowWindow, State, StateChangeDate, Tags, Team, TimePrecision, Title, ValueArea, Where, WorkItem, WorkItemType ] 
   "Query by revision":  
     WorkItem: 
       type: "object"  
@@ -15,6 +15,8 @@ parameterSets:
       type: "object"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Revision: 
@@ -35,6 +37,8 @@ parameterSets:
       type: "object"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Team: 
@@ -50,6 +54,8 @@ parameterSets:
       type: "object"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Team: 
@@ -79,6 +85,8 @@ parameterSets:
       type: "SwitchParameter"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     IterationPath: 
       type: "string"  
     Priority: 
@@ -111,6 +119,8 @@ parameterSets:
       type: "object"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Team: 
@@ -125,6 +135,8 @@ parameterSets:
       type: "object"  
     Fields: 
       type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Team: 
@@ -136,6 +148,7 @@ parameters:
     description: "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem. " 
     required: true 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
     aliases: [ id ] 
@@ -143,6 +156,7 @@ parameters:
     description: "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem. This is an alias of the WorkItem parameter." 
     required: true 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
     aliases: [ id ] 
@@ -243,7 +257,7 @@ parameters:
     required: true 
     globbing: false 
     type: "DateTime" 
-    defaultValue: "01/01/0001 00:00:00" 
+    defaultValue: "1/1/0001 12:00:00 AM" 
   - name: "Query" 
     description: "Specifies a query written in WIQL (Work Item Query Language) " 
     required: true 
@@ -300,6 +314,11 @@ parameters:
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
+  - name: "IncludeLinks" 
+    description: "Gets information about all links and attachments in the work item. When omitted, only fields are retrieved. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Team" 
     description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet. " 
     globbing: false 
@@ -307,7 +326,6 @@ parameters:
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
@@ -315,7 +333,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. "
+    description: "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem. "
 outputs: 
   - type: "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem" 
     description: 

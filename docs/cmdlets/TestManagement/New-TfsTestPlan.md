@@ -54,12 +54,12 @@ parameters:
     description: "Specifies the start date of the test plan. " 
     globbing: false 
     type: "DateTime" 
-    defaultValue: "01/01/0001 00:00:00" 
+    defaultValue: "1/1/0001 12:00:00 AM" 
   - name: "EndDate" 
     description: "Specifies the end date of the test plan. " 
     globbing: false 
     type: "DateTime" 
-    defaultValue: "01/01/0001 00:00:00" 
+    defaultValue: "1/1/0001 12:00:00 AM" 
   - name: "Owner" 
     description: "Specifies the owner of the new test plan. " 
     globbing: false 
