@@ -34,6 +34,7 @@ jobs:
         if: env.Debug 
       - name: Build module
         id: build_module
+        if: ${{ false }}
         shell: pwsh
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
@@ -103,6 +104,8 @@ jobs:
         id: extract_release_notes
         shell: pwsh
         run: |
+          $pwd
+          dir -recurse
           $fileName = (Get-ChildItem releasenotes/* | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
           $releaseNotes = ((Get-Content $fileName -Encoding UTF8 -Raw) -Replace "`r?`n", '%0D')
           Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
