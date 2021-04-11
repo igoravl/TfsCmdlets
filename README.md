@@ -1,7 +1,9 @@
-TfsCmdlets 
-==========
+# TfsCmdlets: PowerShell Cmdlets for Azure DevOps and Team Foundation Server
 
-PowerShell Cmdlets for Azure DevOps and Team Foundation Server
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![Build status](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml/badge.svg?label=Build)](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers)
+
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub) 
+
 
 ## Whats is TfsCmdlets?
 
@@ -143,12 +145,3 @@ Import-Module TfsCmdlets
 
 - [Online Documentation](https://tfscmdlets.dev/)
 - [Release Notes](https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md)
-
-&nbsp;
-
-Project Status | &nbsp;
----------------|--------
-General        | [![Build Status](https://dev.azure.com/TfsCmdlets/TfsCmdlets/_apis/build/status/PS_CI?branchName=master)](https://dev.azure.com/TfsCmdlets/TfsCmdlets/_build/latest?definitionId=2&branchName=master) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases)
-GitHub status  | [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers) 
-Downloads status | [![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub) 
-
