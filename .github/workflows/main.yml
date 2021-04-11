@@ -106,7 +106,7 @@ jobs:
         run: |
           $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
           echo $fileName
-          $releaseNotes = ((Get-Content $fileName -Encoding UTF8 -Raw) -Replace "`r?`n", '%0D')
+          $releaseNotes = ((Get-Content $fileName -Encoding UTF8 -Raw) -Replace "`r?`n", '%0A')
           echo $releaseNotes
           Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
       - name: Create Draft Release
