@@ -115,7 +115,7 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ env.BUILD_NAME }}
-          body: ${{ env.RELEASE_NOTES }}
+          body: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
           draft: true
           prerelease: true
     outputs:
