@@ -162,6 +162,7 @@ jobs:
           unzip -o ../../TfsCmdlets-Docs-*.zip
           popd
           echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
+          echo >> _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
           git add *
