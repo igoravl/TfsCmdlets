@@ -211,12 +211,13 @@ jobs:
           nuget-version: '5.x'
       - name: Push package
         run: |
-          nuget push TfsCmdlets-*.nupkg -Source https://api.nuget.org/v3/index.json
+          nuget push $(ls TfsCmdlets*.nupkg) -Source https://api.nuget.org/v3/index.json
 
   Chocolatey:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
+    environment: chocolatey
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Publish artifact
