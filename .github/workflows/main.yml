@@ -126,7 +126,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
-    #if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
@@ -220,7 +220,6 @@ jobs:
     environment: chocolatey
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-    steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -239,6 +238,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Nuget, PSGallery, Chocolatey, Site ]
     steps:
-      - name: Announce release
-        run: echo TBD
-        
+      - name: Tweet
+        id: tweet
+        uses: snow-actions/tweet@v1.1.0
+        env:
+          CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
+          ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        with:
+          status: |
+            Released ${{ github.event.release.name }}
+            ${{ github.event.release.html_url }}
+          media_paths: |
+            1st.png
+            2nd.png
