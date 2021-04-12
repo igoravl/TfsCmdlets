@@ -142,6 +142,7 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
+    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
@@ -173,8 +174,8 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
-    #if: ${{ github.event_name != 'pull_request' }}
     environment: psgallery
+    if: ${{ github.event_name != 'pull_request' }}
     env:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
@@ -196,10 +197,21 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
-    if: ${{ github.event_name != 'pull_request' }}
+    environment: nuget
+    #if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - name: Publish artifact
-        run: echo TBD
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nuget
+      - name: Install Nuget 5.x
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.API_KEY }}
+          nuget-version: '5.x'
+      - name: Push package
+        run: |
+          nuget push TfsCmdlets-*.nupkg
 
   Chocolatey:
 
