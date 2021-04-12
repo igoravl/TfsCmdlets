@@ -188,7 +188,7 @@ jobs:
         run: |
           Install-Module PackageManagement -Scope CurrentUser -Force
           Install-Module PowerShellGet -Scope CurrentUser -Force
-          Expand-Archive portable/*.zip -DestinationPath Module/TfsCmdlets
+          Expand-Archive TfsCmdlets-Portable*.zip -DestinationPath Module/TfsCmdlets
           $releaseNotes = $env:RELEASE_NOTES
           Publish-Module -Name Module/TfsCmdlets -NuGetApiKey $env:PSGALLERY_KEY -AllowPreRelease -ReleaseNotes $releaseNotes
 
