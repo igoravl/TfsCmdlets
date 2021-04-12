@@ -211,7 +211,7 @@ jobs:
           nuget-version: '5.x'
       - name: Push package
         run: |
-          nuget push TfsCmdlets-*.nupkg
+          nuget push TfsCmdlets-*.nupkg -Source https://api.nuget.org/v3/index.json
 
   Chocolatey:
 
