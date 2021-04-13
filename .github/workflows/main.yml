@@ -95,10 +95,8 @@ jobs:
           Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
           | Where-Object Draft -eq $true `
           | Remove-GitHubRelease -Force
-      - name: Download release notes
+      - name: Download all artifacts
         uses: actions/download-artifact@v2
-        with:
-          name: releasenotes
       - name: Extract release notes
         id: extract_release_notes
         shell: pwsh
@@ -117,6 +115,11 @@ jobs:
           body: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
           draft: true
           prerelease: true
+      - name: Upload release assets
+        uses: alexellis/upload-assets@0.3.0
+        with:
+          asset_paths: [ 'TfsCmdlets*.msi', 'TfsCmdlets*.nupkg', 'TfsCmdlets*.zip' ]
+          
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
@@ -134,6 +137,8 @@ jobs:
         uses: styfle/cancel-workflow-action@0.8.0
         with:
           access_token: ${{ github.token }}
+      - name: Promote release
+        run: 
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
