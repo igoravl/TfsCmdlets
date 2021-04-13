@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
+    <PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
