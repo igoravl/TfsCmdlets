@@ -138,7 +138,7 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - name: Promote release
-        run: 
+        run: echo Not implemented
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
