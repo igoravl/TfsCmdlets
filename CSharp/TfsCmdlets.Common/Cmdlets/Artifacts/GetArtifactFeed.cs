@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
+using Microsoft.VisualStudio.Services.Feed.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
@@ -12,85 +12,56 @@ namespace TfsCmdlets.Cmdlets.Git
     /// Gets information from one or more Git repositories in a team project.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsArtifactFeed")]
-    [OutputType(typeof(GitRepository))]
-    public class GetArtifactFeed : GetCmdletBase<GitRepository>
+    [OutputType(typeof(Feed))]
+    public class GetArtifactFeed : GetCmdletBase<Feed>
     {
         /// <summary>
-        /// Specifies the name or ID of a Git repository. Wildcards are supported. 
-        /// When omitted, all Git repositories in the supplied team project are returned.
+        /// Specifies the feed name. Wildcards are supported. 
+        /// When omitted, returns all feeds.
         /// </summary>
-        [Parameter(Position = 0)]
-        [SupportsWildcards()]
-        [Alias("Name")]
-        public object Repository { get; set; } = "*";
+        [Parameter(Position = 0, ValueFromPipeline = true)]
+        [SupportsWildcards]
+        public object Feed { get; set; } = "*";
 
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
+        [Parameter()]
+        public ArtifactFeedScope Scope { get; set; } = ArtifactFeedScope.Collection;
+
+        [Parameter()]
+        public FeedRole FeedRole { get; set; } = FeedRole.Contributor;
     }
 
-    [Exports(typeof(GitRepository))]
-    internal partial class GitRepositoryDataService : BaseDataService<GitRepository>
+    [Exports(typeof(Feed))]
+    internal partial class ArtifactFeedDataService : BaseDataService<Feed>
     {
-        protected override IEnumerable<GitRepository> DoGetItems()
+        protected override IEnumerable<Feed> DoGetItems()
         {
-            var (_, tp) = GetCollectionAndProject();
-            var repository = GetParameter<object>("Repository");
+            var tpc = GetCollection();
+            var feed = GetParameter<object>(nameof(GetArtifactFeed.Feed));
+            var feedRole = GetParameter<FeedRole>(nameof(GetArtifactFeed.FeedRole));
+            var scope = GetParameter<ArtifactFeedScope>(nameof(GetArtifactFeed.Scope));
+            var client = GetClient<FeedHttpClient>();
 
-            while (true)
+            while(true) switch (feed)
             {
-                switch (repository)
-                {
-                    case null:
-                    case string s when string.IsNullOrEmpty(s):
-                        {
-                            repository = tp.Name;
-                            continue;
-                        }
-                    case GitRepository repo:
-                        {
-                            yield return repo;
-                            yield break;
-                        }
-                    case Guid guid:
-                        {
-                            yield return GetClient<GitHttpClient>()
-                                .GetRepositoryAsync(tp.Name, guid)
-                                .GetResult($"Error getting repository with ID {guid}");
-
-                            yield break;
-                        }
-                    case string s when s.IsGuid():
-                        {
-                            repository = new Guid(s);
-                            continue;
-                        }
-                    case string s when !s.IsWildcard():
-                        {
-                            yield return GetClient<GitHttpClient>()
-                                .GetRepositoryAsync(tp.Name, s)
-                                .GetResult($"Error getting repository '{s}'");
-
-                            yield break;
-                        }
-                    case string s:
-                        {
-                            foreach (var repo in GetClient<GitHttpClient>()
-                                .GetRepositoriesAsync(tp.Name)
-                                .GetResult($"Error getting repository(ies) '{s}'")
-                                .Where(r => r.Name.IsLike(s)))
+                case Feed f:
+                    {
+                        yield return f;
+                        yield break;
+                    }
+                case string s when !string.IsNullOrEmpty(s):
+                    {
+                        foreach(var f1 in client.GetFeedsAsync(feedRole)
+                            .GetResult("Error getting artifact feeds"))
                             {
-                                yield return repo;
+                                yield return f1;
                             }
                             yield break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException(nameof(GetGitRepository.Repository));
-                        }
-                }
+                    }
+                default:
+                    {
+                        throw new ArgumentException(nameof(GetArtifactFeed.Feed));
+                    }
+
             }
         }
     }

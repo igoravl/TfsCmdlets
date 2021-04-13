@@ -115,4 +115,20 @@ namespace TfsCmdlets
         TestedBy = 256, 
     }
 
+    /// <summary>
+    /// Artifact Feed Scope
+    /// </summary>
+    public enum ArtifactFeedScope {
+
+        /// <summary>
+        /// Collection (organization) level feeds
+        /// </summary>
+        Collection, 
+
+        /// <summary>
+        /// Project level feeds
+        /// </summary>
+        Project
+    }
+
 }
