@@ -118,7 +118,7 @@ jobs:
       - name: Upload release assets
         uses: alexellis/upload-assets@0.3.0
         with:
-          asset_paths: [ 'TfsCmdlets*.msi', 'TfsCmdlets*.nupkg', 'TfsCmdlets*.zip' ]
+          asset_paths: "[ 'TfsCmdlets*.msi', 'TfsCmdlets*.nupkg', 'TfsCmdlets*.zip' ]"
           
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
