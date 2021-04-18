@@ -401,13 +401,12 @@ Task PackageMsi -Depends Build {
 
 Task PackageDocs -Depends GenerateDocs {
 
-    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir -Force | Write-Verbose
+    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir/* -Force | Write-Verbose
 }
 
 Task GenerateDocs {
 
     exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1')}
-
 }
 
 Task GenerateNuspec {
