@@ -24,8 +24,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public new object Project { get; set; }
 
         /// <summary>
-        /// Specifies the name of a local image file to be uploaded and used as the team project avatar. 
-        /// To remove a previously set avatar, pass $null to this argument.
+        /// Specifies the name of a local image file to be uploaded and used as the team project icon ("avatar"). 
+        /// To remove a previously set image, pass $null to this argument.
         /// </summary>
         [Parameter()]
         public string AvatarImage { get; set; }
