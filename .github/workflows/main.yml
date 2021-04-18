@@ -110,8 +110,8 @@ jobs:
           Get-GitHubRelease | Where-Object Draft -eq $true | Remove-GitHubRelease -Force
 
           # Create new draft releases
-          $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' `
-             -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -Body: @'
+          $release = New-GitHubRelease -Tag 'v${{ env.BUILD_NAME }}' -Name 'Release ${{ env.BUILD_NAME }}' `
+             -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -commitish '${{ github.ref }}' -Body: @'
           ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
           '@
 
