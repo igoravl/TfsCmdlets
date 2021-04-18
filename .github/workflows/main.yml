@@ -100,8 +100,7 @@ jobs:
           # Connect to GitHub
           Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
 
-          $ghCreds = New-Object System.Management.Automation.PSCredential @(
-            "pat",
+          $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
             (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
           )
           Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
@@ -112,7 +111,7 @@ jobs:
 
           # Create new draft releases
           $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' `
-             -Draft -PreRelease -Body: @'
+             -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -Body: @'
           ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
           '@
 
@@ -137,7 +136,24 @@ jobs:
         with:
           access_token: ${{ github.token }}
       - name: Promote release
-        run: echo Not implemented
+        shell: pwsh
+        run: |
+          # Install module
+          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+
+          # Connect to GitHub
+          Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
+
+          $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
+
+          # Promote release
+          Get-GitHubRelease `
+          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -like "*$(env:BUILD_NAME)*")  } `
+          | Set-GitHubRelease -Draft:$false
+
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
