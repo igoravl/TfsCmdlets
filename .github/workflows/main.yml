@@ -129,6 +129,7 @@ jobs:
     needs: [ Staging ]
     if: ${{ github.event_name != 'pull_request' }}
     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
       - name: Cancel Previous Runs
