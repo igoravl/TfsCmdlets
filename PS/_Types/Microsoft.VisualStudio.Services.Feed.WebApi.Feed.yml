@@ -1,0 +1,3 @@
+- ScriptProperty:
+    Name: Scope
+    GetScriptBlock: if($this.Project) { "Project" } else { "Collection" }

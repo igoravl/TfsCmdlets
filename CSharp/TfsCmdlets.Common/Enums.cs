@@ -118,17 +118,18 @@ namespace TfsCmdlets
     /// <summary>
     /// Artifact Feed Scope
     /// </summary>
+    [Flags]
     public enum ArtifactFeedScope {
 
         /// <summary>
         /// Collection (organization) level feeds
         /// </summary>
-        Collection, 
+        Collection = 1, 
 
         /// <summary>
         /// Project level feeds
         /// </summary>
-        Project
+        Project = 2
     }
 
 }

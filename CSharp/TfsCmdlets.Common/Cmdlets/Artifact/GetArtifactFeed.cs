@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.Services.Feed.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 
-namespace TfsCmdlets.Cmdlets.Git
+namespace TfsCmdlets.Cmdlets.Artifact
 {
     /// <summary>
     /// Gets information from one or more Git repositories in a team project.
@@ -23,11 +23,20 @@ namespace TfsCmdlets.Cmdlets.Git
         [SupportsWildcards]
         public object Feed { get; set; } = "*";
 
+        /// <summary>
+        /// Returns only feeds from the given scope (collection or project). 
+        /// When omitted, returns all feeds.
+        /// </summary>
         [Parameter()]
-        public ArtifactFeedScope Scope { get; set; } = ArtifactFeedScope.Collection;
+        public ArtifactFeedScope Scope { get; set; } = ArtifactFeedScope.Collection | ArtifactFeedScope.Project;
 
+        /// <summary>
+        /// Filters by this role, either Administrator, Contributor, or Reader level permissions.
+        /// When omitted, filters by Administrator roles.
+        /// </summary>
         [Parameter()]
-        public FeedRole FeedRole { get; set; } = FeedRole.Contributor;
+        [ValidateSet("Administrator", "Contributor", "Reader")]
+        public FeedRole FeedRole { get; set; } = FeedRole.Administrator;
     }
 
     [Exports(typeof(Feed))]
@@ -50,12 +59,16 @@ namespace TfsCmdlets.Cmdlets.Git
                     }
                 case string s when !string.IsNullOrEmpty(s):
                     {
-                        foreach(var f1 in client.GetFeedsAsync(feedRole)
-                            .GetResult("Error getting artifact feeds"))
-                            {
-                                yield return f1;
-                            }
-                            yield break;
+                        foreach (var o in client.GetFeedsAsync(feedRole)
+                            .GetResult("Error getting artifact feeds")
+                            .Where(f1 => f1.Name.IsLike(s) && (
+                                (string.IsNullOrEmpty(f1.Project?.Name) && ((scope & ArtifactFeedScope.Collection) > 0)) || 
+                                (!string.IsNullOrEmpty(f1.Project?.Name) && ((scope & ArtifactFeedScope.Project) > 0))
+                            )))
+                        {
+                            yield return o;
+                        }
+                        yield break;
                     }
                 default:
                     {

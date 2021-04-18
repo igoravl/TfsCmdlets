@@ -1,0 +1,13 @@
+ViewSelectedBy: 
+  - Microsoft.VisualStudio.Services.Feed.WebApi.Feed
+GroupBy: 
+  Label: Scope
+  ScriptBlock: if($_.Project) { "$($_.Project.Name)"} else { "(Collection)" }
+TableControl: 
+  Name: 
+  Description: 
+  IsReadOnly: 
+    Label: "Read-only"
+  Visibility: 
+  UpstreamEnabled:
+    Label: "Upstream-enabled"
