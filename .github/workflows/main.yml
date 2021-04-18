@@ -81,20 +81,6 @@ jobs:
     steps:
       - name: Remove stale draft releases
         shell: pwsh
-        run: |
-          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
-          Set-GitHubConfiguration -SuppressTelemetryReminder
-          $ghCreds = New-Object System.Management.Automation.PSCredential @(
-            "pat",
-            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
-          )
-          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly
-
-          #TODO: Limit scope to this pull request (filter by PR name)
-
-          Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
-          | Where-Object Draft -eq $true `
-          | Remove-GitHubRelease -Force
       - name: Download all artifacts
         uses: actions/download-artifact@v2
       - name: Extract release notes
@@ -108,18 +94,32 @@ jobs:
           Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
       - name: Create Draft Release
         id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ env.BUILD_NAME }}
-          body: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
-          draft: true
-          prerelease: true
-      - name: Upload release assets
-        uses: alexellis/upload-assets@0.3.0
-        with:
-          asset_paths: "[ 'msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip' ]"
-          
+        shell: pwsh
+        run: |
+          # Install module
+          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+
+          # Connect to GitHub
+          Set-GitHubConfiguration -SuppressTelemetryReminder
+          $ghCreds = New-Object System.Management.Automation.PSCredential @(
+            "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly
+
+          # Remove stale draft releases
+          # TODO: Limit scope to this pull request (filter by PR name)
+          Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
+          | Where-Object Draft -eq $true `
+          | Remove-GitHubRelease -Force
+
+          # Create new draft releases
+          $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' `
+            -Body: '${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}' -Draft -PreRelease
+
+          # Upload assets
+          $assets = @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip')
+          $assets | ForEach-Object { New-GitHubRelease -Release $release -Path $_ }
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
