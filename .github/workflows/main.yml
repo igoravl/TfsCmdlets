@@ -21,17 +21,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Dump environment variables
-        run: "dir env:"
-        shell: pwsh
-        if: env.Debug 
-      - name: Dump GitHub objects
-        run: |
-          echo @'
-            ${{ toJSON(github) }}
-          '@
-        shell: pwsh
-        if: env.Debug 
+      # - name: Dump environment variables
+      #   run: "dir env:"
+      #   shell: pwsh
+      #   if: env.Debug 
+      # - name: Dump GitHub objects
+      #   run: |
+      #     echo @'
+      #       ${{ toJSON(github) }}
+      #     '@
+      #   shell: pwsh
+      #   if: env.Debug 
       - name: Build module
         id: build_module
         shell: pwsh
