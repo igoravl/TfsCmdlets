@@ -113,12 +113,12 @@ jobs:
           # Create new draft releases
           $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' `
              -Draft -PreRelease -Body: @'
-          ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}'
+          ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
           '@
 
           # Upload assets
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
-          | ForEach-Object { New-GitHubReleaseAsset -Release $release -Path $_ }
+          | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
