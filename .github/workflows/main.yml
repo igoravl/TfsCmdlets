@@ -98,26 +98,26 @@ jobs:
           Install-Module PowerShellForGitHub -Scope CurrentUser -Force
 
           # Connect to GitHub
-          Set-GitHubConfiguration -SuppressTelemetryReminder
+          Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
+
           $ghCreds = New-Object System.Management.Automation.PSCredential @(
             "pat",
             (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
           )
-          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
 
           # Remove stale draft releases
           # TODO: Limit scope to this pull request (filter by PR name)
-          Get-GitHubRelease -OwnerName igoravl -RepositoryName TfsCmdlets `
-          | Where-Object Draft -eq $true `
-          | Remove-GitHubRelease -Force
+          Get-GitHubRelease | Where-Object Draft -eq $true | Remove-GitHubRelease -Force
 
           # Create new draft releases
-          $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' `
-            -Body: '${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}' -Draft -PreRelease
+          $release = New-GitHubRelease -Tag '${{ github.ref }}' -Name 'Release ${{ env.BUILD_NAME }}' -Body: @'
+          ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}' -Draft -PreRelease
+          '@
 
           # Upload assets
-          $assets = @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip')
-          $assets | ForEach-Object { New-GitHubRelease -Release $release -Path $_ }
+          @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
+          | ForEach-Object { New-GitHubRelease -Release $release -Path $_ }
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
