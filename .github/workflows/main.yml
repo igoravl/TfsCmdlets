@@ -1,0 +1,275 @@
+name: Build
+
+env:
+  Config: Release
+  Debug: ${{ false }}
+  
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+
+  Build:
+
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      # - name: Dump environment variables
+      #   run: "dir env:"
+      #   shell: pwsh
+      #   if: env.Debug 
+      # - name: Dump GitHub objects
+      #   run: |
+      #     echo @'
+      #       ${{ toJSON(github) }}
+      #     '@
+      #   shell: pwsh
+      #   if: env.Debug 
+      - name: Build module
+        id: build_module
+        shell: pwsh
+        run: |
+          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+      - name: Publish Nuget
+        uses: actions/upload-artifact@v2
+        with:
+          name: nuget
+          path: "out/Nuget/*.nupkg"
+      - name: Publish Chocolatey
+        uses: actions/upload-artifact@v2
+        with:
+          name: chocolatey
+          path: "out/Chocolatey/*.nupkg"
+      - name: Publish Portable
+        uses: actions/upload-artifact@v2
+        with:
+          name: portable
+          path: "out/Portable/*.zip"
+      - name: Publish MSI
+        uses: actions/upload-artifact@v2
+        with:
+          name: msi
+          path: "out/msi/*"
+      - name: Publish Docs
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: "out/docs/*.zip"
+      - name: Publish Release Notes
+        uses: actions/upload-artifact@v2
+        with:
+          name: releasenotes
+          path: "docs/ReleaseNotes/**"
+    outputs:
+      BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
+
+  Staging:
+
+    runs-on: ubuntu-latest
+    environment: staging
+    needs: [ Build ]
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v2
+      - name: Extract release notes
+        id: extract_release_notes
+        shell: pwsh
+        run: |
+          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
+          echo $fileName
+          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
+          echo $releaseNotes
+          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
+      - name: Create Draft Release
+        id: create_release
+        shell: pwsh
+        run: |
+          # Install module
+          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+
+          # Connect to GitHub
+          Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
+
+          $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
+
+          # Remove stale draft releases
+          # TODO: Limit scope to this pull request (filter by PR name)
+          Get-GitHubRelease | Where-Object Draft -eq $true | Remove-GitHubRelease -Force
+
+          # Create new draft releases
+          $release = New-GitHubRelease -Tag 'v${{ env.BUILD_NAME }}' -Name 'Release ${{ env.BUILD_NAME }}' `
+             -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -commitish '${{ github.sha }}' -Body: @'
+          ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
+          '@
+
+          # Upload assets
+          @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
+          | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
+    outputs:
+      BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
+      RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
+
+  Release: 
+
+    runs-on: ubuntu-latest
+    environment: production
+    needs: [ Staging ]
+    if: ${{ github.event_name != 'pull_request' }}
+    env:
+      BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
+    steps: 
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.8.0
+        with:
+          access_token: ${{ github.token }}
+      - name: Promote release
+        shell: pwsh
+        run: |
+          # Install module
+          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+
+          # Connect to GitHub
+          Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
+
+          $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
+
+          # Promote release
+          Get-GitHubRelease `
+          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -like "*$(env:BUILD_NAME)*")  } `
+          | Set-GitHubRelease -Draft:$false
+
+    outputs:
+      BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
+      RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
+
+  Site:
+
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    if: ${{ github.event_name != 'pull_request' }}
+    env:
+      BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
+      RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          path: site
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docs
+      - name: Publish site
+        run: |
+          cd site && mkdir docs && pushd docs
+          git checkout --track origin/gh-pages
+          unzip -o ../../TfsCmdlets-Docs-*.zip
+          popd
+          echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
+          echo >> _config.yml
+          git config --local user.name "Igor Abade"
+          git config --local user.email igoravl@gmail.com
+          git add *
+          git commit -m "Publish version $BUILD_NAME"
+          git push
+
+  PSGallery:
+
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    environment: psgallery
+    if: ${{ github.event_name != 'pull_request' }}
+    env:
+      RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
+      PSGALLERY_KEY: ${{ secrets.API_KEY }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: portable
+      - name: Publish artifact
+        shell: pwsh
+        run: |
+          Install-Module PackageManagement -Scope CurrentUser -Force
+          Install-Module PowerShellGet -Scope CurrentUser -Force
+          Expand-Archive TfsCmdlets-Portable*.zip -DestinationPath Module/TfsCmdlets
+          $releaseNotes = $env:RELEASE_NOTES
+          Publish-Module -Name Module/TfsCmdlets -NuGetApiKey $env:PSGALLERY_KEY -AllowPreRelease -ReleaseNotes $releaseNotes
+
+  Nuget:
+
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    environment: nuget
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nuget
+      - name: Install Nuget 5.x
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.API_KEY }}
+          nuget-version: '5.x'
+      - name: Push package
+        run: |
+          nuget push $(ls TfsCmdlets*.nupkg) -Source https://api.nuget.org/v3/index.json
+
+  Chocolatey:
+
+    runs-on: ubuntu-latest
+    needs: [ Release ]
+    environment: chocolatey
+    if: ${{ github.event_name != 'pull_request' }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: nuget
+      - name: Install Nuget 5.x
+        uses: nuget/setup-nuget@v1
+        with:
+          nuget-api-key: ${{ secrets.API_KEY }}
+          nuget-version: '5.x'
+      - name: Push package
+        run: |
+          nuget push $(ls TfsCmdlets*.nupkg) -Source https://push.chocolatey.org/
+
+  Announcement:
+
+    runs-on: ubuntu-latest
+    needs: [ Nuget, PSGallery, Chocolatey, Site ]
+    steps:
+      - name: Tweet
+        id: tweet
+        uses: snow-actions/tweet@v1.1.0
+        env:
+          CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
+          ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+        with:
+          status: |
+            Released ${{ github.event.release.name }}
+            ${{ github.event.release.html_url }}
+          media_paths: |
+            1st.png
+            2nd.png
