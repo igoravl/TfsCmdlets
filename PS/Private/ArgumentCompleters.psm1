@@ -82,11 +82,19 @@ Register-ArgumentCompleter -ParameterName Node -Verbose -ScriptBlock {
     elseif ((Get-TfsTeamProject -Current)) {
         $tp = (Get-TfsTeamProject -Current)
     }
-    else {
+    else
+    {
         return
     }
 
-    return Get-TfsArea -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
+    if ($commandName -like '*Area')
+    {
+        return Get-TfsArea -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
+    }
+    elseif ($commandName -like '*Iteration')
+    {
+        return Get-TfsIteration -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
+    }
 }
 
 Function _EscapeArgumentValue {
