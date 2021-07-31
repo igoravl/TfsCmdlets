@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter()]
         [ValidateSet("Git", "Tfvc")]
-        public string SourceControl { get; set; }
+        public string SourceControl { get; set; } = "Git";
 
         /// <summary>
         /// Specifies the process template on which the new team project is based. 
@@ -63,6 +63,11 @@ namespace TfsCmdlets.Cmdlets.TeamProject
             var description = GetParameter<string>(nameof(NewTeamProject.Description));
             var sourceControl = GetParameter<string>(nameof(NewTeamProject.SourceControl));
             var done = false;
+
+            if(processTemplate == null)
+            {
+                processTemplate = GetItem<WebApiProcess>(new {ProcessTemplate = "*", Default = true});
+            }
 
             WebApiProcess template = null;
 
