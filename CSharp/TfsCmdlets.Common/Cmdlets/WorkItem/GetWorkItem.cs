@@ -268,7 +268,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             var ever = GetParameter<bool>(nameof(GetWorkItem.Ever));
             var query = GetParameter<string>(nameof(GetWorkItem.Query));
             var filter = GetParameter<string>(nameof(GetWorkItem.Where));
-            var fields = GetParameter<string[]>(nameof(GetWorkItem.Fields));
+            var fields = GetParameter<object>(nameof(GetWorkItem.Fields)) as string[];
             var showWindow = GetParameter<bool>(nameof(GetWorkItem.ShowWindow));
             var deleted = GetParameter<bool>(nameof(GetWorkItem.Deleted));
             var timePrecision = GetParameter<bool>(nameof(GetWorkItem.TimePrecision));
