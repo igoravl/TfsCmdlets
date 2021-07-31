@@ -5,8 +5,10 @@ using System.Management.Automation;
 using System.Text;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
+using TfsCmdlets.Util;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
@@ -285,7 +287,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 {
                     case int id:
                         {
-                            workItem = new[] { id };
+                            workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
                             continue;
                         }
                     case object[] wis:
@@ -347,7 +349,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             }
                             yield break;
                         }
-                    case WebApiWorkItem wi when showWindow || (includeLinks && wi.Relations == null):
+                    case WebApiWorkItem wi when showWindow:
+                        {
+                            ProcessUtil.OpenInBrowser(((ReferenceLink)wi.Links.Links["html"]).Href);
+                            yield break;
+                        }
+                    case WebApiWorkItem wi when includeLinks && wi.Relations == null:
                         {
                             workItem = new[] { (int)wi.Id };
                             continue;
@@ -355,7 +362,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                     case WebApiWorkItem wi:
                         {
                             yield return wi;
-                            continue;
+                            yield break;
                         }
                     case WorkItemReference wiRef:
                         {
@@ -379,7 +386,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             continue;
                         }
                     case int[] ids:
-                        {
+                        { 
+                            if(showWindow)
+                            {
+                                Logger.LogWarn("ShowWindow is being ignored, since it cannot be used with multiple work items");
+                            }
+
                             foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, expand, fields, client);
 
                             yield break;
@@ -442,7 +454,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             }
             catch (Exception ex)
             {
-                Cmdlet.WriteError(new ErrorRecord(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id));
+                Logger.LogError(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id);
                 return null;
             }
         }
