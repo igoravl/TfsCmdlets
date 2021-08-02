@@ -152,7 +152,7 @@ jobs:
 
           # Promote release
           Get-GitHubRelease `
-          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -like "*$(env:BUILD_NAME)*")  } `
+          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  } `
           | Set-GitHubRelease -Draft:$false
 
     outputs:
