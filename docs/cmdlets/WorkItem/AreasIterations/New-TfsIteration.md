@@ -5,7 +5,7 @@ parent: "WorkItem.AreasIterations"
 description: "Creates a new Iteration in the given Team Project. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Force, Node, Passthru, Project ] 
+  "_All_": [ Collection, FinishDate, Force, Node, Passthru, Project, StartDate ] 
   "__AllParameterSets":  
     Node: 
       type: "string"  
@@ -13,12 +13,16 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
+    FinishDate: 
+      type: "DateTime"  
     Force: 
       type: "SwitchParameter"  
     Passthru: 
       type: "SwitchParameter"  
     Project: 
-      type: "object" 
+      type: "object"  
+    StartDate: 
+      type: "DateTime" 
 parameters: 
   - name: "Node" 
     description: "Specifies the path of the new Iteration. When supplying a path, use a backslash (\"\\\\\") between the path segments. Leading and trailing backslashes are optional. The last segment in the path will be the iteration name. " 
@@ -44,6 +48,14 @@ parameters:
     position: 0 
     type: "string" 
     aliases: [ Iteration,Path ] 
+  - name: "StartDate" 
+    description: "Specifies the start date of the iteration. " 
+    globbing: false 
+    type: "DateTime" 
+  - name: "FinishDate" 
+    description: "Sets the finish date of the iteration. " 
+    globbing: false 
+    type: "DateTime" 
   - name: "Force" 
     description: "Allows the cmdlet to create parent nodes if they're missing. " 
     globbing: false 

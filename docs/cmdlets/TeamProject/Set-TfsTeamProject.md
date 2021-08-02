@@ -23,7 +23,7 @@ parameters:
     position: 0 
     type: "object" 
   - name: "AvatarImage" 
-    description: "Specifies the name of a local image file to be uploaded and used as the team project avatar. To remove a previously set avatar, pass $null to this argument. " 
+    description: "Specifies the name of a local image file to be uploaded and used as the team project icon (\"avatar\"). To remove a previously set image, pass $null to this argument. " 
     globbing: false 
     type: "string" 
   - name: "Collection" 

@@ -36,6 +36,7 @@ parameters:
     description: "Specifies the source control type to be provisioned initially with the team project. Supported types are \"Git\" and \"Tfvc\". " 
     globbing: false 
     type: "string" 
+    defaultValue: "Git" 
   - name: "ProcessTemplate" 
     description: "Specifies the process template on which the new team project is based. Supported values are the process name or an instance of the Microsoft.TeamFoundation.Core.WebApi.Process class. " 
     globbing: false 
