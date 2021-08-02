@@ -1,26 +1,18 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.0 (_02/Aug/2021_)
+## Version 2.0.1 (_02/Aug/2021_)
 
-First official release in the 2.0 series, it has a few improvements over the previous release.
+**REQUIRED UPDATE**: This update adds a missing directive to the manifest file so that cmdlets are properly exported/exposed.
 
-### Improvements
-
-- **New defaults in New-TfsTeamProject**: New-TfsTeamProject now has default values for arguments `SourceControl` (defaults to **Git**) and `ProcessTemplate` (defaults to the default process template in the organization). With that, the only required argument to create a team project is its name. (fixes [#116](https://github.com/igoravl/TfsCmdlets/issues/116))
-- **Iteration dates in New-TfsIteration**: This cmdlet has two new arguments, `StartDate` and `FinishDate`, so that iteration dates can be set during creation with a single command. Previously, it has needed to call **Set-TfsIteration** after creating an iteration.
-- **Support for ErrorAction**: Some cmdlets - namely **Get-TfsTeamProject** and **Get-TfsWorkItem** - now support `-ErrorAction`. This way, a script can continue running when there is an error fetching some of requested items .
-
-### Bug Fixes
-
-- [Iteration argument completer is listing Areas bug](https://github.com/igoravl/TfsCmdlets/issues/137)
-- [Rename-TfsIteration should not remove iteration dates](https://github.com/igoravl/TfsCmdlets/issues/135)
-- [Error using arguments -Area and -Iteration in New-TfsWorkItem and Set-TfsWorkItem](https://github.com/igoravl/TfsCmdlets/issues/133)
-- [Error setting field values with Set-TfsWorkItem](https://github.com/igoravl/TfsCmdlets/issues/132)
-- [Fix Get-TfsWorkItem -ShowWindow](https://github.com/igoravl/TfsCmdlets/issues/123)
+Users with TfsCmdlets v2.0.0 must update to this version to use the module.
 
 ------------------------
 
 ## Previous Versions
+
+### Version 2.0.0 (_02/Aug/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.0.0.md).
 
 ### Version 2.0.0-rc.5 (_17/Apr/2021_)
 
