@@ -236,23 +236,26 @@ jobs:
 
   Chocolatey:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: [ Release ]
     environment: chocolatey
     if: ${{ github.event_name != 'pull_request' }}
+    env:
+      CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
           name: nuget
-      - name: Install Nuget 5.x
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-api-key: ${{ secrets.API_KEY }}
-          nuget-version: '5.x'
+      - name: Install Chocolatey
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+          iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       - name: Push package
         run: |
-          nuget push $(ls TfsCmdlets*.nupkg) -Source https://push.chocolatey.org/
+          choco push $(ls TfsCmdlets*.nupkg) --api-key $env:CHOCO_KEY
 
   Announcement:
 
