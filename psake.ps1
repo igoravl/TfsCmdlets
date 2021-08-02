@@ -194,6 +194,7 @@ Task UpdateModuleManifest {
         Path                 = $ModuleManifestPath
         # FileList             = $fileList
         FunctionsToExport    = @()
+        CmdletsToExport      = '*-Tfs*'
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
