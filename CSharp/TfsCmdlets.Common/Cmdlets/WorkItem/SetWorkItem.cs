@@ -11,6 +11,7 @@ using TfsCmdlets.Extensions;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -145,10 +146,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     {
         private static Dictionary<string, string> _parameterMap = new Dictionary<string, string>()
         {
-            ["Area"] = "System.Area",
+            ["Area"] = "System.AreaPath",
             ["AssignedTo"] = "System.AssignedTo",
             ["Description"] = "System.Description",
-            ["Iteration"] = "System.Iteration",
+            ["Iteration"] = "System.IterationPath",
             ["Priority"] = "Microsoft.VSTS.Common.Priority",
             ["Reason"] = "System.Reason",
             ["State"] = "System.State",
@@ -169,18 +170,18 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             foreach (var argName in _parameterMap.Keys.Where(f => HasParameter(f) && !fields.ContainsKey(f)))
             {
-                fields.Add(_parameterMap[argName], GetParameter<object>(argName));
+                fields.Add(_parameterMap[argName], GetFieldValue(argName, (string)wi.Fields["System.TeamProject"]));
             }
 
             if (fields.Count > 0)
             {
                 var patch = new JsonPatchDocument(){
-                new JsonPatchOperation() {
-                    Operation = Operation.Test,
-                    Path = "/rev",
-                    Value = wi.Rev
-                }
-            };
+                    new JsonPatchOperation() {
+                        Operation = Operation.Test,
+                        Path = "/rev",
+                        Value = wi.Rev
+                    }
+                };
 
                 foreach (DictionaryEntry field in fields)
                 {
@@ -280,6 +281,19 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             throw new Exception("Unable to find a board belonging to team " +
                 $"'{team.Name}' that contains a mapping to the work item type '{workItemType}'");
+        }
+
+        private object GetFieldValue(string argName, string projectName)
+        {
+            object value = GetParameter<object>(argName);
+
+            if (string.Equals(argName, "Area", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(argName, "Iteration", StringComparison.OrdinalIgnoreCase))
+            {
+                return NodeUtil.NormalizeNodePath((string)value, projectName, includeTeamProject: true, includeLeadingSeparator: true);
+            }
+
+            return value;
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
@@ -117,9 +118,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
             var patch = new WorkItemClassificationNode()
             {
-                Name = newName
+                Name = newName,
+                Attributes = nodeToRename.Attributes
             };
-
+            
             return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath.Substring(1))
                 .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, client);
         }

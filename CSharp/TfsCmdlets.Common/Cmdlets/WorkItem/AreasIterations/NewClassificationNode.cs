@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
@@ -44,6 +45,18 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("Iteration", "Path")]
         public override string Node { get; set; }
+
+        /// <summary>
+        /// Specifies the start date of the iteration.
+        /// </summary>
+        [Parameter()]
+        public DateTime? StartDate { get; set; }
+
+        /// <summary>
+        /// Sets the finish date of the iteration. 
+        /// </summary>
+        [Parameter()]
+        public DateTime? FinishDate { get; set; }
 
         /// <inheritdoc/>
         internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
@@ -103,6 +116,25 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             {
                 Name = nodeName
             };
+
+            if(HasParameter(nameof(SetIteration.StartDate)))
+            {
+                if(!HasParameter(nameof(SetIteration.FinishDate)))
+                {
+                    throw new ArgumentException("When specifying iteration dates, both dates must be supplied.");
+                }
+
+                var startDate = GetParameter<DateTime?>(nameof(SetIteration.StartDate));
+                var finishDate = GetParameter<DateTime?>(nameof(SetIteration.FinishDate));
+
+                Log($"Setting iteration dates to '{startDate}' and '{finishDate}'");
+
+                patch.Attributes = new Dictionary<string, object>()
+                {
+                    ["startDate"] = startDate,
+                    ["finishDate"] = finishDate
+                };
+            }
 
             var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
                 .GetResult($"Error creating node {nodePath}");

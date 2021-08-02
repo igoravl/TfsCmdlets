@@ -11,6 +11,10 @@ namespace TfsCmdlets.Services
     {
         void Log(string message, string commandName = null, bool force = false);
 
+        void LogWarn(string message);
+
+        void LogError(Exception ex, string errorId = null, ErrorCategory category = ErrorCategory.NotSpecified, object targetObject = null);
+
         void LogParameters();
     }
 
@@ -30,6 +34,19 @@ namespace TfsCmdlets.Services
             if (string.IsNullOrEmpty(commandName)) commandName = Cmdlet.CommandName;
 
             Cmdlet.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{commandName}] {message}");
+        }
+
+        public void LogWarn(string message)
+        {
+            Cmdlet.WriteWarning(message);
+        }
+
+        public void LogError(Exception ex, string errorId = null, ErrorCategory category = ErrorCategory.NotSpecified, object targetObject = null)
+        {
+            var innerException = ex.InnerException ?? ex;
+            var id = errorId?? innerException.GetType().Name;
+
+            Cmdlet.WriteError(new ErrorRecord(ex, id, category, targetObject));
         }
 
         public void LogParameters()

@@ -95,35 +95,65 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                     case Guid g:
                         {
                             project = g.ToString();
-                            break;
+                            continue;
                         }
                     case string s when !s.IsWildcard() && !deleted:
                         {
-                            yield return client.GetProject(s, true).GetResult($"Error getting team project '{project}'");
+                            yield return FetchProject(s, client);
                             yield break;
                         }
                     case string s:
                         {
                             var stateFilter = deleted ? ProjectState.Deleted : ProjectState.All;
-                            var tpRefs = client.GetProjects(stateFilter).GetResult($"Error getting team project(s) '{project}'");
+                            var tpRefs = FetchProjects(stateFilter, client);
 
                             foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
-                                if (deleted)
-                                {
-                                    yield return new WebApiTeamProject(tpRef);
-                                    continue;
-                                }
-                                yield return client.GetProject(tpRef.Id.ToString(), true).GetResult($"Error getting team project '{tpRef.Id}'");
+                                var proj = deleted ?
+                                    new WebApiTeamProject(tpRef) :
+                                    FetchProject(tpRef.Id.ToString(), client);
+
+                                if (proj == null) continue;
+
+                                yield return proj;
                             }
 
                             yield break;
                         }
                     default:
-                    {
-                        throw new ArgumentException($"Invalid or non-existent team project {project}");
-                    }
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent team project {project}"));
+                            yield break;
+                        }
                 }
+        }
+
+        private WebApiTeamProject FetchProject(string project, ProjectHttpClient client)
+        {
+            try
+            {
+                return client.GetProject(project, true).GetResult($"Error getting team project '{project}'");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+            }
+
+            return null;
+        }
+
+        private IEnumerable<TeamProjectReference> FetchProjects(ProjectState stateFilter, ProjectHttpClient client)
+        {
+            try
+            {
+                return client.GetProjects(stateFilter).GetResult($"Error getting team project(s)");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+            }
+
+            return null;
         }
     }
 }

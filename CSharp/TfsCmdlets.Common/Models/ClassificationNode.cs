@@ -42,6 +42,8 @@ namespace TfsCmdlets.Models
 
         internal Guid Identifier => InnerNode.Identifier;
 
+        internal IDictionary<string,object> Attributes => InnerNode.Attributes;
+
         /// <summary>
         /// Get a node's relative path
         /// </summary>
