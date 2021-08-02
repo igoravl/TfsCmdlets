@@ -508,7 +508,11 @@ VERIFICATION
 Verification is intended to assist the Chocolatey moderators and community
 in verifying that this package's contents are trustworthy.
 
-Binary files contained in this package can be compared against their respective NuGet source packages, listed below:
+This package is published by the TfsCmdlets Project itself. Any binaries will be 
+identical to other package types published by the project.
+
+Third-party binary files contained in this package are .NET assembly references 
+and can be compared against their respective NuGet source packages.
 
 $($packageUrls -join "`r`n")
 
