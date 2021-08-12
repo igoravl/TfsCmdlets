@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <RootNamespace>TfsCmdlets</RootNamespace>
     <AssemblyName>TfsCmdlets.PSDesktop</AssemblyName>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -27,7 +27,5 @@
     <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
   </ItemGroup>
-
-  <Import Project="..\TfsCmdlets.Common\TfsCmdlets.Common.projitems" Label="Shared" />
 
 </Project>
