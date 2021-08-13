@@ -98,10 +98,10 @@ Task BuildLibrary {
 Task GenerateHelp {
 
     $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
-    $helpFile = Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.PSDesktop.dll-Help.xml"
+    $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
 
     exec { & $xmldocExePath `
-        "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.PSDesktop.dll`"" `
+        "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
         -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
@@ -131,11 +131,6 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
-
-    foreach($p in @('Core', 'Desktop'))
-    {
-        Get-ChildItem -Path (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.PSDesktop.dll-Help.xml") -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
-    }
 }
 
 Task GenerateTypesXml {

@@ -113,7 +113,7 @@ Function _Text($text) {
 ### Main script ###
 
 if (-not $RootProjectDir) { $RootProjectDir = $PSScriptRoot }
-if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'CSharp/TfsCmdlets.Common/Cmdlets' ) }
+if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'CSharp/TfsCmdlets/Cmdlets' ) }
 if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir 'out/module') }
 if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs/cmdlets') }
 if (-not $RootUrl) { $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets/' }
@@ -124,7 +124,7 @@ $CommonParameters = @('ErrorAction', 'WarningAction', 'InformationAction',
     'Verbose', 'Debug', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 
     'OutVariable', 'OutBuffer', 'PipelineVariable')
 
-$doc = [xml] (Get-Content (Join-Path $ModuleDir 'TfsCmdlets.PSDesktop.dll-Help.xml'))
+$doc = [xml] (Get-Content (Join-Path $ModuleDir 'TfsCmdlets.dll-Help.xml'))
 
 foreach ($cmd in $doc.helpItems.command) {
     $moduleName = $cmd.Module
