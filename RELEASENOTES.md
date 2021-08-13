@@ -1,14 +1,21 @@
 # TfsCmdlets Release Notes
 
-## Version 2.0.1 (_02/Aug/2021_)
+## Version 2.1.0 (_13/Aug/2021_)
 
-**REQUIRED UPDATE**: This update adds a missing directive to the manifest file so that cmdlets are properly exported/exposed.
+On the user-facing front, this release adds cmdlets to enable/disable Git repositories.
 
-Users with TfsCmdlets v2.0.0 must update to this version to use the module.
+But another big change is a refactoring of the project structure to simplify the codebase. Now, instead of three projects (TfsCmdlets.Common, TfsCmdlets.PSDesktop, and TfsCmdlets.PSCore), there is only one project (TfsCmdlets), which leverages .NET SDK multi-targeting support to achieve what previously required separate projects for each target framework. This change will speed up the development process and make it easier to add new cmdlets in the future.
 
+## Improvements
+
+- **Enable-TfsGitRepository and Disable-TfsGitRepository**: Adds cmdlets to enable/disable Git repositories. When a repository is disabled it cannot be accessed (including clones, pulls, pushes, builds, pull requests etc) but remains discoverable, with a warning message stating it is disabled. (fixes [#131](https://github.com/igoravl/TfsCmdlets/issues/131))
 ------------------------
 
 ## Previous Versions
+
+### Version 2.0.1 (_02/Aug/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.0.1.md).
 
 ### Version 2.0.0 (_02/Aug/2021_)
 

@@ -1,5 +1,5 @@
 # This script is a psake script file and should not be called directly. Use Build.ps1 instead.
-Framework '4.6.2'
+Framework '4.7.1'
 
 Properties {
 
@@ -22,7 +22,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{DesktopTargetFramework = 'net462'; CoreTargetFramework = 'netcoreapp3.1'}
+    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1'}
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -85,30 +85,23 @@ Task CreateOutputDir {
 
 Task BuildLibrary {
 
-    foreach($p in @('Core', 'Desktop'))
+    foreach($tfkey in $TargetFrameworks.Keys)
     {
-        Write-Verbose "Build TfsCmdlets.PS$p"
-        try
-        {
-            Exec { dotnet publish "$SolutionDir/TfsCmdlets.PS$p/TfsCmdlets.PS$p.csproj" --self-contained true -c $Configuration -p:PublishDir="../../out/Module/Lib/$p" /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
-        }
-        catch
-        {
-            Get-Content $OutDir/MSBuild.log 
-            throw "Error building solution"
-        }
+        $tf = $TargetFrameworks[$tfkey]
+
+        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
     }
 
-    Copy-Item (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/')
+    Copy-Item (Join-Path $SolutionDir "TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/') | Write-Verbose
 }
 
 Task GenerateHelp {
 
     $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
-    $helpFile = Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml"
+    $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
 
     exec { & $xmldocExePath `
-        "`"$SolutionDir\TfsCmdlets.PSDesktop\bin\$Configuration\net462\TfsCmdlets.PSDesktop.dll`"" `
+        "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
         -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
@@ -138,11 +131,6 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
-
-    foreach($p in @('Core', 'Desktop'))
-    {
-        Get-ChildItem -Path (Join-Path $SolutionDir "TfsCmdlets.PSDesktop/bin/$Configuration/net462/TfsCmdlets.PSDesktop.dll-Help.xml") -Recurse | Copy-Item -Destination (Join-Path $ModuleDir "TfsCmdlets.PS${p}.dll-Help.xml") -Force
-    }
 }
 
 Task GenerateTypesXml {
@@ -178,7 +166,7 @@ Task UpdateModuleManifest {
     # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
-    $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.PSCore.deps.json') -Recurse)[0] | ConvertFrom-Json)
+    $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.deps.json') -Recurse)[0] | ConvertFrom-Json)
     $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
 
     $PrivateData = @{
@@ -211,7 +199,7 @@ Task UpdateModuleManifest {
 
     # Set RootModule manually to inject conditional loading logic
 
-    $rootModuleExpr = 'RootModule = if($PSEdition -eq "Core") { "Lib/Core/TfsCmdlets.PSCore.dll" } else { "Lib/Desktop/TfsCmdlets.PSDesktop.dll" }'
+    $rootModuleExpr = 'RootModule = if($PSEdition -eq "Core") { "Lib/Core/TfsCmdlets.dll" } else { "Lib/Desktop/TfsCmdlets.dll" }'
     $manifestText = (Get-Content $ModuleManifestPath -Raw) -replace "RootModule = '.+?'", $rootModuleExpr
     $manifestText | Out-File $ModuleManifestPath -Encoding utf8
 
