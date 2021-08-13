@@ -69,10 +69,23 @@ namespace TfsCmdlets.Cmdlets.Git
                         }
                     case string s when !s.IsWildcard():
                         {
-                            yield return GetClient<GitHttpClient>()
-                                .GetRepositoryAsync(tp.Name, s)
-                                .GetResult($"Error getting repository '{s}'");
+                            GitRepository result = null;
+                            try
+                            {
+                                result = GetClient<GitHttpClient>()
+                                    .GetRepositoryAsync(tp.Name, s)
+                                    .GetResult($"Error getting repository '{s}'");
+                            }
+                            catch
+                            {
+                                // Workaround to retrieve disabled repositories
+                                result = GetClient<GitHttpClient>()
+                                    .GetRepositoriesAsync(tp.Name)
+                                    .GetResult($"Error getting repository(ies) '{s}'")
+                                    .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+                            }
 
+                            yield return result;
                             yield break;
                         }
                     case string s:

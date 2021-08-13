@@ -358,10 +358,9 @@ namespace TfsCmdlets.Cmdlets
             return ShouldContinue(query, caption, hasSecurityImpact, ref yesToAll, ref noToAll);
         }
 
-
         /// <summary>
         /// Performs execution of the command. Must be overriden in derived classes.
         /// </summary>
-        protected virtual void DoProcessRecord() => throw new InvalidOperationException("You must override ProcessRecord");
+        protected virtual void DoProcessRecord() => throw new InvalidOperationException("You must override DoProcessRecord");
     }
 }
