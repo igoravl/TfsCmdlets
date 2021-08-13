@@ -115,8 +115,6 @@ inputs:
   - type: "System.Object" 
     description: "Specifies either a URL/name of the Team Foundation Server to connect to, or a previously initialized TfsConfigurationServer object. When using a URL, it must be fully qualified. To connect to a Team Foundation Server instance by using its name, it must have been previously registered. "
 outputs: 
-  - type: "Microsoft.TeamFoundation.Client.TfsConfigurationServer" 
-    description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 

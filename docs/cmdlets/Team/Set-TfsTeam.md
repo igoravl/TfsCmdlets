@@ -6,12 +6,12 @@ description: "Changes the details of a team. "
 remarks: 
 parameterSets: 
   "_All_": [ AreaPaths, BacklogIteration, BacklogVisibilities, BugsBehavior, Collection, Default, DefaultAreaPath, DefaultIterationMacro, Description, IterationPaths, Passthru, Project, Team, WorkingDays ] 
-  "__AllParameterSets":  
+  "Set team settings":  
     Team: 
       type: "object"  
       position: "0"  
     AreaPaths: 
-      type: "IEnumerable`1"  
+      type: "string[]"  
     BacklogIteration: 
       type: "string"  
     BacklogVisibilities: 
@@ -20,8 +20,6 @@ parameterSets:
       type: "string"  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     DefaultAreaPath: 
       type: "string"  
     DefaultIterationMacro: 
@@ -29,13 +27,26 @@ parameterSets:
     Description: 
       type: "string"  
     IterationPaths: 
-      type: "object"  
+      type: "string[]"  
     Passthru: 
       type: "SwitchParameter"  
     Project: 
       type: "object"  
     WorkingDays: 
-      type: "IEnumerable`1" 
+      type: "IEnumerable`1"  
+  "Set default team":  
+    Team: 
+      type: "object"  
+      position: "0"  
+    Default: 
+      type: "SwitchParameter"  
+      required: true  
+    Collection: 
+      type: "object"  
+    Passthru: 
+      type: "SwitchParameter"  
+    Project: 
+      type: "object" 
 parameters: 
   - name: "Team" 
     description: "Specifies the name of the Team, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeam (if any). For more details, see the Get-TfsTeam cmdlet. " 
@@ -51,6 +62,12 @@ parameters:
     position: 0 
     type: "object" 
     aliases: [ Name ] 
+  - name: "Default" 
+    description: "Sets the specified team as the default team. " 
+    required: true 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Description" 
     description: "Specifies a new description " 
     globbing: false 
@@ -68,7 +85,7 @@ parameters:
   - name: "AreaPaths" 
     description: "Specifies the backlog area paths that are associated with this team. Provide a list of area paths in the form '/path1/path2/[*]'. When the path ends with an asterisk, all child area path will be included recursively. Otherwise, only the area itself (without its children) will be included. " 
     globbing: false 
-    type: "IEnumerable`1" 
+    type: "string[]" 
   - name: "BacklogIteration" 
     description: "Specifies the team's backlog iteration path. When omitted, defaults to the team project's root iteration. " 
     globbing: false 
@@ -77,7 +94,7 @@ parameters:
   - name: "IterationPaths" 
     description: "Specifies the backlog iteration paths that are associated with this team. Provide a list of iteration paths in the form '/path1/path2'. " 
     globbing: false 
-    type: "object" 
+    type: "string[]" 
   - name: "DefaultIterationMacro" 
     description: "Specifies the default iteration macro. When omitted, defaults to \"@CurrentIteration\". " 
     globbing: false 
@@ -91,11 +108,6 @@ parameters:
     description: "Specifies which backlog levels (e.g. Epics, Features, Stories) should be visible. " 
     globbing: false 
     type: "Hashtable" 
-  - name: "Default" 
-    description: "Sets the supplied team as the default team project team. " 
-    globbing: false 
-    type: "SwitchParameter" 
-    defaultValue: "False" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
     globbing: false 
