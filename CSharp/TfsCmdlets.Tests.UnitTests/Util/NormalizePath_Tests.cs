@@ -90,6 +90,7 @@ namespace TfsCmdlets.Tests.UnitTests.Util
                 separator: '\\'));
         }
 
+        [Fact]
         public void Can_Return_Path_With_Leading_Trailing_Sep()
         {
             Assert.Equal("\\path\\", NodeUtil.NormalizeNodePath("path", "projectName",
