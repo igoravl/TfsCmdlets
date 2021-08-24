@@ -15,7 +15,7 @@ namespace TfsCmdlets.Util
         {
             if(data == null)
             {
-                throw new ArgumentException($"Invalid or non-existent {name} '{searchCriteria}'");
+                throw new ArgumentException($"Invalid or non-existent {name} '{searchCriteria}'", name);
             }
         }
     }

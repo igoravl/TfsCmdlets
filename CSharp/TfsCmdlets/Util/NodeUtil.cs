@@ -12,10 +12,19 @@ namespace TfsCmdlets.Util
             bool includeScope = false, bool excludePath = false, bool includeLeadingSeparator = false,
             bool includeTrailingSeparator = false, bool includeTeamProject = false, char separator = '\\')
         {
-            // Log "Normalizing path 'Path' with arguments (_DumpObj PSBoundParameters)"
-
+            if (path == null) throw new ArgumentNullException("path");
+            if (projectName == null) throw new ArgumentNullException("projectName");
+            if (includeTeamProject && string.IsNullOrEmpty(projectName)) throw new ArgumentNullException("projectName");
+            if (includeScope && string.IsNullOrEmpty(scope)) throw new ArgumentNullException("scope");
+            if (excludePath && !includeScope && !includeTeamProject) throw new ArgumentException("excludePath is only valid when either includeScope or includeTeamProject are true");
 
             var newPath = new StringBuilder();
+
+            var customSep = (separator != '/' && separator != '\\') ? $"|{separator}" : "";
+
+            projectName = Regex.Replace(projectName?? string.Empty, @$"[/|\\{customSep}]+", separator.ToString()).Trim(separator);
+            scope = Regex.Replace(scope?? string.Empty, @$"[/|\\{customSep}]+", separator.ToString()).Trim(separator);
+            path = Regex.Replace(path?? string.Empty, @$"[/|\\{customSep}]+", separator.ToString()).Trim(separator);
 
             if (includeLeadingSeparator) { newPath.Append(separator); }
             if (includeTeamProject) { newPath.Append(projectName); newPath.Append(separator); }
@@ -23,8 +32,6 @@ namespace TfsCmdlets.Util
 
             if (!excludePath)
             {
-                path = Regex.Replace(path, @"[/|\\]+", separator.ToString()).Trim(' ', separator);
-
                 if (path.Equals(projectName) || path.StartsWith($"{projectName}{separator}"))
                 {
                     if (Regex.IsMatch(path, $@"^{projectName}\{separator}{scope}\{separator}"))
