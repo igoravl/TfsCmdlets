@@ -5,6 +5,9 @@ using System.Reflection;
 
 namespace TfsCmdlets
 {
+    /// <summary>
+    /// This class is used to resolve TfsCmdlets assemblies in runtime.
+    /// </summary>
     public partial class AssemblyResolver
     {
         /// <summary>

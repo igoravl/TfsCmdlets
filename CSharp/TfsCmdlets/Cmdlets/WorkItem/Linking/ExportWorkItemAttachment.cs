@@ -13,6 +13,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
+    /// Downloads one or more attachments from work items
     [Cmdlet(VerbsData.Export, "TfsWorkItemAttachment", SupportsShouldProcess = true)]
     public class ExportWorkItemAttachment: CmdletBase
     {

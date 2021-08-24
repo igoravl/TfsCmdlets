@@ -10,7 +10,10 @@ namespace TfsCmdlets.Models
 {
     public partial class Connection
     {
+        /// <summary>Converts Connection to VssConnection</summary>
         public static implicit operator VssConnection(Connection c) => c.InnerConnection;
+
+        /// <summary>Converts VssConnection to Connection</summary>
         public static implicit operator Connection(VssConnection c) => new Connection(c);
 
         internal VssConnection InnerConnection => this.BaseObject as VssConnection;
@@ -70,6 +73,9 @@ namespace TfsCmdlets.Models
             InnerConnection.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
             InnerConnection.Uri.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
 
+        /// <summary>
+        /// Returns a client object given its type.
+        /// </summary>
         public object GetClientFromType(Type type) => InnerConnection.GetClient(type);
 
         private VssConnection GetParentConnection()
