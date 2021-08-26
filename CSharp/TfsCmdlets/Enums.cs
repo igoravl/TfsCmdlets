@@ -103,15 +103,34 @@ namespace TfsCmdlets
     [Flags]
     public enum WorkItemLinkType
     {
+        /// <summary>All</summary>
         All = 0,
+
+        /// <summary>Parent</summary>
         Parent = 1,
+
+        /// <summary>Child</summary>
         Child = 2,
+
+        /// <summary>Related</summary>
         Related = 4,
+
+        /// <summary>Predecessor</summary>
         Predecessor = 8,
+
+        /// <summary>Successor</summary>
         Successor = 16,
+
+        /// <summary>Duplicate</summary>
         Duplicate = 32,
+
+        /// <summary>Duplicate Of</summary>
         DuplicateOf = 64,
+
+        /// <summary>Tests</summary>
         Tests = 128,
+
+        /// <summary>Tested By</summary>
         TestedBy = 256, 
     }
 

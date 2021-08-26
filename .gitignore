@@ -214,3 +214,7 @@ TfsCmdlets.PSDesktop.xml
 # JetBrains Rider project
 
 CSharp/.idea/**
+
+# Miscellaneous files
+
+.testtemplate.cs

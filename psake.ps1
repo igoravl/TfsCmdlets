@@ -57,10 +57,10 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, UnitTests, GenerateDocs {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs {
 }
 
-Task Test -Depends Build, UnitTests, AllTests {
+Task Test -Depends UnitTests, AllTests {
 }
 
 Task CleanOutputDir -PreCondition { -not $Incremental } {
@@ -208,7 +208,7 @@ Task UpdateModuleManifest {
 
 Task UnitTests -PreCondition { -not $SkipTests }  {
 
-    #Exec { Invoke-Pester -Path $TestsDir -OutputFile (Join-Path $OutDir TestResults-Unit.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker ) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') -EnableExit:$IsCI -ExcludeTag Correctness, Integration, PSCore, PSDesktop }
+    Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
 }
 
 Task AllTests -PreCondition { -not $SkipTests } {

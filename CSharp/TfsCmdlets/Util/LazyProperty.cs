@@ -21,8 +21,7 @@ namespace TfsCmdlets.Util
         /// <returns>The value of the property</returns>
         public static object Get(PSObject obj, string property, ScriptBlock sb)
         {
-            var propertyBag = obj.Properties.FirstOrDefault(
-                p => p.Name.Equals("__PropertyBag"))?.Value as Dictionary<string, object>;
+            var propertyBag = obj.Members?.Match("__PropertyBag").FirstOrDefault()?.Value as Dictionary<string, object>;
 
             if (propertyBag == null)
             {

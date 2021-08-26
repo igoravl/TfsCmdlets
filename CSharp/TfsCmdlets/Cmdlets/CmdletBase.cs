@@ -315,7 +315,7 @@ namespace TfsCmdlets.Cmdlets
                 return;
             }
 
-            throw new NotSupportedException($"This cmdlet requires Windows PowerShell. It will not work on PowerShell Core.{Environment.NewLine}");
+            ErrorUtil.ThrowDesktopOnlyCmdlet();
         }
 
         /// <summary>
