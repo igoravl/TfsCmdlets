@@ -2,9 +2,9 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![Build status](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml/badge.svg?label=Build)](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers)
 
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub) 
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub)
 
-## Whats is TfsCmdlets?
+## What is TfsCmdlets?
 
 TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server (2010 to 2018) and Azure DevOps (Server 2019+ and Services).
 
@@ -14,7 +14,7 @@ TfsCmdlets is available in many installation formats. It also includes **Azure D
 
 ![Azure DevOps Shell](Assets/TfsShell.png)
 
-## Quick start guide 
+## Quick start guide
 
 Do you have an Azure DevOps account created? Awesome! If not, you might want to [create one](https://azure.microsoft.com/en-us/services/devops/).
 
@@ -115,7 +115,8 @@ The full installer will install the module files to the Program Files folder in 
 
 - Download the MSI file from the [Releases](https://github.com/igoravl/tfscmdlets/releases) page;
 - Open the downloaded MSI file
-	- **NOTE**: If Windows SmartScreen flags the file as insecure and refuses to run it, you can click the "More info" button/link in the dialog and select the "Run anyway" option.
+
+> **NOTE**: If Windows SmartScreen flags the file as insecure and refuses to run it, you can click the "More info" button/link in the dialog and select the "Run anyway" option.
 
 **To uninstall the full installer**:
 
@@ -123,7 +124,7 @@ The full installer will install the module files to the Program Files folder in 
 
 #### Portable installer
 
-The portable installer is a zip file containing all the required the module files. 
+The portable installer is a zip file containing all the required the module files.
 
 **To install the portable installer**:
 
@@ -140,7 +141,7 @@ To test the installation, open a new PowerShell window and type:
 Import-Module TfsCmdlets
 ```
 
-**To uninstall the portable installer**
+**To uninstall the portable installer**:
 
 - Close all PowerShell windows where you were using TfsCmdlets (to free files in use);
 - Delete the `TfsCmdlets` folder from the `[Documents]\[Windows]PowerShell\Modules` folder.
