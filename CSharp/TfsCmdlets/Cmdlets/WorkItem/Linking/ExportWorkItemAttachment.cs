@@ -13,13 +13,15 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
+    /// <summary>
     /// Downloads one or more attachments from work items
+    /// </summary>
     [Cmdlet(VerbsData.Export, "TfsWorkItemAttachment", SupportsShouldProcess = true)]
     public class ExportWorkItemAttachment: CmdletBase
     {
         /// <summary>
         /// Specifies the attachment to download. Wildcards are supported. 
-        /// When omitted, all attachments in the specified work item are exported.
+        /// When omitted, all attachments in the specified work item are downloaded.
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNull()]
@@ -90,6 +92,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 
             if(!Directory.Exists(outputDir))
             {
+                if(!ShouldProcess(outputDir, "Create destination directory")) return;
+
                 if(!Force && !ShouldContinue($"Do you want to create destination directory '{outputDir}'?"))
                 {
                     throw new ArgumentException("Destination path invalid or non-existent");
