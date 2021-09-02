@@ -23,33 +23,51 @@ namespace TfsCmdlets.Tests.UnitTests.Util
         {
             const string propName = "__PropertyBag";
 
-            var pso = _PowerShell.AddScript("$global:pso = 0; $pso")
-                .Invoke().First();
+            var returnValues = _PowerShell.AddScript(@"
+                Function PropertyBag_Is_Created_On_First_Call
+                {
+                    $pso = [PSCustomObject] @{Foo='Bar'}
 
-            Assert.False(pso.Members.Match(propName, PSMemberTypes.NoteProperty).Any(), $"Property '{propName}' should not exist");
+                    $pso | Add-Member -Name MyLazy -MemberType ScriptProperty `
+                        -Value { [TfsCmdlets.Util.LazyProperty]::Get($pso, 'MyLazy', {[TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Next()}) }
 
-            _PowerShell.AddScript(@"$global:pso | `
-                Add-Member -Name MyLazy -MemberType ScriptProperty `
-                -Value { [TfsCmdlets.Util.LazyProperty]::Get($global:pso, 'MyLazy', {[TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Next()}) }")
-                .Invoke();
+                    [TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Reset()
 
-            _PowerShell.AddScript("$pso.MyLazy").Invoke().First();
+                    $val1 = $pso.MyLazy
 
-            Assert.True(pso.Properties.Match(propName, PSMemberTypes.NoteProperty).Any(), $"Property '{propName}' not found");
+                    echo $val1, $pso
+                }
+                
+                PropertyBag_Is_Created_On_First_Call"
+            ).Invoke().ToList();
+
+            Assert.Equal(1, returnValues[0]);
+            Assert.True(((PSObject) returnValues[1]).Properties.Match(propName, PSMemberTypes.NoteProperty).Any(), $"Property '{propName}' not found");
         }
 
         [Fact]
         public void Lazy_Property_Is_Called_Only_Once()
         {
-            var pso = _PowerShell.AddScript("$global:pso = 0; $pso").Invoke().First();
+            var returnValues = _PowerShell.AddScript(@"
+                Function Lazy_Property_Is_Called_Only_Once
+                {
+                    $pso = [PSCustomObject]@{Foo='Bar'}
+                    $pso | Add-Member -Name MyLazy -MemberType ScriptProperty `
+                        -Value { [TfsCmdlets.Util.LazyProperty]::Get($pso, 'MyLazy', {[TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Next()}) }
+                        
+                    [TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Reset()
 
-            _PowerShell.AddScript(@"$global:pso | `
-                Add-Member -Name MyLazy -MemberType ScriptProperty `
-                -Value { [TfsCmdlets.Util.LazyProperty]::Get($global:pso, 'MyLazy', {[TfsCmdlets.Tests.UnitTests.Util.LazyPropertySimulator]::Next()}) }")
-                .Invoke();
+                    $val1 = $pso.MyLazy
+                    $val2 = $pso.MyLazy
+                    
+                    echo $val1, $val2
+                }
+                
+                Lazy_Property_Is_Called_Only_Once"
+            ).Invoke().ToList();
 
-            Assert.Equal(1, _PowerShell.AddScript("$pso.MyLazy").Invoke().First());
-            Assert.Equal(1, _PowerShell.AddScript("$pso.MyLazy").Invoke().First());
+            Assert.Equal(1, returnValues[0].BaseObject);
+            Assert.Equal(1, returnValues[1].BaseObject);
         }
     }
 
