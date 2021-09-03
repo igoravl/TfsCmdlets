@@ -75,7 +75,7 @@ namespace TfsCmdlets.Services
 
         private ParameterDictionary MergeParameters(object overridingParameters)
         {
-            return new ParameterDictionary(this.Parameters, overridingParameters);
+            return ParameterDictionary.From(this.Parameters, overridingParameters);
         }
         
         /// <summary>
@@ -112,10 +112,8 @@ namespace TfsCmdlets.Services
         protected TClient GetClient<TClient>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
             where TClient : VssHttpClientBase
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = scope
-            };
+            var pd = ParameterDictionary.From(this.Parameters, parameters);
+            pd["ConnectionType"] = scope;
 
             var conn = Provider.GetDataService<Models.Connection>(Cmdlet, pd).GetItem();
 

@@ -59,7 +59,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
             }
             catch
             {
-                if((GetItem<Models.GlobalList>(new ParameterDictionary(){["GlobalList"] = NewName}) != null) &&
+                if((GetItem<Models.GlobalList>(new {GlobalList = NewName}) != null) &&
                     (GetItem<Models.GlobalList>() != null))
                 {
                     svc.Remove(new[]{NewName});

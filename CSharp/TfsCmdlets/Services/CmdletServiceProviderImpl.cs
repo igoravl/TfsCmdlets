@@ -46,10 +46,8 @@ namespace TfsCmdlets.Services
 
         public Models.Connection GetServer(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = ClientScope.Server
-            };
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["ConnectionType"] = ClientScope.Server;
 
             var srv = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
 
@@ -63,10 +61,8 @@ namespace TfsCmdlets.Services
 
         public Models.Connection GetCollection(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = ClientScope.Collection
-            };
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["ConnectionType"] = ClientScope.Collection;
 
             var tpc = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
 
@@ -82,10 +78,8 @@ namespace TfsCmdlets.Services
         {
             var tpc = GetCollection(cmdlet, parameters);
 
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["Collection"] = tpc
-            };
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["Collection"] = tpc;
 
             var tp = GetDataService<WebApiTeamProject>(cmdlet, pd).GetItem();
 
@@ -99,7 +93,7 @@ namespace TfsCmdlets.Services
 
         public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var parms = new ParameterDictionary(cmdlet, parameters);
+            var parms = ParameterDictionary.From(cmdlet, parameters);
 
             if(parms.Get<object>("Team") is WebApiTeam t)
             {
@@ -144,7 +138,7 @@ namespace TfsCmdlets.Services
                                 throw new Exception($"Error instantiating {type.FullName}");
 
                             svc.Provider = prv;
-                            svc.Parameters = new ParameterDictionary(overriddenParameters, ctx);
+                            svc.Parameters = ParameterDictionary.From(ctx, overriddenParameters);
                             svc.Cmdlet = ctx;
                             return svc;
 

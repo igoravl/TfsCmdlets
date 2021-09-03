@@ -142,16 +142,14 @@ namespace TfsCmdlets.Cmdlets
         /// Returns an API Client from the underlying connection
         /// </summary>
         /// <param name="scope">The scope from which to retrieve the client. Supported scopes are Server, Collection</param>
-        /// <param name="parameters">If specified, the values in this parameter will override the values originally supplied to the this</param>
+        /// <param name="overridingParameters">If specified, the values in this parameter will override the values originally supplied to the cmdlet</param>
         /// <typeparam name="T">The type of the API client</typeparam>
         /// <returns>An instance of the requested API client</returns>
-        private protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null)
+        private protected virtual T GetClient<T>(ClientScope scope = ClientScope.Collection, ParameterDictionary overridingParameters = null)
             where T : VssHttpClientBase
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = scope
-            };
+            var pd = ParameterDictionary.From(this, overridingParameters);
+            pd["ConnectionType"] = scope;
 
             return Provider.GetDataService<Models.Connection>(this, pd).GetItem().GetClient<T>();
         }
@@ -274,7 +272,7 @@ namespace TfsCmdlets.Cmdlets
         {
             if (!this.IsVerbose) return;
 
-            var parms = new ParameterDictionary(this);
+            var parms = ParameterDictionary.From(this);
 
             if (parms.ContainsKey("Password") && parms["Password"] != null) parms["Password"] = "***";
 

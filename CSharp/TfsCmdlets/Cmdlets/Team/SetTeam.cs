@@ -103,12 +103,14 @@ namespace TfsCmdlets.Cmdlets.Team
     {
         protected override Models.Team DoSetItem()
         {
-            var (tpc, tp, t) = GetCollectionProjectAndTeam(new ParameterDictionary(){
-                ["Default"] = false});
+            var (tpc, tp, t) = GetCollectionProjectAndTeam(ParameterDictionary.From(this.Parameters, new
+            {
+                Default = false
+            }));
 
             if (HasParameter(nameof(SetTeam.Default)))
             {
-                if(!ShouldProcess(tp.Name, $"Set default team to {t.Name}")) return t;
+                if (!ShouldProcess(tp.Name, $"Set default team to {t.Name}")) return t;
 
                 var body = $@"
 {{
@@ -135,7 +137,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
                 var svc = GetService<IRestApiService>();
 
-                var result = svc.InvokeAsync(tpc, "/_apis/Contribution/HierarchyQuery", 
+                var result = svc.InvokeAsync(tpc, "/_apis/Contribution/HierarchyQuery",
                     method: "POST",
                     body: body,
                     apiVersion: "6.1").SyncResult();
