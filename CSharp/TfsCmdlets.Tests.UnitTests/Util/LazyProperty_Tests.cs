@@ -35,10 +35,10 @@ namespace TfsCmdlets.Tests.UnitTests.Util
 
                     $val1 = $pso.MyLazy
 
-                    echo $val1, $pso
+                    return @($val1, $pso)
                 }
                 
-                PropertyBag_Is_Created_On_First_Call"
+                $r = PropertyBag_Is_Created_On_First_Call; echo $r"
             ).Invoke().ToList();
 
             Assert.Equal(1, returnValues[0]);
@@ -60,10 +60,10 @@ namespace TfsCmdlets.Tests.UnitTests.Util
                     $val1 = $pso.MyLazy
                     $val2 = $pso.MyLazy
                     
-                    echo $val1, $val2
+                    return $val1, $val2
                 }
                 
-                Lazy_Property_Is_Called_Only_Once"
+                $r = Lazy_Property_Is_Called_Only_Once; echo $r"
             ).Invoke().ToList();
 
             Assert.Equal(1, returnValues[0].BaseObject);
