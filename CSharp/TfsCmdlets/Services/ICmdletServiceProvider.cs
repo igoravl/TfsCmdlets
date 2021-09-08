@@ -3,6 +3,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 using Microsoft.VisualStudio.Services.Client;
 using TfsCmdlets.Cmdlets;
+using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Services
 {
@@ -19,6 +20,7 @@ namespace TfsCmdlets.Services
         (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(CmdletBase cmdlet, ParameterDictionary parameters = null);
 
         Models.Connection GetServer(CmdletBase cmdlet, ParameterDictionary parameters = null);
-        
+
+        TClient GetClient<TClient>(CmdletBase cmdlet, ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null) where TClient : VssHttpClientBase;
     }
 }
