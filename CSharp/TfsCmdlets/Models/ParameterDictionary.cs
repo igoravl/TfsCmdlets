@@ -35,7 +35,8 @@ namespace TfsCmdlets.Cmdlets
         {
             switch (data)
             {
-                case null: throw new ArgumentNullException(nameof(data));
+                case null when overridingParameters == null: throw new ArgumentNullException(nameof(data));
+                case null: return new ParameterDictionary(overridingParameters);
                 case ParameterDictionary pd when overridingParameters == null: return pd;
                 default: return new ParameterDictionary(data, overridingParameters);
             }
@@ -84,7 +85,10 @@ namespace TfsCmdlets.Cmdlets
                     }
                 default:
                     {
-                        original.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).ForEach(prop => Add(prop.Name, prop.GetValue(original)));
+                        original.GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .ForEach(prop => 
+                                Add(prop.Name, prop.GetValue(original)));
                         break;
                     }
             }
@@ -120,7 +124,7 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
-        /// Overrides this instance with another one. Conflicting properties are overwritten.
+        /// Overrides this instance with another one. Existing properties are overwritten.
         /// </summary>
         public void OverrideWith(IDictionary<string,object> other)
         {
@@ -133,15 +137,15 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
-        /// Merges this instance with another one. Conflicting properties are skipped.
+        /// Merges this instance with another one. Existing properties are skipped.
         /// </summary>
         public void MergeWith(IDictionary<string,object> other)
-        {
+       {
             if (other == null || other.Count == 0) return;
 
-            foreach (var kvp in other)
+            foreach (var kvp in other.Where(kvp => !ContainsKey(kvp.Key)))
             {
-                this[kvp.Key] = kvp.Value;
+                Add(kvp.Key, kvp.Value);
             }
         }
     }
