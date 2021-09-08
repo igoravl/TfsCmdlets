@@ -163,7 +163,29 @@ Task GenerateFormatXml {
 
 Task UpdateModuleManifest {
 
-    # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    Function GetExportedFunctionsList {
+
+        $modulePath = "$SolutionDir/TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.dll"
+
+        Get-Module TfsCmdlets | Remove-Module
+        Import-Module $modulePath
+
+        return @(
+            Get-Command -Module TfsCmdlets -ErrorAction SilentlyContinue | 
+            Where-Object { $_.Visibility -eq 'Public' } | 
+            Sort-Object -Property Name |
+            Select-Object -ExpandProperty Name)
+
+    }
+
+    Function GetFileList {
+
+        return (
+            Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.resources.dll | 
+            Select-Object -ExpandProperty FullName | 
+            ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    }
+
     # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
     # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.deps.json') -Recurse)[0] | ConvertFrom-Json)
@@ -180,9 +202,9 @@ Task UpdateModuleManifest {
 
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
-        # FileList             = $fileList
+        FileList             = (GetFileList)
         FunctionsToExport    = @()
-        CmdletsToExport      = '*-Tfs*'
+        CmdletsToExport      = (GetExportedFunctionsList)
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
