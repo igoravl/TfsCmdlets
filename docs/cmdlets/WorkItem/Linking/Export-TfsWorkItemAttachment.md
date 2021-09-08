@@ -2,7 +2,7 @@
 title: Export-TfsWorkItemAttachment
 breadcrumbs: [ "WorkItem", "Linking" ]
 parent: "WorkItem.Linking"
-description: 
+description: "Downloads one or more attachments from work items "
 remarks: 
 parameterSets: 
   "_All_": [ Attachment, Collection, Destination, Force, WorkItem ] 
@@ -22,7 +22,7 @@ parameterSets:
       type: "SwitchParameter" 
 parameters: 
   - name: "Attachment" 
-    description: "Specifies the attachment to download. Wildcards are supported. When omitted, all attachments in the specified work item are exported. " 
+    description: "Specifies the attachment to download. Wildcards are supported. When omitted, all attachments in the specified work item are downloaded. " 
     globbing: false 
     position: 0 
     type: "object" 
@@ -53,6 +53,8 @@ inputs:
 outputs: 
 notes: 
 relatedLinks: 
+  - text: "Online Version:" 
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/Linking/Export-TfsWorkItemAttachment"
 aliases: 
 examples: 
 ---
