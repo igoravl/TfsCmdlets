@@ -8,7 +8,7 @@
     ModuleVersion = '1.0.0.0'
     NestedModules = @('Private/Functions.psm1', 'Private/Aliases.psm1', 'Private/ArgumentCompleters.psm1', 'Private/Admin.psm1')
     PowerShellVersion = '5.1'
-    DotNetFrameworkVersion = '4.6.2'
+    DotNetFrameworkVersion = '4.7.1'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
     AliasesToExport = '*'
