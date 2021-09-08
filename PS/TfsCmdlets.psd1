@@ -21,7 +21,7 @@
             PreRelease = 'PreRelease'
             LicenseUri = 'https://github.com/igoravl/TfsCmdlets/blob/master/LICENSE.md'
             ProjectUri = 'https://github.com/igoravl/tfscmdlets/'
-            IconUri = 'https://tfscmdlets.dev/assets/images/TfsCmdlets_Icon_32.png'
+            IconUri = 'https://tfscmdlets.dev/assets/images/TfsCmdlets_Icon_128.png'
         }
         TfsClientVersion = 'TfsOmNugetVersion'
     }
