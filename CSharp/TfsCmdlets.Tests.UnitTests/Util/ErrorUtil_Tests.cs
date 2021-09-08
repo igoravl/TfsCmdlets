@@ -17,10 +17,16 @@ namespace TfsCmdlets.Tests.UnitTests.Util
         [Fact]
         public void ThrowIfNotFound_Throws_ArgumentException()
         {
-            Assert.Throws<ArgumentException>("test", () => 
+            Assert.Throws<ArgumentException>("test", () =>
                 ErrorUtil.ThrowIfNotFound(null, "test", "searchCriteria")
             );
         }
 
+        [Fact]
+        public void ThrowIfNull_Throws_ArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>("myVar", () => 
+                ErrorUtil.ThrowIfNull(null, "myVar"));
+        }
     }
 }
