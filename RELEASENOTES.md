@@ -1,17 +1,18 @@
 # TfsCmdlets Release Notes
 
-## Version 2.1.0 (_13/Aug/2021_)
+## Version 2.1.1 (_08/Sep/2021_)
 
-On the user-facing front, this release adds cmdlets to enable/disable Git repositories.
+This release fixes a regression in New-TfsArea and New-TfsIteration, that stopped working due to a mishandling of path strings.
 
-But another big change is a refactoring of the project structure to simplify the codebase. Now, instead of three projects (TfsCmdlets.Common, TfsCmdlets.PSDesktop, and TfsCmdlets.PSCore), there is only one project (TfsCmdlets), which leverages .NET SDK multi-targeting support to achieve what previously required separate projects for each target framework. This change will speed up the development process and make it easier to add new cmdlets in the future.
+## Fixes
 
-## Improvements
-
-- **Enable-TfsGitRepository and Disable-TfsGitRepository**: Adds cmdlets to enable/disable Git repositories. When a repository is disabled it cannot be accessed (including clones, pulls, pushes, builds, pull requests etc) but remains discoverable, with a warning message stating it is disabled. (fixes [#131](https://github.com/igoravl/TfsCmdlets/issues/131))
-------------------------
+- Fixes error "`Parent node '\' does not exist. Check the path or use -Force the create any missing parent nodes`" when creating a new area or iteration.
 
 ## Previous Versions
+
+### Version 2.1.0 (_13/Aug/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.1.0.md).
 
 ### Version 2.0.1 (_02/Aug/2021_)
 

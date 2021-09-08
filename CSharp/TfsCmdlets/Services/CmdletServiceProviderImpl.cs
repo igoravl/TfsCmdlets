@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Cmdlets.Team;
+using TfsCmdlets.Extensions;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
@@ -14,10 +16,7 @@ namespace TfsCmdlets.Services
         private readonly Dictionary<Type, Func<ICmdletServiceProvider, CmdletBase, object, IService>> _factories =
             new Dictionary<Type, Func<ICmdletServiceProvider, CmdletBase, object, IService>>();
 
-        internal CmdletServiceProviderImpl()
-        {
-            RegisterFactories();
-        }
+        internal CmdletServiceProviderImpl() => RegisterFactories();
 
         public T GetService<T>(CmdletBase CmdletBase, object parameters = null) where T : IService
         {
@@ -41,17 +40,17 @@ namespace TfsCmdlets.Services
             }
 
             var dataService = ((IDataService<TObj>)_factories[serviceType](this, CmdletBase, overriddenParameters));
+
             return dataService;
         }
 
         public Models.Connection GetServer(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = ClientScope.Server
-            };
+            var parms = ParameterDictionary.From(parameters, new {
+                ConnectionType = ClientScope.Server
+            });
 
-            var srv = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
+            var srv = GetDataService<Models.Connection>(cmdlet, parms).GetItem();
 
             if (srv == null)
             {
@@ -63,10 +62,8 @@ namespace TfsCmdlets.Services
 
         public Models.Connection GetCollection(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["ConnectionType"] = ClientScope.Collection
-            };
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["ConnectionType"] = ClientScope.Collection;
 
             var tpc = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
 
@@ -82,10 +79,8 @@ namespace TfsCmdlets.Services
         {
             var tpc = GetCollection(cmdlet, parameters);
 
-            var pd = new ParameterDictionary(parameters)
-            {
-                ["Collection"] = tpc
-            };
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["Collection"] = tpc;
 
             var tp = GetDataService<WebApiTeamProject>(cmdlet, pd).GetItem();
 
@@ -99,9 +94,9 @@ namespace TfsCmdlets.Services
 
         public (Models.Connection, WebApiTeamProject, WebApiTeam) GetCollectionProjectAndTeam(CmdletBase cmdlet, ParameterDictionary parameters = null)
         {
-            var parms = new ParameterDictionary(cmdlet, parameters);
+            var parms = ParameterDictionary.From(cmdlet, parameters);
 
-            if(parms.Get<object>("Team") is WebApiTeam t)
+            if (parms.Get<object>("Team") is WebApiTeam t)
             {
                 parms["Project"] = t.ProjectId;
             }
@@ -120,6 +115,22 @@ namespace TfsCmdlets.Services
 
             return (tpc, tp, team);
         }
+
+        public TClient GetClient<TClient>(CmdletBase cmdlet, ClientScope scope = ClientScope.Collection, ParameterDictionary parameters = null) where TClient : VssHttpClientBase
+        {
+            var pd = ParameterDictionary.From(cmdlet, parameters);
+            pd["ConnectionType"] = scope;
+
+            var conn = GetDataService<Models.Connection>(cmdlet, pd).GetItem();
+
+            if (conn == null)
+            {
+                throw new ArgumentException($"No TFS connection information available. Either supply a valid -{scope} argument or use one of the Connect-Tfs* cmdlets prior to invoking this cmdlet.");
+            }
+
+            return conn.GetClient<TClient>();
+        }
+
 
         private void RegisterFactories()
         {
@@ -144,7 +155,7 @@ namespace TfsCmdlets.Services
                                 throw new Exception($"Error instantiating {type.FullName}");
 
                             svc.Provider = prv;
-                            svc.Parameters = new ParameterDictionary(overriddenParameters, ctx);
+                            svc.Parameters = ParameterDictionary.From(ctx, overriddenParameters);
                             svc.Cmdlet = ctx;
                             return svc;
 

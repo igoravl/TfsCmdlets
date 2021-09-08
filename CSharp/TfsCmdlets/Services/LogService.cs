@@ -53,7 +53,7 @@ namespace TfsCmdlets.Services
         {
             if (!Cmdlet.IsVerbose) return;
 
-            var parms = new ParameterDictionary(Cmdlet);
+            var parms = ParameterDictionary.From(Cmdlet);
 
             if (parms.ContainsKey("Password") && parms["Password"] != null) parms["Password"] = "***";
 

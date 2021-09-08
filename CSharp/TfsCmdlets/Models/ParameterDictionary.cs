@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -12,10 +13,41 @@ namespace TfsCmdlets.Cmdlets
     /// </summary>
     public class ParameterDictionary : Dictionary<string, object>
     {
+        #region Factory methods
+        
+        /// <summary>
+        /// Creates a new instance of the <see cref="ParameterDictionary"/> class from the specified parameter collection.
+        /// </summary>
+        public static ParameterDictionary From(object data)
+        {
+            switch (data)
+            {
+                case ParameterDictionary pd: return pd;
+                case object o: return new ParameterDictionary(o);
+                default: return new ParameterDictionary();
+            }
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="ParameterDictionary"/> class from the specified parameter collection, optionally overriding its values.
+        /// </summary>
+        public static ParameterDictionary From(object data, object overridingParameters)
+        {
+            switch (data)
+            {
+                case null when overridingParameters == null: throw new ArgumentNullException(nameof(data));
+                case null: return new ParameterDictionary(overridingParameters);
+                case ParameterDictionary pd when overridingParameters == null: return pd;
+                default: return new ParameterDictionary(data, overridingParameters);
+            }
+        }
+
+        #endregion
+
         /// <summary>
         /// Creates an empty dictionary
         /// </summary>
-        public ParameterDictionary()
+        private ParameterDictionary()
             : base(StringComparer.OrdinalIgnoreCase)
         {
         }
@@ -23,36 +55,42 @@ namespace TfsCmdlets.Cmdlets
         /// <summary>
         /// Creates a new dictionary, copying the properties of supplied object
         /// </summary>
-        public ParameterDictionary(object original)
+        private ParameterDictionary(object original)
             : this()
         {
-            switch(original)
+            switch (original)
             {
                 case null: return;
-                case ParameterDictionary pd: {
-                    pd.ForEach(kvp=>Add(kvp.Key, kvp.Value));
-                    break;
-                }
-                case Cmdlet cmdlet: {
-                    cmdlet.GetType()
-                        .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                        .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any())
-                        .ForEach(pi =>
-                            Add(pi.Name,
-                                pi.PropertyType == typeof(SwitchParameter) ?
-                                    ((SwitchParameter)pi.GetValue(cmdlet)).ToBool() :
-                                    pi.GetValue(cmdlet)));
-
-                    if (cmdlet is PSCmdlet psCmdlet)
+                case ParameterDictionary pd:
                     {
-                        Add("ParameterSetName", psCmdlet.ParameterSetName);
+                        pd.ForEach(kvp => Add(kvp.Key, kvp.Value));
+                        break;
                     }
-                    break;
-                }
-                default: {
-                    original.GetType().GetProperties(BindingFlags.Instance|BindingFlags.Public).ForEach(prop=>Add(prop.Name, prop.GetValue(original)));
-                    break;
-                }
+                case Cmdlet cmdlet:
+                    {
+                        cmdlet.GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                            .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any())
+                            .ForEach(pi =>
+                                Add(pi.Name,
+                                    pi.PropertyType == typeof(SwitchParameter) ?
+                                        ((SwitchParameter)pi.GetValue(cmdlet)).ToBool() :
+                                        pi.GetValue(cmdlet)));
+
+                        if (cmdlet is PSCmdlet psCmdlet)
+                        {
+                            Add("ParameterSetName", psCmdlet.ParameterSetName);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        original.GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .ForEach(prop => 
+                                Add(prop.Name, prop.GetValue(original)));
+                        break;
+                    }
             }
         }
 
@@ -60,11 +98,11 @@ namespace TfsCmdlets.Cmdlets
         /// Creates a new dictionary, copying the properties of supplied object and merging it
         /// with another. 
         /// </summary>
-        /// <see cref="ParameterDictionary.Merge(ParameterDictionary)"/>
-        public ParameterDictionary(object original, object mergeWith)
+        /// <see cref="ParameterDictionary.OverrideWith(IDictionary{string, object})"/>
+        private ParameterDictionary(object original, object mergeWith)
             : this(original)
         {
-            Merge(new ParameterDictionary(mergeWith));
+            OverrideWith(ParameterDictionary.From(mergeWith));
         }
 
         /// <summary>
@@ -86,11 +124,23 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
-        /// Merges this instance with another one. Only parameters present in the other collection
-        /// that are also missing from this one are merged, i.e conflicting properties are skipped.
+        /// Overrides this instance with another one. Existing properties are overwritten.
         /// </summary>
-        public void Merge(ParameterDictionary other)
+        public void OverrideWith(IDictionary<string,object> other)
         {
+            if (other == null || other.Count == 0) return;
+
+            foreach (var kvp in other)
+            {
+                this[kvp.Key] = kvp.Value;
+            }
+        }
+
+        /// <summary>
+        /// Merges this instance with another one. Existing properties are skipped.
+        /// </summary>
+        public void MergeWith(IDictionary<string,object> other)
+       {
             if (other == null || other.Count == 0) return;
 
             foreach (var kvp in other.Where(kvp => !ContainsKey(kvp.Key)))

@@ -67,8 +67,8 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
                     this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
 
                     var path = $@"{f.Path.TrimEnd('\\')}\**";
-                    var subFolders = GetItems<WebApiFolder>(new ParameterDictionary(){
-                        ["Folder"] = path
+                    var subFolders = GetItems<WebApiFolder>(new {
+                        Folder = path
                     }).ToList();
 
                     if(subFolders.Count > 0)
