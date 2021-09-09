@@ -124,20 +124,29 @@ jobs:
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
           | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
      
+      - name: Clone wingets-pkgs repository
+        shell: bash
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        run: |
+          git config --local user.email "igoravl@gmail.com"
+          git config --local user.name "Igor Abade"
+          git clone --single-branch --branch "main" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget_pkgs.git"
+
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: msi
+          name: winget
+          path: winget-pkgs
       
-      - name: Pushes to wingets-pkgs repository
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source-directory: 'winget'
-          destination-repository-name: 'winget-pkgs'
-          user-email: igoravl@gmail.com
-          target-branch: main
+      - name: Push to wingets-pkgs repository
+        shell: bash
+        run: |
+          cd winget-pkgs
+          git add manifests/i/Igoravl/TfsCmdlets/*
+          git commit -m "Release ${{ env.BUILD_NAME }}"
+          git push origin main
+
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
