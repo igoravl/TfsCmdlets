@@ -129,6 +129,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
         run: |
           git clone --single-branch --branch "master" --depth 1 "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
+          git checkout -b "Release_${{ env.BUILD_NAME }}"
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -142,7 +143,7 @@ jobs:
           git config --local user.name "Igor Abade"
           git add manifests/i/Igoravl/TfsCmdlets/*
           git commit -m "Release ${{ env.BUILD_NAME }}"
-          git push origin master
+          git push --set-upstream origin/"Release_${{ env.BUILD_NAME }}"
 
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
