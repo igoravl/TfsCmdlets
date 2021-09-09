@@ -129,8 +129,6 @@ jobs:
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         run: |
-          git config --local user.email "igoravl@gmail.com"
-          git config --local user.name "Igor Abade"
           git clone --single-branch --branch "main" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget-pkgs.git"
 
       - name: Download artifact
@@ -143,6 +141,8 @@ jobs:
         shell: bash
         run: |
           cd winget-pkgs
+          git config --local user.email "igoravl@gmail.com"
+          git config --local user.name "Igor Abade"
           git add manifests/i/Igoravl/TfsCmdlets/*
           git commit -m "Release ${{ env.BUILD_NAME }}"
           git push origin main
