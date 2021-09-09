@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Management.Automation;
 using TfsCmdlets.Services;
 
@@ -7,9 +8,9 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Deletes one or more Global Lists.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class RemoveGlobalList : CmdletBase
+    public class RemoveGlobalList : RemoveCmdletBase<Models.GlobalList>
     {
         /// <summary>
         /// Specifies the name of global list to be deleted. Wildcards are supported.
@@ -20,28 +21,33 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         public string GlobalList { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
+        /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter()]
-        public object Collection { get; set; }
+        public SwitchParameter Force { get; set; }
+    }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+    partial class GlobalListDataService
+    {
+        protected override void DoRemoveItem()
         {
-            var list = GetItem<Models.GlobalList>();
+            var tpc = GetCollection();
+            var force = GetParameter<bool>(nameof(RemoveGlobalList.Force));
 
-            if (list == null)
+            var listsToRemove = new List<string>();
+
+            foreach (var l in GetItems<Models.GlobalList>())
             {
-                throw new ArgumentException($"Invalid or non-existent global list '{GlobalList}'");
+                if (!ShouldProcess($"Team Project Collection '{tpc.DisplayName}'", $"Delete global list '{l.Name}'")) continue;
+                if (!force && !ShouldContinue($"Are you sure you want to delete global list '{l.Name}'?")) continue;
+
+                listsToRemove.Add(l.Name);
             }
 
-            var tpc = GetCollection();
+            if (listsToRemove.Count == 0) return;
 
-            if (!ShouldProcess($"Team Project Collection '{tpc.DisplayName}'", $"Delete global list '{list.Name}'")) return;
-
-            GetService<IGlobalListService>().Remove(new[]{list.Name});
+            var svc = GetService<IGlobalListService>();
+            svc.Remove(listsToRemove);
         }
     }
 }

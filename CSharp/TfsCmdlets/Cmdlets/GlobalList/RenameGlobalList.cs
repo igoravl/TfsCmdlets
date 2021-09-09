@@ -9,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class RenameGlobalList : CmdletBase
+    public class RenameGlobalList : RenameCmdletBase<Models.GlobalList>
     {
         /// <summary>
         /// Specifies the name of the global lsit to be renamed.
@@ -17,61 +17,40 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("Name")]
         public string GlobalList { get; set; }
+    }
 
-        /// <summary>
-        /// HELP_PARAM_NEWNAME
-        /// </summary>
-        [Parameter(Position = 1, Mandatory = true)]
-        public string NewName { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+    partial class GlobalListDataService
+    {
+        protected override Models.GlobalList DoRenameItem()
         {
             var list = GetItem<Models.GlobalList>();
-
-            if(list == null)
-            {
-                throw new ArgumentException($"Invalid or non-existent global list [{GlobalList}]");
-            }
-
+            var newName = GetParameter<string>(nameof(RenameGlobalList.NewName));
             var tpc = GetCollection();
 
-            if(!ShouldProcess($"Team Project Collection [{tpc.DisplayName}]", $"Rename global list [{list.Name}] to [{NewName}]")) return;
+            if (!ShouldProcess(tpc, $"Rename global list [{list.Name}] to [{newName}]")) return null;
 
             var svc = GetService<IGlobalListService>();
 
             try
             {
-
                 // Import new (renamed) list
-                svc.Import(new Models.GlobalList(NewName, list.Items));
+                svc.Import(new Models.GlobalList(newName, list.Items));
 
                 // Remove old list
-                svc.Remove(new[]{list.Name});
+                svc.Remove(new[] { list.Name });
             }
             catch
             {
-                if((GetItem<Models.GlobalList>(new {GlobalList = NewName}) != null) &&
+                if ((GetItem<Models.GlobalList>(new { GlobalList = newName }) != null) &&
                     (GetItem<Models.GlobalList>() != null))
                 {
-                    svc.Remove(new[]{NewName});
+                    svc.Remove(new[] { newName });
                 }
 
                 throw;
             }
-
-            if(Passthru)
-            {
-                WriteObject(list);
-            }
+            
+            return list;
         }
     }
 }
