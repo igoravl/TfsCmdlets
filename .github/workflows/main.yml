@@ -123,20 +123,17 @@ jobs:
           # Upload assets
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
           | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
-     
       - name: Clone winget-pkgs repository
         shell: bash
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         run: |
-          git clone --single-branch --branch "main" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget-pkgs.git"
-
+          git clone --single-branch --branch "master" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget-pkgs.git"
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
           name: winget
           path: winget-pkgs
-      
       - name: Push to wingets-pkgs repository
         shell: bash
         run: |
@@ -145,7 +142,7 @@ jobs:
           git config --local user.name "Igor Abade"
           git add manifests/i/Igoravl/TfsCmdlets/*
           git commit -m "Release ${{ env.BUILD_NAME }}"
-          git push origin main
+          git push origin master
 
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
