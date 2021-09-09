@@ -275,8 +275,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
         run: |
-          git clone --single-branch --branch "master" --depth 1 "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
+          git clone --single-branch --branch "master" "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
           cd winget-pkgs
+          git fetch upstream
           git checkout -b "TfsCmdlets_{{ env.BUILD_NAME }}"
       - name: Download artifact
         uses: actions/download-artifact@v2
