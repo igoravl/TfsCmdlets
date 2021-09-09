@@ -43,9 +43,13 @@ Properties {
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
+    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $ThreePartVersion = $VersionMetadata.MajorMinorPatch
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
+
+    # WinGet packaging
+    $WinGetProjectDir = Join-Path $WixProjectDir 'winget'
 
     # Documentation generation
     $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets'
@@ -54,7 +58,7 @@ Properties {
 Task Rebuild -Depends Clean, Build {
 }
 
-Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
 Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs {
@@ -321,7 +325,6 @@ Task PackageMsi -Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
     $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
     $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
@@ -408,6 +411,47 @@ Task PackageMsi -Depends Build {
     if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
     Copy-Item "$WixOutputPath\*.msi" -Destination $MSIDir -Force
+}
+
+Task PackageWinget -Depends PackageMsi {
+
+    Function GetMsiProperty($Path, $Property)
+    {
+        try {
+            $windowsInstaller = New-Object -ComObject 'WindowsInstaller.Installer'
+            $database = $windowsInstaller.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $windowsInstaller, @((Get-Item -Path $Path).FullName, 0))
+            $view = $database.GetType().InvokeMember('OpenView', 'InvokeMethod', $null, $database, ("SELECT Value FROM Property WHERE Property = '$Property'"))
+            $view.GetType().InvokeMember('Execute', 'InvokeMethod', $null, $view, $null)
+            $record = $view.GetType().InvokeMember('Fetch', 'InvokeMethod', $null, $view, $null)
+
+            $value = $record.GetType().InvokeMember('StringData', 'GetProperty', $null, $record, 1)
+
+            $view.GetType().InvokeMember('Close', 'InvokeMethod', $null, $view, $null)
+
+            return $value
+        } 
+        catch {
+            Write-Error -Message $_.ToString()
+        }
+        finally {
+            if($windowsInstaller) {
+                [Void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($windowsInstaller)
+            }
+        }
+    }
+
+    $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
+    $WinGetOutDir = (Join-Path $OutDir 'winget')
+    $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
+    $MsiProductCode = (GetMsiProperty -Path $MsiPath -Property 'ProductCode')
+
+    New-Item -Path $WinGetOutDir -ItemType Directory -Force | Write-Verbose
+
+    foreach($f in (Get-ChildItem $WinGetProjectDir -File))
+    {
+        $outputPath = (Join-Path $WinGetOutDir $f.Name)
+        Get-Content $f.FullName -Raw | Invoke-Expression | Out-File $outputPath -Force
+    }
 }
 
 Task PackageDocs -Depends GenerateDocs {

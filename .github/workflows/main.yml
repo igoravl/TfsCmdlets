@@ -57,6 +57,11 @@ jobs:
         with:
           name: msi
           path: "out/msi/*"
+      - name: Publish WinGet
+        uses: actions/upload-artifact@v2
+        with:
+          name: msi
+          path: "out/winget/*"
       - name: Publish Docs
         uses: actions/upload-artifact@v2
         with:
@@ -256,7 +261,37 @@ jobs:
       - name: Push package
         run: |
           choco push $(ls TfsCmdlets*.nupkg) --api-key $env:CHOCO_KEY
+  
+  WinGet:
 
+    runs-on: ubuntu-latest
+      needs: [ Release ]
+      environment: winget
+      if: ${{ github.event_name != 'pull_request' }}
+      steps:
+        - name: Download artifact
+          uses: actions/download-artifact@v2
+          with:
+            name: msi
+        - name: Generate manifest
+          run: |
+            mkdir -p winget/manifests/i/Igoravl/TfsCmdlets
+            cd winget/manifests/i/Igoravl/TfsCmdlets
+            git clone https://github.com/igoravl/winget-pkgs/
+            cd winget-pkgs/manifests/i/Igoravl/TfsCmdlets
+        - name: Pushes to another repository
+          uses: cpina/github-action-push-to-another-repository@main
+          env:
+            API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+          with:
+            source-directory: 'output'
+            destination-github-username: 'cpina'
+            destination-repository-name: 'pandoc-test-output'
+            user-email: carles3@pina.cat
+            target-branch: main
+        
+
+  
   Announcement:
 
     runs-on: ubuntu-latest
