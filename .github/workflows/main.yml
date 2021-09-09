@@ -124,14 +124,14 @@ jobs:
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
           | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
      
-      - name: Clone wingets-pkgs repository
+      - name: Clone winget-pkgs repository
         shell: bash
         env:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         run: |
           git config --local user.email "igoravl@gmail.com"
           git config --local user.name "Igor Abade"
-          git clone --single-branch --branch "main" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget_pkgs.git"
+          git clone --single-branch --branch "main" --depth 1 "https://igoravl:$API_TOKEN_GITHUB@github.com/igoravl/winget-pkgs.git"
 
       - name: Download artifact
         uses: actions/download-artifact@v2
