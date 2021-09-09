@@ -84,67 +84,45 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
-      # - name: Download all artifacts
-      #   uses: actions/download-artifact@v2
-      # - name: Extract release notes
-      #   id: extract_release_notes
-      #   shell: pwsh
-      #   run: |
-      #     $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
-      #     echo $fileName
-      #     $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
-      #     echo $releaseNotes
-      #     Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
-      # - name: Create Draft Release
-      #   id: create_release
-      #   shell: pwsh
-      #   run: |
-      #     # Install module
-      #     Install-Module PowerShellForGitHub -Scope CurrentUser -Force
-
-      #     # Connect to GitHub
-      #     Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
-
-      #     $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
-      #       (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
-      #     )
-      #     Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
-
-      #     # Remove stale draft releases
-      #     # TODO: Limit scope to this pull request (filter by PR name)
-      #     Get-GitHubRelease | Where-Object Draft -eq $true | Remove-GitHubRelease -Force
-
-      #     # Create new draft releases
-      #     $release = New-GitHubRelease -Tag 'v${{ env.BUILD_NAME }}' -Name 'Release ${{ env.BUILD_NAME }}' `
-      #        -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -commitish '${{ github.sha }}' -Body: @'
-      #     ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
-      #     '@
-
-      #     # Upload assets
-      #     @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
-      #     | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
-      - name: Clone winget-pkgs repository
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
-        run: |
-          git clone --single-branch --branch "master" --depth 1 "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
-          cd winget-pkgs
-          git checkout -b "Release_${{ env.BUILD_NAME }}"
-      - name: Download artifact
+      - name: Download all artifacts
         uses: actions/download-artifact@v2
-        with:
-          name: winget
-          path: winget-pkgs
-      - name: Push to wingets-pkgs repository
-        shell: bash
+      - name: Extract release notes
+        id: extract_release_notes
+        shell: pwsh
         run: |
-          cd winget-pkgs
-          git config --local user.email "igoravl@gmail.com"
-          git config --local user.name "Igor Abade"
-          git add manifests/i/Igoravl/TfsCmdlets/*
-          git commit -m "Release ${{ env.BUILD_NAME }}"
-          git push -u origin Release_${{ env.BUILD_NAME }}
+          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
+          echo $fileName
+          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
+          echo $releaseNotes
+          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
+      - name: Create Draft Release
+        id: create_release
+        shell: pwsh
+        run: |
+          # Install module
+          Install-Module PowerShellForGitHub -Scope CurrentUser -Force
+
+          # Connect to GitHub
+          Set-GitHubConfiguration -SuppressTelemetryReminder -DefaultOwnerName igoravl -DefaultRepository tfscmdlets
+
+          $ghCreds = New-Object System.Management.Automation.PSCredential @( "pat",
+            (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)
+          )
+          Set-GitHubAuthentication -Credential $ghCreds -SessionOnly 
+
+          # Remove stale draft releases
+          # TODO: Limit scope to this pull request (filter by PR name)
+          Get-GitHubRelease | Where-Object Draft -eq $true | Remove-GitHubRelease -Force
+
+          # Create new draft releases
+          $release = New-GitHubRelease -Tag 'v${{ env.BUILD_NAME }}' -Name 'Release ${{ env.BUILD_NAME }}' `
+             -Draft -PreRelease:($env:BUILD_NAME -like '*-*') -commitish '${{ github.sha }}' -Body: @'
+          ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
+          '@
+
+          # Upload assets
+          @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
+          | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
 
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
@@ -292,26 +270,28 @@ jobs:
     environment: winget
     if: ${{ github.event_name != 'pull_request' }}
     steps:
+      - name: Clone winget-pkgs repository
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+        run: |
+          git clone --single-branch --branch "master" --depth 1 "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
+          cd winget-pkgs
+          git checkout -b "TfsCmdlets_{{ env.BUILD_NAME }}"
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: msi
-      - name: Generate manifest
+          name: winget
+          path: winget-pkgs
+      - name: Push to wingets-pkgs repository
+        shell: bash
         run: |
-          mkdir -p winget/manifests/i/Igoravl/TfsCmdlets
-          cd winget/manifests/i/Igoravl/TfsCmdlets
-          git clone https://github.com/igoravl/winget-pkgs/
-          cd winget-pkgs/manifests/i/Igoravl/TfsCmdlets
-      - name: Pushes to another repository
-        uses: cpina/github-action-push-to-another-repository@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source-directory: 'output'
-          destination-github-username: 'cpina'
-          destination-repository-name: 'pandoc-test-output'
-          user-email: carles3@pina.cat
-          target-branch: main
+          cd winget-pkgs
+          git config --local user.email "igoravl@gmail.com"
+          git config --local user.name "Igor Abade"
+          git add manifests/i/Igoravl/TfsCmdlets/*
+          git commit -m "Release ${{ env.BUILD_NAME }}"
+          git push -u origin TfsCmdlets_{{ env.BUILD_NAME }}
   
   Announcement:
 
