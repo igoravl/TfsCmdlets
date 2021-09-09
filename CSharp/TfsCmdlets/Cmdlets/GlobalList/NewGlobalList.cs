@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
 
             if (!ShouldProcess(tpc, $"{(hasList? "Overwrite": "Create")} global list [{name}]")) return null;
 
-            if (!force && hasList) throw new Exception($"Global List '{name}' already exist. To overwrite an existing list, use the -Force switch.");
+            if (!force && hasList) throw new Exception($"Global List '{name}' already exists. To overwrite an existing list, use the -Force switch.");
 
             GetService<IGlobalListService>().Import(newList);
 
