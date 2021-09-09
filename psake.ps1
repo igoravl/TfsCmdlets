@@ -92,6 +92,7 @@ Task BuildLibrary {
     foreach($tfkey in $TargetFrameworks.Keys)
     {
         $tf = $TargetFrameworks[$tfkey]
+        Remove-Item $OutDir/MSBuild.log
 
         Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
     }
