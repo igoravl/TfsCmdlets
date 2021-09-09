@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: winget
-          path: "out/winget/*"
+          path: "out/winget/**"
       - name: Publish Docs
         uses: actions/upload-artifact@v2
         with:
@@ -123,6 +123,21 @@ jobs:
           # Upload assets
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
           | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
+     
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: msi
+      
+      - name: Pushes to wingets-pkgs repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
+        with:
+          source-directory: 'winget'
+          destination-repository-name: 'winget-pkgs'
+          user-email: igoravl@gmail.com
+          target-branch: main
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
