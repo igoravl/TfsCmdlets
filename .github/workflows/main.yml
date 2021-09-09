@@ -144,7 +144,7 @@ jobs:
           git config --local user.name "Igor Abade"
           git add manifests/i/Igoravl/TfsCmdlets/*
           git commit -m "Release ${{ env.BUILD_NAME }}"
-          git push --set-upstream origin/Release_${{ env.BUILD_NAME }}
+          git push -u origin Release_${{ env.BUILD_NAME }}
 
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
