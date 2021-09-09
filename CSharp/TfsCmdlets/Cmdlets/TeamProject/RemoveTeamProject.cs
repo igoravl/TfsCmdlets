@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 if (!force && !ShouldContinue($"Are you sure you want to delete team project '{tp.Name}'?")) continue;
 
-                if (hard && !force && !ShouldContinue("You are using the -Hard switch. The team project deletion is IRREVERSIBLE " +
+                if (hard && !ShouldContinue("You are using the -Hard switch. The team project deletion is IRREVERSIBLE " +
                     $"and may cause DATA LOSS. Are you sure you want to proceed with deleting team project '{tp.Name}'")) continue;
 
                 var method = hard ? "Hard" : "Soft";
