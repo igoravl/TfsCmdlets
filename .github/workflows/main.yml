@@ -126,7 +126,7 @@ jobs:
       - name: Clone winget-pkgs repository
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
         run: |
           git clone --single-branch --branch "master" --depth 1 "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
       - name: Download artifact
