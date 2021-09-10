@@ -3,7 +3,7 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
 {
-    internal interface IGlobalListService : IService
+    public interface IGlobalListService : IService
     {
         void Import(GlobalList list);
 

@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     /// <summary>
     /// Deletes one or more build/pipeline definition folders.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsBuildDefinitionFolder", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsBuildDefinitionFolder", SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiFolder))]
     public class RemoveBuildDefinitionFolder : CmdletBase
     {

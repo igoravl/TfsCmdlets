@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsCommon.Get, "TfsGlobalList")]
     [OutputType(typeof(Models.GlobalList))]
     [DesktopOnly]
-    public class GetGlobalList : CmdletBase
+    public class GetGlobalList : GetCmdletBase<Models.GlobalList>
     {
         /// <summary>
         /// Specifies the name of the global list. Wildcards are supported. 
@@ -20,24 +20,10 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         [Alias("Name")]
         [SupportsWildcards()]
         public string GlobalList { get; set; } = "*";
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            WriteItems<Models.GlobalList>();
-        }
     }
 
     [Exports(typeof(Models.GlobalList))]
-    internal class GlobalListDataService : BaseDataService<Models.GlobalList>
+    internal partial class GlobalListDataService : BaseDataService<Models.GlobalList>
     {
         protected override IEnumerable<Models.GlobalList> DoGetItems()
         {

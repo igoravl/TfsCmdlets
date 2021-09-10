@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// <summary>
     /// Deletes one or more Git repositories from a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true)]
     public class RemoveGitRepository : RemoveCmdletBase<GitRepository>
     {
         /// <summary>
@@ -39,8 +39,8 @@ namespace TfsCmdlets.Cmdlets.Git
 
             foreach (var r in repos)
             {
-                if (!ShouldProcess(tp, $"Delete Git repository [{r.Name}]")) continue;
-                if(!force && !ShouldContinue($"Are you sure you want to delete Git repository '{r.Name}'?")) continue;
+                if (!ShouldProcess(tp, $"Delete Git repository '{r.Name}'")) continue;
+                if (!force && !ShouldContinue($"Are you sure you want to delete Git repository '{r.Name}'?")) continue;
 
                 client.DeleteRepositoryAsync(r.Id).Wait();
             }

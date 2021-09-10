@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Deletes a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTeam", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeam", SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTeam))]
     public class RemoveTeam : RemoveCmdletBase<Models.Team>
     {

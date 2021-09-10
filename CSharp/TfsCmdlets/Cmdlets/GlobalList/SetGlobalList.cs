@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Management.Automation;
 
@@ -6,9 +7,9 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Changes the contents of a Global List.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsGlobalList", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "TfsGlobalList", SupportsShouldProcess = true)]
     [DesktopOnly]
-    public class SetGlobalList : CmdletBase
+    public class SetGlobalList : SetCmdletBase<Models.GlobalList>
     {
         /// <summary>
         /// Specifies the name of the global list to be changed.
@@ -21,24 +22,27 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Specifies a list of items to be added to the global list.
         /// </summary>
-        [Parameter(ParameterSetName = "Edit list items")]
+        [Parameter()]
         public IEnumerable<string> Add { get; set; }
 
         /// <summary>
         /// Specifies a list of items to be removed from the global list.
         /// </summary>
-        [Parameter(ParameterSetName = "Edit list items")]
+        [Parameter()]
         public IEnumerable<string> Remove { get; set; }
 
         /// <summary>
         /// Creates a new list if the specified one does not exist.
         /// </summary>
-        [Parameter(ParameterSetName = "Edit list items")]
+        [Parameter()]
         public SwitchParameter Force { get; set; }
+    }
 
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        public object Collection { get; set; }
+    partial class GlobalListDataService
+    {
+        protected override Models.GlobalList DoSetItem()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

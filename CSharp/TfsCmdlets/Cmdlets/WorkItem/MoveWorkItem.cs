@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// <summary>
     /// Moves a work item to a different team project in the same collection.
     /// </summary>
-    [Cmdlet(VerbsCommon.Move, "TfsWorkItem", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Move, "TfsWorkItem", SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiWorkItem))]
     public class MoveWorkItem : CmdletBase
     {

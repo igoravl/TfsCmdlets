@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Deletes one or more Work Item Areas from a given Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsArea", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsArea", SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
     public class RemoveArea : RemoveClassificationNode
     {
@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Deletes one or more Iterations from a given Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsIteration", ConfirmImpact = ConfirmImpact.High, SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "TfsIteration", SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
     public class RemoveIteration : RemoveClassificationNode
     {

@@ -8,10 +8,10 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Creates a new Global List.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true)]
     [OutputType(typeof(PSCustomObject))]
     [DesktopOnly]
-    public class NewGlobalList : CmdletBase
+    public class NewGlobalList : NewCmdletBase<Models.GlobalList>
     {
         /// <summary>
         /// Specifies the name of the new global list.
@@ -31,42 +31,28 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
+    }
 
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+    partial class GlobalListDataService
+{
+        protected override Models.GlobalList DoNewItem()
         {
-            var newList = new Models.GlobalList(GlobalList, Items).ToXml();
-            var existingList = GetItem<Models.GlobalList>();
+            var name = GetParameter<string>(nameof(NewGlobalList.GlobalList));
+            var items = GetParameter<IEnumerable<string>>(nameof(NewGlobalList.Items));
+            var force = GetParameter<bool>(nameof(NewGlobalList.Force));
+
+            var newList = new Models.GlobalList(name, items).ToXml();
+            var hasList = TestItem<Models.GlobalList>();
+
             var tpc = GetCollection();
 
-            if (!ShouldProcess($"Team Project Collection [{tpc.DisplayName}]", 
-                $"{(existingList != null? "Overwrite": "Create")} global list [{GlobalList}]")) return;
+            if (!ShouldProcess(tpc, $"{(hasList? "Overwrite": "Create")} global list [{name}]")) return null;
 
-            if (!Force && existingList != null)
-            {
-                throw new Exception($"Global List '{GlobalList}' already exist. To overwrite an existing list, use the -Force switch.");
-            }
+            if (!force && hasList) throw new Exception($"Global List '{name}' already exists. To overwrite an existing list, use the -Force switch.");
 
             GetService<IGlobalListService>().Import(newList);
 
-            if(Passthru)
-            {
-                WriteObject(newList);
-            }
+            return newList;
         }
     }
 }

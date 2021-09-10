@@ -1,3 +1,4 @@
+using System;
 using System.Management.Automation;
 using System.Xml;
 using System.Xml.Linq;
@@ -67,6 +68,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         /// <inheritdoc/>
         protected override void DoProcessRecord()
         {
+            if (ParameterSetName.Equals("Export to file"))
+            {
+                throw new NotImplementedException("Export to file is not implemented");
+            }
+
             var (tpc, tp) = GetCollectionAndProject();
             var types = GetItems<WebApiWorkItemType>();
 

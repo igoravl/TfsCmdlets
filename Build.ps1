@@ -186,6 +186,15 @@ finally
 }
 
 if (-not $psake.build_success)
-{ 
+{
+    $msbuildLog = (Join-Path $RootProjectDir 'out/MSBuild.log')
+
+    if (Test-Path $msbuildLog)
+    {
+        Write-Host '========== MSBUILD LOG ===========' -ForegroundColor Red
+        Get-Content $msbuildLog | Write-Host -ForegroundColor Red
+        Write-Host '======== END MSBUILD LOG =========' -ForegroundColor Red
+    }
+
     throw "Build failed. See log above for details."
 }

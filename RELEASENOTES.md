@@ -1,14 +1,26 @@
 # TfsCmdlets Release Notes
 
-## Version 2.1.1 (_08/Sep/2021_)
+## Version 2.1.2 (_10/Sep/2021_)
 
-This release fixes a regression in New-TfsArea and New-TfsIteration, that stopped working due to a mishandling of path strings.
+This release fixes [issue #124](https://github.com/igoravl/TfsCmdlets/issues/124), plus some small refactorings/housekeeping.
 
 ## Fixes
 
-- Fixes error "`Parent node '\' does not exist. Check the path or use -Force the create any missing parent nodes`" when creating a new area or iteration.
+- **Double confirmation in Remove-TfsGitRepository (and others)**: Many cmdlets (all Remove-* ones, and a few others) used to have a ConfirmImpact level set to High. At the same time, some of those also have a Force/ShouldContinue() logic. This meant that the user would be asked for confirmation twice - once when calling ShouldProcess(), and again when calling ShouldContinue(). Now, all cmdlets have their ConfirmImpact set to Medium, and those with potentially destructive actions have a ShouldContinue() call, that can be supressed by the user with the Force parameter.
+
+## Misc
+
+- Adds support to automatic WinGet manifest update and PR creation;
+- Updates icon URL in the Nuget/Chocolatey manifest to a higher-res version;
+- Adds list of exported cmdlets to the module manifest (psd1)
+
+-----------------------
 
 ## Previous Versions
+
+### Version 2.1.1 (_08/Sep/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.1.1.md).
 
 ### Version 2.1.0 (_13/Aug/2021_)
 

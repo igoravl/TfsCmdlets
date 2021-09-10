@@ -35,7 +35,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         public object InputObject { get; set; }
 
         /// <summary>
-        /// Allows the cmdlet to import a global list that already exists.
+        /// Allows the cmdlet to overwrite a global list that already exists.
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }

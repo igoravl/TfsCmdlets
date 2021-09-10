@@ -1,0 +1,26 @@
+@"
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.0.0.schema.json
+
+PackageIdentifier: Igoravl.TfsCmdlets
+PackageVersion: $FourPartVersion
+MinimumOSVersion: 10.0.0.0
+InstallModes:
+- interactive
+- silent
+- silentWithProgress
+Installers:
+- InstallerLocale: en-US
+  Architecture: x64
+  InstallerType: msi
+  Scope: user
+  InstallerUrl: https://github.com/igoravl/TfsCmdlets/releases/download/v$($BuildName.Replace('+', '%2B'))/$ModuleName-$($VersionMetadata.NugetVersion).msi
+  InstallerSha256: $MsiHash
+  InstallerSwitches:
+    Silent: /qn
+    SilentWithProgress: /qb
+  ProductCode: '$MsiProductCode'
+  UpgradeBehavior: install
+ManifestType: installer
+ManifestVersion: 1.0.0
+
+"@

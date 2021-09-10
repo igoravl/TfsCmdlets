@@ -43,9 +43,13 @@ Properties {
     $ChocolateySpecPath = Join-Path $ChocolateyDir "TfsCmdlets.nuspec"
 
     # Wix packaging
+    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $ThreePartVersion = $VersionMetadata.MajorMinorPatch
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
+
+    # WinGet packaging
+    $WinGetProjectDir = Join-Path $WixProjectDir 'winget'
 
     # Documentation generation
     $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets'
@@ -54,10 +58,10 @@ Properties {
 Task Rebuild -Depends Clean, Build {
 }
 
-Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageDocs, PackageModule {
+Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest, GenerateDocs {
 }
 
 Task Test -Depends UnitTests, AllTests {
@@ -89,7 +93,9 @@ Task BuildLibrary {
     {
         $tf = $TargetFrameworks[$tfkey]
 
-        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
+        Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
+        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild_$tfkey.log }
+        Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
     }
 
     Copy-Item (Join-Path $SolutionDir "TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/') | Write-Verbose
@@ -161,11 +167,38 @@ Task GenerateFormatXml {
     Export-PsFormatXml -InputDirectory (Join-Path $PSDir '_Formats') -DestinationFile $outputFile | Write-Verbose
 }
 
+Task GenerateNestedModule {
+
+    $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.psm1')
+
+    foreach($m in (Get-ChildItem (Join-Path $PSDir '_Private') -Recurse -Filter *.ps*))
+    {
+        Get-Content $m.FullName -Encoding utf8 | Out-File $outputFile -Encoding utf8 -Append
+    }
+}
+
 Task UpdateModuleManifest {
 
-    # $fileList = (Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.dll | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    Function GetExportedFunctionsList {
+        $modulePath = (Join-Path $SolutionDir "TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.dll")
+        Get-Module TfsCmdlets | Remove-Module
+        Import-Module $modulePath
+        return @(
+            Get-Command -Module TfsCmdlets -ErrorAction SilentlyContinue | 
+            Where-Object { $_.Visibility -eq 'Public' } | 
+            Sort-Object -Property Name |
+            Select-Object -ExpandProperty Name)
+
+    }
+
+    Function GetFileList {
+        return (
+            Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.resources.dll | 
+            Select-Object -ExpandProperty FullName | 
+            ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
+    }
+
     # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
-    # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.deps.json') -Recurse)[0] | ConvertFrom-Json)
     $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
 
@@ -180,19 +213,14 @@ Task UpdateModuleManifest {
 
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
-        # FileList             = $fileList
+        FileList             = (GetFileList)
+        NestedModules        = @('TfsCmdlets.psm1')
         FunctionsToExport    = @()
-        CmdletsToExport      = '*-Tfs*'
+        CmdletsToExport      = (GetExportedFunctionsList)
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
-        ReleaseNotes     = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
-    }
-
-    if ($nestedModuleList)
-    {
-        # Won't be available when building in Release
-        $manifestArgs['NestedModules'] = $nestedModuleList
+        ReleaseNotes         = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
     }
 
     Update-ModuleManifest @manifestArgs
@@ -299,7 +327,6 @@ Task PackageMsi -Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixProjectDir = Join-Path $RootProjectDir 'Setup'
     $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
     $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
     $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
@@ -386,6 +413,47 @@ Task PackageMsi -Depends Build {
     if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 
     Copy-Item "$WixOutputPath\*.msi" -Destination $MSIDir -Force
+}
+
+Task PackageWinget -Depends PackageMsi {
+
+    Function GetMsiProperty($Path, $Property)
+    {
+        try {
+            $windowsInstaller = New-Object -ComObject 'WindowsInstaller.Installer'
+            $database = $windowsInstaller.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $windowsInstaller, @((Get-Item -Path $Path).FullName, 0))
+            $view = $database.GetType().InvokeMember('OpenView', 'InvokeMethod', $null, $database, ("SELECT Value FROM Property WHERE Property = '$Property'"))
+            $view.GetType().InvokeMember('Execute', 'InvokeMethod', $null, $view, $null)
+            $record = $view.GetType().InvokeMember('Fetch', 'InvokeMethod', $null, $view, $null)
+
+            $value = $record.GetType().InvokeMember('StringData', 'GetProperty', $null, $record, 1)
+
+            $view.GetType().InvokeMember('Close', 'InvokeMethod', $null, $view, $null)
+
+            return $value
+        } 
+        catch {
+            Write-Error -Message $_.ToString()
+        }
+        finally {
+            if($windowsInstaller) {
+                [Void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($windowsInstaller)
+            }
+        }
+    }
+
+    $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
+    $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$FourPartVersion")
+    $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
+    $MsiProductCode = (GetMsiProperty -Path $MsiPath -Property 'ProductCode')
+
+    New-Item -Path $WinGetOutDir -ItemType Directory -Force | Write-Verbose
+
+    foreach($f in (Get-ChildItem $WinGetProjectDir -File))
+    {
+        $outputPath = (Join-Path $WinGetOutDir $f.Name)
+        Get-Content $f.FullName -Raw | Invoke-Expression | Out-File $outputPath -Force
+    }
 }
 
 Task PackageDocs -Depends GenerateDocs {

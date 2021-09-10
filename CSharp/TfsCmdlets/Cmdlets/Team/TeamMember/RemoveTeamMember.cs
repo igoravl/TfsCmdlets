@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// <summary>
     /// Removes a member from a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
+    [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true)]
     public class RemoveTeamMember : CmdletBase
     {
         /// <summary>

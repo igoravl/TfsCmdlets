@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Services
 {
-    internal interface ICmdletServiceProvider
+    public interface ICmdletServiceProvider
     {
         TService GetService<TService>(CmdletBase cmdlet, object parameters = null) where TService : IService;
 

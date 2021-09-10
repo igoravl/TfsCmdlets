@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Shell
 
             var promptCode = File.ReadAllText(Path.Combine(
                 MyInvocation.MyCommand.Module.ModuleBase,
-                "Private/Prompt.ps1"
+                "Prompt.ps1"
             ));
 
             this.InvokeCommand.InvokeScript(promptCode, false, PipelineResultTypes.None, null);
