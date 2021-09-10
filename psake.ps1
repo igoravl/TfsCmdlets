@@ -61,7 +61,7 @@ Task Rebuild -Depends Clean, Build {
 Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, UpdateModuleManifest, GenerateDocs {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest, GenerateDocs {
 }
 
 Task Test -Depends UnitTests, AllTests {
@@ -92,9 +92,10 @@ Task BuildLibrary {
     foreach($tfkey in $TargetFrameworks.Keys)
     {
         $tf = $TargetFrameworks[$tfkey]
-        Remove-Item $OutDir/MSBuild.log -Force -ErrorAction SilentlyContinue
 
-        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild.log }
+        Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
+        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName > $OutDir/MSBuild_$tfkey.log }
+        Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
     }
 
     Copy-Item (Join-Path $SolutionDir "TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/Microsoft.WITDataStore*.dll") (Join-Path $ModuleDir 'Lib/Desktop/') | Write-Verbose
@@ -166,10 +167,20 @@ Task GenerateFormatXml {
     Export-PsFormatXml -InputDirectory (Join-Path $PSDir '_Formats') -DestinationFile $outputFile | Write-Verbose
 }
 
+Task GenerateNestedModule {
+
+    $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.psm1')
+
+    foreach($m in (Get-ChildItem (Join-Path $PSDir '_Private') -Recurse -Filter *.ps*))
+    {
+        Get-Content $m.FullName -Encoding utf8 | Out-File $outputFile -Encoding utf8 -Append
+    }
+}
+
 Task UpdateModuleManifest {
 
     Function GetExportedFunctionsList {
-        $modulePath = "$SolutionDir/TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.dll"
+        $modulePath = (Join-Path $SolutionDir "TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.dll")
         Get-Module TfsCmdlets | Remove-Module
         Import-Module $modulePath
         return @(
@@ -185,14 +196,6 @@ Task UpdateModuleManifest {
             Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.resources.dll | 
             Select-Object -ExpandProperty FullName | 
             ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
-    }
-
-    
-    Function GetNestedModules {
-        return (
-            Get-ChildItem -Path $ModuleDir/Private -File -Recurse -Include *.psm1 | 
-            Select-Object -ExpandProperty FullName | 
-            ForEach-Object { "$($_.SubString($ModuleDir.Length+1).Replace('\', '/'))" })
     }
 
     # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
@@ -211,7 +214,7 @@ Task UpdateModuleManifest {
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
         FileList             = (GetFileList)
-        NestedModules        = (GetNestedModules)
+        NestedModules        = @('TfsCmdlets.psm1')
         FunctionsToExport    = @()
         CmdletsToExport      = (GetExportedFunctionsList)
         ModuleVersion        = $ThreePartVersion

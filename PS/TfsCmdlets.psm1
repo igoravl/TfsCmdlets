@@ -1,1 +1,2 @@
-$global:TfsCmdletsLoadSw.Stop()
+# Private functions
+
