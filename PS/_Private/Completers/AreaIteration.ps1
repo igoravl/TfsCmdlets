@@ -30,7 +30,6 @@ Register-ArgumentCompleter -ParameterName Node -Verbose -ScriptBlock {
         return Get-TfsArea -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
     }
     elseif ($commandName -like '*Iteration') {
-        # return Get-TfsIteration -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
-        return @('i1', 'i2', 'i3')
+        return Get-TfsIteration -Node "\$wordToComplete*" -Project $tp -Collection $tpc | Select-Object -ExpandProperty RelativePath | Sort-Object | _EscapeArgumentValue
     }
 }
