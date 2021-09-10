@@ -16,7 +16,7 @@ using System.IO;
 namespace TfsCmdlets.Cmdlets
 {
     /// <summary>
-    /// Abstract class from which and TfsCmdlets cmdlets derive
+    /// Abstract class from which all TfsCmdlets cmdlets derive
     /// </summary>
     public abstract class CmdletBase : PSCmdlet
     {
