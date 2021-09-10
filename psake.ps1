@@ -425,7 +425,6 @@ Task PackageWinget -Depends PackageMsi {
             $view = $database.GetType().InvokeMember('OpenView', 'InvokeMethod', $null, $database, ("SELECT Value FROM Property WHERE Property = '$Property'"))
             $view.GetType().InvokeMember('Execute', 'InvokeMethod', $null, $view, $null)
             $record = $view.GetType().InvokeMember('Fetch', 'InvokeMethod', $null, $view, $null)
-
             $value = $record.GetType().InvokeMember('StringData', 'GetProperty', $null, $record, 1)
 
             $view.GetType().InvokeMember('Close', 'InvokeMethod', $null, $view, $null)
@@ -445,7 +444,7 @@ Task PackageWinget -Depends PackageMsi {
     $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
     $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$FourPartVersion")
     $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
-    $MsiProductCode = (GetMsiProperty -Path $MsiPath -Property 'ProductCode')
+    $MsiProductCode = ((GetMsiProperty -Path $MsiPath -Property 'ProductCode') -Join '')
 
     New-Item -Path $WinGetOutDir -ItemType Directory -Force | Write-Verbose
 
