@@ -6,7 +6,7 @@
     RootModule = 'Lib/Desktop/TfsCmdlets.dll'
     GUID = 'bd4390dc-a8ad-4bce-8d69-f53ccf8e4163'
     ModuleVersion = '1.0.0.0'
-    NestedModules = @('Private/Functions.psm1', 'Private/Aliases.psm1', 'Private/ArgumentCompleters.psm1', 'Private/Admin.psm1')
+    NestedModules = @()
     PowerShellVersion = '5.1'
     DotNetFrameworkVersion = '4.7.1'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"

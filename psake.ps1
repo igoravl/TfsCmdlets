@@ -169,12 +169,9 @@ Task GenerateFormatXml {
 Task UpdateModuleManifest {
 
     Function GetExportedFunctionsList {
-
         $modulePath = "$SolutionDir/TfsCmdlets/bin/$Configuration/$($TargetFrameworks.Desktop)/TfsCmdlets.dll"
-
         Get-Module TfsCmdlets | Remove-Module
         Import-Module $modulePath
-
         return @(
             Get-Command -Module TfsCmdlets -ErrorAction SilentlyContinue | 
             Where-Object { $_.Visibility -eq 'Public' } | 
@@ -184,15 +181,21 @@ Task UpdateModuleManifest {
     }
 
     Function GetFileList {
-
         return (
             Get-ChildItem -Path $ModuleDir -File -Recurse -Exclude *.resources.dll | 
             Select-Object -ExpandProperty FullName | 
             ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     }
 
+    
+    Function GetNestedModules {
+        return (
+            Get-ChildItem -Path $ModuleDir/Private -File -Recurse -Include *.psm1 | 
+            Select-Object -ExpandProperty FullName | 
+            ForEach-Object { "$($_.SubString($ModuleDir.Length+1).Replace('\', '/'))" })
+    }
+
     # $functionList = (Get-ChildItem -Path $PSDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *-*.ps1 -Recurse } | Select-Object -ExpandProperty BaseName | Sort-Object)
-    # $nestedModuleList = (Get-ChildItem -Path $ModuleDir -Directory | ForEach-Object { Get-ChildItem $_.FullName -Include *.ps1 -Recurse } | Select-Object -ExpandProperty FullName | ForEach-Object { "$($_.SubString($ModuleDir.Length+1))" })
     $depsJson = (Get-Content -Raw -Encoding Utf8 -Path (Get-ChildItem (Join-Path $ModuleDir 'Lib/Core/TfsCmdlets.deps.json') -Recurse)[0] | ConvertFrom-Json)
     $tfsOmNugetVersion = (($depsJson.libraries | Get-Member | Where-Object Name -Like 'Microsoft.VisualStudio.Services.Client/*').Name -split '/')[1]
 
@@ -208,18 +211,13 @@ Task UpdateModuleManifest {
     $manifestArgs = @{
         Path                 = $ModuleManifestPath
         FileList             = (GetFileList)
+        NestedModules        = (GetNestedModules)
         FunctionsToExport    = @()
         CmdletsToExport      = (GetExportedFunctionsList)
         ModuleVersion        = $ThreePartVersion
         CompatiblePSEditions = $CompatiblePSEditions
         PrivateData          = $PrivateData
-        ReleaseNotes     = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
-    }
-
-    if ($nestedModuleList)
-    {
-        # Won't be available when building in Release
-        $manifestArgs['NestedModules'] = $nestedModuleList
+        ReleaseNotes         = "For release notes, see https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md"
     }
 
     Update-ModuleManifest @manifestArgs
