@@ -2,7 +2,7 @@
 
 namespace TfsCmdlets.Services
 {
-    internal interface IService
+    public interface IService
     {
         ICmdletServiceProvider Provider { get; set; }
 

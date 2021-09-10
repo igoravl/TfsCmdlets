@@ -6,7 +6,7 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {
-    internal interface IDataService<T> : IService where T : class
+    public interface IDataService<T> : IService where T : class
     {
         T GetItem();
 

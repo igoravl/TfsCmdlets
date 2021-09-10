@@ -2,7 +2,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Services
 {
-    internal interface ICommandRuntimeService
+    public interface ICommandRuntimeService
     {
         ICommandRuntime CommandRuntime { get; }
     }

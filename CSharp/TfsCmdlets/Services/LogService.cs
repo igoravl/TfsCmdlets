@@ -7,7 +7,7 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Services
 {
-    internal interface ILogger
+    public interface ILogger
     {
         void Log(string message, string commandName = null, bool force = false);
 

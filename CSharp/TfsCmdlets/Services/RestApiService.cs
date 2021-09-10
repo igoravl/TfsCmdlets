@@ -8,7 +8,7 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
 {
-    internal interface IRestApiService : IService
+    public interface IRestApiService : IService
     {
         Task<HttpResponseMessage> InvokeAsync(
             Models.Connection connection, 
