@@ -30,7 +30,7 @@ parameters:
     type: "object" 
     aliases: [ Xml ] 
   - name: "Force" 
-    description: "Allows the cmdlet to import a global list that already exists. " 
+    description: "Allows the cmdlet to overwrite a global list that already exists. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
