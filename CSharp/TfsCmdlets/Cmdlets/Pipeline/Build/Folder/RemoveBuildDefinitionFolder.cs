@@ -5,7 +5,7 @@ using Microsoft.TeamFoundation.Build.WebApi;
 using TfsCmdlets.Extensions;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build
+namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
     /// <summary>
     /// Deletes one or more build/pipeline definition folders.

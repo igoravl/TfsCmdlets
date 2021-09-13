@@ -3,7 +3,7 @@ using System.Management.Automation;
 using TfsCmdlets.Extensions;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build
+namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 {
     /// <summary>
     /// Creates a new build/pipeline definition folder
