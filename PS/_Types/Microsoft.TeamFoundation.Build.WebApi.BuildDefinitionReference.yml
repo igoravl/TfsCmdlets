@@ -1,0 +1,12 @@
+- ScriptProperty:
+    Name: QueueName
+    GetScriptBlock: $this.Queue.Name
+- ScriptProperty:
+    Name: PoolName
+    GetScriptBlock: $this.Queue.Pool.Name  
+- ScriptProperty:
+    Name: IsHostedPool
+    GetScriptBlock: $this.Queue.Pool.IsHosted
+- ScriptProperty:
+    Name: TeamProject
+    GetScriptBlock: $this.Project.Name

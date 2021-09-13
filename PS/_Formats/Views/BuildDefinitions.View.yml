@@ -1,5 +1,5 @@
 ViewSelectedBy: 
-  - Microsoft.TeamFoundation.Build.Client.BuildDefinition
+  - Microsoft.TeamFoundation.Build.WebApi.BuildDefinitionReference
 GroupBy: 
   Label: Team Project
   PropertyName: TeamProject
@@ -8,10 +8,12 @@ TableControl:
     Width: 30
   Id: 
     Width: 5
+  Path:  
+    Width: 30
   QueueStatus: 
     Width: 15
-    Label: Queue Status
-  ContinuousIntegrationType: 
-    Width: 15
-    Label: CI Type
-  Uri:
+    Label: Status
+  QueueName: 
+    Label: Agent Queue Name
+  IsHostedPool:
+    Label: Hosted?
