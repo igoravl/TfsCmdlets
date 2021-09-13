@@ -1,9 +1,7 @@
-using System;
 using System.Collections;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Shell
 {
@@ -76,7 +74,7 @@ namespace TfsCmdlets.Cmdlets.Shell
             // WriteObject($"Loading TfsCmdlets module took {{global}:TfsCmdletsLoadSw.ElapsedMilliseconds}ms."
 
             var profileDir = Path.GetDirectoryName((string)((PSObject)this.GetVariableValue("PROFILE")).BaseObject);
-            var profilePath = Path.Combine(profileDir, "TfsCmdlets_Profile.ps1");
+            var profilePath = Path.Combine(profileDir, $"TfsCmdlets_{(System.Diagnostics.Debugger.IsAttached? "Debug_": "")}Profile.ps1");
 
             if (File.Exists(profilePath))
             {
@@ -97,8 +95,12 @@ namespace TfsCmdlets.Cmdlets.Shell
 
                 if (!NoLogo)
                 {
-                    WriteObject($"Loading TfsCmdlets profile took {sw.ElapsedMilliseconds}ms.");
+                    WriteObject($"Loading TfsCmdlets {(System.Diagnostics.Debugger.IsAttached? "debug ": "")}profile took {sw.ElapsedMilliseconds}ms.");
                 }
+            }
+            else
+            {
+                WriteVerbose($"No profile found at {profilePath}");
             }
 
             IsInShell = true;
@@ -107,7 +109,9 @@ namespace TfsCmdlets.Cmdlets.Shell
         }
 
         internal static bool IsInShell { get; set; }
+
         internal static string PrevShellTitle { get; set; }
+
         internal static ScriptBlock PrevPrompt { get; set; }
     }
 }
