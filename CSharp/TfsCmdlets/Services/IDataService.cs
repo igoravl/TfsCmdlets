@@ -21,5 +21,9 @@ namespace TfsCmdlets.Services
         T SetItem();
 
         bool TestItem();
+
+        T SuspendItem();
+
+        T ResumeItem();
     }
 }

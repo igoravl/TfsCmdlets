@@ -16,6 +16,10 @@ namespace TfsCmdlets.Services
 
         public T RenameItem() => DoRenameItem();
 
+        public T SuspendItem() => DoSuspendItem();
+
+        public T ResumeItem() => DoResumeItem();
+
         public T SetItem() => DoSetItem();
 
         public bool TestItem()
@@ -35,5 +39,9 @@ namespace TfsCmdlets.Services
         protected virtual void DoRemoveItem() => throw new NotImplementedException(nameof(DoRemoveItem));
 
         protected virtual T DoSetItem() => throw new NotImplementedException(nameof(DoSetItem));
+
+        protected virtual T DoSuspendItem() => throw new NotImplementedException(nameof(DoSuspendItem));
+
+        protected virtual T DoResumeItem() => throw new NotImplementedException(nameof(DoResumeItem));
    }
 }
