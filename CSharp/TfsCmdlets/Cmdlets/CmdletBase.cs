@@ -211,12 +211,29 @@ namespace TfsCmdlets.Cmdlets
         {
             return Provider.GetDataService<TObj>(this, parameters).RenameItem();
         }
+
         /// <summary>
         /// Renames an item of the specified type
         /// </summary>
         protected virtual TObj SetItem<TObj>(object parameters = null) where TObj : class
         {
             return Provider.GetDataService<TObj>(this, parameters).SetItem();
+        }
+
+        /// <summary>
+        /// Suspends an item of the specified type
+        /// </summary>
+        protected virtual TObj SuspendItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.GetDataService<TObj>(this, parameters).SuspendItem();
+        }
+
+        /// <summary>
+        /// Resumes an item of the specified type
+        /// </summary>
+        protected virtual TObj ResumeItem<TObj>(object parameters = null) where TObj : class
+        {
+            return Provider.GetDataService<TObj>(this, parameters).ResumeItem();
         }
 
         /// <summary>

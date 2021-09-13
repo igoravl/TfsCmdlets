@@ -8,7 +8,7 @@ namespace TfsCmdlets.Util
 {
     internal static class NodeUtil
     {
-        internal static string NormalizeNodePath(string path, string projectName, string scope = "",
+        internal static string NormalizeNodePath(string path, string projectName = "", string scope = "",
             bool includeScope = false, bool excludePath = false, bool includeLeadingSeparator = false,
             bool includeTrailingSeparator = false, bool includeTeamProject = false, char separator = '\\')
         {
