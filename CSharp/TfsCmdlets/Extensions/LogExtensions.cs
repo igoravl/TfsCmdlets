@@ -80,18 +80,18 @@ namespace TfsCmdlets.Extensions
         //    return !string.IsNullOrEmpty(commandInfo.Name) ? commandInfo.Name : frame.FunctionName;
         //}
 
-        private static bool IsVerbose(CmdletBase cmdlet, bool force = false)
-        {
-            if (force) return true;
+        // private static bool IsVerbose(CmdletBase cmdlet, bool force = false)
+        // {
+        //     if (force) return true;
 
-            var containsVerbose = cmdlet.MyInvocation.BoundParameters.ContainsKey("Verbose");
+        //     var containsVerbose = cmdlet.MyInvocation.BoundParameters.ContainsKey("Verbose");
 
-            if (containsVerbose)
-            {
-                return ((SwitchParameter)cmdlet.MyInvocation.BoundParameters["Verbose"]).ToBool();
-            }
+        //     if (containsVerbose)
+        //     {
+        //         return ((SwitchParameter)cmdlet.MyInvocation.BoundParameters["Verbose"]).ToBool();
+        //     }
 
-            return (ActionPreference) cmdlet.GetVariableValue("VerbosePreference") != ActionPreference.SilentlyContinue;
-        }
+        //     return (ActionPreference) cmdlet.GetVariableValue("VerbosePreference") != ActionPreference.SilentlyContinue;
+        // }
     }
 }

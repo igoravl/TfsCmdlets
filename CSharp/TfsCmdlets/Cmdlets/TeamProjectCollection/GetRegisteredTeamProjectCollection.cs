@@ -7,12 +7,12 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsRegisteredTeamProjectCollection")]
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]
-    public class GetRegisteredTeamProjectCollection : CmdletBase
+    public class GetRegisteredTeamProjectCollection : Cmdlet
     {
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Position=0, ValueFromPipeline=true)]
         //         [Alias("Name")]

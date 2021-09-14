@@ -3,6 +3,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Admin
@@ -29,7 +30,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     [Cmdlet(VerbsCommon.Get, "TfsInstallationPath", DefaultParameterSetName = "Use computer name")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetInstallationPath : CmdletBase
+    public class GetInstallationPath : BasicCmdlet
     {
         /// <summary>
         /// The machine name of the server where the TFS component is installed. 

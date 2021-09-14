@@ -1,5 +1,8 @@
 using System;
 using System.Management.Automation;
+using TfsCmdlets.Cmdlets.TeamProjectCollection;
+using TfsCmdlets.Models;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
@@ -27,14 +30,14 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 	/// </notes>
     [Cmdlet(VerbsData.Dismount, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
     [OutputType(typeof(string))]
-	[DesktopOnly]
-    public partial class DismountTeamProjectCollection : CmdletBase
+    [DesktopOnly]
+    public partial class DismountTeamProjectCollection : CmdletBase<Models.TeamProjectCollection>
     {
         /// <summary>
         /// Specifies the collection to detach.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
-        public object Collection { get; set; }
+        public new object Collection { get; set; }
 
         /// <summary>
         /// Speficies a Servicing Message (optional), to provide a message for users who might try 
@@ -55,23 +58,31 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// </summary>
         [Parameter()]
         public object Server { get; set; }
+    }
+}
 
+namespace TfsCmdlets.Controllers.TeamProjectCollection
+{
+    partial class TeamProjectCollectionController
+    {
 #if NET471_OR_GREATER
         /// <inheritdoc/>
-        protected override void DoProcessRecord()
+        protected override void DoDismountItem(ParameterDictionary parameters)
         {
-            var tpc = GetCollection();
+            var tpc = Collection;
             var srv = tpc.ConfigurationServer;
+            var reason = parameters.Get<string>(nameof(DismountTeamProjectCollection.Reason));
+            var timeout = parameters.Get<TimeSpan>(nameof(DismountTeamProjectCollection.Timeout));
 
-            if (!ShouldProcess($"Server '{srv.Uri}'", $"Detach collection '{tpc.DisplayName}'")) return;
+            if (!PowerShell.ShouldProcess($"Server '{srv.Uri}'", $"Detach collection '{tpc.DisplayName}'")) return;
 
 			var tpcService = srv.GetService<Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService>();
 			var collectionInfo = tpcService.GetCollection(tpc.InnerConnection.InstanceId);
 
-			var tpcJob = tpcService.QueueDetachCollection(collectionInfo, null, Reason, out var connectionString);
-			collectionInfo = tpcService.WaitForCollectionServicingToComplete(tpcJob, Timeout);
+			var tpcJob = tpcService.QueueDetachCollection(collectionInfo, null, reason, out var connectionString);
+			collectionInfo = tpcService.WaitForCollectionServicingToComplete(tpcJob, timeout);
 
-			WriteObject(connectionString); 
+			PowerShell.WriteObject(connectionString); 
         }
 #endif
     }

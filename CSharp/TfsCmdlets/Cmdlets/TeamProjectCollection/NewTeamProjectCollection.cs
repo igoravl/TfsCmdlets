@@ -7,12 +7,12 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
     [OutputType(typeof(Models.Connection))]
-    public class NewTeamProjectCollection : CmdletBase
+    public class NewTeamProjectCollection : Cmdlet
     {
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
         //         [Alias("Name")]

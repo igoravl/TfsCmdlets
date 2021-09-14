@@ -16,8 +16,6 @@ namespace TfsCmdlets
         {
             var resolver = new AssemblyResolver();
             resolver.Register();
-
-            ServiceManager.Register(new CmdletServiceProviderImpl());
         }
     }
 }

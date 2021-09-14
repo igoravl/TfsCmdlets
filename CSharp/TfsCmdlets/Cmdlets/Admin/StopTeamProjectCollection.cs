@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Stops a team project collection and make it offline.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    public class StopTeamProjectCollection : CmdletBase
+    public class StopTeamProjectCollection : CmdletBase<Models.TeamProjectCollection>
     {
         /// <summary>
         /// Performs execution of the command

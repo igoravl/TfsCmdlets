@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Management.Automation;
 using System.Security;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Models;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Connection
 {
@@ -38,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// </example>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(VssConnection))]
-    public class ConnectTeamProjectCollection : CmdletBase
+    public class ConnectTeamProjectCollection : CmdletBase<Models.TeamProjectCollection>
     {
         /// <summary>
         ///  Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, 
@@ -48,7 +51,7 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
-        public object Collection { get; set; }
+        public new object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIAL
@@ -99,25 +102,25 @@ namespace TfsCmdlets.Cmdlets.Connection
         /// </summary>
         [Parameter]
         public SwitchParameter Passthru { get; set; }
+    }
+}
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+namespace TfsCmdlets.Controllers.TeamProjectCollection
+{
+    partial class TeamProjectCollectionController
+    {
+        override protected Models.TeamProjectCollection DoConnectItem(ParameterDictionary parameters)
         {
-            var tpc = this.GetCollection();
+            var tpc = (Models.TeamProjectCollection) Collection;
             tpc.Connect();
 
             var srv = tpc.ConfigurationServer;
 
             CurrentConnections.Set(srv, tpc);
 
-            this.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.AuthorizedIdentity.DisplayName}'");
+            Logger.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.AuthorizedIdentity.DisplayName}'");
 
-            if (Passthru)
-            {
-                WriteObject(tpc);
-            }
+            return tpc;
         }
     }
 }

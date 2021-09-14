@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
+using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
@@ -16,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.Connection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsCredential", DefaultParameterSetName = "Cached credentials")]
     [OutputType(typeof(VssCredentials))]
-    public class NewCredential : CmdletBase
+    public class NewCredential : CmdletBase<VssCredentials>
     {
         /// <summary>
         /// Specifies the URL of the server, collection or organization to connect to.
@@ -62,41 +64,48 @@ namespace TfsCmdlets.Cmdlets.Connection
         [Parameter(ParameterSetName = "Prompt for credential", Mandatory = true)]
         public SwitchParameter Interactive { get; set; }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            WriteObject(this.GetItem<VssCredentials>());
-        }
+        protected override bool ReturnsValue => true;
     }
 
-    [Exports(typeof(VssCredentials))]
-    internal class CredentialsService : BaseDataService<VssCredentials>
+    [Controller(typeof(VssCredentials))]
+    internal class CredentialsController : DisconnectedControllerBase<VssCredentials>
     {
-        protected override IEnumerable<VssCredentials> DoGetItems()
+        public CredentialsController(
+            ILogger logger, 
+            IParameterManager parameterManager,
+            IPowerShellService powerShell) 
+            : base(logger, parameterManager, powerShell)
         {
-            var credential = GetParameter<object>(nameof(NewCredential.Credential));
-            var userName = GetParameter<string>(nameof(NewCredential.UserName));
-            var password = GetParameter<SecureString>(nameof(NewCredential.Password));
-            var accessToken = GetParameter<string>(nameof(NewCredential.PersonalAccessToken));
-            var interactive = GetParameter<bool>(nameof(NewCredential.Interactive));
-            var url = GetParameter<Uri>(nameof(NewCredential.Url));
+        }
 
-            var parameterSetName = ConnectionMode.CachedCredentials;
+        override protected VssCredentials DoNewItem(ParameterDictionary parameters)
+        {
+            return GetItem(parameters);
+        }
+
+        protected override IEnumerable<VssCredentials> DoGetItems(ParameterDictionary parameters)
+        {
+            var credential = parameters.Get<object>(nameof(NewCredential.Credential));
+            var userName = parameters.Get<string>(nameof(NewCredential.UserName));
+            var password = parameters.Get<SecureString>(nameof(NewCredential.Password));
+            var accessToken = parameters.Get<string>(nameof(NewCredential.PersonalAccessToken));
+            var interactive = parameters.Get<SwitchParameter>(nameof(NewCredential.Interactive));
+            var url = parameters.Get<Uri>(nameof(NewCredential.Url));
+
+            var connectionMode = ConnectionMode.CachedCredentials;
 
             if (credential != null)
-                parameterSetName = ConnectionMode.CredentialObject;
+                connectionMode = ConnectionMode.CredentialObject;
             else if (!string.IsNullOrEmpty(userName) || password != null)
-                parameterSetName = ConnectionMode.UserNamePassword;
+                connectionMode = ConnectionMode.UserNamePassword;
             else if (!string.IsNullOrEmpty(accessToken))
-                parameterSetName = ConnectionMode.AccessToken;
+                connectionMode = ConnectionMode.AccessToken;
             else if (interactive)
-                parameterSetName = ConnectionMode.Interactive;
+                connectionMode = ConnectionMode.Interactive;
 
             NetworkCredential netCred;
 
-            while (true) switch (parameterSetName)
+            while (true) switch (connectionMode)
                 {
                     case ConnectionMode.CachedCredentials:
                         {
@@ -110,7 +119,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                         {
                             Logger.Log("Using username/password credentials from UserName/Password arguments");
                             credential = new NetworkCredential(userName, password);
-                            parameterSetName = ConnectionMode.CredentialObject;
+                            connectionMode = ConnectionMode.CredentialObject;
                             continue;
                         }
 
@@ -118,7 +127,7 @@ namespace TfsCmdlets.Cmdlets.Connection
                         {
                             Logger.Log("Using credential from supplied Personal Access Token");
                             credential = new NetworkCredential(string.Empty, accessToken);
-                            parameterSetName = ConnectionMode.CredentialObject;
+                            connectionMode = ConnectionMode.CredentialObject;
                             continue;
                         }
 
@@ -178,7 +187,7 @@ namespace TfsCmdlets.Cmdlets.Connection
 
                     default:
                         {
-                            throw new Exception($"Invalid parameter set '{parameterSetName}'");
+                            throw new Exception($"Invalid parameter set '{connectionMode}'");
                         }
                 }
         }

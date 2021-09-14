@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Admin
@@ -14,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetConfigurationServerConnectionString : CmdletBase
+    public class GetConfigurationServerConnectionString : BasicCmdlet
     {
         /// <summary>
         /// Specifies the name of a Team Foundation Server application tier from which to 

@@ -1,5 +1,11 @@
+using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
+using TfsCmdlets.Models;
+using TfsCmdlets.Services;
+#if NET471_OR_GREATER
+using Microsoft.TeamFoundation.Client;
+#endif
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
@@ -7,14 +13,18 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Gets one of more team project collections (organizations in Azure DevOps).
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProjectCollection", DefaultParameterSetName = "Get by collection")]
+#if NETCOREAPP3_1_OR_GREATER    
     [OutputType(typeof(VssConnection))]
-    public class GetTeamProjectCollection : CmdletBase
+#else
+    [OutputType(typeof(TfsTeamProjectCollection))]
+#endif
+    public class GetTeamProjectCollection : CmdletBase<Models.TeamProjectCollection>
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by collection")]
-        public object Collection { get; set; }
+        public new object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER
@@ -34,22 +44,38 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
+    }
+}
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
+namespace TfsCmdlets.Controllers.TeamProjectCollection
+{
+    [Controller(typeof(Models.TeamProjectCollection))]
+    internal partial class TeamProjectCollectionController : ControllerBase<Models.TeamProjectCollection>
+    {
+        public ICurrentConnections CurrentConnections { get; private set; }
+
+        public TeamProjectCollectionController(
+            ICurrentConnections currentConnections,
+            [InjectConnection(ClientScope.Collection)] Models.Connection collection,
+            ILogger logger,
+            IParameterManager parameterManager, 
+            IPowerShellService powerShell)
+            : base(collection, logger, parameterManager, powerShell)
         {
-            try
+            CurrentConnections = currentConnections;
+        }
+
+        protected override IEnumerable<Models.TeamProjectCollection> DoGetItems(ParameterDictionary parameters)
+        {
+            var current = parameters.Get<bool>("Current");
+
+            if (current)
             {
-                WriteObject(this.GetItems<Models.Connection>(new {
-                    ConnectionType = ClientScope.Collection
-                }), true);
+                yield return CurrentConnections.Collection;
+                yield break;
             }
-            catch
-            {
-                if(!Current) throw;
-            }
+
+            yield return (Models.TeamProjectCollection)Collection;
         }
     }
 }

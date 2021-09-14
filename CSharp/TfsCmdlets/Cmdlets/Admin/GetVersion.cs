@@ -4,6 +4,7 @@ using System.Management.Automation;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
@@ -19,7 +20,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
-    public class GetVersion : GetCmdletBase<ServerVersion>
+    public class GetVersion : CmdletBase<ServerVersion>
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
@@ -29,14 +30,27 @@ namespace TfsCmdlets.Cmdlets.Admin
     }
 
     [Exports(typeof(ServerVersion))]
-    internal class VersionDataService : BaseDataService<ServerVersion>
+    internal class ServerVersionController : ControllerBase<ServerVersion>
     {
-        protected override IEnumerable<ServerVersion> DoGetItems()
-        {
-            var tpc = this.GetCollection();
-            var svc = this.GetService<IRestApiService>();
+        private IRestApiService RestApiService { get; set; }
 
-            this.Log("Trying Azure DevOps Services detection logic");
+        public ServerVersionController(
+            [InjectConnection(ClientScope.Collection)] Models.Connection collection, 
+            ILogger logger, 
+            IParameterManager parameterManager, 
+            IPowerShellService powerShell, 
+            IRestApiService restApiService)
+             : base(collection, logger, parameterManager, powerShell)
+        {
+            RestApiService = restApiService;
+        }
+
+        protected override IEnumerable<ServerVersion> DoGetItems(ParameterDictionary parameters)
+        {
+            var tpc = Collection;
+            var svc = RestApiService;
+
+            Logger.Log("Trying Azure DevOps Services detection logic");
 
             var result = svc.InvokeAsync(tpc, "/").SyncResult();
             var html = result.Content.ReadAsStringAsync().GetResult("Error accessing Azure DevOps home page (/)");
@@ -48,7 +62,7 @@ namespace TfsCmdlets.Cmdlets.Admin
             {
                 versionText = Regex.Replace(matches[0].Groups[1].Value, "[a-zA-Z]", "") + ".0";
 
-                this.Log($"Version text found: '{versionText}'");
+                Logger.Log($"Version text found: '{versionText}'");
 
                 version = new Version(versionText);
 
@@ -73,7 +87,7 @@ namespace TfsCmdlets.Cmdlets.Admin
                 yield break;
             }
 
-            this.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
+            Logger.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
 
             result = svc.InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
             html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About)");
@@ -81,15 +95,15 @@ namespace TfsCmdlets.Cmdlets.Admin
 
             if (matches.Count == 0)
             {
-                this.Log("Response does not contain 'Version' information");
-                this.Log($"Returned HTML: {html}");
+                Logger.Log("Response does not contain 'Version' information");
+                Logger.Log($"Returned HTML: {html}");
 
                 throw new Exception("Team Foundation Server version not found in response.");
             }
 
             versionText = matches[0].Groups[1].Value;
 
-            this.Log($"Version text found: '{versionText}'");
+            Logger.Log($"Version text found: '{versionText}'");
 
             version = new Version(versionText);
             longVersion = $"{version} (TFS {TfsVersionTable.GetYear(version.Major)}))";

@@ -6,12 +6,12 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Deletes a team project collection.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    public class RemoveTeamProjectCollection : CmdletBase
+    public class RemoveTeamProjectCollection : Cmdlet
     {
         /// <summary>
         /// Performs execution of the command
         /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        protected override void ProcessRecord() => throw new System.NotImplementedException();
 
         //         [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
         // public object Collection,

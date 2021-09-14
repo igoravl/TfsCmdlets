@@ -16,7 +16,7 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Converts a TfsConnection-derived object to a Connection object
         /// </summary>
-        public static implicit operator Connection(TfsConnection c) => new Connection(c);
+        // public static implicit operator Connection(TfsConnection c) => new Connection(c);
 
         internal TfsConnection InnerConnection => BaseObject as TfsConnection;
 

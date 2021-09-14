@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Attaches a team project collection database to a Team Foundation Server installation.
     /// </summary>
     [Cmdlet(VerbsData.Mount, "TfsTeamProjectCollection", ConfirmImpact = ConfirmImpact.Medium)]
-    public partial class MountTeamProjectCollection : CmdletBase
+    public partial class MountTeamProjectCollection : BasicCmdlet
     {
         /// <summary>
         /// Specifies the name of the collection to attach. It can be different from the original 
@@ -83,42 +83,42 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [Parameter(ValueFromPipeline = true)]
         public object Server;
 
-#if NET471_OR_GREATER
-    /// <summary>
-    /// Performs execution of the command
-    /// </summary>
-    protected override void DoProcessRecord()
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void DoProcessRecord()
         {
-            var configServer = (TfsConfigurationServer) GetServer().InnerConnection;
-            var tpcService = configServer.GetService<Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService>();
-            var servicingTokens = new System.Collections.Generic.Dictionary<string,string>();
+// #if NET471_OR_GREATER
+//             var configServer = (TfsConfigurationServer) GetServer().InnerConnection;
+//             var tpcService = configServer.GetService<Microsoft.TeamFoundation.Framework.Client.ITeamProjectCollectionService>();
+//             var servicingTokens = new System.Collections.Generic.Dictionary<string,string>();
 
-            if (ParameterSetName == "Use database server")
-            {
-                servicingTokens["CollectionDatabaseName"] = DatabaseName;
-                ConnectionString = $"Data source={DatabaseServer}; Integrated Security=true; Initial Catalog={DatabaseName}";
-            }
+//             if (ParameterSetName == "Use database server")
+//             {
+//                 servicingTokens["CollectionDatabaseName"] = DatabaseName;
+//                 ConnectionString = $"Data source={DatabaseServer}; Integrated Security=true; Initial Catalog={DatabaseName}";
+//             }
 
-            try
-            {
-                //Write-Progress -Id 1 -Activity $"Attach team project collection" -Status "Attaching team project collection {Collection}" -PercentComplete 0
+//             try
+//             {
+//                 //Write-Progress -Id 1 -Activity $"Attach team project collection" -Status "Attaching team project collection {Collection}" -PercentComplete 0
 
-                var tpcJob = tpcService.QueueAttachCollection(ConnectionString, servicingTokens, Clone.ToBool(), Collection, Description,
-                    $"~/{Collection}/");
+//                 var tpcJob = tpcService.QueueAttachCollection(ConnectionString, servicingTokens, Clone.ToBool(), Collection, Description,
+//                     $"~/{Collection}/");
 
-                var collection = tpcService.WaitForCollectionServicingToComplete(tpcJob, Timeout);
+//                 var collection = tpcService.WaitForCollectionServicingToComplete(tpcJob, Timeout);
 
-                WriteObject(GetItem<Models.Connection>(new {Collection = this.Collection}));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error mounting collection '{Collection}': {ex}", ex);
-            }
-            finally
-            {
-                // Write-Progress -Id 1 -Activity "Attach team project collection" -Completed
-            }
+//                 WriteObject(GetItem<Models.Connection>(new {Collection = this.Collection}));
+//             }
+//             catch (Exception ex)
+//             {
+//                 throw new Exception($"Error mounting collection '{Collection}': {ex}", ex);
+//             }
+//             finally
+//             {
+//                 // Write-Progress -Id 1 -Activity "Attach team project collection" -Completed
+//             }
+// #endif
         }
-#endif
     }
 }

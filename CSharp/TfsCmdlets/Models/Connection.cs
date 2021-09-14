@@ -7,7 +7,7 @@ namespace TfsCmdlets.Models
     /// <summary>
     /// Encapsulates the platform-specific connection object
     /// </summary>
-    public partial class Connection: PSObject
+    public abstract partial class Connection : PSObject
     {
         internal Connection(object obj) : base(obj) { }
 
@@ -18,6 +18,30 @@ namespace TfsCmdlets.Models
         internal virtual void Connect() => DoConnect();
 
         partial void DoConnect();
+    }
 
+    public sealed class ConfigurationServer : Connection
+    {
+#if NETCOREAPP3_1_OR_GREATER
+        public static implicit operator ConfigurationServer(VssConnection c) => new ConfigurationServer(c);
+#else
+        public static implicit operator ConfigurationServer(Microsoft.TeamFoundation.Client.TfsConnection c) => new ConfigurationServer(c);
+#endif
+
+        public ConfigurationServer(object obj) : base(obj)
+        {
+        }
+    }
+
+    public sealed class TeamProjectCollection : Connection
+    {
+#if NETCOREAPP3_1_OR_GREATER
+        public static implicit operator TeamProjectCollection(VssConnection c) => new TeamProjectCollection(c);
+#else
+        public static implicit operator TeamProjectCollection(Microsoft.TeamFoundation.Client.TfsConnection c) => new TeamProjectCollection(c);
+#endif
+        public TeamProjectCollection(object obj) : base(obj)
+        {
+        }
     }
 }

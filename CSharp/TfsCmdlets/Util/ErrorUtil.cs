@@ -9,7 +9,7 @@ namespace TfsCmdlets.Util
     {
         internal static void ThrowDesktopOnlyCmdlet()
         {
-            throw new NotSupportedException("This cmdlet is not supported on PowerShell Core");
+            throw new NotSupportedException("This cmdlet requires Windows PowerShell. It does not work on PowerShell 6+.");
         }
 
         internal static void ThrowIfNotFound(object data, string name, object searchCriteria)

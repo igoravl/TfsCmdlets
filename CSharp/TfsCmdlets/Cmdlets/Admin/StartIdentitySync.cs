@@ -1,5 +1,6 @@
 using System;
 using System.Management.Automation;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
@@ -8,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
     [DesktopOnly]
-    public partial class StartIdentitySync : CmdletBase
+    public partial class StartIdentitySync : BasicCmdlet
     {
         /// <summary>
         /// HELP_PARAM_SERVER
@@ -28,9 +29,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         [Parameter()]
         public object Credential { get; set; }
 
-#if NET471_OR_GREATER
         /// <inheritdoc/>
         protected override void DoProcessRecord() => throw new NotImplementedException();
-#endif
     }
 }
