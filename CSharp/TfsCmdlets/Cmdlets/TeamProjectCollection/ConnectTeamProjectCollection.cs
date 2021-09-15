@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
-        public new object Collection { get; set; }
+        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIAL

@@ -60,7 +60,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter()]
-        public new object Collection { get; set; }
+        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER

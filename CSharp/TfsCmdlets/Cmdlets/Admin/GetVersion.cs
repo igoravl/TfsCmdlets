@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets.Admin
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public new object Collection { get; set; }
+        public object Collection { get; set; }
 
         // TODO
     }

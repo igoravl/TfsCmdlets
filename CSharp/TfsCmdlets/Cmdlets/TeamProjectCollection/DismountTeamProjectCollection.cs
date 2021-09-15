@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// Specifies the collection to detach.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
-        public new object Collection { get; set; }
+        public object Collection { get; set; }
 
         /// <summary>
         /// Specifies a Servicing Message (optional), to provide a message for users who might try 

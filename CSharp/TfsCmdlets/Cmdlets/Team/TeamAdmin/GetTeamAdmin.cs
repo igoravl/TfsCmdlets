@@ -43,9 +43,6 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
         // TODO
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
         //    protected override void DoProcessRecord()
         //    {
         //        WriteItems<TfsTeamAdmin>();
