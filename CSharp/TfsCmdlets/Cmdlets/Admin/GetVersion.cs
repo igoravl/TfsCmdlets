@@ -20,95 +20,98 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
-    public class GetVersion : CmdletBase<ServerVersion>
+    public class GetVersion : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public new object Collection { get; set; }
+
+        // TODO
     }
 
-    [Exports(typeof(ServerVersion))]
-    internal class ServerVersionController : ControllerBase<ServerVersion>
-    {
-        private IRestApiService RestApiService { get; set; }
+    //[Exports(typeof(ServerVersion))]
+    //internal class ServerVersionController : CollectionLevelController<ServerVersion>
+    //{
+    //    private IRestApiService RestApiService { get; set; }
 
-        public ServerVersionController(
-            [InjectConnection(ClientScope.Collection)] Models.Connection collection, 
-            ILogger logger, 
-            IParameterManager parameterManager, 
-            IPowerShellService powerShell, 
-            IRestApiService restApiService)
-             : base(collection, logger, parameterManager, powerShell)
-        {
-            RestApiService = restApiService;
-        }
+    //    public ServerVersionController(
+    //        TpcConnection collection, 
+    //        ILogger logger, 
+    //        IParameterManager parameterManager, 
+    //        IPowerShellService powerShell, 
+    //        IRestApiService restApiService)
+    //         : base(collection, logger, parameterManager, powerShell)
+    //    {
+    //        RestApiService = restApiService;
+    //    }
 
-        protected override IEnumerable<ServerVersion> DoGetItems(ParameterDictionary parameters)
-        {
-            var tpc = Collection;
-            var svc = RestApiService;
+    //    protected override IEnumerable<ServerVersion> DoGetItems(ParameterDictionary parameters)
+    //    {
+    //        var tpc = Collection;
+    //        var svc = RestApiService;
 
-            Logger.Log("Trying Azure DevOps Services detection logic");
+    //        Logger.Log("Trying Azure DevOps Services detection logic");
 
-            var result = svc.InvokeAsync(tpc, "/").SyncResult();
-            var html = result.Content.ReadAsStringAsync().GetResult("Error accessing Azure DevOps home page (/)");
-            var matches = (new Regex(@"""serviceVersion"":""(.+?)( \((.+?)\))?""")).Matches(html);
+    //        var result = svc.InvokeAsync(tpc, "/").SyncResult();
+    //        var html = result.Content.ReadAsStringAsync().GetResult("Error accessing Azure DevOps home page (/)");
+    //        var matches = (new Regex(@"""serviceVersion"":""(.+?)( \((.+?)\))?""")).Matches(html);
 
-            Version version; string versionText = null, longVersion = null;
+    //        Version version;
+    //        string versionText;
+    //        string longVersion = null;
 
-            if (matches.Count > 0)
-            {
-                versionText = Regex.Replace(matches[0].Groups[1].Value, "[a-zA-Z]", "") + ".0";
+    //        if (matches.Count > 0)
+    //        {
+    //            versionText = Regex.Replace(matches[0].Groups[1].Value, "[a-zA-Z]", "") + ".0";
 
-                Logger.Log($"Version text found: '{versionText}'");
+    //            Logger.Log($"Version text found: '{versionText}'");
 
-                version = new Version(versionText);
+    //            version = new Version(versionText);
 
-                if(matches[0].Groups.Count == 4)
-                {
-                    longVersion = $"{matches[0].Groups[1].Value}" + (
-                        !string.IsNullOrEmpty(matches[0].Groups[3].Value)? 
-                            $" ({matches[0].Groups[3].Value})": 
-                            ""
-                        );
-                }
+    //            if(matches[0].Groups.Count == 4)
+    //            {
+    //                longVersion = $"{matches[0].Groups[1].Value}" + (
+    //                    !string.IsNullOrEmpty(matches[0].Groups[3].Value)? 
+    //                        $" ({matches[0].Groups[3].Value})": 
+    //                        ""
+    //                    );
+    //            }
 
-                yield return new ServerVersion
-                {
-                    Version = version,
-                    LongVersion = longVersion,
-                    Update = version.Minor,
-                    FriendlyVersion = "Azure DevOps " + (tpc.IsHosted ? $"Services, Sprint {version.Minor}" : $"Server {TfsVersionTable.GetYear(version.Major)}"),
-                    IsHosted = tpc.IsHosted
-                };
+    //            yield return new ServerVersion
+    //            {
+    //                Version = version,
+    //                LongVersion = longVersion,
+    //                Update = version.Minor,
+    //                FriendlyVersion = "Azure DevOps " + (tpc.IsHosted ? $"Services, Sprint {version.Minor}" : $"Server {TfsVersionTable.GetYear(version.Major)}"),
+    //                IsHosted = tpc.IsHosted
+    //            };
 
-                yield break;
-            }
+    //            yield break;
+    //        }
 
-            Logger.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
+    //        Logger.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
 
-            result = svc.InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
-            html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About)");
-            matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
+    //        result = svc.InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
+    //        html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About)");
+    //        matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
 
-            if (matches.Count == 0)
-            {
-                Logger.Log("Response does not contain 'Version' information");
-                Logger.Log($"Returned HTML: {html}");
+    //        if (matches.Count == 0)
+    //        {
+    //            Logger.Log("Response does not contain 'Version' information");
+    //            Logger.Log($"Returned HTML: {html}");
 
-                throw new Exception("Team Foundation Server version not found in response.");
-            }
+    //            throw new Exception("Team Foundation Server version not found in response.");
+    //        }
 
-            versionText = matches[0].Groups[1].Value;
+    //        versionText = matches[0].Groups[1].Value;
 
-            Logger.Log($"Version text found: '{versionText}'");
+    //        Logger.Log($"Version text found: '{versionText}'");
 
-            version = new Version(versionText);
-            longVersion = $"{version} (TFS {TfsVersionTable.GetYear(version.Major)}))";
+    //        version = new Version(versionText);
+    //        //longVersion = $"{version} (TFS {TfsVersionTable.GetYear(version.Major)}))";
 
-            yield return TfsVersionTable.GetServerVersion(version);
-        }
-    }
+    //        yield return TfsVersionTable.GetServerVersion(version);
+    //    }
 }

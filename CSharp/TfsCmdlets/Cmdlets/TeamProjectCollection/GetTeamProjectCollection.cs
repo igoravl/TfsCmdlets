@@ -3,12 +3,13 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
+
+namespace TfsCmdlets.Cmdlets.TeamProjectCollection
+{
 #if NET471_OR_GREATER
 using Microsoft.TeamFoundation.Client;
 #endif
 
-namespace TfsCmdlets.Cmdlets.TeamProjectCollection
-{
     /// <summary>
     /// Gets one of more team project collections (organizations in Azure DevOps).
     /// </summary>
@@ -18,13 +19,13 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 #else
     [OutputType(typeof(TfsTeamProjectCollection))]
 #endif
-    public class GetTeamProjectCollection : CmdletBase<Models.TeamProjectCollection>
+    public class GetTeamProjectCollection : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by collection")]
-        public new object Collection { get; set; }
+        public object Collection { get; set; }
 
         /// <summary>
         /// HELP_PARAM_SERVER
@@ -44,38 +45,9 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
+
+        // TODO
+
     }
-}
 
-namespace TfsCmdlets.Controllers.TeamProjectCollection
-{
-    [Controller(typeof(Models.TeamProjectCollection))]
-    internal partial class TeamProjectCollectionController : ControllerBase<Models.TeamProjectCollection>
-    {
-        public ICurrentConnections CurrentConnections { get; private set; }
-
-        public TeamProjectCollectionController(
-            ICurrentConnections currentConnections,
-            [InjectConnection(ClientScope.Collection)] Models.Connection collection,
-            ILogger logger,
-            IParameterManager parameterManager, 
-            IPowerShellService powerShell)
-            : base(collection, logger, parameterManager, powerShell)
-        {
-            CurrentConnections = currentConnections;
-        }
-
-        protected override IEnumerable<Models.TeamProjectCollection> DoGetItems(ParameterDictionary parameters)
-        {
-            var current = parameters.Get<bool>("Current");
-
-            if (current)
-            {
-                yield return CurrentConnections.Collection;
-                yield break;
-            }
-
-            yield return (Models.TeamProjectCollection)Collection;
-        }
-    }
 }

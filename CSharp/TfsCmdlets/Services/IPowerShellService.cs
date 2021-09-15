@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services
@@ -32,5 +34,11 @@ namespace TfsCmdlets.Services
         string Edition {get;}
 
         bool ShouldProcess(string target, string action);
+
+        bool ShouldProcess(TeamProject tp, string action);
+        
+        bool ShouldProcess(TpcConnection collection, string action);
+        
+        bool ShouldContinue(string query, string caption = null);
     }
 }

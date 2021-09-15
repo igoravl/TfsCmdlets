@@ -2,7 +2,7 @@ using System;
 using TfsCmdlets.Util;
 using Xunit;
 
-namespace TfsCmdlets.Tests.UnitTests
+namespace TfsCmdlets.Tests.UnitTests.Util
 {
     public class Mru_Tests
     {

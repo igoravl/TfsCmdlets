@@ -10,6 +10,6 @@ namespace TfsCmdlets.Services
 {
     public interface IParameterManager
     {
-        ParameterDictionary Get(object overridingParameters = null);
+        ParameterDictionary GetParameters(object overridingParameters = null);
     }
 }

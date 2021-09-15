@@ -7,9 +7,9 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <summary>
     ///   Triggers an Identity Sync server job.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
+    [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true)]
     [DesktopOnly]
-    public partial class StartIdentitySync : BasicCmdlet
+    public class StartIdentitySync : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_SERVER
@@ -29,7 +29,6 @@ namespace TfsCmdlets.Cmdlets.Admin
         [Parameter()]
         public object Credential { get; set; }
 
-        /// <inheritdoc/>
-        protected override void DoProcessRecord() => throw new NotImplementedException();
+        // TODO
     }
 }

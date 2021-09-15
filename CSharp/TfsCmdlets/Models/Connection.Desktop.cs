@@ -11,18 +11,18 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Converts a Connection object to a TfsConnection-derived object
         /// </summary>
-        public static implicit operator TfsConnection(Connection c) => c?.InnerConnection;
+        public static implicit operator Microsoft.TeamFoundation.Client.TfsConnection(Connection c) => c?.InnerConnection;
 
         /// <summary>
         /// Converts a TfsConnection-derived object to a Connection object
         /// </summary>
         // public static implicit operator Connection(TfsConnection c) => new Connection(c);
 
-        internal TfsConnection InnerConnection => BaseObject as TfsConnection;
+        internal Microsoft.TeamFoundation.Client.TfsConnection InnerConnection => BaseObject as Microsoft.TeamFoundation.Client.TfsConnection;
 
         internal object GetService(Type serviceType) => InnerConnection.GetService(serviceType);
 
-        internal TfsConnection ConfigurationServer
+        internal Microsoft.TeamFoundation.Client.TfsConnection ConfigurationServer
         {
             get
             {

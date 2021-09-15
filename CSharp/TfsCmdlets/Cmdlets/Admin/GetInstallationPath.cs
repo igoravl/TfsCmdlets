@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using TfsCmdlets.Extensions;
 using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
@@ -30,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     [Cmdlet(VerbsCommon.Get, "TfsInstallationPath", DefaultParameterSetName = "Use computer name")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetInstallationPath : BasicCmdlet
+    public class GetInstallationPath : CmdletBase
     {
         /// <summary>
         /// The machine name of the server where the TFS component is installed. 
@@ -78,59 +77,61 @@ namespace TfsCmdlets.Cmdlets.Admin
         [Credential]
         public PSCredential Credential { get; set; } = PSCredential.Empty;
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            const string cmd = "_GetInstallationPath -Version $args[0] -Component $args[1]";
-            const string localTemplate = "{0}";
-            // const string remoteTemplate = "Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList $args[0] $args[1] ";
-            // const string remoteComputerTemplate = remoteTemplate + " -Computer $args[2] -Credential $args[3]";
-            // const string remoteSessionTemplate = remoteTemplate + " -Session $args[2]";
+        // TODO
 
-            var funcCode = File.ReadAllText(Path.Combine(
-                MyInvocation.MyCommand.Module.ModuleBase,
-                "Private/Admin.ps1"
-            ));
+        ///// <summary>
+        ///// Performs execution of the command
+        ///// </summary>
+        //protected override void DoProcessRecord()
+        //{
+        //    const string cmd = "_GetInstallationPath -Version $args[0] -Component $args[1]";
+        //    const string localTemplate = "{0}";
+        //    // const string remoteTemplate = "Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList $args[0] $args[1] ";
+        //    // const string remoteComputerTemplate = remoteTemplate + " -Computer $args[2] -Credential $args[3]";
+        //    // const string remoteSessionTemplate = remoteTemplate + " -Session $args[2]";
 
-            object session = null;
-            object credential = null;
-            string invokeCmd;
+        //    var funcCode = File.ReadAllText(Path.Combine(
+        //        MyInvocation.MyCommand.Module.ModuleBase,
+        //        "Private/Admin.ps1"
+        //    ));
 
-            if (Session != null)
-            {
-                throw new NotImplementedException("Remote sessions are currently not supported");
-                // invokeCmd = string.Format(remoteSessionTemplate, cmd);
-                // session = Session;
-            }
-            else if (!ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-            {
-                throw new NotImplementedException("Remote computers are currently not supported");
-                // invokeCmd = string.Format(remoteComputerTemplate, cmd);
-                // session = ComputerName;
-                // credential = Credential;
-            }
-            else
-            {
-                invokeCmd = string.Format(localTemplate, cmd);
-            }
+        //    object session = null;
+        //    object credential = null;
+        //    string invokeCmd;
 
-            string version;
+        //    if (Session != null)
+        //    {
+        //        throw new NotImplementedException("Remote sessions are currently not supported");
+        //        // invokeCmd = string.Format(remoteSessionTemplate, cmd);
+        //        // session = Session;
+        //    }
+        //    else if (!ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase))
+        //    {
+        //        throw new NotImplementedException("Remote computers are currently not supported");
+        //        // invokeCmd = string.Format(remoteComputerTemplate, cmd);
+        //        // session = ComputerName;
+        //        // credential = Credential;
+        //    }
+        //    else
+        //    {
+        //        invokeCmd = string.Format(localTemplate, cmd);
+        //    }
+
+        //    string version;
             
-            if(Version == 0)
-            {
-                version = null;
-            }
-            else
-            {
-                version = $"{TfsVersionTable.GetMajorVersion(Version)}.0";
-            }
+        //    if(Version == 0)
+        //    {
+        //        version = null;
+        //    }
+        //    else
+        //    {
+        //        version = $"{TfsVersionTable.GetMajorVersion(Version)}.0";
+        //    }
 
-            var result = this.InvokeCommand.InvokeScript(funcCode + invokeCmd, true, PipelineResultTypes.None, null, 
-                version, Component.ToString(), session, credential);
+        //    var result = this.InvokeCommand.InvokeScript(funcCode + invokeCmd, true, PipelineResultTypes.None, null, 
+        //        version, Component.ToString(), session, credential);
 
-            WriteObject(result);
-        }
+        //    WriteObject(result);
+        //}
     }
 }

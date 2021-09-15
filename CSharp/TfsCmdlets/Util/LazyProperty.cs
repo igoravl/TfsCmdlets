@@ -38,7 +38,8 @@ namespace TfsCmdlets.Util
 
             try
             {
-                value = propertyBag[property] = sb.InvokeWithContext(null, new List<PSVariable>(){
+                value = propertyBag[property] = sb.InvokeWithContext(null, new List<PSVariable>
+                {
                     new PSVariable("_", obj)});
             }
             catch(Exception ex)

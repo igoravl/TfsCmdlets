@@ -1,16 +1,15 @@
 ﻿using System;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
-namespace TfsCmdlets
+namespace TfsCmdlets.Services.Impl
 {
     [Exports(typeof(ICurrentConnections), Singleton = true)]
     public class CurrentConnections: ICurrentConnections
     {
-        public ConfigurationServer Server {get;set;}
+        public ServerConnection Server {get;set;}
 
-        public Models.TeamProjectCollection Collection {get;set;}
+        public Models.TpcConnection Collection {get;set;}
 
         public TeamProject Project {get;set;}
 
@@ -41,7 +40,7 @@ namespace TfsCmdlets
             Team = null;
         }
 
-        public void Set(ConfigurationServer server)
+        public void Set(ServerConnection server)
         {
             Reset();
 
@@ -49,7 +48,7 @@ namespace TfsCmdlets
             // TODO: Mru.Server.Set(Server.Uri.ToString());
         }
 
-        public void Set(ConfigurationServer server, Models.TeamProjectCollection collection)
+        public void Set(ServerConnection server, Models.TpcConnection collection)
         {
             Set(server);
 
@@ -57,13 +56,13 @@ namespace TfsCmdlets
             // TODO: Mru.Collection.Set(Collection.Uri.ToString());
         }
 
-        public void Set(ConfigurationServer server, Models.TeamProjectCollection collection, TeamProject project)
+        public void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project)
         {
             Set(server, collection);
             Project = project;
         }
 
-        public void Set(ConfigurationServer server, Models.TeamProjectCollection collection, TeamProject project, WebApiTeam team)
+        public void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project, WebApiTeam team)
         {
             Set(server, collection, project);
             Team = team;

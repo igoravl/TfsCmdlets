@@ -62,54 +62,44 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
         [Parameter()]
         public object Server { get; set; }
 
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            Models.Connection provider;
+        // TODO
 
-            switch (Scope)
-            {
-                case RegistryScope.User: {
-                    throw new NotImplementedException("User scopes are currently not supported");
-                }
-                case RegistryScope.Collection: {
-                    provider = this.GetCollection();
-                    break;
-                }
-                case RegistryScope.Server: {
-                    provider = this.GetServer();
-                    break;
-                }
-                default: {
-                    throw new Exception($"Invalid scope {Scope}");
-                }
-            }
+//        /// <summary>
+//        /// Performs execution of the command
+//        /// </summary>
+//        protected override void DoProcessRecord()
+//        {
+//            Models.Connection provider = Scope switch
+//            {
+//                RegistryScope.User => throw new NotImplementedException("User scopes are currently not supported"),
+//                RegistryScope.Collection => Locator.GetService<Models.TpcConnection>(),
+//                RegistryScope.Server => Locator.GetService<Models.ServerConnection>(),
+//                _ => throw new Exception($"Invalid scope {Scope}")
+//            };
 
-            if(!ShouldProcess($"Registry key '{Path}' in {Scope} '{provider}'", $"Set value to '{Value}'"))
-                return;
+//            if(!ShouldProcess($"Registry key '{Path}' in {Scope} '{provider}'", $"Set value to '{Value}'"))
+//                return;
 
-            var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
-    <s:Body>
-        <UpdateRegistryEntries xmlns='http://microsoft.com/webservices/'>
-            <registryEntries>
-                <RegistryEntry Path='{Path}'><Value>{Value}</Value></RegistryEntry>
-            </registryEntries>
-        </UpdateRegistryEntries>
-    </s:Body>
-</s:Envelope>";
+//            var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
+//    <s:Body>
+//        <UpdateRegistryEntries xmlns='http://microsoft.com/webservices/'>
+//            <registryEntries>
+//                <RegistryEntry Path='{Path}'><Value>{Value}</Value></RegistryEntry>
+//            </registryEntries>
+//        </UpdateRegistryEntries>
+//    </s:Body>
+//</s:Envelope>";
 
-            var restApiService = GetService<IRestApiService>();
+//            var restApiService = Locator.GetService<IRestApiService>();
 
-            var result = restApiService.InvokeAsync(
-                provider,
-                "/Services/v3.0/RegistryService.asmx",
-                "POST",
-                soapEnvelope,
-                "application/soap+xml",
-                "application/soap+xml",
-                apiVersion: null).SyncResult();
-        }
+//            restApiService.InvokeAsync(
+//                provider,
+//                "/Services/v3.0/RegistryService.asmx",
+//                "POST",
+//                soapEnvelope,
+//                "application/soap+xml",
+//                "application/soap+xml",
+//                apiVersion: null).SyncResult();
+//        }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Models;
 
-namespace TfsCmdlets
+namespace TfsCmdlets.Services
 {
     public interface ICurrentConnections
     {
-        ConfigurationServer Server { get; set; }
+        ServerConnection Server { get; set; }
 
-        Models.TeamProjectCollection Collection { get; set; }
+        Models.TpcConnection Collection { get; set; }
 
         TeamProject Project { get; set; }
 
@@ -19,9 +19,9 @@ namespace TfsCmdlets
 
         void Reset();
 
-        void Set(ConfigurationServer server);
-        void Set(ConfigurationServer server, Models.TeamProjectCollection collection);
-        void Set(ConfigurationServer server, Models.TeamProjectCollection collection, TeamProject project);
-        void Set(ConfigurationServer server, Models.TeamProjectCollection collection, TeamProject project, WebApiTeam team);
+        void Set(ServerConnection server);
+        void Set(ServerConnection server, Models.TpcConnection collection);
+        void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project);
+        void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project, WebApiTeam team);
     }
 }

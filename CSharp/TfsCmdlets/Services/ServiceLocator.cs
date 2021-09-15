@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Services
@@ -12,9 +14,12 @@ namespace TfsCmdlets.Services
     {
         [ThreadStatic]
         private static ServiceLocator _instance;
-        private Dictionary<Type, Func<object>> Factories { get; } = new Dictionary<Type, Func<object>>();
+        private Dictionary<Type, IList<Func<object>>> Factories { get; } = new Dictionary<Type, IList<Func<object>>>();
+
         private readonly Stack<PSCmdlet> _cmdlets = new Stack<PSCmdlet>();
+        
         private PSCmdlet Context => _cmdlets.Count > 0 ? _cmdlets.Peek() : null;
+        
         public static ServiceLocator Instance => _instance ??= new ServiceLocator();
 
         private ServiceLocator() => RegisterFactories();
@@ -29,7 +34,7 @@ namespace TfsCmdlets.Services
             _cmdlets.Pop();
         }
 
-        public void Inject(object cmdlet)
+        public void Inject(Cmdlets.CmdletBase cmdlet)
         {
             var type = cmdlet.GetType();
 
@@ -41,13 +46,28 @@ namespace TfsCmdlets.Services
             {
                 if (prop.GetValue(cmdlet) != null) continue;
 
-                prop.SetValue(cmdlet, GetService(prop.PropertyType));
+                var typeInfo = prop.PropertyType.GetTypeInfo();
+                var types = typeInfo.ImplementedInterfaces?.ToList();
+                var isEnumerable = types.Any(t => t.IsAssignableFrom(typeof(IEnumerable)));
+
+                if (isEnumerable && typeInfo.IsGenericType)
+                {
+                    var services = GetServices(typeInfo.GenericTypeArguments[0]);
+                    var list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(typeInfo.GenericTypeArguments[0]));
+                    services.ForEach(s => list.Add(s));
+                    
+                    prop.SetValue(cmdlet, list);
+                }
+                else
+                {
+                    prop.SetValue(cmdlet, GetService(prop.PropertyType));
+                }
             }
         }
 
         private object Resolve(Type type)
         {
-            var ctor = type.GetConstructors().First();
+            var ctor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).First();
 
             var parmValues = new List<object>();
 
@@ -76,23 +96,32 @@ namespace TfsCmdlets.Services
 
         public object GetService(Type serviceType)
         {
+            return GetServices(serviceType).First();
+        }
+
+        public IEnumerable<T> GetServices<T>()
+        {
+            return (IEnumerable<T>) GetServices(typeof(T));
+        }
+
+        public IEnumerable<object> GetServices(Type serviceType)
+        {
             if (!Factories.ContainsKey(serviceType))
             {
                 throw new ArgumentException($"Invalid service {serviceType.FullName}. Are you missing an [Exports] attribute?");
             }
 
-            var service = Factories[serviceType]();
+            var factories = Factories[serviceType];
 
-            return service;
+            return factories.Select(svcFunc => svcFunc()).ToList();
         }
 
         private void RegisterFactories()
         {
             foreach (var concreteType in GetType().Assembly.GetTypes()
-                .Where(t =>
-                    t.GetCustomAttributes<BaseExportsAttribute>().Any()))
+                .Where(t => t.GetCustomAttributes<ExportsAttributeBase>().Any()))
             {
-                var attrs = concreteType.GetCustomAttributes<BaseExportsAttribute>();
+                var attrs = concreteType.GetCustomAttributes<ExportsAttributeBase>();
 
                 Type key;
                 Func<object> value;
@@ -101,7 +130,7 @@ namespace TfsCmdlets.Services
                 {
                     switch (attr)
                     {
-                        case ExportsAttribute exportsAttr when exportsAttr.Singleton:
+                        case ExportsAttribute {Singleton: true}:
                             {
                                 var svc = Resolve(concreteType);
 
@@ -126,12 +155,12 @@ namespace TfsCmdlets.Services
                             }
                     }
 
-                    if (Factories.ContainsKey(key))
+                    if (!Factories.ContainsKey(key))
                     {
-                        throw new InvalidOperationException($"Service {key.FullName} already registered");
+                        Factories[key] = new List<Func<object>>();
                     }
 
-                    Factories.Add(key, value);
+                    Factories[key].Add(value);
                 }
             }
         }

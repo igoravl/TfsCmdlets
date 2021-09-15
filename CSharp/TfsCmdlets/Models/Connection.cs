@@ -20,27 +20,27 @@ namespace TfsCmdlets.Models
         partial void DoConnect();
     }
 
-    public sealed class ConfigurationServer : Connection
+    public sealed class ServerConnection : Connection
     {
 #if NETCOREAPP3_1_OR_GREATER
-        public static implicit operator ConfigurationServer(VssConnection c) => new ConfigurationServer(c);
+        public static implicit operator ServerConnection(VssConnection c) => new ServerConnection(c);
 #else
-        public static implicit operator ConfigurationServer(Microsoft.TeamFoundation.Client.TfsConnection c) => new ConfigurationServer(c);
+        public static implicit operator ServerConnection(Microsoft.TeamFoundation.Client.TfsConnection c) => new ServerConnection(c);
 #endif
 
-        public ConfigurationServer(object obj) : base(obj)
+        public ServerConnection(object obj) : base(obj)
         {
         }
     }
 
-    public sealed class TeamProjectCollection : Connection
+    public sealed class TpcConnection : Connection
     {
 #if NETCOREAPP3_1_OR_GREATER
-        public static implicit operator TeamProjectCollection(VssConnection c) => new TeamProjectCollection(c);
+        public static implicit operator TpcConnection(VssConnection c) => new TpcConnection(c);
 #else
-        public static implicit operator TeamProjectCollection(Microsoft.TeamFoundation.Client.TfsConnection c) => new TeamProjectCollection(c);
+        public static implicit operator TpcConnection(Microsoft.TeamFoundation.Client.TfsConnection c) => new TpcConnection(c);
 #endif
-        public TeamProjectCollection(object obj) : base(obj)
+        public TpcConnection(object obj) : base(obj)
         {
         }
     }

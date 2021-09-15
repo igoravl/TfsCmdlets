@@ -8,10 +8,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
     public class RemoveTeamProjectCollection : Cmdlet
     {
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        // TODO
 
         //         [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
         // public object Collection,

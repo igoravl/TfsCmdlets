@@ -9,10 +9,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     //[OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredProjectCollection[]))]
     public class GetRegisteredTeamProjectCollection : Cmdlet
     {
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void ProcessRecord() => throw new System.NotImplementedException();
+        // TODO
 
         //         [Parameter(Position=0, ValueFromPipeline=true)]
         //         [Alias("Name")]
