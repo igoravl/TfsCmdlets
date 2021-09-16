@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using TfsCmdlets.Models;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Services
 {
-    public interface ICommand<T>: ICommand
+    public interface IDataCommand<T>: ICommand
     {
         IEnumerable<T> Invoke(ParameterDictionary parameters);
     }
@@ -12,6 +14,12 @@ namespace TfsCmdlets.Services
     {
         object InvokeCommand(ParameterDictionary parameters);
 
-        string CommandName { get; }
+        string Verb {get;}
+
+        string Noun {get;}
+
+        string CommandName {get;}
+
+        Type DataType {get;}
     }
 }

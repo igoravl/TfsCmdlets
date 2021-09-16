@@ -1,18 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl
 {
-    [Exports(typeof(IPowerShellService))]
-    internal class PowerShellServiceImpl : IPowerShellService, IPowerShellSite
+    [Export(typeof(IPowerShellService))]
+    internal class PowerShellServiceImpl : IPowerShellService
     {
-        private PSCmdlet Cmdlet {get;set;}
+        private ICmdletContextManager ContextManager { get; }
 
-        public void SetCmdlet(PSCmdlet cmdlet)
-            => Cmdlet = cmdlet;
+        private CmdletBase Cmdlet  => ContextManager.Current;
 
         public void WriteObject(object items, bool enumerateCollection = true)
             => Cmdlet.WriteObject(items, enumerateCollection);
@@ -75,5 +76,11 @@ namespace TfsCmdlets.Services.Impl
 #else
 #error Unsupported platform
 #endif
+
+        [ImportingConstructor]  
+        public PowerShellServiceImpl(ICmdletContextManager contextManager)
+        {
+            ContextManager = contextManager;
+        }
     }
 }

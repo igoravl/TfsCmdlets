@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TfsCmdlets.Commands;
 using TfsCmdlets.Models;
+using TfsCmdlets.Services;
 using Xunit;
 
 namespace TfsCmdlets.Tests.UnitTests.Commands
@@ -10,7 +11,7 @@ namespace TfsCmdlets.Tests.UnitTests.Commands
         [Fact]
         public void Can_Get_Verb_From_Type_Name()
         {
-            var cmd = new GetTestCommand(null);
+            var cmd = new GetTestCommand();
 
             //Assert.Equal("Get", cmd.Verb);
         }
@@ -18,14 +19,15 @@ namespace TfsCmdlets.Tests.UnitTests.Commands
         [Fact]
         public void Can_Get_Noun_From_Type_Name()
         {
-            var cmd = new GetTestCommand(null);
+            var cmd = new GetTestCommand();
 
             //Assert.Equal("TestCommand", cmd.Noun);
         }
 
         private class GetTestCommand : CommandBase<object>
         {
-            public GetTestCommand(TpcConnection collection) : base(collection)
+            public GetTestCommand()
+            : base(null, null, null)
             {
             }
 

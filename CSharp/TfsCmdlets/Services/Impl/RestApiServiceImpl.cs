@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
@@ -7,7 +8,6 @@ using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Services.Impl
 {
-[Exports(typeof(IRestApiService))]
     internal class RestApiServiceImpl : IRestApiService
     {
         private GenericHttpClient _client;
@@ -15,12 +15,6 @@ namespace TfsCmdlets.Services.Impl
         public ILogger Logger { get; private set; }
 
         Uri IRestApiService.Uri => _client?.Uri;
-
-        public RestApiServiceImpl(GenericHttpClient client, ILogger logger)
-        {
-            _client = client;
-            Logger = logger;
-        }
 
         Task<HttpResponseMessage> IRestApiService.InvokeAsync(Models.Connection connection, string path,
             string method,
@@ -116,5 +110,11 @@ namespace TfsCmdlets.Services.Impl
                 apiVersion,
                 serviceHostName);
         }
-    }
+ 
+        public RestApiServiceImpl(GenericHttpClient client, ILogger logger)
+        {
+            _client = client;
+            Logger = logger;
+        }
+   }
 }

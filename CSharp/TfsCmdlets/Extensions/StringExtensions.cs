@@ -23,5 +23,15 @@ namespace TfsCmdlets.Extensions
         {
             return Guid.TryParse(input, out _);
         }
+
+        internal static int FindIndex(this string input, Predicate<char> predicate, int startIndex = 0)
+        {
+            for (int i = startIndex; i < input.Length; i++)
+            {
+                if (predicate(input[i])) return i;
+            }
+
+            return -1;
+        }
     }
 }

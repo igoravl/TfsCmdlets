@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
@@ -13,9 +14,9 @@ namespace TfsCmdlets.Cmdlets
     /// </summary>
     public abstract class CmdletBase : PSCmdlet
     {
-        [Inject] protected IPowerShellService PSService { get; set; }
-        [Inject] protected IParameterManager ParameterManager { get; set; }
-        [Inject] protected IEnumerable<ICommand> Commands { get; set; }
+        [Import] protected IPowerShellService PSService { get; set; }
+        [Import] protected IParameterManager ParameterManager { get; set; }
+        [ImportMany] protected IEnumerable<Lazy<ICommand>> Commands { get; set; }
 
         // internal ServiceLocator Locator { get; private set; }
 
@@ -80,7 +81,7 @@ namespace TfsCmdlets.Cmdlets
         {
             var result = DoInvokeCommand();
 
-            if (result != null)
+            if (result != null && ReturnsValue)
             {
                 WriteObject(result, true);
             }
@@ -88,7 +89,7 @@ namespace TfsCmdlets.Cmdlets
 
         private IEnumerable<object> DoInvokeCommand()
         {
-            var command = Commands.FirstOrDefault(c => c.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase));
+            var command = Commands.FirstOrDefault(c => c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase))?.Value;
 
             if (command == null) throw new Exception($"Command '{CommandName}' not found. Are you missing a [Command] attribute?");
 
@@ -100,14 +101,19 @@ namespace TfsCmdlets.Cmdlets
         private void InjectDependencies()
         {
             var locator = ServiceLocator.Instance;
+            var contextManager = locator.GetExport<ICmdletContextManager>();
 
-            locator.PushContext(this);
-            locator.Inject(this);
+            contextManager.Enter(this);
+
+            locator.SatisfyImports(this);
         }
 
         private void CleanUpContext()
         {
-            ServiceLocator.Instance.PopContext();
+            var locator = ServiceLocator.Instance;
+            var contextManager = locator.GetExport<ICmdletContextManager>();
+
+            contextManager.Exit();
         }
 
         private string GetVerb()
@@ -118,6 +124,30 @@ namespace TfsCmdlets.Cmdlets
             return attr.VerbName;
         }
 
+        private bool ReturnsValue
+        {
+            get
+            {
+                var isGet = GetVerb().Equals("Get", StringComparison.OrdinalIgnoreCase);
+                var isPassthru = IsPassthru;
+
+                return isGet || isPassthru;
+            }
+        }
+
+        private bool IsPassthru
+        {
+            get
+            {
+                var parms = this.MyInvocation.BoundParameters;
+                var hasPassthru = parms.Keys.Any(k => k.Equals("Passthru", StringComparison.OrdinalIgnoreCase));
+                var isPassthru = hasPassthru && ((SwitchParameter)parms["Passthru"]).IsPresent;
+
+                return isPassthru;
+            }
+        }
+
+
         /// <summary>
         /// Check whether the currently executing environment is Windows PowerShell
         /// </summary>
@@ -125,7 +155,7 @@ namespace TfsCmdlets.Cmdlets
         ///     NotSupportedException when running on PowerShell Core.</throws>
         private void CheckWindowsOnly()
         {
-            const bool isDesktop = 
+            const bool isDesktop =
 #if NETCOREAPP3_1_OR_GREATER
                 false;
 #elif NET471_OR_GREATER

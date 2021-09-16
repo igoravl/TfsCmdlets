@@ -1,16 +1,13 @@
 using System;
+using System.Composition;
 
 namespace TfsCmdlets.Services.Impl
 {
-    [Exports(typeof(ILogger))]
+    [Export(typeof(ILogger)), Shared]
     internal class LoggerImpl : ILogger
     {
         private IPowerShellService PowerShell { get; set; }
 
-        public LoggerImpl(IPowerShellService powerShell)
-        {
-            PowerShell = powerShell;
-        }
 
         public void Log(string message)
         {
@@ -33,5 +30,11 @@ namespace TfsCmdlets.Services.Impl
         {
             PowerShell.WriteWarning(message);
         }
-    }
+
+        [ImportingConstructor]
+        public LoggerImpl(IPowerShellService powerShell)
+        {
+            PowerShell = powerShell;
+        }
+     }
 }

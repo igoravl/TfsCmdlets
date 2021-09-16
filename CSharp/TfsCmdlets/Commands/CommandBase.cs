@@ -1,34 +1,37 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.Services.CircuitBreaker;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
+using System.Composition;
+using System.Diagnostics;
+using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Commands
 {
-    internal abstract class CommandBase<T> : ICommand<T>
+    internal abstract class CommandBase<T> : CommandBase, IDataCommand<T>
     {
-        protected Models.TpcConnection Collection { get; }
-
-        public virtual string CommandName { get; }
-
-        public virtual string Noun { get; }
-
-        protected CommandBase(Models.TpcConnection collection)
-        {
-            Collection = collection;
-            CommandName = GetCommandName();
-        }
+        public override Type DataType => typeof(T);
 
         public abstract IEnumerable<T> Invoke(ParameterDictionary parameters);
 
-        public object InvokeCommand(ParameterDictionary parameters)
-            => Invoke(parameters);
+        public override object InvokeCommand(ParameterDictionary parameters) => Invoke(parameters);
 
-        private string GetCommandName()
+        public IDataManager Data { get; }
+
+        public IConnectionManager Connections { get; }
+
+        protected TClient GetClient<TClient>() where TClient : VssHttpClientBase
         {
-            return GetType().Name;
+            return Connections.GetCollection().GetClient<TClient>();
         }
-    }
+
+        [ImportingConstructor]
+        protected CommandBase(IConnectionManager connections, IDataManager data, ILogger logger) : base(logger)
+        {
+            Connections = connections;
+            Data = data;
+
+            Debug.WriteLine($"{GetType().Name} created");
+        }
+   }
 }

@@ -1,40 +1,15 @@
 ﻿using System;
+using System.Composition;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ExportsAttribute : ExportsAttributeBase
+    [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    public class CommandAttribute: ExportAttribute
     {
-        public bool Singleton { get; set; } = false;
-
-        public ExportsAttribute(Type exports)
+        public CommandAttribute(): base(typeof(ICommand))
         {
-            Exports = exports;
         }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class ControllerAttribute : ExportsAttributeBase
-    {
-        public ControllerAttribute(Type exports)
-        {
-            Exports = exports;
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class CommandAttribute : ExportsAttributeBase
-    {
-        public CommandAttribute()
-        {
-            Exports = typeof(ICommand);
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class InjectAttribute : Attribute
-    {
     }
 
     [AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -52,10 +27,5 @@ namespace TfsCmdlets
         public RequiresVersionAttribute(int version) => Version = version;
 
         public RequiresVersionAttribute(int version, int update) : this(version) => Update = update;
-    }
-
-    public class ExportsAttributeBase : Attribute
-    {
-        public Type Exports { get; set; }
     }
 }

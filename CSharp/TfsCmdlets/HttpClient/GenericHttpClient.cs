@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Composition;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -13,6 +14,7 @@ namespace TfsCmdlets.HttpClient
     /// <summary>
     /// Generic HTTP Client, used by the Invoke-TfsRestApi cmdlet
     /// </summary>
+    [Export]
     public class GenericHttpClient : VssHttpClientBase
     {
         #region Constructors and fields

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Composition;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl
 {
-    [Exports(typeof(ICurrentConnections), Singleton = true)]
-    public class CurrentConnections: ICurrentConnections
+    [Export(typeof(ICurrentConnections)), Shared]
+    public class CurrentConnectionsImpl: ICurrentConnections
     {
         public ServerConnection Server {get;set;}
 

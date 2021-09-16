@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Composition;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
-using TfsCmdlets.Services.Impl;
 
 namespace TfsCmdlets.Commands.TeamProjectCollection
 {
     [Command]
-    internal class GetTeamProjectCollection : GetCommand<TpcConnection>
+    internal class GetTeamProjectCollection : CommandBase<TpcConnection>
     {
         private ICurrentConnections CurrentConnections { get; }
 
@@ -20,11 +20,12 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
                 yield break;
             }
 
-            yield return Collection;
+            yield return Connections.GetCollection();
         }
 
-        protected GetTeamProjectCollection(ICurrentConnections currentConnections, TpcConnection collection)
-            : base(collection)
+        [ImportingConstructor]
+        public GetTeamProjectCollection(ICurrentConnections currentConnections, IConnectionManager connections, IDataManager data, ILogger logger)
+                : base(connections, data, logger)
         {
             CurrentConnections = currentConnections;
         }

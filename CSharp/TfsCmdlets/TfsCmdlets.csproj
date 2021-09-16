@@ -9,7 +9,7 @@
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+  <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
@@ -18,26 +18,22 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
     <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" PrivateAssets="all" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+    <PackageReference Include="System.Composition" Version="5.0.1" />
+    <PackageReference Include="System.Composition.Hosting" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
     <Compile Remove="**/*.Desktop.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
-    <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" />
-    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
     <Compile Remove="**/*.Core.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-    <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
+      <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
-
 </Project>
