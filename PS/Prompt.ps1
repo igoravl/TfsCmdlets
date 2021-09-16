@@ -64,7 +64,9 @@ Function prompt {
 
         $promptPrefix += "]$escReset"
     }
-    catch { }
+    catch { 
+        Write-Warning "Unable to get prompt prefix: $_"
+    }
 
     return $promptPrefix + [System.Environment]::NewLine + $defaultPsPrompt
 }

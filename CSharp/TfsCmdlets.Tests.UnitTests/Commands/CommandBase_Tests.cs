@@ -27,7 +27,7 @@ namespace TfsCmdlets.Tests.UnitTests.Commands
         private class GetTestCommand : CommandBase<object>
         {
             public GetTestCommand()
-            : base(null, null, null)
+            : base(null, null, null, null)
             {
             }
 

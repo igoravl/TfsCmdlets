@@ -27,7 +27,8 @@
                 "-Configuration",
                 "Debug",
                 "-Targets",
-                "Build"
+                "Build",
+                "-SkipTests"
             ]
         },
         {

@@ -22,8 +22,8 @@ namespace TfsCmdlets.Commands.Credential
         }
 
         [ImportingConstructor]
-        public NewCredential(IConnectionManager connections, IDataManager data, ILogger logger)
-        : base(connections, data, logger)
+        public NewCredential(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
+        : base(powerShell, connections, data, logger)
         {
         }
     }

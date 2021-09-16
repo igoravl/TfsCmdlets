@@ -24,7 +24,8 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
         }
 
         [ImportingConstructor]
-        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IConnectionManager connections, IDataManager data, ILogger logger) : base(connections, data, logger)
+        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
+         : base(powerShell, connections, data, logger)
         {
             CurrentConnections = currentConnections;
         }

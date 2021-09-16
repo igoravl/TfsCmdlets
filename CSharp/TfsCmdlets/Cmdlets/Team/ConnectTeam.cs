@@ -82,30 +82,5 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter]
         public SwitchParameter Passthru { get; set; }
-
-        // TODO
-
-        ///// <summary>
-        ///// Performs execution of the command
-        ///// </summary>
-        //protected override void DoProcessRecord()
-        //{
-        //    var (tpc, tp, t) = this.GetCollectionProjectAndTeam();
-
-        //    CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp, t);
-
-        //    // TODO: 
-        //    //this.Log($"Adding '{tp.Name} to the MRU list");
-        //    //_SetMru "Server" - Value(srv.Uri)
-        //    //_SetMru "Collection" - Value(tpc.Uri)
-        //    //_SetMru "Project" - Value(tp.Name)
-
-        //    this.Log($"Connected to '{t.Name}'");
-
-        //    if (Passthru)
-        //    {
-        //        WriteObject(tp);
-        //    }
-        //}
     }
 }

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Models;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -12,6 +15,7 @@ namespace TfsCmdlets.Services.Impl
     {
         private IEnumerable<Lazy<ICommand>> Commands { get; }
         public IParameterManager ParameterManager { get; }
+        public Lazy<IConnectionManager> Connections { get; }
 
         public T GetItem<T>(object parameters = null)
         {
@@ -51,14 +55,27 @@ namespace TfsCmdlets.Services.Impl
             throw new NotImplementedException();
         }
 
+        public ServerConnection GetServer(object parameters = null)
+            => GetItem<ServerConnection>(parameters);
+
+        public TpcConnection GetCollection(object parameters = null)
+            => GetItem<TpcConnection>(parameters);
+
+        public WebApiTeamProject GetProject(object parameters = null)
+            => GetItem<WebApiTeamProject>(parameters);
+
+        public WebApiTeam GetTeam(object parameters = null)
+            => GetItem<WebApiTeam>(parameters);
+
         [ImportingConstructor]
         public DataManagerImpl(
-            [ImportMany] IEnumerable<Lazy<ICommand>> commands, 
-            IParameterManager parameterManager)
+            [ImportMany] IEnumerable<Lazy<ICommand>> commands,
+            IParameterManager parameterManager,
+            Lazy<IConnectionManager> connections)
         {
             Commands = commands;
             ParameterManager = parameterManager;
+            Connections = connections;
         }
-
     }
 }

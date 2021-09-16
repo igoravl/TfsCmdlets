@@ -81,10 +81,15 @@ namespace TfsCmdlets.Cmdlets
         {
             var result = DoInvokeCommand();
 
-            if (result != null && ReturnsValue)
+            if (result == null) return;
+
+            if (!ReturnsValue)
             {
-                WriteObject(result, true);
+                foreach (var _ in result) { } // forces enumeration of iterator
+                return;
             }
+
+            WriteObject(result, true);
         }
 
         private IEnumerable<object> DoInvokeCommand()
