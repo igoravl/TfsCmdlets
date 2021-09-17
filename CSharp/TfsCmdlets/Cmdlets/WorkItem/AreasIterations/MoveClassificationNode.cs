@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "TfsArea", SupportsShouldProcess = true)]
     [OutputType(typeof(WorkItemClassificationNode))]
-    public class MoveArea : MoveClassificationNode
+    public class MoveArea : CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_AREA
@@ -21,10 +21,43 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [SupportsWildcards()]
         [ValidateNotNullOrEmpty]
         [Alias("Path", "Area")]
-        public override object Node { get; set; } = @"\**";
+        public object Node { get; set; } = @"\**";
 
-        /// <inheritdoc/>
-        internal override TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
+        /// <summary>
+        /// Specifies the name and/or path of the destination parent node.
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1)]
+        [Alias("MoveTo")]
+        public object Destination { get; set; }
+
+        /// <summary>
+        /// Allows the cmdlet to create destination parent node(s) if they're missing.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
+        /// HELP_PARAM_PASSTHRU
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
+
+        /// <summary>
+        /// Returns the type name for the underlying ICommand implementing the logic of this cmdlet
+        /// </summary>
+        internal TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
     }
 
     /// <summary>
