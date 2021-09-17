@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsTeamProject")]
     [OutputType(typeof(WebApiTeamProject))]
-    public class SetTeamProject : CmdletBase
+    public class SetTeamProject : CollectionLevelCmdlet
     {
         /// <summary>
         /// Specifies the name of the Team Project. 

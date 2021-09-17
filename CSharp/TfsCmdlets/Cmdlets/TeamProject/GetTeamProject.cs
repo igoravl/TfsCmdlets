@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProject", DefaultParameterSetName = "Get by project")]
     [OutputType(typeof(WebApiTeamProject))]
-    public class GetTeamProject : CmdletBase
+    public class GetTeamProject : CollectionLevelCmdlet
     {
         /// <summary>
         /// Specifies the name of a Team Project. Wildcards are supported. 
@@ -21,6 +21,12 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by project")]
         public object Project { get; set; } = "*";
+
+        /// <summary>
+        /// HELP_PARAM_COLLECTION
+        /// </summary>
+        [Parameter(ValueFromPipeline = true)]
+        public override object Collection { get; set; }
 
         /// <summary>
         /// Lists deleted team projects present in the "recycle bin"
@@ -34,8 +40,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
-
-        // TODO
-
     }
 }

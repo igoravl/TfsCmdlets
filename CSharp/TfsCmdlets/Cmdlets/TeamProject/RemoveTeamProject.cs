@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// Deletes one or more team projects. 
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProject", SupportsShouldProcess = true)]
-    public class RemoveTeamProject : CmdletBase
+    public class RemoveTeamProject : CollectionLevelCmdlet
     {
         /// <summary>
         /// Specifies the name of a Team Project to delete. Wildcards are supported.
@@ -33,8 +33,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
-
-        // TODO
-
     }
 }
