@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets
         /// Returns the PowerShell command name of this cmdlet
         /// </summary>
         /// <value>The name of the this, as defined by the [Cmdlet] attribute. If the attribute is missing, returns the class name.</value>
-        internal virtual string CommandName
+        internal virtual string DisplayName
         {
             get
             {
@@ -39,6 +39,13 @@ namespace TfsCmdlets.Cmdlets
                 return attr == null ? GetType().Name : $"{attr.VerbName}-{attr.NounName}";
             }
         }
+
+        /// <summary>
+        /// Returns the type name for the underlying ICommand implementing the logic of this cmdlet
+        /// </summary>
+        /// <value>The name of the class. If not overridden in derived classes, 
+        /// returns the name of the cmdlet class (by convention, cmdlet and command have the same type name).</value>
+        protected virtual string CommandName => GetType().Name;
 
         /// <summary>
         /// Performs initialization of the command execution, logs the supplied parameters and check whether the current 
@@ -65,10 +72,7 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <inheritdoc/>
-        protected sealed override void ProcessRecord()
-        {
-            DoProcessRecord();
-        }
+        protected sealed override void ProcessRecord() => DoProcessRecord();
 
         protected virtual void DoBeginProcessing() { }
 

@@ -11,7 +11,9 @@ namespace TfsCmdlets.Services
 
         public string Noun => GetType().Name.Substring(Verb.Length);
 
-        public string CommandName => $"{Verb}-Tfs{Noun}";
+        public string DisplayName => $"{Verb}-Tfs{Noun}";
+
+        public string CommandName => $"{Verb}{Noun}";
 
         public virtual Type DataType => GetType();
 
