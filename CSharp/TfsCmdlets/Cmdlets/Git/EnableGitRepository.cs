@@ -20,7 +20,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Enable, "TfsGitRepository", SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
-    public class EnableGitRepository : CmdletBase
+    public class EnableGitRepository : ProjectLevelCmdlet
     {
         /// <summary>
         /// Specifies the name or ID of a Git repository. Wildcards are supported. 
@@ -29,14 +29,5 @@ namespace TfsCmdlets.Cmdlets.Git
         [SupportsWildcards()]
         [Alias("Name")]
         public object Repository { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()]
-        public object Project { get; set; }
-
-        // TODO
-
     }
 }

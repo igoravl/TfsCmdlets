@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsGitRepository", SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
-    public class NewGitRepository : CmdletBase
+    public class NewGitRepository : NewCmdlet
     {
         /// <summary>
         /// Specifies the name of the new repository
@@ -18,8 +18,5 @@ namespace TfsCmdlets.Cmdlets.Git
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("Name")]
         public string Repository { get; set; }
-
-        // TODO
-
     }
 }

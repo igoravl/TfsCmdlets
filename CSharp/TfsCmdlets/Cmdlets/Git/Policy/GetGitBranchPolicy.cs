@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
-    public class GetGitBranchPolicy : CmdletBase
+    public class GetGitBranchPolicy : ProjectLevelCmdlet
     {
         /// <summary>
         /// Specifies the policy type of the branch policy to return. Wildcards are supported. 
@@ -36,74 +36,5 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         /// </summary>
         [Parameter()]
         public object Repository;
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter()]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
     }
-
-    // TODO
-
-    //[Exports(typeof(PolicyConfiguration))]
-    //internal class GitBranchPolicyDataServiceImpl : CollectionLevelController<PolicyConfiguration>
-    //{
-    //    protected override IEnumerable<PolicyConfiguration> DoGetItems(ParameterDictionary parameters)
-    //    {
-    //        var repo = this.GetItem<GitRepository>();
-
-    //        var branch = $"refs/heads/{GetItem<GitBranchStats>().Name}";
-    //        var policyType = parameters.Get<object>("PolicyType");
-
-    //        while(true) switch(policyType)
-    //        {
-    //            case PolicyType pt:
-    //            {
-    //                policyType = pt.Id;
-    //                continue;
-    //            }
-    //            case string s when s.IsGuid():
-    //            {
-    //                policyType = new Guid(s);
-    //                continue;
-    //            }
-    //            case Guid g:
-    //            {
-    //                foreach(var pol in GetClient<GitHttpClient>()
-    //                    .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, g)
-    //                    .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
-    //                    .PolicyConfigurations)
-    //                {
-    //                    yield return pol;
-    //                }
-
-    //                yield break;
-    //            }
-    //            case string s:
-    //            {
-    //                foreach(var pol in GetClient<GitHttpClient>()
-    //                    .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch)
-    //                    .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
-    //                    .PolicyConfigurations
-    //                    .Where(pc => pc.Type.DisplayName.IsLike(s)))
-    //                {
-    //                    yield return pol;
-    //                }
-
-    //                yield break;
-    //            }
-    //            default:
-    //            {
-    //                throw new ArgumentException($"Invalid policy type '{policyType}'");
-    //            }
-    //        }
-    //    }
-    //}
 }
