@@ -3,13 +3,13 @@
     "Desktop (PS 5.1)": {
       "commandName": "Executable",
       "executablePath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\PowerShell.exe",
-      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath)\"",
+      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath); Enter-TfsShell\"",
       "workingDirectory": "$(ProjectDir)"
     },
     "Core (PS 7.x)": {
       "commandName": "Executable",
       "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
-      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath)\"",
+      "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath); Enter-TfsShell\"",
       "workingDirectory": "$(ProjectDir)"
     }
   }
