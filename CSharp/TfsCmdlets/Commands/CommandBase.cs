@@ -1,36 +1,31 @@
 using System;
-using System.Collections.Generic;
+using System.Composition;
+using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
-using System.Composition;
-using System.Diagnostics;
-using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Commands
 {
-    internal abstract class CommandBase<T> : CommandBase, IDataCommand<T>
+    internal abstract class CommandBase : ICommand
     {
-        public override Type DataType => typeof(T);
+        public string Verb => GetType().Name.Substring(0, GetType().Name.FindIndex(c => char.IsUpper(c), 1));
 
-        public abstract IEnumerable<T> Invoke(ParameterDictionary parameters);
+        public string Noun => GetType().Name.Substring(Verb.Length);
 
-        public override object InvokeCommand(ParameterDictionary parameters) => Invoke(parameters);
+        public string DisplayName => $"{Verb}-Tfs{Noun}";
 
-        public IDataManager Data { get; }
-        public IPowerShellService PowerShell { get; }
+        public string CommandName => $"{Verb}{Noun}";
 
-        protected TClient GetClient<TClient>() where TClient : VssHttpClientBase
-            => Data.GetCollection().GetClient<TClient>();
+        public virtual Type DataType => GetType();
 
-        protected T GetItem(object parameters = null) => Data.GetItem<T>(parameters);
-        
-        protected IEnumerable<T> GetItems(object parameters = null) => Data.GetItems<T>(parameters);
+        public ILogger Logger { get; }
+
+        public abstract object InvokeCommand(ParameterDictionary parameters);
 
         [ImportingConstructor]
-        protected CommandBase(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(logger)
+        public CommandBase(ILogger logger)
         {
-            PowerShell = powerShell;
-            Data = data;
+            Logger = logger;
         }
-   }
+    }
 }
