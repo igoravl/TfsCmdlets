@@ -101,8 +101,7 @@ namespace TfsCmdlets.Services.Impl
                         uri, GetItem<VssCredentials>(new { Url = uri }));
                     break;
                 }
-#endif
-#if NET471_OR_GREATER
+#else
                 case Microsoft.TeamFoundation.Client.TfsConnection conn:
                     {
                         result = conn;
