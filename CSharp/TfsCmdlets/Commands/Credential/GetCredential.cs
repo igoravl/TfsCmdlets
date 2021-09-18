@@ -104,7 +104,7 @@ namespace TfsCmdlets.Commands.Credential
 
                     case ConnectionMode.Interactive:
                         {
-                            if (EnvironmentUtil.PSEdition.Equals("Core"))
+                            if (PowerShell.Edition.Equals("Core"))
                             {
                                 throw new Exception("Interactive logins are currently not supported in PowerShell Core. Use personal access tokens instead.");
                             }
