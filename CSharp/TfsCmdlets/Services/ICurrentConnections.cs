@@ -5,9 +5,9 @@ namespace TfsCmdlets.Services
 {
     public interface ICurrentConnections
     {
-        ServerConnection Server { get; set; }
+        Connection Server { get; set; }
 
-        Models.TpcConnection Collection { get; set; }
+        Models.Connection Collection { get; set; }
 
         TeamProject Project { get; set; }
 
@@ -19,9 +19,9 @@ namespace TfsCmdlets.Services
 
         void Reset();
 
-        void Set(ServerConnection server);
-        void Set(ServerConnection server, Models.TpcConnection collection);
-        void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project);
-        void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project, WebApiTeam team);
+        void Set(Connection server);
+        void Set(Connection server, Models.Connection collection);
+        void Set(Connection server, Models.Connection collection, TeamProject project);
+        void Set(Connection server, Models.Connection collection, TeamProject project, WebApiTeam team);
     }
 }

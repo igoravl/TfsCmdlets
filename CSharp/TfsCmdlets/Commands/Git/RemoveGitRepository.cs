@@ -31,7 +31,7 @@ namespace TfsCmdlets.Commands.Git
         }
 
         [ImportingConstructor]
-        public RemoveGitRepository(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+        public RemoveGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
         }
     }

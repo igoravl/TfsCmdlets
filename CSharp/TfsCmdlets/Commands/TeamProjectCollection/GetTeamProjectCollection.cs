@@ -6,11 +6,11 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Commands.TeamProjectCollection
 {
     [Command]
-    internal class GetTeamProjectCollection : CommandBase<TpcConnection>
+    internal class GetTeamProjectCollection : CommandBase<Connection>
     {
         private ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<TpcConnection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
         {
             var current = parameters.Get<bool>("Current");
 
@@ -20,12 +20,12 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
                 yield break;
             }
 
-            yield return Connections.GetCollection();
+            yield return Data.GetCollection();
         }
 
         [ImportingConstructor]
-        public GetTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-                : base(powerShell, connections, data, logger)
+        public GetTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger)
+                : base(powerShell, data, logger)
         {
             CurrentConnections = currentConnections;
         }

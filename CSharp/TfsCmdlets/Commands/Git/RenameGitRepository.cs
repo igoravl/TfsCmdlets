@@ -27,7 +27,7 @@ namespace TfsCmdlets.Commands.Git
         }
 
         [ImportingConstructor]
-        public RenameGitRepository(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+        public RenameGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
         }
     }

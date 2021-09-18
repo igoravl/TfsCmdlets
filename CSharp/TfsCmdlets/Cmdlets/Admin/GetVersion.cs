@@ -37,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     //    private IRestApiService RestApiService { get; set; }
 
     //    public ServerVersionController(
-    //        TpcConnection collection, 
+    //        Connection collection, 
     //        ILogger logger, 
     //        IParameterManager parameterManager, 
     //        IPowerShellService powerShell, 

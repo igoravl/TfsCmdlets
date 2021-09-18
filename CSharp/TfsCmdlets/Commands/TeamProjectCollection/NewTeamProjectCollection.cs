@@ -15,9 +15,9 @@ using Microsoft.TeamFoundation.Framework.Client;
 namespace TfsCmdlets.Commands.TeamProjectCollection
 {
     [Command]
-    internal class NewTeamProjectCollection : CommandBase<TpcConnection>
+    internal class NewTeamProjectCollection : CommandBase<Connection>
     {
-        public override IEnumerable<TpcConnection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
         {
 #if NET471_OR_GREATER
             
@@ -100,8 +100,8 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
         }
 
         [ImportingConstructor]
-        public NewTeamProjectCollection(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-            : base(powerShell, connections, data, logger)
+        public NewTeamProjectCollection(IPowerShellService powerShell, IDataManager data, ILogger logger)
+            : base(powerShell, data, logger)
         {
         }
     }

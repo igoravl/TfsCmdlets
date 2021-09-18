@@ -41,7 +41,7 @@ namespace TfsCmdlets.Services
 
         bool ShouldProcess(TeamProject tp, string action);
 
-        bool ShouldProcess(TpcConnection collection, string action);
+        bool ShouldProcess(Connection collection, string action);
 
         bool ShouldContinue(string query, string caption = null);
 

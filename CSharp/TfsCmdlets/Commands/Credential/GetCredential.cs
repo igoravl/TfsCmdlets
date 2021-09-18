@@ -140,8 +140,8 @@ namespace TfsCmdlets.Commands.Credential
         }
 
         [ImportingConstructor]
-        public GetCredential(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-         : base(powerShell, connections, data, logger)
+        public GetCredential(IPowerShellService powerShell, IDataManager data, ILogger logger)
+         : base(powerShell, data, logger)
         {
         }
     }

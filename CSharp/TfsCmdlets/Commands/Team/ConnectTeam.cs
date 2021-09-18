@@ -37,7 +37,7 @@ namespace TfsCmdlets.Commands.Team
         }
 
         [ImportingConstructor]
-        public ConnectTeam(ICurrentConnections currentConnections, IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+        public ConnectTeam(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
             CurrentConnections = currentConnections;
         }

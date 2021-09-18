@@ -1,100 +1,76 @@
-﻿#if NET471_OR_GREATER
-using System;
-using System.Linq;
-using System.Reflection;
-using Microsoft.TeamFoundation.Client;
+﻿//#if NET471_OR_GREATER
+//using System;
+//using System.Linq;
+//using System.Reflection;
+//using Microsoft.TeamFoundation.Client;
 
-namespace TfsCmdlets.Models
-{
-    partial class Connection
-    {
-        /// <summary>
-        /// Converts a Connection object to a TfsConnection-derived object
-        /// </summary>
-        public static implicit operator Microsoft.TeamFoundation.Client.TfsConnection(Connection c) => c?.InnerConnection;
+//namespace TfsCmdlets.Models
+//{
+//    partial class Connection
+//    {
+//        internal Microsoft.TeamFoundation.Client.TfsConnection InnerConnection => BaseObject as Microsoft.TeamFoundation.Client.TfsConnection;
 
-        /// <summary>
-        /// Converts a TfsConnection-derived object to a Connection object
-        /// </summary>
-        // public static implicit operator Connection(TfsConnection c) => new Connection(c);
+//        internal object GetService(Type serviceType) => InnerConnection.GetService(serviceType);
 
-        internal Microsoft.TeamFoundation.Client.TfsConnection InnerConnection => BaseObject as Microsoft.TeamFoundation.Client.TfsConnection;
+//        internal Microsoft.TeamFoundation.Client.TfsConnection ConfigurationServer
+//        {
+//            get
+//            {
 
-        internal object GetService(Type serviceType) => InnerConnection.GetService(serviceType);
+//            }
+//        }
 
-        internal Microsoft.TeamFoundation.Client.TfsConnection ConfigurationServer
-        {
-            get
-            {
-                if (InnerConnection is TfsTeamProjectCollection tpc)
-                {
-                    var srv = tpc.ConfigurationServer;
+//        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
 
-                    if (srv == null)
-                    {
-                        srv = new TfsConfigurationServer(tpc.Uri, tpc.ClientCredentials);
-                    }
 
-                    return srv;
-                }
 
-                return InnerConnection;
-            }
-        }
+//        internal virtual string DisplayName
+//        {
+//            get
+//            {
+//                if (InnerConnection == null) return null;
 
-        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
+//                if (InnerConnection.Uri.Segments.Length > 1 &&
+//                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
+//                {
+//                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1];
+//                }
+//                else if (InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
+//                {
+//                    return InnerConnection.Uri.Host.Substring(InnerConnection.Uri.Host.IndexOf('.'));
+//                }
 
-        internal Guid ServerId => InnerConnection.InstanceId;
+//                return InnerConnection.Uri.AbsoluteUri;
+//            }
+//        }
 
-        internal virtual T GetService<T>() => InnerConnection.GetService<T>();
+//        /// <summary>
+//        /// Gets a client of the given type
+//        /// </summary>
+//        public object GetClientFromType(Type type)
+//        {
+//            var m = InnerConnection.GetType()
+//                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+//                .Where(m => m.Name.Equals("GetClient")).FirstOrDefault();
 
-        internal virtual string DisplayName
-        {
-            get
-            {
-                if (InnerConnection == null) return null;
+//            return m?
+//                .MakeGenericMethod(type)
+//                .Invoke(InnerConnection, null);
+//        }
 
-                if (InnerConnection.Uri.Segments.Length > 1 &&
-                    !InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
-                {
-                    return InnerConnection.Uri.Segments[InnerConnection.Uri.Segments.Length - 1];
-                }
-                else if (InnerConnection.Uri.Host.EndsWith(".visualstudio.com"))
-                {
-                    return InnerConnection.Uri.Host.Substring(InnerConnection.Uri.Host.IndexOf('.'));
-                }
+//        internal bool IsHosted => InnerConnection.IsHostedServer;
 
-                return InnerConnection.Uri.AbsoluteUri;
-            }
-        }
-
-        /// <summary>
-        /// Gets a client of the given type
-        /// </summary>
-        public object GetClientFromType(Type type)
-        {
-            var m = InnerConnection.GetType()
-                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                .Where(m => m.Name.Equals("GetClient")).FirstOrDefault();
-
-            return m?
-                .MakeGenericMethod(type)
-                .Invoke(InnerConnection, null);
-        }
-
-        internal bool IsHosted => InnerConnection.IsHostedServer;
-
-        partial void DoConnect()
-        {
-            if (BaseObject is TfsTeamProjectCollection tpc)
-            {
-                tpc.EnsureAuthenticated();
-            }
-            else if (BaseObject is TfsConfigurationServer srv)
-            {
-                srv.EnsureAuthenticated();
-            }
-        }
-    }
-}
-#endif
+//        partial void DoConnect()
+//        {
+//            if (BaseObject is TfsTeamProjectCollection tpc)
+//            {
+//                tpc.EnsureAuthenticated();
+//            }
+//            else if (BaseObject is TfsConfigurationServer srv)
+//            {
+//                srv.EnsureAuthenticated();
+//            }
+//        }
+//    }
+//}
+//#endif

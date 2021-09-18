@@ -6,15 +6,15 @@
 
 //namespace TfsCmdlets.Cmdlets.ConfigServer
 //{
-//    [Controller(typeof(Models.ServerConnection))]
-//    internal class ConfigurationServerController : SimpleControllerBase<Models.ServerConnection>
+//    [Controller(typeof(Models.Connection))]
+//    internal class ConfigurationServerController : SimpleControllerBase<Models.Connection>
 //    {
 //        public ICurrentConnections CurrentConnections { get; private set; }
-//        public ServerConnection Server { get; }
+//        public Connection Server { get; }
 
 //        public ConfigurationServerController(
 //            ICurrentConnections currentConnections,
-//            Models.ServerConnection server,
+//            Models.Connection server,
 //            ILogger logger,
 //            IParameterManager parameterManager,
 //            IPowerShellService powerShell)
@@ -24,7 +24,7 @@
 //            Server = server;
 //        }
 
-//        protected override IEnumerable<Models.ServerConnection> DoGetItems(ParameterDictionary parameters)
+//        protected override IEnumerable<Models.Connection> DoGetItems(ParameterDictionary parameters)
 //        {
 //            var current = parameters.Get<bool>("Current");
 
@@ -37,7 +37,7 @@
 //            yield return Server;
 //        }
 
-//        protected override ServerConnection DoConnectItem(ParameterDictionary parameters)
+//        protected override Connection DoConnectItem(ParameterDictionary parameters)
 //        {
 //            Server.Connect();
 

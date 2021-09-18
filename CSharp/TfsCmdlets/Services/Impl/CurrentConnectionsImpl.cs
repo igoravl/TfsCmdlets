@@ -8,9 +8,9 @@ namespace TfsCmdlets.Services.Impl
     [Export(typeof(ICurrentConnections)), Shared]
     public class CurrentConnectionsImpl: ICurrentConnections
     {
-        public ServerConnection Server {get;set;}
+        public Connection Server {get;set;}
 
-        public Models.TpcConnection Collection {get;set;}
+        public Models.Connection Collection {get;set;}
 
         public TeamProject Project {get;set;}
 
@@ -41,7 +41,7 @@ namespace TfsCmdlets.Services.Impl
             Team = null;
         }
 
-        public void Set(ServerConnection server)
+        public void Set(Connection server)
         {
             Reset();
 
@@ -49,7 +49,7 @@ namespace TfsCmdlets.Services.Impl
             // TODO: Mru.Server.Set(Server.Uri.ToString());
         }
 
-        public void Set(ServerConnection server, Models.TpcConnection collection)
+        public void Set(Connection server, Models.Connection collection)
         {
             Set(server);
 
@@ -57,13 +57,13 @@ namespace TfsCmdlets.Services.Impl
             // TODO: Mru.Collection.Set(Collection.Uri.ToString());
         }
 
-        public void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project)
+        public void Set(Connection server, Models.Connection collection, TeamProject project)
         {
             Set(server, collection);
             Project = project;
         }
 
-        public void Set(ServerConnection server, Models.TpcConnection collection, TeamProject project, WebApiTeam team)
+        public void Set(Connection server, Models.Connection collection, TeamProject project, WebApiTeam team)
         {
             Set(server, collection, project);
             Team = team;

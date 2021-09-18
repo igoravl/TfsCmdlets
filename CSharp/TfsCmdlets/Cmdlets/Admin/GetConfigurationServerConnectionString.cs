@@ -10,12 +10,12 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <summary>
     /// Gets the configuration server database connection string.
     /// </summary>
-    /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationserverconnectionstring/">Online version:</related>
+    /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationConnectionstring/">Online version:</related>
     /// <related>Get-TfsInstallationPath</related>
-    [Cmdlet(VerbsCommon.Get, "TfsConfigurationServerConnectionString")]
+    [Cmdlet(VerbsCommon.Get, "TfsConfigurationConnectionString")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class GetConfigurationServerConnectionString : CmdletBase
+    public class GetConfigurationConnectionString : CmdletBase
     {
         /// <summary>
         /// Specifies the name of a Team Foundation Server application tier from which to 

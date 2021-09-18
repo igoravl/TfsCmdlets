@@ -79,8 +79,8 @@ namespace TfsCmdlets.Commands.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        public GetClassificationNode(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-                : base(powerShell, connections, data, logger)
+        public GetClassificationNode(IPowerShellService powerShell, IDataManager data, ILogger logger)
+                : base(powerShell, data, logger)
         {
         }
     }

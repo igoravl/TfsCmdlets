@@ -13,17 +13,17 @@ using Microsoft.TeamFoundation.Framework.Common;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-    [Controller(typeof(TpcConnection))]
-    internal class TeamProjectCollectionController : CollectionLevelController<TpcConnection>
+    [Controller(typeof(Connection))]
+    internal class TeamProjectCollectionController : CollectionLevelController<Connection>
     {
 
 #if NET471_OR_GREATER
-        private ServerConnection ServerConnection { get; }
+        private Connection Connection { get; }
 #endif
 
         private ICurrentConnections CurrentConnections { get; set; }
 
-        protected override IEnumerable<TpcConnection> DoGetItems(ParameterDictionary parameters)
+        protected override IEnumerable<Connection> DoGetItems(ParameterDictionary parameters)
         {
             var current = parameters.Get<bool>("Current");
 
@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
             yield return Collection;
         }
 
-        protected override TpcConnection DoConnectItem(ParameterDictionary parameters)
+        protected override Connection DoConnectItem(ParameterDictionary parameters)
         {
             Collection.Connect();
 
@@ -57,83 +57,8 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
             );
         }
 
-        protected override TpcConnection DoNewItem(ParameterDictionary parameters)
+        protected override Connection DoNewItem(ParameterDictionary parameters)
         {
-#if NET471_OR_GREATER
-            if (!PowerShell.ShouldProcess(Collection, "Create team project collection")) return null;
-
-            var configServer = ServerConnection;
-            var collectionName = parameters.Get<string>(nameof(NewTeamProjectCollection.Collection));
-            var databaseServer = parameters.Get<string>(nameof(NewTeamProjectCollection.DatabaseServer));
-            var databaseName = parameters.Get<string>(nameof(NewTeamProjectCollection.DatabaseName));
-            var description = parameters.Get<string>(nameof(NewTeamProjectCollection.Description));
-            var useExistingDatabase = parameters.Get<bool>(nameof(NewTeamProjectCollection.UseExistingDatabase));
-            var isDefault = parameters.Get<bool>(nameof(NewTeamProjectCollection.Default));
-            var connectionString = parameters.Get<string>(nameof(NewTeamProjectCollection.ConnectionString));
-            var pollingInterval = parameters.Get<int>(nameof(NewTeamProjectCollection.PollingInterval));
-            var timeout = parameters.Get<TimeSpan>(nameof(NewTeamProjectCollection.Timeout));
-
-            Enum.TryParse<TeamFoundationServiceHostStatus>(parameters.Get<string>(nameof(NewTeamProjectCollection.InitialState)),
-                out var initialState);
-
-            var tpcService = configServer
-                .GetService<ITeamProjectCollectionService>();
-
-            var servicingTokens = new Dictionary<string, string>()
-            {
-                ["SharePointAction"] = "None",
-                ["ReportingAction"] = "None"
-            };
-
-            if (!string.IsNullOrEmpty(databaseName)) servicingTokens["CollectionDatabaseName"] = databaseName;
-            if (useExistingDatabase) servicingTokens["UseExistingDatabase"] = useExistingDatabase.ToString();
-            if (!string.IsNullOrEmpty(connectionString)) servicingTokens["CollectionDatabaseName"] = databaseName;
-            if (!string.IsNullOrEmpty(databaseServer)) connectionString = $"Data source={databaseServer}; Integrated Security=true";
-
-            var tpcJob = tpcService.QueueCreateCollection(
-                collectionName,
-                description,
-                isDefault,
-                $"~/{collectionName}/",
-                initialState,
-                servicingTokens,
-                connectionString,
-                null,
-                null);
-
-            var start = DateTime.Now;
-
-            while (DateTime.Now.Subtract(start) < timeout)
-            {
-                Thread.Sleep(pollingInterval);
-
-                var collectionInfo = tpcService.GetCollection(tpcJob.HostId,
-                    ServiceHostFilterFlags.IncludeAllServicingDetails);
-
-                var jobDetail = collectionInfo.ServicingDetails.FirstOrDefault(job => job.JobId == tpcJob.JobId);
-
-                if (jobDetail == null) return GetItem(parameters);
-
-                switch (jobDetail.JobStatus)
-                {
-                    case ServicingJobStatus.Unknown:
-                    case ServicingJobStatus.Queued:
-                    case ServicingJobStatus.Running:
-                        continue;
-                    case ServicingJobStatus.Failed:
-                        throw new Exception($"Error creating team project collection {collectionName}");
-                    case ServicingJobStatus.Complete:
-                        GetItem(parameters);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            throw new TimeoutException($"Operation timed out during creation of team project collection {Collection}");
-#else
-            return null;
-#endif
         }
 
         protected override void DoDismountItem(ParameterDictionary parameters)
@@ -159,7 +84,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         protected override void DoMountItem(ParameterDictionary parameters)
         {
 #if NET471_OR_GREATER
-            var configServer = (TfsConfigurationServer)ServerConnection;
+            var configServer = (TfsConfigurationServer)Connection;
             var tpcService = configServer.GetService<ITeamProjectCollectionService>();
 
             var collectionName = parameters.Get<string>(nameof(MountTeamProjectCollection.Collection));
@@ -192,21 +117,21 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 
 #if NET471_OR_GREATER
         public TeamProjectCollectionController(
-            ServerConnection server,
+            Connection server,
             ICurrentConnections currentConnections,
-            TpcConnection collection,
+            Connection collection,
             ILogger logger,
             IParameterManager parameterManager,
             IPowerShellService powerShell)
             : base(collection, logger, parameterManager, powerShell)
         {
-            ServerConnection = server;
+            Connection = server;
             CurrentConnections = currentConnections;
         }
 #else
         public TeamProjectCollectionController(
             ICurrentConnections currentConnections,
-            TpcConnection collection,
+            Connection collection,
             ILogger logger,
             IParameterManager parameterManager,
             IPowerShellService powerShell)

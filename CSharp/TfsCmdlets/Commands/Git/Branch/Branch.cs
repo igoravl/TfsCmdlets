@@ -92,8 +92,8 @@ namespace TfsCmdlets.Commands.Git.Branch
         }
 
         [ImportingConstructor]
-        public GetGitBranch(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) 
-            : base(powerShell, connections, data, logger)
+        public GetGitBranch(IPowerShellService powerShell, IDataManager data, ILogger logger) 
+            : base(powerShell, data, logger)
         {
         }
     }

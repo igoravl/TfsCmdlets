@@ -29,7 +29,7 @@ namespace TfsCmdlets.Commands.Git
         }
 
         [ImportingConstructor]
-        public EnableGitRepository(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+        public EnableGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
         }
     }

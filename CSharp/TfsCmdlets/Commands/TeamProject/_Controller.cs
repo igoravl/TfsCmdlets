@@ -186,7 +186,7 @@
 //            IController<WebApiProcess> processController,
 //            WebApiTeamProject project,
 //            CurrentConnections currentConnections,
-//            TpcConnection collection,
+//            Connection collection,
 //            ILogger logger,
 //            IParameterManager parameterManager,
 //            IPowerShellService powerShell)

@@ -6,13 +6,13 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Commands.TeamProjectCollection
 {
     [Command]
-    internal class ConnectTeamProjectCollection : CommandBase<TpcConnection>
+    internal class ConnectTeamProjectCollection : CommandBase<Connection>
     {
         public ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<TpcConnection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
         {
-            var tpc = Connections.GetCollection();
+            var tpc = Data.GetCollection();
 
             tpc.Connect();
             var srv = tpc.ConfigurationServer;
@@ -24,8 +24,8 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
         }
 
         [ImportingConstructor]
-        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-         : base(powerShell, connections, data, logger)
+        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger)
+         : base(powerShell, data, logger)
         {
             CurrentConnections = currentConnections;
         }

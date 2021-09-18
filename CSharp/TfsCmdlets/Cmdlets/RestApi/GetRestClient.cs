@@ -50,7 +50,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         //    /// </summary>
         //    protected override void DoProcessRecord()
         //    {
-        //        var provider = ParameterSetName == "Get by collection" ? Collection : Location.GetService<ServerConnection>();
+        //        var provider = ParameterSetName == "Get by collection" ? Collection : Location.GetService<Connection>();
 
         //        Type clientType;
 

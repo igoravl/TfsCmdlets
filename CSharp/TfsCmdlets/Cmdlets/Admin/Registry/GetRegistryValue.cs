@@ -70,11 +70,11 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
 //                    throw new NotImplementedException("User scopes are currently not supported");
 //                }
 //                case RegistryScope.Collection: {
-//                    provider = Locator.GetService<Models.TpcConnection>();
+//                    provider = Locator.GetService<Models.Connection>();
 //                    break;
 //                }
 //                case RegistryScope.Server: {
-//                    provider = Locator.GetService<Models.ServerConnection>();
+//                    provider = Locator.GetService<Models.Connection>();
 //                    break;
 //                }
 //                default: {

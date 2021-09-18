@@ -55,7 +55,7 @@ namespace TfsCmdlets.Services.Impl
         public bool ShouldProcess(TeamProject tp, string action)
             => ShouldProcess($"Team Project '{tp.Name}'", action);
 
-        public bool ShouldProcess(TpcConnection collection, string action)
+        public bool ShouldProcess(Connection collection, string action)
             => ShouldProcess($"Team Project Collection '{collection.DisplayName}'", action);
 
         public bool ShouldContinue(string query, string caption = null)

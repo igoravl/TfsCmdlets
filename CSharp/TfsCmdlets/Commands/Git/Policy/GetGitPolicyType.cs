@@ -58,7 +58,7 @@ namespace TfsCmdlets.Commands.Git.Branch
         }
 
         [ImportingConstructor]
-        public GetGitPolicyType(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+        public GetGitPolicyType(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
         }
     }

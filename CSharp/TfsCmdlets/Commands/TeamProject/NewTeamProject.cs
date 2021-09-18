@@ -87,7 +87,7 @@ namespace TfsCmdlets.Commands.TeamProject
         }
 
         [ImportingConstructor]
-         public NewTeamProject(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger) : base(powerShell, connections, data, logger)
+         public NewTeamProject(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
         {
         }
    }

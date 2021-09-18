@@ -15,9 +15,9 @@ namespace TfsCmdlets.Services
 
         IEnumerable<T> Invoke<T>(string verb, object parameters = null);
 
-        ServerConnection GetServer(object parameters = null);
+        Connection GetServer(object parameters = null);
 
-        TpcConnection GetCollection(object parameters = null);
+        Connection GetCollection(object parameters = null);
         
         WebApiTeamProject GetProject(object parameters = null);
         

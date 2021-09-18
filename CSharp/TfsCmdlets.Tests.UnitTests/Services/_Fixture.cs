@@ -132,7 +132,7 @@
 //             throw new NotImplementedException();
 //         }
 
-//         public bool ShouldProcess(TpcConnection collection, string action)
+//         public bool ShouldProcess(Connection collection, string action)
 //         {
 //             throw new NotImplementedException();
 //         }

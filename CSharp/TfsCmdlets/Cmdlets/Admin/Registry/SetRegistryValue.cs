@@ -72,8 +72,8 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
 //            Models.Connection provider = Scope switch
 //            {
 //                RegistryScope.User => throw new NotImplementedException("User scopes are currently not supported"),
-//                RegistryScope.Collection => Locator.GetService<Models.TpcConnection>(),
-//                RegistryScope.Server => Locator.GetService<Models.ServerConnection>(),
+//                RegistryScope.Collection => Locator.GetService<Models.Connection>(),
+//                RegistryScope.Server => Locator.GetService<Models.Connection>(),
 //                _ => throw new Exception($"Invalid scope {Scope}")
 //            };
 

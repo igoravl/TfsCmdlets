@@ -85,8 +85,8 @@ namespace TfsCmdlets.Commands.Git
         }
 
         [ImportingConstructor]
-        public GetGitRepository(IPowerShellService powerShell, IConnectionManager connections, IDataManager data, ILogger logger)
-            : base(powerShell, connections, data, logger)
+        public GetGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger)
+            : base(powerShell, data, logger)
         {
         }
     }
