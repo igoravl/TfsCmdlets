@@ -19,9 +19,6 @@ namespace TfsCmdlets.Commands
         public IDataManager Data { get; }
         public IPowerShellService PowerShell { get; }
 
-        protected TClient GetClient<TClient>() where TClient : VssHttpClientBase
-            => Data.GetCollection().GetClient<TClient>();
-
         protected T GetItem(object parameters = null) => Data.GetItem<T>(parameters);
         
         protected IEnumerable<T> GetItems(object parameters = null) => Data.GetItems<T>(parameters);

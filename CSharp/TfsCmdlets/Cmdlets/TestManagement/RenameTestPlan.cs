@@ -36,7 +36,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 
     //        if(!PowerShell.ShouldProcess(tp, $"Rename test plan '{plan.Name}' to '{newName}'")) return null;
 
-    //        var client = GetClient<TestPlanHttpClient>();
+    //        var client = Data.GetClient<TestPlanHttpClient>(parameters);
 
     //        return client.UpdateTestPlanAsync(new TestPlanUpdateParams() {
     //            Name = newName

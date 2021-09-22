@@ -45,8 +45,6 @@ namespace TfsCmdlets.Services
             Dictionary<string, string> queryParameters = null,
             string apiVersion = "4.1",
             string serviceHostName = null);
-
-        Uri Uri { get; }
     }
 
 }

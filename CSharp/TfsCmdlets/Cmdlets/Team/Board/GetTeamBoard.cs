@@ -64,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
     //                case string s when !s.IsGuid():
     //                    {
     //                        var ctx = new TeamContext(tp.Name, t.Name);
-    //                        var client = GetClient<WorkHttpClient>();
+    //                        var client = Data.GetClient<WorkHttpClient>(parameters);
 
     //                        foreach (var b in client.GetBoardsAsync(ctx)
     //                            .GetResult("Error getting team boards")
@@ -79,7 +79,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
     //                case string s:
     //                    {
     //                        var ctx = new TeamContext(tp.Name, t.Name);
-    //                        var client = GetClient<WorkHttpClient>();
+    //                        var client = Data.GetClient<WorkHttpClient>(parameters);
 
     //                        yield return client.GetBoardAsync(ctx, s)
     //                            .GetResult($"Error getting board 's'");

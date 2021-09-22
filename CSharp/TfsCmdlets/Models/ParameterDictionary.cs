@@ -67,9 +67,9 @@ namespace TfsCmdlets.Models
 
             var newParms = new ParameterDictionary(overridingParameters);
 
-            foreach (var kvp in newParms)
+            foreach (var parm in newParms)
             {
-                this[kvp.Key] = kvp.Value;
+                this[parm.Key] = parm.Value is PSObject psObject ? psObject.BaseObject : parm.Value;
             }
         }
 

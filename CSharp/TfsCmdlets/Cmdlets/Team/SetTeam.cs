@@ -154,9 +154,9 @@ namespace TfsCmdlets.Cmdlets.Team
     //            var backlogIteration = parameters.Get<string>(nameof(SetTeam.BacklogIteration));
     //            var iterationPaths = parameters.Get<IEnumerable<string>>(nameof(SetTeam.IterationPaths));
 
-    //            var teamClient = GetClient<TeamHttpClient>();
-    //            var projectClient = GetClient<ProjectHttpClient>();
-    //            var workClient = GetClient<WorkHttpClient>();
+    //            var teamClient = GetClient<TeamHttpClient>(parameters);
+    //            var projectClient = GetClient<ProjectHttpClient>(parameters);
+    //            var workClient = GetClient<WorkHttpClient>(parameters);
 
     //            // Set description
 

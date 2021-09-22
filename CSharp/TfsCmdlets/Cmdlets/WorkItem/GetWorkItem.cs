@@ -281,7 +281,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //        WorkItemExpand expand = (includeLinks? WorkItemExpand.Relations: WorkItemExpand.None);
 
     //        var tp = Project;
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        var done = false;
 

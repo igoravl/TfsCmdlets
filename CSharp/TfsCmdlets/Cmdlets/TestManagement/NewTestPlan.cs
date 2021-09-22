@@ -69,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 
     //        var tp = Project;
 
-    //        var client = GetClient<TestPlanHttpClient>();
+    //        var client = Data.GetClient<TestPlanHttpClient>(parameters);
 
     //        return client.CreateTestPlanAsync(new TestPlanCreateParams() {
     //            AreaPath = NodeUtil.NormalizeNodePath(areaPath, tp.Name, "Areas", includeTeamProject: true),

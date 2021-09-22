@@ -197,7 +197,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //                });
     //            }
 
-    //            var client = GetClient<WorkItemTrackingHttpClient>();
+    //            var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //            wi = client.UpdateWorkItemAsync(patch, (int)wi.Id, false, bypassRules)
     //                .GetResult("Error updating work item");
@@ -252,7 +252,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //                });
     //            }
 
-    //            var client = GetClient<WorkItemTrackingHttpClient>();
+    //            var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //            wi = client.UpdateWorkItemAsync(patch, (int)wi.Id, false, bypassRules)
     //                .GetResult("Error updating work item");

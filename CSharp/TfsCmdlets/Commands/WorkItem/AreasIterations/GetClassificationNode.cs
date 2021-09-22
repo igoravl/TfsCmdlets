@@ -17,7 +17,7 @@ namespace TfsCmdlets.Commands.WorkItem.AreasIterations
         {
             var node = parameters.Get<object>("Node");
             var structureGroup = parameters.Get<TreeStructureGroup>("StructureGroup");
-            var tp = Data.GetProject();
+            var tp = Data.GetProject(parameters);
             var done = false;
             string path = null;
 
@@ -52,7 +52,7 @@ namespace TfsCmdlets.Commands.WorkItem.AreasIterations
                 }
             }
 
-            var client = GetClient<WorkItemTrackingHttpClient>();
+            var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
             var depth = 1;
 
             if (path.IsWildcard())

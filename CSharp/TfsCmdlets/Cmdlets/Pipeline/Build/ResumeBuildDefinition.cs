@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     //    protected override BuildDefinition DoResumeItem()
     //    {
     //        var def = GetItem<BuildDefinition>();
-    //        var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+    //        var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
 
     //        if(def.QueueStatus == DefinitionQueueStatus.Enabled)
     //        {

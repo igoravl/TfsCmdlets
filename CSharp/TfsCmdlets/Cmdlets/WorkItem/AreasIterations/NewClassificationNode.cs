@@ -95,7 +95,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
     //        var tp = Project;
     //        var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true);
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
     //        var parentPath = Path.GetDirectoryName(nodePath);
     //        var nodeName = Path.GetFileName(nodePath);
 

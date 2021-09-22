@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //        return;
         //    }
 
-        //    var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+        //    var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
 
         //    var newFolder = new WebApiFolder() {
         //        Description = Description

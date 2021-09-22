@@ -92,7 +92,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
         //         }
 
         //         t = Get-TfsTeam -Team Team -Project Project -Collection Collection; if (t.Count != 1) {throw new Exception($"Invalid or non-existent team '{Team}'."}; if(t.ProjectName) {Project = t.ProjectName}; tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw "Invalid or non-existent team project Project."}; tpc = tp.Store.TeamProjectCollection)
-        //         var client = GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>();
+        //         var client = Data.GetClient<Microsoft.TeamFoundation.Work.WebApi.WorkHttpClient>(parameters);
 
         //         foreach(boardName in boards)
         //         {

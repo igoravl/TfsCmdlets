@@ -73,7 +73,7 @@ namespace TfsCmdlets.Cmdlets.Identity
         //            identity = srv.AuthorizedIdentity.UniqueName;
         //        }
 
-        //        var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);
+        //        var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);
         //        var qm = queryMembership;
 
         //        while (true) switch(identity)

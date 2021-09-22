@@ -48,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //    {
     //        var text = parameters.Get<string>(nameof(SearchWorkItem.Query));
     //        var results = parameters.Get<int>(nameof(SearchWorkItem.Results));
-    //        var client = GetClient<SearchHttpClient>();
+    //        var client = Data.GetClient<SearchHttpClient>(parameters);
     //        var req = new WorkItemSearchRequest() {
     //            SearchText = text,
     //            IncludeFacets = false,

@@ -72,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
     //            if (!force && !PowerShell.ShouldContinue($"Are you sure you want to delete folder '{f.Path}' and all of its contents?")) continue;
 
-    //            GetClient<ReleaseHttpClient>()
+    //            GetClient<ReleaseHttpClient>(parameters)
     //                .DeleteFolderAsync(tp.Name, f.Path)
     //                .Wait();
     //        }

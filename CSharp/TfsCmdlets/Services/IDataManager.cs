@@ -9,18 +9,22 @@ namespace TfsCmdlets.Services
 {
     public interface IDataManager
     {
-        T GetItem<T>(object parameters = null);
+        T GetItem<T>(object parameters);
 
-        IEnumerable<T> GetItems<T>(object parameters = null);
+        IEnumerable<T> GetItems<T>(object parameters);
 
-        IEnumerable<T> Invoke<T>(string verb, object parameters = null);
+        IEnumerable<T> Invoke<T>(string verb, object parameters);
 
-        Connection GetServer(object parameters = null);
+        Connection GetServer(object parameters);
 
-        Connection GetCollection(object parameters = null);
+        Connection GetCollection(object parameters);
         
-        WebApiTeamProject GetProject(object parameters = null);
+        WebApiTeamProject GetProject(object parameters);
         
-        WebApiTeam GetTeam(object parameters = null);
+        WebApiTeam GetTeam(object parameters);
+
+        T GetClient<T>(object parameters);
+
+        T GetService<T>(object parameters);
     }
 }

@@ -17,7 +17,7 @@ namespace TfsCmdlets.Commands.Git.Branch
 
             var branch = parameters.Get<object>("Branch");
             var defaultBranch = parameters.Get<bool>("Default");
-            var repo = Data.GetItem<GitRepository>();
+            var repo = Data.GetItem<GitRepository>(parameters);
 
             if (repo.Size == 0)
             {
@@ -25,7 +25,7 @@ namespace TfsCmdlets.Commands.Git.Branch
                 yield break;
             }
 
-            var client = GetClient<GitHttpClient>();
+            var client = Data.GetClient<GitHttpClient>(parameters);
             string branchName = null;
             var done = false;
 

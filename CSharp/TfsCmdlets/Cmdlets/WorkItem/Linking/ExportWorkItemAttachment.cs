@@ -87,7 +87,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         //    }
 
         //    var tp = Project;
-        //    var client = GetClient<WorkItemTrackingHttpClient>();
+        //    var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
         //    var outputDir = ResolvePath(Destination);
 
         //    Log($"Downloading attachments to output directory '{outputDir}'");

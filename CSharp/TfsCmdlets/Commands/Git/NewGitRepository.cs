@@ -13,12 +13,12 @@ namespace TfsCmdlets.Commands.Git
     {
         public override IEnumerable<GitRepository> Invoke(ParameterDictionary parameters)
         {
-            var tp = Data.GetProject();
+            var tp = Data.GetProject(parameters);
             var repo = parameters.Get<string>(nameof(Cmdlets.Git.NewGitRepository.Repository));
 
             if (!PowerShell.ShouldProcess(tp, $"Create Git repository '{repo}'")) yield break;
 
-            var client = GetClient<GitHttpClient>();
+            var client = Data.GetClient<GitHttpClient>(parameters);
 
             var tpRef = new TeamProjectReference
             {

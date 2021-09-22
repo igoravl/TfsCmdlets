@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.VisualStudio.Services.Location;
 using Microsoft.VisualStudio.Services.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Location;
+using TfsCmdlets.Services;
 
 #if NETCOREAPP3_1_OR_GREATER
 using AdoConnection = Microsoft.VisualStudio.Services.WebApi.VssConnection;
@@ -15,7 +16,7 @@ using AdoConnection = Microsoft.TeamFoundation.Client.TfsConnection;
 
 namespace TfsCmdlets.Models
 {
-    public sealed class Connection : PSObject
+    public sealed class Connection : PSObject, ITfsServiceProvider
     {
         /// <summary>Converts Connection to AdoConnection</summary>
         public static implicit operator AdoConnection(Connection c) => c.InnerConnection;
@@ -35,24 +36,16 @@ namespace TfsCmdlets.Models
 
         internal Uri Uri => InnerConnection.Uri;
 
-        internal T GetClient<T>() where T : VssHttpClientBase => InnerConnection.GetClient<T>();
+        object ITfsServiceProvider.GetService(Type serviceType) 
+            => CallGenericMethod(serviceType, "GetService");
+        
+        object ITfsServiceProvider.GetClient(Type clientType) 
+            => CallGenericMethod(clientType, "GetClient");
 
 #if NETCOREAPP3_1_OR_GREATER
         internal Guid ServerId => InnerConnection.ServerId;
-
-        internal T GetService<T>() where T : IVssClientService => InnerConnection.GetService<T>();
-
-        internal object GetService(Type serviceType)
-        {
-            return CallGenericMethod(serviceType, "GetService");
-        }
-
 #else
         internal Guid ServerId => InnerConnection.InstanceId;
-
-        internal T GetService<T>() => InnerConnection.GetService<T>();
-
-        internal object GetService(Type serviceType) => InnerConnection.GetService(serviceType);
 #endif
 
 

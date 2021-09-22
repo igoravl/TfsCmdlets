@@ -29,7 +29,7 @@ namespace TfsCmdlets.Commands.TeamProject
                 yield break;
             }
 
-            var client = GetClient<ProjectHttpClient>();
+            var client = Data.GetClient<ProjectHttpClient>(parameters);
 
             while (true) switch (project)
                 {

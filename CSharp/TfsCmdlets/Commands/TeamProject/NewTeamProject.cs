@@ -17,7 +17,7 @@ namespace TfsCmdlets.Commands.TeamProject
     {
         public override IEnumerable<WebApiTeamProject> Invoke(ParameterDictionary parameters)
         {
-           var tpc = Data.GetCollection();
+           var tpc = Data.GetCollection(parameters);
            var project = parameters.Get<string>(nameof(Cmdlets.TeamProject.NewTeamProject.Project));
 
            if (!PowerShell.ShouldProcess(tpc, $"Create team project '{project}'"))
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Commands.TeamProject
                _ => throw new ArgumentException($"Invalid or non-existent process template '{processTemplate}'")
            };
 
-           var client = GetClient<ProjectHttpClient>();
+           var client = Data.GetClient<ProjectHttpClient>(parameters);
 
            var tpInfo = new WebApiTeamProject
            {
@@ -64,7 +64,7 @@ namespace TfsCmdlets.Commands.TeamProject
 
            // Wait for the operation to complete
 
-           var opsClient = GetClient<OperationsHttpClient>();
+           var opsClient = Data.GetClient<OperationsHttpClient>(parameters);
            var opsToken = opsClient.GetOperation(token.Id)
                .GetResult("Error getting operation status");
 

@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //        var force = parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));
 
     //        var tp = Project;
-    //        var client = GetClient<TaggingHttpClient>();
+    //        var client = Data.GetClient<TaggingHttpClient>(parameters);
 
     //        foreach(var t in tags)
     //        {

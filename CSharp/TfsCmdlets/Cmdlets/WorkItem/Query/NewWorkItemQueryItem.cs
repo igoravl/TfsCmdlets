@@ -114,7 +114,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //        if (!PowerShell.ShouldProcess(tp, $"{(existingItem == null ? "Create" : "Overwrite")} " +
     //            $"work item {itemType} '{fullPath}'")) return null;
 
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        var newItem = new QueryHierarchyItem()
     //        {

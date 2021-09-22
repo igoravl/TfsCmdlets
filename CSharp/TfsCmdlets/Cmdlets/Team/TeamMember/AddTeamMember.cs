@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
         //        Identity = t.Id
         //    });
 
-        //    var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+        //    var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(parameters);
 
         //    this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to team '{group.DisplayName}'");
 

@@ -8,13 +8,10 @@ using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Services.Impl
 {
+    [Export(typeof(IRestApiService))]
     internal class RestApiServiceImpl : IRestApiService
     {
-        private GenericHttpClient _client;
-
         public ILogger Logger { get; private set; }
-
-        Uri IRestApiService.Uri => _client?.Uri;
 
         Task<HttpResponseMessage> IRestApiService.InvokeAsync(Models.Connection connection, string path,
             string method,
@@ -41,9 +38,9 @@ namespace TfsCmdlets.Services.Impl
                 GenericHttpClient.UseHost(serviceHostName);
             }
 
-            _client = conn.GetClient<GenericHttpClient>();
+            var client = conn.GetClient<GenericHttpClient>();
 
-            var task = _client.InvokeAsync(new HttpMethod(method), path, body,
+            var task = client.InvokeAsync(new HttpMethod(method), path, body,
                 requestContentType, responseContentType, additionalHeaders, queryParameters,
                 apiVersion);
 
@@ -77,9 +74,9 @@ namespace TfsCmdlets.Services.Impl
                 GenericHttpClient.UseHost(serviceHostName);
             }
 
-            _client = conn.GetClient<GenericHttpClient>();
+            var client = conn.GetClient<GenericHttpClient>();
 
-            var task = _client.InvokeAsync<T>(new HttpMethod(method), path, body,
+            var task = client.InvokeAsync<T>(new HttpMethod(method), path, body,
                 requestContentType, responseContentType, additionalHeaders, queryParameters,
                 apiVersion);
 
@@ -111,9 +108,9 @@ namespace TfsCmdlets.Services.Impl
                 serviceHostName);
         }
  
-        public RestApiServiceImpl(GenericHttpClient client, ILogger logger)
+        [ImportingConstructor]
+        public RestApiServiceImpl(IDataManager data, ILogger logger)
         {
-            _client = client;
             Logger = logger;
         }
    }

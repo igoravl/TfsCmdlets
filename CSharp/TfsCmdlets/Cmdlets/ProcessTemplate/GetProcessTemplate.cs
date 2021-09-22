@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     //        var process = parameters.Get<object>(nameof(GetProcessTemplate.ProcessTemplate));
     //        var isDefault = parameters.Get<bool>(nameof(GetProcessTemplate.Default));
 
-    //        var client = GetClient<ProcessHttpClient>();
+    //        var client = Data.GetClient<ProcessHttpClient>(parameters);
 
     //        while (true) switch (process)
     //            {

@@ -50,7 +50,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
         //    ErrorUtil.ThrowIfNotFound(group, nameof(group), Group);
 
-        //    var client = GetClient<IdentityHttpClient>();
+        //    var client = Data.GetClient<IdentityHttpClient>(parameters);
 
         //    if (!PowerShell.ShouldProcess(group.DisplayName,
         //        $"Remove member '{member.DisplayName} ({member.UniqueName})'"))

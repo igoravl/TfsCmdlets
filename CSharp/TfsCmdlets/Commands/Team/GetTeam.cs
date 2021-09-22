@@ -25,8 +25,8 @@ namespace TfsCmdlets.Commands.Team
             var includeSettings = parameters.Get<bool>(nameof(Cmdlets.Team.GetTeam.IncludeSettings));
             var defaultTeam = parameters.Get<bool>(nameof(Cmdlets.Team.GetTeam.Default));
 
-            var tp = Data.GetProject();
-            var client = GetClient<TeamHttpClient>();
+            var tp = Data.GetProject(parameters);
+            var client = Data.GetClient<TeamHttpClient>(parameters);
 
             while (true) switch (team)
                 {
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Commands.Team
                     case { } when defaultTeam:
                         {
                             Logger.Log("Get default team");
-                            var projectClient = GetClient<ProjectHttpClient>();
+                            var projectClient = Data.GetClient<ProjectHttpClient>(parameters);
                             var props = projectClient
                                 .GetProjectPropertiesAsync(tp.Id)
                                 .GetResult("Error retrieving project's default team");
@@ -65,14 +65,14 @@ namespace TfsCmdlets.Commands.Team
                                 continue;
                             }
 
-                            yield return CreateTeamObject(t);
+                            yield return CreateTeamObject(t, parameters);
                             yield break;
                         }
                     case string s when !s.IsWildcard():
                         {
                             var result = client.GetTeamAsync(tp.Name, s)
                                 .GetResult($"Error getting team '{s}'");
-                            yield return CreateTeamObject(result, includeMembers, includeSettings);
+                            yield return CreateTeamObject(result, parameters);
                             yield break;
                         }
                     case string s:
@@ -81,7 +81,7 @@ namespace TfsCmdlets.Commands.Team
                                 .GetResult($"Error getting team(s) '{s}'")
                                 .Where(t => t.Name.IsLike(s)))
                             {
-                                yield return CreateTeamObject(result, includeMembers, includeSettings);
+                                yield return CreateTeamObject(result, parameters);
                             }
                             yield break;
                         }
@@ -92,13 +92,16 @@ namespace TfsCmdlets.Commands.Team
                 }
         }
 
-        private Models.Team CreateTeamObject(WebApiTeam innerTeam, bool includeMembers = false, bool includeSettings = false)
+        private Models.Team CreateTeamObject(WebApiTeam innerTeam, ParameterDictionary parameters)
         {
             var team = new Models.Team(innerTeam);
 
+            var includeMembers = parameters.Get<bool>("IncludeMembers");
+            var includeSettings = parameters.Get<bool>("IncludeSettings");
+
             if (includeMembers)
             {
-                var client = GetClient<TeamHttpClient>();
+                var client = Data.GetClient<TeamHttpClient>(parameters);
                 Logger.Log($"Retrieving team membership information for team '{team.Name}'");
 
                 var members = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
@@ -111,7 +114,7 @@ namespace TfsCmdlets.Commands.Team
             {
                 Logger.Log($"Retrieving team settings for team '{team.Name}'");
 
-                var workClient = GetClient<WorkHttpClient>();
+                var workClient = Data.GetClient<WorkHttpClient>(parameters);
                 var ctx = new TeamContext(team.ProjectName, team.Name);
                 team.Settings = workClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");

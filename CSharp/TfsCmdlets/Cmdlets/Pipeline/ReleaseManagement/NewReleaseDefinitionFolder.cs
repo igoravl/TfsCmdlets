@@ -40,7 +40,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
     //        if (!PowerShell.ShouldProcess(tp, $"Create release folder '{folder}'")) return null;
 
-    //        var client = GetClient<ReleaseHttpClient>();
+    //        var client = Data.GetClient<ReleaseHttpClient>(parameters);
     //        var newFolder = new WebApiFolder()
     //        {
     //            Description = description,

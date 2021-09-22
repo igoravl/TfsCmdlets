@@ -12,25 +12,15 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IDataManager)), Shared]
-    [Export(typeof(ICommandManager))]
-    internal class DataManagerImpl : IDataManager, ICommandManager
+    // [Export(typeof(ICommandManager))]
+    internal class DataManagerImpl : IDataManager //, ICommandManager
     {
-        private IEnumerable<Lazy<ICommand>> Commands { get; }
-        public IParameterManager ParameterManager { get; }
-        public ILogger Logger { get; }
-        public ICurrentConnections CurrentConnections { get; }
+        protected IEnumerable<Lazy<ICommand>> Commands { get; }
+        protected IParameterManager ParameterManager { get; }
+        protected ILogger Logger { get; }
+        protected ICurrentConnections CurrentConnections { get; }
 
-        public T GetItem<T>(object parameters = null)
-        {
-            return GetItems<T>(parameters).First();
-        }
-
-        public IEnumerable<T> GetItems<T>(object parameters = null)
-        {
-            return Invoke<T>(VerbsCommon.Get, parameters);
-        }
-
-        public IEnumerable<T> Invoke<T>(string verb, object parameters = null)
+        public IEnumerable<T> Invoke<T>(string verb, object parameters)
         {
             var dataType = typeof(T);
             var command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType.Equals(dataType)).Value as IDataCommand<T>;
@@ -43,34 +33,46 @@ namespace TfsCmdlets.Services.Impl
             return command.Invoke(ParameterManager.GetParameters(parameters));
         }
 
-        public ICommand GetCommandByName(string commandName)
-        {
-            throw new NotImplementedException();
-        }
+        // public ICommand GetCommandByName(string commandName)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public IEnumerable<ICommand> GetCommandByVerb(string verb, string noun = null)
-        {
-            throw new NotImplementedException();
-        }
+        // public IEnumerable<ICommand> GetCommandByVerb(string verb, string noun = null)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public IEnumerable<ICommand> GetCommandByNoun(string noun)
-        {
-            throw new NotImplementedException();
-        }
+        // public IEnumerable<ICommand> GetCommandByNoun(string noun)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
-        public Connection GetServer(object parameters = null)
+        public T GetItem<T>(object parameters)
+            => GetItems<T>(parameters).First();
+
+        public IEnumerable<T> GetItems<T>(object parameters)
+            => Invoke<T>(VerbsCommon.Get, parameters);
+
+        public Connection GetServer(object parameters)
             => CreateConnection(ClientScope.Server, parameters);
 
-        public Connection GetCollection(object parameters = null)
+        public Connection GetCollection(object parameters)
             => CreateConnection(ClientScope.Collection, parameters);
 
-        public WebApiTeamProject GetProject(object parameters = null)
+        public WebApiTeamProject GetProject(object parameters)
             => GetItem<WebApiTeamProject>(parameters);
 
-        public WebApiTeam GetTeam(object parameters = null)
+        public WebApiTeam GetTeam(object parameters)
             => GetItem<WebApiTeam>(parameters);
 
-        private Connection CreateConnection(ClientScope scope, object parameters = null)
+        public T GetClient<T>(object parameters)
+            => (T) ((ITfsServiceProvider)GetCollection(parameters)).GetClient(typeof(T));
+
+        public T GetService<T>(object parameters)
+            => (T) ((ITfsServiceProvider)GetCollection(parameters)).GetService(typeof(T));
+
+        private Connection CreateConnection(ClientScope scope, object parameters)
         {
 #if NETCOREAPP3_1_OR_GREATER
             Microsoft.VisualStudio.Services.WebApi.VssConnection result = null;
@@ -116,11 +118,12 @@ namespace TfsCmdlets.Services.Impl
                 case Uri uri when scope == ClientScope.Collection:
                     {
                         Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                        result = new Microsoft.TeamFoundation.Client.TfsTeamProjectCollection(uri, GetItem<VssCredentials>(new { Url = uri }));
+                        result = Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
+                            uri, GetItem<VssCredentials>(new { Url = uri }));
                         break;
                     }
 #endif
-                case null:
+                    case null:
                 {
                     Logger.Log($"Get currently connected {scope}");
                     result = ((Connection)CurrentConnections.Get(scope.ToString()))?.InnerConnection;

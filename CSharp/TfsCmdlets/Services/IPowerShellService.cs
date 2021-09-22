@@ -34,8 +34,12 @@ namespace TfsCmdlets.Services
         void SetVariableValue(string name, object value);
 
         string Edition { get; }
+
         string WindowTitle { get; set; }
+
         PSModuleInfo Module { get; }
+
+        string CurrentCommand {get;}
 
         bool ShouldProcess(string target, string action);
 

@@ -20,7 +20,7 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
                 yield break;
             }
 
-            yield return Data.GetCollection();
+            yield return Data.GetCollection(parameters);
         }
 
         [ImportingConstructor]

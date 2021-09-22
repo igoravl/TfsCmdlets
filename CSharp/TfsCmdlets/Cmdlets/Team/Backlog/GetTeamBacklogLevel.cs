@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.Team.Backlog
     //            }
     //            case string s:
     //            {
-    //                var client = GetClient<WorkHttpClient>();
+    //                var client = Data.GetClient<WorkHttpClient>(parameters);
     //                var ctx = new TeamContext(tp.Name, t.Name);
 
     //                var result = client.GetBacklogsAsync(ctx)

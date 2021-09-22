@@ -12,10 +12,10 @@ namespace TfsCmdlets.Commands.Git
     {
         public override IEnumerable<GitRepository> Invoke(ParameterDictionary parameters)
         {
-            var tp = Data.GetProject();
+            var tp = Data.GetProject(parameters);
             var repos = GetItems();
 
-            var client = GetClient<GitExtendedHttpClient>();
+            var client = Data.GetClient<GitExtendedHttpClient>(parameters);
 
             foreach (var repo in repos)
             {

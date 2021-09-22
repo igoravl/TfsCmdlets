@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     //{
     //    protected override IEnumerable<WebApiPublisher> DoGetItems()
     //    {
-    //        var client = GetClient<ServiceHooksPublisherHttpClient>();
+    //        var client = Data.GetClient<ServiceHooksPublisherHttpClient>(parameters);
     //        var publisher = parameters.Get<object>(nameof(GetServiceHookPublisher.Publisher));
 
     //        while (true) switch (publisher)

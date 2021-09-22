@@ -68,7 +68,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     //                    }
     //                case IEnumerable<string> types:
     //                    {
-    //                        var client = GetClient<WorkItemTrackingHttpClient>();
+    //                        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
     //                        var tp = Project;
 
     //                        foreach (var t in types)

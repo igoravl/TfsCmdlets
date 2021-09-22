@@ -30,7 +30,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //        var newName = parameters.Get<string>("NewName");
 
     //        var tp = Project;
-    //        var client = GetClient<TaggingHttpClient>();
+    //        var client = Data.GetClient<TaggingHttpClient>(parameters);
 
     //        if (!PowerShell.ShouldProcess(tp, $"Rename work item tag '{tag.Name}' to '{newName}'")) return null;
 

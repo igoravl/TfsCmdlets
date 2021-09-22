@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         //        return;
         //    }
 
-        //    var client = GetClient<TeamAdminHttpClient>();
+        //    var client = Data.GetClient<TeamAdminHttpClient>(parameters);
 
         //    this.Log($"Removing administrator '{admin.DisplayName} ({admin.UniqueName})' from team '{t.Name}'");
 

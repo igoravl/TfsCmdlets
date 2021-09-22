@@ -90,7 +90,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //            return null;
     //        }
 
-    //        var t = GetClient<TeamHttpClient>().CreateTeamAsync(new WebApiTeam()
+    //        var t = GetClient<TeamHttpClient>(parameters).CreateTeamAsync(new WebApiTeam()
     //        {
     //            Name = team,
     //            Description = description,

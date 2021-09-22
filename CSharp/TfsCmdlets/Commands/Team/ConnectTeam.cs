@@ -19,10 +19,18 @@ namespace TfsCmdlets.Commands.Team
 
         public override IEnumerable<WebApiTeam> Invoke(ParameterDictionary parameters)
         {
-            var tpc = Data.GetCollection();
-            var tp = Data.GetProject();
-            var t = Data.GetTeam();
 
+            var parms = new ParameterDictionary(parameters);
+
+            var tpc = Data.GetCollection(parameters);
+            parms["Collection"] = null;
+            CurrentConnections.Set(tpc.ConfigurationServer, tpc);
+
+            var tp = Data.GetProject(parms);
+            parms["Project"] = null;
+            CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp);
+
+            var t = Data.GetTeam(parms);
             CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp, t);
 
             // TODO: 

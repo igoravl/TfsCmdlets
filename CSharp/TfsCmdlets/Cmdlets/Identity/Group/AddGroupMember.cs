@@ -43,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         //        Identity = Group
         //    });
 
-        //    var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+        //    var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(parameters);
 
         //    this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to group '{group.DisplayName}'");
 

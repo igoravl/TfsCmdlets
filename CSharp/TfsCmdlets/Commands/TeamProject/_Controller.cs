@@ -36,7 +36,7 @@
 //            var hard = parameters.Get<bool>(nameof(RemoveTeamProject.Hard));
 //            var force = parameters.Get<bool>(nameof(RemoveTeamProject.Force));
 
-//            var client = GetClient<ProjectHttpClient>();
+//            var client = Data.GetClient<ProjectHttpClient>(parameters);
 
 //            foreach (var tp in tps)
 //            {
@@ -56,7 +56,7 @@
 
 //                // Wait for the operation to complete
 
-//                var opsClient = GetClient<OperationsHttpClient>();
+//                var opsClient = GetClient<OperationsHttpClient>(parameters);
 //                var opsToken = opsClient.GetOperation(token.Id).GetResult("Error getting operation status");
 
 //                while (
@@ -103,7 +103,7 @@
 
 //            // Wait for the operation to complete
 
-//            var opsClient = GetClient<OperationsHttpClient>();
+//            var opsClient = GetClient<OperationsHttpClient>(parameters);
 //            var opsToken = opsClient.GetOperation(token.Id)
 //                .GetResult("Error getting operation status");
 
@@ -133,7 +133,7 @@
 
 //            if(!PowerShell.ShouldProcess(Project, $"Set avatar image to {avatarImage}")) return Project;
 
-//            var client = GetClient<ProjectHttpClient>();
+//            var client = Data.GetClient<ProjectHttpClient>(parameters);
 //            var projectAvatar = new ProjectAvatar();
 
 //            if (!File.Exists(avatarImage)) throw new ArgumentException($"Invalid avatar image path '{avatarImage}'");

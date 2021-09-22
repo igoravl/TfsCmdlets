@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 
     //        if (!PowerShell.ShouldProcess(tp, $"Create work item tag '{tag}'")) return null;
 
-    //        var client = GetClient<TaggingHttpClient>();
+    //        var client = Data.GetClient<TaggingHttpClient>(parameters);
 
     //        return client.CreateTagAsync(tp.Id, tag)
     //            .GetResult($"Error creating work item tag '{tag}'");

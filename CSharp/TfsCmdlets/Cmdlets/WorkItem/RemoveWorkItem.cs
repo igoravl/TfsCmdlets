@@ -54,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //        var (tpc, tp) = GetCollectionAndProject();
     //        var destroy = parameters.Get<bool>(nameof(RemoveWorkItem.Destroy));
     //        var force = parameters.Get<bool>(nameof(RemoveWorkItem.Force));
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        foreach(var wi in wis)
     //        {

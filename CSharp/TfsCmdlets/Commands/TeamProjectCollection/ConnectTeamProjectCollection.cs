@@ -12,7 +12,7 @@ namespace TfsCmdlets.Commands.TeamProjectCollection
 
         public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
         {
-            var tpc = Data.GetCollection();
+            var tpc = Data.GetCollection(parameters);
 
             tpc.Connect();
             var srv = tpc.ConfigurationServer;

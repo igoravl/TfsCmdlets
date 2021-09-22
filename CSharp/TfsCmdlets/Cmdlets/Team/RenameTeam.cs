@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
     //        if(!PowerShell.ShouldProcess(tp, $"Rename team '{t.Name}' to '{newName}'")) return null;
 
-    //        return new Models.Team(GetClient<TeamHttpClient>().UpdateTeamAsync(new WebApiTeam() {
+    //        return new Models.Team(GetClient<TeamHttpClient>(parameters).UpdateTeamAsync(new WebApiTeam() {
     //                Name = newName
     //            }, tp.Id.ToString(), t.Id.ToString())
     //            .GetResult($"Error renaming team '{t.Name}' to '{newName}'"));

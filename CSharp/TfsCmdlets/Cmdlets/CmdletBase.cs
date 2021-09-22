@@ -16,6 +16,7 @@ namespace TfsCmdlets.Cmdlets
     {
         [Import] protected IPowerShellService PSService { get; set; }
         [Import] protected IParameterManager ParameterManager { get; set; }
+        [Import] protected ILogger Logger { get; set; }
         [ImportMany] protected IEnumerable<Lazy<ICommand>> Commands { get; set; }
 
         // internal ServiceLocator Locator { get; private set; }
@@ -58,7 +59,8 @@ namespace TfsCmdlets.Cmdlets
             CheckWindowsOnly();
             InjectDependencies();
             // CheckRequiredVersion();
-            // LogParameters();
+            LogParameters();
+            
             DoBeginProcessing();
         }
 
@@ -66,7 +68,6 @@ namespace TfsCmdlets.Cmdlets
         protected sealed override void EndProcessing()
         {
             DoEndProcessing();
-            CleanUpContext();
 
             base.EndProcessing();
         }
@@ -104,25 +105,22 @@ namespace TfsCmdlets.Cmdlets
 
             var parameters = ParameterManager.GetParameters(this);
 
-            return command.InvokeCommand(parameters) as IEnumerable<object>;
+            var result = command.InvokeCommand(parameters);
+
+            if(result is IEnumerable<object> objList) return objList;
+
+            return new[] { result };
         }
 
         private void InjectDependencies()
         {
             var locator = ServiceLocator.Instance;
-            var contextManager = locator.GetExport<ICmdletContextManager>();
-
-            contextManager.Enter(this);
-
             locator.SatisfyImports(this);
         }
 
-        private void CleanUpContext()
+        private void LogParameters()
         {
-            var locator = ServiceLocator.Instance;
-            var contextManager = locator.GetExport<ICmdletContextManager>();
-
-            contextManager.Exit();
+             Logger.LogParameters();
         }
 
         private string GetVerb()
@@ -133,7 +131,7 @@ namespace TfsCmdlets.Cmdlets
             return attr.VerbName;
         }
 
-        private bool ReturnsValue
+        protected virtual bool ReturnsValue
         {
             get
             {

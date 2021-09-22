@@ -173,7 +173,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         //            Id = sourceNode.Id
         //        };
 
-        //        var client = GetClient<WorkItemTrackingHttpClient>();
+        //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
         //        var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, StructureGroup, destinationNode.RelativePath.Substring(1))
         //            .GetResult($"Error moving node {sourceNode.RelativePath} to {destinationNode.RelativePath}");

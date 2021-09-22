@@ -50,7 +50,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     //    protected override IEnumerable<WebApiServiceHookNotification> DoGetItems()
     //    {
     //        var subscription = GetItem<WebApiSubscription>();
-    //        var client = GetClient<ServiceHooksPublisherHttpClient>();
+    //        var client = Data.GetClient<ServiceHooksPublisherHttpClient>(parameters);
 
     //        var from = parameters.Get<DateTime?>(nameof(GetServiceHookNotificationHistory.From));
     //        var to = parameters.Get<DateTime?>(nameof(GetServiceHookNotificationHistory.To));

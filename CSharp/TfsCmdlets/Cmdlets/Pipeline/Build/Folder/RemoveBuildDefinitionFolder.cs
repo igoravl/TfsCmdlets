@@ -81,7 +81,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //        }
 
         //        var tp = Project;
-        //        var client = GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+        //        var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
 
         //        if(!Force)
         //        {

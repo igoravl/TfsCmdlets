@@ -13,7 +13,7 @@ using NewCredentialCmdlet = TfsCmdlets.Cmdlets.Credential.NewCredential;
 
 namespace TfsCmdlets.Commands.Credential
 {
-    [Export(typeof(ICommand))]
+    [Command]
     internal class GetCredential : CommandBase<VssCredentials>
     {
         public override IEnumerable<VssCredentials> Invoke(ParameterDictionary parameters)
@@ -36,93 +36,92 @@ namespace TfsCmdlets.Commands.Credential
             else if (interactive)
                 connectionMode = ConnectionMode.Interactive;
 
-            NetworkCredential netCred;
+            NetworkCredential netCred = null;
 
-            while (true) switch (connectionMode)
-                {
-                    case ConnectionMode.CachedCredentials:
+            switch (connectionMode)
+            {
+                case ConnectionMode.CachedCredentials:
+                    {
+                        Logger.Log("Using cached credentials");
+
+                        yield return new VssClientCredentials(true);
+                        break;
+                    }
+
+                case ConnectionMode.UserNamePassword:
+                    {
+                        Logger.Log("Using username/password credentials from UserName/Password arguments");
+                        netCred = new NetworkCredential(userName, password);
+                        break;
+                    }
+
+                case ConnectionMode.AccessToken:
+                    {
+                        Logger.Log("Using credential from supplied Personal Access Token");
+                        netCred = new NetworkCredential(string.Empty, accessToken);
+                        break;
+                    }
+
+                case ConnectionMode.CredentialObject:
+                    {
+                        switch (credential)
                         {
-                            Logger.Log("Using cached credentials");
+                            case VssCredentials cred:
+                                {
+                                    Logger.Log("Using supplied credential as-is, since object already is of type VssCredentials");
+                                    yield return cred;
+                                    break;
+                                }
+                            case PSCredential cred:
+                                {
+                                    Logger.Log("Using username/password credentials from supplied PSCredential object");
+                                    netCred = cred.GetNetworkCredential();
+                                    break;
+                                }
+                            case NetworkCredential cred:
+                                {
+                                    Logger.Log("Using username/password credentials from supplied NetworkCredential object");
+                                    netCred = cred;
+                                    break;
+                                }
+                            default:
+                                {
+                                    throw new Exception("Invalid argument Credential. Supply either a PowerShell credential (PSCredential object) or a System.Net.NetworkCredential object.");
+                                }
+                        }
+                        break;
+                    }
 
-                            yield return new VssClientCredentials(true);
-                            yield break;
+                case ConnectionMode.Interactive:
+                    {
+                        if (PowerShell.Edition.Equals("Core"))
+                        {
+                            throw new Exception("Interactive logins are currently not supported in PowerShell Core. Use personal access tokens instead.");
                         }
 
-                    case ConnectionMode.UserNamePassword:
-                        {
-                            Logger.Log("Using username/password credentials from UserName/Password arguments");
-                            credential = new NetworkCredential(userName, password);
-                            connectionMode = ConnectionMode.CredentialObject;
-                            continue;
-                        }
+                        Logger.Log("Using interactive credential");
 
-                    case ConnectionMode.AccessToken:
-                        {
-                            Logger.Log("Using credential from supplied Personal Access Token");
-                            credential = new NetworkCredential(string.Empty, accessToken);
-                            connectionMode = ConnectionMode.CredentialObject;
-                            continue;
-                        }
+                        yield return new VssClientCredentials(
+                            new WindowsCredential(false),
+                            new VssFederatedCredential(false),
+                            CredentialPromptType.PromptIfNeeded);
+                        break;
+                    }
 
-                    case ConnectionMode.CredentialObject:
-                        {
-                            switch (credential)
-                            {
-                                case VssCredentials cred:
-                                    {
-                                        Logger.Log("Using supplied credential as-is, since object already is of type VssCredentials");
-                                        yield return cred;
-                                        yield break;
-                                    }
-                                case PSCredential cred:
-                                    {
-                                        Logger.Log("Using username/password credentials from supplied PSCredential object");
-                                        netCred = cred.GetNetworkCredential();
-                                        break;
-                                    }
-                                case NetworkCredential cred:
-                                    {
-                                        Logger.Log("Using username/password credentials from supplied NetworkCredential object");
-                                        netCred = cred;
-                                        break;
-                                    }
-                                default:
-                                    {
-                                        throw new Exception("Invalid argument Credential. Supply either a PowerShell credential (PSCredential object) or a System.Net.NetworkCredential object.");
-                                    }
-                            }
+                default:
+                    {
+                        throw new Exception($"Invalid parameter set '{connectionMode}'");
+                    }
+            }
 
-                            yield return IsHosted(url) ?
-                                new VssClientCredentials(
-                                    new WindowsCredential(netCred),
-                                    new VssBasicCredential(netCred)) :
-                                new VssClientCredentials(
-                                    new WindowsCredential(netCred));
+            if (netCred == null) yield break;
 
-                            yield break;
-                        }
-
-                    case ConnectionMode.Interactive:
-                        {
-                            if (PowerShell.Edition.Equals("Core"))
-                            {
-                                throw new Exception("Interactive logins are currently not supported in PowerShell Core. Use personal access tokens instead.");
-                            }
-
-                            Logger.Log("Using interactive credential");
-
-                            yield return new VssClientCredentials(
-                                new WindowsCredential(false),
-                                new VssFederatedCredential(false),
-                                CredentialPromptType.PromptIfNeeded);
-                            yield break;
-                        }
-
-                    default:
-                        {
-                            throw new Exception($"Invalid parameter set '{connectionMode}'");
-                        }
-                }
+            yield return IsHosted(url) ?
+                new VssClientCredentials(
+                    new WindowsCredential(netCred),
+                    new VssBasicCredential(netCred)) :
+                new VssClientCredentials(
+                    new WindowsCredential(netCred));
         }
 
         private bool IsHosted(Uri url) => (

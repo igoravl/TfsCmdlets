@@ -156,7 +156,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     //            });
     //        }
 
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        return client.CreateWorkItemAsync(patch, tp.Name, type.Name, false, bypassRules)
     //            .GetResult("Error creating work item");

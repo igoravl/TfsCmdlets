@@ -71,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     //                case int i:
     //                    {
     //                        var tp = Project;
-    //                        var client = GetClient<TestPlanHttpClient>();
+    //                        var client = Data.GetClient<TestPlanHttpClient>(parameters);
     //                        yield return client.GetTestPlanByIdAsync(tp.Id, i)
     //                            .GetResult($"Error getting test plan '{i}'");
     //                        yield break;
@@ -79,7 +79,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     //                case string s:
     //                    {
     //                        var tp = Project;
-    //                        var client = GetClient<TestPlanHttpClient>();
+    //                        var client = Data.GetClient<TestPlanHttpClient>(parameters);
     //                        foreach (var plan in client.GetTestPlansAsync(tp.Id, owner, null, planDetails, active)
     //                            .GetResult($"Error getting test plans '{testPlan}'")
     //                            .Where(plan => plan.Name.IsLike(s)))

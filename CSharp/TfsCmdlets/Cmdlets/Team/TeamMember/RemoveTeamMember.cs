@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
 
         //    ErrorUtil.ThrowIfNotFound(group, nameof(group), Team);
 
-        //    var client = GetClient<IdentityHttpClient>();
+        //    var client = Data.GetClient<IdentityHttpClient>(parameters);
 
         //    if (!PowerShell.ShouldProcess($"Team '{t.Name}'",
         //        $"Remove member '{member.DisplayName} ({member.UniqueName})'"))

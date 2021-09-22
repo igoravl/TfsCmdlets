@@ -102,7 +102,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         //        wit = GetItem<WebApiWorkItemType>(new {WorkItem = wi});
         //    }
 
-        //    var client = GetClient<WorkItemTrackingHttpClient>();
+        //    var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
         //    // var flags = WorkItemCopyFlags.None;
 

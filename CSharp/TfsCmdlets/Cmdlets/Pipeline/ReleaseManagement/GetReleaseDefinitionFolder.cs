@@ -62,7 +62,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //                    }
     //                case string s when s.IsWildcard():
     //                    {
-    //                        var client = GetClient<ReleaseHttpClient>();
+    //                        var client = Data.GetClient<ReleaseHttpClient>(parameters);
     //                        var tp = Project;
     //                        s = NodeUtil.NormalizeNodePath(s, tp.Name);
     //                        var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
@@ -78,7 +78,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //                    }
     //                case string s:
     //                    {
-    //                        var client = GetClient<ReleaseHttpClient>();
+    //                        var client = Data.GetClient<ReleaseHttpClient>(parameters);
     //                        var tp = Project;
     //                        var f = client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
     //                            .GetResult($"Error getting folders matching {s}").FirstOrDefault();

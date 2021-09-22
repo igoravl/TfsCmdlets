@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
@@ -14,9 +15,8 @@ namespace TfsCmdlets.Services.Impl
     {
         private IPowerShellService PowerShell { get; set; }
 
-        public ParameterDictionary GetParameters(object overridingParameters = null) 
+        public ParameterDictionary GetParameters(object overridingParameters = null)
             => new ParameterDictionary(PowerShell.GetBoundParameters(), overridingParameters);
-
 
         [ImportingConstructor]
         public ParameterManagerImpl(IPowerShellService powerShell)

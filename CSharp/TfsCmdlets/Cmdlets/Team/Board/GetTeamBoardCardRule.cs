@@ -72,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
 
     //        var (_, tp, t) = GetCollectionProjectAndTeam();
     //        var ctx = new TeamContext(tp.Name, t.Name);
-    //        var client = GetClient<WorkHttpClient>();
+    //        var client = Data.GetClient<WorkHttpClient>(parameters);
 
     //        var rules = client.GetBoardCardRuleSettingsAsync(ctx, board.Name)
     //            .GetResult("Error getting board card rules")

@@ -107,7 +107,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //        var scope = parameters.Get<string>(nameof(GetWorkItemQuery.Scope));
 
     //        var tp = Project;
-    //        var client = GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>(parameters);
 
     //        while (true) switch (item)
     //            {

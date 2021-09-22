@@ -15,8 +15,8 @@ namespace TfsCmdlets.Commands.Git.Branch
     {
         public override IEnumerable<PolicyConfiguration> Invoke(ParameterDictionary parameters)
         {
-            var repo = Data.GetItem<GitRepository>();
-            var branch = $"refs/heads/{Data.GetItem<GitBranchStats>().Name}";
+            var repo = Data.GetItem<GitRepository>(parameters);
+            var branch = $"refs/heads/{Data.GetItem<GitBranchStats>(parameters).Name}";
             var policyType = parameters.Get<object>("PolicyType");
 
             while (true) switch (policyType)
@@ -33,7 +33,7 @@ namespace TfsCmdlets.Commands.Git.Branch
                     }
                 case Guid g:
                     {
-                        foreach (var pol in GetClient<GitHttpClient>()
+                        foreach (var pol in Data.GetClient<GitHttpClient>(parameters)
                             .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, g)
                             .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
                             .PolicyConfigurations)
@@ -45,7 +45,7 @@ namespace TfsCmdlets.Commands.Git.Branch
                     }
                 case string s:
                     {
-                        foreach (var pol in GetClient<GitHttpClient>()
+                        foreach (var pol in Data.GetClient<GitHttpClient>(parameters)
                             .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch)
                             .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
                             .PolicyConfigurations

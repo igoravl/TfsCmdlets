@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         //                    }
         //                case string s:
         //                    {
-        //                        var client = GetClient<ServiceHooksPublisherHttpClient>();
+        //                        var client = Data.GetClient<ServiceHooksPublisherHttpClient>(parameters);
         //                        var result = client.GetConsumersAsync().GetResult("Error getting service hook consumers");
 
         //                        foreach(var shc in result.Where(c=>c.Name.IsLike(s) || c.Id.IsLike(s)))

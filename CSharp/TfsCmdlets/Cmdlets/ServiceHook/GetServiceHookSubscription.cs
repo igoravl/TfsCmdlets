@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     //{
     //    protected override IEnumerable<WebApiSubscription> DoGetItems()
     //    {
-    //        var client = GetClient<ServiceHooksPublisherHttpClient>();
+    //        var client = Data.GetClient<ServiceHooksPublisherHttpClient>(parameters);
     //        var subscription = parameters.Get<object>(nameof(GetServiceHookSubscription.Subscription));
     //        var eventType = parameters.Get<string>(nameof(GetServiceHookSubscription.EventType));
 

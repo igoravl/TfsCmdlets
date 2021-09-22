@@ -59,7 +59,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //            createParams.RepositoryId = repo.Id;
     //        }
 
-    //        var client = GetClient<WikiHttpClient>();
+    //        var client = Data.GetClient<WikiHttpClient>(parameters);
 
     //        return client.CreateWikiAsync(createParams)
     //            .GetResult("Error creating Wiki repository");

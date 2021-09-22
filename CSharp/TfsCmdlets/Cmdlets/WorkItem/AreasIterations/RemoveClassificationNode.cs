@@ -116,7 +116,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     //        this.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");
 
     //        var (_, tp) = this.GetCollectionAndProject();
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        foreach (var node in nodes)
     //        {

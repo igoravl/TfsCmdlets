@@ -31,16 +31,16 @@ namespace TfsCmdlets.Commands.Git.Branch
                     }
                 case Guid g:
                     {
-                        var tp = Data.GetProject();
-                        var client = GetClient<PolicyHttpClient>();
+                        var tp = Data.GetProject(parameters);
+                        var client = Data.GetClient<PolicyHttpClient>(parameters);
                         yield return client.GetPolicyTypeAsync(tp.Name, g)
                             .GetResult("Error retrieving policy types");
                         yield break;
                     }
                 case string s:
                     {
-                        var tp = Data.GetProject();
-                        var client = GetClient<PolicyHttpClient>();
+                        var tp = Data.GetProject(parameters);
+                        var client = Data.GetClient<PolicyHttpClient>(parameters);
                         foreach (var pt in client.GetPolicyTypesAsync(tp.Name)
                             .GetResult("Error retrieving policy types")
                             .Where(p => p.DisplayName.IsLike(s)))

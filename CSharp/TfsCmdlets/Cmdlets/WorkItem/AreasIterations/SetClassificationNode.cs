@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
     //        var tp = Project;
 
-    //        var client = GetClient<WorkItemTrackingHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
 
     //        if (!PowerShell.ShouldProcess(tp, $"Set dates on iteration '{nodeToSet.RelativePath}'")) return null;
 

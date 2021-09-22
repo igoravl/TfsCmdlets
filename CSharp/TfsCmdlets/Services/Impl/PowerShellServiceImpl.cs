@@ -5,6 +5,7 @@ using System.Composition;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Models;
@@ -14,9 +15,34 @@ namespace TfsCmdlets.Services.Impl
     [Export(typeof(IPowerShellService))]
     internal class PowerShellServiceImpl : IPowerShellService
     {
-        private ICmdletContextManager ContextManager { get; }
+        private System.Management.Automation.PowerShell PowerShell { get; } =
+            System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
 
-        private CmdletBase Cmdlet  => ContextManager.Current;
+        private static PropertyInfo _ExecutionContextProperty;
+        private static PropertyInfo _CurrentCommandProcessor;
+        private static PropertyInfo _Command;
+
+        private CmdletBase Cmdlet
+        {
+            get
+            {
+                var executionContext = (_ExecutionContextProperty ??= PowerShell.Runspace.GetType()
+                    .GetProperty("ExecutionContext", BindingFlags.Instance | BindingFlags.NonPublic))
+                    .GetValue(PowerShell.Runspace);
+
+                var commandProcessor = (_CurrentCommandProcessor ??= executionContext.GetType()
+                    .GetProperty("CurrentCommandProcessor", BindingFlags.Instance | BindingFlags.NonPublic))
+                    .GetValue(executionContext);
+
+                var command = (_Command ??= commandProcessor.GetType()
+                    .GetProperty("Command", BindingFlags.Instance | BindingFlags.NonPublic))
+                    .GetValue(commandProcessor);
+
+                return (CmdletBase) command;
+            }
+        }
+
+        public string CurrentCommand => Cmdlet.DisplayName;
 
         public string WindowTitle { get => Cmdlet.Host.UI.RawUI.WindowTitle; set => Cmdlet.Host.UI.RawUI.WindowTitle = value; }
 
@@ -49,7 +75,7 @@ namespace TfsCmdlets.Services.Impl
         public void SetVariableValue(string name, object value)
             => throw new NotImplementedException();
 
-        public bool ShouldProcess(string target, string action) 
+        public bool ShouldProcess(string target, string action)
             => Cmdlet.ShouldProcess(target, action);
 
         public bool ShouldProcess(TeamProject tp, string action)
@@ -87,16 +113,17 @@ namespace TfsCmdlets.Services.Impl
         /// <typeparam name="T">The expected type of the objects outputted by the script</typeparam>
         /// <returns>The output of the script, if any</returns>
         public T InvokeScript<T>(string script, params object[] arguments)
-            => (T) Cmdlet.InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
+            => (T)Cmdlet.InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
 
         public object InvokeScript(string script, bool useNewScope, PipelineResultTypes writeToPipeline, IList input, params object[] args)
             => Cmdlet.InvokeCommand.InvokeScript(script, useNewScope, writeToPipeline, input, args);
+
         public bool IsVerbose
         {
             get
             {
-                var parms = GetBoundParameters();
 
+                var parms = GetBoundParameters();
                 var containsVerbose = parms.ContainsKey("Verbose");
 
                 return containsVerbose ?
@@ -114,10 +141,9 @@ namespace TfsCmdlets.Services.Impl
 #error Unsupported platform
 #endif
 
-        [ImportingConstructor]  
-        public PowerShellServiceImpl(ICmdletContextManager contextManager)
+        [ImportingConstructor]
+        public PowerShellServiceImpl()
         {
-            ContextManager = contextManager;
         }
     }
 }

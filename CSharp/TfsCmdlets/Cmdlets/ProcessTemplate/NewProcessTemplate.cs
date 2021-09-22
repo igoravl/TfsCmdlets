@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 
     //        if (exists && !(force || ShouldContinue($"Are you sure you want to overwrite existing process '{process}'?"))) return null;
 
-    //        var client = GetClient<WorkItemTrackingProcessHttpClient>();
+    //        var client = Data.GetClient<WorkItemTrackingProcessHttpClient>(parameters);
 
     //        var tmpProcessName = exists? $"{process}_{(new Random().Next()):X}": process;
 

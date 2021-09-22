@@ -190,7 +190,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         //            });
         //        }
 
-        //        var client = GetClient<WorkItemTrackingHttpClient>();
+        //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
         //        var result = client.UpdateWorkItemAsync(patch, (int)wi.Id)
         //            .GetResult("Error moving work item");
 

@@ -14,7 +14,7 @@ namespace TfsCmdlets.Commands.Git
     {
         public override IEnumerable<GitRepository> Invoke(ParameterDictionary parameters)
         {
-            var tp = Data.GetProject();
+            var tp = Data.GetProject(parameters);
             var repository = parameters.Get<object>(nameof(Cmdlets.Git.GetGitRepository.Repository));
 
             while (true) switch (repository)
@@ -32,7 +32,7 @@ namespace TfsCmdlets.Commands.Git
                 }
                 case Guid guid:
                 {
-                    yield return GetClient<GitHttpClient>()
+                    yield return Data.GetClient<GitHttpClient>(parameters)
                         .GetRepositoryAsync(tp.Name, guid)
                         .GetResult($"Error getting repository with ID {guid}");
 
@@ -49,14 +49,14 @@ namespace TfsCmdlets.Commands.Git
 
                     try
                     {
-                        result = GetClient<GitHttpClient>()
+                        result = Data.GetClient<GitHttpClient>(parameters)
                             .GetRepositoryAsync(tp.Name, s)
                             .GetResult($"Error getting repository '{s}'");
                     }
                     catch
                     {
                         // Workaround to retrieve disabled repositories
-                        result = GetClient<GitHttpClient>()
+                        result = Data.GetClient<GitHttpClient>(parameters)
                             .GetRepositoriesAsync(tp.Name)
                             .GetResult($"Error getting repository(ies) '{s}'")
                             .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
@@ -67,7 +67,7 @@ namespace TfsCmdlets.Commands.Git
                 }
                 case string s:
                 {
-                    foreach (var repo in GetClient<GitHttpClient>()
+                    foreach (var repo in Data.GetClient<GitHttpClient>(parameters)
                         .GetRepositoriesAsync(tp.Name)
                         .GetResult($"Error getting repository(ies) '{s}'")
                         .Where(r => r.Name.IsLike(s)))

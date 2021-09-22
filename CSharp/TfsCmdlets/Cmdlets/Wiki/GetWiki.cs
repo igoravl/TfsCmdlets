@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                case null when projectWiki:
     //                case string s when string.IsNullOrEmpty(s) && projectWiki:
     //                    {
-    //                        foreach (var w in GetClient<WikiHttpClient>()
+    //                        foreach (var w in GetClient<WikiHttpClient>(parameters)
     //                            .GetAllWikisAsync(tp.Name)
     //                            .GetResult($"Error getting project wiki")
     //                            .Where(r => r.Type == WikiType.ProjectWiki))
@@ -72,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                    }
     //                case Guid guid:
     //                    {
-    //                        yield return GetClient<WikiHttpClient>()
+    //                        yield return Data.GetClient<WikiHttpClient>(parameters)
     //                            .GetWikiAsync(tp.Name, guid)
     //                            .GetResult($"Error getting Wiki with ID {guid}");
 
@@ -85,7 +85,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                    }
     //                case string s when !s.IsWildcard():
     //                    {
-    //                        yield return GetClient<WikiHttpClient>()
+    //                        yield return Data.GetClient<WikiHttpClient>(parameters)
     //                            .GetWikiAsync(tp.Name, s)
     //                            .GetResult($"Error getting Wiki '{s}'");
 
@@ -93,7 +93,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                    }
     //                case string s:
     //                    {
-    //                        foreach (var w in GetClient<WikiHttpClient>()
+    //                        foreach (var w in GetClient<WikiHttpClient>(parameters)
     //                            .GetAllWikisAsync(tp.Name)
     //                            .GetResult($"Error getting wiki(s) '{s}'")
     //                            .Where(r => r.Name.IsLike(s)))

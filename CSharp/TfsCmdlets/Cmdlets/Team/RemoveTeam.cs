@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //                continue;
     //            }
 
-    //            GetClient<TeamHttpClient>().DeleteTeamAsync(tp.Name, t.Name)
+    //            GetClient<TeamHttpClient>(parameters).DeleteTeamAsync(tp.Name, t.Name)
     //                .Wait($"Error deleting team {t.Name}");
     //        }
     //    }
