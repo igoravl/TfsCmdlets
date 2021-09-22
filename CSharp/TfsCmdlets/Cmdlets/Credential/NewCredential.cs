@@ -58,5 +58,6 @@ namespace TfsCmdlets.Cmdlets.Credential
         public SwitchParameter Interactive { get; set; }
 
         protected override string CommandName => nameof(TfsCmdlets.Commands.Credential.GetCredential);
+        protected override bool ReturnsValue => true;
     }
 }
