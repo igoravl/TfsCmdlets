@@ -1,10 +1,4 @@
-using System;
-using System.Linq;
 using System.Management.Automation;
-using System.Xml.Linq;
-using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Admin.Registry
 {
@@ -61,45 +55,5 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
         /// </summary>
         [Parameter()]
         public object Server { get; set; }
-
-        // TODO
-
-//        /// <summary>
-//        /// Performs execution of the command
-//        /// </summary>
-//        protected override void DoProcessRecord()
-//        {
-//            Models.Connection provider = Scope switch
-//            {
-//                RegistryScope.User => throw new NotImplementedException("User scopes are currently not supported"),
-//                RegistryScope.Collection => Locator.GetService<Models.Connection>(),
-//                RegistryScope.Server => Locator.GetService<Models.Connection>(),
-//                _ => throw new Exception($"Invalid scope {Scope}")
-//            };
-
-//            if(!ShouldProcess($"Registry key '{Path}' in {Scope} '{provider}'", $"Set value to '{Value}'"))
-//                return;
-
-//            var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
-//    <s:Body>
-//        <UpdateRegistryEntries xmlns='http://microsoft.com/webservices/'>
-//            <registryEntries>
-//                <RegistryEntry Path='{Path}'><Value>{Value}</Value></RegistryEntry>
-//            </registryEntries>
-//        </UpdateRegistryEntries>
-//    </s:Body>
-//</s:Envelope>";
-
-//            var restApiService = Locator.GetService<IRestApiService>();
-
-//            restApiService.InvokeAsync(
-//                provider,
-//                "/Services/v3.0/RegistryService.asmx",
-//                "POST",
-//                soapEnvelope,
-//                "application/soap+xml",
-//                "application/soap+xml",
-//                apiVersion: null).SyncResult();
-//        }
     }
 }

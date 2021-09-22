@@ -54,59 +54,5 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
         /// </summary>
         [Parameter()]
         public object Server { get; set; }
-
-        // TODO
-
-//        /// <summary>
-//        /// Performs execution of the command
-//        /// </summary>
-//        protected override void DoProcessRecord()
-//        {
-//            Models.Connection provider;
-
-//            switch (Scope)
-//            {
-//                case RegistryScope.User: {
-//                    throw new NotImplementedException("User scopes are currently not supported");
-//                }
-//                case RegistryScope.Collection: {
-//                    provider = Locator.GetService<Models.Connection>();
-//                    break;
-//                }
-//                case RegistryScope.Server: {
-//                    provider = Locator.GetService<Models.Connection>();
-//                    break;
-//                }
-//                default: {
-//                    throw new Exception($"Invalid scope {Scope}");
-//                }
-//            }
-
-//            var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
-//    <s:Body>
-//        <QueryRegistryEntries xmlns='http://microsoft.com/webservices/'>
-//            <registryPathPattern>{Path}</registryPathPattern>
-//        </QueryRegistryEntries>
-//    </s:Body>
-//</s:Envelope>";
-
-//            var restApiService = Locator.GetService<IRestApiService>();
-
-//            var result = restApiService.InvokeAsync(
-//                provider,
-//                "/Services/v3.0/RegistryService.asmx",
-//                "POST",
-//                soapEnvelope,
-//                "application/soap+xml",
-//                "application/soap+xml",
-//                apiVersion: null).SyncResult();
-
-//            var resultString = result.Content.ReadAsStringAsync().GetResult();
-//            var resultXml = XDocument.Parse(resultString);
-//            var value = resultXml.Descendants(
-//                XName.Get("QueryRegistryEntriesResult", "http://microsoft.com/webservices/")).FirstOrDefault()?.Value;
-
-//            WriteObject(value);
-//        }
     }
 }
