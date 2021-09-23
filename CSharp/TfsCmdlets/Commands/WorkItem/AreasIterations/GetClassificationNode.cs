@@ -6,6 +6,7 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
+using TfsCmdlets.Services.Impl;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Commands.WorkItem.AreasIterations
@@ -13,6 +14,8 @@ namespace TfsCmdlets.Commands.WorkItem.AreasIterations
     [Command]
     internal class GetClassificationNode : CommandBase<ClassificationNode>
     {
+        public INodeUtil NodeUtil { get; }
+
         public override IEnumerable<ClassificationNode> Invoke(ParameterDictionary parameters)
         {
             var node = parameters.Get<object>("Node");
@@ -79,9 +82,10 @@ namespace TfsCmdlets.Commands.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        public GetClassificationNode(IPowerShellService powerShell, IDataManager data, ILogger logger)
+        public GetClassificationNode(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, ILogger logger)
                 : base(powerShell, data, logger)
         {
+            NodeUtil = nodeUtil;
         }
     }
 }

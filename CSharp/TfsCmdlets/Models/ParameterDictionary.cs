@@ -11,10 +11,11 @@ namespace TfsCmdlets.Models
     /// <summary>
     /// Represents a collection of cmdlet arguments
     /// </summary>
-    public class ParameterDictionary : Dictionary<string, object>
+    public class ParameterDictionary: IEnumerable<KeyValuePair<string,object>>
     {
-        public ParameterDictionary()
-            : base(StringComparer.OrdinalIgnoreCase)
+        private readonly Dictionary<string, object> _innerDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+        private ParameterDictionary()
         {
         }
 
@@ -27,25 +28,30 @@ namespace TfsCmdlets.Models
             switch (original)
             {
                 case null: return;
-                case IReadOnlyDictionary<string, object> dict:
+                case IEnumerable<KeyValuePair<string, object>> dict:
                     {
-                        dict.ForEach(kvp => Add(kvp.Key, kvp.Value));
+                        dict.ForEach(kvp => _innerDictionary.Add(kvp.Key, kvp.Value));
                         break;
                     }
                 case Cmdlet cmdlet:
                     {
-                        cmdlet.GetType()
-                            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                            .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any())
-                            .ForEach(pi =>
-                                Add(pi.Name,
-                                    pi.PropertyType == typeof(SwitchParameter) ?
-                                        ((SwitchParameter)pi.GetValue(cmdlet)).ToBool() :
-                                        pi.GetValue(cmdlet)));
+                        var props = cmdlet
+                            .GetType()
+                            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                            .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null);
+
+                        foreach (var prop in props)
+                        {
+                            var name = prop.Name;
+                            var value = prop.GetValue(cmdlet);
+                            value = value is PSObject psObject ? psObject.BaseObject : value;
+
+                            if (value != null) _innerDictionary.Add(name, value);
+                        }
 
                         if (cmdlet is PSCmdlet psCmdlet)
                         {
-                            Add("ParameterSetName", psCmdlet.ParameterSetName);
+                            _innerDictionary.Add("ParameterSetName", psCmdlet.ParameterSetName);
                         }
                         break;
                     }
@@ -54,7 +60,7 @@ namespace TfsCmdlets.Models
                         original.GetType()
                             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
                             .ForEach(prop =>
-                                Add(prop.Name, prop.GetValue(original)));
+                            _innerDictionary.Add(prop.Name, prop.GetValue(original)));
                         break;
                     }
             }
@@ -69,7 +75,7 @@ namespace TfsCmdlets.Models
 
             foreach (var parm in newParms)
             {
-                this[parm.Key] = parm.Value is PSObject psObject ? psObject.BaseObject : parm.Value;
+                _innerDictionary[parm.Key] = parm.Value;
             }
         }
 
@@ -79,25 +85,37 @@ namespace TfsCmdlets.Models
         /// </summary>
         public T Get<T>(string name, T defaultValue = default)
         {
-            if (!ContainsKey(name)) return defaultValue;
+            if (!HasParameter(name)) return defaultValue;
 
-            var val = this[name];
-
-            switch (val)
+            var val = _innerDictionary[name] switch
             {
-                case PSObject obj:
-                    {
-                        val = obj.BaseObject;
-                        break;
-                    }
-                case SwitchParameter sw:
-                    {
-                        val = sw.ToBool();
-                        break;
-                    }
-            }
+                PSObject obj => obj.BaseObject,
+                SwitchParameter sw => sw.ToBool(),
+                _ => _innerDictionary[name]
+            };
 
             return (T)val;
         }
+
+        public object this[string name]
+        {
+            get => _innerDictionary[name];
+            set => _innerDictionary[name] = value;
+        }
+
+        public ParameterDictionary Override(object overridingParameters)
+            => new ParameterDictionary(this, overridingParameters);
+
+        public void Remove(string name)
+            => _innerDictionary.Remove(name);
+
+        public bool HasParameter(string parameter)
+            => _innerDictionary.ContainsKey(parameter);
+
+        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
+            => _innerDictionary.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => ((IEnumerable) _innerDictionary).GetEnumerator();
     }
 }

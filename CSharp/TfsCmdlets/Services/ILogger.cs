@@ -1,4 +1,5 @@
 using System;
+using System.Management.Automation;
 
 namespace TfsCmdlets.Services
 {
@@ -10,7 +11,7 @@ namespace TfsCmdlets.Services
 
         void LogError(string message);
 
-        void LogError(Exception ex);
+        void LogError(Exception ex, string errorId = null, ErrorCategory category = ErrorCategory.NotSpecified, object targetObject = null);
 
         void LogParameters();
     }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Management.Automation;
@@ -10,7 +11,7 @@ namespace TfsCmdlets.Services.Impl
     internal class LoggerImpl : ILogger
     {
         private IPowerShellService PowerShell { get; set; }
-        public IParameterManager ParameterManager { get; }
+        private IParameterManager ParameterManager { get; }
 
         private readonly string[] _hiddenParameters = new[]{"Password", "PersonalAccessToken"};
 
@@ -23,12 +24,15 @@ namespace TfsCmdlets.Services.Impl
 
         public void LogError(string message)
         {
-            throw new NotImplementedException();
+            LogError(new Exception(message));
         }
 
-        public void LogError(Exception ex)
+        public void LogError(Exception ex, string errorId = null, ErrorCategory category = ErrorCategory.NotSpecified, object targetObject = null)
         {
-            throw new NotImplementedException();
+            var innerException = ex.InnerException ?? ex;
+            var id = errorId ?? innerException.GetType().Name;
+
+            PowerShell.WriteError(new ErrorRecord(ex, id, category, targetObject));
         }
 
         public void LogWarn(string message)
@@ -41,23 +45,23 @@ namespace TfsCmdlets.Services.Impl
         {
             if (!PowerShell.IsVerbose) return;
 
-            var parms = ParameterManager.GetParameters();
+            var parms = new Dictionary<string,object>();
 
-            foreach (var key in parms.Keys.ToList()) 
+            foreach (var kvp in ParameterManager.GetParameters()) 
             {
-                if (_hiddenParameters.Any(p => p.Equals(key, StringComparison.OrdinalIgnoreCase)))
+                if (_hiddenParameters.Any(p => p.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase)))
                 {
-                    parms[key] = "*****";
+                    parms[kvp.Key] = "*****";
+                    continue;
                 }
 
-                if(parms[key] is SwitchParameter switchParameter)
+                if(kvp.Value is SwitchParameter switchParameter)
                 {
-                    parms[key] = switchParameter.IsPresent;
+                    parms[kvp.Key] = switchParameter.IsPresent;
+                    continue;
                 }
-            }
 
-            foreach(var hidden in _hiddenParameters)
-            {
+                parms[kvp.Key] = kvp.Value;
             }
 
             var hasParameterSetName = parms.ContainsKey("ParameterSetName");
@@ -66,7 +70,7 @@ namespace TfsCmdlets.Services.Impl
                     .Replace("\":", "\" = ")
                     .Replace(",\"", "; \"");
 
-            Log($"Running cmdlet with {(hasParameterSetName? $"parameter set '{parms.Get<string>("ParameterSetName")}' and ": "")}the following arguments: {args}");
+            Log($"Running cmdlet with {(hasParameterSetName? $"parameter set '{parms["ParameterSetName"]}' and ": "")}the following arguments: {args}");
 
         }
 

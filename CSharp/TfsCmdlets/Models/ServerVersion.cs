@@ -1,3 +1,4 @@
+using System;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Models
@@ -8,6 +9,23 @@ namespace TfsCmdlets.Models
     /// </summary>
     public class ServerVersion
     {
+        public ServerVersion(string version)
+        : this(Version.Parse(version))
+        {
+        }
+
+        public ServerVersion(string version, string longVersionMoniker, int year)
+        : this(Version.Parse(version))
+        {
+            LongVersion = $"{version} ({longVersionMoniker})";
+            YearVersion = year;
+        }
+
+        public ServerVersion(Version version)
+        {
+            Version = version;
+        }
+
         /// <summary>
         /// Gets the "four-part" version of TFS / Azure DevOps
         /// </summary>
@@ -38,6 +56,6 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Gets the version of the server as its corresponding year (e.g. 2019 for version 17.*)
         /// </summary>
-        public int YearVersion => TfsVersionTable.GetYear(Version.Major);
+        public int YearVersion { get; set; }
     }
 }

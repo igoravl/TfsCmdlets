@@ -1,12 +1,13 @@
-using System;
+using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace TfsCmdlets.Util
+namespace TfsCmdlets.Services.Impl
 {
-    internal static class ProcessUtil
+    [Export(typeof(IProcessUtil))]
+    internal class ProcessUtil : IProcessUtil
     {
-        internal static void OpenInBrowser(string url)
+        public void OpenInBrowser(string url)
         {
             try
             {

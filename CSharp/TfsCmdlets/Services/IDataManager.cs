@@ -13,7 +13,7 @@ namespace TfsCmdlets.Services
 
         IEnumerable<T> GetItems<T>(object parameters);
 
-        IEnumerable<T> Invoke<T>(string verb, object parameters);
+        IEnumerable<T> Invoke<T>(string verb, string noun = null, object parameters = null);
 
         Connection GetServer(object parameters);
 

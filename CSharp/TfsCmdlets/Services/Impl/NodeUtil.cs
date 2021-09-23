@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
+using System.Composition;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace TfsCmdlets.Util
+namespace TfsCmdlets.Services.Impl
 {
-    internal static class NodeUtil
+    [Export(typeof(INodeUtil))]
+    internal class NodeUtilImpl : INodeUtil
     {
-        internal static string NormalizeNodePath(string path, string projectName = "", string scope = "",
+        public string NormalizeNodePath(string path, string projectName = "", string scope = "",
             bool includeScope = false, bool excludePath = false, bool includeLeadingSeparator = false,
             bool includeTrailingSeparator = false, bool includeTeamProject = false, char separator = '\\')
         {
