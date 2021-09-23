@@ -50,57 +50,5 @@ namespace TfsCmdlets.Cmdlets.Admin
 		[Parameter()]
         [Credential]
         public PSCredential Credential { get; set; } = PSCredential.Empty;
-
-        // TODO
-
-        ///// <summary>
-        ///// Performs execution of the command
-        ///// </summary>
-        //protected override void DoProcessRecord()
-        //{
-        //    const string cmd = "_GetConnectionString -Version $args[0]";
-        //    const string localTemplate = "{0}";
-        //    // const string remoteTemplate = "Invoke-Command -ScriptBlock {{ {0} }} -ArgumentList $args[0] ";
-        //    // const string remoteComputerTemplate = remoteTemplate + " -Computer $args[1] -Credential $args[2]";
-        //    // const string remoteSessionTemplate = remoteTemplate + " -Session $args[1]";
-
-        //    var funcCode = File.ReadAllText(Path.Combine(
-        //        MyInvocation.MyCommand.Module.ModuleBase,
-        //        "Private/Admin.ps1"
-        //    ));
-
-        //    string invokeCmd;
-
-        //    if (Session != null)
-        //    {
-        //        throw new NotImplementedException("Remote sessions are currently not supported");
-        //        // invokeCmd = string.Format(remoteSessionTemplate, cmd);
-        //        // session = Session;
-        //    }
-        //    else if (!ComputerName.Equals("localhost", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        throw new NotImplementedException("Remote computers are currently not supported");
-        //        // invokeCmd = string.Format(remoteComputerTemplate, cmd);
-        //        // session = ComputerName;
-        //        // credential = Credential;
-        //    }
-        //    else
-        //    {
-        //        invokeCmd = string.Format(localTemplate, cmd);
-        //    }
-
-        //    var version = Version == 0 ? 
-        //        null : 
-        //        $"{TfsVersionTable.GetMajorVersion(Version)}.0";
-
-        //    var result = this.InvokeCommand.InvokeScript(
-        //        funcCode + invokeCmd, 
-        //        true, 
-        //        PipelineResultTypes.None, 
-        //        null, 
-        //        version);
-
-        //    WriteObject(result);
-        //}
     }
 }
