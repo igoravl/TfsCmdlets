@@ -118,7 +118,7 @@ namespace TfsCmdlets
             const string ANSI_FG_GRAY = "\x1b[30;1m";
             const string ANSI_FG_WHITE = "\x1b[37;1m";
             const string ANSI_RESET = "\x1b[40m\x1b[0m";
-            var NOT_CONNECTED = $"{ANSI_BG_GRAY}{ANSI_FG_GRAY}Not connected{ANSI_RESET}";
+            var NOT_CONNECTED = $"{Environment.NewLine}{ANSI_BG_GRAY}{ANSI_FG_GRAY}[Not connected]{ANSI_RESET}{Environment.NewLine}";
 
             var connections = ServiceLocator.Instance.GetExport<ICurrentConnections>();
 
