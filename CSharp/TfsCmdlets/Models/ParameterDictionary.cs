@@ -15,7 +15,7 @@ namespace TfsCmdlets.Models
     {
         private readonly Dictionary<string, object> _innerDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-        private ParameterDictionary()
+        public ParameterDictionary()
         {
         }
 

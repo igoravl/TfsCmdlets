@@ -24,7 +24,7 @@ namespace TfsCmdlets.Models
         /// <summary>Converts AdoConnection to Connection</summary>
         public static implicit operator Connection(AdoConnection c) => new Connection(c);
 
-        private Connection(object obj) : base(obj) { }
+        internal  Connection(object obj) : base(obj) { }
 
         internal AdoConnection InnerConnection => this.BaseObject as AdoConnection;
 
