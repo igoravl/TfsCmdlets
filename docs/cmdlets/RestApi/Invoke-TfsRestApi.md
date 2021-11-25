@@ -5,7 +5,7 @@ parent: "RestApi"
 description: "Invoke an Azure DevOps REST API. "
 remarks: "Invoke-TfsRestApi can automatically parse an example URL from https://docs.microsoft.com/en-us/rest/api/azure/devops/ and replace its various tokens (such as {organization}, {project} and {team}) as long as collection / project / team information are available via either the their respective arguments in this command or the corresponding Connect-Tfs* cmdlet. HTTP method and API version are also automatically extracted from the supplied example, when available. "
 parameterSets: 
-  "_All_": [ AdditionalHeaders, ApiVersion, AsTask, Body, Collection, Method, Path, Project, QueryParameters, Raw, RequestContentType, ResponseContentType, Team, UseHost ] 
+  "_All_": [ AdditionalHeaders, ApiVersion, AsTask, Body, Collection, Method, NoAutoUnwrap, Path, Project, QueryParameters, Raw, RequestContentType, ResponseContentType, Team, UseHost ] 
   "__AllParameterSets":  
     Path: 
       type: "string"  
@@ -23,6 +23,8 @@ parameterSets:
       type: "object"  
     Method: 
       type: "string"  
+    NoAutoUnwrap: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     QueryParameters: 
@@ -86,6 +88,11 @@ parameters:
     description: "Specifies an alternate host name for APIs not hosted in \"dev.azure.com\", e.g. \"vsaex.dev.azure.com\" or \"vssps.dev.azure.com\". " 
     globbing: false 
     type: "string" 
+  - name: "NoAutoUnwrap" 
+    description: "Prevents the automatic expansion (unwrapping) of the 'value' property in the response JSON. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Raw" 
     description: "Returns the API response as an unparsed string. If omitted, JSON responses will be parsed, converted and returned as objects (via ConvertFrom-Json). " 
     globbing: false 
