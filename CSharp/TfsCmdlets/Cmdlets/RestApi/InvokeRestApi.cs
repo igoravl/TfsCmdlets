@@ -103,6 +103,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
         public string UseHost { get; set; }
 
         /// <summary>
+        /// Prevents the automatic expansion (unwrapping) of the 'value' property in the response JSON.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter NoAutoUnwrap { get; set; }
+
+        /// <summary>
         /// Returns the API response as an unparsed string. If omitted, JSON responses will be 
         /// parsed, converted and returned as objects (via ConvertFrom-Json).
         /// </summary>
@@ -236,7 +242,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
             var responseType = result.Content.Headers.ContentType.MediaType;
 
             WriteObject(!Raw && responseType.Equals("application/json")
-                ? PSJsonConverter.Deserialize(responseBody)
+                ? PSJsonConverter.Deserialize(responseBody, (bool) NoAutoUnwrap)
                 : responseBody);
         }
 

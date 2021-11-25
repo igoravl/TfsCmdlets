@@ -4,9 +4,15 @@ namespace TfsCmdlets.Util
 {
     internal class PSJsonConverter
     {
-        internal static object Deserialize(string input)
+        internal static object Deserialize(string input, bool noAutoUnwrap)
         {
-            var sb = ScriptBlock.Create("$o = ConvertFrom-Json -InputObject $args[0]; if ($o.Value) {return $o.Value} else {return $o}");
+            string script;
+
+            script = noAutoUnwrap ? 
+                "ConvertFrom-Json -InputObject $args[0]" :
+                "$o = ConvertFrom-Json -InputObject $args[0]; if ($o.Value) {return $o.Value} else {return $o}";
+
+            var sb = ScriptBlock.Create(script);
             var jsonObject = sb.Invoke(input);
 
             return jsonObject;
