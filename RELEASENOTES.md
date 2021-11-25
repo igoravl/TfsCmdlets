@@ -16,7 +16,7 @@ In previous versions, `Invoke-TfsRestApi` would return the JSON response as-is.
 
 In most situations, that would mean that using the code below would result in the following result:
 
-```powershell
+```
 PS> Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4'
 
 count value
@@ -26,7 +26,7 @@ count value
 
 Notice that the returned JSON response contains two properties, `count` and `value`. The `value` property contains the actual data. To access it, you most likely would have to use the following code:
 
-```powershell
+```
 PS> (Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4').value
 
 source            : userInterface
