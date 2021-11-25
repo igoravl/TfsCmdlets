@@ -6,7 +6,7 @@ namespace TfsCmdlets.Util
     {
         internal static object Deserialize(string input)
         {
-            var sb = ScriptBlock.Create("ConvertFrom-Json -InputObject $args[0]");
+            var sb = ScriptBlock.Create("$o = ConvertFrom-Json -InputObject $args[0]; if ($o.Value) {return $o.Value} else {return $o}");
             var jsonObject = sb.Invoke(input);
 
             return jsonObject;

@@ -156,14 +156,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
             if (Uri.TryCreate(Path, UriKind.Absolute, out var uri))
             {
-                var host = uri.Host;
-
-                if (host.EndsWith(".dev.azure.com"))
+                if(string.IsNullOrEmpty(UseHost) && !uri.Host.Equals(tpc.Uri.Host, StringComparison.OrdinalIgnoreCase))
                 {
-                    UseHost = host;
+                    UseHost = uri.Host;
                 }
-
-                Path = uri.AbsolutePath.Replace("%7Borganization%7D/", "");
+                
+                Path = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
 
                 if (uri.AbsoluteUri.StartsWith(tpc.Uri.AbsoluteUri))
                 {
@@ -202,19 +200,30 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
             this.Log($"Path '{Path}', version '{ApiVersion}'");
 
-            if(tpc.IsHosted && !string.IsNullOrEmpty(UseHost))
+            string host = null;
+
+            if(tpc.IsHosted)
             {
-                GenericHttpClient.UseHost(UseHost);
+                if(!string.IsNullOrEmpty(UseHost))
+                {
+                    host = UseHost;
+                }
+                else if (!tpc.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    host = tpc.Uri.Host;
+                }
             }
 
             var client = this.GetService<IRestApiService>();
+
             var task = client.InvokeAsync(tpc, Path, Method, Body,
                 RequestContentType, ResponseContentType,
                 AdditionalHeaders.ToDictionary<string, string>(),
                 QueryParameters.ToDictionary<string, string>(),
-                ApiVersion);
+                ApiVersion,
+                host);
 
-            this.Log($"{Method} {client.Uri.AbsoluteUri}");
+            this.Log($"{Method} {client.Url.AbsoluteUri}");
 
             if (AsTask)
             {
