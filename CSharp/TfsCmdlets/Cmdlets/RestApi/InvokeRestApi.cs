@@ -103,6 +103,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
         public string UseHost { get; set; }
 
         /// <summary>
+        /// Prevents the automatic expansion (unwrapping) of the 'value' property in the response JSON.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter NoAutoUnwrap { get; set; }
+
+        /// <summary>
         /// Returns the API response as an unparsed string. If omitted, JSON responses will be 
         /// parsed, converted and returned as objects (via ConvertFrom-Json).
         /// </summary>
@@ -156,14 +162,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
             if (Uri.TryCreate(Path, UriKind.Absolute, out var uri))
             {
-                var host = uri.Host;
-
-                if (host.EndsWith(".dev.azure.com"))
+                if(string.IsNullOrEmpty(UseHost) && !uri.Host.Equals(tpc.Uri.Host, StringComparison.OrdinalIgnoreCase))
                 {
-                    UseHost = host;
+                    UseHost = uri.Host;
                 }
-
-                Path = uri.AbsolutePath.Replace("%7Borganization%7D/", "");
+                
+                Path = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
 
                 if (uri.AbsoluteUri.StartsWith(tpc.Uri.AbsoluteUri))
                 {
@@ -202,19 +206,30 @@ namespace TfsCmdlets.Cmdlets.RestApi
 
             this.Log($"Path '{Path}', version '{ApiVersion}'");
 
-            if(tpc.IsHosted && !string.IsNullOrEmpty(UseHost))
+            string host = null;
+
+            if(tpc.IsHosted)
             {
-                GenericHttpClient.UseHost(UseHost);
+                if(!string.IsNullOrEmpty(UseHost))
+                {
+                    host = UseHost;
+                }
+                else if (!tpc.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    host = tpc.Uri.Host;
+                }
             }
 
             var client = this.GetService<IRestApiService>();
+
             var task = client.InvokeAsync(tpc, Path, Method, Body,
                 RequestContentType, ResponseContentType,
                 AdditionalHeaders.ToDictionary<string, string>(),
                 QueryParameters.ToDictionary<string, string>(),
-                ApiVersion);
+                ApiVersion,
+                host);
 
-            this.Log($"{Method} {client.Uri.AbsoluteUri}");
+            this.Log($"{Method} {client.Url.AbsoluteUri}");
 
             if (AsTask)
             {
@@ -227,7 +242,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
             var responseType = result.Content.Headers.ContentType.MediaType;
 
             WriteObject(!Raw && responseType.Equals("application/json")
-                ? PSJsonConverter.Deserialize(responseBody)
+                ? PSJsonConverter.Deserialize(responseBody, (bool) NoAutoUnwrap)
                 : responseBody);
         }
 
