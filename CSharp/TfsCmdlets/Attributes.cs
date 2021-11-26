@@ -5,9 +5,9 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets
 {
     [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-    public class CommandAttribute: ExportAttribute
+    public class CmdletControllerAttribute: ExportAttribute
     {
-        public CommandAttribute(): base(typeof(ICommand))
+        public CmdletControllerAttribute(): base(typeof(IController))
         {
         }
     }

@@ -8,7 +8,7 @@
     },
     "Core (PS 7.x)": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+      "executablePath": "pwsh.exe",
       "commandLineArgs": "-noexit -command \"Import-Module $(TargetPath); Enter-TfsShell\"",
       "workingDirectory": "$(ProjectDir)"
     }

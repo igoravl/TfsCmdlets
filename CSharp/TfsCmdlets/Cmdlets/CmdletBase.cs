@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets
         [Import] protected IPowerShellService PSService { get; set; }
         [Import] protected IParameterManager ParameterManager { get; set; }
         [Import] protected ILogger Logger { get; set; }
-        [ImportMany] protected IEnumerable<Lazy<ICommand>> Commands { get; set; }
+        [ImportMany] protected IEnumerable<Lazy<IController>> Controllers { get; set; }
 
         // internal ServiceLocator Locator { get; private set; }
 
@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <summary>
-        /// Returns the type name for the underlying ICommand implementing the logic of this cmdlet
+        /// Returns the type name for the underlying IController implementing the logic of this cmdlet
         /// </summary>
         /// <value>The name of the class. If not overridden in derived classes, 
         /// returns the name of the cmdlet class (by convention, cmdlet and command have the same type name).</value>
@@ -99,7 +99,7 @@ namespace TfsCmdlets.Cmdlets
 
         private IEnumerable<object> DoInvokeCommand()
         {
-            var command = Commands.FirstOrDefault(c => c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase))?.Value;
+            var command = Controllers.FirstOrDefault(c => c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase))?.Value;
 
             if (command == null) throw new Exception($"Command '{CommandName}' not found. Are you missing a [Command] attribute?");
 
@@ -162,11 +162,10 @@ namespace TfsCmdlets.Cmdlets
         ///     NotSupportedException when running on PowerShell Core.</throws>
         private void CheckWindowsOnly()
         {
-            const bool isDesktop =
 #if NETCOREAPP3_1_OR_GREATER
-                false;
+            const bool isDesktop = false;
 #elif NET471_OR_GREATER
-                true;
+            const bool isDesktop = true;
 #else
 #error Unsupported platform
 #endif

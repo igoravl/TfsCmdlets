@@ -19,8 +19,8 @@
 //         public void LogError(Exception ex) => throw new NotImplementedException();
 //     }
 
-//     [Export(typeof(ICommand))]
-//     public class CommandSample1 : ICommand
+//     [Export(typeof(IController))]
+//     public class CommandSample1 : IController
 //     {
 //         public object InvokeCommand(ParameterDictionary parameters) => throw new NotImplementedException();
 
@@ -33,8 +33,8 @@
 //         public Type DataType => throw new NotImplementedException();
 //     }
 
-//     [Export(typeof(ICommand))]
-//     public class CommandSample2 : ICommand
+//     [Export(typeof(IController))]
+//     public class CommandSample2 : IController
 //     {
 //         public object InvokeCommand(ParameterDictionary parameters) => throw new NotImplementedException();
 
@@ -48,8 +48,8 @@
 //     }
 
 
-//     [Export(typeof(ICommand))]
-//     public class CommandSample3: ICommand, ILogger
+//     [Export(typeof(IController))]
+//     public class CommandSample3: IController, ILogger
 //     {
 //         public void Log(string message) => throw new NotImplementedException();
 
@@ -154,7 +154,7 @@
 //     public class CmdletSample2
 //     {
 //         [Import] public ILogger Logger { get; set; }
-//         [ImportMany] public IEnumerable<ICommand> Commands { get; set; }
+//         [ImportMany] public IEnumerable<IController> Controllers { get; set; }
 //     }
 
 //     public class CmdletSample3

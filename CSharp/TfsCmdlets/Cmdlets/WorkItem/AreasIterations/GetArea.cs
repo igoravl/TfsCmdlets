@@ -46,9 +46,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         internal TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
 
         /// <summary>
-        /// Returns the type name for the underlying ICommand implementing the logic of this cmdlet
+        /// Returns the type name for the underlying IController implementing the logic of this cmdlet
         /// </summary>
         protected override string CommandName =>
-            nameof(TfsCmdlets.Commands.WorkItem.AreasIterations.GetClassificationNode);
+            nameof(TfsCmdlets.Controllers.WorkItem.AreasIterations.GetClassificationNode);
     }
 }

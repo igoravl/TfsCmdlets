@@ -5,12 +5,12 @@ using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Services
 {
-    public interface IDataCommand<T>: ICommand
+    public interface ITypedController<T>: IController
     {
         IEnumerable<T> Invoke(ParameterDictionary parameters);
     }
 
-    public interface ICommand
+    public interface IController
     {
         object InvokeCommand(ParameterDictionary parameters);
 

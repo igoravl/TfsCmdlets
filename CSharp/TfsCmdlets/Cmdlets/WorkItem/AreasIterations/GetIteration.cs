@@ -40,6 +40,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         internal TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
 
         protected override string CommandName =>
-            nameof(TfsCmdlets.Commands.WorkItem.AreasIterations.GetClassificationNode);
+            nameof(TfsCmdlets.Controllers.WorkItem.AreasIterations.GetClassificationNode);
     }
 }

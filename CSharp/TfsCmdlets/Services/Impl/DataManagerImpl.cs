@@ -12,31 +12,31 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IDataManager)), Shared]
-    // [Export(typeof(ICommandManager))]
-    internal class DataManagerImpl : IDataManager //, ICommandManager
+    // [Export(typeof(IControllerManager))]
+    internal class DataManagerImpl : IDataManager //, IControllerManager
     {
-        protected IEnumerable<Lazy<ICommand>> Commands { get; }
+        protected IEnumerable<Lazy<IController>> Commands { get; }
         protected IParameterManager ParameterManager { get; }
         protected ILogger Logger { get; }
         protected ICurrentConnections CurrentConnections { get; }
 
         public IEnumerable<T> Invoke<T>(string verb, string noun = null, object parameters = null)
         {
-            ICommand command;
+            IController command;
             var parms = ParameterManager.GetParameters(parameters);
 
             if (string.IsNullOrEmpty(noun))
             {
                 // Find by data type
                 var dataType = typeof(T);
-                command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType.Equals(dataType)).Value as IDataCommand<T>;
+                command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType.Equals(dataType)).Value as ITypedController<T>;
 
                 if (command == null) throw new ArgumentException($"Command {verb} not found for data type {dataType.Name}");
             }
             else
             {
                 // Find by noun
-                command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun).Value as IDataCommand<T>;
+                command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun).Value as ITypedController<T>;
 
                 if (command == null) throw new ArgumentException($"Command {verb}{noun} not found");
             }
@@ -150,7 +150,7 @@ namespace TfsCmdlets.Services.Impl
 
         [ImportingConstructor]
         public DataManagerImpl(
-            [ImportMany] IEnumerable<Lazy<ICommand>> commands,
+            [ImportMany] IEnumerable<Lazy<IController>> commands,
             IParameterManager parameterManager,
             ILogger logger,
             ICurrentConnections currentConnections)

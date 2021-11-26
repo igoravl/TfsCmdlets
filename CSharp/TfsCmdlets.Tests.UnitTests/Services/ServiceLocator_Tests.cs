@@ -55,7 +55,7 @@
 //             container.SatisfyImports(cmdlet);
 
 //             Assert.IsAssignableFrom<LoggerSample>(cmdlet.Logger);
-//             Assert.Collection(cmdlet.Commands,
+//             Assert.Collection(cmdlet.Controllers,
 //                 i => Assert.IsAssignableFrom<CommandSample1>(i),
 //                 i => Assert.IsAssignableFrom<CommandSample2>(i),
 //                 i => Assert.IsAssignableFrom<CommandSample3>(i));

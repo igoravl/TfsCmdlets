@@ -1,0 +1,34 @@
+using System.Collections.Generic;
+using System.Composition;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Models;
+using TfsCmdlets.Services;
+
+namespace TfsCmdlets.Controllers.Git
+{
+    [CmdletController]
+    internal class RenameGitRepository : ControllerBase<GitRepository>
+    {
+        public override IEnumerable<GitRepository> Invoke(ParameterDictionary parameters)
+        {
+            var tp = Data.GetProject(parameters);
+            var repoToRename = GetItem(parameters);
+            var newName = parameters.Get<string>(nameof(Cmdlets.Git.RenameGitRepository.NewName));
+
+            if (!PowerShell.ShouldProcess(tp, $"Rename Git repository [{repoToRename.Name}] to '{newName}'"))
+                yield break;
+
+            var client = Data.GetClient<GitHttpClient>(parameters);
+
+            yield return client.RenameRepositoryAsync(repoToRename, newName)
+                .GetResult("Error renaming repository");
+        }
+
+        [ImportingConstructor]
+        public RenameGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        {
+        }
+    }
+}

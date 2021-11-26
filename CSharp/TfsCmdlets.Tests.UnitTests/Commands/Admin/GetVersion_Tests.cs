@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NSubstitute;
-using TfsCmdlets.Commands.Admin;
+using TfsCmdlets.Controllers.Admin;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using Xunit;

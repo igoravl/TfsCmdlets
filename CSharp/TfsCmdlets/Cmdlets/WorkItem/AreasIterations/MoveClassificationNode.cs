@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public SwitchParameter Passthru { get; set; }
 
         /// <summary>
-        /// Returns the type name for the underlying ICommand implementing the logic of this cmdlet
+        /// Returns the type name for the underlying IController implementing the logic of this cmdlet
         /// </summary>
         internal TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
     }
