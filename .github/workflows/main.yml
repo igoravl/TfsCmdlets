@@ -275,8 +275,9 @@ jobs:
         run: |
           git clone --single-branch --branch "master" "https://igoravl:$GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
           cd winget-pkgs
+          git remote add upstream https://github.com/microsoft/winget-pkgs.git
           git fetch upstream
-          git checkout -b "TfsCmdlets_{{ env.BUILD_NAME }}"
+          git checkout -b "TfsCmdlets_$BUILD_NAME"
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
@@ -289,8 +290,8 @@ jobs:
           git config --local user.email "igoravl@gmail.com"
           git config --local user.name "Igor Abade"
           git add manifests/i/Igoravl/TfsCmdlets/*
-          git commit -m "Release ${{ env.BUILD_NAME }}"
-          git push -u origin TfsCmdlets_{{ env.BUILD_NAME }}
+          git commit -m "Release $BUILD_NAME"
+          git push -u origin "TfsCmdlets_$BUILD_NAME"
       - name: Create pull request to microsoft/winget-pkgs
         shell: pwsh
         run: |
@@ -301,8 +302,8 @@ jobs:
           Set-GitHubAuthentication -SessionOnly -Credential (New-Object System.Management.Automation.PSCredential @("pat",
             (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)))
           # Create pull request
-          New-GitHubPullRequest -Draft -OwnerName Microsoft -RepositoryName winget-pkgs `
-            -Title 'TfsCmdlets_{{ env.BUILD_NAME }}' -Head 'igoravl:TfsCmdlets_{{ env.BUILD_NAME }}' -base master -Body @'
+          New-GitHubPullRequest -OwnerName Microsoft -RepositoryName winget-pkgs `
+            -Title "TfsCmdlets_$env:BUILD_NAME" -Head "igoravl:TfsCmdlets_$env:BUILD_NAME" -base master -Body @'
           - [x] Have you signed the [Contributor License Agreement](https://cla.opensource.microsoft.com/microsoft/winget-pkgs)?
           - [x] Have you checked that there aren't other open [pull requests](https://github.com/microsoft/winget-pkgs/pulls) for the same manifest update/change?
           - [x] Have you validated your manifest locally with `winget validate --manifest <path>`? 
