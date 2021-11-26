@@ -13,8 +13,7 @@ using TfsCmdlets.HttpClient;
 
 namespace TfsCmdlets.Services.Impl
 {
-    [Export(typeof(IRestApiService))]
-    internal class RestApiServiceImpl : IRestApiService
+    public interface IRestApiService
     {
         Task<HttpResponseMessage> InvokeAsync(
             Models.Connection connection,
@@ -55,11 +54,11 @@ namespace TfsCmdlets.Services.Impl
         Uri Url {get;}
     }
 
-    [Exports(typeof(IRestApiService))]
-    internal class RestApiServiceImpl : BaseService, IRestApiService
+    [Export(typeof(IRestApiService))]
+    internal class RestApiServiceImpl : IRestApiService
     {
         private GenericHttpClient _client;
-
+        private ILogger Logger {get;set;}
         public Uri Url => _client.Uri;
 
         Task<HttpResponseMessage> IRestApiService.InvokeAsync(
