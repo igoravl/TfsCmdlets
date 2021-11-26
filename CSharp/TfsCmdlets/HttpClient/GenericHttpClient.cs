@@ -19,40 +19,38 @@ namespace TfsCmdlets.HttpClient
     {
         #region Constructors and fields
 
-        private static string _Host;
-
         /// <summary>
         /// Creates a new instance of the GenericHttpClient class
         /// </summary>
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials) : base(SetHost(baseUrl), credentials)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials) : base(baseUrl, credentials)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the GenericHttpClient class
         /// </summary>
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings) : base(SetHost(baseUrl), credentials, settings)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings) : base(baseUrl, credentials, settings)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the GenericHttpClient class
         /// </summary>
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, handlers)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, params DelegatingHandler[] handlers) : base(baseUrl, credentials, handlers)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the GenericHttpClient class
         /// </summary>
-        public GenericHttpClient(Uri baseUrl, HttpMessageHandler pipeline, bool disposeHandler) : base(SetHost(baseUrl), pipeline, disposeHandler)
+        public GenericHttpClient(Uri baseUrl, HttpMessageHandler pipeline, bool disposeHandler) : base(baseUrl, pipeline, disposeHandler)
         {
         }
 
         /// <summary>
         /// Creates a new instance of the GenericHttpClient class
         /// </summary>
-        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings, params DelegatingHandler[] handlers) : base(SetHost(baseUrl), credentials, settings, handlers)
+        public GenericHttpClient(Uri baseUrl, VssCredentials credentials, VssHttpRequestSettings settings, params DelegatingHandler[] handlers) : base(baseUrl, credentials, settings, handlers)
         {
         }
 
@@ -62,28 +60,6 @@ namespace TfsCmdlets.HttpClient
         /// Gets the API URL
         /// </summary>
         public Uri Uri { get; private set; }
-
-        /// <summary>
-        /// Specifies an alternate host name for APIs not hosted in "dev.azure.com"
-        /// </summary>
-        /// <param name="host">An alternate host, such as "vsaex.dev.azure.com" or "vssps.dev.azure.com".</param>
-        public static void UseHost(string host)
-        {
-            _Host = host;
-        }
-
-        private static Uri SetHost(Uri baseUrl)
-        {
-            if (_Host == null)
-            {
-                return baseUrl;
-            }
-
-            baseUrl = (new UriBuilder(baseUrl) { Host = _Host }).Uri;
-            _Host = null;
-
-            return baseUrl;
-        }
 
         /// <summary>
         /// Sends a GET request to an Azure DevOps API

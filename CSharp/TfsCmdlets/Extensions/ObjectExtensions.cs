@@ -27,5 +27,23 @@ namespace TfsCmdlets.Extensions
                 }
             }
         }
+
+        public static T GetHiddenField<T>(this object self, string fieldName)
+        {
+            var field = self.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return (T) field.GetValue(self);
+        }
+
+        public static void SetHiddenField(this object self, string fieldName, object value)
+        {
+            var field = self.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            field.SetValue(self, value);
+        }
+
+        public static object CallHiddenMethod(this object self, string methodName, params object[] parameters)
+        {
+            var method = self.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            return method.Invoke(self, parameters);
+        }
     }
 }

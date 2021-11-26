@@ -103,6 +103,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
         public string UseHost { get; set; }
 
         /// <summary>
+        /// Prevents the automatic expansion (unwrapping) of the 'value' property in the response JSON.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter NoAutoUnwrap { get; set; }
+
+        /// <summary>
         /// Returns the API response as an unparsed string. If omitted, JSON responses will be 
         /// parsed, converted and returned as objects (via ConvertFrom-Json).
         /// </summary>
@@ -245,5 +251,123 @@ namespace TfsCmdlets.Cmdlets.RestApi
         //            return false;
         //        }
         //    }
+        /// <summary>
+        /// Performs execution of the command
+        /// </summary>
+        protected override void DoProcessRecord()
+        {
+            if (Path.Contains(" "))
+            {
+                var tokens = Path.Split(' ');
+
+                if (IsHttpMethod(tokens[0]))
+                {
+                    Method = tokens[0];
+                    Path = Path.Substring(tokens[0].Length+1);
+                }
+            }
+
+            var tpc = this.GetCollection();
+
+            Path = Path.Replace("https://{instance}/{collection}/", "http://tfs/");
+
+            if (Uri.TryCreate(Path, UriKind.Absolute, out var uri))
+            {
+                if(string.IsNullOrEmpty(UseHost) && !uri.Host.Equals(tpc.Uri.Host, StringComparison.OrdinalIgnoreCase))
+                {
+                    UseHost = uri.Host;
+                }
+                
+                Path = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
+
+                if (uri.AbsoluteUri.StartsWith(tpc.Uri.AbsoluteUri))
+                {
+                    Path = Path.Substring(tpc.Uri.AbsoluteUri.Length);
+                }
+
+                var query = uri.ParseQueryString();
+
+                if(query["api-version"] != null)
+                {
+                    ApiVersion = query["api-version"];
+                }
+            }
+
+            if (Path.Contains("%7Bproject%7D") || Path.Contains("%7BprojectId%7D"))
+            {
+                var (_, tp) = GetCollectionAndProject();
+
+                Path = Path
+                    .Replace("%7Bproject%7D", tp.Id.ToString())
+                    .Replace("%7BprojectId%7D", tp.Id.ToString());
+
+                this.Log($"Replace token {{project[Id]}} in URL with [{tp.Id}]");
+            }
+
+            if (Path.Contains("%7Bteam%7D") || Path.Contains("%7BteamId%7D"))
+            {
+                var (_, _, t) = GetCollectionProjectAndTeam();
+
+                Path = Path
+                    .Replace("%7Bteam%7D", t.Id.ToString())
+                    .Replace("%7BteamId%7D", t.Id.ToString());
+
+                this.Log($"Replace token {{team}} in URL with [{t.Id}]");
+            }
+
+            this.Log($"Path '{Path}', version '{ApiVersion}'");
+
+            string host = null;
+
+            if(tpc.IsHosted)
+            {
+                if(!string.IsNullOrEmpty(UseHost))
+                {
+                    host = UseHost;
+                }
+                else if (!tpc.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    host = tpc.Uri.Host;
+                }
+            }
+
+            var client = this.GetService<IRestApiService>();
+
+            var task = client.InvokeAsync(tpc, Path, Method, Body,
+                RequestContentType, ResponseContentType,
+                AdditionalHeaders.ToDictionary<string, string>(),
+                QueryParameters.ToDictionary<string, string>(),
+                ApiVersion,
+                host);
+
+            this.Log($"{Method} {client.Url.AbsoluteUri}");
+
+            if (AsTask)
+            {
+                WriteObject(task);
+                return;
+            }
+
+            var result = task.GetResult("Unknown error when calling REST API");
+            var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var responseType = result.Content.Headers.ContentType.MediaType;
+
+            WriteObject(!Raw && responseType.Equals("application/json")
+                ? PSJsonConverter.Deserialize(responseBody, (bool) NoAutoUnwrap)
+                : responseBody);
+        }
+
+        private bool IsHttpMethod(string method)
+        {
+            try
+            {
+                var m = new HttpMethod(method);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

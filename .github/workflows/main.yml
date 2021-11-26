@@ -154,7 +154,7 @@ jobs:
             (ConvertTo-SecureString -String $env:GITHUB_TOKEN -AsPlainText -Force)))
           # Promote release
           $rel = Get-GitHubRelease `
-          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  } `
+          | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  }
           Set-GitHubRelease -Release $rel.id -Draft:$false
           Write-Output "::set-output name=RELEASE_URL::$($rel.html_url)"
     outputs:

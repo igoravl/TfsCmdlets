@@ -1,22 +1,56 @@
 # TfsCmdlets Release Notes
 
-## Version 2.1.2 (_10/Sep/2021_)
+## Version 2.1.3 (_25/Nov/2021_)
 
-This release fixes [issue #124](https://github.com/igoravl/TfsCmdlets/issues/124), plus some small refactorings/housekeeping.
+This release fixes [issue #152](https://github.com/igoravl/TfsCmdlets/issues/152). It also contains an improvement (which happens to be a breaking change).
 
 ## Fixes
 
-- **Double confirmation in Remove-TfsGitRepository (and others)**: Many cmdlets (all Remove-* ones, and a few others) used to have a ConfirmImpact level set to High. At the same time, some of those also have a Force/ShouldContinue() logic. This meant that the user would be asked for confirmation twice - once when calling ShouldProcess(), and again when calling ShouldContinue(). Now, all cmdlets have their ConfirmImpact set to Medium, and those with potentially destructive actions have a ShouldContinue() call, that can be supressed by the user with the Force parameter.
+- **Error when calling Invoke-TfsRestApi for different hosts in the same session**: If you tried to call `Invoke-TfsRestApi` for a certain host (e.g. _vsrm.dev.azure.com_) and then call another host (e.g. _vssps.dev.azure.com_) it would fail. Internally, this cmdlet uses a custom [VssHttpClientBase](https://docs.microsoft.com/en-us/previous-versions/dn245567(v=vs.120)) implementation called GenericHttpClient. This custom implementation has, among other things, the ability to call APIs hosted in different parts of Azure DevOps such as **vsrm.dev.azure.com** and **vssps.dev.azure.com**. However, once an instance of GenericHttpClient is created by a call to [VssConnection.GetClient&lt;T&gt;()](https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/dn228357(v=vs.120)), it is cached internally by VssConnection and thus cannot be updated to point to another URL. This release fixes it.
 
-## Misc
+## Improvements
 
-- Adds support to automatic WinGet manifest update and PR creation;
-- Updates icon URL in the Nuget/Chocolatey manifest to a higher-res version;
-- Adds list of exported cmdlets to the module manifest (psd1)
+### Invoke-TfsRestApi now unwraps the property "value" in the response (BREAKING)
+
+In previous versions, `Invoke-TfsRestApi` would return the JSON response as-is.
+
+In most situations, that would mean that using the code below would result in the following result:
+
+```
+PS> Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4'
+
+count value
+----- -----
+    1 {@{source=userInterface; revision=27; description=; createdBy=; createdOn=2020-10-02T13:20:20.847Z; ...
+```
+
+Notice that the returned JSON response contains two properties, `count` and `value`. The `value` property contains the actual data. To access it, you most likely would have to use the following code:
+
+```
+PS> (Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4').value
+
+source            : userInterface
+revision          : 27
+description       : This is a sample definition
+createdBy         : @{displayName=Igor Abade...
+```
+
+That is a very common pattern used by the Azure DevOps APIs. So common, in fact, that it was almost guaranteed that the response would be wrapped in a property called "value" - which means that you're required to unwrap the `value` property nearly every time you called an Azure DevOps API.
+
+Now, `Invoke-TfsRestApi` automatically expands the "value" property, so that now calls to `Invoke-TfsRestApi` will most certainly return the data you were looking for in the first place. However, that means your scripts may break, and you're required to manually fix them if you were using the `(Invoke-TfsRestApi '_apis/...').value` pattern.
+
+To fix your scripts, you can either:
+
+- Add the `-NoAutoUnwrap` parameter to the call to `Invoke-TfsRestApi`; or
+- Remove the call to the `Value` property, replacing a code like `(Invoke-TfsRestApi '_apis/...').value` with `Invoke-TfsRestApi '_apis/...'`.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.1.2 (_10/Sep/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.1.2.md).
 
 ### Version 2.1.1 (_08/Sep/2021_)
 
