@@ -9,7 +9,9 @@ namespace TfsCmdlets.Util
     {
         internal static void ThrowDesktopOnlyCmdlet()
         {
+#if NETCOREAPP3_1_OR_GREATER
             throw new NotSupportedException("This cmdlet requires Windows PowerShell. It does not work on PowerShell 6+.");
+#endif
         }
 
         internal static void ThrowIfNotFound(object data, string name, object searchCriteria)
