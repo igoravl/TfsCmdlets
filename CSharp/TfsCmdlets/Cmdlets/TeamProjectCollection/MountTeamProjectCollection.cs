@@ -81,9 +81,8 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// HELP_PARAM_SERVER
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public object Server;
+        public object Server { get; set; }
 
         // TODO
-
     }
 }
