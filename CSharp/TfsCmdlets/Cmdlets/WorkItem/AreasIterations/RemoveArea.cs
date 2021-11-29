@@ -113,7 +113,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     //            throw new Exception($"Invalid or non-existent node '{moveTo}'. To remove nodes, supply a valid node in the -MoveTo argument");
     //        }
 
-    //        this.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");
+    //        Logger.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");
 
     //        var (_, tp) = this.GetCollectionAndProject();
     //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);

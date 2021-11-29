@@ -51,7 +51,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     //        var queryOrder = parameters.Get<DefinitionQueryOrder>(nameof(GetBuildDefinition.QueryOrder), DefinitionQueryOrder.None);
 
     //        var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
 
 
     //        while (true) switch (definition)

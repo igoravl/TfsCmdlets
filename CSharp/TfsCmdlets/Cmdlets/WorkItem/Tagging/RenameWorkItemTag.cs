@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //        var force = parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));
     //        var newName = parameters.Get<string>("NewName");
 
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<TaggingHttpClient>(parameters);
 
     //        if (!PowerShell.ShouldProcess(tp, $"Rename work item tag '{tag.Name}' to '{newName}'")) return null;

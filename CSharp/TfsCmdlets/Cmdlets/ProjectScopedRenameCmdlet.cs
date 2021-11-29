@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class RenameCmdlet: ProjectLevelCmdlet
+    public abstract class ProjectScopedRenameCmdlet : ProjectScopedCmdlet
     {
         /// <summary>
         /// HELP_PARAM_NEWNAME

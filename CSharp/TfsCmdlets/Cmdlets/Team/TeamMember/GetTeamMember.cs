@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
 
         //    if (group == null) throw new ArgumentException($"Invalid or non-existent team '{Team}'");
 
-        //    this.Log($"Returning members from team '{t.Name}'");
+        //    Logger.Log($"Returning members from team '{t.Name}'");
 
         //    foreach(var memberId in group.MemberIds)
         //    {

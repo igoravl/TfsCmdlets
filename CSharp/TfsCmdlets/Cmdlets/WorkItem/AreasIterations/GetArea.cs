@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// </example>
     [Cmdlet(VerbsCommon.Get, "TfsArea")]
     [OutputType(typeof(WorkItemClassificationNode))]
-    public class GetArea : CmdletBase
+    public class GetArea : ProjectScopedGetCmdlet
     {
         /// <summary>
         /// HELP_PARAM_AREA
@@ -26,18 +26,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [ValidateNotNullOrEmpty]
         [Alias("Path", "Area")]
         public object Node { get; set; } = @"\**";
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
 
         /// <summary>
         /// Indicates the type of structure (area or iteration)

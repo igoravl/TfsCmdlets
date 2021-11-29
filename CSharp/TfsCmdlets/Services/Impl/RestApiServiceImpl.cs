@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections;
-using System.Linq;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Composition;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
-using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.HttpClient;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IRestApiService))]
     internal class RestApiServiceImpl : IRestApiService

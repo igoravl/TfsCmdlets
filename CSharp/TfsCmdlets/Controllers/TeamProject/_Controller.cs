@@ -1,12 +1,12 @@
 //        protected override WebApiTeamProject DoConnectItem(ParameterDictionary parameters)
 //        {
 //            var tpc = Collection;
-//            var tp = Project;
+//            var tp = Data.GetProject(parameters);
 
 //            CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp);
 
 //            // TODO: 
-//            //this.Log($"Adding '{tp.Name} to the MRU list");
+//            //Logger.Log($"Adding '{tp.Name} to the MRU list");
 //            //_SetMru "Server" - Value(srv.Uri)
 //            //_SetMru "Collection" - Value(tpc.Uri)
 //            //_SetMru "Project" - Value(tp.Name)
@@ -77,7 +77,7 @@
 //        protected override WebApiTeamProject DoRenameItem(ParameterDictionary parameters)
 //        {
 //            var tpc = Collection;
-//            var tp = Project;
+//            var tp = Data.GetProject(parameters);
 //            var newName = parameters.Get<string>("NewName");
 //            var force = parameters.Get<bool>(nameof(RenameTeamProject.Force));
 

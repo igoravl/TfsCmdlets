@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         //        return;
         //    }
 
-        //    this.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");
+        //    Logger.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");
 
         //    client.RemoveMemberFromGroupAsync(group.Descriptor, member.Descriptor)
         //        .GetResult($"Error removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");

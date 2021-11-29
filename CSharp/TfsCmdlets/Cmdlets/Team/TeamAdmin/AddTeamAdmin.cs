@@ -64,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         //        return;
         //    }
 
-        //    this.Log($"Adding administrator '{admin.DisplayName} ({admin.UniqueName})' to team '{t.Name}'");
+        //    Logger.Log($"Adding administrator '{admin.DisplayName} ({admin.UniqueName})' to team '{t.Name}'");
 
         //    var client = Data.GetClient<TeamAdminHttpClient>(parameters);
         //    var result = client.AddTeamAdmin(t.ProjectName, t.Id, admin.Id); 

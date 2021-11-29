@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// Exports the contents of one or more Global Lists to XML.
     /// </summary>
     /// <remarks>
-    /// This cmdlets generates an XML containing one or more global lists and their respective items, 
+    /// This cmdlet generates an XML containing one or more global lists and their respective items, 
     /// in the same format used by witadmin. It is functionally equivalent to "witadmin exportgloballist"
     /// </remarks>
     /// <example>
@@ -21,7 +21,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </example>
     /// <notes>
     /// To export or list global lists, you must be a member of the Project Collection Valid Users 
-    /// group or have your View collection-level information permission set to Allow.
+    /// group or have the "View collection-level information" permission set to Allow.
     /// </notes>
     /// <input>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</input>
     /// <input>System.String</input>
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsData.Export, "TfsGlobalList")]
     [OutputType(typeof(string))]
     [DesktopOnly]
-    public class ExportGlobalList : CmdletBase
+    public class ExportGlobalList : CollectionScopedGetCmdlet
     {
         /// <summary>
         /// Specifies the name of the global list to be exported. Wildcards are supported. 
@@ -41,14 +41,5 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         [Alias("Name")]
         [SupportsWildcards()]
         public object GlobalList { get; set; } = "*";
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
-        
-        // TODO
-
     }
 }

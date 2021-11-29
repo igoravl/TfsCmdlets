@@ -53,7 +53,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
         //    if (group == null) throw new ArgumentException($"Invalid or non-existent group '{Group}'");
 
-        //    this.Log($"Returning members from group '{Group}'");
+        //    Logger.Log($"Returning members from group '{Group}'");
 
         //    foreach(var memberId in group.MemberIds)
         //    {

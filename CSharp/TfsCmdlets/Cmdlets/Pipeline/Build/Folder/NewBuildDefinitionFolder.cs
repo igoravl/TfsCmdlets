@@ -59,7 +59,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //        throw new ArgumentException($"Invalid folder name '{Folder}'");
         //    }
 
-        //    var tp = Project;
+        //    var tp = Data.GetProject(parameters);
 
         //    if(!PowerShell.ShouldProcess($"Team Project '{tp.Name}'", $"Create build folder '{Folder}'")) 
         //    {

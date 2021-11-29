@@ -5,12 +5,12 @@ using System.Text;
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class GetCmdlet: ProjectLevelCmdlet
+    public abstract class ProjectScopedNewCmdlet : ProjectScopedCmdlet
     {
         /// <summary>
-        /// HELP_PARAM_PROJECT
+        /// HELP_PARAM_PASSTHRU
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public override object Project { get; set; }
+        [Parameter()]
+        public SwitchParameter Passthru { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     //    {
     //        var plans = GetItems<TestPlan>();
     //        var force = parameters.Get<bool>(nameof(RemoveTestPlan.Force));
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<TestPlanHttpClient>(parameters);
 
     //        foreach (var plan in plans)

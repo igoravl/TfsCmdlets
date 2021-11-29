@@ -34,7 +34,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //{
     //    protected override WebApiFolder DoNewItem()
     //    {
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var folder = parameters.Get<string>(nameof(NewReleaseDefinitionFolder.Folder));
     //        var description = parameters.Get<string>(nameof(NewReleaseDefinitionFolder.Description));
 

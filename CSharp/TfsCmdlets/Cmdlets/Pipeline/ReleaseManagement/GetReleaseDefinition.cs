@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         //         /// </summary>
         //         protected override void DoProcessRecord()
         //     {
-        //         if (Definition is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition) { this.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition; returning input item immediately, without further processing."; WriteObject(Definition }); return;);
+        //         if (Definition is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition) { Logger.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition; returning input item immediately, without further processing."; WriteObject(Definition }); return;);
 
         //         # if(_TestGuid(Definition))
         //         # {

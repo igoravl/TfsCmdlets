@@ -61,7 +61,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //                    }
     //                case IEnumerable<string> tags:
     //                    {
-    //                        var tp = Project;
+    //                        var tp = Data.GetProject(parameters);
     //                        var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>(parameters);
 
     //                        var result = client.GetTagsAsync(tp.Id, includeInactive)

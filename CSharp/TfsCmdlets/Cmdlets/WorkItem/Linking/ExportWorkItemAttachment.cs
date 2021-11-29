@@ -86,7 +86,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         //            }
         //    }
 
-        //    var tp = Project;
+        //    var tp = Data.GetProject(parameters);
         //    var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
         //    var outputDir = ResolvePath(Destination);
 

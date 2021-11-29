@@ -186,13 +186,13 @@ namespace TfsCmdlets.Cmdlets.Team
     //            {
     //                if (tpc.IsHosted)
     //                {
-    //                    this.Log("Conected to Azure DevOps Services. Treating Team Field Value as Area Path");
+    //                    Logger.Log("Conected to Azure DevOps Services. Treating Team Field Value as Area Path");
     //                    defaultAreaPath = NodeUtil.NormalizeNodePath(defaultAreaPath, tp.Name, "Areas", includeTeamProject: true);
     //                }
 
     //                if (areaPaths == null)
     //                {
-    //                    this.Log("AreaPaths is empty. Adding DefaultAreaPath (TeamFieldValue) to AreaPaths as default value.");
+    //                    Logger.Log("AreaPaths is empty. Adding DefaultAreaPath (TeamFieldValue) to AreaPaths as default value.");
 
     //                    areaPaths = new string[] { defaultAreaPath };
     //                }
@@ -204,7 +204,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //                    NewItem<Models.ClassificationNode>(area);
     //                }
 
-    //                this.Log($"Setting default area path (team field) to {defaultAreaPath}");
+    //                Logger.Log($"Setting default area path (team field) to {defaultAreaPath}");
 
     //                teamFieldPatch.DefaultValue = defaultAreaPath;
     //            }
@@ -237,7 +237,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //            if (backlogIteration != null &&
     //                ShouldProcess(t, $"Set the team's backlog iteration to '{backlogIteration}'"))
     //            {
-    //                this.Log($"Setting backlog iteration to {backlogIteration}");
+    //                Logger.Log($"Setting backlog iteration to {backlogIteration}");
 
     //                var iteration = GetItem<Models.ClassificationNode>(new
     //                {
@@ -259,7 +259,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
     //            //         if (BacklogVisibilities && ShouldProcess(Team, $"Set the team"s backlog visibilities to {_DumpObj {BacklogVisibilities}}"))
     //            //         {
-    //            //             this.Log($"Setting backlog iteration to {BacklogVisibilities}");
+    //            //             Logger.Log($"Setting backlog iteration to {BacklogVisibilities}");
     //            //             patch.BacklogVisibilities = _NewDictionary @([string], [bool]) BacklogVisibilities
 
     //            //             isDirty = true
@@ -267,7 +267,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
     //            //         if (DefaultIterationMacro && ShouldProcess(Team, $"Set the team"s default iteration macro to {DefaultIterationMacro}"))
     //            //         {
-    //            //             this.Log($"Setting default iteration macro to {DefaultIterationMacro}");
+    //            //             Logger.Log($"Setting default iteration macro to {DefaultIterationMacro}");
     //            //             patch.DefaultIterationMacro = DefaultIterationMacro
 
     //            //             isDirty = true
@@ -275,7 +275,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
     //            //         if (WorkingDays && ShouldProcess(Team, $"Set the team"s working days to {_DumpObj {WorkingDays}}"))
     //            //         {
-    //            //             this.Log($"Setting working days to {{WorkingDays}|ConvertTo=-Json -Compress}");
+    //            //             Logger.Log($"Setting working days to {{WorkingDays}|ConvertTo=-Json -Compress}");
     //            //             patch.WorkingDays = WorkingDays
 
     //            //             isDirty = true
@@ -283,7 +283,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
     //            //         if(BugsBehavior && ShouldProcess(Team, $"Set the team"s bugs behavior to {_DumpObj {BugsBehavior}}"))
     //            //         {
-    //            //             this.Log($"Setting bugs behavior to {_DumpObj {BugsBehavior}}");
+    //            //             Logger.Log($"Setting bugs behavior to {_DumpObj {BugsBehavior}}");
     //            //             patch.BugsBehavior = BugsBehavior
 
     //            //             isDirty = true

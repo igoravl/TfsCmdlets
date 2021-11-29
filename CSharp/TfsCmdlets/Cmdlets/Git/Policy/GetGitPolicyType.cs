@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitPolicyType")]
     [OutputType(typeof(PolicyType))]
-    public class GetGitPolicyType: ProjectLevelCmdlet
+    public class GetGitPolicyType: ProjectScopedCmdlet
     {
         /// <summary>
         /// Specifies the display name or ID of the policy type. Wildcards are supported.

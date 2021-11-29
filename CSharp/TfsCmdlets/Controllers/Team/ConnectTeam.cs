@@ -29,7 +29,7 @@ namespace TfsCmdlets.Controllers.Team
             CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp, t);
 
             // TODO: 
-            //this.Log($"Adding '{tp.Name} to the MRU list");
+            //Logger.Log($"Adding '{tp.Name} to the MRU list");
             //_SetMru "Server" - Value(srv.Uri)
             //_SetMru "Collection" - Value(tpc.Uri)
             //_SetMru "Project" - Value(tp.Name)

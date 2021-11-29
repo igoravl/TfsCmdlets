@@ -94,7 +94,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     //{
     //    protected override ClassificationNode DoRenameItem()
     //    {
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<WorkItemTrackingHttpClient>(parameters);
     //        var nodeToRename = GetItem<ClassificationNode>();
     //        var structureGroup = parameters.Get<TreeStructureGroup>("StructureGroup");

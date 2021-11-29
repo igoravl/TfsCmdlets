@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     [Cmdlet(VerbsCommon.New, "TfsTeamProject", DefaultParameterSetName = "Get by project", SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTeamProject))]
     [RequiresVersion(2015)]
-    public class NewTeamProject : CollectionLevelCmdlet
+    public class NewTeamProject : CollectionScopedCmdlet
     {
         /// <summary>
         ///  Specifies the name of the new team project.

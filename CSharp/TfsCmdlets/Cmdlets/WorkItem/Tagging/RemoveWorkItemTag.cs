@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //        var tags = GetItems<WebApiTagDefinition>(new{IncludeInactive=true});
     //        var force = parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));
 
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<TaggingHttpClient>(parameters);
 
     //        foreach(var t in tags)

@@ -2,12 +2,12 @@
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class ProjectLevelCmdlet: CollectionLevelCmdlet
+    public abstract class ProjectScopedCmdlet : CollectionScopedCmdlet
     {
         /// <summary>
         /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public virtual object Project { get; set; }
+        public object Project { get; set; }
     }
 }

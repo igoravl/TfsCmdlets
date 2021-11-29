@@ -76,7 +76,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //{
     //    protected override Models.Team DoNewItem()
     //    {
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var team = parameters.Get<string>(nameof(NewTeam.Team));
     //        var description = parameters.Get<string>(nameof(NewTeam.Description));
     //        var noAreaPath = parameters.Get<bool>(nameof(NewTeam.NoDefaultArea));

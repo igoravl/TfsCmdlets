@@ -11,7 +11,7 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Controllers.Admin.Registry
 {
     [CmdletController]
-    internal class GetRegistryValue : ControllerBase
+    internal class GetRegistryValueController : ControllerBase
     {
         private IPowerShellService PowerShell { get; }
         public IRestApiService RestApi { get; }
@@ -55,7 +55,7 @@ namespace TfsCmdlets.Controllers.Admin.Registry
         }
 
         [ImportingConstructor]
-        public GetRegistryValue(IRestApiService restApi, IDataManager data, ILogger logger)
+        public GetRegistryValueController(IRestApiService restApi, IDataManager data, ILogger logger)
          : base(logger)
         {
             RestApi = restApi;

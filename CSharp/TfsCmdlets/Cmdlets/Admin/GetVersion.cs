@@ -20,12 +20,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsVersion")]
     [OutputType(typeof(ServerVersion))]
-    public class GetVersion : CmdletBase
+    public class GetVersion : CollectionScopedGetCmdlet
     {
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
     }
 }

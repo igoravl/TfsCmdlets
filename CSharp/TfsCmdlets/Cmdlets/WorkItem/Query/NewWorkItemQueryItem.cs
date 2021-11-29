@@ -94,7 +94,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //        var wiql = parameters.Get<string>("Wiql");
     //        var scope = parameters.Get<string>("Scope").Equals("Personal") ? "My Queries" : "Shared Queries";
     //        var force = parameters.Get<bool>("Force");
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
 
     //        var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, scope, includeScope: true, separator: '/');
     //        var queryName = Path.GetFileName(fullPath);
@@ -127,7 +127,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //        var parentFolder = GetItem<QueryHierarchyItem>(new{Folder=parentPath, ItemType="Folder"})??
     //            NewItem<QueryHierarchyItem>(new {Folder=parentPath, ItemType="Folder"});
 
-    //        this.Log($"Creating query '{queryName}' in folder '{parentPath}'");
+    //        Logger.Log($"Creating query '{queryName}' in folder '{parentPath}'");
 
     //        var result = client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
     //            .GetResult($"Error creating new work item {itemType} '{fullPath}'");

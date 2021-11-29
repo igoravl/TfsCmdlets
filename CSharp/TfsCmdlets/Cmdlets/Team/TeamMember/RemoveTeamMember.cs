@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
         //        return;
         //    }
 
-        //    this.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from team '{t.Name}'");
+        //    Logger.Log($"Removing '{member.DisplayName} ({member.UniqueName}))' from team '{t.Name}'");
 
         //    client.RemoveMemberFromGroupAsync(group.Descriptor, member.Descriptor)
         //        .GetResult($"Error removing '{member.DisplayName} ({member.UniqueName}))' from group '{group.DisplayName}'");

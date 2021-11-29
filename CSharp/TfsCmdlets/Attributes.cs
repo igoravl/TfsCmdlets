@@ -7,7 +7,7 @@ namespace TfsCmdlets
     [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class CmdletControllerAttribute: ExportAttribute
     {
-        public CmdletControllerAttribute(): base(typeof(IController))
+        public CmdletControllerAttribute() : base(typeof(IController))
         {
         }
     }

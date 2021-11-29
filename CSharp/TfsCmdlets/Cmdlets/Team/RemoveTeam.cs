@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Team
     //    /// </summary>
     //    protected override void DoRemoveItem(ParameterDictionary parameters)
     //    {
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var teams = GetItems<Models.Team>();
 
     //        foreach (var t in teams)

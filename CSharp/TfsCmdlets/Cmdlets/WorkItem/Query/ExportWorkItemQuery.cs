@@ -92,7 +92,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         //        protected override void DoProcessRecord()
         //        {
         //            var queries = GetItems<QueryHierarchyItem>(new { ItemType = "Query" });
-        //            var (tpc, tp) = GetCollectionAndProject();
+        //            var tp = Data.GetProject(parameters);
 
         //            foreach (var query in queries)
         //            {
@@ -118,7 +118,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
 
         //                if (!Directory.Exists(destDir))
         //                {
-        //                    this.Log($"Destination path '{Destination}' not found.");
+        //                    Logger.Log($"Destination path '{Destination}' not found.");
 
         //                    if (!PowerShell.ShouldProcess(Destination, "Create output directory")) continue;
 

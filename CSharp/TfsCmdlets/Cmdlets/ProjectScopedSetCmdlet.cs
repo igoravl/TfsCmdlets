@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class SetCmdlet: ProjectLevelCmdlet
+    public abstract class ProjectScopedSetCmdlet : ProjectScopedCmdlet
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

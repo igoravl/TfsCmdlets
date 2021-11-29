@@ -55,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
 
         //    var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(parameters);
 
-        //    this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to team '{group.DisplayName}'");
+        //    Logger.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to team '{group.DisplayName}'");
 
         //    if (!PowerShell.ShouldProcess($"Team '{group.DisplayName}'", 
         //        $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;

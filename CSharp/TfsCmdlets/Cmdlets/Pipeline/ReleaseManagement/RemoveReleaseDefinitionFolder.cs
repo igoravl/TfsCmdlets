@@ -46,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //        var folders = GetItems<WebApiFolder>();
     //        var recurse = parameters.Get<bool>(nameof(RemoveReleaseDefinitionFolder.Recurse));
     //        var force = parameters.Get<bool>(nameof(RemoveReleaseDefinitionFolder.Force));
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
 
     //        foreach (var f in folders)
     //        {
@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
     //            if (!recurse)
     //            {
-    //                this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
+    //                Logger.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
 
     //                var subFolders = GetItems<WebApiFolder>(new 
     //                {

@@ -19,7 +19,10 @@ namespace TfsCmdlets.Cmdlets
         [Import] protected ILogger Logger { get; set; }
         [ImportMany] protected IEnumerable<Lazy<IController>> Controllers { get; set; }
 
-        // internal ServiceLocator Locator { get; private set; }
+        internal IController GetController()
+            => Controllers.FirstOrDefault(c =>
+                c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase) ||
+                c.Value.CommandName.Equals(CommandName + "Controller", StringComparison.OrdinalIgnoreCase))?.Value;
 
         protected string Verb { get; private set; }
 
@@ -60,7 +63,7 @@ namespace TfsCmdlets.Cmdlets
             InjectDependencies();
             // CheckRequiredVersion();
             LogParameters();
-            
+
             DoBeginProcessing();
         }
 
@@ -84,30 +87,38 @@ namespace TfsCmdlets.Cmdlets
         /// </summary>
         protected virtual void DoProcessRecord()
         {
-            var result = DoInvokeCommand();
-
-            if (result == null) return;
-
-            if (!ReturnsValue)
+            try
             {
-                foreach (var _ in result) { } // forces enumeration of iterator
-                return;
-            }
+                var result = DoInvokeCommand();
 
-            WriteObject(result, true);
+                if (result == null) return;
+
+                if (!ReturnsValue)
+                {
+                    foreach (var _ in result) { } // forces enumeration of iterator
+
+                    return;
+                }
+
+                WriteObject(result, true);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+            }
         }
 
         private IEnumerable<object> DoInvokeCommand()
         {
-            var command = Controllers.FirstOrDefault(c => c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase))?.Value;
+            var command = GetController();
 
-            if (command == null) throw new Exception($"Command '{CommandName}' not found. Are you missing a [Command] attribute?");
+            if (command == null) throw new Exception($"Controller '{CommandName}' not found. Are you missing a [CmdletController] attribute?");
 
             var parameters = ParameterManager.GetParameters(this);
 
             var result = command.InvokeCommand(parameters);
 
-            if(result is IEnumerable<object> objList) return objList;
+            if (result is IEnumerable<object> objList) return objList;
 
             return new[] { result };
         }
@@ -120,7 +131,7 @@ namespace TfsCmdlets.Cmdlets
 
         private void LogParameters()
         {
-             Logger.LogParameters();
+            Logger.LogParameters();
         }
 
         private string GetVerb()

@@ -9,22 +9,34 @@ namespace TfsCmdlets.Services
 {
     public interface IDataManager
     {
-        T GetItem<T>(object parameters);
+        T GetItem<T>(ParameterDictionary parameters);
 
-        IEnumerable<T> GetItems<T>(object parameters);
+        IEnumerable<T> GetItems<T>(ParameterDictionary parameters);
 
-        IEnumerable<T> Invoke<T>(string verb, string noun = null, object parameters = null);
+        T NewItem<T>(ParameterDictionary parameters);
 
-        Connection GetServer(object parameters);
+        T SetItem<T>(ParameterDictionary parameters);
 
-        Connection GetCollection(object parameters);
+        void RemoveItem<T>(ParameterDictionary parameters);
+
+        T RenameItem<T>(ParameterDictionary parameters);
+
+        bool TestItem<T>(ParameterDictionary parameters);
+
+        IEnumerable<T> Invoke<T>(string verb, ParameterDictionary parameters);
+
+        IEnumerable<T> Invoke<T>(string verb, string noun, ParameterDictionary parameters);
+
+        Connection GetServer(ParameterDictionary parameters);
+
+        Connection GetCollection(ParameterDictionary parameters);
         
-        WebApiTeamProject GetProject(object parameters);
+        WebApiTeamProject GetProject(ParameterDictionary parameters);
         
-        WebApiTeam GetTeam(object parameters);
+        WebApiTeam GetTeam(ParameterDictionary parameters);
 
-        T GetClient<T>(object parameters);
+        T GetClient<T>(ParameterDictionary parameters);
 
-        T GetService<T>(object parameters);
+        T GetService<T>(ParameterDictionary parameters);
     }
 }

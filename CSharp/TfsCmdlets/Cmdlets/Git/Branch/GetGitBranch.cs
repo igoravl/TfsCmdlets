@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranch", DefaultParameterSetName="Get by name")]
     [OutputType(typeof(GitBranchStats))]
-    public class GetGitBranch : ProjectLevelCmdlet
+    public class GetGitBranch : ProjectScopedCmdlet
     {
         /// <summary>
         /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 

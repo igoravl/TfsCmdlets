@@ -45,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //{
     //    protected override IEnumerable<WikiV2> DoGetItems()
     //    {
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var wiki = parameters.Get<object>("Wiki");
     //        var projectWiki = parameters.Get<bool>("ProjectWiki");
 
@@ -56,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                case null when projectWiki:
     //                case string s when string.IsNullOrEmpty(s) && projectWiki:
     //                    {
-    //                        foreach (var w in GetClient<WikiHttpClient>(parameters)
+    //                        foreach (var w in Data.GetClient<WikiHttpClient>(parameters)
     //                            .GetAllWikisAsync(tp.Name)
     //                            .GetResult($"Error getting project wiki")
     //                            .Where(r => r.Type == WikiType.ProjectWiki))
@@ -93,7 +93,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //                    }
     //                case string s:
     //                    {
-    //                        foreach (var w in GetClient<WikiHttpClient>(parameters)
+    //                        foreach (var w in Data.GetClient<WikiHttpClient>(parameters)
     //                            .GetAllWikisAsync(tp.Name)
     //                            .GetResult($"Error getting wiki(s) '{s}'")
     //                            .Where(r => r.Name.IsLike(s)))

@@ -32,7 +32,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     //{
     //    protected override void DoRemoveItem(ParameterDictionary parameters)
     //    {
-    //        var (tpc, tp) = GetCollectionAndProject();
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<WikiHttpClient>(parameters);
 
     //        var wikis = GetItems<WikiV2>();

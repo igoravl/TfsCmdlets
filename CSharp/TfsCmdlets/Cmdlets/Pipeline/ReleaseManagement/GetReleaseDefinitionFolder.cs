@@ -63,7 +63,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //                case string s when s.IsWildcard():
     //                    {
     //                        var client = Data.GetClient<ReleaseHttpClient>(parameters);
-    //                        var tp = Project;
+    //                        var tp = Data.GetProject(parameters);
     //                        s = NodeUtil.NormalizeNodePath(s, tp.Name);
     //                        var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
     //                            .GetResult($"Error getting folders matching {s}");
@@ -79,7 +79,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     //                case string s:
     //                    {
     //                        var client = Data.GetClient<ReleaseHttpClient>(parameters);
-    //                        var tp = Project;
+    //                        var tp = Data.GetProject(parameters);
     //                        var f = client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
     //                            .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 

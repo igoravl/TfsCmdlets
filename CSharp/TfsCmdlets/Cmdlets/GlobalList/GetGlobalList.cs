@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     [Cmdlet(VerbsCommon.Get, "TfsGlobalList")]
     [OutputType(typeof(Models.GlobalList))]
     [DesktopOnly]
-    public class GetGlobalList : CmdletBase
+    public class GetGlobalList : CollectionScopedGetCmdlet
     {
         /// <summary>
         /// Specifies the name of the global list. Wildcards are supported. 
@@ -21,15 +21,4 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         [SupportsWildcards()]
         public string GlobalList { get; set; } = "*";
     }
-
-    // TODO
-
-    //[Exports(typeof(Models.GlobalList))]
-    //internal partial class GlobalListDataService : CollectionLevelController<Models.GlobalList>
-    //{
-    //    protected override IEnumerable<Models.GlobalList> DoGetItems()
-    //    {
-    //        return Provider.GetService<IGlobalListService>(Cmdlet, Parameters).Export();
-    //    }
-    //}
 }

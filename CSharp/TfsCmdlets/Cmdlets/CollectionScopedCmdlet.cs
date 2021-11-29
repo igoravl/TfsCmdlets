@@ -2,13 +2,12 @@
 
 namespace TfsCmdlets.Cmdlets
 {
-    public class CollectionLevelCmdlet: CmdletBase
+    public abstract class CollectionScopedCmdlet: ServerScopedCmdlet
     {
-
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter()]
-        public virtual object Collection { get; set; }
+        public object Collection { get; set; }
     }
 }

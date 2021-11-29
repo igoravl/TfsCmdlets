@@ -67,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
 
         //        if(!Recurse)
         //        {
-        //            this.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
+        //            Logger.Log($"Recurse argument not set. Check if folder '{f.Path}' has sub-folders");
 
         //            var path = $@"{f.Path.TrimEnd('\\')}\**";
         //            var subFolders = GetItems<WebApiFolder>(new {
@@ -80,12 +80,12 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //            }
         //        }
 
-        //        var tp = Project;
+        //        var tp = Data.GetProject(parameters);
         //        var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
 
         //        if(!Force)
         //        {
-        //            this.Log($"Force argument not set. Check if folder '{f.Path}' has build definitions");
+        //            Logger.Log($"Force argument not set. Check if folder '{f.Path}' has build definitions");
 
         //            var result = client.GetDefinitionsAsync2(tp.Name, null, null, null, DefinitionQueryOrder.None, null, null, null, null, f.Path)
         //                .GetResult($"Error fetching build definitions in folder '{f.Path}'").ToList();

@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         //                throw new NotImplementedException("Export to file is not implemented");
         //            }
 
-        //            var (tpc, tp) = GetCollectionAndProject();
+        //            var tp = Data.GetProject(parameters);
         //            var types = GetItems<WebApiWorkItemType>();
 
         //#pragma warning disable CS0618

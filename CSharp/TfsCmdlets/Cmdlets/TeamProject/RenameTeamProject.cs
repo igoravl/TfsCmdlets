@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// Renames a team project. 
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "TfsTeamProject", SupportsShouldProcess = true)]
-    public class RenameTeamProject : CollectionLevelCmdlet
+    public class RenameTeamProject : CollectionScopedCmdlet
     {
         /// <summary>
         /// Specifies the name of a Team Project to rename.

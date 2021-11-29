@@ -26,7 +26,7 @@ namespace TfsCmdlets.Controllers.TeamProject
            }
 
            var processTemplate = parameters.Get<object>(nameof(Cmdlets.TeamProject.NewTeamProject.ProcessTemplate));
-           processTemplate ??= Data.GetItem<Process>(new { ProcessTemplate = "*", Default = true });
+           processTemplate ??= Data.GetItem<Process>(parameters.Override(new { ProcessTemplate = "*", Default = true }));
 
            var description = parameters.Get<string>(nameof(Cmdlets.TeamProject.NewTeamProject.Description));
            var sourceControl = parameters.Get<string>(nameof(Cmdlets.TeamProject.NewTeamProject.SourceControl));
@@ -34,7 +34,7 @@ namespace TfsCmdlets.Controllers.TeamProject
            var template = processTemplate switch
            {
                Process p => p,
-               string s => Data.GetItem<Process>(new { Process = s }),
+               string s => Data.GetItem<Process>(parameters.Override(new { Process = s })),
                _ => throw new ArgumentException($"Invalid or non-existent process template '{processTemplate}'")
            };
 

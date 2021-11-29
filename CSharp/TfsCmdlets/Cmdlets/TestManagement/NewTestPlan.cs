@@ -67,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     //        var startDate = parameters.Get<DateTime>(nameof(NewTestPlan.StartDate));
     //        var endDate = parameters.Get<DateTime>(nameof(NewTestPlan.EndDate));
 
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
 
     //        var client = Data.GetClient<TestPlanHttpClient>(parameters);
 

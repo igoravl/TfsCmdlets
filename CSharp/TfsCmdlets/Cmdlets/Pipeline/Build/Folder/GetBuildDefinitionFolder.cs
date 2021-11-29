@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //            case string s when s.IsWildcard():
         //            {
         //                var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
-        //                var tp = Project;
+        //                var tp = Data.GetProject(parameters);
         //                var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
         //                    .GetResult($"Error getting folders matching {s}");
 
@@ -86,7 +86,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         //            case string s:
         //            {
         //                var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>(parameters);
-        //                var tp = Project;
+        //                var tp = Data.GetProject(parameters);
         //                var f = client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
         //                    .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 

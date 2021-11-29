@@ -106,7 +106,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //        var item = isFolder ? GetParameter<string>("Folder") : GetParameter<string>("Query");
     //        var scope = parameters.Get<string>(nameof(GetWorkItemQuery.Scope));
 
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
     //        var client = Data.GetClient<Microsoft.TeamFoundation.WorkItemTracking.WebApi.WorkItemTrackingHttpClient>(parameters);
 
     //        while (true) switch (item)
@@ -144,7 +144,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     //    {
     //        if (!(item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0))
     //        {
-    //            this.Log($"Fetching child nodes for node '{item.Path}'");
+    //            Logger.Log($"Fetching child nodes for node '{item.Path}'");
 
     //            item = client.GetQueryAsync(projectName, item.Path, QueryExpand.All, 2, false)
     //                .GetResult($"Error retrieving folder from path '{item.Path}'");

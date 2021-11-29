@@ -192,7 +192,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         //             .Replace("%7Bproject%7D", tp.Id.ToString())
         //             .Replace("%7BprojectId%7D", tp.Id.ToString());
 
-        //         this.Log($"Replace token {{project[Id]}} in URL with [{tp.Id}]");
+        //         Logger.Log($"Replace token {{project[Id]}} in URL with [{tp.Id}]");
         //     }
 
         //     if (Path.Contains("%7Bteam%7D") || Path.Contains("%7BteamId%7D"))
@@ -203,10 +203,10 @@ namespace TfsCmdlets.Cmdlets.RestApi
         //             .Replace("%7Bteam%7D", t.Id.ToString())
         //             .Replace("%7BteamId%7D", t.Id.ToString());
 
-        //         this.Log($"Replace token {{team}} in URL with [{t.Id}]");
+        //         Logger.Log($"Replace token {{team}} in URL with [{t.Id}]");
         //     }
 
-        //     this.Log($"Path '{Path}', version '{ApiVersion}'");
+        //     Logger.Log($"Path '{Path}', version '{ApiVersion}'");
 
         //     string host = null;
 
@@ -231,7 +231,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
         //         ApiVersion,
         //         host);
 
-        //     this.Log($"{Method} {client.Url.AbsoluteUri}");
+        //     Logger.Log($"{Method} {client.Url.AbsoluteUri}");
 
         //     if (AsTask)
         //     {

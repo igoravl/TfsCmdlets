@@ -45,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
         //    var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(parameters);
 
-        //    this.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to group '{group.DisplayName}'");
+        //    Logger.Log($"Adding {member.IdentityType} '{member.DisplayName} ({member.UniqueName})' to group '{group.DisplayName}'");
 
         //    if (!PowerShell.ShouldProcess($"Group '{group.DisplayName}'", 
         //        $"Add member '{member.DisplayName} ({member.UniqueName})'")) return;

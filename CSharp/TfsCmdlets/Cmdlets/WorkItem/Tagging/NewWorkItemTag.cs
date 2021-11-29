@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     //    protected override WebApiTagDefinition DoNewItem()
     //    {
     //        var tag = parameters.Get<string>(nameof(NewWorkItemTag.Tag));
-    //        var tp = Project;
+    //        var tp = Data.GetProject(parameters);
 
     //        if (!PowerShell.ShouldProcess(tp, $"Create work item tag '{tag}'")) return null;
 
