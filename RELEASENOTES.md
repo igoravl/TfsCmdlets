@@ -1,52 +1,22 @@
 # TfsCmdlets Release Notes
 
-## Version 2.1.3 (_25/Nov/2021_)
+## Version 2.1.4 (_30/Nov/2021_)
 
-This release fixes [issue #152](https://github.com/igoravl/TfsCmdlets/issues/152). It also contains an improvement (which happens to be a breaking change).
+This release fixes a couple issues in `Get-TfsIdentity` and `Invoke-TfsRestApi`.
 
 ## Fixes
 
-- **Error when calling Invoke-TfsRestApi for different hosts in the same session**: If you tried to call `Invoke-TfsRestApi` for a certain host (e.g. _vsrm.dev.azure.com_) and then call another host (e.g. _vssps.dev.azure.com_) it would fail. Internally, this cmdlet uses a custom [VssHttpClientBase](https://docs.microsoft.com/en-us/previous-versions/dn245567(v=vs.120)) implementation called GenericHttpClient. This custom implementation has, among other things, the ability to call APIs hosted in different parts of Azure DevOps such as **vsrm.dev.azure.com** and **vssps.dev.azure.com**. However, once an instance of GenericHttpClient is created by a call to [VssConnection.GetClient&lt;T&gt;()](https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2013/dn228357(v=vs.120)), it is cached internally by VssConnection and thus cannot be updated to point to another URL. This release fixes it.
+- **Error when using Get-TfsIdentity with Azure DevOps Services**: Get-TfsIdentity is a cmdlet that helps to deal with legacy APIs, such as the Azure DevOps Security API. To fetch an identiy, it connected to a configuration server (the "root" of an Azure DevOps installation) and called the required API. However, connecting to a configuration server is not supported when using Azure DevOps Services. Now, when used with Azure DevOps Services, Get-TfsIdentity will use the collection (organization) scope for the API, whereas calls to the on-prem server still target the configuration server.
 
-## Improvements
-
-### Invoke-TfsRestApi now unwraps the property "value" in the response (BREAKING)
-
-In previous versions, `Invoke-TfsRestApi` would return the JSON response as-is.
-
-In most situations, that would mean that using the code below would result in the following result:
-
-```
-PS> Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4'
-
-count value
------ -----
-    1 {@{source=userInterface; revision=27; description=; createdBy=; createdOn=2020-10-02T13:20:20.847Z; ...
-```
-
-Notice that the returned JSON response contains two properties, `count` and `value`. The `value` property contains the actual data. To access it, you most likely would have to use the following code:
-
-```
-PS> (Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1-preview.4').value
-
-source            : userInterface
-revision          : 27
-description       : This is a sample definition
-createdBy         : @{displayName=Igor Abade...
-```
-
-That is a very common pattern used by the Azure DevOps APIs. So common, in fact, that it was almost guaranteed that the response would be wrapped in a property called "value" - which means that you're required to unwrap the `value` property nearly every time you called an Azure DevOps API.
-
-Now, `Invoke-TfsRestApi` automatically expands the "value" property, so that now calls to `Invoke-TfsRestApi` will most certainly return the data you were looking for in the first place. However, that means your scripts may break, and you're required to manually fix them if you were using the `(Invoke-TfsRestApi '_apis/...').value` pattern.
-
-To fix your scripts, you can either:
-
-- Add the `-NoAutoUnwrap` parameter to the call to `Invoke-TfsRestApi`; or
-- Remove the call to the `Value` property, replacing a code like `(Invoke-TfsRestApi '_apis/...').value` with `Invoke-TfsRestApi '_apis/...'`.
+- **Error calling Invoke-TfsRestApi for alternate hosts under Windows PowerShell (Desktop)**: There was a bug in the implementation of Invoke-TfsRestApi that caused it to fail when using alternate hosts in Windows PowerShell. This has been fixed.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.1.3 (_25/Nov/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.1.3.md).
 
 ### Version 2.1.2 (_10/Sep/2021_)
 
@@ -104,248 +74,46 @@ See release notes [here](Docs/ReleaseNotes/2.0.0-beta.14.md).
 
 See release notes [here](Docs/ReleaseNotes/2.0.0-beta.13.md).
 
-### Version 2.0.0-beta.11 (_14/Jul/2020_)
+### Version 2.0.0-beta.12 (_14/Jul/2020_)
 
-#### Improvements
-
-#### PowerShell 7 (Core) support
-
-- Most cmdlets are now run in both Windows PowerShell and PowerShell 7;
-- Exception made to those cmdlets still relying on the old Client Object Model library (e.g. most cmdlets that operate on a configuration server level);
-- TfsCmdlets is expected to work on Linux and Mac, although it's been only lightly tested on Linux and have not been tested on a Mac **at all**.
-
-#### New cmdlets
-
-- Connect-TfsTeam
-- Disconnect-TfsTeam
-- Enter-TfsShell
-- Exit-TfsShell
-- Get-TfsReleaseDefinition
-- Get-TfsVersion
-- New-TfsProcessTemplate
-- New-TfsTestPlan
-- Remove-TfsWorkItemTag
-- Rename-TfsGlobalList
-- Rename-TfsTeamProject
-- Rename-TfsTestPlan
-- Search-TfsWorkItem
-- Undo-TfsTeamProjectRemoval
-
-#### Other improvements 
-
-- **Documentation site**: Published new [documentation site](https://tfscmdlets.dev) (**WORK IN PROGRESS**)
-- **Get-Help**: All cmdlets are now (most) properly documented. Examples are still missing in many of them, but all are guaranteed to have, at least, synopsis and parameter documentation.
-
-#### Breaking Changes
-
-- TfsCmdlets won't run on earlier versions of PowerShell. Please use either **Windows PowerShell 5.1** or **PowerShell 7 (Core)**.
-- `Get-TfsCredential` renamed to `New-TfsCredential`
-- `Get-TfsPolicyType` renamed to `Get-GitTfsPolicyType`
-- `Get-TfsTeamBacklog` renamed to `Get-TfsTeamBacklogLevel`
-- `Get-TfsTeamBoardCardRuleSettings` renamed to `Get-TfsTeamBoardCardRule`
-- `Set-TfsTeamBoardCardRuleSettings` renamed to `Set-TfsTeamBoardCardRule`
-- Removed `Set-TfsArea`, since same result can be obtained by using either `Rename-TfsArea` or `Move-TfsArea`
-- Removed `Set-TfsWorkItemBoardStatus`, since same result can be obtained by using either `Set-TfsWorkItem`
-
-#### Known issues
-
-- PowerShell Core **only supports PAT (Personal Access Token)** logins. All other authentication methods (username/password, credential object, interactive) will only work in Windows PowerShell;
-- Some cmdlets haven't been ported to .NET yet and thus will throw a `NotImplementedException` exception when first run.
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.12.md).
 
 ### Version 2.0.0-beta.11 (_21/Jan/2020_)
 
-#### Improvements
-
-##### New cmdlets: `Enter-TfsShell`, `Exit-TfsShell`, `Get-TfsVersion`, `Invoke-TfsRestApi`
-
-The new `Enter-TfsShell` and `Exit-TfsShell` cmdlets streamline the invocation of the "Azure DevOps Shell" mode. When invoked, shows a banner with the module version and activates the custom console prompt. The custom prompt displays the currently connected Azure DevOps org/server.
-
-`Invoke-TfsRestApi` can be used to streamline calls to the Azure DevOps REST API for scenarios/APIs not yet covered by TfsCmdlets.
-
-Lastly, `Get-TfsVersion` returns version information on a given team project collection / organization. Currently, only Azure DevOps Services organizations are supported. Support for TFS and Azure DevOps Server will be added in a future release.
-
-##### Convert work item query-related cmdlets (`*-TfsWorkItemQuery`, `*-TfsWorkItemQueryFolder`) to REST API
-
-In the process, they've been generalized and converted to aliases to their new "generic" counterparts (`*-TfsWorkItemQueryItem`), much like the Area/Iteration cmdlets.
-
-##### Convert PowerShell Format/Types XML files (*.Format.ps1xml, *.Types.ps1xml) to YAML
-
-Now both **TfsCmdlets.Types.ps1xml** and **TfsCmdlets.Format.ps1xml** files are generated during build time from YAML files with [ps1xmlgen](https://github.com/igoravl/ps1xmlgen). That offers a much better experience to edit/mantain PowerShell's type/format XML files.
-
-##### Argument completers
-
-This improvement is way overdue, but now we have the first set of argument completers. Any cmdlets with the arguments `-Server`, `-Collection` and `-Project` can be "Tab-completed".
-
-##### New aliases for Connect-* cmdlets
-
-Now, to connect to a Azure DevOps (or TFS) collection/organization/project/team you can use optionally use one of the aliases below:
-
-* Connect-TfsConfigurationServer
-  * ctfssvr
-* Connect-TfsTeamProjectCollection
-  * Connect-AzdoOrganization
-  * Connect-TfsOrganization
-  * ctfs
-* Connect-TfsTeamProject
-  * ctfstp
-* Connect-TfsTeam
-  * ctfsteam
-
-##### Bug fixes
-
-- Fix iteration processing in Set-TfsTeam ([72f0fc0](https://github.com/igoravl/TfsCmdlets/pull/98/commits/72f0fc0cdcba7d41c8341efd0b0304303058907e)), ([e15d1ee](https://github.com/igoravl/TfsCmdlets/pull/98/commits/e15d1ee0bff2e8a5bd20b26e11d1b41413eb79b9))
-- Fix build when in Release configuration ([6a795ce](https://github.com/igoravl/TfsCmdlets/pull/98/commits/6a795ce49331e37fbd7319f26c1e452d0135a7f6))
-- Fix classification node (area/iteration) retrieval for old APIs ([0df3616](https://github.com/igoravl/TfsCmdlets/pull/98/commits/0df3616868a15054125261555ecefed1d830d599))
-- Fix TFS Client Library version retrieval ([a9ac849](https://github.com/igoravl/TfsCmdlets/pull/98/commits/a9ac849643f5738e9616ae5c01a12c93c4d1345c))
-- Fix Azure DevOps Shell command prompt
-- Fix Disconnect-* issues
-
-#### Known issues
-
-- Incremental build is currently disabled in the default Visual Studio Code Build task, as it's a bit inconsistent.
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.11.md).
 
 ### Version 2.0.0-beta.10 (_12/Sep/2019_)
 
-#### Improvements
-
-- Not an improvement per se, but the *MoveBy* argument in the Set-TfsClassificationNode cmdlet (and related area/iteration ones) now displays a 'deprecated' warning when MoveBy is specified. The argument is then ignored.
-
-#### Bug fixes
-
-- Fix an issue with Area/Iteration cmdlets not processing pipelines correctly
-
-#### Known issues
-
-- N/A
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.10.md).
 
 ### Version 2.0.0-beta.9 (_10/Sep/2019_)
 
-#### Improvements
-
-- Add folder management cmdlets for Build and Release Definitions:
-  - Build
-    - Get-TfsBuildDefinitionFolder
-    - New-TfsBuildDefinitionFolder
-    - Remove-TfsBuildDefinitionFolder
-  - Release
-    - Get-TfsReleaseDefinitionFolder
-    - New-TfsReleaseDefinitionFolder
-    - Remove-TfsReleaseDefinitionFolder
-
-#### Bug fixes
-
-N/A
-
-#### Known issues
-
-- Set-TfsArea and Set-TfsIteration no longer support reordering of node (`-MoveBy` argument). Still trying to figure out how to do it with the REST API
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.9.md).
 
 ### Version 2.0.0-beta.8 (_06/Sep/2019_)
 
-#### Improvements
-
-- Area/iteration cmdlets have been ported to the new REST API
-- New "generic" versions of the area/iteration cmdlets are now available. `*-TfsClassificationNode` cmdlets have a `-StructureGroup` argument that accepts either 'Areas' or 'Iterations'. Actually, area and iteration cmdlets (`*-TfsArea` and `*-TfsIteration`) are now merely aliases to their respective `*-TfsClassificationNode` counterparts.
-
-#### Bug fixes
-
-- Fix a bug in Connect-TfsTeamProjectCollection when passing a credential ([27dd30](https://github.com/igoravl/TfsCmdlets/commit/27dd302e1b243436229c3f44fa138c22952718b3))
-
-#### Known issues
-
-- Set-TfsArea and Set-TfsIteration no longer support reordering of node (`-MoveBy` argument). Still trying to figure out how to do it with the REST API
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.8.md).
 
 ### Version 2.0.0-beta.6 (_02/Sep/2019_)
 
-#### Improvements
-
-- Add new group membership management cmdlets:
-  - Add-TfsGroupMember
-  - Get-TfsGroupMember
-  - Remove-TfsGroupMember
-
-#### Bug fixes
-
-N/A
-
-#### Known issues
-
-N/A
+See release notes [here](Docs/ReleaseNotes/2.0.0-beta.6.md).
 
 ### 1.0.0-alpha7 (_22/Oct/2015_)
 
-#### Improvements
-
-- Added essential help comments to all cmdlets. Future versions will improve the documentation quality and depth.
-
-#### Bug Fixes
-
-- Fix Nuget and Chocolatey package icons
-- Fix bug in Get-TfsWorkItemType that would not return any WITDs
-
-#### Known Issues
-
-- N/A
+See release notes [here](Docs/ReleaseNotes/1.0.0-alpha7.md).
 
 ### 1.0.0-alpha6 (_22/Oct/2015_)
 
-#### Improvements
-
-- Enable build from cmdline with VS 2015 ([ab2325b](https://github.com/igoravl/tfscmdlets/commit/ab2325bae7cce788292d8532742a230756d1fd06))
-- Change PoShTools detection from error to warning ([09e62f3](https://github.com/igoravl/tfscmdlets/commit/09e62f3b034e1706fb5845b3f8588658f99a21f8))
-- Skip PoShTools detection in AppVeyor ([47cafa4](https://github.com/igoravl/tfscmdlets/commit/47cafa40f16c3e9c7d6f18594154f994d74cfb9c))
-- Add custom type detection logic ([b10f32c](https://github.com/igoravl/tfscmdlets/commit/b10f32c5538576ea3cec7bf9f8b8d4c96eddba56))
-
-#### Bug Fixes
-
-- Fix commit message with apostrophe breaking build ([8066ab8](https://github.com/igoravl/tfscmdlets/commit/8066ab8310fa21111e09c5ecba306914edb6e4ab))
-- Add proper parameter initialization for credentials ([d0c4d6c](https://github.com/igoravl/tfscmdlets/commit/d0c4d6c7d28682f43ae730904d802ebf4a2d4584))
-- Fix handling of current config server ([d7b53f](https://github.com/igoravl/tfscmdlets/commit/d7b53fca74a66f22f793bed39f1ef3bdf642ae83))
-
-#### Known Issues
-
-- N/A
+See release notes [here](Docs/ReleaseNotes/1.0.0-alpha6.md).
 
 ### 1.0.0-alpha5 (_10/Sep/2015_)
 
-#### Improvements
-
-- Add cascade disconnection: When calling a "higher" Disconnect cmdlet (e.g. Disconnect-TfsConfigurationServer), the "lower" ones (e.g. TeamProjectCollection, TeamProject) are cascade-invoked, in other to prevent inconsistent connection information.
-
-#### Bug fixes
-
-- Fix conditional use of -Title in New-TfsWorkItem ([96a8a60](https://github.com/igoravl/tfscmdlets/commit/818af6e9d6ba3f30e976f3ef20d6070ac50fa3e7))
-- Fix argument naming and pipelined return in Get-TfsWorkItem ([0a118125](https://github.com/igoravl/tfscmdlets/commit/0a11812554b447f4418e11454911ca5f53f34924))
-- Fix return when passing -Current in Get-TfsConfigurationServer ([58647d2f](https://github.com/igoravl/tfscmdlets/commit/58647d2f29d84d6f5db4e0022062c2dd30cfaba1))
-
-#### Known Issues
-
-- N/A
+See release notes [here](Docs/ReleaseNotes/1.0.0-alpha5.md).
 
 ### 1.0.0-alpha4 (_03/Sep/2015_)
 
-#### Improvements
-
-- Remove dependency on .NET 3.5
-
-#### Bug fixes
-
-- N/A
-
-#### Known Issues
-
-- N/A
+See release notes [here](Docs/ReleaseNotes/1.0.0-alpha4.md).
 
 ### 1.0.0-alpha3 (_03/Sep/2015_)
 
-#### Improvements
-
-- Add help comments to the Areas & Iterations functions
-
-#### Bug fixes
-
-- Fix an issue in the AssemblyResolver implementation. Previously it was implemented as a scriptblock and was running into some race conditions that would crash PowerShell. Switched to a pure .NET implementation in order to avoid the race condition.
-
-#### Known Issues
-
-- TfsCmdlets has currently a dependency on .NET 3.5 and won't load in computers with only .NET 4.x installed. Workaround is to install .NET 3.5. Next version will no longer depend on .NET 3.5.
+See release notes [here](Docs/ReleaseNotes/1.0.0-alpha3.md).

@@ -133,14 +133,15 @@ namespace TfsCmdlets.Services
 
             if (client.BaseAddress.Host != uri.Host)
             {
-                var pipeline = conn.GetHiddenField<HttpMessageHandler>("m_pipeline");
-                client = new GenericHttpClient(uri, pipeline, false);
-
-#if NETCOREAPP3_1_OR_GREATER
-                conn.CallHiddenMethod("RegisterClientServiceInstance", typeof(GenericHttpClient), client);
+                VssConnection vssConn;
+#if NET471_OR_GREATER
+                vssConn = conn.GetHiddenField<VssConnection>("m_vssConnection");;
 #else
-                throw new NotImplementedException("RegisterClientServiceInstance is not implemented in PS Desktop");
+                vssConn = conn;
 #endif
+                var pipeline = vssConn.GetHiddenField<HttpMessageHandler>("m_pipeline");
+                client = new GenericHttpClient(uri, pipeline, false);
+                vssConn.CallHiddenMethod("RegisterClientServiceInstance", typeof(GenericHttpClient), client);
             }
 
             return _client = client;

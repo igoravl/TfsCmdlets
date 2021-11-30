@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Management.Automation;
+using System.Reflection;
 using Microsoft.TeamFoundation.Framework.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,20 +32,42 @@ namespace TfsCmdlets.Extensions
 
         public static T GetHiddenField<T>(this object self, string fieldName)
         {
-            var field = self.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            return (T) field.GetValue(self);
+            var field = FindMember<FieldInfo>(self, fieldName);
+            return (T)field.GetValue(self);
         }
 
         public static void SetHiddenField(this object self, string fieldName, object value)
         {
-            var field = self.GetType().GetField(fieldName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var field = FindMember<FieldInfo>(self, fieldName);
             field.SetValue(self, value);
         }
 
         public static object CallHiddenMethod(this object self, string methodName, params object[] parameters)
         {
-            var method = self.GetType().GetMethod(methodName, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var method = FindMember<MethodInfo>(self, methodName);
             return method.Invoke(self, parameters);
+        }
+
+        private static T FindMember<T>(object self, string memberName)
+            where T : MemberInfo
+        {
+            var rootType = self.GetType();
+
+            while (rootType != null)
+            {
+                var member = rootType
+                    .GetMember(memberName, MemberTypes.All, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                    .FirstOrDefault(mi => mi is T);
+
+                if (member != null)
+                {
+                    return (T)member;
+                }
+
+                rootType = rootType.BaseType;
+            }
+
+            throw new ArgumentException($"Member {memberName} not found");
         }
     }
 }
