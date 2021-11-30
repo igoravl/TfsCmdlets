@@ -18,13 +18,16 @@ namespace TfsCmdlets.Controllers
 
         public virtual Type DataType => GetType();
 
+        public IParameterManager Parameters { get; }
+        
         public ILogger Logger { get; }
 
-        public abstract object InvokeCommand(ParameterDictionary parameters);
+        public abstract object InvokeCommand();
 
         [ImportingConstructor]
-        public ControllerBase(ILogger logger)
+        public ControllerBase(IParameterManager parameters, ILogger logger)
         {
+            Parameters = parameters;
             Logger = logger;
         }
     }

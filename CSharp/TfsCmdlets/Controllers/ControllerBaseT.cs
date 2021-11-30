@@ -12,9 +12,9 @@ namespace TfsCmdlets.Controllers
     {
         public override Type DataType => typeof(T);
 
-        public abstract IEnumerable<T> Invoke(ParameterDictionary parameters);
+        public abstract IEnumerable<T> Invoke();
 
-        public override object InvokeCommand(ParameterDictionary parameters) => Invoke(parameters);
+        public override object InvokeCommand() => Invoke();
 
         public IDataManager Data { get; }
 
@@ -25,7 +25,7 @@ namespace TfsCmdlets.Controllers
         protected IEnumerable<T> GetItems(ParameterDictionary parameters = null) => Data.GetItems<T>(parameters);
 
         [ImportingConstructor]
-        protected ControllerBase(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(logger)
+        protected ControllerBase(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) : base(parameters, logger)
         {
             PowerShell = powerShell;
             Data = data;

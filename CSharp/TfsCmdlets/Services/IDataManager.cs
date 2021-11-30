@@ -9,34 +9,34 @@ namespace TfsCmdlets.Services
 {
     public interface IDataManager
     {
-        T GetItem<T>(ParameterDictionary parameters);
+        T GetItem<T>(object overridingParameters = null);
 
-        IEnumerable<T> GetItems<T>(ParameterDictionary parameters);
+        IEnumerable<T> GetItems<T>(object overridingParameters = null);
 
-        T NewItem<T>(ParameterDictionary parameters);
+        T NewItem<T>(object overridingParameters = null);
 
-        T SetItem<T>(ParameterDictionary parameters);
+        T SetItem<T>(object overridingParameters = null);
 
-        void RemoveItem<T>(ParameterDictionary parameters);
+        void RemoveItem<T>(object overridingParameters = null);
 
-        T RenameItem<T>(ParameterDictionary parameters);
+        T RenameItem<T>(object overridingParameters = null);
 
-        bool TestItem<T>(ParameterDictionary parameters);
+        bool TestItem<T>(object overridingParameters = null);
 
-        IEnumerable<T> Invoke<T>(string verb, ParameterDictionary parameters);
+        IEnumerable<T> Invoke<T>(string verb, object overridingParameters = null);
 
-        IEnumerable<T> Invoke<T>(string verb, string noun, ParameterDictionary parameters);
+        IEnumerable<T> Invoke<T>(string verb, string noun, object overridingParameters = null);
 
-        Connection GetServer(ParameterDictionary parameters);
+        Connection GetServer(object overridingParameters = null);
 
-        Connection GetCollection(ParameterDictionary parameters);
+        Connection GetCollection(object overridingParameters = null);
         
-        WebApiTeamProject GetProject(ParameterDictionary parameters);
+        WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null);
         
-        WebApiTeam GetTeam(ParameterDictionary parameters);
+        WebApiTeam GetTeam(object overridingParameters = null, string contextValue = null);
 
-        T GetClient<T>(ParameterDictionary parameters);
+        T GetClient<T>(object overridingParameters = null);
 
-        T GetService<T>(ParameterDictionary parameters);
+        T GetService<T>(object overridingParameters = null);
     }
 }

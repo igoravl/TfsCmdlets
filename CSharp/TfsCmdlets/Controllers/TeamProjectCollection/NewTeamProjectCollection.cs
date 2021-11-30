@@ -17,29 +17,29 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
     [CmdletController]
     internal class NewTeamProjectCollection : ControllerBase<Connection>
     {
-        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke()
         {
 #if NET471_OR_GREATER
             
-            var tpc = Data.GetCollection(parameters);
+            var tpc = Data.GetCollection();
 
             if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) return null;
 
-            var configServer = Data.GetServer(parameters);
-            var collectionName = parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Collection));
-            var databaseServer = parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseServer));
-            var databaseName = parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseName));
-            var description = parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Description));
-            var useExistingDatabase = parameters.Get<bool>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.UseExistingDatabase));
-            var isDefault = parameters.Get<bool>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Default));
-            var connectionString = parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.ConnectionString));
-            var pollingInterval = parameters.Get<int>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.PollingInterval));
-            var timeout = parameters.Get<TimeSpan>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Timeout));
+            var configServer = Data.GetServer(Parameters);
+            var collectionName = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Collection));
+            var databaseServer = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseServer));
+            var databaseName = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseName));
+            var description = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Description));
+            var useExistingDatabase = Parameters.Get<bool>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.UseExistingDatabase));
+            var isDefault = Parameters.Get<bool>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Default));
+            var connectionString = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.ConnectionString));
+            var pollingInterval = Parameters.Get<int>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.PollingInterval));
+            var timeout = Parameters.Get<TimeSpan>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Timeout));
 
-            Enum.TryParse<TeamFoundationServiceHostStatus>(parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.InitialState)),
+            Enum.TryParse<TeamFoundationServiceHostStatus>(Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.InitialState)),
                 out var initialState);
 
-            var tpcService = Data.GetService<ITeamProjectCollectionService>(parameters);
+            var tpcService = Data.GetService<ITeamProjectCollectionService>(Parameters);
 
             var servicingTokens = new Dictionary<string, string>()
             {
@@ -74,7 +74,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
                 var jobDetail = collectionInfo.ServicingDetails.FirstOrDefault(job => job.JobId == tpcJob.JobId);
 
-                if (jobDetail == null) return GetItems(parameters);
+                if (jobDetail == null) return GetItems();
 
                 switch (jobDetail.JobStatus)
                 {
@@ -85,7 +85,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
                     case ServicingJobStatus.Failed:
                         throw new Exception($"Error creating team project collection {collectionName}");
                     case ServicingJobStatus.Complete:
-                        GetItem(parameters);
+                        GetItem();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -99,8 +99,8 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
         }
 
         [ImportingConstructor]
-        public NewTeamProjectCollection(IPowerShellService powerShell, IDataManager data, ILogger logger)
-            : base(powerShell, data, logger)
+        public NewTeamProjectCollection(IPowerShellService powerShell, IDataManager data, IParameterManager Parameters, ILogger logger)
+            : base(powerShell, data, Parameters, logger)
         {
         }
     }

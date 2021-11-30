@@ -16,96 +16,90 @@ namespace TfsCmdlets.Services.Impl
     internal class DataManagerImpl : IDataManager //, IControllerManager
     {
         protected IEnumerable<Lazy<IController>> Commands { get; }
-        protected IParameterManager ParameterManager { get; }
+        protected IParameterManager Parameters { get; }
         protected ILogger Logger { get; }
         protected ICurrentConnections CurrentConnections { get; }
 
-        public IEnumerable<T> Invoke<T>(string verb, ParameterDictionary parameters)
+        public IEnumerable<T> Invoke<T>(string verb, object overridingParameters = null)
         {
             var dataType = typeof(T);
-            IController command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType == dataType)?.Value as ITypedController<T>;
+            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType == dataType)?.Value as ITypedController<T>;
 
-            if (command == null)
+            if (controller == null)
             {
-                throw new ArgumentException($"Command {verb} not found for data type {dataType.Name}");
+                throw new ArgumentException($"Command '{verb}' not found for data type '{dataType.Name}'");
             }
 
-            var result = command.InvokeCommand(ParameterManager.GetParameters(parameters));
-
-            return result is IEnumerable<T> list ? 
-                list : 
-                new[] {(T) result};
-
+            return DoInvokeCommand<T>(controller, overridingParameters);
         }
 
-        public IEnumerable<T> Invoke<T>(string verb, string noun, ParameterDictionary parameters)
+        public IEnumerable<T> Invoke<T>(string verb, string noun, object overridingParameters = null)
         {
-            IController command = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun)?.Value as ITypedController<T>;
+            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun)?.Value as ITypedController<T>;
 
-            if (command == null)
+            if (controller == null)
             {
-                throw new ArgumentException($"Command {verb}{noun} not found");
+                throw new ArgumentException($"Command '{verb}{noun}' not found");
             }
 
-            var result = command.InvokeCommand(ParameterManager.GetParameters(parameters));
-
-            return result is IEnumerable<T> list ? 
-                list : 
-                new[] {(T) result};
+            return DoInvokeCommand<T>(controller, overridingParameters);
         }
 
-        public T GetItem<T>(ParameterDictionary parameters)
-            => GetItems<T>(parameters).First();
+        public T GetItem<T>(object overridingParameters = null)
+            => GetItems<T>(overridingParameters).First();
 
-        public IEnumerable<T> GetItems<T>(ParameterDictionary parameters)
-            => Invoke<T>(VerbsCommon.Get, parameters);
+        public IEnumerable<T> GetItems<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.Get, overridingParameters);
 
-        public bool TestItem<T>(ParameterDictionary parameters)
+        public bool TestItem<T>(object overridingParameters = null)
         {
-            try { return GetItems<T>(parameters).Any(); }
+            try { return GetItems<T>(overridingParameters).Any(); }
             catch { return false; };
         }
 
-        public T NewItem<T>(ParameterDictionary parameters)
-            => Invoke<T>(VerbsCommon.New, parameters).FirstOrDefault();
+        public T NewItem<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.New, overridingParameters).FirstOrDefault();
 
-        public T SetItem<T>(ParameterDictionary parameters)
-            => Invoke<T>(VerbsCommon.Set, parameters).FirstOrDefault();
+        public T SetItem<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.Set, overridingParameters).FirstOrDefault();
 
-        public void RemoveItem<T>(ParameterDictionary parameters)
-            => Invoke<T>(VerbsCommon.Remove, parameters);
+        public void RemoveItem<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.Remove, overridingParameters);
 
-        public T RenameItem<T>(ParameterDictionary parameters)
-            => Invoke<T>(VerbsCommon.Rename, parameters).FirstOrDefault();
+        public T RenameItem<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.Rename, overridingParameters).FirstOrDefault();
 
-        public Connection GetServer(ParameterDictionary parameters)
-            => CreateConnection(ClientScope.Server, parameters);
+        public Connection GetServer(object overridingParameters = null)
+            => CreateConnection(ClientScope.Server, overridingParameters);
 
-        public Connection GetCollection(ParameterDictionary parameters)
-            => CreateConnection(ClientScope.Collection, parameters);
+        public Connection GetCollection(object overridingParameters = null)
+            => CreateConnection(ClientScope.Collection, overridingParameters);
 
-        public WebApiTeamProject GetProject(ParameterDictionary parameters)
-            => GetItem<WebApiTeamProject>(parameters);
+        public WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null)
+        {
+            return GetItem<WebApiTeamProject>(overridingParameters);
+        }
 
-        public WebApiTeam GetTeam(ParameterDictionary parameters)
-            => GetItem<WebApiTeam>(parameters);
+        public WebApiTeam GetTeam(object overridingParameters = null, string contextValue = null)
+        {
+            return GetItem<WebApiTeam>(overridingParameters);
+        }
 
-        public T GetClient<T>(ParameterDictionary parameters)
-            => (T)((ITfsServiceProvider)GetCollection(parameters)).GetClient(typeof(T));
+        public T GetClient<T>(object overridingParameters = null)
+            => (T)((ITfsServiceProvider)GetCollection(overridingParameters)).GetClient(typeof(T));
 
-        public T GetService<T>(ParameterDictionary parameters)
-            => (T)((ITfsServiceProvider)GetCollection(parameters)).GetService(typeof(T));
+        public T GetService<T>(object overridingParameters = null)
+            => (T)((ITfsServiceProvider)GetCollection(overridingParameters)).GetService(typeof(T));
 
-        private Connection CreateConnection(ClientScope scope, ParameterDictionary parameters)
+        private Connection CreateConnection(ClientScope scope, object overridingParameters = null)
         {
 #if NETCOREAPP3_1_OR_GREATER
             Microsoft.VisualStudio.Services.WebApi.VssConnection result = null;
 #else
             Microsoft.TeamFoundation.Client.TfsConnection result = null;
 #endif
-            var parms = ParameterManager.GetParameters(parameters);
-            var connection = parms.Get<object>(scope.ToString());
-            var current = parms.Get<bool>("Current");
+            var connection = Parameters.Get<object>(scope.ToString());
+            var current = Parameters.Get<bool>("Current");
 
             while (result == null) switch (connection)
                 {
@@ -124,7 +118,7 @@ namespace TfsCmdlets.Services.Impl
                         {
                             Logger.Log($"Get {scope} referenced by URL '{uri}'");
                             result = new Microsoft.VisualStudio.Services.WebApi.VssConnection(
-                                uri, GetItem<VssCredentials>(parameters.Override(new { Url = uri })));
+                                uri, GetItem<VssCredentials>(new { Url = uri }));
                             break;
                         }
 #else
@@ -136,14 +130,14 @@ namespace TfsCmdlets.Services.Impl
                 case Uri uri when scope == ClientScope.Server:
                     {
                         Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                        result = new Microsoft.TeamFoundation.Client.TfsConfigurationServer(uri, GetItem<VssCredentials>(parameters.Override(new { Url = uri })));
+                        result = new Microsoft.TeamFoundation.Client.TfsConfigurationServer(uri, GetItem<VssCredentials>(new { Url = uri }));
                         break;
                     }
                 case Uri uri when scope == ClientScope.Collection:
                     {
                         Logger.Log($"Get {scope} referenced by URL '{uri}'");
                         result = Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
-                            uri, GetItem<VssCredentials>(parameters.Override(new { Url = uri })));
+                            uri, GetItem<VssCredentials>(new { Url = uri }));
                         break;
                     }
 #endif
@@ -172,15 +166,33 @@ namespace TfsCmdlets.Services.Impl
             return (Connection)result;
         }
 
+        private IEnumerable<T> DoInvokeCommand<T>(IController controller, object overridingParameters)
+        {
+            try
+            {
+                Parameters.PushContext(overridingParameters);
+
+                var result = controller.InvokeCommand();
+
+                return result is IEnumerable<T> list ?
+                    list :
+                    new[] { (T)result };
+            }
+            finally
+            {
+                Parameters.PopContext();
+            }
+        }
+
         [ImportingConstructor]
         public DataManagerImpl(
             [ImportMany] IEnumerable<Lazy<IController>> commands,
-            IParameterManager parameterManager,
+            IParameterManager parameters,
             ILogger logger,
             ICurrentConnections currentConnections)
         {
             Commands = commands;
-            ParameterManager = parameterManager;
+            Parameters = parameters;
             Logger = logger;
             CurrentConnections = currentConnections;
         }

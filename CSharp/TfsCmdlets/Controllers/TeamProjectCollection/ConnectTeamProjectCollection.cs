@@ -10,9 +10,9 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
     {
         public ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke()
         {
-            var tpc = Data.GetCollection(parameters);
+            var tpc = Data.GetCollection();
 
             tpc.Connect();
             var srv = tpc.ConfigurationServer;
@@ -24,8 +24,8 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
         }
 
         [ImportingConstructor]
-        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger)
-         : base(powerShell, data, logger)
+        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+         : base(powerShell, data, parameters, logger)
         {
             CurrentConnections = currentConnections;
         }

@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets
     public abstract class CmdletBase : PSCmdlet
     {
         [Import] protected IPowerShellService PSService { get; set; }
-        [Import] protected IParameterManager ParameterManager { get; set; }
+        [Import] protected IParameterManager Parameters { get; set; }
         [Import] protected ILogger Logger { get; set; }
         [ImportMany] protected IEnumerable<Lazy<IController>> Controllers { get; set; }
 
@@ -114,9 +114,9 @@ namespace TfsCmdlets.Cmdlets
 
             if (command == null) throw new Exception($"Controller '{CommandName}' not found. Are you missing a [CmdletController] attribute?");
 
-            var parameters = ParameterManager.GetParameters(this);
+            Parameters.Initialize(this);
 
-            var result = command.InvokeCommand(parameters);
+            var result = command.InvokeCommand();
 
             if (result is IEnumerable<object> objList) return objList;
 

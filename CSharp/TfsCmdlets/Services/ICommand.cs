@@ -7,12 +7,12 @@ namespace TfsCmdlets.Services
 {
     public interface ITypedController<T>: IController
     {
-        IEnumerable<T> Invoke(ParameterDictionary parameters);
+        IEnumerable<T> Invoke();
     }
 
     public interface IController
     {
-        object InvokeCommand(ParameterDictionary parameters);
+        object InvokeCommand();
 
         string Verb {get;}
 

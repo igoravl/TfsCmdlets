@@ -16,14 +16,14 @@ namespace TfsCmdlets.Controllers.Credential
     [CmdletController]
     internal class GetCredential : ControllerBase<VssCredentials>
     {
-        public override IEnumerable<VssCredentials> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<VssCredentials> Invoke()
         {
-            var credential = parameters.Get<object>(nameof(NewCredentialCmdlet.Credential));
-            var userName = parameters.Get<string>(nameof(NewCredentialCmdlet.UserName));
-            var password = parameters.Get<SecureString>(nameof(NewCredentialCmdlet.Password));
-            var accessToken = parameters.Get<string>(nameof(NewCredentialCmdlet.PersonalAccessToken));
-            var interactive = parameters.Get<bool>(nameof(NewCredentialCmdlet.Interactive));
-            var url = parameters.Get<Uri>(nameof(NewCredentialCmdlet.Url));
+            var credential = Parameters.Get<object>(nameof(NewCredentialCmdlet.Credential));
+            var userName = Parameters.Get<string>(nameof(NewCredentialCmdlet.UserName));
+            var password = Parameters.Get<SecureString>(nameof(NewCredentialCmdlet.Password));
+            var accessToken = Parameters.Get<string>(nameof(NewCredentialCmdlet.PersonalAccessToken));
+            var interactive = Parameters.Get<bool>(nameof(NewCredentialCmdlet.Interactive));
+            var url = Parameters.Get<Uri>(nameof(NewCredentialCmdlet.Url));
 
             var connectionMode = ConnectionMode.CachedCredentials;
 
@@ -139,8 +139,8 @@ namespace TfsCmdlets.Controllers.Credential
         }
 
         [ImportingConstructor]
-        public GetCredential(IPowerShellService powerShell, IDataManager data, ILogger logger)
-         : base(powerShell, data, logger)
+        public GetCredential(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+         : base(powerShell, data, parameters, logger)
         {
         }
     }

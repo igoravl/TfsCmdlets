@@ -10,9 +10,9 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
     {
         private ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<Connection> Invoke(ParameterDictionary parameters)
+        public override IEnumerable<Connection> Invoke()
         {
-            var current = parameters.Get<bool>("Current");
+            var current = Parameters.Get<bool>("Current");
 
             if (current)
             {
@@ -20,12 +20,12 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
                 yield break;
             }
 
-            yield return Data.GetCollection(parameters);
+            yield return Data.GetCollection();
         }
 
         [ImportingConstructor]
-        public GetTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger)
-                : base(powerShell, data, logger)
+        public GetTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+                : base(powerShell, data, parameters, logger)
         {
             CurrentConnections = currentConnections;
         }

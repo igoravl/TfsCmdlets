@@ -11,7 +11,7 @@ namespace TfsCmdlets.Services.Impl
     internal class LoggerImpl : ILogger
     {
         private IPowerShellService PowerShell { get; set; }
-        private IParameterManager ParameterManager { get; }
+        private IParameterManager Parameters { get; }
 
         private readonly string[] _hiddenParameters = new[]{"Password", "PersonalAccessToken"};
 
@@ -47,7 +47,7 @@ namespace TfsCmdlets.Services.Impl
 
             var parms = new Dictionary<string,object>();
 
-            foreach (var kvp in ParameterManager.GetParameters()) 
+            foreach (var kvp in Parameters) 
             {
                 if (_hiddenParameters.Any(p => p.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -75,10 +75,10 @@ namespace TfsCmdlets.Services.Impl
         }
 
         [ImportingConstructor]
-        public LoggerImpl(IPowerShellService powerShell, IParameterManager parameterManager)
+        public LoggerImpl(IPowerShellService powerShell, IParameterManager parameters)
         {
             PowerShell = powerShell;
-            ParameterManager = parameterManager;
+            Parameters = parameters;
         }
      }
 }
