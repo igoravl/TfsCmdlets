@@ -18,7 +18,7 @@ Installers:
   InstallerSwitches:
     Silent: /qn
     SilentWithProgress: /qb
-  ProductCode: '$MsiProductCode'
+  ProductCode: ""$MsiProductCode""
   UpgradeBehavior: install
 ManifestType: installer
 ManifestVersion: 1.0.0
