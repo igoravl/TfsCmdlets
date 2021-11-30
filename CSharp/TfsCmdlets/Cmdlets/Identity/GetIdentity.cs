@@ -10,6 +10,7 @@ namespace TfsCmdlets.Cmdlets.Identity
 {
     /// <summary>
     /// Gets one or more identities that represents either users or groups in Azure DevOps.
+    /// This cmdlet resolves legacy identity information for use with older APIs such as the Security APIs.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
     [OutputType(typeof(WebApiIdentity))]
@@ -40,9 +41,15 @@ namespace TfsCmdlets.Cmdlets.Identity
         public SwitchParameter Current { get; set; }
 
         /// <summary>
+        /// HELP_PARAM_Collection
+        /// </summary>
+        [Parameter()]
+        public object Collection { get; set; }
+
+        /// <summary>
         /// HELP_PARAM_SERVER
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter()]
         public object Server { get; set; }
 
         /// <summary>
@@ -63,15 +70,20 @@ namespace TfsCmdlets.Cmdlets.Identity
             var queryMembership = GetParameter<TfsQueryMembership>("QueryMembership");
             var identity = GetParameter<object>("Identity");
 
+            var tpc = GetCollection();
+
             if (current)
             {
-                var srv = GetServer();
-                if (srv == null) yield break;
+                if (tpc == null) yield break;
 
-                identity = srv.AuthorizedIdentity.UniqueName;
+                identity = tpc.AuthorizedIdentity.UniqueName;
             }
 
-            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);
+            var client = GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(
+                tpc.IsHosted? 
+                    ClientScope.Collection: 
+                    ClientScope.Server);
+
             var qm = queryMembership;
 
             while (true) switch(identity)
