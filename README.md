@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![Build status](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml/badge.svg?label=Build)](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers)
 
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](https://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](https://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub)
 
 ## What is TfsCmdlets?
 
@@ -25,7 +25,7 @@ Next, install TfsCmdlets in your computer (see section "_How to install_", below
 ```PowerShell
 # Connect to your Azure DevOps organization
 # (Will be used as default for the -Collection argument when required by a cmdlet)
-Connect-TfsTeamProjectCollection http://dev.azure.com/<your_organization_name>
+Connect-TfsTeamProjectCollection https://dev.azure.com/<your_organization_name>
 
 # Get a list of team projects in the currently connected organization
 Get-TfsTeamProject
@@ -99,7 +99,7 @@ To add TfsCmdlets to your solution, search for **TfsCmdlets** in the Visual Stud
 
 - Note: To add the latest pre-release version of TfsCmdlets, don't forget check the "Include prerelease" checkbox
 
-[Package details](http://www.nuget.org/packages/tfscmdlets)
+[Package details](https://www.nuget.org/packages/tfscmdlets)
 
 ### Offline installation
 
