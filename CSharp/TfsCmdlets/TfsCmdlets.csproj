@@ -7,13 +7,16 @@
     <LangVersion>8.0</LangVersion>
     <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
@@ -45,6 +48,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Generated\" />
+    <Folder Include="Generated\TfsCmdlets.SourceGenerators\" />
   </ItemGroup>
 </Project>

@@ -57,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Credential
         [Parameter(ParameterSetName = "Prompt for credential", Mandatory = true)]
         public SwitchParameter Interactive { get; set; }
 
-        protected override string CommandName => nameof(TfsCmdlets.Controllers.Credential.GetCredential);
+        protected override string CommandName => "GetCredential";
         protected override bool ReturnsValue => true;
     }
 }

@@ -1,54 +1,85 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
-public class ImportingConstructorGenerator : ISourceGenerator
+namespace TfsCmdlets.SourceGenerators
 {
-    public void Initialize(GeneratorInitializationContext context)
+    [Generator]
+    public class ImportingConstructorGenerator : ISourceGenerator
     {
-        context.RegisterForSyntaxNotifications(() => new ImportingConstructorSyntaxReceiver());
-    }
-
-    public void Execute(GeneratorExecutionContext context)
-    {
-        context.AddSource($@"
-/*
-{DateTime.Now}
-*/
-", "Temp");
-    }
-
-    internal class ImportingConstructorSyntaxReceiver : ISyntaxContextReceiver
-    {
-        internal static INamedTypeSymbol ControllerBase { get; private set; }
-        internal static INamedTypeSymbol ControllerBaseT { get; private set; }
-
-        internal List<INamedTypeSymbol> Controllers = new List<INamedTypeSymbol>();
-
-        public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
-            var node = context.Node;
+            context.RegisterForSyntaxNotifications(() => new ImportingConstructorSyntaxReceiver());
+        }
 
-            if (!(node is ClassDeclarationSyntax cds)) return;
+        public void Execute(GeneratorExecutionContext context)
+        {
+            if (!(context.SyntaxContextReceiver is ImportingConstructorSyntaxReceiver syntaxReceiver)) return;
 
-            var type = context.SemanticModel.GetDeclaredSymbol(cds) as INamedTypeSymbol;
-
-            if (type.BaseType.Name.Equals("ControllerBase"))
+            foreach (var controller in syntaxReceiver.Controllers)
             {
-                Controllers.Add(type);
-                return;
+                var genericArg = "";
+                var ctorArgs = "";
+                var baseCtorArgs= "";
+                var propInit = "";
+
+                context.AddSource($"{controller.FullName()}.cs", SourceText.From($@"/*
+Controller name: {controller.FullName()}
+*/
+
+
+using TfsCmdlets.Services;
+
+// ReSharper disable once CheckNamespace
+namespace {controller.FullNamespace()}
+{{
+        internal partial class {controller.Name}: {controller.BaseType.Name}{genericArg}
+  {{
+            [System.Composition.ImportingConstructor]
+            internal {controller.Name}({ctorArgs})
+                : base({baseCtorArgs})
+    {{
+{propInit}
+    }}
+}}
+}}
+", 
+                    Encoding.UTF8));
             }
+        }
 
-            if (type.Name.Equals("ControllerBase"))
+        internal class ImportingConstructorSyntaxReceiver : ISyntaxContextReceiver
+        {
+            internal INamedTypeSymbol ControllerBase { get; private set; }
+            internal INamedTypeSymbol ControllerBaseT { get; private set; }
+            internal List<INamedTypeSymbol> Controllers { get; } = new List<INamedTypeSymbol>();
+
+            public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                if (type.IsGenericType)
+                var node = context.Node;
+
+                if (!(node is ClassDeclarationSyntax cds)) return;
+
+                var type = context.SemanticModel.GetDeclaredSymbol(cds) as INamedTypeSymbol;
+
+                if (type.Name.EndsWith("Controller"))
                 {
-                    ControllerBaseT = type;
+                    Controllers.Add(type);
                     return;
                 }
 
-                ControllerBase = type;
+                if (type.Name.Equals("ControllerBase"))
+                {
+                    if (type.IsGenericType)
+                    {
+                        ControllerBaseT = type;
+                        return;
+                    }
+
+                    ControllerBase = type;
+                }
             }
         }
     }
