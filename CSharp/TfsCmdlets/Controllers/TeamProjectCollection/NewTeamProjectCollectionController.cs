@@ -14,8 +14,8 @@ using Microsoft.TeamFoundation.Framework.Client;
 
 namespace TfsCmdlets.Controllers.TeamProjectCollection
 {
-    [CmdletController]
-    internal class NewTeamProjectCollection : ControllerBase<Connection>
+    [CmdletController(typeof(Connection))]
+    partial class NewTeamProjectCollectionController
     {
         public override IEnumerable<Connection> Invoke()
         {
@@ -96,12 +96,6 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 #else
             return null;
 #endif
-        }
-
-        [ImportingConstructor]
-        public NewTeamProjectCollection(IPowerShellService powerShell, IDataManager data, IParameterManager Parameters, ILogger logger)
-            : base(powerShell, data, Parameters, logger)
-        {
         }
     }
 }

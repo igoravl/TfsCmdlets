@@ -6,8 +6,8 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git
 {
-    [CmdletController]
-    internal class RemoveGitRepository : ControllerBase<GitRepository>
+    [CmdletController(typeof(GitRepository))]
+    partial class RemoveGitRepositoryController 
     {
         public override IEnumerable<GitRepository> Invoke()
         {
@@ -28,12 +28,6 @@ namespace TfsCmdlets.Controllers.Git
             }
 
             return null;
-        }
-
-        [ImportingConstructor]
-        public RemoveGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
-            : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

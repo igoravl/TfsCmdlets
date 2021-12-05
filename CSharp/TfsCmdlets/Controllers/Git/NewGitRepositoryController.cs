@@ -8,8 +8,8 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git
 {
-    [CmdletController]
-    internal class NewGitRepository : ControllerBase<GitRepository>
+    [CmdletController(typeof(GitRepository))]
+    partial class NewGitRepositoryController
     {
         public override IEnumerable<GitRepository> Invoke()
         {
@@ -34,12 +34,6 @@ namespace TfsCmdlets.Controllers.Git
 
             yield return client.CreateRepositoryAsync(repoToCreate, tp.Name)
                 .GetResult("Error creating Git repository");
-        }
-
-        [ImportingConstructor]
-        public NewGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
-            : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

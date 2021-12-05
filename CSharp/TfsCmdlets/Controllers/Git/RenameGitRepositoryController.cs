@@ -8,8 +8,8 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git
 {
-    [CmdletController]
-    internal class RenameGitRepository : ControllerBase<GitRepository>
+    [CmdletController(typeof(GitRepository))]
+    partial class RenameGitRepositoryController 
     {
         public override IEnumerable<GitRepository> Invoke()
         {
@@ -25,11 +25,5 @@ namespace TfsCmdlets.Controllers.Git
             yield return client.RenameRepositoryAsync(repoToRename, newName)
                 .GetResult("Error renaming repository");
         }
-
-        [ImportingConstructor]
-        public RenameGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
-            : base(powerShell, data, parameters, logger)
-        {
-        }
-    }
+   }
 }

@@ -9,8 +9,8 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git.Policy
 {
-    [CmdletController]
-    internal class GetGitPolicyType : ControllerBase<PolicyType>
+    [CmdletController(typeof(PolicyType))]
+    partial class GetGitPolicyTypeController
     {
         public override IEnumerable<PolicyType> Invoke()
         {
@@ -54,12 +54,6 @@ namespace TfsCmdlets.Controllers.Git.Policy
                         throw new ArgumentException($"Invalid policy type '{policyType}'", nameof(policyType));
                     }
             }
-        }
-
-        [ImportingConstructor]
-        public GetGitPolicyType(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
-            : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

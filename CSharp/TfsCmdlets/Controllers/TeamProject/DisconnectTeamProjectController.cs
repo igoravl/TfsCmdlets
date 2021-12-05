@@ -5,8 +5,8 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController]
-    internal class DisconnectTeamProjectController : ControllerBase<WebApiTeamProject>
+    [CmdletController(typeof(WebApiTeamProject))]
+    partial class DisconnectTeamProjectController
     {
         public override IEnumerable<WebApiTeamProject> Invoke()
         {
@@ -19,13 +19,7 @@ namespace TfsCmdlets.Controllers.TeamProject
             return null;
         }
 
+        [Import]
         private ICurrentConnections CurrentConnections { get; }
-
-        [ImportingConstructor]
-        public DisconnectTeamProjectController(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-            : base(powerShell, data, parameters, logger)
-        {
-            CurrentConnections = currentConnections;
-        }
     }
 }

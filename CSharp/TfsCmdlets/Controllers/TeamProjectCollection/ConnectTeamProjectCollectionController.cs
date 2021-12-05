@@ -5,9 +5,10 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.TeamProjectCollection
 {
-    [CmdletController]
-    internal class ConnectTeamProjectCollection : ControllerBase<Connection>
+    [CmdletController(typeof(Connection))]
+    partial class ConnectTeamProjectCollectionController 
     {
+        [Import]
         public ICurrentConnections CurrentConnections { get; }
 
         public override IEnumerable<Connection> Invoke()
@@ -21,13 +22,6 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
             Logger.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.AuthorizedIdentity.DisplayName}'");
 
             yield return tpc;
-        }
-
-        [ImportingConstructor]
-        public ConnectTeamProjectCollection(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-         : base(powerShell, data, parameters, logger)
-        {
-            CurrentConnections = currentConnections;
         }
     }
 }

@@ -14,8 +14,8 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController]
-    internal class SetTeamProjectController: ControllerBase<WebApiTeamProject>
+    [CmdletController(typeof(WebApiTeamProject))]
+    partial class SetTeamProjectController
     {
         public override IEnumerable<WebApiTeamProject> Invoke()
         {
@@ -40,12 +40,6 @@ namespace TfsCmdlets.Controllers.TeamProject
                 .Wait($"Error setting team project avatar");
 
             yield return tp;
-        }
-
-        [ImportingConstructor]
-        public SetTeamProjectController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-          : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

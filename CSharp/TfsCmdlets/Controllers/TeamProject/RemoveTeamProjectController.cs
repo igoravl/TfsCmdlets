@@ -12,8 +12,8 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController]
-    internal class RemoveTeamProjectController: ControllerBase<WebApiTeamProject>
+    [CmdletController(typeof(WebApiTeamProject))]
+    partial class RemoveTeamProjectController
     {
         public override IEnumerable<WebApiTeamProject> Invoke()
         {
@@ -61,12 +61,6 @@ namespace TfsCmdlets.Controllers.TeamProject
             }
 
             return null;
-        }
-
-        [ImportingConstructor]
-        public RemoveTeamProjectController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-          : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

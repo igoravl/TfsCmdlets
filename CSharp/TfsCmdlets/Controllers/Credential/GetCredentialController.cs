@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
-using TfsCmdlets.Util;
 using NewCredentialCmdlet = TfsCmdlets.Cmdlets.Credential.NewCredential;
 
 namespace TfsCmdlets.Controllers.Credential
 {
     [CmdletController(typeof(VssCredentials))]
-    internal class GetCredentialController: ControllerBase<VssCredentials>
+    partial class GetCredentialController
     {
         public override IEnumerable<VssCredentials> Invoke()
         {
@@ -128,7 +124,6 @@ namespace TfsCmdlets.Controllers.Credential
             url.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase) ||
             url.Host.EndsWith(".visualstudio.com", StringComparison.OrdinalIgnoreCase));
 
-
         private enum ConnectionMode
         {
             CachedCredentials,
@@ -136,12 +131,6 @@ namespace TfsCmdlets.Controllers.Credential
             UserNamePassword,
             AccessToken,
             Interactive
-        }
-
-        [ImportingConstructor]
-        public GetCredentialController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-         : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

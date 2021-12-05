@@ -9,7 +9,7 @@ using WebApiTeamProjectRef = Microsoft.TeamFoundation.Core.WebApi.TeamProjectRef
 namespace TfsCmdlets.Controllers.TeamProject
 {
     [CmdletController(typeof(WebApiTeamProject))]
-    internal partial class UndoTeamProjectRemovalController: ControllerBase<WebApiTeamProject>
+    partial class UndoTeamProjectRemovalController
     {
         [Import]
         private IRestApiService RestApiService { get; }
@@ -48,10 +48,6 @@ namespace TfsCmdlets.Controllers.TeamProject
 
                 yield return GetItem(tp);
             }
-        }
-
-        public UndoTeamProjectRemovalController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

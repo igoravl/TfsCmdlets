@@ -9,8 +9,8 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git
 {
-    [CmdletController]
-    internal class GetGitRepository : ControllerBase<GitRepository>
+    [CmdletController(typeof(GitRepository))]
+    partial class GetGitRepositoryController 
     {
         public override IEnumerable<GitRepository> Invoke()
         {
@@ -82,12 +82,6 @@ namespace TfsCmdlets.Controllers.Git
                     throw new ArgumentException("Repository");
                 }
             }
-        }
-
-        [ImportingConstructor]
-        public GetGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-            : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

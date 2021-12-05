@@ -9,10 +9,9 @@ using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git.Branch
 {
-    [CmdletController]
-    internal class GetGitBranch : ControllerBase<GitBranchStats>
+    [CmdletController(typeof(GitBranchStats))]
+    partial class GetGitBranchController 
     {
-
         public override IEnumerable<GitBranchStats> Invoke()
         {
 
@@ -90,12 +89,6 @@ namespace TfsCmdlets.Controllers.Git.Branch
             {
                 yield return b;
             }
-        }
-
-        [ImportingConstructor]
-        public GetGitBranch(IPowerShellService powerShell, IDataManager data, IParameterManager parameters , ILogger logger) 
-            : base(powerShell, data, parameters, logger)
-        {
         }
     }
 }

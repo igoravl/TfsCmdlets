@@ -9,8 +9,8 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController]
-    internal class GetTeamProject : ControllerBase<WebApiTeamProject>
+    [CmdletController(typeof(WebApiTeamProject))]
+    partial class GetTeamProjectController
     {
         public override IEnumerable<WebApiTeamProject> Invoke()
         {
@@ -99,13 +99,7 @@ namespace TfsCmdlets.Controllers.TeamProject
             return null;
         }
 
+        [Import]
         private ICurrentConnections CurrentConnections { get; }
-
-        [ImportingConstructor]
-        public GetTeamProject(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-          : base(powerShell, data, parameters, logger)
-        {
-            CurrentConnections = currentConnections;
-        }
     }
 }

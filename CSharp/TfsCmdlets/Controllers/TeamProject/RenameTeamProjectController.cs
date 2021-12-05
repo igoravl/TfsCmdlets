@@ -13,8 +13,8 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController]
-    internal class RenameTeamProjectController: ControllerBase<WebApiTeamProject>
+    [CmdletController(typeof(WebApiTeamProject))]
+    partial class RenameTeamProjectController
     {
 
         public override IEnumerable<WebApiTeamProject> Invoke()
@@ -66,13 +66,7 @@ namespace TfsCmdlets.Controllers.TeamProject
             return GetItems(new { Project = tp.Id });
         }
 
+        [Import]
         private IRestApiService RestApiService { get; }
-
-        [ImportingConstructor]
-        public RenameTeamProjectController(IRestApiService restApiService, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-          : base(powerShell, data, parameters, logger)
-        {
-            RestApiService = restApiService;
-        }
     }
 }
