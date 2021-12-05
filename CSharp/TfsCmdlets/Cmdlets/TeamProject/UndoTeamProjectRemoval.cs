@@ -23,8 +23,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         public object Project { get; set; }
-
-        // TODO
-
     }
 }

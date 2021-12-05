@@ -14,7 +14,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
     {
         public override IEnumerable<PolicyType> Invoke()
         {
-            var policyType = parameters.Get<object>("PolicyType");
+            var policyType = Parameters.Get<object>("PolicyType");
 
             while (true) switch (policyType)
             {
@@ -31,7 +31,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
                 case Guid g:
                     {
                         var tp = Data.GetProject();
-                        var client = Data.GetClient<PolicyHttpClient>(parameters);
+                        var client = Data.GetClient<PolicyHttpClient>();
                         yield return client.GetPolicyTypeAsync(tp.Name, g)
                             .GetResult("Error retrieving policy types");
                         yield break;
@@ -39,7 +39,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
                 case string s:
                     {
                         var tp = Data.GetProject();
-                        var client = Data.GetClient<PolicyHttpClient>(parameters);
+                        var client = Data.GetClient<PolicyHttpClient>();
                         foreach (var pt in client.GetPolicyTypesAsync(tp.Name)
                             .GetResult("Error retrieving policy types")
                             .Where(p => p.DisplayName.IsLike(s)))
@@ -57,7 +57,8 @@ namespace TfsCmdlets.Controllers.Git.Policy
         }
 
         [ImportingConstructor]
-        public GetGitPolicyType(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        public GetGitPolicyType(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

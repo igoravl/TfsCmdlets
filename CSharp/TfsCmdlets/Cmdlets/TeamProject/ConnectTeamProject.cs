@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
-    public class ConnectTeamProject : CmdletBase
+    public class ConnectTeamProject : CollectionScopedCmdlet
     {
         /// <summary>
         /// Specifies the name of the Team Project, its ID (a GUID), or a 
@@ -57,24 +57,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public string PersonalAccessToken { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_SERVER
-        /// </summary>
-        [Parameter]
-        public object Server { get; set; }
-
-        /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
         [Parameter]
         public SwitchParameter Passthru { get; set; }
-
-        // TODO
-
     }
 }

@@ -14,11 +14,11 @@ namespace TfsCmdlets.Controllers.Git
         public override IEnumerable<GitRepository> Invoke()
         {
             var tp = Data.GetProject();
-            var repo = parameters.Get<string>(nameof(Cmdlets.Git.NewGitRepository.Repository));
+            var repo = Parameters.Get<string>(nameof(Cmdlets.Git.NewGitRepository.Repository));
 
             if (!PowerShell.ShouldProcess(tp, $"Create Git repository '{repo}'")) yield break;
 
-            var client = Data.GetClient<GitHttpClient>(parameters);
+            var client = Data.GetClient<GitHttpClient>();
 
             var tpRef = new TeamProjectReference
             {
@@ -37,7 +37,8 @@ namespace TfsCmdlets.Controllers.Git
         }
 
         [ImportingConstructor]
-        public NewGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        public NewGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

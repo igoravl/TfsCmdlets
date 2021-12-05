@@ -8,28 +8,29 @@ using TfsCmdlets.Services;
 namespace TfsCmdlets.Controllers.Git
 {
     [CmdletController]
-    internal class EnableGitRepository : ControllerBase<GitRepository>
+    internal class DisableGitRepository : ControllerBase<GitRepository>
     {
         public override IEnumerable<GitRepository> Invoke()
         {
             var tp = Data.GetProject();
             var repos = GetItems();
 
-            var client = Data.GetClient<GitExtendedHttpClient>(parameters);
+            var client = Data.GetClient<GitExtendedHttpClient>();
 
             foreach (var repo in repos)
             {
                 if (!PowerShell.ShouldProcess($"Team project '{tp.Name}'", $"Disable Git repository '{repo.Name}'"))
                     continue;
 
-                client.UpdateRepositoryEnabledStatus(tp.Name, repo.Id, true);
+                client.UpdateRepositoryEnabledStatus(tp.Name, repo.Id, false);
 
                 yield return repo;
             }
         }
 
         [ImportingConstructor]
-        public EnableGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        public DisableGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

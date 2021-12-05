@@ -15,7 +15,7 @@ namespace TfsCmdlets.Controllers.Git
         public override IEnumerable<GitRepository> Invoke()
         {
             var tp = Data.GetProject();
-            var repository = parameters.Get<object>(nameof(Cmdlets.Git.GetGitRepository.Repository));
+            var repository = Parameters.Get<object>(nameof(Cmdlets.Git.GetGitRepository.Repository));
 
             while (true) switch (repository)
             {
@@ -32,7 +32,7 @@ namespace TfsCmdlets.Controllers.Git
                 }
                 case Guid guid:
                 {
-                    yield return Data.GetClient<GitHttpClient>(parameters)
+                    yield return Data.GetClient<GitHttpClient>()
                         .GetRepositoryAsync(tp.Name, guid)
                         .GetResult($"Error getting repository with ID {guid}");
 
@@ -49,14 +49,14 @@ namespace TfsCmdlets.Controllers.Git
 
                     try
                     {
-                        result = Data.GetClient<GitHttpClient>(parameters)
+                        result = Data.GetClient<GitHttpClient>()
                             .GetRepositoryAsync(tp.Name, s)
                             .GetResult($"Error getting repository '{s}'");
                     }
                     catch
                     {
                         // Workaround to retrieve disabled repositories
-                        result = Data.GetClient<GitHttpClient>(parameters)
+                        result = Data.GetClient<GitHttpClient>()
                             .GetRepositoriesAsync(tp.Name)
                             .GetResult($"Error getting repository(ies) '{s}'")
                             .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
@@ -67,7 +67,7 @@ namespace TfsCmdlets.Controllers.Git
                 }
                 case string s:
                 {
-                    foreach (var repo in Data.GetClient<GitHttpClient>(parameters)
+                    foreach (var repo in Data.GetClient<GitHttpClient>()
                         .GetRepositoriesAsync(tp.Name)
                         .GetResult($"Error getting repository(ies) '{s}'")
                         .Where(r => r.Name.IsLike(s)))
@@ -85,8 +85,8 @@ namespace TfsCmdlets.Controllers.Git
         }
 
         [ImportingConstructor]
-        public GetGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger)
-            : base(powerShell, data, logger)
+        public GetGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

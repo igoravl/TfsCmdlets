@@ -13,8 +13,8 @@ using NewCredentialCmdlet = TfsCmdlets.Cmdlets.Credential.NewCredential;
 
 namespace TfsCmdlets.Controllers.Credential
 {
-    [CmdletController]
-    internal class GetCredential : ControllerBase<VssCredentials>
+    [CmdletController(typeof(VssCredentials))]
+    internal partial class GetCredentialController
     {
         public override IEnumerable<VssCredentials> Invoke()
         {
@@ -138,10 +138,10 @@ namespace TfsCmdlets.Controllers.Credential
             Interactive
         }
 
-        [ImportingConstructor]
-        public GetCredential(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-         : base(powerShell, data, parameters, logger)
-        {
-        }
+        //[ImportingConstructor]
+        //public GetCredential(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        // : base(powerShell, data, parameters, logger)
+        //{
+        //}
     }
 }

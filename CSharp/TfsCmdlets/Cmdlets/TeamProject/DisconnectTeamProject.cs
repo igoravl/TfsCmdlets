@@ -16,8 +16,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     [Cmdlet(VerbsCommunications.Disconnect, "TfsTeamProject")]
     public class DisconnectTeamProject : CmdletBase
     {
-
-        // TODO
-
     }
 }

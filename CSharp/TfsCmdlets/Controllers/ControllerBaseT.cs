@@ -20,9 +20,9 @@ namespace TfsCmdlets.Controllers
 
         public IPowerShellService PowerShell { get; }
 
-        protected T GetItem(ParameterDictionary parameters = null) => Data.GetItem<T>(parameters);
+        protected T GetItem(object parameters = null) => Data.GetItem<T>(parameters);
         
-        protected IEnumerable<T> GetItems(ParameterDictionary parameters = null) => Data.GetItems<T>(parameters);
+        protected IEnumerable<T> GetItems(object parameters = null) => Data.GetItems<T>(parameters);
 
         [ImportingConstructor]
         protected ControllerBase(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) : base(parameters, logger)

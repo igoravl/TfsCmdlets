@@ -12,12 +12,13 @@ namespace TfsCmdlets.Controllers.Git.Branch
     [CmdletController]
     internal class GetGitBranch : ControllerBase<GitBranchStats>
     {
+
         public override IEnumerable<GitBranchStats> Invoke()
         {
 
-            var branch = parameters.Get<object>("Branch");
-            var defaultBranch = parameters.Get<bool>("Default");
-            var repo = Data.GetItem<GitRepository>(parameters);
+            var branch = Parameters.Get<object>("Branch");
+            var defaultBranch = Parameters.Get<bool>("Default");
+            var repo = Data.GetItem<GitRepository>();
 
             if (repo.Size == 0)
             {
@@ -25,7 +26,7 @@ namespace TfsCmdlets.Controllers.Git.Branch
                 yield break;
             }
 
-            var client = Data.GetClient<GitHttpClient>(parameters);
+            var client = Data.GetClient<GitHttpClient>();
             string branchName = null;
             var done = false;
 
@@ -92,8 +93,8 @@ namespace TfsCmdlets.Controllers.Git.Branch
         }
 
         [ImportingConstructor]
-        public GetGitBranch(IPowerShellService powerShell, IDataManager data, ILogger logger) 
-            : base(powerShell, data, logger)
+        public GetGitBranch(IPowerShellService powerShell, IDataManager data, IParameterManager parameters , ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

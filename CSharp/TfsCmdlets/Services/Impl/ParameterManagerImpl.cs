@@ -5,16 +5,16 @@ using System.Composition;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
-using Microsoft.VisualStudio.Services.Common;
-using TfsCmdlets.Models;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IParameterManager)), Shared]
     internal class ParameterManagerImpl : IParameterManager
     {
-        private Dictionary<string, object> _innerDictionary;
-        private readonly Stack<Dictionary<string, object>> _contextStack = new Stack<Dictionary<string, object>>();
+        private Cmdlet _cmdlet;
+        private IDictionary<string, object> _innerDictionary;
+        private readonly Stack<Tuple<Cmdlet, IDictionary<string, object>>> _contextStack = new Stack<Tuple<Cmdlet, IDictionary<string, object>>>();
 
         /// <summary>
         /// Creates a new dictionary, copying the properties of supplied object
@@ -23,7 +23,7 @@ namespace TfsCmdlets.Services.Impl
         {
             _innerDictionary = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             _contextStack.Clear();
-            
+
             var props = cmdlet
                 .GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -42,6 +42,8 @@ namespace TfsCmdlets.Services.Impl
             {
                 _innerDictionary.Add("ParameterSetName", psCmdlet.ParameterSetName);
             }
+
+            _cmdlet = cmdlet;
         }
 
         /// <summary>
@@ -50,6 +52,8 @@ namespace TfsCmdlets.Services.Impl
         /// </summary>
         public T Get<T>(string name, T defaultValue = default)
         {
+            CheckIsInitialized();
+
             if (!HasParameter(name)) return defaultValue;
 
             var val = _innerDictionary[name] switch
@@ -68,6 +72,83 @@ namespace TfsCmdlets.Services.Impl
             set => _innerDictionary[name] = value;
         }
 
+        public void PushContext(object overridingParameters)
+        {
+            _contextStack.Push(new Tuple<Cmdlet, IDictionary<string, object>>(_cmdlet, _innerDictionary));
+            _innerDictionary = Override(overridingParameters);
+        }
+
+        public void PushContext(Cmdlet cmdlet, object overridingParameters)
+        {
+            _contextStack.Push(new Tuple<Cmdlet, IDictionary<string, object>>(cmdlet, _innerDictionary));
+            _innerDictionary = Override(overridingParameters);
+        }
+
+        public void PopContext()
+        {
+            if (_contextStack.Count > 0)
+            {
+                var context = _contextStack.Pop();
+                _cmdlet = context.Item1;
+                _innerDictionary = context.Item2;
+                return;
+            }
+
+            _cmdlet = null;
+            _innerDictionary = null;
+        }
+
+        private IDictionary<string, object> Override(object overridingParameters)
+        {
+            if (overridingParameters == null) return this;
+
+            var overridden = new Dictionary<string, object>(this, StringComparer.OrdinalIgnoreCase);
+
+            switch (overridingParameters)
+            {
+                case IEnumerable<KeyValuePair<string, object>> dict:
+                    {
+                        foreach (var kvp in dict)
+                        {
+                            var value = kvp.Value is PSObject psObject ? psObject.BaseObject : kvp.Value;
+                            if (value != null) overridden[kvp.Key] = value;
+                        }
+                        break;
+                    }
+                case IDictionary dict:
+                    foreach (var key in dict.Keys)
+                    {
+                        var value = dict[key] is PSObject psObject ? psObject.BaseObject : dict[key];
+                        if (value != null) overridden[key.ToString()] = value;
+                    }
+                    break;
+                default:
+                    {
+                        foreach (var prop in overridingParameters.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                        {
+                            var name = prop.Name;
+                            var value = prop.GetValue(overridingParameters);
+                            value = value is PSObject psObject ? psObject.BaseObject : value;
+                            if (value != null) overridden[name] = value;
+                        }
+                        break;
+                    }
+            }
+
+            return overridden;
+        }
+
+        public void Reset()
+        {
+            _cmdlet = null;
+            _innerDictionary = null;
+            _contextStack.Clear();
+        }
+
+        private void CheckIsInitialized() => ErrorUtil.ThrowIfNull(_cmdlet, "ParameterManager is not initialized");
+
+        private IPowerShellService PowerShell { get; set; }
+
         public void Remove(string name)
             => _innerDictionary.Remove(name);
 
@@ -78,40 +159,46 @@ namespace TfsCmdlets.Services.Impl
             => _innerDictionary.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator()
-            => ((IEnumerable)_innerDictionary).GetEnumerator();
+            => _innerDictionary.GetEnumerator();
 
-        public void PushContext(object overridingParameters)
-        {
-            _contextStack.Push(_innerDictionary);
-            _innerDictionary = Override(overridingParameters);
-        }
+        void IDictionary<string, object>.Add(string key, object value)
+            => _innerDictionary.Add(key, value);
 
-        public void PopContext()
-        {
-            _innerDictionary = _contextStack.Pop();
-        }
+        bool IDictionary<string, object>.ContainsKey(string key)
+            => _innerDictionary.ContainsKey(key);
 
-        private Dictionary<string, object> Override(object overridingParameters)
-        {
-            var overridden = new Dictionary<string, object>(this, StringComparer.OrdinalIgnoreCase);
+        bool IDictionary<string, object>.Remove(string key)
+            => _innerDictionary.Remove(key);
 
-            if (overridingParameters == null) return overridden;
+        bool IDictionary<string, object>.TryGetValue(string key, out object value)
+            => _innerDictionary.TryGetValue(key, out value);
 
-            var props = overridingParameters.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
+            => _innerDictionary.Add(item);
 
-            foreach (var prop in props)
-            {
-                var name = prop.Name;
-                var value = prop.GetValue(overridingParameters);
-                value = value is PSObject psObject ? psObject.BaseObject : value;
+        void ICollection<KeyValuePair<string, object>>.Clear()
+            => _innerDictionary.Clear();
 
-                if (value != null) overridden[name] = value;
-            }
+        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
+            => _innerDictionary.Contains(item);
 
-            return overridden;
-        }
+        void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
+            => _innerDictionary.CopyTo(array, arrayIndex);
 
-        private IPowerShellService PowerShell { get; set; }
+        ICollection<string> IDictionary<string, object>.Keys
+            => _innerDictionary.Keys;
+
+        ICollection<object> IDictionary<string, object>.Values
+            => _innerDictionary.Values;
+
+        int ICollection<KeyValuePair<string, object>>.Count
+            => _innerDictionary.Count;
+
+        bool ICollection<KeyValuePair<string, object>>.IsReadOnly
+            => _innerDictionary.IsReadOnly;
+
+        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
+            => _innerDictionary.Remove(item);
 
         [ImportingConstructor]
         public ParameterManagerImpl(IPowerShellService powerShell)

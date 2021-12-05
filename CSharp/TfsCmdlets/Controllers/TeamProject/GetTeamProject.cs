@@ -4,7 +4,6 @@ using System.Composition;
 using System.Linq;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
@@ -13,13 +12,11 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController]
     internal class GetTeamProject : ControllerBase<WebApiTeamProject>
     {
-        public ICurrentConnections CurrentConnections { get; }
-
         public override IEnumerable<WebApiTeamProject> Invoke()
         {
-            var project = parameters.Get<object>(nameof(Cmdlets.TeamProject.GetTeamProject.Project));
-            var current = parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Current));
-            var deleted = parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Deleted));
+            var project = Parameters.Get<object>(nameof(Cmdlets.TeamProject.GetTeamProject.Project));
+            var current = Parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Current));
+            var deleted = Parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Deleted));
 
             if (project == null || current)
             {
@@ -29,7 +26,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                 yield break;
             }
 
-            var client = Data.GetClient<ProjectHttpClient>(parameters);
+            var client = Data.GetClient<ProjectHttpClient>();
 
             while (true) switch (project)
                 {
@@ -102,12 +99,13 @@ namespace TfsCmdlets.Controllers.TeamProject
             return null;
         }
 
+        private ICurrentConnections CurrentConnections { get; }
+
         [ImportingConstructor]
-        public GetTeamProject(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, ILogger logger)
-          : base(powerShell, data, logger)
+        public GetTeamProject(ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+          : base(powerShell, data, parameters, logger)
         {
             CurrentConnections = currentConnections;
         }
-
     }
 }

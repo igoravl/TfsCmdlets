@@ -27,8 +27,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter()]
         public SwitchParameter Force { get; set; }
-
-        // TODO
-
     }
 }

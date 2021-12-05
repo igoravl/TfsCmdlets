@@ -15,9 +15,9 @@ namespace TfsCmdlets.Controllers.Git.Policy
     {
         public override IEnumerable<PolicyConfiguration> Invoke()
         {
-            var repo = Data.GetItem<GitRepository>(parameters);
-            var branch = $"refs/heads/{Data.GetItem<GitBranchStats>(parameters).Name}";
-            var policyType = parameters.Get<object>("PolicyType");
+            var repo = Data.GetItem<GitRepository>();
+            var branch = $"refs/heads/{Data.GetItem<GitBranchStats>().Name}";
+            var policyType = Parameters.Get<object>("PolicyType");
 
             while (true) switch (policyType)
             {
@@ -33,7 +33,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
                     }
                 case Guid g:
                     {
-                        foreach (var pol in Data.GetClient<GitHttpClient>(parameters)
+                        foreach (var pol in Data.GetClient<GitHttpClient>()
                             .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, g)
                             .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
                             .PolicyConfigurations)
@@ -45,7 +45,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
                     }
                 case string s:
                     {
-                        foreach (var pol in Data.GetClient<GitHttpClient>(parameters)
+                        foreach (var pol in Data.GetClient<GitHttpClient>()
                             .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch)
                             .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
                             .PolicyConfigurations
@@ -64,8 +64,8 @@ namespace TfsCmdlets.Controllers.Git.Policy
         }
 
         [ImportingConstructor]
-        public GetGitBranchPolicy(IPowerShellService powerShell, IDataManager data, ILogger logger)
-        : base(powerShell, data, logger)
+        public GetGitBranchPolicy(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

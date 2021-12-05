@@ -72,6 +72,8 @@ namespace TfsCmdlets.Cmdlets
         {
             DoEndProcessing();
 
+            Parameters.Reset();
+
             base.EndProcessing();
         }
 
@@ -142,16 +144,8 @@ namespace TfsCmdlets.Cmdlets
             return attr.VerbName;
         }
 
-        protected virtual bool ReturnsValue
-        {
-            get
-            {
-                var isGet = GetVerb().Equals("Get", StringComparison.OrdinalIgnoreCase);
-                var isPassthru = IsPassthru;
-
-                return isGet || isPassthru;
-            }
-        }
+        protected virtual bool ReturnsValue 
+            => IsPassthru || GetVerb().Equals("Get", StringComparison.OrdinalIgnoreCase);
 
         private bool IsPassthru
         {

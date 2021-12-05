@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Tests.Integratio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets", "TfsCmdlets\TfsCmdlets.csproj", "{63E2B0B3-DB12-4DE6-ADE8-660E8323E38A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.SourceGenerators", "TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj", "{1045CB54-F17F-42EA-9497-5D60815BDC64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{63E2B0B3-DB12-4DE6-ADE8-660E8323E38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63E2B0B3-DB12-4DE6-ADE8-660E8323E38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63E2B0B3-DB12-4DE6-ADE8-660E8323E38A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

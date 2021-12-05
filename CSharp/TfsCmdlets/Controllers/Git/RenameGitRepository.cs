@@ -14,20 +14,21 @@ namespace TfsCmdlets.Controllers.Git
         public override IEnumerable<GitRepository> Invoke()
         {
             var tp = Data.GetProject();
-            var repoToRename = GetItem(parameters);
-            var newName = parameters.Get<string>(nameof(Cmdlets.Git.RenameGitRepository.NewName));
+            var repoToRename = GetItem();
+            var newName = Parameters.Get<string>(nameof(Cmdlets.Git.RenameGitRepository.NewName));
 
             if (!PowerShell.ShouldProcess(tp, $"Rename Git repository [{repoToRename.Name}] to '{newName}'"))
                 yield break;
 
-            var client = Data.GetClient<GitHttpClient>(parameters);
+            var client = Data.GetClient<GitHttpClient>();
 
             yield return client.RenameRepositoryAsync(repoToRename, newName)
                 .GetResult("Error renaming repository");
         }
 
         [ImportingConstructor]
-        public RenameGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        public RenameGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }

@@ -7,7 +7,13 @@
     <LangVersion>8.0</LangVersion>
     <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
@@ -36,5 +42,9 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Generated\" />
   </ItemGroup>
 </Project>

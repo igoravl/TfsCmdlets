@@ -29,8 +29,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter()]
         public string AvatarImage { get; set; }
-
-        // TODO
-
     }
 }

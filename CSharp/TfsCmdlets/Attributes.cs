@@ -7,8 +7,15 @@ namespace TfsCmdlets
     [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class CmdletControllerAttribute: ExportAttribute
     {
+        public Type DataType { get; }
+
         public CmdletControllerAttribute() : base(typeof(IController))
         {
+        }
+
+        public CmdletControllerAttribute(Type dataType) : base(typeof(IController))
+        {
+            DataType = dataType;
         }
     }
 

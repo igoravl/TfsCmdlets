@@ -12,10 +12,10 @@ namespace TfsCmdlets.Controllers.Git
         public override IEnumerable<GitRepository> Invoke()
         {
             var tp = Data.GetProject();
-            var repos = GetItems(parameters);
-            var force = parameters.Get<bool>(nameof(Cmdlets.Git.RemoveGitRepository.Force));
+            var repos = GetItems();
+            var force = Parameters.Get<bool>(nameof(Cmdlets.Git.RemoveGitRepository.Force));
 
-            var client = Data.GetClient<GitHttpClient>(parameters);
+            var client = Data.GetClient<GitHttpClient>();
 
             foreach (var r in repos)
             {
@@ -31,7 +31,8 @@ namespace TfsCmdlets.Controllers.Git
         }
 
         [ImportingConstructor]
-        public RemoveGitRepository(IPowerShellService powerShell, IDataManager data, ILogger logger) : base(powerShell, data, logger)
+        public RemoveGitRepository(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger) 
+            : base(powerShell, data, parameters, logger)
         {
         }
     }
