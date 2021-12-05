@@ -23,14 +23,18 @@ namespace TfsCmdlets.SourceGenerators
             foreach (var controller in syntaxReceiver.Controllers)
             {
                 var genericArg = GetGenericArgument(controller);
+                var isGeneric = !string.IsNullOrEmpty(genericArg);
                 var ctorArgs = "";
-                var baseCtorArgs= "";
+                var baseCtorArgs= GetBaseConstructorArguments(isGeneric? 
+                    syntaxReceiver.ControllerBaseT: 
+                    syntaxReceiver.ControllerBase);
                 var propInit = "";
 
                 context.AddSource($"{controller.FullName()}.cs", SourceText.From($@"/*
 Controller name: {controller.FullName()}
 */
 
+using System.Composition;
 using TfsCmdlets.Services;
 
 // ReSharper disable once CheckNamespace
@@ -38,7 +42,7 @@ namespace {controller.FullNamespace()}
 {{
   internal partial class {controller.Name}: ControllerBase{genericArg}
   {{
-    [System.Composition.ImportingConstructor]
+    [ImportingConstructor]
     internal {controller.Name}({ctorArgs})
         : base({baseCtorArgs})
     {{
@@ -49,6 +53,18 @@ namespace {controller.FullNamespace()}
 ", 
                     Encoding.UTF8));
             }
+        }
+
+        private string GetBaseConstructorArguments(INamedTypeSymbol baseClass)
+        {
+            var args = new List<string>();
+
+            foreach (var parm in baseClass.Constructors[0].Parameters)
+            {
+                args.Add(parm.Name);
+            }
+
+            return string.Join(", ", args);
         }
 
         private string GetGenericArgument(INamedTypeSymbol controller)
