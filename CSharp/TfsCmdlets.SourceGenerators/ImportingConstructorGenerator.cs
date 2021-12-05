@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -20,7 +22,7 @@ namespace TfsCmdlets.SourceGenerators
 
             foreach (var controller in syntaxReceiver.Controllers)
             {
-                var genericArg = "";
+                var genericArg = GetGenericArgument(controller);
                 var ctorArgs = "";
                 var baseCtorArgs= "";
                 var propInit = "";
@@ -29,25 +31,34 @@ namespace TfsCmdlets.SourceGenerators
 Controller name: {controller.FullName()}
 */
 
-
 using TfsCmdlets.Services;
 
 // ReSharper disable once CheckNamespace
 namespace {controller.FullNamespace()}
 {{
-        internal partial class {controller.Name}: {controller.BaseType.Name}{genericArg}
+  internal partial class {controller.Name}: ControllerBase{genericArg}
   {{
-            [System.Composition.ImportingConstructor]
-            internal {controller.Name}({ctorArgs})
-                : base({baseCtorArgs})
+    [System.Composition.ImportingConstructor]
+    internal {controller.Name}({ctorArgs})
+        : base({baseCtorArgs})
     {{
 {propInit}
     }}
-}}
+  }}
 }}
 ", 
                     Encoding.UTF8));
             }
+        }
+
+        private string GetGenericArgument(INamedTypeSymbol controller)
+        {
+            var attr = controller.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.Name.Equals("CmdletControllerAttribute") ?? false);
+
+            if (attr == null || attr.ConstructorArguments.Length == 0) return string.Empty;
+
+            return $"<{attr.ConstructorArguments[0].Value}>";
         }
 
         internal class ImportingConstructorSyntaxReceiver : ISyntaxContextReceiver
