@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace TfsCmdlets.SourceGenerators
 {
     [Generator]
-    public class ImportingConstructorGenerator : ISourceGenerator
+    public class ControllerGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
         {
