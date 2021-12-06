@@ -44,7 +44,7 @@ namespace TfsCmdlets.SourceGenerators
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru { get; set; }
 ");
                             break;
@@ -56,7 +56,7 @@ namespace TfsCmdlets.SourceGenerators
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Passthru { get; set; }
 ");
                             break;
