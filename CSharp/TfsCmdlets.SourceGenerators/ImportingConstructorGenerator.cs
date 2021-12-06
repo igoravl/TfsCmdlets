@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -36,6 +37,7 @@ Class name  : {controller.FullName()}
 
 using System.CodeDom.Compiler;
 using System.Composition;
+using TfsCmdlets.Controllers;
 using TfsCmdlets.Services;
 
 // ReSharper disable once CheckNamespace
@@ -60,14 +62,14 @@ namespace {controller.FullNamespace()}
             => string.Join("\n", GetImportedProperties(controller)
                 .Select(p => $"      {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};"));
 
-        private IEnumerable<IPropertySymbol> GetImportedProperties(INamedTypeSymbol controller) 
+        private IEnumerable<IPropertySymbol> GetImportedProperties(INamedTypeSymbol controller)
             => controller
                 .GetMembers()
                 .OfType<IPropertySymbol>()
                 .Where(p => p.GetAttributes().Any(
                     a => a.AttributeClass.Name.Equals("ImportAttribute")));
 
-        private string GetConstructorArguments(INamedTypeSymbol controller, INamedTypeSymbol baseClass) 
+        private string GetConstructorArguments(INamedTypeSymbol controller, INamedTypeSymbol baseClass)
             => string.Join(", ", GetImportedProperties(controller)
                 .Select(p => $"{p.Type.Name} {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)}")
                 .Concat(
@@ -89,7 +91,7 @@ namespace {controller.FullNamespace()}
             var attr = controller.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.Name.Equals("CmdletControllerAttribute") ?? false);
 
-            if (attr == null || attr.ConstructorArguments.Length == 0) return string.Empty;
+            if (attr == null || attr.ConstructorArguments.Length == 0 || string.IsNullOrEmpty(attr.ConstructorArguments[0].Value.ToString())) return string.Empty;
 
             return $"<{attr.ConstructorArguments[0].Value}>";
         }
