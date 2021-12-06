@@ -8,8 +8,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// Changes the contents of a Global List.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsGlobalList", SupportsShouldProcess = true)]
-    [DesktopOnly]
-    public class SetGlobalList : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class SetGlobalList 
     {
         /// <summary>
         /// Specifies the name of the global list to be changed.
@@ -22,19 +22,19 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Specifies a list of items to be added to the global list.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public IEnumerable<string> Add { get; set; }
 
         /// <summary>
         /// Specifies a list of items to be removed from the global list.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public IEnumerable<string> Remove { get; set; }
 
         /// <summary>
         /// Creates a new list if the specified one does not exist.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
     }
 

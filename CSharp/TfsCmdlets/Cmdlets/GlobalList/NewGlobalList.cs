@@ -10,8 +10,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true)]
     [OutputType(typeof(PSCustomObject))]
-    [DesktopOnly]
-    public class NewGlobalList : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class NewGlobalList 
     {
         /// <summary>
         /// Specifies the name of the new global list.
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Allows the cmdlet to overwrite an existing global list.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
     }
 

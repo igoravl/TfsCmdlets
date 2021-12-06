@@ -9,8 +9,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// Deletes one or more Global Lists.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", SupportsShouldProcess = true)]
-    [DesktopOnly]
-    public class RemoveGlobalList : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class RemoveGlobalList 
     {
         /// <summary>
         /// Specifies the name of global list to be deleted. Wildcards are supported.
@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
     }
 

@@ -24,8 +24,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// To import global lists, you must be a member of the Project Collection Administrators security group.
     /// </notes>
     [Cmdlet(VerbsData.Import, "TfsGlobalList", SupportsShouldProcess = true)]
-    [DesktopOnly]
-    public class ImportGlobalList : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class ImportGlobalList 
     {
         /// <summary>
         /// XML document object containing one or more global list definitions.
@@ -37,14 +37,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Allows the cmdlet to overwrite a global list that already exists.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter()]
-        public object Collection { get; set; }
 
         // TODO
 

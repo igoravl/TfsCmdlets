@@ -8,8 +8,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// Changes either the name or the contents of a Global List.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "TfsGlobalList", SupportsShouldProcess = true)]
-    [DesktopOnly]
-    public class RenameGlobalList : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class RenameGlobalList 
     {
         /// <summary>
         /// Specifies the name of the global lsit to be renamed.

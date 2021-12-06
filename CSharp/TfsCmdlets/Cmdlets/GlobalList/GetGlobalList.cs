@@ -9,8 +9,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGlobalList")]
     [OutputType(typeof(Models.GlobalList))]
-    [DesktopOnly]
-    public class GetGlobalList : CollectionScopedGetCmdlet
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true)]
+    partial class GetGlobalList 
     {
         /// <summary>
         /// Specifies the name of the global list. Wildcards are supported. 

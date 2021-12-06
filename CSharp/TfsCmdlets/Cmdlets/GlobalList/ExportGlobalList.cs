@@ -28,8 +28,8 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <input>System.Uri</input>
     [Cmdlet(VerbsData.Export, "TfsGlobalList")]
     [OutputType(typeof(string))]
-    [DesktopOnly]
-    public class ExportGlobalList : CollectionScopedGetCmdlet
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true)]
+    partial class ExportGlobalList
     {
         /// <summary>
         /// Specifies the name of the global list to be exported. Wildcards are supported. 
