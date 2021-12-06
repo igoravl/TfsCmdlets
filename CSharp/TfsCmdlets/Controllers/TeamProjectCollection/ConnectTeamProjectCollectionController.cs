@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
     partial class ConnectTeamProjectCollectionController 
     {
         [Import]
-        public ICurrentConnections CurrentConnections { get; }
+        private ICurrentConnections CurrentConnections { get; }
 
         public override IEnumerable<Connection> Invoke()
         {
