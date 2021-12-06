@@ -19,7 +19,8 @@ namespace TfsCmdlets.Cmdlets.Git
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Disable, "TfsGitRepository", SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
-    public class DisableGitRepository : ProjectScopedCmdlet
+    [TfsCmdlet(CmdletScope.Project)]
+    partial class DisableGitRepository
     {
         /// <summary>
         /// Specifies the name or ID of a Git repository. Wildcards are supported. 

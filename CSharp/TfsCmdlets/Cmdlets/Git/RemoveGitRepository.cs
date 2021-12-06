@@ -8,7 +8,8 @@ namespace TfsCmdlets.Cmdlets.Git
     /// Deletes one or more Git repositories from a team project.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsGitRepository", SupportsShouldProcess = true)]
-    public class RemoveGitRepository : ProjectScopedCmdlet
+    [TfsCmdlet(CmdletScope.Project)]
+    partial class RemoveGitRepository
     {
         /// <summary>
         /// Specifies the repository to be deleted. Value can be the name or ID of a Git repository, 
@@ -23,7 +24,7 @@ namespace TfsCmdlets.Cmdlets.Git
         /// <summary>
         /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
     }
 }
