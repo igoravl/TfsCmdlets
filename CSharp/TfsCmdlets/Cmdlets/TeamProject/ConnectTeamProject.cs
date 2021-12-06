@@ -8,7 +8,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
-    public class ConnectTeamProject : CollectionScopedCmdlet
+    [TfsCmdlet(CmdletScope.Collection)]
+    partial class ConnectTeamProject
     {
         /// <summary>
         /// Specifies the name of the Team Project, its ID (a GUID), or a 

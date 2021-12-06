@@ -16,8 +16,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProject", DefaultParameterSetName = "Get by project", SupportsShouldProcess = true)]
     [OutputType(typeof(WebApiTeamProject))]
-    [RequiresVersion(2015)]
-    public class NewTeamProject : CollectionScopedCmdlet
+    [TfsCmdlet(CmdletScope.Collection, RequiresVersion = 2015)]
+    partial class NewTeamProject
     {
         /// <summary>
         ///  Specifies the name of the new team project.
@@ -28,14 +28,14 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// <summary>
         /// Specifies a description for the new team project.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Description { get; set; }
 
         /// <summary>
         /// Specifies the source control type to be provisioned initially with the team project. 
         /// Supported types are "Git" and "Tfvc".
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateSet("Git", "Tfvc")]
         public string SourceControl { get; set; } = "Git";
 
@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// Supported values are the process name or an instance of the
         /// Microsoft.TeamFoundation.Core.WebApi.Process class.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public object ProcessTemplate { get; set; }
     }
 }

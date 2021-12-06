@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// Connect-TfsTeamProject is made.
     /// </remarks>
     [Cmdlet(VerbsCommunications.Disconnect, "TfsTeamProject")]
-    public class DisconnectTeamProject : CmdletBase
+    partial class DisconnectTeamProject
     {
     }
 }

@@ -12,7 +12,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// Deletes one or more team projects. 
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProject", SupportsShouldProcess = true)]
-    public class RemoveTeamProject : CollectionScopedCmdlet
+    [TfsCmdlet(CmdletScope.Collection)]
+    partial class RemoveTeamProject
     {
         /// <summary>
         /// Specifies the name of a Team Project to delete. Wildcards are supported.
@@ -25,13 +26,13 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// Deletes the team project permanently. When omitted, the team project is moved to a 
         /// "recycle bin" and can be recovered either via UI or by using Undo-TfsTeamProjectRemoval.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Hard { get; set; }
 
         /// <summary>
         /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
     }
 }

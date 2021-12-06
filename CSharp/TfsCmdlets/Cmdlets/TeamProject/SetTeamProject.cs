@@ -15,7 +15,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "TfsTeamProject")]
     [OutputType(typeof(WebApiTeamProject))]
-    public class SetTeamProject : CollectionScopedCmdlet
+    [TfsCmdlet(CmdletScope.Collection)]
+    partial class SetTeamProject
     {
         /// <summary>
         /// Specifies the name of the Team Project. 
@@ -27,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// Specifies the name of a local image file to be uploaded and used as the team project icon ("avatar"). 
         /// To remove a previously set image, pass $null to this argument.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string AvatarImage { get; set; }
     }
 }

@@ -13,7 +13,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// </remarks>
     [Cmdlet(VerbsCommon.Get, "TfsTeamProject", DefaultParameterSetName = "Get by project")]
     [OutputType(typeof(WebApiTeamProject))]
-    public class GetTeamProject : CollectionScopedGetCmdlet
+    [TfsCmdlet(CmdletScope.Collection)]
+    partial class GetTeamProject
     {
         /// <summary>
         /// Specifies the name of a Team Project. Wildcards are supported. 
