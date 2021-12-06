@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Composition;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.Cmdlets.Git;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
 using TfsCmdlets.Services;
@@ -15,7 +16,7 @@ namespace TfsCmdlets.Controllers.Git
         {
             var tp = Data.GetProject();
             var repoToRename = GetItem();
-            var newName = Parameters.Get<string>(nameof(Cmdlets.Git.RenameGitRepository.NewName));
+            var newName = Parameters.Get<string>(nameof(RenameGitRepository.NewName));
 
             if (!PowerShell.ShouldProcess(tp, $"Rename Git repository [{repoToRename.Name}] to '{newName}'"))
                 yield break;

@@ -21,7 +21,7 @@ namespace TfsCmdlets.Controllers.TeamProject
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();
-            var newName = Parameters.Get<string>(nameof(ProjectScopedRenameCmdlet.NewName));
+            var newName = Parameters.Get<string>(nameof(RenameTeamProject.NewName));
             var force = Parameters.Get<bool>(nameof(RenameTeamProject.Force));
 
             if (!PowerShell.ShouldProcess(tpc, $"Rename team project '{tp.Name}' to ")) return null;
