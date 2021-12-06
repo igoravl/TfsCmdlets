@@ -21,11 +21,17 @@ namespace TfsCmdlets.Controllers
 
         protected ILogger Logger { get; }
 
+        protected IDataManager Data { get; }
+
+        protected IPowerShellService PowerShell { get; }
+
         public abstract object InvokeCommand();
 
         [ImportingConstructor]
-        public ControllerBase(IParameterManager parameters, ILogger logger)
+        public ControllerBase(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
         {
+            PowerShell = powerShell;
+            Data = data;
             Parameters = parameters;
             Logger = logger;
         }
