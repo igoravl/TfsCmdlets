@@ -30,7 +30,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// <summary>
         /// Recursively expands all member groups, returning the users and/or groups contained in them
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Recurse { get; set; }
     }
 }
