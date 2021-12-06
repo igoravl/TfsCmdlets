@@ -4,6 +4,7 @@ using System.Composition;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
+using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Extensions;
 using TfsCmdlets.HttpClient;
 
