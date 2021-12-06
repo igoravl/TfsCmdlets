@@ -175,7 +175,7 @@ namespace TfsCmdlets.Cmdlets
 #error Unsupported platform
 #endif
 
-            if (isDesktop || GetType().GetCustomAttribute<DesktopOnlyAttribute>() == null)
+            if (isDesktop && GetType().GetCustomAttribute<TfsCmdletAttribute>().DesktopOnly)
             {
                 return;
             }
