@@ -10,8 +10,9 @@ namespace TfsCmdlets.Cmdlets.Credential
     /// or Azure DevOps organization.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsCredential", DefaultParameterSetName = "Cached credentials")]
+    [TfsCmdlet(CmdletScope.None, SkipAutoProperties = true)]
     [OutputType(typeof(VssCredentials))]
-    public class NewCredential : CmdletBase
+    partial class NewCredential : CmdletBase
     {
         /// <summary>
         /// Specifies the URL of the server, collection or organization to connect to.
