@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 using System.Composition;
-using System.Diagnostics;
-using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Controllers
 {
@@ -16,9 +13,9 @@ namespace TfsCmdlets.Controllers
 
         public override object InvokeCommand() => Invoke();
 
-        public IDataManager Data { get; }
+        protected IDataManager Data { get; }
 
-        public IPowerShellService PowerShell { get; }
+        protected IPowerShellService PowerShell { get; }
 
         protected T GetItem(object parameters = null) => Data.GetItem<T>(parameters);
         

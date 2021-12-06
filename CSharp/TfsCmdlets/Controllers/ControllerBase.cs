@@ -1,7 +1,6 @@
 using System;
 using System.Composition;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Models;
 using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers
@@ -18,9 +17,9 @@ namespace TfsCmdlets.Controllers
 
         public virtual Type DataType => GetType();
 
-        public IParameterManager Parameters { get; }
-        
-        public ILogger Logger { get; }
+        protected IParameterManager Parameters { get; }
+
+        protected ILogger Logger { get; }
 
         public abstract object InvokeCommand();
 
