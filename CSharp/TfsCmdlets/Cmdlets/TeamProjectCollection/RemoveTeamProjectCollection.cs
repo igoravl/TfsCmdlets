@@ -6,20 +6,20 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Deletes a team project collection.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    public class RemoveTeamProjectCollection : Cmdlet
+    partial class RemoveTeamProjectCollection
     {
         // TODO
 
         //         [Parameter(Mandatory=true, Position=0, ValueFromPipeline=true)]
         // public object Collection,
 
-        //         [Parameter()]
+        //         [Parameter]
         // public object Server,
 
-        //         [Parameter()]
+        //         [Parameter]
         //         public timespan Timeout { get; set; } = timespan.MaxValue,
 
-        //         [Parameter()]
+        //         [Parameter]
         //         [System.Management.Automation.Credential()]
         //         [System.Management.Automation.PSCredential]
         //         Credential = System.Management.Automation.PSCredential.Empty

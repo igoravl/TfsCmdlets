@@ -19,7 +19,7 @@ using Microsoft.TeamFoundation.Client;
 #else
     [OutputType(typeof(TfsTeamProjectCollection))]
 #endif
-    public class GetTeamProjectCollection : CmdletBase
+    partial class GetTeamProjectCollection
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

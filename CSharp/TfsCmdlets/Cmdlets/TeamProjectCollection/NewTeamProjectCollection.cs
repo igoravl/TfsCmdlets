@@ -10,8 +10,8 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
     [OutputType(typeof(Connection))]
-    [DesktopOnly]
-    public class NewTeamProjectCollection : CmdletBase
+    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true)]
+    partial class NewTeamProjectCollection
     {
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [Alias("Name")]
@@ -45,19 +45,5 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 
         [Parameter] 
         public TimeSpan Timeout { get; set; } = TimeSpan.MaxValue;
-
-        [Parameter]
-        public object Server { get; set; }
-
-        [Parameter]
-        [Credential]
-        public PSCredential Credential { get; set; } = PSCredential.Empty;
-
-        [Parameter]
-        public SwitchParameter Passthru { get; set; }
-
-        // TODO
-
-
     }
 }

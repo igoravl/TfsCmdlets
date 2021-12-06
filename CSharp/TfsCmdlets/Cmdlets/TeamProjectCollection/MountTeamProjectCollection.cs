@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// Attaches a team project collection database to a Team Foundation Server installation.
     /// </summary>
     [Cmdlet(VerbsData.Mount, "TfsTeamProjectCollection")]
-    public class MountTeamProjectCollection : CmdletBase
+    partial class MountTeamProjectCollection
     {
         /// <summary>
         /// Specifies the name of the collection to attach. It can be different from the original 
@@ -24,7 +24,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// <summary>
         /// Specifies a new description for the collection. When omitted, it retains the original description.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Description { get; set; }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// When omitted, the collection is automatically started and goes online after being attached.
         /// </summary>
         /// <value></value>
-        [Parameter()]
+        [Parameter]
         [ValidateSet("Started", "Stopped")]
         public string InitialState { get; set; } = "Started";
 
@@ -59,7 +59,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// Changes the internal collection IDs upon attaching to that a "clone" of the original 
         /// collection can be attached to the same server.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Clone { get; set; }
 
         /// <summary>
@@ -67,14 +67,14 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// When omitted, defaults to 5 seconds.
         /// </summary>
         /// <value></value>
-        [Parameter()]
+        [Parameter]
         public int PollingInterval { get; set; } = 5;
 
         /// <summary>
         /// Specifies the maximum period of time this cmdlet should wait for the attach procedure 
         /// to complete. By default, it waits indefinitely until the collection servicing completes.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public TimeSpan Timeout { get; set; } = TimeSpan.MaxValue;
 
         /// <summary>

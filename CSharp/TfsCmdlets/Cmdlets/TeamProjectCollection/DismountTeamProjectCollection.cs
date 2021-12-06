@@ -29,8 +29,8 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </notes>
     [Cmdlet(VerbsData.Dismount, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
     [OutputType(typeof(string))]
-    [DesktopOnly]
-    public partial class DismountTeamProjectCollection : CmdletBase
+    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true)]
+    public partial class DismountTeamProjectCollection
     {
         /// <summary>
         /// Specifies the collection to detach.
@@ -42,23 +42,14 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         /// Specifies a Servicing Message (optional), to provide a message for users who might try 
         /// to connect to projects in this collection while it is offline.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string Reason { get; set; }
 
         /// <summary>
         /// Specifies the maximum period of time this cmdlet should wait for the detach procedure 
         /// to complete. By default, it waits indefinitely until the collection servicing completes.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public TimeSpan Timeout { get; set; } = TimeSpan.MaxValue;
-
-        /// <summary>
-        /// HELP_PARAM_SERVER
-        /// </summary>
-        [Parameter()]
-        public object Server { get; set; }
-
-        // TODO
-
     }
 }

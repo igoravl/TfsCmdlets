@@ -38,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </example>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(VssConnection))]
-    public class ConnectTeamProjectCollection : CmdletBase
+    partial class ConnectTeamProjectCollection
     {
         /// <summary>
         ///  Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, 
