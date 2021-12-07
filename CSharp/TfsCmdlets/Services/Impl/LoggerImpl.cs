@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Composition;
 using System.Linq;
 using System.Management.Automation;
-using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl
 {

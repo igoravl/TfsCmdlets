@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 

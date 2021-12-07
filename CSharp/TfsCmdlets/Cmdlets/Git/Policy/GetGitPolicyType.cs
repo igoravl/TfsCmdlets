@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Policy.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Git.Policy
 {

@@ -1,14 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
+using System.Management.Automation;
 using System.Threading;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Operations;
 using TfsCmdlets.Cmdlets.TeamProject;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject

@@ -1,8 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 using TfsCmdlets.Extensions;
 

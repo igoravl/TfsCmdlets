@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {

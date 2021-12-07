@@ -1,8 +1,6 @@
 using System;
 using System.Management.Automation;
-using TfsCmdlets.Models;
 #if NET471_OR_GREATER
-using Microsoft.TeamFoundation.Client;
 #endif
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection

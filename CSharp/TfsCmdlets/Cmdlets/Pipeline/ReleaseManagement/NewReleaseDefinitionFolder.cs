@@ -1,7 +1,4 @@
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement

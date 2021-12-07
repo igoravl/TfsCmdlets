@@ -1,5 +1,3 @@
-using TfsCmdlets.Services;
-using System.Collections.Generic;
 using System.Management.Automation;
 
 namespace TfsCmdlets.Cmdlets.GlobalList

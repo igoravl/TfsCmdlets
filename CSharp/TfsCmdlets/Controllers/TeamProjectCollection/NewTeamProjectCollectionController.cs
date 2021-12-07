@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Composition;
+﻿// ReSharper disable RedundantUsingDirective
+using System;
 using System.Linq;
+using System.Collections.Generic;
+using System.Management.Automation;
 using System.Threading;
 using Microsoft.TeamFoundation.Framework.Common;
-using TfsCmdlets.Controllers;
 using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 #if NET471_OR_GREATER
 using Microsoft.TeamFoundation.Framework.Client;
@@ -20,7 +19,6 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
         public override IEnumerable<Connection> Invoke()
         {
 #if NET471_OR_GREATER
-            
             var tpc = Data.GetCollection();
 
             if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) return null;
@@ -72,7 +70,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
                 var collectionInfo = tpcService.GetCollection(tpcJob.HostId,
                     ServiceHostFilterFlags.IncludeAllServicingDetails);
 
-                var jobDetail = collectionInfo.ServicingDetails.FirstOrDefault(job => job.JobId == tpcJob.JobId);
+                var jobDetail = collectionInfo.ServicingDetails.Cast<ServicingJobDetail>().FirstOrDefault(job => job.JobId == tpcJob.JobId);
 
                 if (jobDetail == null) return GetItems();
 

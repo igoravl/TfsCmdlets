@@ -171,7 +171,7 @@ if (-not $psake.build_success) {
 
 ========== MSBUILD LOG ===========
 
-$(Get-Content $logFile)
+$(Get-Content $logFile -Raw)
 
 ======== END MSBUILD LOG =========
 

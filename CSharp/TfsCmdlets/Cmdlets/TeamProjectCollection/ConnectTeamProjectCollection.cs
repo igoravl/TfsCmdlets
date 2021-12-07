@@ -1,7 +1,6 @@
 using System.Management.Automation;
 using System.Security;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {

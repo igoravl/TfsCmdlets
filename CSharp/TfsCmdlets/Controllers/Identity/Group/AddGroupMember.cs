@@ -1,3 +1,4 @@
+using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using TfsCmdlets.Cmdlets.Identity.Group;
 using TfsCmdlets.Extensions;

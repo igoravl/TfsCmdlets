@@ -1,15 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Composition;
 using System.IO;
-using System.Linq;
-using System.Threading;
+using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
-using Microsoft.VisualStudio.Services.Operations;
-using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Cmdlets.TeamProject;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
@@ -37,7 +31,7 @@ namespace TfsCmdlets.Controllers.TeamProject
             };
 
             client.SetProjectAvatarAsync(projectAvatar, tp.Name)
-                .Wait($"Error setting team project avatar");
+                .Wait();
 
             yield return tp;
         }

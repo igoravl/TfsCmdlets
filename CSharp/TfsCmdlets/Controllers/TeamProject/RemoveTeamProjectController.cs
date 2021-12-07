@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
+using System.Management.Automation;
 using System.Threading;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Operations;
 using TfsCmdlets.Cmdlets.TeamProject;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
@@ -42,7 +40,7 @@ namespace TfsCmdlets.Controllers.TeamProject
 
                 // Wait for the operation to complete
 
-                var opsClient = Data.GetClient<OperationsHttpClient>(Parameters);
+                var opsClient = Data.GetClient<OperationsHttpClient>();
                 var opsToken = opsClient.GetOperation(token.Id).GetResult("Error getting operation status");
 
                 while (

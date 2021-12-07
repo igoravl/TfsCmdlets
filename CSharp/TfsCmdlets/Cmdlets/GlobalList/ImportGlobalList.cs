@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using System.Xml;
-using System.Xml.Linq;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {

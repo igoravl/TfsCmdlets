@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.WebApi;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using Microsoft.VisualStudio.Services.Identity;
 using System.Collections.Generic;

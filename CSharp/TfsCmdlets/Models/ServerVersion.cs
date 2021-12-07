@@ -1,5 +1,4 @@
 using System;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Models
 {

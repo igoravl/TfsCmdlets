@@ -1,13 +1,6 @@
-using System.Collections.Generic;
 using System.Management.Automation;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
-using TfsCmdlets.Util;
-using System;
-using TfsCmdlets.Extensions;
-using Microsoft.VisualStudio.Services.Operations;
-using System.Threading;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {

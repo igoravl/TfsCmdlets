@@ -1,12 +1,4 @@
-﻿using System;
-using System.Management.Automation;
-using Microsoft.TeamFoundation.Framework.Common;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using TfsCmdlets.Cmdlets;
-using TfsCmdlets.Util;
-
-namespace TfsCmdlets.Extensions
+﻿namespace TfsCmdlets.Extensions
 {
     internal static class LogExtensions
     {

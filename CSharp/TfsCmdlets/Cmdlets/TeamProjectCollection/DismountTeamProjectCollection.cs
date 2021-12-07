@@ -1,7 +1,5 @@
 using System;
 using System.Management.Automation;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {

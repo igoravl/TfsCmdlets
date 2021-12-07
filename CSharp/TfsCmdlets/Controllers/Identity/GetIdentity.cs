@@ -7,10 +7,6 @@ using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembers
 
 namespace TfsCmdlets.Controllers.Identity
 {
-    /// <summary>
-    /// Gets one or more identities that represents either users or groups in Azure DevOps.
-    /// This cmdlet resolves legacy identity information for use with older APIs such as the Security APIs.
-    ///</summary>
     [CmdletController(typeof(Models.Identity))]
     partial class GetIdentityController
     {

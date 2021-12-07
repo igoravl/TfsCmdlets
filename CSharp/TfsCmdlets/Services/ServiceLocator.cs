@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Composition.Hosting;
+﻿using System.Composition.Hosting;
 using System.Reflection;
-using System.Text;
 
 namespace TfsCmdlets.Services
 {

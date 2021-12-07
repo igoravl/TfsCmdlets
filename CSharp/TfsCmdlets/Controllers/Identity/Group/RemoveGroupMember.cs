@@ -1,8 +1,6 @@
-using Microsoft.TeamFoundation.Work.WebApi;
-using Microsoft.VisualStudio.Services.Identity.Client;
+using System.Management.Automation;
 using TfsCmdlets.Cmdlets.Identity.Group;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Controllers.Identity.Group
 {

@@ -1,8 +1,4 @@
-using System;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.Identity;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 

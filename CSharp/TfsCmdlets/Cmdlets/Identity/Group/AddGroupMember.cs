@@ -1,6 +1,4 @@
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.Identity;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {

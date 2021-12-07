@@ -1,6 +1,4 @@
 ﻿using System.Management.Automation;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets
 {

@@ -1,6 +1,4 @@
-using System;
 using System.Management.Automation;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.GlobalList
 {

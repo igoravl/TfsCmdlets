@@ -1,11 +1,8 @@
 using System.Collections.Generic;
-using System.Composition;
-using Microsoft.TeamFoundation.Core.WebApi;
+using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Cmdlets.Git;
 using TfsCmdlets.Extensions;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Git
 {
