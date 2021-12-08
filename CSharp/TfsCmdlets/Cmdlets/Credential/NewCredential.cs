@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Credential
     [Cmdlet(VerbsCommon.New, "TfsCredential", DefaultParameterSetName = "Cached credentials")]
     [TfsCmdlet(CmdletScope.None, SkipAutoProperties = true)]
     [OutputType(typeof(VssCredentials))]
-    partial class NewCredential : CmdletBase
+    partial class NewCredential 
     {
         /// <summary>
         /// Specifies the URL of the server, collection or organization to connect to.
