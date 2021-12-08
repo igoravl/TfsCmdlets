@@ -24,7 +24,7 @@ namespace TfsCmdlets.Controllers.TeamProject
 
             if (!File.Exists(avatarImage)) throw new ArgumentException($"Invalid avatar image path '{avatarImage}'");
 
-            var client = Data.GetClient<ProjectHttpClient>(Parameters);
+            var client = Data.GetClient<ProjectHttpClient>();
             var projectAvatar = new ProjectAvatar
             {
                 Image = File.ReadAllBytes(avatarImage)

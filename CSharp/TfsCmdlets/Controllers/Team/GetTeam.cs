@@ -101,7 +101,7 @@ namespace TfsCmdlets.Controllers.Team
 
             if (includeMembers)
             {
-                var client = Data.GetClient<TeamHttpClient>(Parameters);
+                var client = Data.GetClient<TeamHttpClient>();
                 Logger.Log($"Retrieving team membership information for team '{team.Name}'");
 
                 var members = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
@@ -114,7 +114,7 @@ namespace TfsCmdlets.Controllers.Team
             {
                 Logger.Log($"Retrieving team settings for team '{team.Name}'");
 
-                var workClient = Data.GetClient<WorkHttpClient>(Parameters);
+                var workClient = Data.GetClient<WorkHttpClient>();
                 var ctx = new TeamContext(team.ProjectName, team.Name);
                 team.Settings = workClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");

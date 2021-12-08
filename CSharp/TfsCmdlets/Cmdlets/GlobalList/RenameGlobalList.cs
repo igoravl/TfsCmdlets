@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     //{
     //    protected override Models.GlobalList DoRenameItem()
     //    {
-    //        var list = GetItem<Models.GlobalList>();
+    //        var list = Data.GetItem<Models.GlobalList>();
     //        var newName = parameters.Get<string>(nameof(RenameGlobalList.NewName));
     //        var tpc = Collection;
 

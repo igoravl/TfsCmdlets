@@ -75,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         //        }
 
         //    var importList = new Models.GlobalListCollection(doc);
-        //    var existingLists = GetItems<Models.GlobalList>(new { GlobalList = "*" });
+        //    var existingLists = Data.GetItems<Models.GlobalList>(new { GlobalList = "*" });
         //    var operations = new Dictionary<string, string>();
 
         //    foreach (var list in importList)

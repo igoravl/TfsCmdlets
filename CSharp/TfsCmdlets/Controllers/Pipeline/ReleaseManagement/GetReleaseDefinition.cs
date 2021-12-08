@@ -26,7 +26,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
         //         # {
         //         #     tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
 
-        //         #     var client = Data.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>(parameters);
+        //         #     var client = Data.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
 
         //         #     task = client.GetRepositoryAsync(guid); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error getting repository with ID {guid}" task.Exception.InnerExceptions })
 

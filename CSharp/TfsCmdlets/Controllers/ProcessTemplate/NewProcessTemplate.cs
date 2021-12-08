@@ -20,7 +20,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
             //        var process = parameters.Get<string>(nameof(NewProcessTemplate.ProcessTemplate));
             //        var description = parameters.Get<string>(nameof(NewProcessTemplate.Description));
             //        var referenceName = parameters.Get<string>(nameof(NewProcessTemplate.ReferenceName));
-            //        var parent = GetItem<WebApiProcess>(new { ProcessTemplate = parameters.Get<object>(nameof(NewProcessTemplate.Parent)) });
+            //        var parent = Data.GetItem<WebApiProcess>(new { ProcessTemplate = parameters.Get<object>(nameof(NewProcessTemplate.Parent)) });
             //        var exists = TestItem<WebApiProcess>();
             //        var force = parameters.Get<bool>(nameof(NewProcessTemplate.Force));
 
@@ -28,7 +28,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 
             //        if (exists && !(force || ShouldContinue($"Are you sure you want to overwrite existing process '{process}'?"))) return null;
 
-            //        var client = Data.GetClient<WorkItemTrackingProcessHttpClient>(parameters);
+            //        var client = Data.GetClient<WorkItemTrackingProcessHttpClient>();
 
             //        var tmpProcessName = exists? $"{process}_{(new Random().Next()):X}": process;
 

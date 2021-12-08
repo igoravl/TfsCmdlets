@@ -23,7 +23,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
             if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) return null;
 
-            var configServer = Data.GetServer(Parameters);
+            var configServer = Data.GetServer();
             var collectionName = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Collection));
             var databaseServer = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseServer));
             var databaseName = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.DatabaseName));
@@ -37,7 +37,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
             Enum.TryParse<TeamFoundationServiceHostStatus>(Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.InitialState)),
                 out var initialState);
 
-            var tpcService = Data.GetService<ITeamProjectCollectionService>(Parameters);
+            var tpcService = Data.GetService<ITeamProjectCollectionService>();
 
             var servicingTokens = new Dictionary<string, string>()
             {

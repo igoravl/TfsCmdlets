@@ -36,7 +36,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                 _ => throw new ArgumentException($"Invalid or non-existent process template '{processTemplate}'")
             };
 
-            var client = Data.GetClient<ProjectHttpClient>(Parameters);
+            var client = Data.GetClient<ProjectHttpClient>();
 
             var tpInfo = new WebApiTeamProject
             {
@@ -62,7 +62,7 @@ namespace TfsCmdlets.Controllers.TeamProject
 
             // Wait for the operation to complete
 
-            var opsClient = Data.GetClient<OperationsHttpClient>(Parameters);
+            var opsClient = Data.GetClient<OperationsHttpClient>();
             var opsToken = opsClient.GetOperation(token.Id)
                 .GetResult("Error getting operation status");
 
