@@ -53,5 +53,9 @@ namespace TfsCmdlets.Services
         object InvokeScript(string script, Dictionary<string, object> variables);
 
         object InvokeScript(string script, bool useNewScope, PipelineResultTypes writeToPipeline, IList input, params object[] args);
+
+        string ResolvePath(string basePath, string path = "");
+
+        string GetCurrentDirectory();
     }
 }

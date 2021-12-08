@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Composition;
+using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -118,6 +119,28 @@ namespace TfsCmdlets.Services.Impl
         public object InvokeScript(string script, bool useNewScope, PipelineResultTypes writeToPipeline, IList input, params object[] args)
             => Cmdlet.InvokeCommand.InvokeScript(script, useNewScope, writeToPipeline, input, args);
 
+ /// <summary>
+        /// Gets the current directory in PowerShell
+        /// </summary>
+        public string GetCurrentDirectory()
+        {
+            return Cmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
+        }
+
+        /// <summary>
+        /// Gets the current directory in PowerShell
+        /// </summary>
+        public string ResolvePath(string basePath, string path = "")
+        {
+            var relativePath = Path.Combine(basePath, path);
+
+            if (!Path.IsPathRooted(relativePath))
+            {
+                relativePath = Path.Combine(GetCurrentDirectory(), relativePath);
+            }
+
+            return Path.GetFullPath(relativePath);
+        }
         public bool IsVerbose
         {
             get
