@@ -47,3 +47,4 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         [Parameter]
         public SwitchParameter Force { get; set; }
     }
+}
