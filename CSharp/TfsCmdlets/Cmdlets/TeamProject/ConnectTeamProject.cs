@@ -18,49 +18,5 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull()]
         public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_INTERACTIVE
-        /// </summary>
-        [Parameter(ParameterSetName = "Prompt for credential")]
-        public SwitchParameter Interactive { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CACHED_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
-        public SwitchParameter Cached { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_USER_NAME
-        /// </summary>
-        [Parameter(ParameterSetName = "User name and password", Mandatory = true, Position = 1)]
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSWORD
-        /// </summary>
-        [Parameter(ParameterSetName = "User name and password", Position = 2)]
-        public SecureString Password { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
-        [ValidateNotNull]
-        public object Credential { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
-        /// </summary>
-        [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
-        [Alias("Pat")]
-        public string PersonalAccessToken { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Passthru { get; set; }
     }
 }

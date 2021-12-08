@@ -37,6 +37,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// </example>
     [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
     [OutputType(typeof(VssConnection))]
+    [TfsCmdlet(CmdletScope.Server)]
     partial class ConnectTeamProjectCollection
     {
         /// <summary>
@@ -48,58 +49,5 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
         [ValidateNotNull]
         public object Collection { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CACHED_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = "Cached credentials", Mandatory = true)]
-        public SwitchParameter Cached { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_USER_NAME
-        /// </summary>
-        [Parameter(ParameterSetName = "User name and password", Mandatory = true, Position = 1)]
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSWORD
-        /// </summary>
-        [Parameter(ParameterSetName = "User name and password", Position = 2)]
-        public SecureString Password { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = "Credential object", Mandatory = true)]
-        [ValidateNotNull]
-        public object Credential { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
-        /// </summary>
-        [Parameter(ParameterSetName = "Personal Access Token", Mandatory = true)]
-        [Alias("Pat")]
-        public string PersonalAccessToken { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_INTERACTIVE
-        /// </summary>
-        [Parameter(ParameterSetName = "Prompt for credential")]
-        public SwitchParameter Interactive { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_SERVER
-        /// </summary>
-        [Parameter]
-        public object Server { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSTHRU
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Passthru { get; set; }
-
-        // TODO
-
     }
 }
