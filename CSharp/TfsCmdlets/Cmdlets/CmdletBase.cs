@@ -95,14 +95,10 @@ namespace TfsCmdlets.Cmdlets
 
                 if (result == null) return;
 
-                if (!ReturnsValue)
+                foreach(var r in result)
                 {
-                    foreach (var _ in result) { } // forces enumeration of iterator
-
-                    return;
+                    if(ReturnsValue) WriteObject(r);
                 }
-
-                WriteObject(result, true);
             }
             catch (Exception ex)
             {
@@ -145,7 +141,7 @@ namespace TfsCmdlets.Cmdlets
         }
 
         protected virtual bool ReturnsValue 
-            => IsPassthru || GetVerb().Equals("Get", StringComparison.OrdinalIgnoreCase);
+            => IsPassthru || (new[]{"Get", "Invoke"}).Any(v => v.Equals(GetVerb(), StringComparison.OrdinalIgnoreCase));
 
         private bool IsPassthru
         {
@@ -175,7 +171,7 @@ namespace TfsCmdlets.Cmdlets
 #error Unsupported platform
 #endif
 
-            if (isDesktop && GetType().GetCustomAttribute<TfsCmdletAttribute>().DesktopOnly)
+            if (isDesktop && (GetType().GetCustomAttribute<TfsCmdletAttribute>()?.DesktopOnly ?? false))
             {
                 return;
             }
