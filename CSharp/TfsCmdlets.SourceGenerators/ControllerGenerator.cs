@@ -44,7 +44,7 @@ namespace {controller.FullNamespace()}
   internal partial class {controller.Name}: ControllerBase{genericArg}
   {{
     [ImportingConstructor]
-    internal {controller.Name}({ctorArgs})
+    public {controller.Name}({ctorArgs})
         : base({baseCtorArgs})
     {{
 {propInit}
