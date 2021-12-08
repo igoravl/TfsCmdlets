@@ -9,7 +9,6 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": "$msCompile",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -29,6 +28,9 @@
                 "-Targets",
                 "Build",
                 "-SkipTests"
+            ],
+            "problemMatcher": [
+                "$msCompile"
             ]
         },
         {
@@ -50,6 +52,9 @@
                 "${workspaceRoot}/build.ps1",
                 "-Targets",
                 "Rebuild"
+            ],
+            "problemMatcher": [
+                "$msCompile"
             ]
         },
         {
