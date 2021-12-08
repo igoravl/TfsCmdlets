@@ -3,7 +3,7 @@
 namespace TfsCmdlets.Cmdlets
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    internal class TfsCmdletAttribute: Attribute
+    internal class TfsCmdletAttribute : Attribute
     {
         public CmdletScope Scope { get; }
 
@@ -14,6 +14,8 @@ namespace TfsCmdlets.Cmdlets
         public int RequiresVersion { get; set; }
 
         public bool SkipAutoProperties { get; set; }
+
+        public string PipelineProperty { get; set; }
 
         public TfsCmdletAttribute(CmdletScope scope)
         {
