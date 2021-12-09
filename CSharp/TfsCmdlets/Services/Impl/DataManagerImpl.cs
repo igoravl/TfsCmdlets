@@ -8,6 +8,7 @@ using TfsCmdlets.Models;
 using TfsCmdlets.Util;
 using Microsoft.VisualStudio.Services.Common;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
+using System.Collections;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -168,19 +169,53 @@ namespace TfsCmdlets.Services.Impl
 
         private IEnumerable<T> DoInvokeCommand<T>(IController controller, object overridingParameters)
         {
-            try
+            Parameters.PushContext(overridingParameters);
+
+            var result = controller.InvokeCommand();
+
+            return new EnumerableWrapper<T>(result is IEnumerable<T> list ? list : new[] { (T)result }, () => Parameters.PopContext());
+        }
+
+        private class EnumerableWrapper<T> : IEnumerable<T>, IEnumerator<T>
+        {
+            private readonly IEnumerator<T> _inner;
+            private readonly Action _onEnumerationCompleted;
+            private bool disposedValue;
+
+            public T Current => _inner.Current;
+
+            object IEnumerator.Current => Current;
+
+            public EnumerableWrapper(IEnumerable<T> inner, Action onEnumerationCompleted)
             {
-                Parameters.PushContext(overridingParameters);
-
-                var result = controller.InvokeCommand();
-
-                return result is IEnumerable<T> list ?
-                    list :
-                    new[] { (T)result };
+                _inner = inner.GetEnumerator();
+                _onEnumerationCompleted = onEnumerationCompleted;
             }
-            finally
+
+            public IEnumerator<T> GetEnumerator() => this;
+
+            public void Reset() => _inner.Reset();
+
+            IEnumerator IEnumerable.GetEnumerator() => this;
+
+            public bool MoveNext() => _inner.MoveNext();
+
+            protected virtual void Dispose(bool disposing)
             {
-                Parameters.PopContext();
+                if (!disposedValue)
+                {
+                    if (disposing)
+                    {
+                        _onEnumerationCompleted();
+                    }
+                    disposedValue = true;
+                }
+            }
+
+            public void Dispose()
+            {
+                Dispose(disposing: true);
+                GC.SuppressFinalize(this);
             }
         }
 

@@ -100,7 +100,7 @@ namespace TfsCmdlets.Services.Impl
 
         private IDictionary<string, object> Override(object overridingParameters)
         {
-            if (overridingParameters == null) return this;
+            if (overridingParameters == null) return _innerDictionary;
 
             var overridden = new Dictionary<string, object>(this, StringComparer.OrdinalIgnoreCase);
 
