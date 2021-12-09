@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets.TeamProject;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;

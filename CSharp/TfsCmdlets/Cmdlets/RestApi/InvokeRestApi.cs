@@ -1,11 +1,5 @@
-using System;
 using System.Collections;
 using System.Management.Automation;
-using System.Net.Http;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.HttpClient;
-using TfsCmdlets.Services;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {

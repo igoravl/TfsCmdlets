@@ -1,7 +1,4 @@
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.Identity.Client;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {

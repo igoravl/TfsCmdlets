@@ -1,6 +1,5 @@
 using Microsoft.TeamFoundation.Core.WebApi;
 using System.Management.Automation;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Team
 {

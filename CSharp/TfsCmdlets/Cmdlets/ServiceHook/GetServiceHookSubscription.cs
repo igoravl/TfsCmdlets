@@ -1,13 +1,7 @@
-using System.Collections.Generic;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
-using TfsCmdlets.Services;
 using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;
 using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 using WebApiSubscription = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription;
-using TfsCmdlets.Extensions;
-using System.Linq;
-using System;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {

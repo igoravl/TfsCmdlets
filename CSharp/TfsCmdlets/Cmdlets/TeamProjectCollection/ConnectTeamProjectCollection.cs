@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using System.Security;
 using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection

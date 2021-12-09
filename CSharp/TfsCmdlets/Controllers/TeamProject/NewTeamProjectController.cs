@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Management.Automation;
 using System.Threading;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.VisualStudio.Services.Operations;

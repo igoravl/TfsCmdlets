@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook

@@ -1,8 +1,4 @@
-using System;
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models;
-using TfsCmdlets.Extensions;
 using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate

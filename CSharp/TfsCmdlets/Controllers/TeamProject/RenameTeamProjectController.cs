@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Composition;
-using System.Management.Automation;
 using System.Threading;
 using Microsoft.VisualStudio.Services.Operations;
 using TfsCmdlets.Cmdlets.TeamProject;

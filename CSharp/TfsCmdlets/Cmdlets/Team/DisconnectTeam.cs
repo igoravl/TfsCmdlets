@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using TfsCmdlets.Services.Impl;
 
 namespace TfsCmdlets.Cmdlets.Team
 {

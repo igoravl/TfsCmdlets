@@ -4,11 +4,11 @@ using System.Management.Automation;
 using System.Reflection;
 using Microsoft.VisualStudio.Services.Location;
 using Microsoft.VisualStudio.Services.WebApi;
-using Microsoft.VisualStudio.Services.WebApi.Location;
 using TfsCmdlets.Services;
 
 #if NETCOREAPP3_1_OR_GREATER
 using AdoConnection = Microsoft.VisualStudio.Services.WebApi.VssConnection;
+using Microsoft.VisualStudio.Services.WebApi.Location;
 #else
 using Microsoft.TeamFoundation.Client;
 using AdoConnection = Microsoft.TeamFoundation.Client.TfsConnection;

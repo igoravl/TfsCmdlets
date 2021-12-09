@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using System.Security;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {

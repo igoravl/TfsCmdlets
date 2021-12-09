@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Microsoft.TeamFoundation.Core.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate

@@ -1,10 +1,5 @@
-using System;
-using System.Linq;
 using System.Management.Automation;
-using System.Reflection;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
 {

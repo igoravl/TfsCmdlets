@@ -1,13 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
-using Microsoft.TeamFoundation.Core.WebApi.Types;
-using Microsoft.TeamFoundation.Work.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
-using TfsCmdlets.Services.Impl;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
