@@ -190,7 +190,7 @@ namespace {cmdlet.FullNamespace()}
                 return propertyName.Equals(settings.PipelineProperty, StringComparison.OrdinalIgnoreCase);
             }
 
-            return ((settings.Verb.Equals("Get") || settings.Verb.StartsWith("Connect")) || ((int)settings.Scope == (int)currentScope));
+            return ((settings.Verb.Equals("Get") || settings.Verb.StartsWith("Connect")) && ((int)settings.Scope == (int)currentScope));
         }
 
         private T GetAttributeConstructorValue<T>(INamedTypeSymbol cmdlet, string attributeName, int argumentPosition = 0)
