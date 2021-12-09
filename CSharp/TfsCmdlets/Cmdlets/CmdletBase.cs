@@ -21,8 +21,13 @@ namespace TfsCmdlets.Cmdlets
 
         internal IController GetController()
             => Controllers.FirstOrDefault(c =>
-                c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase) ||
-                c.Value.CommandName.Equals(CommandName + "Controller", StringComparison.OrdinalIgnoreCase))?.Value;
+                    c.Value.CommandName.Equals(CommandName, StringComparison.OrdinalIgnoreCase) ||
+                    c.Value.CommandName.Equals(CommandName + "Controller", StringComparison.OrdinalIgnoreCase) ||
+                    (c.Value.Verb.Equals(Verb) && c.Value.DataType == GetDataType())
+                )?.Value;
+
+        internal Type GetDataType()
+            => GetType().GetCustomAttribute<TfsCmdletAttribute>()?.DataType ?? typeof(object);
 
         protected string Verb { get; private set; }
 
