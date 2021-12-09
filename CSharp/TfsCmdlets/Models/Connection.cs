@@ -24,7 +24,7 @@ namespace TfsCmdlets.Models
         /// <summary>Converts AdoConnection to Connection</summary>
         public static implicit operator Connection(AdoConnection c) => new Connection(c);
 
-        internal  Connection(object obj) : base(obj) { }
+        internal Connection(object obj) : base(obj) { }
 
         internal AdoConnection InnerConnection => this.BaseObject as AdoConnection;
 
@@ -36,10 +36,10 @@ namespace TfsCmdlets.Models
 
         internal Uri Uri => InnerConnection.Uri;
 
-        object ITfsServiceProvider.GetService(Type serviceType) 
+        object ITfsServiceProvider.GetService(Type serviceType)
             => CallGenericMethod(serviceType, "GetService");
-        
-        object ITfsServiceProvider.GetClient(Type clientType) 
+
+        object ITfsServiceProvider.GetClient(Type clientType)
             => CallGenericMethod(clientType, "GetClient");
 
 #if NETCOREAPP3_1_OR_GREATER
@@ -58,7 +58,7 @@ namespace TfsCmdlets.Models
                 var segmentCount = InnerConnection.Uri.Segments.Length;
 
                 if (segmentCount > 1 &&
-                    !InnerConnection.Uri.Segments[segmentCount-1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
+                    !InnerConnection.Uri.Segments[segmentCount - 1].Equals("tfs", StringComparison.OrdinalIgnoreCase))
                 {
                     return InnerConnection.Uri.Segments[segmentCount - 1];
                 }
@@ -126,9 +126,20 @@ namespace TfsCmdlets.Models
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)
                 .FirstOrDefault(m => m.Name.Equals(methodName));
 
-            return m?
-                .MakeGenericMethod(T)
-                .Invoke(InnerConnection, null);
+            object result;
+
+            try
+            {
+                result = m?.MakeGenericMethod(T).Invoke(InnerConnection, null);
+            }
+            catch (Exception ex)
+            {
+                if(ex.InnerException != null) throw ex.InnerException;
+
+                throw;
+            }
+
+            return result;
         }
     }
 }
