@@ -8,6 +8,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitBranchPolicy")]
     [OutputType(typeof(PolicyConfiguration))]
+    [TfsCmdlet(CmdletScope.Project, PipelineProperty = nameof(GetGitBranchPolicy.Branch))]
     partial class GetGitBranchPolicy 
     {
         /// <summary>

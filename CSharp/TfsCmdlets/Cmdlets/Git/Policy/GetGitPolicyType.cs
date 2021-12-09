@@ -8,6 +8,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsGitPolicyType")]
     [OutputType(typeof(PolicyType))]
+    [TfsCmdlet(CmdletScope.Project)]
     partial class GetGitPolicyType
     {
         /// <summary>

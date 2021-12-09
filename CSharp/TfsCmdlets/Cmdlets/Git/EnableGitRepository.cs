@@ -14,6 +14,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Enable, "TfsGitRepository", SupportsShouldProcess = true)]
     [OutputType(typeof(GitRepository))]
+    [TfsCmdlet(CmdletScope.Project)]
     partial class EnableGitRepository 
     {
         /// <summary>
