@@ -1,5 +1,0 @@
----
-layout: module
-title: Boards
----
-
