@@ -15,13 +15,17 @@ namespace TfsCmdlets.Models
     public class ClassificationNode : PSObject
     {
         private readonly WorkItemTrackingHttpClient _client;
-
         private WorkItemClassificationNode InnerNode => (WorkItemClassificationNode)BaseObject;
+        private readonly string _rootPath;
+        private readonly string _relativePath;
 
         internal ClassificationNode(WorkItemClassificationNode n,
             string projectName, WorkItemTrackingHttpClient client) : base(n)
         {
             ProjectName = projectName;
+            _rootPath = $"\\{ProjectName}\\{InnerNode.StructureType}";
+            _relativePath = (_rootPath.Length == InnerNode.Path.Length) ?
+                string.Empty : InnerNode.Path.Substring(_rootPath.Length + 1);
             _client = client;
             FixNodePath();
         }
@@ -44,11 +48,7 @@ namespace TfsCmdlets.Models
 
         internal IDictionary<string,object> Attributes => InnerNode.Attributes;
 
-        /// <summary>
-        /// Get a node's relative path
-        /// </summary>
-        internal string RelativePath => InnerNode.Path.Substring(InnerNode.Path.IndexOf('\\',
-            InnerNode.Path.Substring(0, InnerNode.Path.IndexOf('\\', 1) + 1).Length));
+        internal string RelativePath => _relativePath;
 
         internal bool HasChildren => InnerNode.HasChildren != null && InnerNode.HasChildren.Value;
 
