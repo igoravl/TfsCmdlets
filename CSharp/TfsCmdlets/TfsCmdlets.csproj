@@ -7,40 +7,16 @@
     <LangVersion>8.0</LangVersion>
     <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Generated\**" />
-    <EmbeddedResource Remove="Generated\**" />
-    <None Remove="Generated\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
-
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     <CompilerGeneratedFilesOutputPath>Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net471|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net471|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netcoreapp3.1|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netcoreapp3.1|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
   <ItemGroup>
+    <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
@@ -61,6 +37,12 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
     <Compile Remove="**/*.Core.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Generated\**" />
+    <EmbeddedResource Remove="Generated\**" />
+    <None Remove="Generated\**" />
   </ItemGroup>
 
   <ItemGroup>
