@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace TfsCmdlets.Services
 {
-    public interface IParameterManager: IDictionary<string,object>
+    public interface IParameterManager //: IDictionary<string,object>
     {
         void Initialize(Cmdlet cmdlet);
 
@@ -16,5 +16,9 @@ namespace TfsCmdlets.Services
         void PopContext();
 
         void Reset();
+
+        IEnumerable<string> Keys { get; }
+
+        object this[string key] { get; set; }
     }
 }

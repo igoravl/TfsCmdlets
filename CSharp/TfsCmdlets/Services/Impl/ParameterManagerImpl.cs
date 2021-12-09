@@ -102,7 +102,7 @@ namespace TfsCmdlets.Services.Impl
         {
             if (overridingParameters == null) return _innerDictionary;
 
-            var overridden = new Dictionary<string, object>(this, StringComparer.OrdinalIgnoreCase);
+            var overridden = new Dictionary<string, object>(_innerDictionary, StringComparer.OrdinalIgnoreCase);
 
             switch (overridingParameters)
             {
@@ -155,50 +155,7 @@ namespace TfsCmdlets.Services.Impl
         public bool HasParameter(string parameter)
             => _innerDictionary.ContainsKey(parameter);
 
-        IEnumerator<KeyValuePair<string, object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator()
-            => _innerDictionary.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator()
-            => _innerDictionary.GetEnumerator();
-
-        void IDictionary<string, object>.Add(string key, object value)
-            => _innerDictionary.Add(key, value);
-
-        bool IDictionary<string, object>.ContainsKey(string key)
-            => _innerDictionary.ContainsKey(key);
-
-        bool IDictionary<string, object>.Remove(string key)
-            => _innerDictionary.Remove(key);
-
-        bool IDictionary<string, object>.TryGetValue(string key, out object value)
-            => _innerDictionary.TryGetValue(key, out value);
-
-        void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item)
-            => _innerDictionary.Add(item);
-
-        void ICollection<KeyValuePair<string, object>>.Clear()
-            => _innerDictionary.Clear();
-
-        bool ICollection<KeyValuePair<string, object>>.Contains(KeyValuePair<string, object> item)
-            => _innerDictionary.Contains(item);
-
-        void ICollection<KeyValuePair<string, object>>.CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
-            => _innerDictionary.CopyTo(array, arrayIndex);
-
-        ICollection<string> IDictionary<string, object>.Keys
-            => _innerDictionary.Keys;
-
-        ICollection<object> IDictionary<string, object>.Values
-            => _innerDictionary.Values;
-
-        int ICollection<KeyValuePair<string, object>>.Count
-            => _innerDictionary.Count;
-
-        bool ICollection<KeyValuePair<string, object>>.IsReadOnly
-            => _innerDictionary.IsReadOnly;
-
-        bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item)
-            => _innerDictionary.Remove(item);
+        public IEnumerable<string> Keys => _innerDictionary.Keys;
 
         [ImportingConstructor]
         public ParameterManagerImpl(IPowerShellService powerShell)

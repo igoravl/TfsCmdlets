@@ -46,21 +46,23 @@ namespace TfsCmdlets.Services.Impl
 
             var parms = new Dictionary<string,object>();
 
-            foreach (var kvp in Parameters) 
+            foreach (var key in Parameters.Keys) 
             {
-                if (_hiddenParameters.Any(p => p.Equals(kvp.Key, StringComparison.OrdinalIgnoreCase)))
+                var value = Parameters[key];
+                
+                if (_hiddenParameters.Any(p => p.Equals(key, StringComparison.OrdinalIgnoreCase)))
                 {
-                    parms[kvp.Key] = "*****";
+                    parms[key] = "*****";
                     continue;
                 }
 
-                if(kvp.Value is SwitchParameter switchParameter)
+                if(value is SwitchParameter switchParameter)
                 {
-                    parms[kvp.Key] = switchParameter.IsPresent;
+                    parms[key] = switchParameter.IsPresent;
                     continue;
                 }
 
-                parms[kvp.Key] = kvp.Value;
+                parms[key] = value;
             }
 
             var hasParameterSetName = parms.ContainsKey("ParameterSetName");
