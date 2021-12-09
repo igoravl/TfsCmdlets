@@ -17,6 +17,8 @@ namespace TfsCmdlets.Cmdlets
 
         public string PipelineProperty { get; set; }
 
+        public Type DataType { get; set; }
+
         public TfsCmdletAttribute(CmdletScope scope)
         {
             Scope = scope;
