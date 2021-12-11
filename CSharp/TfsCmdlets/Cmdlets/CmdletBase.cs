@@ -115,7 +115,7 @@ namespace TfsCmdlets.Cmdlets
         {
             var command = GetController();
 
-            if (command == null) throw new Exception($"Controller '{CommandName}' not found. Are you missing a [CmdletController] attribute?");
+            if (command == null) throw new Exception($"Controller '{CommandName}Controller' not found. Are you missing a [CmdletController] attribute?");
 
             Parameters.Initialize(this);
 
