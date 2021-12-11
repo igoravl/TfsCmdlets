@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     /// <summary>
     /// Renames a test plans.
     /// </summary>
-    [Cmdlet(VerbsCommon.Rename, "TfsTestPlan", SupportsShouldProcess=true, ConfirmImpact=ConfirmImpact.Medium)]
-    [OutputType(typeof(TestPlan))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess=true, OutputType = typeof(TestPlan))]
     partial class RenameTestPlan
     {
         /// <summary>

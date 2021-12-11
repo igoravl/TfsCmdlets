@@ -6,16 +6,15 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// <summary>
     /// Gets information from one or more branches in a remote Git repository.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGitBranch", DefaultParameterSetName="Get by name")]
-    [TfsCmdlet(CmdletScope.Project, PipelineProperty = nameof(GetGitBranch.Repository))]
-    [OutputType(typeof(GitBranchStats))]
-    partial class GetGitBranch 
+    [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, DefaultParameterSetName = "Get by name", 
+     OutputType = typeof(GitBranchStats))]
+    partial class GetGitBranch
     {
         /// <summary>
         /// Specifies the name of a branch in the supplied Git repository. Wildcards are supported. 
         /// When omitted, all branches are returned.
         /// </summary>
-        [Parameter(Position=0, ParameterSetName="Get by name")]
+        [Parameter(Position = 0, ParameterSetName = "Get by name")]
         [ValidateNotNullOrEmpty]
         [Alias("RefName")]
         [SupportsWildcards()]
@@ -24,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         /// <summary>
         /// Returns the default branch in the given repository.
         /// </summary>
-        [Parameter(Mandatory=true, ParameterSetName="Get default")]
+        [Parameter(Mandatory = true, ParameterSetName = "Get default")]
         public SwitchParameter Default { get; set; }
 
         /// <summary>

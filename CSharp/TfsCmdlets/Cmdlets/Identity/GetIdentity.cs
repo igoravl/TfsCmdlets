@@ -8,9 +8,7 @@ namespace TfsCmdlets.Cmdlets.Identity
     /// Gets one or more identities that represents either users or groups in Azure DevOps. 
     /// This cmdlets resolves legacy identity information for use with older APIs such as the Security APIs
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsIdentity")]
-    [OutputType(typeof(WebApiIdentity))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiIdentity))]
     partial class GetIdentity 
     {
         /// <summary>

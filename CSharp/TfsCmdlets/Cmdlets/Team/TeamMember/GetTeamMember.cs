@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// <summary>
     /// Gets the members of a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamMember")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, OutputType = typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
     partial class GetTeamMember
     {
         /// <summary>

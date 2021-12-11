@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     /// <summary>
     /// Creates a new release definition folder.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsReleaseDefinitionFolder", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiFolder))]
     partial class NewReleaseDefinitionFolder 
     {
         /// <summary>

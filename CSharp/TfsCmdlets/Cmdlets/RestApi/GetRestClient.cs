@@ -14,9 +14,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
     /// information supplied by their parent connection object and can be used as a more convenient mechanism 
     /// to issue API calls.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsRestClient", DefaultParameterSetName = "Get by collection")]
-    [OutputType(typeof(VssHttpClientBase))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, DefaultParameterSetName = "Get by collection", OutputType = typeof(VssHttpClientBase))]
     partial class GetRestClient
     {
         /// <summary>

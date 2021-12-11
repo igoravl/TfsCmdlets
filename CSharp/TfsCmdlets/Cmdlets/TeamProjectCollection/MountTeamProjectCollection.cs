@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// <summary>
     /// Attaches a team project collection database to a Team Foundation Server installation.
     /// </summary>
-    [Cmdlet(VerbsData.Mount, "TfsTeamProjectCollection")]
+    [TfsCmdlet(CmdletScope.None)]
     partial class MountTeamProjectCollection
     {
         /// <summary>

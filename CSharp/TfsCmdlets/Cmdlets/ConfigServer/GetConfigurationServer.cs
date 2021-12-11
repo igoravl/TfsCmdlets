@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
@@ -10,8 +9,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <summary>
     ///   Gets information about a configuration server.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsConfigurationServer", DefaultParameterSetName = "Get by server")]
-    [TfsCmdlet(CmdletScope.None)]
+    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Get by server")]
     partial class GetConfigurationServer
     {
         /// <summary>

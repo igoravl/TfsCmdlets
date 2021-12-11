@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// <summary>
     /// Gets the Git branch policy configuration of the given Git branches.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGitBranchPolicy")]
-    [OutputType(typeof(PolicyConfiguration))]
-    [TfsCmdlet(CmdletScope.Project, PipelineProperty = nameof(GetGitBranchPolicy.Branch))]
+    [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, OutputType = typeof(PolicyConfiguration))]
     partial class GetGitBranchPolicy 
     {
         /// <summary>

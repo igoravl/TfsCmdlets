@@ -11,9 +11,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// event such as "work item changed" or "build queued". Use this cmdlet to list the available publishers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookPublisher")]
-    [OutputType(typeof(WebApiPublisher))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiPublisher))]
     partial class GetServiceHookPublisher
     {
         /// <summary>

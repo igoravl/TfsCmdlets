@@ -1,17 +1,12 @@
-using System.Collections;
 using System.Management.Automation;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
     /// <summary>
     /// Sets the contents of one or more work items.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsWorkItem", SupportsShouldProcess = true)]
-    [OutputType(typeof(Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiWorkItem))]
     partial class SetWorkItem
     {
         /// <summary>

@@ -7,9 +7,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// <summary>
     /// Gets one or more build/pipeline definition folders in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsBuildDefinitionFolder")]
-    [OutputType(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WebApiFolder))]
     partial class GetBuildDefinitionFolder
     {
         /// <summary>

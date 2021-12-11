@@ -25,9 +25,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// <notes>
     /// Detaching a collection prevents users from accessing any projects in that collection.
     /// </notes>
-    [Cmdlet(VerbsData.Dismount, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    [OutputType(typeof(string))]
-    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true, SupportsShouldProcess = true, OutputType = typeof(string))]
     partial class DismountTeamProjectCollection
     {
         /// <summary>

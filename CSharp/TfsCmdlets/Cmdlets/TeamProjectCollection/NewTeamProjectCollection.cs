@@ -1,15 +1,11 @@
-using System;
 using System.Management.Automation;
-using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
     /// <summary>
     /// Creates a new team project collection.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    [OutputType(typeof(Connection))]
-    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Server, DesktopOnly = true, SupportsShouldProcess = true, OutputType = typeof(Models.Connection))]
     partial class NewTeamProjectCollection
     {
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]

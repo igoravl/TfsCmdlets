@@ -8,9 +8,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Changes the details of a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsTeam", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTeam))]
     partial class SetTeam 
     {
         /// <summary>

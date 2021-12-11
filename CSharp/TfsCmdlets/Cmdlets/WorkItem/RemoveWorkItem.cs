@@ -1,15 +1,11 @@
 using System.Management.Automation;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
     /// <summary>
     /// Deletes a work item from a team project collection.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsWorkItem", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true)]
     partial class RemoveWorkItem
     {
         /// <summary>

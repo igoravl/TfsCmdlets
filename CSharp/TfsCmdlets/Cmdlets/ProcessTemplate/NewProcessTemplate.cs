@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     /// <summary>
     /// Creates a new inherited process.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsProcessTemplate", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiProcess))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(WebApiProcess))]
     partial class NewProcessTemplate 
     {
         /// <summary>

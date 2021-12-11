@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// <summary>
     /// Removes a member from a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTeamMember", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, SupportsShouldProcess = true)]
     partial class RemoveTeamMember
     {
         /// <summary>

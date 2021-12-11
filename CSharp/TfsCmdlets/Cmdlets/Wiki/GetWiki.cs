@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     /// <summary>
     /// Gets information from one or more Wiki repositories in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsWiki")]
-    [OutputType(typeof(WikiV2))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WikiV2))]
     partial class GetWiki
     {
         /// <summary>

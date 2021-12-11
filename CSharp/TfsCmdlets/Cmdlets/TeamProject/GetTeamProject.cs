@@ -11,9 +11,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// (an instance of Microsoft.TeamFoundation.Core.WebApi.TeamProject) from the supplied 
     /// Team Project Collection.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamProject", DefaultParameterSetName = "Get by project")]
-    [OutputType(typeof(WebApiTeamProject))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, DefaultParameterSetName = "Get by project", OutputType = typeof(WebApiTeamProject))]
     partial class GetTeamProject
     {
         /// <summary>

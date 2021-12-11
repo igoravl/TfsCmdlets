@@ -23,9 +23,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 	/// <example>
 	/// <code>Copy-TfsTestPlan -TestPlan "My test plan" -Project "SourceProject" -Destination "TargetProject" -NewName "My new test plan"</code>
 	/// </example>
-    [Cmdlet(VerbsCommon.Copy, "TfsTestPlan")]
-    [OutputType(typeof(TestPlan))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(TestPlan))]
     partial class CopyTestPlan
     {
         /// <summary>

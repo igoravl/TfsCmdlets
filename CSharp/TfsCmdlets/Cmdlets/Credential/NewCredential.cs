@@ -9,9 +9,7 @@ namespace TfsCmdlets.Cmdlets.Credential
     /// Provides credentials to use when you connect to a Team Foundation Server 
     /// or Azure DevOps organization.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsCredential", DefaultParameterSetName = "Cached credentials")]
-    [TfsCmdlet(CmdletScope.None)]
-    [OutputType(typeof(VssCredentials))]
+    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Cached credentials", OutputType = typeof(VssCredentials))]
     partial class NewCredential 
     {
         /// <summary>

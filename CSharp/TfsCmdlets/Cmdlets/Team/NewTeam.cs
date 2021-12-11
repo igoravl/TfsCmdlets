@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Creates a new team.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsTeam", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTeam))]
     partial class NewTeam
     {
         /// <summary>

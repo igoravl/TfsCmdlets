@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.Shell
     /// <summary>
     /// Deactivates the Azure DevOps Shell
     /// </summary>
-    [Cmdlet(VerbsCommon.Exit, "TfsShell")]
+    [TfsCmdlet(CmdletScope.None)]
     partial class ExitShell 
     {
     }

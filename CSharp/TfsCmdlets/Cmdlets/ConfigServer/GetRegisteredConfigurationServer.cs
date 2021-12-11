@@ -1,19 +1,14 @@
-using System;
-using System.Linq;
 using System.Management.Automation;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
     /// <summary>
     /// Gets one or more Team Foundation Server addresses registered in the current computer.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsRegisteredConfigurationServer")]
-#if NET471_OR_GREATER
-    [OutputType(typeof(Microsoft.TeamFoundation.Client.RegisteredConfigurationServer))]
-#endif
     [TfsCmdlet(CmdletScope.None, DesktopOnly = true)]
+#if NET471_OR_GREATER
+    , OutputType = typeof(Microsoft.TeamFoundation.Client.RegisteredConfigurationServer))]
+#endif
     partial class GetRegisteredConfigurationServer
     {
         /// <summary>

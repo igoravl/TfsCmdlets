@@ -7,9 +7,8 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// <summary>
     /// Creates a new team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsTeamProject", DefaultParameterSetName = "Get by project", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiTeamProject))]
-    [TfsCmdlet(CmdletScope.Collection, RequiresVersion = 2015)]
+    [TfsCmdlet(CmdletScope.Collection, RequiresVersion = 2015, DefaultParameterSetName = "Get by project", SupportsShouldProcess = true, 
+     OutputType = typeof(WebApiTeamProject))]
     partial class NewTeamProject
     {
         /// <summary>

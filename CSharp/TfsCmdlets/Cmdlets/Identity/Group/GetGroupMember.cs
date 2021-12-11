@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// <summary>
     /// Gets the members of a Azure DevOps group
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGroupMember")]
-    [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
     partial class GetGroupMember
     {
         /// <summary>

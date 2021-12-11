@@ -6,8 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.XamlBuild
     /// <summary>
     /// Queues a XAML Build.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "TfsXamlBuild", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Project, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Project, DesktopOnly = true, SupportsShouldProcess = true)]
     partial class StartXamlBuild
     {
         [Parameter(Mandatory = true, Position = 0)]

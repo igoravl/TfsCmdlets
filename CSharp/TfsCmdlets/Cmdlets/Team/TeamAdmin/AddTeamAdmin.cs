@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// <summary>
     /// Adds a new administrator to a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "TfsTeamAdmin", SupportsShouldProcess = true)]
-    [OutputType(typeof(TeamAdmins))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, SupportsShouldProcess = true, OutputType = typeof(TeamAdmins))]
     partial class AddTeamAdmin
     {
         /// <summary>

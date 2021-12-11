@@ -12,9 +12,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// Slack, Trello ou the generic WebHook consumer. Use this cmdlet to list the available consumers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookConsumer")]
-    [OutputType(typeof(WebApiConsumer))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiConsumer))]
     partial class GetServiceHookConsumer
     {
         /// <summary>

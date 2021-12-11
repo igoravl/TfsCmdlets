@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Gets information about one or more teams.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
-    [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Get by team", OutputType = typeof(WebApiTeam))]
     partial class GetTeam 
     {
         /// <summary>

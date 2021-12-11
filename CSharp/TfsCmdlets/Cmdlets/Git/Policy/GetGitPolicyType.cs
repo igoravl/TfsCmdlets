@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// <summary>
     /// Gets one or more Git branch policies supported by the given team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGitPolicyType")]
-    [OutputType(typeof(PolicyType))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(PolicyType))]
     partial class GetGitPolicyType
     {
         /// <summary>

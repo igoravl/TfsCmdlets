@@ -5,9 +5,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// <summary>
     /// Connects to a Team Project.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProject", DefaultParameterSetName = "Prompt for credential")]
-    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, DefaultParameterSetName = "Prompt for credential", OutputType = typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
     partial class ConnectTeamProject
     {
         /// <summary>

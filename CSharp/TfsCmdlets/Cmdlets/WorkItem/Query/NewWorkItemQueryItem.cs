@@ -12,7 +12,7 @@
 //     /// Create a new work items query in the given Team Project.
 //     /// </summary>
 //     [Cmdlet(VerbsCommon.New, "TfsWorkItemQuery", SupportsShouldProcess = true)]
-//     [OutputType(typeof(QueryHierarchyItem))]
+//     , OutputType = typeof(QueryHierarchyItem))]
 //     partial class NewWorkItemQuery 
 //     {
 //         /// <summary>
@@ -39,7 +39,7 @@
 //     /// Create a new work items query in the given Team Project.
 //     /// </summary>
 //     [Cmdlet(VerbsCommon.New, "TfsWorkItemQueryFolder", SupportsShouldProcess = true)]
-//     [OutputType(typeof(QueryHierarchyItem))]
+//     , OutputType = typeof(QueryHierarchyItem))]
 //     partial class NewWorkItemQueryFolder : NewWorkItemQueryItemCmdletBase
 //     {
 //         /// <summary>

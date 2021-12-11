@@ -9,9 +9,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// <summary>
     /// Gets the notification history for a given service hook subscription
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookNotificationHistory")]
-    [OutputType(typeof(Notification))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(Notification))]
     partial class GetServiceHookNotificationHistory
     {
         /// <summary>

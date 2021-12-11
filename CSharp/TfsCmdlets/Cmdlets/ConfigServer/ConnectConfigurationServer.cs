@@ -1,7 +1,4 @@
 using System.Management.Automation;
-using System.Security;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
@@ -27,8 +24,7 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <para type="input">System.String</para>
     /// <para type="input">System.Uri</para>
 
-    [Cmdlet(VerbsCommunications.Connect, "TfsConfigurationServer", DefaultParameterSetName = "Prompt for credential")]
-    [TfsCmdlet(CmdletScope.None)]
+    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Prompt for credential")]
     partial class ConnectConfigurationServer
     {
         /// <summary>

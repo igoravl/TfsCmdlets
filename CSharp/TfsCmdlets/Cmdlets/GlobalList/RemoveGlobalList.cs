@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Deletes one or more Global Lists.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsGlobalList", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true, SupportsShouldProcess = true)]
     partial class RemoveGlobalList 
     {
         /// <summary>

@@ -25,9 +25,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <input>Microsoft.TeamFoundation.Client.TfsTeamProjectCollection</input>
     /// <input>System.String</input>
     /// <input>System.Uri</input>
-    [Cmdlet(VerbsData.Export, "TfsGlobalList")]
-    [OutputType(typeof(string))]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true, OutputType = typeof(string))]
     partial class ExportGlobalList
     {
         /// <summary>

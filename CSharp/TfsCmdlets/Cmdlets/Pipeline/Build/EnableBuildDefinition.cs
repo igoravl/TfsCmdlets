@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     /// <summary>
     /// Gets one or more build/pipeline definitions in a team project.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Enable, "TfsBuildDefinition", SupportsShouldProcess = true)]
-    [OutputType(typeof(BuildDefinitionReference))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
     partial class EnableBuildDefinition
     {
         /// <summary>

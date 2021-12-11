@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// <summary>
     /// Adds group members to an Azure DevOps group.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "TfsGroupMember", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true)]
     partial class AddGroupMember 
     {
         /// <summary>

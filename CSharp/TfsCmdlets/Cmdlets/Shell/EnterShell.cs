@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.Shell
     /// <summary>
     /// Activates the Azure DevOps Shell
     /// </summary>
-    [Cmdlet(VerbsCommon.Enter, "TfsShell")]
+    [TfsCmdlet(CmdletScope.None)]
     partial class EnterShell
     {
         /// <summary>

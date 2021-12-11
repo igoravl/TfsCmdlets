@@ -7,9 +7,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     /// <summary>
     /// Gets one or more Release/pipeline definition folders in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsReleaseDefinitionFolder")]
-    [OutputType(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WebApiFolder))]
     partial class GetReleaseDefinitionFolder
     {
         /// <summary>

@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     /// <summary>
     /// Deletes one or more Git repositories from a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsWiki", SupportsShouldProcess = true, DefaultParameterSetName = "Remove code wiki")]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, DefaultParameterSetName = "Remove code wiki")]
     partial class RemoveWiki
     {
         /// <summary>

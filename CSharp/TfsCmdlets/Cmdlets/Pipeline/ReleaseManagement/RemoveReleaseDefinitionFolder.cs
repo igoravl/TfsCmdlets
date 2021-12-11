@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     /// <summary>
     /// Deletes one or more release definition folders.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsReleaseDefinitionFolder", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiFolder))]
     partial class RemoveReleaseDefinitionFolder
     {
         /// <summary>

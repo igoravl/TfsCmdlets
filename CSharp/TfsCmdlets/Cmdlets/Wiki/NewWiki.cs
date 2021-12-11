@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
     /// <summary>
     /// Creates a new Wiki repository in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsWiki", SupportsShouldProcess = true)]
-    [OutputType(typeof(WikiV2))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WikiV2))]
     partial class NewWiki
     {
         /// <summary>

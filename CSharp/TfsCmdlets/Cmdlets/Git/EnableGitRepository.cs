@@ -12,9 +12,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// pull requests etc) but remains discoverable, with a warning message 
     /// stating it is disabled.
     /// </remarks>
-    [Cmdlet(VerbsLifecycle.Enable, "TfsGitRepository", SupportsShouldProcess = true)]
-    [OutputType(typeof(GitRepository))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(GitRepository))]
     partial class EnableGitRepository 
     {
         /// <summary>

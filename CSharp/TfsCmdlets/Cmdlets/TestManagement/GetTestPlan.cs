@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     /// <summary>
     /// Gets the contents of one or more test plans.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTestPlan")]
-    [OutputType(typeof(TestPlan))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(TestPlan))]
     partial class GetTestPlan
     {
         /// <summary>

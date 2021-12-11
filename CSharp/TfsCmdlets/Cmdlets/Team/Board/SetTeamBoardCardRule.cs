@@ -8,9 +8,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
     /// <summary>
     /// Set the card rule settings of the specified backlog board.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsTeamBoardCardRuleSetting", SupportsShouldProcess = true)]
-    [OutputType(typeof(BoardCardRuleSettings))]
-    [TfsCmdlet(CmdletScope.Team, PipelineProperty = "Board")]
+    [TfsCmdlet(CmdletScope.Team, NoAutoPipeline = true, SupportsShouldProcess = true, OutputType = typeof(BoardCardRuleSettings))]
     partial class SetTeamBoardCardRule
     {
         /// <summary>

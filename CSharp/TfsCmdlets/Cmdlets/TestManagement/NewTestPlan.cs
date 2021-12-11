@@ -7,9 +7,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     /// <summary>
     /// Creates a new test plan.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsTestPlan")]
-    [OutputType(typeof(TestPlan))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(TestPlan))]
     partial class NewTestPlan
     {
         /// <summary>

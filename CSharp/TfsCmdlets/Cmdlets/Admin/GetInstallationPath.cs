@@ -1,9 +1,5 @@
-using System;
-using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using TfsCmdlets.Services;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
@@ -26,9 +22,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     ///         server SPTFSSRV, prompting for admin credentials to be used for establishing a 
     ///         PS Remoting session to the server</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "TfsInstallationPath", DefaultParameterSetName = "Use computer name")]
-    [OutputType(typeof(string))]
-    [TfsCmdlet(CmdletScope.None)]
+    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Use computer name", OutputType = typeof(string))]
     partial class GetInstallationPath
     {
         /// <summary>

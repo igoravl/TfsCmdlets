@@ -19,9 +19,7 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
     /// 
     ///   IMPORTANT: Retrieving user-scoped values is currently not supported.
     /// </notes>
-    [Cmdlet(VerbsCommon.Set, "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(object))]
     partial class SetRegistryValue
     {
         /// <summary>

@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
     /// <summary>
     /// Adds new members to a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "TfsTeamMember", SupportsShouldProcess = true)]
-    [OutputType(typeof(TeamAdmins))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, SupportsShouldProcess = true, OutputType = typeof(TeamAdmins))]
     partial class AddTeamMember
     {
         /// <summary>

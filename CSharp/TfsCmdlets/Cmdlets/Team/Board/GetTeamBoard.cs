@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
     /// <summary>
     /// Gets one or more team boards.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamBoard")]
-    [OutputType(typeof(WebApiBoard))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, OutputType = typeof(WebApiBoard))]
     partial class GetTeamBoard
     {
         /// <summary>

@@ -6,8 +6,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Changes the contents of a Global List.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsGlobalList", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true, SupportsShouldProcess = true)]
     partial class SetGlobalList 
     {
         /// <summary>

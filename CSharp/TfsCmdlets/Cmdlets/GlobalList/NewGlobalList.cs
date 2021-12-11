@@ -5,9 +5,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Creates a new Global List.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsGlobalList", SupportsShouldProcess = true)]
-    [OutputType(typeof(PSCustomObject))]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true, SupportsShouldProcess = true, OutputType = typeof(PSCustomObject))]
     partial class NewGlobalList 
     {
         /// <summary>

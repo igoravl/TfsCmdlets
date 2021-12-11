@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
     /// <summary>
     /// Deletes one or more test plans.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTestPlan", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true)]
     partial class RemoveTestPlan
     {
         /// <summary>

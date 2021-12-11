@@ -12,10 +12,8 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     /// this cmdlet, unless their -Collection argument is provided or a new call to 
     /// Connect-TfsTeam is made.
     /// </remarks>
-    [Cmdlet(VerbsCommunications.Disconnect, "TfsTeamProjectCollection")]
+    [TfsCmdlet(CmdletScope.None)]
     partial class DisconnectTeamProjectCollection 
     {
-        // TODO
-
     }
 }

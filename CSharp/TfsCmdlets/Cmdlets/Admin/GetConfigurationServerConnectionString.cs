@@ -1,9 +1,5 @@
-using System;
-using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
-using TfsCmdlets.Services;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
@@ -12,9 +8,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </summary>
     /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationConnectionstring/">Online version:</related>
     /// <related>Get-TfsInstallationPath</related>
-    [Cmdlet(VerbsCommon.Get, "TfsConfigurationConnectionString")]
-    [OutputType(typeof(string))]
-    [TfsCmdlet(CmdletScope.None, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.None, DesktopOnly = true, OutputType = typeof(string))]
     partial class GetConfigurationConnectionString
     {
         /// <summary>

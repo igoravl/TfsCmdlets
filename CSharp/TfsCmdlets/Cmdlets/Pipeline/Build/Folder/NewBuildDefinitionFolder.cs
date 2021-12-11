@@ -11,9 +11,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// the parent folders (foo, foo\bar) does not exist, it is automatically created before creating any
     /// child folders.
     /// </remarks>
-    [Cmdlet(VerbsCommon.New, "TfsBuildDefinitionFolder", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiFolder))]
     partial class NewBuildDefinitionFolder
     {
         /// <summary>

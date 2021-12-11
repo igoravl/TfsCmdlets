@@ -15,11 +15,17 @@ namespace TfsCmdlets.Cmdlets
 
         public bool SkipAutoProperties { get; set; }
 
-        public string PipelineProperty { get; set; }
+        public bool NoAutoPipeline { get; set; }
 
         public Type DataType { get; set; }
 
-        public TfsCmdletAttribute(CmdletScope scope)
+        public Type OutputType { get; set; }
+
+        public bool SupportsShouldProcess { get; set; }
+
+        public string DefaultParameterSetName { get; set; }
+
+        public TfsCmdletAttribute(CmdletScope scope = CmdletScope.None)
         {
             Scope = scope;
         }

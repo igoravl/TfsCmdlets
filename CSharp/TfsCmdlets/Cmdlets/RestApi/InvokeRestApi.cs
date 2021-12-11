@@ -30,7 +30,6 @@ namespace TfsCmdlets.Cmdlets.RestApi
     ///   <code>Invoke-TfsRestApi 'GET https://{instance}/{collection}/_apis/process/processes?api-version=4.1' -Collection http://vsalm:8080/tfs/DefaultCollection</code>
     ///   <para>Calls an API in a TFS instance, parsing the example provided by the docs.microsoft.com web site.</para>
     /// </example>
-    [Cmdlet(VerbsLifecycle.Invoke, "TfsRestApi")]
     [TfsCmdlet(CmdletScope.Team)]
     partial class InvokeRestApi
     {

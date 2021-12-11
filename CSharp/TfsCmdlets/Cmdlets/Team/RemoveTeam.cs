@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Deletes a team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTeam", SupportsShouldProcess = true)]
-    [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTeam))]
     partial class RemoveTeam 
     {
         /// <summary>

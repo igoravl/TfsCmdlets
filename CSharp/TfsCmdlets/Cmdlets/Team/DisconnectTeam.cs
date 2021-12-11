@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// this cmdlet, unless their -Team argument is provided or a new call to 
     /// Connect-TfsTeam is made.
     /// </remarks>
-    [Cmdlet(VerbsCommunications.Disconnect, "TfsTeam")]
+    [TfsCmdlet(CmdletScope.None)]
     partial class DisconnectTeam
     { 
     }

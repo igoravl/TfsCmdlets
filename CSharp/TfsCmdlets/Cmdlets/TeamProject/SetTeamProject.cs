@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// <summary>
     /// Changes the details of a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "TfsTeamProject")]
-    [OutputType(typeof(WebApiTeamProject))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiTeamProject))]
     partial class SetTeamProject
     {
         /// <summary>

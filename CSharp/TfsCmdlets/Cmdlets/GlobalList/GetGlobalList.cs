@@ -5,9 +5,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
     /// <summary>
     /// Gets the contents of one or more Global Lists.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsGlobalList")]
-    [OutputType(typeof(Models.GlobalList))]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly=true, OutputType = typeof(Models.GlobalList))]
     partial class GetGlobalList 
     {
         /// <summary>

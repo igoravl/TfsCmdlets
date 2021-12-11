@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     /// <summary>
     /// Gets information from one or more process templates.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsProcessTemplate")]
-    [OutputType(typeof(WebApiProcess))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiProcess))]
     partial class GetProcessTemplate 
     {
         /// <summary>

@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
     /// <summary>
     /// Gets one or more team board card rules.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamBoardCardRule")]
-    [OutputType(typeof(WebApiCardRule))]
-    [TfsCmdlet(CmdletScope.Team, PipelineProperty = "Board")]
+    [TfsCmdlet(CmdletScope.Team, NoAutoPipeline = true, OutputType = typeof(WebApiCardRule))]
     partial class GetTeamBoardCardRule
     {
         /// <summary>

@@ -1,6 +1,4 @@
 using System.Management.Automation;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services.Impl;
 
 namespace TfsCmdlets.Cmdlets.ConfigServer
 {
@@ -13,7 +11,6 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// as provided by "Get-TfsConfigurationServer -Current" will no longer work after a call to this cmdlet, 
     /// unless their -Server argument is provided or a new call to Connect-TfsConfigurationServer is made.
     /// </remarks>
-    [Cmdlet(VerbsCommunications.Disconnect, "TfsConfigurationServer")]
     [TfsCmdlet(CmdletScope.None)]
     partial class DisconnectConfigurationServer
     {

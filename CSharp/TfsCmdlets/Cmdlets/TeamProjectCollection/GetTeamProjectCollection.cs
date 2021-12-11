@@ -10,13 +10,12 @@ using Microsoft.TeamFoundation.Client;
     /// <summary>
     /// Gets one of more team project collections (organizations in Azure DevOps).
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamProjectCollection", DefaultParameterSetName = "Get by collection")]
+    [TfsCmdlet(CmdletScope.Server, DefaultParameterSetName = "Get by collection", 
 #if NETCOREAPP3_1_OR_GREATER    
-    [OutputType(typeof(VssConnection))]
+     OutputType = typeof(VssConnection))]
 #else
-    [OutputType(typeof(TfsTeamProjectCollection))]
+     OutputType = typeof(TfsTeamProjectCollection))]
 #endif
-    [TfsCmdlet(CmdletScope.Server)]
     partial class GetTeamProjectCollection
     {
         /// <summary>

@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.Backlog
     /// <summary>
     /// Gets information about one or more backlog levels of a given team.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsTeamBacklogLevel")]
-    [OutputType(typeof(WebApiBacklogLevelConfiguration))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, OutputType = typeof(WebApiBacklogLevelConfiguration))]
     partial class GetTeamBacklogLevel
     {
         /// <summary>

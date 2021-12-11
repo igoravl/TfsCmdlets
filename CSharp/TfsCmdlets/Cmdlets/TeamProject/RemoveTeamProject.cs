@@ -6,8 +6,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
     /// <summary>
     /// Deletes one or more team projects. 
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "TfsTeamProject", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true)]
     partial class RemoveTeamProject
     {
         /// <summary>

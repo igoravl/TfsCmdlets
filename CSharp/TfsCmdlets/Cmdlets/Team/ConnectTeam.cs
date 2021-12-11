@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Connects to a team.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Connect, "TfsTeam", DefaultParameterSetName = "Prompt for credential")]
-    [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Prompt for credential", OutputType = typeof(WebApiTeam))]
     partial class ConnectTeam
     {
         /// <summary>

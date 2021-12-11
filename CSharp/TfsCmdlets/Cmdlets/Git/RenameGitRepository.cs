@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// <summary>
     /// Renames a Git repository in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Rename, "TfsGitRepository", SupportsShouldProcess = true)]
-    [OutputType(typeof(GitRepository))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(GitRepository))]
     partial class RenameGitRepository
     {
         /// <summary>

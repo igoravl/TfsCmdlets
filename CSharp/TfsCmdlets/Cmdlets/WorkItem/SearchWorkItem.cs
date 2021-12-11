@@ -7,9 +7,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// Gets the contents of one or more work items.
     /// </summary>
     /// <related>https://docs.microsoft.com/en-us/azure/devops/project/search/advanced-work-item-search-syntax</related>
-    [Cmdlet(VerbsCommon.Search, "TfsWorkItem", DefaultParameterSetName = "Query by text")]
-    [OutputType(typeof(WebApiWorkItem))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Query by text", OutputType = typeof(WebApiWorkItem))]
     partial class SearchWorkItem : CmdletBase
     {
         /// <summary>

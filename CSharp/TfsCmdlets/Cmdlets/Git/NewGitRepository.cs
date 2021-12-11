@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// <summary>
     /// Creates a new Git repository in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsGitRepository", SupportsShouldProcess = true)]
-    [OutputType(typeof(GitRepository))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GitRepository))]
     partial class NewGitRepository
     {
         /// <summary>

@@ -5,8 +5,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <summary>
     /// Starts an offline team project collection and make it online.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "TfsTeamProjectCollection", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Server)]
+    [TfsCmdlet(CmdletScope.Server, SupportsShouldProcess = true)]
     partial class StartTeamProjectCollection
     {
         /// <summary>

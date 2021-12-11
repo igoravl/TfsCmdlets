@@ -1,10 +1,4 @@
-using System;
-using System.Linq;
 using System.Management.Automation;
-using System.Xml.Linq;
-using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Admin.Registry
 {
@@ -26,9 +20,7 @@ namespace TfsCmdlets.Cmdlets.Admin.Registry
     ///   <code>Get-TfsRegistryValue -Path '/Service/Integration/Settings/EmailEnabled'</code>
     ///   <para>Gets the current value of the 'EmailEnabled' key in the TFS Registry</para>
     /// </example>
-    [Cmdlet(VerbsCommon.Get, "TfsRegistryValue")]
-    [OutputType(typeof(object))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(object))]
     partial class GetRegistryValue
     {
         /// <summary>

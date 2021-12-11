@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     /// <summary>
     /// Gets one or more build/pipeline definitions in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsBuildDefinition")]
-    [OutputType(typeof(BuildDefinitionReference))]
-    [TfsCmdlet(CmdletScope.Project)]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(BuildDefinitionReference))]
     partial class GetBuildDefinition
     {
         /// <summary>

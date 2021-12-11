@@ -1,4 +1,3 @@
-using System;
 using System.Management.Automation;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
@@ -7,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// <summary>
     /// Gets the contents of one or more work items.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsWorkItem", DefaultParameterSetName = "Query by revision")]
-    [OutputType(typeof(WebApiWorkItem))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, DefaultParameterSetName = "Query by revision", OutputType = typeof(WebApiWorkItem))]
     partial class GetWorkItem
     {
         /// <summary>

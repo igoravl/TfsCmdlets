@@ -8,9 +8,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// <summary>
     /// Gets one or more service hook subscriptions
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookSubscription")]
-    [OutputType(typeof(WebApiSubscription))]
-    [TfsCmdlet(CmdletScope.Collection)]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiSubscription))]
     partial class GetServiceHookSubscription
     {
         /// <summary>

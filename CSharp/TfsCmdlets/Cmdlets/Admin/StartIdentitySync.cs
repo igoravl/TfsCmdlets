@@ -1,14 +1,11 @@
-using System;
 using System.Management.Automation;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Cmdlets.Admin
 {
     /// <summary>
     ///   Triggers an Identity Sync server job.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "TfsIdentitySync", SupportsShouldProcess = true)]
-    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true, SupportsShouldProcess = true)]
     partial class StartIdentitySync
     {
         /// <summary>

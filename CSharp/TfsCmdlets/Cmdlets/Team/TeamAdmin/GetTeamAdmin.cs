@@ -6,9 +6,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
     /// <summary>
     /// Gets the administrators of a team.
     /// </summary>    
-    [Cmdlet(VerbsCommon.Get, "TfsTeamAdmin")]
-    [OutputType(typeof(WebApiIdentity))]
-    [TfsCmdlet(CmdletScope.Team)]
+    [TfsCmdlet(CmdletScope.Team, OutputType = typeof(WebApiIdentity))]
     partial class GetTeamAdmin
     {
         /// <summary>

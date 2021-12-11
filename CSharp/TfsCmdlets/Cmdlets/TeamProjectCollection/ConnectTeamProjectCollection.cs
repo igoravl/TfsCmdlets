@@ -34,9 +34,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     ///         -Collection http://tfs:8080/tfs/DefaultCollection -Credential (Get-TfsCredential -Interactive)`
     ///   </para>
     /// </example>
-    [Cmdlet(VerbsCommunications.Connect, "TfsTeamProjectCollection", DefaultParameterSetName = "Prompt for credential")]
-    [OutputType(typeof(VssConnection))]
-    [TfsCmdlet(CmdletScope.Server)]
+    [TfsCmdlet(CmdletScope.Server, DefaultParameterSetName = "Prompt for credential", OutputType = typeof(VssConnection))]
     partial class ConnectTeamProjectCollection
     {
         /// <summary>
