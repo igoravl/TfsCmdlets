@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TfsTeam", DefaultParameterSetName = "Get by team")]
     [OutputType(typeof(WebApiTeam))]
-    [TfsCmdlet(CmdletScope.Server)]
+    [TfsCmdlet(CmdletScope.Project)]
     partial class GetTeam 
     {
         /// <summary>
@@ -16,7 +16,12 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported.
         /// When omitted, all teams in the given team project are returned.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Get by team")]
+        [Parameter(Position = 0, ParameterSetName="Get by team")]
+        [Parameter(Position = 0, ParameterSetName="Cached credentials")]
+        [Parameter(Position = 0, ParameterSetName="User name and password")]
+        [Parameter(Position = 0, ParameterSetName="Credential object")]
+        [Parameter(Position = 0, ParameterSetName="Personal Access Token")]
+        [Parameter(Position = 0, ParameterSetName="Prompt for credential")]
         [Alias("Name")]
         [SupportsWildcards]
         public object Team { get; set; } = "*";
@@ -37,18 +42,6 @@ namespace TfsCmdlets.Cmdlets.Team
         public SwitchParameter IncludeSettings { get; set; }
 
         /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by team")]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ParameterSetName = "Get by team")]
-        public object Collection { get; set; }
-
-        /// <summary>
         /// Returns the team specified in the last call to Connect-TfsTeam (i.e. the "current" team)
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
@@ -57,7 +50,11 @@ namespace TfsCmdlets.Cmdlets.Team
         /// <summary>
         /// Returns the default team in the given team project.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = "Get default team")]
+        [Parameter(Position = 0, ParameterSetName="Cached credentials")]
+        [Parameter(Position = 0, ParameterSetName="User name and password")]
+        [Parameter(Position = 0, ParameterSetName="Credential object")]
+        [Parameter(Position = 0, ParameterSetName="Personal Access Token")]
+        [Parameter(Position = 0, ParameterSetName="Prompt for credential")]
         public SwitchParameter Default { get; set; }
     }
 }

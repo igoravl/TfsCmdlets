@@ -17,8 +17,11 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         /// <summary>
         /// HELP_PARAM_SERVER
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Get by server", ValueFromPipeline = true)]
-        [AllowNull]
+        [Parameter(Position = 0, ParameterSetName = "Cached credentials")]
+        [Parameter(Position = 0, ParameterSetName = "User name and password")]
+        [Parameter(Position = 0, ParameterSetName = "Credential object")]
+        [Parameter(Position = 0, ParameterSetName = "Personal Access Token")]
+        [Parameter(Position = 0, ParameterSetName = "Prompt for credential")]
         public object Server { get; set; }
 
         /// <summary>
@@ -27,11 +30,5 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CREDENTIAL
-        /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Get by server")]
-        public object Credential { get; set; }
     }
 }

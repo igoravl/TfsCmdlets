@@ -17,7 +17,5 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     [TfsCmdlet(CmdletScope.None)]
     partial class DisconnectConfigurationServer
     {
-        // TODO
-
     }
 }

@@ -16,25 +16,20 @@ using Microsoft.TeamFoundation.Client;
 #else
     [OutputType(typeof(TfsTeamProjectCollection))]
 #endif
+    [TfsCmdlet(CmdletScope.Server)]
     partial class GetTeamProjectCollection
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by collection")]
+        [Parameter(Position = 0, ParameterSetName = "Cached credentials")]
+        [Parameter(Position = 0, ParameterSetName = "User name and password")]
+        [Parameter(Position = 0, ParameterSetName = "Credential object")]
+        [Parameter(Position = 0, ParameterSetName = "Personal Access Token")]
+        [Parameter(Position = 0, ParameterSetName = "Prompt for credential")]
+        [SupportsWildcards]
         public object Collection { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_SERVER
-        /// </summary>
-        [Parameter(ValueFromPipeline = true, ParameterSetName = "Get by collection")]
-        public object Server { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = "Get by collection")]
-        public object Credential { get; set; }
 
         /// <summary>
         /// Returns the team project collection specified in the last call to 
@@ -42,9 +37,5 @@ using Microsoft.TeamFoundation.Client;
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get current")]
         public SwitchParameter Current { get; set; }
-
-        // TODO
-
     }
-
 }
