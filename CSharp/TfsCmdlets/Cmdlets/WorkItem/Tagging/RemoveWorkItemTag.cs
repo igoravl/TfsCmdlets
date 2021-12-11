@@ -22,3 +22,4 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         [Parameter]
         public SwitchParameter Force {get;set;}
     }
+}

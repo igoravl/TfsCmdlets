@@ -19,12 +19,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Alias("Path")]
         public object Query { get; set; } = "**";
 
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
-
         /// <inheritdoc/>
         internal string ItemType => "Query";
     }

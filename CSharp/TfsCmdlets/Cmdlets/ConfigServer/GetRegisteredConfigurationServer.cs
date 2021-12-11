@@ -5,10 +5,11 @@ namespace TfsCmdlets.Cmdlets.ConfigServer
     /// <summary>
     /// Gets one or more Team Foundation Server addresses registered in the current computer.
     /// </summary>
-    [TfsCmdlet(CmdletScope.None, DesktopOnly = true)]
+    [TfsCmdlet(CmdletScope.None, DesktopOnly = true
 #if NET471_OR_GREATER
-    , OutputType = typeof(Microsoft.TeamFoundation.Client.RegisteredConfigurationServer))]
+    , OutputType = typeof(Microsoft.TeamFoundation.Client.RegisteredConfigurationServer)
 #endif
+)]
     partial class GetRegisteredConfigurationServer
     {
         /// <summary>

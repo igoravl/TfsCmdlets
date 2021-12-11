@@ -23,12 +23,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /// </summary>
         [Parameter]
         public SwitchParameter IncludeInactive { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        /// <value></value>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
     }
 }

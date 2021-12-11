@@ -27,7 +27,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 
         public SwitchParameter SkipSave { get; set; }
 
-        [Parameter]
-        public object Collection { get; set; }
     }
 }
