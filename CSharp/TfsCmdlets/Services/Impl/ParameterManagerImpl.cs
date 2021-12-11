@@ -27,7 +27,7 @@ namespace TfsCmdlets.Services.Impl
             var props = cmdlet
                 .GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Where(pi => pi.GetCustomAttribute<ParameterAttribute>(true) != null);
+                .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any());
 
             foreach (var prop in props)
             {
