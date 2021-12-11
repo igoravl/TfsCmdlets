@@ -33,7 +33,7 @@ namespace TfsCmdlets.Controllers.WorkItem
             var deleted = Parameters.Get<bool>(nameof(GetWorkItem.Deleted));
             var timePrecision = Parameters.Get<bool>(nameof(GetWorkItem.TimePrecision));
             var includeLinks = Parameters.Get<bool>(nameof(GetWorkItem.IncludeLinks));
-            var expand = (includeLinks ? WorkItemExpand.Relations : WorkItemExpand.None);
+            var expand = (includeLinks ? WorkItemExpand.All : WorkItemExpand.Fields);
 
             var tp = Data.GetProject();
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
