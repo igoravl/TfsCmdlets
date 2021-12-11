@@ -176,7 +176,7 @@ namespace {type.FullNamespace()}
         /// <summary>
         /// HELP_PARAM_INTERACTIVE
         /// </summary>
-        [Parameter(ParameterSetName = ""Prompt for credential"", Mandatory = true)]
+        [Parameter(ParameterSetName = ""Prompt for credential"")]
         public SwitchParameter Interactive { get; set; }
 ";
 
