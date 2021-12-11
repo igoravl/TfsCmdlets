@@ -7,7 +7,7 @@
     <LangVersion>8.0</LangVersion>
     <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
