@@ -1,8 +1,3 @@
-using System;
-using System.Management.Automation;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
-using Microsoft.VisualStudio.Services.Identity;
-using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 using Microsoft.VisualStudio.Services.Common;
@@ -123,18 +118,6 @@ namespace TfsCmdlets.Models
         {
             get => _inner.IsDeletedInOrigin;
             set => _inner.IsDeletedInOrigin = value;
-        }
-
-        public string DisplayNameForXmlSerialization
-        {
-            get => _inner.DisplayNameForXmlSerialization;
-            set => _inner.DisplayNameForXmlSerialization = value;
-        }
-
-        public string UrlForXmlSerialization
-        {
-            get => _inner.UrlForXmlSerialization;
-            set => _inner.UrlForXmlSerialization = value;
         }
 
         public override string ToString()
