@@ -15,7 +15,6 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
     /// Gets one or more Release/pipeline definition folders in a team project.
     /// </summary>
     [CmdletController(typeof(WebApiFolder))]
-    [TfsCmdlet(CmdletScope.Project)]
     partial class GetReleaseDefinitionFolderController
     {
         [Import] 
