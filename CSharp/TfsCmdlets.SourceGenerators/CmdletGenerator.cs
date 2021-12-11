@@ -72,7 +72,7 @@ namespace {type.FullNamespace()}
         {
             // Basic properties
             _generators.Add(((cmdlet) => cmdlet.Verb == "Rename", GenerateNewNameProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "New", GeneratePassthruProperty));
+            _generators.Add(((cmdlet) => cmdlet.Verb == "New" && cmdlet.Noun != "Credential", GeneratePassthruProperty));
             _generators.Add(((cmdlet) => cmdlet.Verb == "Set", GeneratePassthruProperty));
             _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GeneratePassthruProperty));
 
@@ -85,6 +85,7 @@ namespace {type.FullNamespace()}
             // Credential properties
             _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GenerateCredentialProperties));
             _generators.Add(((cmdlet) => IsGetScopeCmdlet(cmdlet), GenerateCredentialProperties)); 
+            _generators.Add(((cmdlet) => cmdlet.CmdletName == "NewCredential", GenerateCredentialProperties)); 
         }
 
         private static string GenerateNewNameProperty(CmdletInfo settings) => @"
