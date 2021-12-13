@@ -13,6 +13,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         /// When omitted, all attachments in the specified work item are downloaded.
         /// </summary>
         [Parameter(Position = 0)]
+        [SupportsWildcards]
         [ValidateNotNull()]
         public object Attachment { get; set; } = "*";
 

@@ -90,7 +90,7 @@ namespace TfsCmdlets
         /// Collection
         /// </summary>
         Collection,
-        
+
         /// <summary>
         /// Server
         /// </summary>
@@ -110,28 +110,58 @@ namespace TfsCmdlets
         Parent = 1,
 
         /// <summary>Child</summary>
-        Child = 2,
+        Child = 1 << 1,
 
         /// <summary>Related</summary>
-        Related = 4,
+        Related = 1 << 2,
 
         /// <summary>Predecessor</summary>
-        Predecessor = 8,
+        Predecessor = 1 << 3,
 
         /// <summary>Successor</summary>
-        Successor = 16,
+        Successor = 1 << 4,
 
         /// <summary>Duplicate</summary>
-        Duplicate = 32,
+        Duplicate = 1 << 5,
 
         /// <summary>Duplicate Of</summary>
-        DuplicateOf = 64,
+        DuplicateOf = 1 << 6,
 
         /// <summary>Tests</summary>
-        Tests = 128,
+        Tests = 1 << 7,
 
         /// <summary>Tested By</summary>
-        TestedBy = 256, 
+        TestedBy = 1 << 8,
+
+        /// <summary>Test Case</summary>
+        TestCase = 1 << 9,
+
+        /// <summary>Shared Steps</summary>
+        SharedSteps = 1 << 10,
+
+        /// <summary>Shared Step</summary>
+        References = 1 << 11,
+
+        /// <summary>Shared Step</summary>
+        ReferencedBy = 1 << 12,
+
+        /// <summary>Produces For</summary>
+        ProducesFor = 1 << 13,
+
+        /// <summary>Consumes From</summary>
+        ConsumesFrom = 1 << 14,
+
+        /// <summary>Remote Related</summary>
+        RemoteRelated = 1 << 15,
+
+        /// <summary>Attached File</summary>
+        AttachedFile = 1 << 29,
+
+        /// <summary>Hyperlink</summary>
+        Hyperlink = 1 << 30,
+
+        /// <summary>Artifact link</summary>
+        ArtifactLink = 1 << 31,
     }
 
 }

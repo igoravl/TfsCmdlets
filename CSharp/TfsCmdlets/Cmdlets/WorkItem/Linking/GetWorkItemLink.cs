@@ -23,10 +23,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         [Parameter]
         public WorkItemLinkType LinkType { get; set; }
 
-        /// <summary>
-        /// Includes attachment information alongside links. When omitted, only links are retrieved.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter IncludeAttachments { get; set; }
     }
 }

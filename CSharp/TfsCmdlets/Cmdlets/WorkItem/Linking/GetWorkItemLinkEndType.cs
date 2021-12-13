@@ -6,11 +6,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     /// Gets the work item link end types of a team project collection.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection)]
-    partial class GetWorkItemLinkEndType
+    partial class GetWorkItemLinkType
     {
         [Parameter(Position = 0)]
-        [Alias("Name")]
         [SupportsWildcards]
-        public string LinkEndType { get; set; } = "*";
+        [Alias("Name", "EndLinkType", "Type", "Link")]
+        public object LinkType { get; set; } = "*";
     }
 }
