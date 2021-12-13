@@ -26,5 +26,11 @@ namespace TfsCmdlets.Cmdlets.Shell
         /// </summary>
         [Parameter]
         public SwitchParameter NoLogo { get; set; }
+
+        /// <summary>
+        /// Do not load the user profile TfsCmdlets.Profile.ps1 (if present) when activating the Azure DevOps Shell.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoProfile { get; set; }
     }
 }

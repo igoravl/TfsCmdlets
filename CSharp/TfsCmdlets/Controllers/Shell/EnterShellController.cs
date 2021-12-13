@@ -14,6 +14,7 @@ namespace TfsCmdlets.Controllers.Shell
 
             var doNotClearHost = Parameters.Get<bool>("DoNotClearHost");
             var noLogo = Parameters.Get<bool>("NoLogo");
+            var noProfile = Parameters.Get<bool>("NoProfile");
             var windowTitle = Parameters.Get<string>("WindowTitle");
 
             PrevShellTitle ??= PowerShell.WindowTitle;
@@ -51,7 +52,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
             var profileDir = Path.GetDirectoryName((string)((PSObject)PowerShell.GetVariableValue("PROFILE")).BaseObject);
             var profilePath = Path.Combine(profileDir, $"TfsCmdlets_{(System.Diagnostics.Debugger.IsAttached ? "Debug_" : "")}Profile.ps1");
 
-            if (File.Exists(profilePath))
+            if ((!noProfile) && File.Exists(profilePath))
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 
@@ -89,5 +90,4 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
 
         internal static ScriptBlock PrevPrompt { get; set; }
     }
-
 }
