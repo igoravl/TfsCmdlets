@@ -132,7 +132,7 @@ namespace TfsCmdlets.Services.Impl
         /// </summary>
         public string ResolvePath(string basePath, string path = "")
         {
-            var relativePath = Path.Combine(basePath, path);
+            var relativePath = Path.Combine(basePath ?? GetCurrentDirectory(), path);
 
             if (!Path.IsPathRooted(relativePath))
             {
