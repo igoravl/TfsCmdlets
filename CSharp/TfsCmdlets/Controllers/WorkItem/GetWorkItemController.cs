@@ -47,6 +47,11 @@ namespace TfsCmdlets.Controllers.WorkItem
                             workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
                             continue;
                         }
+                    case string s when int.TryParse(s, out var id):
+                        {
+                            workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
+                            continue;
+                        }
                     case object[] wis:
                         {
                             var list = new List<int>();
