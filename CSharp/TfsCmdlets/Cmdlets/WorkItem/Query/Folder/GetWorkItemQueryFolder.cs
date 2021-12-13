@@ -4,10 +4,10 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
     /// <summary>
-    /// Create a new work items query in the given Team Project.
+    /// Gets the definition of one or more work item saved queries.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(QueryHierarchyItem))]
-    partial class NewWorkItemQuery
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(QueryHierarchyItem))]
+    partial class GetWorkItemQueryFolder
     {
         /// <summary>
         /// Specifies one or more saved queries to return. Wildcards supported. 
@@ -15,8 +15,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNull()]
+        [SupportsWildcards()]
         [Alias("Path")]
-        public string Query { get; set; }
+        public object Folder { get; set; } = "**";
 
         /// <summary>
         /// Specifies the scope of the returned item. Personal refers to the 
@@ -29,13 +30,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         public string Scope { get; set; } = "Both";
 
         /// <summary>
-        /// Specifies the query definition text in WIQL (Work Item Query Language).
+        /// Returns deleted items.
         /// </summary>
-        [Parameter]
-        [Alias("Definition")]
-        public string Wiql { get; set; }
+        [Parameter()]
+        public SwitchParameter Deleted { get; set; }
 
-        [Parameter]
-        internal string ItemType => "Query";
+        [Parameter()]       
+        internal string ItemType => "Folder";
     }
 }

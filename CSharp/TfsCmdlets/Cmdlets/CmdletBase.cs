@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets
                 )?.Value;
 
         internal Type GetDataType()
-            => GetType().GetCustomAttribute<TfsCmdletAttribute>()?.DataType ?? typeof(object);
+            => GetType().GetCustomAttribute<TfsCmdletAttribute>()?.OutputType ?? typeof(object);
 
         protected string Verb { get; private set; }
 
@@ -100,9 +100,12 @@ namespace TfsCmdlets.Cmdlets
 
                 if (result == null) return;
 
-                foreach(var r in result)
+                foreach (var r in result)
                 {
-                    if(ReturnsValue) WriteObject(r);
+                    if (ReturnsValue && r != null)
+                    {
+                        WriteObject(r);
+                    }
                 }
             }
             catch (Exception ex)
@@ -145,8 +148,8 @@ namespace TfsCmdlets.Cmdlets
             return attr.VerbName;
         }
 
-        protected virtual bool ReturnsValue 
-            => IsPassthru || (new[]{"Get", "Invoke"}).Any(v => v.Equals(GetVerb(), StringComparison.OrdinalIgnoreCase));
+        protected virtual bool ReturnsValue
+            => IsPassthru || (new[] { "Get", "Invoke", "Export" }).Any(v => v.Equals(GetVerb(), StringComparison.OrdinalIgnoreCase));
 
         private bool IsPassthru
         {

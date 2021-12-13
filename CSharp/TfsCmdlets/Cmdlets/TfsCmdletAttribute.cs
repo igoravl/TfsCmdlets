@@ -17,8 +17,6 @@ namespace TfsCmdlets.Cmdlets
 
         public bool NoAutoPipeline { get; set; }
 
-        public Type DataType { get; set; }
-
         public Type OutputType { get; set; }
 
         public bool SupportsShouldProcess { get; set; }

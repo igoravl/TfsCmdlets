@@ -19,7 +19,23 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Alias("Path")]
         public object Query { get; set; } = "**";
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Specifies the scope of the returned item. Personal refers to the 
+        /// "My Queries" folder", whereas Shared refers to the "Shared Queries" 
+        /// folder. When omitted defaults to "Both", effectively searching for items 
+        /// in both scopes.
+        /// </summary>
+        [Parameter()]
+        [ValidateSet("Personal", "Shared", "Both")]
+        public string Scope { get; set; } = "Both";
+
+        /// <summary>
+        /// Returns deleted items.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Deleted { get; set; }
+
+        [Parameter]
         internal string ItemType => "Query";
     }
 }

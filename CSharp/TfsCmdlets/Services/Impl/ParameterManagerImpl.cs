@@ -29,7 +29,7 @@ namespace TfsCmdlets.Services.Impl
 
             var props = cmdlet
                 .GetType()
-                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(pi => pi.GetCustomAttributes<ParameterAttribute>(true).Any()).ToList();
 
             foreach (var prop in props)
