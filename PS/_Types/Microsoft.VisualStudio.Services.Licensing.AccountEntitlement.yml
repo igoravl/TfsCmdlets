@@ -1,0 +1,9 @@
+- ScriptProperty:
+    Name: DisplayName
+    GetScriptBlock: $this.User.DisplayName
+- ScriptProperty:
+    Name: UniqueName
+    GetScriptBlock: $this.User.UniqueName
+- ScriptProperty:
+    Name: Inactive
+    GetScriptBlock: $this.User.Inactive
