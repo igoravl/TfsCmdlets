@@ -80,6 +80,8 @@ namespace {type.FullNamespace()}
             _generators.Add(((cmdlet) => cmdlet.Verb == "New" && cmdlet.Noun != "Credential", GeneratePassthruProperty));
             _generators.Add(((cmdlet) => cmdlet.Verb == "Set", GeneratePassthruProperty));
             _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GeneratePassthruProperty));
+            _generators.Add(((cmdlet) => cmdlet.Verb == "Enable", GeneratePassthruProperty));
+            _generators.Add(((cmdlet) => cmdlet.Verb == "Disable", GeneratePassthruProperty));
 
             // Context-dependent properties
             _generators.Add(((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Team, GenerateTeamScopeProperty));

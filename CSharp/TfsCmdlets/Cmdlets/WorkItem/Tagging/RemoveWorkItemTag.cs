@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /// <summary>
         /// Specifies one or more tags to delete. Wildcards are supported.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory=true)]
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
         [SupportsWildcards()]
         [Alias("Name")]
         public object Tag { get; set; }
@@ -20,6 +20,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter]
-        public SwitchParameter Force {get;set;}
+        public SwitchParameter Force { get; set; }
     }
 }
