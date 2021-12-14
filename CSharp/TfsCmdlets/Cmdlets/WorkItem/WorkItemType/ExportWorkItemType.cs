@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     /// <summary>
     /// Exports an XML work item type definition from a team project.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true, DesktopOnly = true,
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Export to file", SupportsShouldProcess = true, DesktopOnly = true,
      OutputType = typeof(string))]
     partial class ExportWorkItemType
     {
@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         /// Specifies one or more work item types to export. Wildcards are supported. 
         /// When omitted, all work item types in the given project are exported
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Export to output stream")]
+        [Parameter(Position = 0)]
         [Alias("Name")]
         [SupportsWildcards()]
         public string Type { get; set; } = "*";
@@ -28,8 +28,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         /// <summary>
         /// Specifies the path to the folder where exported types are saved.
         /// </summary>
-        [Parameter(ParameterSetName = "Export to file", Mandatory = true)]
+        [Parameter(ParameterSetName = "Export to file")]
         public string Destination { get; set; }
+
+        /// <summary>
+        /// Specifies the encoding for the exported XML files. When omitted, 
+        /// defaults to UTF-8.
+        /// </summary>
+        [Parameter(ParameterSetName = "Export to file")]
+        public string Encoding { get; set; } = "UTF-8";
 
         /// <summary>
         /// Allows the cmdlet to overwrite an existing file in the destination folder.

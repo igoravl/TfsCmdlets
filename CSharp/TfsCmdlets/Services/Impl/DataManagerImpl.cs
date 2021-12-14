@@ -71,14 +71,17 @@ namespace TfsCmdlets.Services.Impl
             => Invoke<T>(VerbsCommon.Rename, overridingParameters).FirstOrDefault();
 
         public Connection GetServer(object overridingParameters = null)
-            => CreateConnection(ClientScope.Server, overridingParameters);
+            => CreateConnection(ClientScope.Server, overridingParameters)?? 
+                throw new ArgumentException("No server information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet.");
 
         public Connection GetCollection(object overridingParameters = null)
-            => CreateConnection(ClientScope.Collection, overridingParameters);
+            => CreateConnection(ClientScope.Collection, overridingParameters)?? 
+                throw new ArgumentException("No team project collection information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection prior to invoking this cmdlet.");
 
         public WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null)
         {
-            return GetItem<WebApiTeamProject>(overridingParameters);
+            return GetItem<WebApiTeamProject>(overridingParameters)?? 
+                throw new ArgumentException("No team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
         }
 
         public WebApiTeam GetTeam(object overridingParameters = null, string contextValue = null)
