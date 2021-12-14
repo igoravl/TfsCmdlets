@@ -67,7 +67,6 @@ namespace TfsCmdlets.Cmdlets
             CheckWindowsOnly();
             InjectDependencies();
             // CheckRequiredVersion();
-            LogParameters();
 
             DoBeginProcessing();
         }
@@ -121,6 +120,7 @@ namespace TfsCmdlets.Cmdlets
             if (command == null) throw new Exception($"Controller '{CommandName}Controller' not found. Are you missing a [CmdletController] attribute?");
 
             Parameters.Initialize(this);
+            LogParameters();
 
             var result = command.InvokeCommand();
 
@@ -137,7 +137,7 @@ namespace TfsCmdlets.Cmdlets
 
         private void LogParameters()
         {
-            Logger.LogParameters();
+            Logger.LogParameters(Parameters);
         }
 
         private string GetVerb()

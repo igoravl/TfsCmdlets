@@ -10,7 +10,6 @@ namespace TfsCmdlets.Services.Impl
     internal class LoggerImpl : ILogger
     {
         private IPowerShellService PowerShell { get; set; }
-        private IParameterManager Parameters { get; }
 
         private readonly string[] _hiddenParameters = new[]{"Password", "PersonalAccessToken"};
 
@@ -40,15 +39,15 @@ namespace TfsCmdlets.Services.Impl
         }
 
         
-        public void LogParameters()
+        public void LogParameters(IParameterManager parameters)
         {
             if (!PowerShell.IsVerbose) return;
 
-            var parms = new Dictionary<string,object>();
+            var parms = new Dictionary<string, object>();
 
-            foreach (var key in Parameters.Keys) 
+            foreach (var key in parameters.Keys) 
             {
-                var value = Parameters[key];
+                var value = parameters[key];
                 
                 if (_hiddenParameters.Any(p => p.Equals(key, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -65,21 +64,20 @@ namespace TfsCmdlets.Services.Impl
                 parms[key] = value;
             }
 
-            var hasParameterSetName = parms.ContainsKey("ParameterSetName");
+            var hasParameterSetName = parms.Keys.Contains("parametersetName");
             var args = Newtonsoft.Json.Linq.JObject.FromObject(parms)
                     .ToString(Newtonsoft.Json.Formatting.None)
                     .Replace("\":", "\" = ")
                     .Replace(",\"", "; \"");
 
-            Log($"Running cmdlet with {(hasParameterSetName? $"parameter set '{parms["ParameterSetName"]}' and ": "")}the following arguments: {args}");
+            Log($"Running cmdlet with {(hasParameterSetName? $"parameter set '{parms["parametersetName"]}' and ": "")}the following arguments: {args}");
 
         }
 
         [ImportingConstructor]
-        public LoggerImpl(IPowerShellService powerShell, IParameterManager parameters)
+        public LoggerImpl(IPowerShellService powerShell)
         {
             PowerShell = powerShell;
-            Parameters = parameters;
         }
      }
 }
