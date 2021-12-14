@@ -29,12 +29,12 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// <summary>
         /// Lists deleted team projects present in the "recycle bin"
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Get by project")]
-        [Parameter(Position = 0, ParameterSetName = "Cached credentials")]
-        [Parameter(Position = 0, ParameterSetName = "User name and password")]
-        [Parameter(Position = 0, ParameterSetName = "Credential object")]
-        [Parameter(Position = 0, ParameterSetName = "Personal Access Token")]
-        [Parameter(Position = 0, ParameterSetName = "Prompt for credential")]
+        [Parameter(ParameterSetName = "Get by project")]
+        [Parameter(ParameterSetName = "Cached credentials")]
+        [Parameter(ParameterSetName = "User name and password")]
+        [Parameter(ParameterSetName = "Credential object")]
+        [Parameter(ParameterSetName = "Personal Access Token")]
+        [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Deleted { get; set; }
 
         /// <summary>
