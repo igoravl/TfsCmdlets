@@ -55,6 +55,27 @@ namespace TfsCmdlets
     }
 
     /// <summary>
+    /// Group scope for Get-TfsGroup
+    /// </summary>
+    public enum GroupScope
+    {
+        /// <summary>
+        /// Server-level scope
+        /// </summary>
+        Server,
+
+        /// <summary>
+        /// Collection-level scope
+        /// </summary>
+        Collection,
+
+        /// <summary>
+        /// Project-level scope
+        /// </summary>
+        Project
+    }
+
+    /// <summary>
     /// Board card rule
     /// </summary>
     [Flags]
