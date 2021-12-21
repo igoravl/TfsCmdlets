@@ -29,8 +29,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// Sets the finish date of the iteration. To clear the finish date, set it to $null. Note that when clearing a date, 
         /// both must be cleared at the same time (i.e. setting both StartDate and FinishDate to $null).
         /// </summary>
-        [Parameter(Mandatory = true)]
+        [Parameter(Mandatory = true, ParameterSetName = "Set by finish date")]
         public DateTime? FinishDate { get; set; }
+
+        /// <summary>
+        /// Sets the length (in days) of the iteration. To clear the finish date, set it to 0. Note that when clearing a date, 
+        /// both must be cleared at the same time (i.e. setting both StartDate to $null and Length to 0).
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Set by iteration length")]
+        [ValidateRange(0, int.MaxValue)]
+        public int Length { get; set; } = 0;
 
         [Parameter]
         internal  TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
