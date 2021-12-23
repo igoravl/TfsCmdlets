@@ -15,24 +15,16 @@ namespace TfsCmdlets.Controllers.TeamProject
             var tp = Data.GetProject();
             var avatarImage = Parameters.Get<string>(nameof(SetTeamProject.AvatarImage));
 
-            if (string.IsNullOrEmpty(avatarImage) ||
-                !PowerShell.ShouldProcess(tp, $"Set avatar image to {avatarImage}"))
+            if(!string.IsNullOrEmpty(avatarImage))
             {
-                yield return tp;
+                Logger.LogWarn($"The -AvatarImage parameter is deprecated and will be removed in a future version. Use the Import-TfsTeamProjectAvatar cmdlet instead.");
+
+                Data.Invoke<object>("Import", "TeamProjectAvatar", new {
+                    Path = avatarImage
+                });
             }
 
-            if (!File.Exists(avatarImage)) throw new ArgumentException($"Invalid avatar image path '{avatarImage}'");
-
-            var client = Data.GetClient<ProjectHttpClient>();
-            var projectAvatar = new ProjectAvatar
-            {
-                Image = File.ReadAllBytes(avatarImage)
-            };
-
-            client.SetProjectAvatarAsync(projectAvatar, tp.Name)
-                .Wait();
-
-            yield return tp;
+            return null;
         }
     }
 }

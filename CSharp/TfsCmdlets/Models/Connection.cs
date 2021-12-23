@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.Location;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Services;
@@ -32,8 +33,6 @@ namespace TfsCmdlets.Models
 
         internal AdoConnection ConfigurationServer => _parentConnection ??= GetParentConnection();
 
-        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
-
         internal Uri Uri => InnerConnection.Uri;
 
         object ITfsServiceProvider.GetService(Type serviceType)
@@ -44,10 +43,11 @@ namespace TfsCmdlets.Models
 
 #if NETCOREAPP3_1_OR_GREATER
         internal Guid ServerId => InnerConnection.ServerId;
+        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity);
 #else
         internal Guid ServerId => InnerConnection.InstanceId;
+        internal Models.Identity AuthorizedIdentity => new Models.Identity(InnerConnection.AuthorizedIdentity, GetSubjectDescriptor(InnerConnection.AuthorizedIdentity, InnerConnection));
 #endif
-
 
         internal string DisplayName
         {
@@ -141,6 +141,16 @@ namespace TfsCmdlets.Models
 
             return result;
         }
+
+#if NET471_OR_GREATER
+        private SubjectDescriptor GetSubjectDescriptor(Microsoft.TeamFoundation.Framework.Client.TeamFoundationIdentity identity, AdoConnection connection)
+        {
+            var client = connection.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
+            var apiIdentity = client.ReadIdentityAsync(identity.TeamFoundationId, Microsoft.VisualStudio.Services.Identity.QueryMembership.None).SyncResult();
+
+            return apiIdentity.SubjectDescriptor;
+        }
+#endif        
     }
 }
 

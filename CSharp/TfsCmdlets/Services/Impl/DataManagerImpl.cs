@@ -36,11 +36,11 @@ namespace TfsCmdlets.Services.Impl
 
         public IEnumerable<T> Invoke<T>(string verb, string noun, object overridingParameters = null)
         {
-            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun)?.Value as ITypedController<T>;
+            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun)?.Value as IController;
 
             if (controller == null)
             {
-                throw new ArgumentException($"Command '{verb}{noun}' not found");
+                throw new ArgumentException($"Controller '{verb}{noun}[Controller]' not found");
             }
 
             return DoInvokeCommand<T>(controller, overridingParameters);

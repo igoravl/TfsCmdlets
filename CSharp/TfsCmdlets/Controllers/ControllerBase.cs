@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers
     {
         public string Verb => GetType().Name.Substring(0, GetType().Name.FindIndex(c => char.IsUpper(c), 1));
 
-        public string Noun => GetType().Name.Substring(Verb.Length);
+        public string Noun => GetType().Name.Substring(Verb.Length, GetType().Name.EndsWith("Controller")? GetType().Name.Length - Verb.Length - 10 : GetType().Name.Length - Verb.Length);
 
         public string DisplayName => $"{Verb}-Tfs{Noun}";
 
