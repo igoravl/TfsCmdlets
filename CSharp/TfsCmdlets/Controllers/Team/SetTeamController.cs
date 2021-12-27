@@ -151,7 +151,16 @@ namespace TfsCmdlets.Controllers.Team
 
             if (Parameters.HasParameter(nameof(SetTeam.BacklogVisibilities)) && PowerShell.ShouldProcess(t, $"Set the team's backlog visibilities as '{backlogVisibilities.ToJsonString()}'"))
             {
-                patch.BacklogVisibilities = backlogVisibilities;
+                var backlogLevels = Data.GetItems<Models.BacklogLevelConfiguration>().ToList();
+                var translatedVisibilities = new Dictionary<string, bool>();
+
+                foreach(var kv in backlogVisibilities)
+                {
+                    var newKey = backlogLevels.FirstOrDefault(l => kv.Key.Equals(l.Name, StringComparison.OrdinalIgnoreCase))?.Id ?? kv.Key;
+                    translatedVisibilities.Add(newKey, kv.Value);
+                }
+
+                patch.BacklogVisibilities = translatedVisibilities;
                 isDirty = true;
             }
 
