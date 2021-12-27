@@ -165,7 +165,7 @@ finally {
 }
 
 if (-not $psake.build_success) {
-    foreach($logFile in (Get-ChildItem (Join-Path $RootProjectDir 'out/MSBuild*.log')))
+    foreach($logFile in (Get-ChildItem (Join-Path $RootProjectDir 'out/*.log')))
     {
         Write-Host -ForegroundColor Red @"
 
