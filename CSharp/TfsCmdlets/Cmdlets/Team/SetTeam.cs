@@ -1,5 +1,6 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team
 {
@@ -70,14 +71,14 @@ namespace TfsCmdlets.Cmdlets.Team
         ///  Specifies the team's Working Days. When omitted, defaults to Monday thru Friday
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
-        public IEnumerable<string> WorkingDays = new[] { "monday", "tuesday", "wednesday", "thursday", "friday" };
+        public IEnumerable<DayOfWeek> WorkingDays = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
 
         /// <summary>
         /// Specifies how bugs should behave when added to a board.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
         [ValidateSet("AsTasks", "AsRequirements", "Off")]
-        public string BugsBehavior { get; set; }
+        public BugsBehavior BugsBehavior { get; set; }
 
         /// <summary>
         /// Specifies which backlog levels (e.g. Epics, Features, Stories) should be visible.

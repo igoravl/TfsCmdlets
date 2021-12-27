@@ -5,7 +5,7 @@ TfsCmdlets.Cmdlets.Team.Board.SetTeamBoardCardRule
 // TfsCmdlets.Cmdlets.Team.DisconnectTeam
 // TfsCmdlets.Cmdlets.Team.NewTeam
 // TfsCmdlets.Cmdlets.Team.RemoveTeam
-TfsCmdlets.Cmdlets.Team.RenameTeam
+// TfsCmdlets.Cmdlets.Team.RenameTeam
 TfsCmdlets.Cmdlets.Team.SetTeam
 TfsCmdlets.Cmdlets.Team.TeamAdmin.AddTeamAdmin
 TfsCmdlets.Cmdlets.Team.TeamAdmin.GetTeamAdmin

@@ -40,9 +40,11 @@ namespace TfsCmdlets.Services
 
         bool ShouldProcess(string target, string action);
 
+        bool ShouldProcess(Connection collection, string action);
+
         bool ShouldProcess(TeamProject tp, string action);
 
-        bool ShouldProcess(Connection collection, string action);
+        bool ShouldProcess(WebApiTeam t, string action);
 
         bool ShouldContinue(string query, string caption = null);
 

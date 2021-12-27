@@ -76,11 +76,14 @@ namespace TfsCmdlets.Services.Impl
         public bool ShouldProcess(string target, string action)
             => Cmdlet.ShouldProcess(target, action);
 
+        public bool ShouldProcess(Connection collection, string action)
+            => ShouldProcess($"Team Project Collection '{collection.DisplayName}'", action);
+
         public bool ShouldProcess(TeamProject tp, string action)
             => ShouldProcess($"Team Project '{tp.Name}'", action);
 
-        public bool ShouldProcess(Connection collection, string action)
-            => ShouldProcess($"Team Project Collection '{collection.DisplayName}'", action);
+        public bool ShouldProcess(WebApiTeam t, string action)
+            => ShouldProcess($"Team '{t.Name}'", action);
 
         public bool ShouldContinue(string query, string caption = null)
             => Cmdlet.ShouldContinue(query, caption);
