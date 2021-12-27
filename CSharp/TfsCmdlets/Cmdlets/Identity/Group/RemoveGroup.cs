@@ -6,14 +6,14 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// <summary>
     /// Gets information about an Azure DevOps user.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup))]
-    partial class GetGroup
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup), SupportsShouldProcess = true)]
+    partial class RemoveGroup
     {
         /// <summary>
         /// Specifies the user or group to be retrieved. Supported values are: 
         /// User/group name, email, or ID
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards]
         public object Group { get; set; } = "*";
 
@@ -25,9 +25,9 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public GroupScope Scope { get; set; } = GroupScope.Collection;
 
         /// <summary>
-        /// Searches recursively for groups in the scopes under the specified scope.
+        /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter]
-        public SwitchParameter Recurse { get; set; }
+        public SwitchParameter Force { get; set; }
     }
 }

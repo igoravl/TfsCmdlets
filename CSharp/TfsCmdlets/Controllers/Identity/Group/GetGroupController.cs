@@ -11,12 +11,32 @@ namespace TfsCmdlets.Controllers.Identity.Group
 
         public override IEnumerable<GraphGroup> Invoke()
         {
-            var group = Parameters.Get<string>(nameof(GetGroup.Group));
+            var group = Parameters.Get<object>(nameof(GetGroup.Group));
             var scope = Parameters.Get<GroupScope>(nameof(GetGroup.Scope));
             var recurse = Parameters.Get<bool>(nameof(GetGroup.Recurse));
             var client = Data.GetClient<GraphHttpClient>();
 
             PagedGraphGroups result = null;
+            string groupName;
+
+            switch (group)
+            {
+                case string s:
+                    {
+                        groupName = s;
+                        break;
+                    }
+                case GraphGroup g:
+                    {
+                        yield return g;
+                        yield break;
+                    }
+                default:
+                    {
+                        Logger.LogError($"Invalid group type: {group.GetType().Name}");
+                        yield break;
+                    }
+            }
 
             switch (scope)
             {
@@ -27,17 +47,15 @@ namespace TfsCmdlets.Controllers.Identity.Group
                 case GroupScope.Collection:
                     {
                         var tpc = Data.GetCollection();
-                        var id = Guid.NewGuid();
-                        object descriptor = null;//DescriptorService.GetDescriptor(id);
 
                         do
                         {
-                            result = client.ListGroupsAsync(scopeDescriptor: (string)descriptor, continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>("Error getting groups in collection");
 
                             foreach (var g in result.GraphGroups
                                 .Where(g =>
-                                    (g.PrincipalName.IsLike(group) || g.DisplayName.IsLike(group)) &&
+                                    (g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)) &&
                                     (recurse || g.Domain.EndsWith(tpc.ServerId.ToString()))))
                             {
                                 yield return g;
@@ -56,7 +74,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
                             result = client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>($"Error getting groups in team project {tp.Name}");
 
-                            foreach (var g in result.GraphGroups.Where(g => g.PrincipalName.IsLike(group) || g.DisplayName.IsLike(group)))
+                            foreach (var g in result.GraphGroups.Where(g => g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)))
                             {
                                 yield return g;
                             }
