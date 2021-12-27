@@ -1,7 +1,6 @@
 using System.Management.Automation;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
-namespace TfsCmdlets.Cmdlets.TeamProject
+namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
 {
     /// <summary>
     /// Exports the team project avatar (image).

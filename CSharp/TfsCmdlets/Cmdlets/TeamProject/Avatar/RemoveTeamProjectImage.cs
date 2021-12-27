@@ -1,6 +1,4 @@
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-
-namespace TfsCmdlets.Cmdlets.TeamProject
+namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
 {
     /// <summary>
     /// Removes the team project avatar, resetting it to the default avatar.

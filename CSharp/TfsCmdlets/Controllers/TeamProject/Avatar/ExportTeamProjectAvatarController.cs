@@ -1,4 +1,5 @@
 using TfsCmdlets.Cmdlets.TeamProject;
+using ExportTeamProjectAvatar = TfsCmdlets.Cmdlets.TeamProject.Avatar.ExportTeamProjectAvatar;
 
 namespace TfsCmdlets.Controllers.TeamProject.Avatar
 {

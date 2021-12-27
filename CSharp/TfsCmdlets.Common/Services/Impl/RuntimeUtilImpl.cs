@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.Versioning;
 
-namespace TfsCmdlets.Util
+namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IRuntimeUtil)), Shared]
     internal class RuntimeUtil: IRuntimeUtil

@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.Query
+namespace TfsCmdlets.Cmdlets.WorkItem.Query.Folder
 {
     /// <summary>
     /// Gets the definition of one or more work item saved queries.

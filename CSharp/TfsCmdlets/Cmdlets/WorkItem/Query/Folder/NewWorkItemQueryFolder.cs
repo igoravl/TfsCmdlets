@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.Query
+namespace TfsCmdlets.Cmdlets.WorkItem.Query.Folder
 {
     /// <summary>
     /// Create a new work items query in the given Team Project.

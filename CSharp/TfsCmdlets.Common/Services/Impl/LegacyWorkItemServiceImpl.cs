@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace TfsCmdlets.Services
+namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IWorkItemStore))]
     public class WorkItemStoreImpl : IWorkItemStore

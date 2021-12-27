@@ -1,5 +1,6 @@
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets.TeamProject;
+using ImportTeamProjectAvatar = TfsCmdlets.Cmdlets.TeamProject.Avatar.ImportTeamProjectAvatar;
 
 namespace TfsCmdlets.Controllers.TeamProject.Avatar
 {

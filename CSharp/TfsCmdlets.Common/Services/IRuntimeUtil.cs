@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.Versioning;
-
-namespace TfsCmdlets.Util
+﻿namespace TfsCmdlets.Services
 {
     public interface IRuntimeUtil
     {
