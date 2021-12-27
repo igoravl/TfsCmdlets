@@ -13,15 +13,12 @@ namespace TfsCmdlets.Controllers.Identity.Group
         {
             var groups = Data.GetItems<GraphGroup>();
             var scope = Parameters.Get<GroupScope>(nameof(RemoveGroup.Scope));
-            var force = Parameters.Get<bool>(nameof(RemoveGroup.Force));
 
             var client = Data.GetClient<GraphHttpClient>();
 
             foreach (var group in groups)
             {
                 if (!PowerShell.ShouldProcess($"Group '{group.PrincipalName}'", "Remove group")) continue;
-
-                if (!force && !PowerShell.ShouldContinue($"Remove group '{group.PrincipalName}'")) continue;
 
                 client.DeleteGroupAsync(group.Descriptor)
                     .Wait($"Error removing group '{group.PrincipalName}'");

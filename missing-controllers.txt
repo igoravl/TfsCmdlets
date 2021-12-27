@@ -1,11 +1,10 @@
-TfsCmdlets.Cmdlets.Identity.GetGroup
 TfsCmdlets.Cmdlets.Team.Backlog.GetTeamBacklogLevel
 TfsCmdlets.Cmdlets.Team.Board.GetTeamBoard
 TfsCmdlets.Cmdlets.Team.Board.GetTeamBoardCardRule
 TfsCmdlets.Cmdlets.Team.Board.SetTeamBoardCardRule
-TfsCmdlets.Cmdlets.Team.DisconnectTeam
-TfsCmdlets.Cmdlets.Team.NewTeam
-TfsCmdlets.Cmdlets.Team.RemoveTeam
+// TfsCmdlets.Cmdlets.Team.DisconnectTeam
+// TfsCmdlets.Cmdlets.Team.NewTeam
+// TfsCmdlets.Cmdlets.Team.RemoveTeam
 TfsCmdlets.Cmdlets.Team.RenameTeam
 TfsCmdlets.Cmdlets.Team.SetTeam
 TfsCmdlets.Cmdlets.Team.TeamAdmin.AddTeamAdmin

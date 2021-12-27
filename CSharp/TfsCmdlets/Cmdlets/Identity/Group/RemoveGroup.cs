@@ -23,11 +23,5 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         [Parameter]
         public GroupScope Scope { get; set; } = GroupScope.Collection;
-
-        /// <summary>
-        /// HELP_PARAM_FORCE_REMOVE
-        /// </summary>
-        [Parameter]
-        public SwitchParameter Force { get; set; }
     }
 }
