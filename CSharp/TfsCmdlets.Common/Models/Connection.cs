@@ -37,11 +37,14 @@ namespace TfsCmdlets.Models
 
 #if NETCOREAPP3_1_OR_GREATER
         public Guid ServerId => InnerObject.ServerId;
-        public Models.Identity AuthorizedIdentity => new Models.Identity(InnerObject.AuthorizedIdentity);
+        public string CurrentUserUniqueName => (string)InnerObject.AuthorizedIdentity.Properties["Account"];
 #else
         public Guid ServerId => InnerObject.InstanceId;
-        public Models.Identity AuthorizedIdentity => Models.Identity.FromLegacyIdentity(InnerObject.AuthorizedIdentity);
+        public string CurrentUserUniqueName => InnerObject.AuthorizedIdentity.UniqueName;
 #endif
+
+        public string CurrentUserDisplayName => InnerObject.AuthorizedIdentity.DisplayName;
+
 
         public string DisplayName
         {

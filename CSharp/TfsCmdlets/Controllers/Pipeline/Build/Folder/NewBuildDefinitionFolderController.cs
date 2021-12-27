@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using TfsCmdlets.Cmdlets.Pipeline.Build.Folder;
-using TfsCmdlets.Extensions;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
 namespace TfsCmdlets.Controllers.Pipeline.Build.Folder

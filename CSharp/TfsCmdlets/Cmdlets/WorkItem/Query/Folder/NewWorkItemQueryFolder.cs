@@ -1,10 +1,5 @@
-using System;
-using System.IO;
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {

@@ -2,7 +2,6 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 using WebApiSubscription = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription;
 using WebApiServiceHookNotification = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Notification;
-using System;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
 {

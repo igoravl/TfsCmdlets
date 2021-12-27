@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Controllers.Git
 {

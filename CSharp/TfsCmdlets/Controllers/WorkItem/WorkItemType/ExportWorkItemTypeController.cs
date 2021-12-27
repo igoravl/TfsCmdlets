@@ -1,5 +1,3 @@
-using System.Management.Automation;
-using System.Xml.Linq;
 using TfsCmdlets.Cmdlets.WorkItem.WorkItemType;
 using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 

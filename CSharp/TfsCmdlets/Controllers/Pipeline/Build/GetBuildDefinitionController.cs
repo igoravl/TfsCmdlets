@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
 using Microsoft.TeamFoundation.Build.WebApi;
 using TfsCmdlets.Cmdlets.Pipeline.Build;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.Pipeline.Build
 {

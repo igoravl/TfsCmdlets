@@ -1,5 +1,4 @@
 using TfsCmdlets.Cmdlets.Identity.Group;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Controllers.Identity.Group
 {

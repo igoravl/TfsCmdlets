@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;

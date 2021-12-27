@@ -13,6 +13,7 @@ namespace TfsCmdlets.Controllers.Admin.Registry
         {
             var scope = Parameters.Get<RegistryScope>("Scope");
             var path = Parameters.Get<string>("Path");
+
             var provider = scope switch
             {
                 RegistryScope.User => throw new NotImplementedException("User scopes are currently not supported"),
@@ -20,6 +21,11 @@ namespace TfsCmdlets.Controllers.Admin.Registry
                 RegistryScope.Server => Data.GetServer(),
                 _ => throw new Exception($"Invalid scope {scope}")
             };
+
+            if(scope == RegistryScope.Server && provider.IsHosted)
+            {
+                throw new NotSupportedException("Server scopes are not supported in Azure DevOps Services.");
+            }
 
             var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
                <s:Body>

@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 

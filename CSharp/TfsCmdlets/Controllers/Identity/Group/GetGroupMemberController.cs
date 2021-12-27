@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.Identity;
 using TfsCmdlets.Cmdlets.Identity.Group;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Controllers.Identity.Group
 {

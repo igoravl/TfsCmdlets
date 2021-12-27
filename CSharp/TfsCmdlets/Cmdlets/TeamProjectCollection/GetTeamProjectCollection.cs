@@ -1,20 +1,16 @@
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
-#if NET471_OR_GREATER
-using Microsoft.TeamFoundation.Client;
-#endif
 
     /// <summary>
     /// Gets one of more team project collections (organizations in Azure DevOps).
     /// </summary>
     [TfsCmdlet(CmdletScope.Server, DefaultParameterSetName = "Get by collection", 
 #if NETCOREAPP3_1_OR_GREATER    
-     OutputType = typeof(VssConnection))]
+     OutputType = typeof(Microsoft.VisualStudio.Services.WebApi.VssConnection))]
 #else
-     OutputType = typeof(TfsTeamProjectCollection))]
+     OutputType = typeof(Microsoft.TeamFoundation.Client.TfsTeamProjectCollection))]
 #endif
     partial class GetTeamProjectCollection
     {

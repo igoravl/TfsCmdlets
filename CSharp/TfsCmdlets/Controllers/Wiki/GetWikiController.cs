@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 using TfsCmdlets.Cmdlets.Wiki;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Controllers.Wiki
 {

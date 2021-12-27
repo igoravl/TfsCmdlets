@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 
 namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement

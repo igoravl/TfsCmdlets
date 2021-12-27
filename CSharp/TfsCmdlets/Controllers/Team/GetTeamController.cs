@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.Team

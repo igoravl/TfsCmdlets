@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
 
 namespace TfsCmdlets.Controllers.ProcessTemplate

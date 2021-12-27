@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using System.Net;
 using System.Security;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
-using NewCredentialCmdlet = TfsCmdlets.Cmdlets.Credential.NewCredential;
+using TfsCmdlets.Cmdlets.Credential;
 
 namespace TfsCmdlets.Controllers.Credential
 {
@@ -14,12 +12,12 @@ namespace TfsCmdlets.Controllers.Credential
     {
         public override IEnumerable<VssCredentials> Invoke()
         {
-            var credential = Parameters.Get<object>(nameof(NewCredentialCmdlet.Credential));
-            var userName = Parameters.Get<string>(nameof(NewCredentialCmdlet.UserName));
-            var password = Parameters.Get<SecureString>(nameof(NewCredentialCmdlet.Password));
-            var accessToken = Parameters.Get<string>(nameof(NewCredentialCmdlet.PersonalAccessToken));
-            var interactive = Parameters.Get<bool>(nameof(NewCredentialCmdlet.Interactive));
-            var url = Parameters.Get<Uri>(nameof(NewCredentialCmdlet.Url));
+            var credential = Parameters.Get<object>(nameof(NewCredential.Credential));
+            var userName = Parameters.Get<string>(nameof(NewCredential.UserName));
+            var password = Parameters.Get<SecureString>(nameof(NewCredential.Password));
+            var accessToken = Parameters.Get<string>(nameof(NewCredential.PersonalAccessToken));
+            var interactive = Parameters.Get<bool>(nameof(NewCredential.Interactive));
+            var url = Parameters.Get<Uri>(nameof(NewCredential.Url));
 
             var connectionMode = ConnectionMode.CachedCredentials;
 

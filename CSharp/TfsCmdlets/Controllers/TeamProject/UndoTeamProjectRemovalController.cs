@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 using WebApiTeamProjectRef = Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference;
 

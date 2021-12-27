@@ -36,10 +36,5 @@ namespace TfsCmdlets.Models
         public string UniqueName { get; private set; }
 
         public IEnumerable<Guid> MemberIds { get; private set; }
-
-        public static Identity FromLegacyIdentity(object identity)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

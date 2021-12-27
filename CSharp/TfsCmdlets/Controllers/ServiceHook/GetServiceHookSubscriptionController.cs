@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 using TfsCmdlets.Cmdlets.ServiceHook;
 using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;

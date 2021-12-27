@@ -1,7 +1,4 @@
-using System.Collections.Generic;
 using Microsoft.TeamFoundation.Core.WebApi;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.Team

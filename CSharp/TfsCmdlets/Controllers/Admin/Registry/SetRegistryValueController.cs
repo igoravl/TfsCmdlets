@@ -1,4 +1,3 @@
-using System.Management.Automation;
 using Microsoft.VisualStudio.Services.WebApi;
 
 namespace TfsCmdlets.Controllers.Admin.Registry

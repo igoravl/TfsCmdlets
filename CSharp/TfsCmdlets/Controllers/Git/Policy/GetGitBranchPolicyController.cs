@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.TeamFoundation.Policy.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Controllers.Git.Policy
 {

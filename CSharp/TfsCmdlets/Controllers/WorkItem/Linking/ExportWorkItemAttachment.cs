@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using System.Text;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using TfsCmdlets.Extensions;
+﻿using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using TfsCmdlets.Util;
-using System.IO;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Cmdlets.WorkItem.Linking;
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace TfsCmdlets.Controllers.Pipeline.XamlBuild
 {
     /// <summary>

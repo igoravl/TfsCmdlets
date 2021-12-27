@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.Identity;
-using TfsCmdlets.Extensions;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
@@ -22,7 +19,7 @@ namespace TfsCmdlets.Controllers.Identity
                 var srv = Data.GetServer();
                 if (srv == null) return null;
 
-                identity = srv.AuthorizedIdentity.UniqueName;
+                identity = srv.CurrentUserUniqueName;
             }
 
             var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>(ClientScope.Server);

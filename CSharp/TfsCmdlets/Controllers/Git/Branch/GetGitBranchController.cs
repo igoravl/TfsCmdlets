@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
-using TfsCmdlets.Extensions;
+﻿using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Controllers.Git.Branch
 {

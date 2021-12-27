@@ -1,4 +1,3 @@
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
 using TfsCmdlets.Util;

@@ -1,16 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Composition;
-using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using Microsoft.VisualStudio.Services.Search.WebApi;
-using Microsoft.VisualStudio.Services.Search.WebApi.Contracts.WorkItem;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 using TfsCmdlets.Cmdlets.WorkItem;
-using TfsCmdlets.Services;
 using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;

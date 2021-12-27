@@ -1,5 +1,3 @@
-using System.Management.Automation;
-
 namespace TfsCmdlets.Cmdlets.TeamProject
 {
     /// <summary>

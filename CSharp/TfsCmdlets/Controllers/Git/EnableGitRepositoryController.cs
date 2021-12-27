@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.HttpClient;
 

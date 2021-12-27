@@ -16,7 +16,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
             var srv = tpc.ConfigurationServer;
             CurrentConnections.Set(srv, tpc);
 
-            Logger.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.AuthorizedIdentity.DisplayName}'");
+            Logger.Log($"Connected to {tpc.Uri}, ID {tpc.ServerId}, as '{tpc.CurrentUserDisplayName}'");
 
             yield return tpc;
         }

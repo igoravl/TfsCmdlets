@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 using TfsCmdlets.Cmdlets.TestManagement;
 

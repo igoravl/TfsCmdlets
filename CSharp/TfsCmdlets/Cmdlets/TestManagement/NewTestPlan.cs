@@ -1,4 +1,3 @@
-using System;
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 

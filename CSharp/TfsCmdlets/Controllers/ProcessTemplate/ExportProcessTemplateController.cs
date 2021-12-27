@@ -1,9 +1,9 @@
-using TfsCmdlets.Cmdlets.ProcessTemplate;
-using System.IO.Compression;
-using System.Xml.Linq;
-
 #if NET471_OR_GREATER
+using TfsCmdlets.Cmdlets.ProcessTemplate;
 using Microsoft.TeamFoundation.Server;
+using System.Xml;
+using System.Xml.Linq;
+using System.IO.Compression;
 #endif
 
 namespace TfsCmdlets.Controllers.ProcessTemplate

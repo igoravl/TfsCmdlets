@@ -57,8 +57,7 @@ namespace TfsCmdlets
 
             if (connections.Team is { } t) segments.Add(t.Name);
             
-            var userName = tpc.AuthorizedIdentity.UniqueName ??
-                           tpc.AuthorizedIdentity.Properties["Account"].ToString();
+            var userName = tpc.CurrentUserUniqueName;
 
             return $"{Environment.NewLine}{colorScheme}[{string.Join(" > ", segments.ToArray())} {ANSI_BG_BLUE}({userName}){colorScheme}]{ANSI_RESET}{Environment.NewLine}";
         }

@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 using TfsCmdlets.Cmdlets.TestManagement;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.TestManagement
 {

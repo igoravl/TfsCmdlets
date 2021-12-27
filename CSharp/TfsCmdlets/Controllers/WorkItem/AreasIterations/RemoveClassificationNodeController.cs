@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;

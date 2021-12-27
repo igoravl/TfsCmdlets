@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;
 

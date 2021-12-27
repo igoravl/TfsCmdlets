@@ -1,6 +1,4 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-
-namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
+﻿namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
     [CmdletController]
     partial class TestClassificationNodeController

@@ -1,4 +1,3 @@
-using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject.Avatar

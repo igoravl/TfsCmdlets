@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Work.WebApi;
 using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;

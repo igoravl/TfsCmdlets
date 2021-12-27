@@ -1,9 +1,4 @@
-using System;
-using System.Collections;
-using System.Composition;
 using System.Net.Http;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Controllers.RestApi

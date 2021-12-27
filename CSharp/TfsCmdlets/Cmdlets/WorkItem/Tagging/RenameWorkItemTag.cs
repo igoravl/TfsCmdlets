@@ -1,6 +1,5 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
