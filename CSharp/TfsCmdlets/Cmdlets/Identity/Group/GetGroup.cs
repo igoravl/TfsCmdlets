@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     /// <summary>
     /// Gets information about an Azure DevOps user.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(GraphGroup), DefaultParameterSetName = "Get by ID or Name")]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup), DefaultParameterSetName = "Get by ID or Name")]
     partial class GetGroup
     {
         /// <summary>
