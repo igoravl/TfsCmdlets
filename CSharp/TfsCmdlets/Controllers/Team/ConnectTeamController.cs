@@ -6,6 +6,7 @@ namespace TfsCmdlets.Controllers.Team
     [CmdletController(typeof(WebApiTeam))]
     partial class ConnectTeamController
     {
+        [Import]
         private ICurrentConnections CurrentConnections { get; }
 
         public override IEnumerable<WebApiTeam> Invoke()
