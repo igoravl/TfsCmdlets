@@ -1,9 +1,6 @@
-using System.Collections.Generic;
-using System.Composition;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations

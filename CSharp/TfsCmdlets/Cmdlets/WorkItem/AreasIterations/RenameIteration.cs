@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -17,8 +16,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [ValidateNotNullOrEmpty]
         [Alias("Path", "Iteration")]
         public object Node { get; set; }
-
-        [Parameter]
-        internal TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
     }
 }

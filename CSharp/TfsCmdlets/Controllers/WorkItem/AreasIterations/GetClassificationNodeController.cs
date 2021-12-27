@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Composition;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using TfsCmdlets.Extensions;
 using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
@@ -20,39 +15,35 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             var node = Parameters.Get<object>("Node");
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");
             var tp = Data.GetProject();
-            var done = false;
             string path = null;
 
-            while (!done) switch (node)
-                {
-                    case WorkItemClassificationNode n:
-                        {
-                            yield return new ClassificationNode(n, tp.Name, null);
-                            yield break;
-                        }
-                    case string s when s.Equals("\\") || s.Equals("/"):
-                        {
-                            path = "\\";
-                            done = true;
-                            break;
-                        }
-                    case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
-                        {
-                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), true, false, true, false, true);
-                            done = true;
-                            break;
-                        }
-                    case string s when !string.IsNullOrEmpty(s):
-                        {
-                            path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true, false, false);
-                            done = true;
-                            break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent node {node}");
-                        }
-                }
+            switch (node)
+            {
+                case WorkItemClassificationNode n:
+                    {
+                        yield return new ClassificationNode(n, tp.Name, null);
+                        yield break;
+                    }
+                case string s when s.Equals("\\") || s.Equals("/"):
+                    {
+                        path = "\\";
+                        break;
+                    }
+                case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
+                    {
+                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), true, false, true, false, true);
+                        break;
+                    }
+                case string s when !string.IsNullOrEmpty(s):
+                    {
+                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true, false, false);
+                        break;
+                    }
+                default:
+                    {
+                        throw new ArgumentException($"Invalid or non-existent node {node}");
+                    }
+            }
 
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var depth = 1;

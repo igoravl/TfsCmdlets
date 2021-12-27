@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.IO;
-using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
@@ -24,19 +18,19 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             var force = Parameters.Get<bool>("Force");
 
             var nodeType = structureGroup.ToString().TrimEnd('s');
-            var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, scope: nodeType, includeTeamProject: true);
+            var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, scope: nodeType, includeTeamProject: false);
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var parentPath = Path.GetDirectoryName(nodePath);
             var nodeName = Path.GetFileName(nodePath);
 
             if (!PowerShell.ShouldProcess($"Team Project {tp.Name}", $"Create node '{nodePath}'")) yield break;
 
-            if (!Data.TestItem<ClassificationNode>(new { Node = parentPath }))
+            if (!string.IsNullOrEmpty(parentPath) && !Data.TestItem<ClassificationNode>(new { Node = parentPath }))
             {
                 if (!force)
                 {
-                    Logger.Log($"Parent node '{parentPath}' does not exist");
-                    throw new Exception($"Parent node '{parentPath}' does not exist. Check the path or use -Force the create any missing parent nodes.");
+                    Logger.LogError(new Exception($"Parent node '{parentPath}' does not exist. Check the path or use -Force the create any missing parent nodes."));
+                    yield break;
                 }
 
                 Data.NewItem<ClassificationNode>(new { Node = parentPath });
@@ -51,7 +45,8 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             {
                 if (!Parameters.HasParameter("FinishDate"))
                 {
-                    throw new ArgumentException("When specifying iteration dates, both dates must be supplied.");
+                    Logger.LogError(new ArgumentException("When specifying iteration dates, both dates must be supplied."));
+                    yield break;
                 }
 
                 var startDate = Parameters.Get<DateTime?>("StartDate");

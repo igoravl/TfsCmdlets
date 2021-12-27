@@ -9,6 +9,9 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode))]
     partial class RenameClassificationNodeController
     {
+        [Import]
+        private INodeUtil NodeUtil { get; }
+
         public override IEnumerable<ClassificationNode> Invoke()
         {
             var tp = Data.GetProject();
@@ -16,7 +19,12 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             var nodeToRename = Data.GetItem<ClassificationNode>();
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");
             var structureGroupName = structureGroup.ToString().TrimEnd('s');
-            var newName = Parameters.Get<string>("NewName");
+            var newName = NodeUtil.NormalizeNodePath(Parameters.Get<string>("NewName"));
+
+            if(newName.Contains("\\"))
+            {
+                throw new ArgumentException($"New name cannot contain backslashes: {newName}");
+            }
 
             if (!PowerShell.ShouldProcess($"{structureGroupName} '{nodeToRename.FullPath}'", $"Rename to '{newName}'"))
             {

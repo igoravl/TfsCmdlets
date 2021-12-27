@@ -18,9 +18,9 @@ namespace TfsCmdlets.Controllers.Admin
                 throw new NotImplementedException("Remote computers are currently not supported");
             }
 
-            var installationPath = Data.GetItem<TfsInstallationPath>(Parameters.Override(new {
+            var installationPath = Data.GetItem<TfsInstallationPath>(new {
                 Component = TfsComponent.ApplicationTier
-            }));
+            });
 
             var webConfigPath = Path.Combine(installationPath.InnerObject, "Web Services/Web.config");
             var webConfig = XDocument.Load(webConfigPath);

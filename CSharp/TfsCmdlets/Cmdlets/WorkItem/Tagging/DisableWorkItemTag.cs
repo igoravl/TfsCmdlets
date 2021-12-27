@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     /// <summary>
     /// Disables (deactivates) a work item tag.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTagDefinition))]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTagDefinition), CustomControllerName = "ToggleWorkItemTag")]
     partial class DisableWorkItemTag
     {
         /// <summary>
@@ -20,7 +20,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 
         [Parameter]
         internal bool Enabled => false;
-
-        protected override string CommandName => "ToggleWorkItemTag";
     }
 }

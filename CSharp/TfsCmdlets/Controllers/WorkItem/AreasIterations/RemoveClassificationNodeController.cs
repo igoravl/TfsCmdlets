@@ -21,7 +21,8 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 
             if (moveToNode == null)
             {
-                throw new Exception($"Invalid or non-existent node '{moveTo}'. To remove nodes, supply a valid node in the -MoveTo argument");
+                Logger.LogError(new Exception($"Invalid or non-existent node '{moveTo}'. To remove nodes, supply a valid node in the -MoveTo argument"));
+                return null;
             }
 
             Logger.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");

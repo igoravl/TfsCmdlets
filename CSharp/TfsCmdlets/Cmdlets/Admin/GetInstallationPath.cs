@@ -22,7 +22,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     ///         server SPTFSSRV, prompting for admin credentials to be used for establishing a 
     ///         PS Remoting session to the server</para>
     /// </example>
-    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Use computer name", OutputType = typeof(string))]
+    [TfsCmdlet(CmdletScope.None, WindowsOnly = true, DefaultParameterSetName = "Use computer name", OutputType = typeof(string))]
     partial class GetInstallationPath
     {
         /// <summary>

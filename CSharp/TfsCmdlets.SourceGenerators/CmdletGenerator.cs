@@ -93,6 +93,15 @@ namespace {type.FullNamespace()}
             _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GenerateCredentialProperties));
             _generators.Add(((cmdlet) => IsGetScopeCmdlet(cmdlet), GenerateCredentialProperties));
             _generators.Add(((cmdlet) => cmdlet.CmdletName == "NewCredential", GenerateCredentialProperties));
+
+            // CustomController property
+            _generators.Add(((cmdlet) => !string.IsNullOrEmpty(cmdlet.CustomControllerName), GenerateCustomControllerProperty));
+
+            // ReturnsValue property
+            _generators.Add(((cmdlet) => cmdlet.ReturnsValue, GenerateReturnsValueProperty));
+
+            // Areas/Iterations StructureGroup property
+            _generators.Add(((cmdlet) => cmdlet.CmdletName.EndsWith("Area") || cmdlet.CmdletName.EndsWith("Iteration"), GenerateStructureGroupProperty));
         }
 
         private string GenerateCmdletAttribute(CmdletInfo cmdlet)
@@ -128,6 +137,20 @@ namespace {type.FullNamespace()}
         /// </summary>
         [Parameter]
         public SwitchParameter Passthru { get; set; }
+";
+
+        private static string GenerateCustomControllerProperty(CmdletInfo settings) => $@"
+        protected override string CommandName => ""{settings.CustomControllerName}"";
+";
+
+        private static string GenerateReturnsValueProperty(CmdletInfo settings) => $@"
+        protected override bool ReturnsValue => {settings.ReturnsValue.ToString().ToLower()};
+";
+
+        private static string GenerateStructureGroupProperty(CmdletInfo settings) => $@"
+        [Parameter]
+        internal Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup StructureGroup => 
+            Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.{(settings.CmdletName.EndsWith("Area") ? "Areas" : "Iterations")};
 ";
 
         private string GenerateTeamScopeProperty(CmdletInfo settings)
@@ -270,9 +293,11 @@ namespace {type.FullNamespace()}
             internal int RequiresVersion { get; private set; }
             internal bool NoAutoPipeline { get; private set; }
             public string DefaultParameterSetName { get; private set; }
+            public string CustomControllerName { get; private set; }
             public INamedTypeSymbol DataType { get; private set; }
             public INamedTypeSymbol OutputType { get; private set; }
             public bool SupportsShouldProcess { get; private set; }
+            public bool ReturnsValue { get; private set; }
 
             internal CmdletInfo(INamedTypeSymbol cmdlet)
             {
@@ -290,6 +315,8 @@ namespace {type.FullNamespace()}
                 OutputType = GetAttributeNamedValue<INamedTypeSymbol>(cmdlet, "TfsCmdletAttribute", "OutputType");
                 SupportsShouldProcess = GetAttributeNamedValue<bool>(cmdlet, "TfsCmdletAttribute", "SupportsShouldProcess");
                 DefaultParameterSetName = GetAttributeNamedValue<string>(cmdlet, "TfsCmdletAttribute", "DefaultParameterSetName");
+                CustomControllerName =  GetAttributeNamedValue<string>(cmdlet, "TfsCmdletAttribute", "CustomControllerName");
+                ReturnsValue =  GetAttributeNamedValue<bool>(cmdlet, "TfsCmdletAttribute", "ReturnsValue");
             }
 
             private T GetAttributeConstructorValue<T>(INamedTypeSymbol cmdlet, string attributeName, int argumentPosition = 0)

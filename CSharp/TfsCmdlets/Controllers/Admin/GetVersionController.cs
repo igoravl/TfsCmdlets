@@ -4,7 +4,7 @@ using TfsCmdlets.Models;
 namespace TfsCmdlets.Controllers.Admin
 {
     [CmdletController(typeof(ServerVersion))]
-    internal class GetVersionController
+    partial class GetVersionController
     {
         [Import]
         private ITfsVersionTable TfsVersionTable { get; }

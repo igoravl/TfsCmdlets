@@ -1,62 +1,46 @@
-// using System.Management.Automation;
-// using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-// using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-// using TfsCmdlets.Extensions;
-// using TfsCmdlets.Models;
-// using TfsCmdlets.Util;
+using System.Management.Automation;
 
-// namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
-// {
-//     /// <summary>
-//     /// Gets one or more Work Item Areas from a given Team Project.
-//     /// </summary>
-//     [Cmdlet(VerbsCommon.Move, "TfsArea", SupportsShouldProcess = true)]
-//     [OutputType(typeof(Models.ClassificationNode))]
-//     public class MoveArea : CmdletBase
-//     {
-//         /// <summary>
-//         /// HELP_PARAM_AREA
-//         /// </summary>
-//         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-//         [SupportsWildcards()]
-//         [ValidateNotNullOrEmpty]
-//         [Alias("Path", "Area")]
-//         public object Node { get; set; } = @"\**";
+namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
+{
+    /// <summary>
+    /// Copies one or more Work Item Areas recursively
+    /// </summary>
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(Models.ClassificationNode))]
+    partial class CopyArea 
+    {
+        /// <summary>
+        /// HELP_PARAM_AREA
+        /// </summary>
+        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [SupportsWildcards()]
+        [ValidateNotNullOrEmpty]
+        [Alias("Path", "Area")]
+        public object Node { get; set; } = @"\**";
 
-//         /// <summary>
-//         /// Specifies the name and/or path of the destination parent node.
-//         /// </summary>
-//         [Parameter(Mandatory = true, Position = 1)]
-//         [Alias("MoveTo")]
-//         public object Destination { get; set; }
+        /// <summary>
+        /// Specifies the name and/or path of the destination parent node.
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 1)]
+        [Alias("CopyTo")]
+        public object Destination { get; set; }
 
-//         /// <summary>
-//         /// Allows the cmdlet to create destination parent node(s) if they're missing.
-//         /// </summary>
-//         [Parameter()]
-//         public SwitchParameter Force { get; set; }
+        /// <summary>
+        /// Specifies the name and/or path of the destination team project. 
+        /// When omitted, copies the area to the same team project.
+        /// </summary>
+        [Parameter]
+        public object DestinationProject { get; set; }
 
-//         /// <summary>
-//         /// HELP_PARAM_PROJECT
-//         /// </summary>
-//         [Parameter()]
-//         public object Project { get; set; }
+        /// <summary>
+        /// Allows the cmdlet to create destination parent node(s) if they're missing.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Force { get; set; }
 
-//         /// <summary>
-//         /// HELP_PARAM_COLLECTION
-//         /// </summary>
-//         [Parameter()]
-//         public object Collection { get; set; }
-
-//         /// <summary>
-//         /// HELP_PARAM_PASSTHRU
-//         /// </summary>
-//         [Parameter()]
-//         public SwitchParameter Passthru { get; set; }
-
-//         /// <summary>
-//         /// Returns the type name for the underlying IController implementing the logic of this cmdlet
-//         /// </summary>
-//         internal TreeStructureGroup StructureGroup => TreeStructureGroup.Areas;
-//     }
-// }
+        /// <summary>
+        /// Copies nodes recursively. When omitted, sub-nodes are not copied.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter Recurse { get; set; }
+    }
+}

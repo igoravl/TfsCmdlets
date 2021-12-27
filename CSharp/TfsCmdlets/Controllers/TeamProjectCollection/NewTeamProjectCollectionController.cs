@@ -1,8 +1,5 @@
 ﻿// ReSharper disable RedundantUsingDirective
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Management.Automation;
 using System.Threading;
 using Microsoft.TeamFoundation.Framework.Common;
 using TfsCmdlets.Models;

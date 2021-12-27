@@ -10,6 +10,9 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
     [CmdletController(typeof(WebApiWorkItemType))]
     partial class ImportWorkItemTypeController
     {
+        [Import]
+        private IWorkItemStore Store { get; set; }
+
         public override IEnumerable<WebApiWorkItemType> Invoke()
         {
             var xml = Parameters.Get<string>(nameof(ImportWorkItemType.Xml));
@@ -32,18 +35,9 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
                 throw new InvalidOperationException($"Work item types can only be imported into team projects based on XML Process Templates. Team Project '{tp.Name}' uses the {process.Type} process template '{process.Name}'.");
             }
 
-            DoImport(tpc, tp.Name, xml);
+            Store.ImportWorkItemType(tp.Name, xml);
 
             return null;
-        }
-
-        private void DoImport(Models.Connection tpc, string tpName, string xml)
-        {
-#if NET471_OR_GREATER
-            var store = tpc.InnerConnection.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
-            var tp = store.Projects[tpName];
-            tp.WorkItemTypes.Import(xml);
-#endif
         }
     }
 }

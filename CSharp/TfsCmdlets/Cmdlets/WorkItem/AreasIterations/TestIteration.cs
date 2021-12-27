@@ -1,12 +1,11 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     /// <summary>
     /// Determines whether the specified iteration exist.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(Models.ClassificationNode))]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(bool), CustomControllerName = "TestClassificationNode")]
     partial class TestIteration
     {
         /// <summary>
@@ -16,8 +15,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Alias("Iteration", "Path")]
         [SupportsWildcards()]
         public string Node { get; set; }
-
-        [Parameter]
-        internal TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
     }
 }

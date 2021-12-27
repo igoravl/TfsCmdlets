@@ -16,7 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Source Generators -->
     <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../TfsCmdlets.Common/TfsCmdlets.Common.csproj" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
@@ -31,12 +36,12 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <Compile Remove="**/*.Desktop.cs" />
+    <Compile Remove="**/*-desktop.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
-    <Compile Remove="**/*.Core.cs" />
+    <Compile Remove="**/*-core.cs" />
   </ItemGroup>
 
   <ItemGroup>

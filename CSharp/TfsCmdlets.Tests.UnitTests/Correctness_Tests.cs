@@ -1,45 +1,59 @@
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Management.Automation;
-//using System.Reflection;
-//using TfsCmdlets.Cmdlets;
-//using TfsCmdlets.Services;
-//using Xunit;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
+using System.Reflection;
+using TfsCmdlets.Cmdlets;
+using TfsCmdlets.Extensions;
+using TfsCmdlets.Services;
+using Xunit;
 
-//namespace TfsCmdlets.Tests.UnitTests
-//{
-//    public class Correctness_Tests
-//    {
-//        [Fact]
-//        public void All_Cmdlets_Have_Controllers()
-//        {
-//            var asm = typeof(AssemblyResolver).Assembly;
-//            var cmdlets = asm.GetTypes().Where(t => typeof(CmdletBase).IsAssignableFrom(t) && !t.IsAbstract).ToList();
-//            var controllers = new List<IController>();
+namespace TfsCmdlets.Tests.UnitTests
+{
+    public class Correctness_Tests
+    {
+        [Fact]
+        public void All_Cmdlets_Have_Controllers()
+        {
+            var asm = typeof(AssemblyResolver).Assembly;
 
-//            foreach (var t in asm.GetTypes()
-//                         .Where(t => typeof(IController).IsAssignableFrom(t) && !t.IsAbstract))
-//            {
-//                var ci = t.GetConstructors()[0];
-//                var parms = new object[ci.GetParameters().Length];
+            var cmdletTypes = asm.GetTypes()
+                .Where(t => t.GetCustomAttributes<TfsCmdletAttribute>().Any())
+                .ToList();
 
-//                controllers.Add(ci.Invoke(parms) as IController);
-//            }
+            var controllerTypes = asm.GetTypes()
+                .Where(t => t.GetCustomAttributes<CmdletControllerAttribute>().Any()).ToList();
 
-//            var missingControllers = new SortedSet<string>();
+            var missingControllers = new SortedSet<string>();
 
-//            foreach (var cmdlet in cmdlets)
-//            {
-//                if (!controllers.Any(
-//                        c => c.CommandName.Equals(cmdlet.Name, StringComparison.OrdinalIgnoreCase) || 
-//                        c.CommandName.Equals(cmdlet.Name + "Controller", StringComparison.OrdinalIgnoreCase)))
-//                {
-//                    missingControllers.Add(cmdlet.Name);
-//                }
-//            }
+            foreach (var cmdletType in cmdletTypes)
+            {
+                var cmdletAttr = cmdletType.GetCustomAttribute<CmdletAttribute>();
+                var tfsCmdletAttr = cmdletType.GetCustomAttribute<TfsCmdletAttribute>();
 
-//            Assert.Empty(missingControllers);
-//        }
-//    }
-//}
+                var commandName = tfsCmdletAttr.CustomControllerName ?? cmdletAttr.VerbName + cmdletAttr.NounName.Substring(3);
+                var dataType = tfsCmdletAttr.OutputType;
+
+                // Find by name
+
+                if (controllerTypes.Any(t => t.Name.Equals(commandName) || t.Name.Equals(commandName + "Controller")))
+                {
+                    continue;
+                }
+
+                // Find by verb + data type
+
+                if (controllerTypes.Any(t =>
+                     t.GetCustomAttribute<CmdletControllerAttribute>().DataType == dataType &&
+                     cmdletAttr.VerbName.Equals(t.Name.Substring(0, t.Name.FindIndex(c => char.IsUpper(c), 1)))))
+                {
+                    continue;
+                }
+
+                missingControllers.Add(cmdletType.FullName);
+            }
+
+            Assert.True(0 == missingControllers.Count, $"Found cmdlet(s) without a controller: {string.Join(", ", missingControllers.OrderBy(s=>s).ToArray())}");
+        }
+    }
+}

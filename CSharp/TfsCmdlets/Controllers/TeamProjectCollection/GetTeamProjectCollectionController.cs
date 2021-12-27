@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Composition;
-using TfsCmdlets.Models;
-using TfsCmdlets.Services;
+﻿using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Controllers.TeamProjectCollection
 {

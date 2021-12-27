@@ -12,6 +12,8 @@ namespace TfsCmdlets
         /// </summary>
         void IModuleAssemblyInitializer.OnImport()
         {
+            ServiceLocator.SetSite(this);
+
             var resolver = new AssemblyResolver();
             resolver.Register();
         }

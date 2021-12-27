@@ -39,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         public string Encoding { get; set; } = "UTF-8";
 
         /// <summary>
-        /// Allows the cmdlet to overwrite an existing file in the destination folder.
+        /// HELP_PARAM_FORCE_OVERWRITE
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "Export to file")]

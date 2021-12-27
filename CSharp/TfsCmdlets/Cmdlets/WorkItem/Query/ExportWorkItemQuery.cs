@@ -54,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         public SwitchParameter FlattenFolders { get; set; }
 
         /// <summary>
-        /// Allows the cmdlet to overwrite an existing file in the destination folder.
+        /// HELP_PARAM_FORCE_OVERWRITE
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "Export to file")]

@@ -8,6 +8,10 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
     [CmdletController]
     partial class ExportWorkItemTypeController
     {
+
+        [Import]
+        private IWorkItemStore Store { get; set; }
+
         public override object InvokeCommand()
         {
             var types = Data.GetItems<WebApiWorkItemType>();
@@ -26,15 +30,13 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
             {
                 if (!PowerShell.ShouldProcess($"Team Project '{tp.Name}'", $"Export work item type '{type.Name}'")) continue;
 
-                var xml = GetXml(tpc, tp.Name, type, includeGlobalLists);
+                var xml = Store.ExportWorkItemType(tp.Name, type.Name, includeGlobalLists);
 
-                if(xml == null) continue;
-
-                var doc = xml.ToString();
+                if (xml == null) continue;
 
                 if (asXml)
                 {
-                    result.Add(doc.ToString());
+                    result.Add(xml);
                     continue;
                 }
 
@@ -59,7 +61,7 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
 
                 try
                 {
-                    File.WriteAllText(outputPath, doc, Encoding.GetEncoding(encoding));
+                    File.WriteAllText(outputPath, xml, Encoding.GetEncoding(encoding));
                 }
                 catch (Exception ex)
                 {
@@ -68,20 +70,6 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
             }
 
             return result;
-        }
-
-        private object GetXml(Models.Connection tpc, string tpName, WebApiWorkItemType type, bool includeGlobalLists)
-        {
-#if NET471_OR_GREATER
-            var store = tpc.InnerConnection.GetService<Microsoft.TeamFoundation.WorkItemTracking.Client.WorkItemStore>();
-            var tp = store.Projects[tpName];
-            var xmlText = tp.WorkItemTypes[type.Name].Export(includeGlobalLists).OuterXml;
-            var doc = XDocument.Parse(xmlText);
-
-            return doc.ToString();
-#else
-            return null;
-#endif
         }
     }
 }

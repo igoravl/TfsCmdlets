@@ -1,6 +1,4 @@
-﻿using System;
-using System.Management.Automation;
-using System.Security;
+﻿using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Common;
 
 namespace TfsCmdlets.Cmdlets.Credential
@@ -9,7 +7,8 @@ namespace TfsCmdlets.Cmdlets.Credential
     /// Provides credentials to use when you connect to a Team Foundation Server 
     /// or Azure DevOps organization.
     /// </summary>
-    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Cached credentials", OutputType = typeof(VssCredentials))]
+    [TfsCmdlet(CmdletScope.None, DefaultParameterSetName = "Cached credentials", OutputType = typeof(VssCredentials), 
+        CustomControllerName = "GetCredential", ReturnsValue = true)]
     partial class NewCredential 
     {
         /// <summary>
@@ -17,9 +16,5 @@ namespace TfsCmdlets.Cmdlets.Credential
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public Uri Url { get; set; }
-
-        protected override string CommandName => "GetCredential";
-        
-        protected override bool ReturnsValue => true;
     }
 }

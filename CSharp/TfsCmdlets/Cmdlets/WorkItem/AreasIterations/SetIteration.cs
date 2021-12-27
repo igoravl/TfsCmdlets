@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -39,8 +38,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Parameter(Mandatory = true, ParameterSetName = "Set by iteration length")]
         [ValidateRange(0, int.MaxValue)]
         public int Length { get; set; } = 0;
-
-        [Parameter]
-        internal  TreeStructureGroup StructureGroup => TreeStructureGroup.Iterations;
     }
 }
