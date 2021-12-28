@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
 using System.Management.Automation;
+using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -11,13 +9,13 @@ namespace TfsCmdlets.Services.Impl
     {
         private IPowerShellService PowerShell { get; set; }
 
-        private readonly string[] _hiddenParameters = new[]{"Password", "PersonalAccessToken"};
+        private readonly string[] _hiddenParameters = new[] { "Password", "PersonalAccessToken" };
 
         public void Log(string message, string commandName = null)
         {
-            if(!PowerShell.IsVerbose) return;
-            
-            PowerShell.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{(commandName?? PowerShell.CurrentCommand)}] {message}");
+            if (!PowerShell.IsVerbose) return;
+
+            PowerShell.WriteVerbose($"[{DateTime.Now:HH:mm:ss.ffff}] [{(commandName ?? PowerShell.CurrentCommand)}] {message}");
         }
 
         public void LogError(string message)
@@ -38,39 +36,54 @@ namespace TfsCmdlets.Services.Impl
             PowerShell.WriteWarning(message);
         }
 
-        
+
         public void LogParameters(IParameterManager parameters)
         {
             if (!PowerShell.IsVerbose) return;
 
             var parms = new Dictionary<string, object>();
+            var parameterSetName = parameters["ParameterSetName"]?? "__AllParameterSets";
+            var hasParameterSetName = !parameterSetName.Equals("__AllParameterSets");
 
-            foreach (var key in parameters.Keys) 
+            foreach (var key in parameters.Keys.Where(key => !key.Equals("ParameterSetName")))
             {
                 var value = parameters[key];
-                
-                if (_hiddenParameters.Any(p => p.Equals(key, StringComparison.OrdinalIgnoreCase)))
-                {
-                    parms[key] = "*****";
-                    continue;
-                }
 
-                if(value is SwitchParameter switchParameter)
+                switch (value)
                 {
-                    parms[key] = switchParameter.IsPresent;
-                    continue;
+                    case { } when (_hiddenParameters.Any(p => p.Equals(key, StringComparison.OrdinalIgnoreCase))):
+                        {
+                            value = "*****";
+                            break;
+                        }
+                    case SwitchParameter switchParameter:
+                        {
+                            value = switchParameter.IsPresent;
+                            break;
+                        }
+                    case Models.Connection conn: {
+                        value = $"{{Connection Url={conn.Uri}}}";
+                        break;
+                    }
+                    case WebApiTeamProject tp: {
+                        value = $"{{Project Name='{tp.Name}' Id={tp.Id}}}";
+                        break;
+                    }
+                    case WebApiTeam t: {
+                        value = $"{{Team Name='{t.Name}' Id={t.Id}}}";
+                        break;
+                    }
                 }
-
                 parms[key] = value;
             }
 
-            var hasParameterSetName = parms.Keys.Contains("parametersetName");
             var args = Newtonsoft.Json.Linq.JObject.FromObject(parms)
                     .ToString(Newtonsoft.Json.Formatting.None)
                     .Replace("\":", "\" = ")
                     .Replace(",\"", "; \"");
 
-            Log($"Running cmdlet with {(hasParameterSetName? $"parameter set '{parms["parametersetName"]}' and ": "")}the following arguments: {args}");
+            Log($"<START> Running cmdlet with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}the following implicit and explicit arguments:");
+            Log(args);
 
         }
 
@@ -79,5 +92,5 @@ namespace TfsCmdlets.Services.Impl
         {
             PowerShell = powerShell;
         }
-     }
+    }
 }

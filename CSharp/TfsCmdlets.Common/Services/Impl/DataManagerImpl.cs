@@ -81,15 +81,25 @@ namespace TfsCmdlets.Services.Impl
             => GetItem<WebApiTeamProject>(overridingParameters) ??
                 throw new ArgumentException("No team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
 
-        public WebApiTeam GetTeam(object overridingParameters = null, string contextValue = null)
-            => GetItem<WebApiTeam>(overridingParameters) ??
+        public Models.Team GetTeam(object overridingParameters = null, string contextValue = null)
+            => GetItem<Models.Team>(overridingParameters) ??
                 throw new ArgumentException("No team information available. Either supply a valid -Team argument or use Connect-TfsTeam prior to invoking this cmdlet.");
 
         public T GetClient<T>(object overridingParameters = null)
-            => (T)((ITfsServiceProvider)GetCollection(overridingParameters)).GetClient(typeof(T));
+        {
+            var conn = ((ITfsServiceProvider)GetCollection(overridingParameters));
+
+            Logger.Log($"GetClient: Getting an instance of [{typeof(T).FullName}]");
+            return (T)conn.GetClient(typeof(T));
+        }
 
         public T GetService<T>(object overridingParameters = null)
-            => (T)((ITfsServiceProvider)GetCollection(overridingParameters)).GetService(typeof(T));
+        {
+            var conn = ((ITfsServiceProvider)GetCollection(overridingParameters));
+
+            Logger.Log($"GetService: Getting an instance of [{typeof(T).FullName}]");
+            return (T)conn.GetService(typeof(T));
+        }
 
         private Connection CreateConnection(ClientScope scope, object overridingParameters = null)
         {
@@ -108,12 +118,14 @@ namespace TfsCmdlets.Services.Impl
                 {
                     case Connection conn:
                         {
+                            Logger.Log($"Returning the {scope} passed as an argument, unmodified.");
                             result = conn.InnerObject;
                             break;
                         }
 #if NETCOREAPP3_1_OR_GREATER
                     case Microsoft.VisualStudio.Services.WebApi.VssConnection conn:
                         {
+                            Logger.Log($"Returning the {scope} passed as an argument, unmodified.");
                             result = conn;
                             break;
                         }
@@ -125,33 +137,41 @@ namespace TfsCmdlets.Services.Impl
                             break;
                         }
 #else
-                    case Microsoft.VisualStudio.Services.WebApi.VssConnection conn when scope == ClientScope.Server:
+                    case Microsoft.VisualStudio.Services.WebApi.VssConnection conn when scope == ClientScope.Collection:
                         {
+                            Logger.Log($"Get TfsTeamProjectCollection from the supplied VssConnection");
                             result = new TfsTeamProjectCollection(conn.Uri, conn.Credentials);
                             break;
                         }
                     case Microsoft.VisualStudio.Services.WebApi.VssConnection conn when scope == ClientScope.Server:
                         {
+                            Logger.Log($"Get TfsConfigurationServer from the supplied VssConnection");
                             result = new TfsConfigurationServer(conn.Uri, conn.Credentials);
                             break;
                         }
-                    case Microsoft.TeamFoundation.Client.TfsConnection conn:
+                    case TfsTeamProjectCollection conn when scope == ClientScope.Collection:
                         {
+                            Logger.Log($"Returning the {scope} passed as an argument, unmodified.");
+                            result = conn;
+                            break;
+                        }
+                    case TfsConfigurationServer conn when scope == ClientScope.Server:
+                        {
+                            Logger.Log($"Returning the {scope} passed as an argument, unmodified.");
                             result = conn;
                             break;
                         }
                     case Uri uri when scope == ClientScope.Server:
                         {
                             Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                            result =
- new Microsoft.TeamFoundation.Client.TfsConfigurationServer(uri, GetItem<VssCredentials>(new { Url = uri }));
+                            result = TfsConfigurationServerFactory.GetConfigurationServer(
+                                uri, GetItem<VssCredentials>(new { Url = uri }));
                             break;
                         }
                     case Uri uri when scope == ClientScope.Collection:
                         {
                             Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                            result =
- Microsoft.TeamFoundation.Client.TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
+                            result = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
                                 uri, GetItem<VssCredentials>(new { Url = uri }));
                             break;
                         }
@@ -160,11 +180,6 @@ namespace TfsCmdlets.Services.Impl
                         {
                             Logger.Log($"Get currently connected {scope}");
                             result = ((Connection)CurrentConnections.Get(scope.ToString()))?.InnerObject;
-
-                            if (result == null && current) return null;
-
-                            ErrorUtil.ThrowIfNull(result, scope.ToString(),
-                                $"No connection information available. Either supply a valid -{scope} argument or use one of the Connect-Tfs* cmdlets prior to invoking this cmdlet.");
 
                             break;
                         }
