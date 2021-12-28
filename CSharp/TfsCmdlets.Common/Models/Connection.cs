@@ -16,10 +16,10 @@ namespace TfsCmdlets.Models
     public sealed class Connection : ModelBase<AdoConnection>, ITfsServiceProvider
     {
         /// <summary>Converts Connection to AdoConnection</summary>
-        public static implicit operator AdoConnection(Connection c) => c.InnerObject;
+        public static implicit operator AdoConnection(Connection c) => c?.InnerObject;
 
         /// <summary>Converts AdoConnection to Connection</summary>
-        public static implicit operator Connection(AdoConnection c) => new Connection(c);
+        public static implicit operator Connection(AdoConnection c) => c == null? null: new Connection(c);
 
         public Connection(AdoConnection obj) : base(obj) { }
 
