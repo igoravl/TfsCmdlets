@@ -9,6 +9,8 @@ namespace TfsCmdlets.Services
 
         T Get<T>(string name, T defaultValue = default);
 
+        T GetRaw<T>(string name, T defaultValue = default);
+
         bool HasParameter(string parameter);
 
         IDisposable PushContext(object overridingParameters);

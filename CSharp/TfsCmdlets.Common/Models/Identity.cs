@@ -36,5 +36,11 @@ namespace TfsCmdlets.Models
         public string UniqueName { get; private set; }
 
         public IEnumerable<Guid> MemberIds { get; private set; }
+
+        protected override void AddProperty(string name, object value)
+        {
+            InnerObject.Properties.Add(name, value);
+            base.AddProperty(name, value);
+        }
     }
 }

@@ -69,6 +69,19 @@ namespace TfsCmdlets.Services.Impl
             return (T)val;
         }
 
+        /// <summary>
+        /// Returns the raw value of a property. When the property is missing, returns an
+        /// optionally supplied default value.
+        /// </summary>
+        public T GetRaw<T>(string name, T defaultValue = default)
+        {
+            CheckIsInitialized();
+
+            if (!_parameterValues.ContainsKey(name)) return defaultValue;
+
+            return (T)_parameterValues[name];
+        }
+
         public object this[string name]
         {
             get => _parameterValues[name];
