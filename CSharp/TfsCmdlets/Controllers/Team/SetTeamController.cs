@@ -7,7 +7,7 @@ using TfsCmdlets.Cmdlets.Team;
 
 namespace TfsCmdlets.Controllers.Team
 {
-    [CmdletController(typeof(WebApiTeam))]
+    [CmdletController(typeof(Models.Team))]
     partial class SetTeamController
     {
         [Import]
@@ -16,7 +16,7 @@ namespace TfsCmdlets.Controllers.Team
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<WebApiTeam> Invoke()
+        public override IEnumerable<Models.Team> Invoke()
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();

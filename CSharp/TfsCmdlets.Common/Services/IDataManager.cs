@@ -31,7 +31,7 @@ namespace TfsCmdlets.Services
         
         WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null);
         
-        WebApiTeam GetTeam(object overridingParameters = null, string contextValue = null);
+        Models.Team GetTeam(object overridingParameters = null, string contextValue = null);
 
         T GetClient<T>(object overridingParameters = null);
 

@@ -2,10 +2,10 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Controllers.TeamProject
 {
-    [CmdletController(typeof(WebApiTeam))]
+    [CmdletController(typeof(Models.Team))]
     partial class DisconnectTeamController
     {
-        public override IEnumerable<WebApiTeam> Invoke()
+        public override IEnumerable<Models.Team> Invoke()
         {
             CurrentConnections.Set(
                 CurrentConnections.Server,

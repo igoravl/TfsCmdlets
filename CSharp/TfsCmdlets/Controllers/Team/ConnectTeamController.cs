@@ -3,13 +3,13 @@ using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.Team
 {
-    [CmdletController(typeof(WebApiTeam))]
+    [CmdletController(typeof(Models.Team))]
     partial class ConnectTeamController
     {
         [Import]
         private ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<WebApiTeam> Invoke()
+        public override IEnumerable<Models.Team> Invoke()
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();

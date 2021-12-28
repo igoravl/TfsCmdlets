@@ -3,10 +3,10 @@ using TfsCmdlets.Cmdlets.Team;
 
 namespace TfsCmdlets.Controllers.Team
 {
-    [CmdletController(typeof(WebApiTeam))]
+    [CmdletController(typeof(Models.Team))]
     partial class RenameTeamController
     {
-        public override IEnumerable<WebApiTeam> Invoke()
+        public override IEnumerable<Models.Team> Invoke()
         {
             var tp = Data.GetProject();
             var t = Data.GetItem<WebApiTeam>();

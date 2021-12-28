@@ -2,10 +2,10 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Controllers.Team
 {
-    [CmdletController(typeof(WebApiTeam))]
+    [CmdletController(typeof(Models.Team))]
     partial class RemoveTeamController
     {
-        public override IEnumerable<WebApiTeam> Invoke()
+        public override IEnumerable<Models.Team> Invoke()
         {
             var tp = Data.GetProject();
             var teams = Data.GetItems<WebApiTeam>();
