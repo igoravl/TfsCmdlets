@@ -3,7 +3,7 @@
 namespace TfsCmdlets.Cmdlets
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class TfsCmdletAttribute : Attribute
+    public sealed class TfsCmdletAttribute : Attribute
     {
         public CmdletScope Scope { get; }
 
@@ -18,6 +18,8 @@ namespace TfsCmdlets.Cmdlets
         public bool SkipAutoProperties { get; set; }
 
         public bool NoAutoPipeline { get; set; }
+
+        public Type DataType { get; set; }
 
         public Type OutputType { get; set; }
 

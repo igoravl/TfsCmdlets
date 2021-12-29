@@ -1,6 +1,7 @@
 ﻿using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.Common;
+using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Models
 {
@@ -21,6 +22,12 @@ namespace TfsCmdlets.Models
             SubjectDescriptor = obj.SubjectDescriptor;
         }
 
+        public Identity(WebApiIdentity obj, WebApiTeam team)
+            : this(obj)
+        {
+            SetTeam(team);
+        }
+
         public string IdentityType => IsContainer ? "Group" : "User";
 
         public Guid Id { get; private set; }
@@ -37,9 +44,26 @@ namespace TfsCmdlets.Models
 
         public IEnumerable<Guid> MemberIds { get; private set; }
 
+        public Guid TeamId => (Guid)InnerObject.Properties[nameof(TeamId)];
+
+        public Guid ProjectId => (Guid)InnerObject.Properties[nameof(ProjectId)];
+
+        public string TeamName => (string)InnerObject.Properties[nameof(TeamName)];
+
+        public string ProjectName => (string)InnerObject.Properties[nameof(ProjectName)];
+
+        internal void SetTeam(WebApiTeam team)
+        {
+            AddProperty(nameof(TeamId), team.Id);
+            AddProperty(nameof(ProjectId), team.ProjectId);
+            AddProperty(nameof(TeamName), team.Name);
+            AddProperty(nameof(ProjectName), team.ProjectName);
+        }
+
         protected override void AddProperty(string name, object value)
         {
-            InnerObject.Properties.Add(name, value);
+            InnerObject.Properties[name] = value;
+            
             base.AddProperty(name, value);
         }
     }

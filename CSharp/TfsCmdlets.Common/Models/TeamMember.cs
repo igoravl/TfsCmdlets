@@ -4,11 +4,11 @@ using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 namespace TfsCmdlets.Models
 {
     /// <summary>
-    /// Represents an administrator of a Team Foundation / Azure DevOps Team
+    /// Represents a member of a Team Foundation / Azure DevOps Team
     /// </summary>
-    public class TeamAdmin : Identity
+    public class TeamMember : Identity
     {
-        public TeamAdmin(WebApiIdentity obj, WebApiTeam team) : base(obj, team)
+        public TeamMember(WebApiIdentity obj, WebApiTeam team) : base(obj, team)
         {
         }
     }

@@ -14,17 +14,12 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
 
             ErrorUtil.ThrowIfNotFound(team, nameof(team), Parameters.Get<object>(nameof(GetTeamAdmin.Team)));
 
-            foreach (var member in team.TeamMembers.Where(m => m.IsTeamAdmin))
+            foreach (var m in team.TeamMembers.Where(m => m.IsTeamAdmin &&
+                (m.Identity.DisplayName.IsLike(admin) || m.Identity.UniqueName.IsLike(admin))))
             {
-                var a = new Models.TeamAdmin(Data.GetItem<Models.Identity>(new
-                {
-                    Identity = member.Identity.Id
-                }), team);
-
-                if (a.DisplayName.IsLike(admin) || a.UniqueName.IsLike(admin))
-                {
-                    yield return a;
-                }
+                yield return new Models.TeamAdmin(
+                    Data.GetItem<Models.Identity>(new { Identity = m.Identity.Id }).InnerObject,
+                    team);
             }
         }
     }

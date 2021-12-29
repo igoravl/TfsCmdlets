@@ -20,7 +20,7 @@ namespace TfsCmdlets.Cmdlets
         [Import] protected IPowerShellService PSService { get; set; }
         [Import] protected IParameterManager Parameters { get; set; }
         [Import] protected ILogger Logger { get; set; }
-        [Import] protected IRuntimeUtil RuntimeUtil {get;set;}
+        [Import] protected IRuntimeUtil RuntimeUtil { get; set; }
         [ImportMany] protected IEnumerable<Lazy<IController>> Controllers { get; set; }
 
         public IController GetController()
@@ -31,7 +31,10 @@ namespace TfsCmdlets.Cmdlets
                 )?.Value;
 
         public Type GetDataType()
-            => GetType().GetCustomAttribute<TfsCmdletAttribute>()?.OutputType ?? typeof(object);
+        {
+            var attr = GetType().GetCustomAttribute<TfsCmdletAttribute>();
+            return attr.DataType ?? attr.OutputType ?? typeof(object);
+        }
 
         protected string Verb { get; private set; }
 
@@ -99,16 +102,13 @@ namespace TfsCmdlets.Cmdlets
         {
             try
             {
-                var result = DoInvokeCommand();
+                var results = DoInvokeCommand();
 
-                if (result == null) return;
+                if (results == null) return;
 
-                foreach (var r in result)
+                foreach (var result in results.Where(r => r != null && ReturnsValue))
                 {
-                    if (ReturnsValue && r != null)
-                    {
-                        WriteObject(r);
-                    }
+                    WriteObject(result);
                 }
             }
             catch (Exception ex)
@@ -175,8 +175,8 @@ namespace TfsCmdlets.Cmdlets
         ///     NotSupportedException when running on PowerShell Core.</throws>
         private void CheckHostingEnvironment()
         {
-            var requiresDesktop = (bool) GetType().GetCustomAttribute<TfsCmdletAttribute>()?.DesktopOnly;
-            var requiresWindows = (bool) GetType().GetCustomAttribute<TfsCmdletAttribute>()?.WindowsOnly;
+            var requiresDesktop = (bool)GetType().GetCustomAttribute<TfsCmdletAttribute>()?.DesktopOnly;
+            var requiresWindows = (bool)GetType().GetCustomAttribute<TfsCmdletAttribute>()?.WindowsOnly;
 
             if (requiresDesktop && !RuntimeUtil.Platform.Equals("Desktop")) ErrorUtil.ThrowDesktopOnlyCmdlet();
             if (requiresWindows && !RuntimeUtil.OperatingSystem.Equals("Windows")) ErrorUtil.ThrowWindowsOnlyCmdlet();

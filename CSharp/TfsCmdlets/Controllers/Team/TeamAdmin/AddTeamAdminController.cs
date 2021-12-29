@@ -8,22 +8,33 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
     {
         public override IEnumerable<Models.TeamAdmin> Invoke()
         {
-            var t = Data.GetTeam();
-            var admParam = Parameters.Get<object>(nameof(AddTeamAdmin.Admin));
-            var admin = Data.GetItem<Models.Identity>(new { Identity = admParam });
+            var team = Data.GetTeam();
+            var member = Parameters.Get<object>(nameof(AddTeamAdmin.Admin));
 
-            if (admin.IsContainer)
+            var identities = Data.GetItems<Models.Identity>(new { Identity = member })
+                .Where(i => !i.IsContainer)
+                .ToDictionary(i => i.Id.ToString());
+
+            if (identities.Count == 0)
             {
-                Logger.LogError(new ArgumentException($"'{admin.DisplayName}' is a group. Only users can be added as administrators."));
+                Logger.LogWarn($"No identities found matching '{member}'");
                 yield break;
             }
 
-            if (!PowerShell.ShouldProcess(t, $"Add administrator '{admin.DisplayName} ({admin.UniqueName})'")) yield break;
+            var ids = identities.Values.Select(i => i.Id);
+            var uniqueNames = identities.Values.Select(i => i.UniqueName);
+
+            if (!PowerShell.ShouldProcess(team, $"Add team administrator(s) {string.Join(", ", uniqueNames)}")) yield break;
 
             var client = Data.GetClient<TeamAdminHttpClient>();
-            var result = client.AddTeamAdmin(t.ProjectName, t.Id, admin.Id);
+            var result = client.AddTeamAdmin(team.ProjectId, team.Id, ids);
 
-            yield return new Models.TeamAdmin(admin, t);
+            foreach (var addedAdmin in result)
+            {
+                if (!identities.ContainsKey(addedAdmin.TeamFoundationId)) continue;
+
+                yield return new Models.TeamAdmin(identities[addedAdmin.TeamFoundationId].InnerObject, team);
+            }
         }
     }
 }

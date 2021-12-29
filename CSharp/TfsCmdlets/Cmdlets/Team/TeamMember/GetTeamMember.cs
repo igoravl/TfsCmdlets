@@ -1,12 +1,13 @@
 using System.Management.Automation;
 using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
+using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {
     /// <summary>
     /// Gets the members of a team.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Team, OutputType = typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
+    [TfsCmdlet(CmdletScope.Team, DataType = typeof(Models.TeamMember), OutputType = typeof(WebApiIdentity))]
     partial class GetTeamMember
     {
         /// <summary>
