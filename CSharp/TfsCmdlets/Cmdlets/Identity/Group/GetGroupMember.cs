@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {

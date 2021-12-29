@@ -1,6 +1,3 @@
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using WebApiTeamProjectRef = Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference;
-
 namespace TfsCmdlets.Controllers.TeamProject
 {
     [CmdletController(typeof(WebApiTeamProject))]

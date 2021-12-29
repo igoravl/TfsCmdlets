@@ -1,6 +1,4 @@
 using System.Management.Automation;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using WebApiTeamProjectRef = Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {

@@ -1,6 +1,5 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Cmdlets.WorkItem.Linking;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Controllers.WorkItem.Linking
 {

@@ -1,5 +1,4 @@
 using TfsCmdlets.Cmdlets.Team.TeamAdmin;
-using TfsCmdlets.HttpClient;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Controllers.Team.TeamAdmin

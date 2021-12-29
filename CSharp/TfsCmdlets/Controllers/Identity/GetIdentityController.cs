@@ -1,7 +1,4 @@
 using Microsoft.VisualStudio.Services.Identity;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
-using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
-using TfsQueryMembership = Microsoft.VisualStudio.Services.Identity.QueryMembership;
 
 namespace TfsCmdlets.Controllers.Identity
 {

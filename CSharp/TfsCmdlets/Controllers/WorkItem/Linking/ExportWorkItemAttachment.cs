@@ -1,5 +1,4 @@
-﻿using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Cmdlets.WorkItem.Linking;

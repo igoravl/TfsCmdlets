@@ -1,8 +1,6 @@
 using System.Threading;
 using Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi;
 using TfsCmdlets.Cmdlets.TestManagement;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-// using Microsoft.TeamFoundation.TestManagement.WebApi;
 
 namespace TfsCmdlets.Controllers.TestManagement
 {

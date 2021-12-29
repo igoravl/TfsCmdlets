@@ -1,8 +1,6 @@
 using Microsoft.VisualStudio.Services.Search.WebApi;
 using Microsoft.VisualStudio.Services.Search.WebApi.Contracts.WorkItem;
 using TfsCmdlets.Cmdlets.WorkItem;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 
 namespace TfsCmdlets.Controllers.WorkItem
 {

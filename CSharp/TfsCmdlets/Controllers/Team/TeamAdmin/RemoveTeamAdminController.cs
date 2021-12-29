@@ -1,9 +1,5 @@
-using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets.Team.TeamAdmin;
 using TfsCmdlets.HttpClient;
-using TfsCmdlets.Util;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
 namespace TfsCmdlets.Controllers.Team.TeamAdmin
 {

@@ -1,8 +1,6 @@
 using Microsoft.VisualStudio.Services.Licensing;
 using TfsCmdlets.Cmdlets.Identity;
 using Microsoft.VisualStudio.Services.Licensing.Client;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
-using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
 
 namespace TfsCmdlets.Controllers.Identity
 {

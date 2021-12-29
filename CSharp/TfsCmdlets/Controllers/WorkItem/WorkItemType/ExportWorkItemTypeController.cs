@@ -1,5 +1,4 @@
 using TfsCmdlets.Cmdlets.WorkItem.WorkItemType;
-using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 
 namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
 {

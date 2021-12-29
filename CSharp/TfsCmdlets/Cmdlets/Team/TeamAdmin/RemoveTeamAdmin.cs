@@ -1,6 +1,5 @@
 using System.Management.Automation;
 using TfsCmdlets.HttpClient;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {

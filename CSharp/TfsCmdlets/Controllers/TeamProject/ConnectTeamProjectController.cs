@@ -1,5 +1,3 @@
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-
 namespace TfsCmdlets.Controllers.TeamProject
 {
     [CmdletController(typeof(WebApiTeamProject))]

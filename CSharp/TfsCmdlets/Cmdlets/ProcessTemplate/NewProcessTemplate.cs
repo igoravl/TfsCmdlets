@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {

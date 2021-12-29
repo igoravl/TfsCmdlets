@@ -1,5 +1,4 @@
 using Microsoft.TeamFoundation.Core.WebApi;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Controllers.Team
 {

@@ -1,6 +1,4 @@
 using System.Management.Automation;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {

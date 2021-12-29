@@ -1,6 +1,4 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Controllers.WorkItem.History

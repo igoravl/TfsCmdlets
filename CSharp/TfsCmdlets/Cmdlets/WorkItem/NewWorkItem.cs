@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {

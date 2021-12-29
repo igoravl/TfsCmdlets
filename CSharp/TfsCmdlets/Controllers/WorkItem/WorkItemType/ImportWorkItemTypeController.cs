@@ -1,8 +1,5 @@
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets.WorkItem.WorkItemType;
-using WebApiProcess = Microsoft.TeamFoundation.Core.WebApi.Process;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using WebApiWorkItemType = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemType;
 
 namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
 {
