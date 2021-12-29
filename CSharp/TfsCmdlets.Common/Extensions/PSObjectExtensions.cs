@@ -6,7 +6,14 @@ namespace TfsCmdlets.Extensions
     {
         public static void AddNoteProperty(this PSObject obj, string name, object value)
         {
-            obj.Properties.Add(new PSNoteProperty(name, value));
+            if (obj.Properties[name] == null)
+            {
+                obj.Properties.Add(new PSNoteProperty(name, value));
+            }
+            else
+            {
+                obj.Properties[name].Value = new PSNoteProperty(name, value);
+            }
         }
         
         public static PSPropertyInfo GetProperty(this PSObject obj, string name)
