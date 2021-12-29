@@ -13,7 +13,6 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
         {
             var tag = Data.GetItem<WebApiTagDefinition>();
             var newName = Parameters.Get<string>(nameof(RenameWorkItemTag.NewName));
-            var force = Parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));
 
             var tp = Data.GetProject();
             var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
