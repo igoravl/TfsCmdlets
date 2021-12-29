@@ -76,6 +76,8 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
         Remove-Item $ModuleDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     }
 
+    Remove-Item $OutDir/*.log -Force -ErrorAction SilentlyContinue | Out-Null
+
     New-Item $ModuleDir -ItemType Directory -Force | Out-Null
 }
 
