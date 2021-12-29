@@ -11,6 +11,8 @@ namespace TfsCmdlets.Services
 
         IEnumerable<T> GetItems<T>(object overridingParameters = null);
 
+        T AddItem<T>(object overridingParameters = null);
+
         T NewItem<T>(object overridingParameters = null);
 
         T SetItem<T>(object overridingParameters = null);
@@ -23,7 +25,7 @@ namespace TfsCmdlets.Services
 
         IEnumerable<T> Invoke<T>(string verb, object overridingParameters = null);
 
-        IEnumerable<T> Invoke<T>(string verb, string noun, object overridingParameters = null);
+        IEnumerable Invoke(string verb, string noun, object overridingParameters = null);
 
         Connection GetServer(object overridingParameters = null);
 

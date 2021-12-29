@@ -32,17 +32,20 @@ namespace TfsCmdlets.Services.Impl
                 throw new ArgumentException($"Command '{verb}' not found for data type '{dataType.Name}'");
             }
 
-            return DoInvokeCommand<T>(controller, overridingParameters);
+            foreach(var item in DoInvokeCommand(controller, overridingParameters))
+            {
+                yield return (T) item;
+            }
         }
 
-        public IEnumerable<T> Invoke<T>(string verb, string noun, object overridingParameters = null)
+        public IEnumerable Invoke(string verb, string noun, object overridingParameters = null)
         {
             if (Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.Noun == noun)?.Value is not { } controller)
             {
                 throw new ArgumentException($"Controller '{verb}{noun}[Controller]' not found");
             }
 
-            return DoInvokeCommand<T>(controller, overridingParameters);
+            return DoInvokeCommand(controller, overridingParameters);
         }
 
         public T GetItem<T>(object overridingParameters = null)
@@ -59,6 +62,9 @@ namespace TfsCmdlets.Services.Impl
 
         public T NewItem<T>(object overridingParameters = null)
             => Invoke<T>(VerbsCommon.New, overridingParameters).FirstOrDefault();
+
+        public T AddItem<T>(object overridingParameters = null)
+            => Invoke<T>(VerbsCommon.Add, overridingParameters).FirstOrDefault();
 
         public T SetItem<T>(object overridingParameters = null)
             => Invoke<T>(VerbsCommon.Set, overridingParameters).FirstOrDefault();
@@ -193,32 +199,32 @@ namespace TfsCmdlets.Services.Impl
             }
         }
 
-        private IEnumerable<T> DoInvokeCommand<T>(IController controller, object overridingParameters)
+        private IEnumerable DoInvokeCommand(IController controller, object overridingParameters)
         {
             Parameters.PushContext(overridingParameters);
 
             var result = controller.InvokeCommand();
 
-            return new EnumerableWrapper<T>(result is IEnumerable<T> list ? list : new[] { (T)result }, () => Parameters.PopContext());
+            return new EnumerableWrapper(result is IEnumerable list ? list : new[] { result }, () => Parameters.PopContext());
         }
 
-        private sealed class EnumerableWrapper<T> : IEnumerable<T>, IEnumerator<T>
+        private sealed class EnumerableWrapper : IEnumerable, IEnumerator
         {
-            private readonly IEnumerator<T> _inner;
+            private readonly IEnumerator _inner;
             private readonly Action _onEnumerationCompleted;
             private bool _isDisposed;
 
-            public T Current => _inner.Current;
+            public object Current => _inner.Current;
 
             object IEnumerator.Current => Current;
 
-            public EnumerableWrapper(IEnumerable<T> inner, Action onEnumerationCompleted)
+            public EnumerableWrapper(IEnumerable inner, Action onEnumerationCompleted)
             {
                 _inner = inner.GetEnumerator();
                 _onEnumerationCompleted = onEnumerationCompleted;
             }
 
-            public IEnumerator<T> GetEnumerator() => this;
+            public IEnumerator GetEnumerator() => this;
 
             public void Reset() => _inner.Reset();
 
