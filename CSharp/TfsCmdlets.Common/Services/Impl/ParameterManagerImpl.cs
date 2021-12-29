@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using TfsCmdlets.Util;
@@ -62,6 +57,7 @@ namespace TfsCmdlets.Services.Impl
             var val = _parameterValues[name] switch
             {
                 PSObject obj => obj.BaseObject,
+                IEnumerable<PSObject> objs => objs.Select(o => o.BaseObject).ToList(),
                 SwitchParameter sw => sw.ToBool(),
                 _ => _parameterValues[name]
             };
