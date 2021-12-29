@@ -1,3 +1,4 @@
+using System.Management.Automation;
 using TfsCmdlets.Cmdlets.TeamProject;
 
 namespace TfsCmdlets.Controllers.TeamProject
@@ -14,7 +15,7 @@ namespace TfsCmdlets.Controllers.TeamProject
             {
                 Logger.LogWarn($"The -AvatarImage parameter is deprecated and will be removed in a future version. Use the Import-TfsTeamProjectAvatar cmdlet instead.");
 
-                Data.Invoke<object>("Import", "TeamProjectAvatar", new {
+                Data.Invoke(VerbsData.Import, "TeamProjectAvatar", new {
                     Path = avatarImage
                 });
             }
