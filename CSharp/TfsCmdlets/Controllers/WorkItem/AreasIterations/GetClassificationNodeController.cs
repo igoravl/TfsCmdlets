@@ -46,11 +46,11 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             }
 
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
-            var depth = 1;
+            var depth = 2;
 
             if (path.IsWildcard())
             {
-                depth = 2;
+                depth = 4;
                 Logger.Log($"Preparing to recursively search for pattern '{path}'");
 
                 var root = new ClassificationNode(client.GetClassificationNodeAsync(tp.Name, structureGroup, "\\", depth)
