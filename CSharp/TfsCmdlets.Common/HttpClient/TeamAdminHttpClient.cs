@@ -14,15 +14,15 @@ namespace TfsCmdlets.HttpClient
         /// <summary>
         /// Adds an administrator to a team
         /// </summary>
-        public IEnumerable<TeamAdmin> AddTeamAdmin(Guid projectId, Guid teamId, Guid userId)
+        public IEnumerable<TeamAdmin> AddTeamAdmin(Guid projectId, Guid teamId, IEnumerable<Guid> userIds)
         {
-            return AddTeamAdmin(projectId.ToString(), teamId, userId);
+            return AddTeamAdmin(projectId.ToString(), teamId, userIds);
         }
 
         /// <summary>
         /// Adds an administrator to a team
         /// </summary>
-        public IEnumerable<TeamAdmin> AddTeamAdmin(string project, Guid teamId, Guid userId)
+        public IEnumerable<TeamAdmin> AddTeamAdmin(string project, Guid teamId, IEnumerable<Guid> userIds)
         {
             var result = Post<AddTeamAdminRequestData, TeamAdmins>(
                 $"/{project}/_api/_identity/AddTeamAdmins",
@@ -30,7 +30,7 @@ namespace TfsCmdlets.HttpClient
                 {
                     Team = teamId,
                     NewUsers = "[]",
-                    ExistingUsers = $"[\"{userId}\"]"
+                    ExistingUsers = $"[{string.Join(", ", userIds.Select(id => "\"" + id + "\""))}]"
                 });
 
             return result.Admins;
