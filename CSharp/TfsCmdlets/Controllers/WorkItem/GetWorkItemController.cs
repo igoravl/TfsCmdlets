@@ -261,7 +261,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 {
                     case "Text":
                         {
-                            var values = ((IEnumerable<string>)paramValue).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
@@ -274,7 +274,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "LongText":
                         {
-                            var values = ((IEnumerable<string>)paramValue).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
@@ -287,7 +287,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Number":
                         {
-                            var values = (IEnumerable<int>)paramValue;
+                            var values = ((paramValue as IEnumerable<int>) ?? (IEnumerable<int>)new[]{(int)paramValue}).ToList();
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v})")));
                             sb.Append(")");
@@ -295,7 +295,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Date":
                         {
-                            var values = (IEnumerable<DateTime>)paramValue;
+                            var values = ((paramValue as IEnumerable<DateTime>) ?? (IEnumerable<DateTime>)new[]{(DateTime)paramValue}).ToList();
                             var format = $"yyyy-MM-dd HH:mm:ss{(timePrecision ? "HH:mm:ss" : "")}";
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v.ToString(format)})")));
@@ -304,7 +304,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Tree":
                         {
-                            var values = (IEnumerable<string>)paramValue;
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{v}')")));
                             sb.Append(")");
@@ -312,8 +312,10 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Boolean":
                         {
-                            var v = (bool)paramValue;
-                            sb.Append($"([{kvp.Value.Item2}] = {v})");
+                            var values = ((paramValue as IEnumerable<bool>) ?? (IEnumerable<bool>)new[]{(bool)paramValue}).ToList();
+                            sb.Append("(");
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v})")));
+                            sb.Append(")");
                             break;
                         }
                     case "Project":
@@ -368,7 +370,7 @@ namespace TfsCmdlets.Controllers.WorkItem
            "System.Description",
            "System.Tags" };
 
-        private static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new Dictionary<string, Tuple<string, string>>()
+        internal static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new Dictionary<string, Tuple<string, string>>()
         {
             ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
             ["BoardColumn"] = new Tuple<string, string>("Text", "System.BoardColumn"),

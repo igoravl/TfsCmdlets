@@ -22,9 +22,9 @@ namespace TfsCmdlets.Controllers.WorkItem
             var boardColumnDone = Parameters.Get<bool>(nameof(SetWorkItem.BoardColumnDone));
             var boardLane = Parameters.Get<string>(nameof(SetWorkItem.BoardLane));
 
-            foreach (var argName in Parameters.Keys.Where(f => Parameters.HasParameter(f) && !fields.ContainsKey(f)))
+            foreach (var argName in Parameters.Keys.Where(f => Parameters.HasParameter(f) && WellKnownFields.ContainsKey(f)))
             {
-                fields.Add(Parameters[argName], GetFieldValue(argName, (string)wi.Fields["System.TeamProject"]));
+                fields[WellKnownFields[argName].Item2] = GetFieldValue(argName, (string)wi.Fields["System.TeamProject"]);
             }
 
             if (fields.Keys.Count > 0)
@@ -116,7 +116,7 @@ namespace TfsCmdlets.Controllers.WorkItem
 
         private WebApiBoard FindBoard(string workItemType, Models.Connection tpc, WebApiTeamProject tp, WebApiTeam team)
         {
-            var boards = Data.GetItems<WebApiBoard>(new
+            var boards = Data.GetItems<Models.Board>(new
             {
                 Board = "*",
                 Team = team,
@@ -124,13 +124,13 @@ namespace TfsCmdlets.Controllers.WorkItem
                 Collection = tpc
             }).ToList();
 
-            foreach (WebApiBoard b in boards)
+            foreach (var b in boards)
             {
-                var keys = b.AllowedMappings.Values.SelectMany(o => o.Keys).ToList();
+                var keys = b.InnerObject.AllowedMappings.Values.SelectMany(o => o.Keys).ToList();
 
                 if (keys.Any(t => t.Equals(workItemType, StringComparison.OrdinalIgnoreCase)))
                 {
-                    return b;
+                    return b.InnerObject;
                 }
             }
 
@@ -150,5 +150,25 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             return value;
         }
-    }
+ 
+         internal static readonly Dictionary<string, Tuple<string, string>> WellKnownFields = new Dictionary<string, Tuple<string, string>>()
+        {
+            ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
+            ["ChangedBy"] = new Tuple<string, string>("Identifier", "System.ChangedBy"),
+            ["ChangedDate"] = new Tuple<string, string>("Date", "System.ChangedDate"),
+            ["CreatedBy"] = new Tuple<string, string>("Identifier", "System.CreatedBy"),
+            ["CreatedDate"] = new Tuple<string, string>("Date", "System.CreatedDate"),
+            ["Description"] = new Tuple<string, string>("Text", "System.Description"),
+            ["IterationPath"] = new Tuple<string, string>("Tree", "System.IterationPath"),
+            ["Priority"] = new Tuple<string, string>("Number", "Microsoft.VSTS.Common.Priority"),
+            ["Project"] = new Tuple<string, string>("Project", "System.TeamProject"),
+            ["Reason"] = new Tuple<string, string>("Text", "System.Reason"),
+            ["State"] = new Tuple<string, string>("Text", "System.State"),
+            ["StateChangeDate"] = new Tuple<string, string>("Date", "Microsoft.VSTS.Common.StateChangeDate"),
+            ["Tags"] = new Tuple<string, string>("LongText", "System.Tags"),
+            ["Title"] = new Tuple<string, string>("Text", "System.Title"),
+            ["ValueArea"] = new Tuple<string, string>("Text", "Microsoft.VSTS.Common.ValueArea"),
+            ["WorkItemType"] = new Tuple<string, string>("Text", "System.WorkItemType")
+        };
+   }
 }
