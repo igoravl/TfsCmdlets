@@ -12,6 +12,7 @@ namespace TfsCmdlets.Controllers.WorkItem
             var text = Parameters.Get<string>(nameof(SearchWorkItem.Query));
             var results = Parameters.Get<int>(nameof(SearchWorkItem.Results));
             var client = Data.GetClient<SearchHttpClient>();
+
             var req = new WorkItemSearchRequest()
             {
                 SearchText = text,
@@ -34,9 +35,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                     .GetResult("Error getting search results");
             }
 
-            throw new NotImplementedException();
-
-            // return Data.GetItems<WebApiWorkItem>(resp.Results.SelectMany(r => r.Hits).Select(h => h.));
+            return Data.GetItems<WebApiWorkItem>(new { WorkItem = resp.Results.Select(wi => int.Parse(wi.Fields["system.id"])).ToList() });
         }
     }
 }

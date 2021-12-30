@@ -44,7 +44,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                             workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
                             continue;
                         }
-                    case object[] wis:
+                    case IEnumerable<object> wis:
                         {
                             var list = new List<int>();
                             foreach (var o in wis)
@@ -63,7 +63,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                         {
                             IEnumerable<WorkItemDeleteReference> result;
 
-                            if (workItem is int[] ids)
+                            if (workItem is IEnumerable<int> ids)
                             {
                                 result = client.GetDeletedWorkItemsAsync(ids)
                                     .GetResult($"Error getting deleted work items {string.Join(", ", ids)}");
@@ -139,7 +139,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                             workItem = id;
                             continue;
                         }
-                    case int[] ids:
+                    case IEnumerable<int> ids:
                         {
                             if (showWindow)
                             {

@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets
     /// </summary>
     public abstract class CmdletBase : PSCmdlet
     {
-        private static readonly IEnumerable<string> _valueReturningVerbs = new[] { "Get", "Test", "Invoke", "Export" };
+        private static readonly IEnumerable<string> _valueReturningVerbs = new[] { "Get", "Test", "Invoke", "Export", "Search" };
 
         private static readonly string _netFx = Assembly
             .GetExecutingAssembly()?
