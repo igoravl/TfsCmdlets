@@ -17,7 +17,10 @@ namespace TfsCmdlets.Controllers.TestManagement
             {
                 if (!PowerShell.ShouldProcess(tp, $"Delete test plan '{plan.Name}'")) continue;
 
-                var hasChildren = true; // TODO: Get children
+                var suites = client.GetTestSuitesForPlanAsync(tp.Name, plan.Id, SuiteExpand.Children)
+                    .GetResult($"Error retrieving test suites for test plan '{plan.Name}'");
+
+                var hasChildren = (suites.Count > 1 || suites[0].Children?.Count > 0);
 
                 if (hasChildren && !force & !PowerShell.ShouldContinue($"Are you sure you want to delete test plan '{plan.Name}' and all of its contents?")) continue;
 
