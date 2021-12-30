@@ -44,6 +44,6 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         /// Specifies the owner of the new test plan.
         /// </summary>
         [Parameter]
-        public string Owner { get; set; }
+        public object Owner { get; set; }
     }
 }
