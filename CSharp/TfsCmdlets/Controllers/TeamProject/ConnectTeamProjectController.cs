@@ -10,12 +10,6 @@ namespace TfsCmdlets.Controllers.TeamProject
 
             CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp);
 
-            // TODO: 
-            //Logger.Log($"Adding '{tp.Name} to the MRU list");
-            //_SetMru "Server" - Value(srv.Uri)
-            //_SetMru "Collection" - Value(tpc.Uri)
-            //_SetMru "Project" - Value(tp.Name)
-
             Logger.Log($"Connected to '{tp.Name}'");
 
             yield return tp;
