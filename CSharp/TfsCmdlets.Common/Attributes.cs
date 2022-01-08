@@ -9,6 +9,14 @@ namespace TfsCmdlets
     {
         public Type DataType { get; }
 
+        public string CustomCmdletName { get; set; }
+
+        public string[] CustomVerbs { get; set; }
+
+        public string[] CustomNouns { get; set; }
+
+        public Type CustomBaseClass { get; set; }
+
         public CmdletControllerAttribute() : base(typeof(IController))
         {
         }

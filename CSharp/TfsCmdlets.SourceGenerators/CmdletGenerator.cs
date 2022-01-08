@@ -4,49 +4,95 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace TfsCmdlets.SourceGenerators
 {
-    [Generator]
-    public class CmdletGenerator : ISourceGenerator
+    public class CmdletGenerator : IGenerator
     {
         private static readonly string[] _scopeNames = new[]{
             "ConfigurationServer", "TeamProjectCollection", "TeamProject", "Team" };
         private static readonly string[] _credentialParameterSetNames = new[]{
             "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential" };
 
-        private readonly List<(Predicate<CmdletInfo>, Func<CmdletInfo, string>)> _generators =
-            new List<(Predicate<CmdletInfo>, Func<CmdletInfo, string>)>();
+        private static readonly List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<GeneratedProperty>>, string)> _generators =
+            new List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<GeneratedProperty>>, string)>()
+            {
+                // Basic properties
+                ((cmdlet) => cmdlet.Verb == "Rename", GenerateNewNameProperty, "Rename->NewName"),
+                ((cmdlet) => cmdlet.Verb == "New" && cmdlet.Noun != "Credential", GeneratePassthruProperty, "New->Passthru"),
+                ((cmdlet) => cmdlet.Verb == "Set", GeneratePassthruProperty, "Set->Passthru"),
+                ((cmdlet) => cmdlet.Verb == "Connect", GeneratePassthruProperty, "Connect->Passthru"),
+                ((cmdlet) => cmdlet.Verb == "Enable", GeneratePassthruProperty, "Enable->Passthru"),
+                ((cmdlet) => cmdlet.Verb == "Disable", GeneratePassthruProperty, "Disable->Passthru"), 
 
-        public void Initialize(GeneratorInitializationContext context)
+                // Context-dependent properties
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Team, GenerateTeamScopeProperty, "Scope->Team"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Project, GenerateProjectScopeProperty, "Scope->Project"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Collection, GenerateCollectionScopeProperty, "Scope->Collection"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Server, GenerateServerScopeProperty, "Scope->Server"), 
+
+                // Credential properties
+                ((cmdlet) => cmdlet.Verb == "Connect", GenerateCredentialProperties, "Connect->Credential"),
+                ((cmdlet) => IsGetScopeCmdlet(cmdlet), GenerateCredentialProperties, "(IsScope)->Credential"),
+                ((cmdlet) => cmdlet.Name == "NewCredential", GenerateCredentialProperties, "NewCredential->Credential"), 
+
+                // CustomController property
+                ((cmdlet) => !string.IsNullOrEmpty(cmdlet.CustomControllerName), GenerateCustomControllerProperty, "CustomController"), 
+
+                // ReturnsValue property
+                ((cmdlet) => cmdlet.ReturnsValue, GenerateReturnsValueProperty, "ReturnsValue"), 
+
+                // Areas/Iterations StructureGroup property
+                ((cmdlet) => cmdlet.Name.EndsWith("Area") || cmdlet.Name.EndsWith("Iteration"), GenerateStructureGroupProperty, "(Area/Iteration)->StructureGroup"),
+            };
+
+        public void Initialize(GeneratorExecutionContext context)
         {
-            context.RegisterForSyntaxNotifications(() => new CmdletSyntaxReceiver());
-            RegisterGenerators();
         }
 
-        public void Execute(GeneratorExecutionContext context)
+        public GeneratorState ProcessType(GeneratorExecutionContext context, INamedTypeSymbol type)
         {
-            if (!(context.SyntaxContextReceiver is CmdletSyntaxReceiver syntaxReceiver)) return;
+            var cmdlet = new CmdletInfo(type);
 
-            foreach (var type in syntaxReceiver.Cmdlets)
+            if (cmdlet.SkipAutoProperties)
             {
-                var cmdlet = new CmdletInfo(type);
-                var props = new StringBuilder();
+                Logger.Log("- Skipping cmdlet generation due to SkipAutoPropeties == true");
+                return cmdlet;
+            }
 
-                if (!cmdlet.SkipAutoProperties)
+            foreach (var (condition, generator, generatorName) in _generators)
+            {
+                if (!condition(cmdlet))
                 {
-                    foreach (var (condition, generator) in _generators)
-                    {
-                        if (condition(cmdlet)) props.Append(generator(cmdlet));
-                    }
+                    Logger.Log($"- N/A: '{generatorName}'");
+                    continue;
                 }
 
-                var cmdletAttribute = GenerateCmdletAttribute(cmdlet);
-                var outputTypeAttribute = GenerateOutputTypeAttribute(cmdlet);
-                var sourceText = SourceText.From($@"/*
-Generated by: [TfsCmdlets.SourceGenerators.CmdletGenerator]
-Class name  : {type.FullName()}
+                Logger.Log($"- Running generator {generatorName}");
+
+                foreach (var prop in generator(cmdlet))
+                {
+                    Logger.Log($"  - Rendering property {prop.Name}");
+                    cmdlet.GeneratedProperties.Add(prop.Name, prop);
+                }
+            }
+
+            return cmdlet;
+        }
+
+        public string Generate(GeneratorState state)
+        {
+            var cmdlet = (CmdletInfo)state;
+            var props = new StringBuilder();
+
+            foreach (var prop in cmdlet.GeneratedProperties.Values)
+            {
+                props.Append(prop.ToString());
+            }
+
+            return $@"/*
+Generated by: [{this.GetType().FullName}]
+Class name  : {cmdlet.FullName}
 Verb        : {cmdlet.Verb}
 Noun        : {cmdlet.Noun}
 DataType    : {cmdlet.DataType.FullName()}
@@ -60,155 +106,75 @@ using System.Composition;
 using TfsCmdlets.Services;
 
 // ReSharper disable once CheckNamespace
-namespace {type.FullNamespace()}
+namespace {cmdlet.Namespace}
 {{
-  {cmdletAttribute}{outputTypeAttribute}
-  public partial class {type.Name}: CmdletBase
+  {cmdlet.CmdletAttribute}{cmdlet.OutputTypeAttribute}
+  public partial class {cmdlet.Name}: CmdletBase
   {{
 {props}
   }}
 }}
-",
-                    Encoding.UTF8);
-
-                context.AddSource($"{type.FullName()}.cs", sourceText);
-            }
+";
         }
 
-        private void RegisterGenerators()
+        private static IEnumerable<GeneratedProperty> GenerateNewNameProperty(CmdletInfo settings)
         {
-            // Basic properties
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Rename", GenerateNewNameProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "New" && cmdlet.Noun != "Credential", GeneratePassthruProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Set", GeneratePassthruProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GeneratePassthruProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Enable", GeneratePassthruProperty));
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Disable", GeneratePassthruProperty));
-
-            // Context-dependent properties
-            _generators.Add(((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Team, GenerateTeamScopeProperty));
-            _generators.Add(((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Project, GenerateProjectScopeProperty));
-            _generators.Add(((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Collection, GenerateCollectionScopeProperty));
-            _generators.Add(((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Server, GenerateServerScopeProperty));
-
-            // Credential properties
-            _generators.Add(((cmdlet) => cmdlet.Verb == "Connect", GenerateCredentialProperties));
-            _generators.Add(((cmdlet) => IsGetScopeCmdlet(cmdlet), GenerateCredentialProperties));
-            _generators.Add(((cmdlet) => cmdlet.CmdletName == "NewCredential", GenerateCredentialProperties));
-
-            // CustomController property
-            _generators.Add(((cmdlet) => !string.IsNullOrEmpty(cmdlet.CustomControllerName), GenerateCustomControllerProperty));
-
-            // ReturnsValue property
-            _generators.Add(((cmdlet) => cmdlet.ReturnsValue, GenerateReturnsValueProperty));
-
-            // Areas/Iterations StructureGroup property
-            _generators.Add(((cmdlet) => cmdlet.CmdletName.EndsWith("Area") || cmdlet.CmdletName.EndsWith("Iteration"), GenerateStructureGroupProperty));
-        }
-
-        private string GenerateCmdletAttribute(CmdletInfo cmdlet)
-        {
-            var props = new List<string>();
-
-            if(cmdlet.SupportsShouldProcess) props.Add($"SupportsShouldProcess = true");
-            if(!string.IsNullOrEmpty(cmdlet.DefaultParameterSetName)) props.Add($"DefaultParameterSetName = \"{cmdlet.DefaultParameterSetName}\"");
-
-            return $"[Cmdlet(\"{cmdlet.Verb}\", \"Tfs{cmdlet.Noun}\"{(props.Any() ? $", {string.Join(", ", props)}" : string.Empty)})]";
-        }
-
-        private string GenerateOutputTypeAttribute(CmdletInfo cmdlet)
-        {
-            if(cmdlet.OutputType == null && cmdlet.DataType == null) return string.Empty;
-
-            return cmdlet.OutputType != null ? 
-                $"\n  [OutputType(typeof({cmdlet.OutputType.FullName()}))]" :
-                $"\n  [OutputType(typeof({cmdlet.DataType.FullName()}))]";
-        }
-
-        private static string GenerateNewNameProperty(CmdletInfo settings) => @"
+            yield return new GeneratedProperty("NewName", "string", @"
         /// <summary>
         /// HELP_PARAM_NEWNAME
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         public string NewName { get; set; }
-";
+");
+        }
 
-        private static string GeneratePassthruProperty(CmdletInfo settings) => @"
+        private static IEnumerable<GeneratedProperty> GeneratePassthruProperty(CmdletInfo settings)
+        {
+            yield return new GeneratedProperty("Passthru", "SwitchParameter", @"
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
         [Parameter]
         public SwitchParameter Passthru { get; set; }
-";
+");
+        }
 
-        private static string GenerateCustomControllerProperty(CmdletInfo settings) => $@"
+        private static IEnumerable<GeneratedProperty> GenerateCustomControllerProperty(CmdletInfo settings)
+        {
+            yield return new GeneratedProperty("CommandName", "string", true, $@"
         protected override string CommandName => ""{settings.CustomControllerName}"";
-";
+");
+        }
 
-        private static string GenerateReturnsValueProperty(CmdletInfo settings) => $@"
+        private static IEnumerable<GeneratedProperty> GenerateReturnsValueProperty(CmdletInfo settings)
+        {
+            yield return new GeneratedProperty("ReturnsValue", "bool", true, $@"
         protected override bool ReturnsValue => {settings.ReturnsValue.ToString().ToLower()};
-";
+");
+        }
 
-        private static string GenerateStructureGroupProperty(CmdletInfo settings) => $@"
+        private static IEnumerable<GeneratedProperty> GenerateStructureGroupProperty(CmdletInfo settings)
+        {
+            yield return new GeneratedProperty("StructureGroup", "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup", $@"
         [Parameter]
         internal Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup StructureGroup => 
-            Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.{(settings.CmdletName.EndsWith("Area") ? "Areas" : "Iterations")};
-";
+            Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.{(settings.Name.EndsWith("Area") ? "Areas" : "Iterations")};
+");
+        }
 
-        private string GenerateTeamScopeProperty(CmdletInfo settings)
+        private static IEnumerable<GeneratedProperty> GenerateTeamScopeProperty(CmdletInfo settings)
             => GenerateScopeProperty(CmdletScope.Team, settings);
 
-        private string GenerateProjectScopeProperty(CmdletInfo settings)
+        private static IEnumerable<GeneratedProperty> GenerateProjectScopeProperty(CmdletInfo settings)
             => GenerateScopeProperty(CmdletScope.Project, settings);
 
-        private string GenerateCollectionScopeProperty(CmdletInfo settings)
+        private static IEnumerable<GeneratedProperty> GenerateCollectionScopeProperty(CmdletInfo settings)
             => GenerateScopeProperty(CmdletScope.Collection, settings);
 
-        private string GenerateServerScopeProperty(CmdletInfo settings)
+        private static IEnumerable<GeneratedProperty> GenerateServerScopeProperty(CmdletInfo settings)
             => GenerateScopeProperty(CmdletScope.Server, settings);
 
-        private string GenerateCredentialProperties(CmdletInfo settings) => @"
-        /// <summary>
-        /// HELP_PARAM_CACHED_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = ""Cached credentials"", Mandatory = true)]
-        public SwitchParameter Cached { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_USER_NAME
-        /// </summary>
-        [Parameter(ParameterSetName = ""User name and password"", Mandatory = true)]
-        public string UserName { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PASSWORD
-        /// </summary>
-        [Parameter(ParameterSetName = ""User name and password"", Mandatory = true)]
-        public SecureString Password { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_CREDENTIAL
-        /// </summary>
-        [Parameter(ParameterSetName = ""Credential object"", Mandatory = true)]
-        [ValidateNotNull]
-        public object Credential { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
-        /// </summary>
-        [Parameter(ParameterSetName = ""Personal Access Token"", Mandatory = true)]
-        [Alias(""Pat"")]
-        public string PersonalAccessToken { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_INTERACTIVE
-        /// </summary>
-        [Parameter(ParameterSetName = ""Prompt for credential"")]
-        public SwitchParameter Interactive { get; set; }
-";
-
-
-        private string GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
+        private static IEnumerable<GeneratedProperty> GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
         {
             var scopeName = currentScope.ToString();
             var isGetScopedCmdlet = IsGetScopeCmdlet(settings);
@@ -235,25 +201,77 @@ namespace {type.FullNamespace()}
         [Parameter({parameterSetName}{(isGetScopedCmdlet && isPipeline ? ", " : string.Empty)}{valueFromPipeline})]");
             }
 
-            return $@"
+            yield return new GeneratedProperty(scopeName, "object", $@"
         /// <summary>
         /// HELP_PARAM_{scopeName.ToUpper()}
         /// </summary>{attributes}
         public object {scopeName} {{ get; set; }}
-";
+");
         }
 
-        private bool IsGetScopeCmdlet(CmdletInfo cmdlet)
+        private static IEnumerable<GeneratedProperty> GenerateCredentialProperties(CmdletInfo settings)
+        {
+            yield return new GeneratedProperty("Cached", "SwitchParameter", @"
+        /// <summary>
+        /// HELP_PARAM_CACHED_CREDENTIAL
+        /// </summary>
+        [Parameter(ParameterSetName = ""Cached credentials"", Mandatory = true)]
+        public SwitchParameter Cached { get; set; }
+");
+
+            yield return new GeneratedProperty("UserName", "string", @"
+        /// <summary>
+        /// HELP_PARAM_USER_NAME
+        /// </summary>
+        [Parameter(ParameterSetName = ""User name and password"", Mandatory = true)]
+        public string UserName { get; set; }
+");
+
+            yield return new GeneratedProperty("Password", "System.Security.SecureString", @"
+        /// <summary>
+        /// HELP_PARAM_PASSWORD
+        /// </summary>
+        [Parameter(ParameterSetName = ""User name and password"", Mandatory = true)]
+        public SecureString Password { get; set; }
+");
+
+            yield return new GeneratedProperty("Credential", "object", @"
+        /// <summary>
+        /// HELP_PARAM_CREDENTIAL
+        /// </summary>
+        [Parameter(ParameterSetName = ""Credential object"", Mandatory = true)]
+        [ValidateNotNull]
+        public object Credential { get; set; }
+");
+
+            yield return new GeneratedProperty("PersonalAccessToken", "string", @"
+        /// <summary>
+        /// HELP_PARAM_PERSONAL_ACCESS_TOKEN
+        /// </summary>
+        [Parameter(ParameterSetName = ""Personal Access Token"", Mandatory = true)]
+        [Alias(""Pat"")]
+        public string PersonalAccessToken { get; set; }
+");
+
+            yield return new GeneratedProperty("Interactive", "SwitchParameter", @"
+        /// <summary>
+        /// HELP_PARAM_INTERACTIVE
+        /// </summary>
+        [Parameter(ParameterSetName = ""Prompt for credential"")]
+        public SwitchParameter Interactive { get; set; }
+");
+        }
+
+        private static bool IsGetScopeCmdlet(CmdletInfo cmdlet)
             => _scopeNames.Contains(cmdlet.Noun) && cmdlet.Verb == "Get";
 
 
-        private bool IsPipelineProperty(string propertyName, CmdletScope currentScope, CmdletInfo settings)
+        private static bool IsPipelineProperty(string propertyName, CmdletScope currentScope, CmdletInfo settings)
         {
             if (settings.NoAutoPipeline) return false;
 
             return ((settings.Verb.Equals("Get") || settings.Verb.StartsWith("Connect") || settings.Verb.StartsWith("Export")) && ((int)settings.Scope == (int)currentScope));
         }
-
 
         internal class CmdletSyntaxReceiver : ISyntaxContextReceiver
         {
@@ -273,103 +291,7 @@ namespace {type.FullNamespace()}
             }
         }
 
-        [Flags]
-        private enum CmdletScope
-        {
-            None = 0,
-            Server = 1,
-            Collection = 2,
-            Project = 3,
-            Team = 4
-        }
 
-        private class CmdletInfo
-        {
-            public string CmdletName { get; private set; }
-            public string Noun { get; private set; }
-            internal string Verb { get; private set; }
-            internal CmdletScope Scope { get; private set; }
-            internal bool SkipAutoProperties { get; private set; }
-            internal bool DesktopOnly { get; private set; }
-            internal bool HostedOnly { get; private set; }
-            internal int RequiresVersion { get; private set; }
-            internal bool NoAutoPipeline { get; private set; }
-            public string DefaultParameterSetName { get; private set; }
-            public string CustomControllerName { get; private set; }
-            public INamedTypeSymbol DataType { get; private set; }
-            public INamedTypeSymbol OutputType { get; private set; }
-            public bool SupportsShouldProcess { get; private set; }
-            public bool ReturnsValue { get; private set; }
 
-            internal CmdletInfo(INamedTypeSymbol cmdlet)
-            {
-                CmdletName = cmdlet.Name;
-                Verb = cmdlet.Name.Substring(0, FindIndex(cmdlet.Name, c => char.IsUpper(c), 1));
-                Noun = cmdlet.Name.Substring(Verb.Length);
-                Scope = GetAttributeConstructorValue<CmdletScope>(cmdlet, "TfsCmdletAttribute");
-                SkipAutoProperties = GetAttributeNamedValue(cmdlet, "TfsCmdletAttribute", "SkipAutoProperties");
-                DesktopOnly = GetAttributeNamedValue(cmdlet, "TfsCmdletAttribute", "DesktopOnly");
-                HostedOnly = GetAttributeNamedValue(cmdlet, "TfsCmdletAttribute", "HostedOnly");
-                RequiresVersion = GetAttributeNamedValue<int>(cmdlet, "TfsCmdletAttribute", "RequiresVersion");
-                NoAutoPipeline = GetAttributeNamedValue<bool>(cmdlet, "TfsCmdletAttribute", "NoAutoPipeline");
-                DefaultParameterSetName = GetAttributeNamedValue<string>(cmdlet, "CmdletAttribute", "DefaultParameterSetName");
-                OutputType = GetAttributeNamedValue<INamedTypeSymbol>(cmdlet, "TfsCmdletAttribute", "OutputType");
-                DataType = GetAttributeNamedValue<INamedTypeSymbol>(cmdlet, "TfsCmdletAttribute", "DataType")?? OutputType;
-                SupportsShouldProcess = GetAttributeNamedValue<bool>(cmdlet, "TfsCmdletAttribute", "SupportsShouldProcess");
-                DefaultParameterSetName = GetAttributeNamedValue<string>(cmdlet, "TfsCmdletAttribute", "DefaultParameterSetName");
-                CustomControllerName =  GetAttributeNamedValue<string>(cmdlet, "TfsCmdletAttribute", "CustomControllerName");
-                ReturnsValue =  GetAttributeNamedValue<bool>(cmdlet, "TfsCmdletAttribute", "ReturnsValue");
-            }
-
-            private T GetAttributeConstructorValue<T>(INamedTypeSymbol cmdlet, string attributeName, int argumentPosition = 0)
-            {
-                var attr = cmdlet
-                    .GetAttributes()
-                    .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
-
-                if (attr == null) return default(T);
-
-                var arg = attr.ConstructorArguments[argumentPosition];
-
-                return (T)arg.Value;
-            }
-
-            private T GetAttributeNamedValue<T>(INamedTypeSymbol cmdlet, string attributeName, string argumentName)
-            {
-                var attr = cmdlet
-                    .GetAttributes()
-                    .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
-
-                if (attr == null) return default(T);
-
-                var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
-
-                return (T)(arg.Value.Value ?? default(T));
-            }
-
-            private bool GetAttributeNamedValue(INamedTypeSymbol cmdlet, string attributeName, string argumentName, bool defaultValue = false)
-            {
-                var attr = cmdlet
-                    .GetAttributes()
-                    .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
-
-                if (attr == null) return defaultValue;
-
-                var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
-
-                return (arg.Value.Value?.ToString() ?? string.Empty).Equals("True", StringComparison.OrdinalIgnoreCase);
-            }
-
-            private static int FindIndex(string input, Predicate<char> predicate, int startIndex = 0)
-            {
-                for (int i = startIndex; i < input.Length; i++)
-                {
-                    if (predicate(input[i])) return i;
-                }
-
-                return -1;
-            }
-
-        }
     }
 }
