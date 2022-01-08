@@ -58,7 +58,7 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
 
                 try
                 {
-                    File.WriteAllText(outputPath, xml, Encoding.GetEncoding(encoding));
+                    File.WriteAllText(outputPath, xml, System.Text.Encoding.GetEncoding(encoding));
                 }
                 catch (Exception ex)
                 {

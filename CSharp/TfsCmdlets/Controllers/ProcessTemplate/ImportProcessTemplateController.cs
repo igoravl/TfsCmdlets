@@ -37,9 +37,9 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
 
             var processTemplateSvc = Data.GetService<IProcessTemplates>();
 
-            var tempFile = Path.GetTempFileName();
+            var tempFile = System.IO.Path.GetTempFileName();
             var zipFile = $"{tempFile}.zip";
-            File.Move(tempFile, Path.GetFileName(zipFile));
+            File.Move(tempFile, System.IO.Path.GetFileName(zipFile));
 
             ZipFile.CreateFromDirectory(dir, zipFile);
 

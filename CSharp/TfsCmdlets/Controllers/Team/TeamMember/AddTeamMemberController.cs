@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using TfsCmdlets.Cmdlets.Team.TeamMember;
 
-namespace TfsCmdlets.Controllers.Team.TeamAdmin
+namespace TfsCmdlets.Controllers.Team.TeamMember
 {
     [CmdletController(typeof(Models.TeamMember))]
     partial class AddTeamMemberController
@@ -11,8 +11,7 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
             var team = Data.GetTeam();
             var member = Parameters.Get<object>(nameof(GetTeamMember.Member));
 
-            var identities = Data.GetItems<Models.Identity>(new { Identity = member })
-                .Where(i => !i.IsContainer)
+            var identities = Enumerable.Where<Models.Identity>(Data.GetItems<Models.Identity>(new { Identity = member }), i => !i.IsContainer)
                 .ToList();
 
             if (identities.Count == 0)
@@ -26,11 +25,11 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
 
             if (!PowerShell.ShouldProcess(team, $"Add team member(s) {string.Join(", ", uniqueNames)}")) yield break;
 
-            var added = Data.Invoke(VerbsCommon.Add, "GroupMember", new
+            var added = Enumerable.Cast<Models.Identity>(Data.Invoke(VerbsCommon.Add, "GroupMember", new
             {
                 Group = team.Id,
                 Member = identities
-            }).Cast<Models.Identity>();
+            }));
 
             foreach(var i in added)
             {

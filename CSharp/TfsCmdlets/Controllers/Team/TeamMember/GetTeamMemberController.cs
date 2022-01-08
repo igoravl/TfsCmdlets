@@ -1,9 +1,7 @@
-using TfsCmdlets.Cmdlets.Team.TeamAdmin;
 using TfsCmdlets.Cmdlets.Team.TeamMember;
-using TfsCmdlets.HttpClient;
 using TfsCmdlets.Util;
 
-namespace TfsCmdlets.Controllers.Team.TeamAdmin
+namespace TfsCmdlets.Controllers.Team.TeamMember
 {
     [CmdletController(typeof(Models.TeamMember))]
     partial class GetTeamMemberController
@@ -15,8 +13,8 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
 
             ErrorUtil.ThrowIfNotFound(team, nameof(team), Parameters.Get<object>(nameof(GetTeamMember.Team)));
 
-            foreach (var m in team.TeamMembers.Where(m => 
-                m.Identity.DisplayName.IsLike(member) || m.Identity.UniqueName.IsLike(member)))
+            foreach (var m in Enumerable.Where<Microsoft.VisualStudio.Services.WebApi.TeamMember>(team.TeamMembers, m => 
+                StringExtensions.IsLike(m.Identity.DisplayName, member) || StringExtensions.IsLike(m.Identity.UniqueName, member)))
             {
                 yield return new Models.TeamMember(
                     Data.GetItem<Models.Identity>(new { Identity = m.Identity.Id }).InnerObject,

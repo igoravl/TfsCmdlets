@@ -1,6 +1,4 @@
-using Microsoft.TeamFoundation.Core.WebApi;
-
-namespace TfsCmdlets.Controllers.TeamProject
+namespace TfsCmdlets.Controllers.Team
 {
     [CmdletController(typeof(Models.Team))]
     partial class DisconnectTeamController

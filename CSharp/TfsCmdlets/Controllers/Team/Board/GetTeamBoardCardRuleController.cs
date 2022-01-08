@@ -2,7 +2,7 @@ using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
 using TfsCmdlets.Cmdlets.Team.Board;
 
-namespace TfsCmdlets.Controllers.Team.Backlog
+namespace TfsCmdlets.Controllers.Team.Board
 {
     [CmdletController(typeof(Models.CardRule))]
     partial class GetTeamBoardCardRuleController
@@ -20,8 +20,7 @@ namespace TfsCmdlets.Controllers.Team.Backlog
             var ctx = new TeamContext(tp.Name, t.Name);
             var client = Data.GetClient<WorkHttpClient>();
 
-            var rules = client.GetBoardCardRuleSettingsAsync(ctx, board.Name)
-                .GetResult("Error getting board card rules")
+            var rules = TaskExtensions.GetResult<BoardCardRuleSettings>(client.GetBoardCardRuleSettingsAsync(ctx, board.Name), "Error getting board card rules")
                 .rules;
 
             // Card rules

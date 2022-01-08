@@ -2,7 +2,7 @@ using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
 using TfsCmdlets.Cmdlets.Team.Board;
 
-namespace TfsCmdlets.Controllers.Team.Backlog
+namespace TfsCmdlets.Controllers.Team.Board
 {
     [CmdletController(typeof(Models.Board))]
     partial class GetTeamBoardController
@@ -28,12 +28,10 @@ namespace TfsCmdlets.Controllers.Team.Backlog
                         var ctx = new TeamContext(tp.Name, t.Name);
                         var client = Data.GetClient<WorkHttpClient>();
 
-                        foreach (var b in client.GetBoardsAsync(ctx)
-                            .GetResult("Error getting team boards")
+                        foreach (var b in TaskExtensions.GetResult<List<BoardReference>>(client.GetBoardsAsync(ctx), "Error getting team boards")
                             .Where(b => b.Name.IsLike(s)))
                         {
-                            yield return new Models.Board(client.GetBoardAsync(ctx, b.Id.ToString())
-                                .GetResult($"Error getting board '{b.Name}'"), tp.Name, t.Name);
+                            yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(client.GetBoardAsync(ctx, b.Id.ToString()), $"Error getting board '{b.Name}'"), tp.Name, t.Name);
                         }
 
                         yield break;
@@ -43,8 +41,7 @@ namespace TfsCmdlets.Controllers.Team.Backlog
                         var ctx = new TeamContext(tp.Name, t.Name);
                         var client = Data.GetClient<WorkHttpClient>();
 
-                        yield return new Models.Board(client.GetBoardAsync(ctx, s)
-                            .GetResult($"Error getting board 's'"), tp.Name, t.Name);
+                        yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(client.GetBoardAsync(ctx, s), $"Error getting board 's'"), tp.Name, t.Name);
 
                         yield break;
                     }

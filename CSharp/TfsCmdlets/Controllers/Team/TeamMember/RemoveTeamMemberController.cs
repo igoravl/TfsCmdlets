@@ -1,4 +1,4 @@
-namespace TfsCmdlets.Controllers.Team.TeamAdmin
+namespace TfsCmdlets.Controllers.Team.TeamMember
 {
     [CmdletController(typeof(Models.Identity))]
     partial class RemoveTeamMemberController
