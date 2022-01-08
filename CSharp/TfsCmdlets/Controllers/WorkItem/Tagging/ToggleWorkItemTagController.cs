@@ -2,11 +2,13 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Controllers.WorkItem.Tagging
 {
-    /// <summary>
-    /// Gets one or more work item tags.
-    /// </summary>
-    [CmdletController(typeof(WebApiTagDefinition))]
-    partial class ToggleWorkItemTagController
+    [CmdletController(typeof(WebApiTagDefinition), CustomBaseClass = typeof(ToggleWorkItemTagController))]
+    partial class EnableWorkItemTagController { }
+
+    [CmdletController(typeof(WebApiTagDefinition), CustomBaseClass = typeof(ToggleWorkItemTagController))]
+    partial class DisableWorkItemTagController { }
+
+    internal abstract class ToggleWorkItemTagController: ControllerBase<WebApiTagDefinition>
     {
         public override IEnumerable<WebApiTagDefinition> Invoke()
         {
@@ -22,6 +24,12 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
                 yield return client.UpdateTagAsync(tp.Id, tag.Id, tag.Name, enabled)
                     .GetResult($"Error renaming work item tag '{tag.Name}'");
             }
+        }
+
+        [ImportingConstructor]
+        protected ToggleWorkItemTagController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
         }
     }
 }

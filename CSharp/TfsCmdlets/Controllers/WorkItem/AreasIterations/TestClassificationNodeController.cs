@@ -1,11 +1,22 @@
 ﻿namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController]
-    partial class TestClassificationNodeController
+    [CmdletController(CustomBaseClass = typeof(TestClassificationNodeController))]
+    partial class TestAreaController { }
+
+    [CmdletController(CustomBaseClass = typeof(TestClassificationNodeController))]
+    partial class TestIterationController { }
+
+    internal class TestClassificationNodeController: ControllerBase
     {
         public override object InvokeCommand()
         {
             return Data.TestItem<Models.ClassificationNode>();
+        }
+
+        [ImportingConstructor]
+        protected TestClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
         }
     }
 }

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     /// <summary>
     /// Enables (activates) a work item tag.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTagDefinition), CustomControllerName = "ToggleWorkItemTag")]
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTagDefinition))]
     partial class EnableWorkItemTag
     {
         /// <summary>

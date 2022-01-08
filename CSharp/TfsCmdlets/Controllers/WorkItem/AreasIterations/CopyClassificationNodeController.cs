@@ -4,12 +4,14 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController(typeof(ClassificationNode))]
-    partial class CopyClassificationNodeController
-    {
-        [Import]
-        private INodeUtil NodeUtil { get; }
+    [CmdletController(typeof(Models.ClassificationNode), CustomBaseClass = typeof(CopyClassificationNodeController))]
+    partial class CopyAreaController { }
 
+    [CmdletController(typeof(Models.ClassificationNode), CustomBaseClass = typeof(CopyClassificationNodeController))]
+    partial class CopyIterationController { }
+
+    internal abstract class CopyClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    {
         public override IEnumerable<ClassificationNode> Invoke()
         {
             var tp = Data.GetProject();
@@ -84,6 +86,12 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                     }
                 }
             }
+        }
+
+        [ImportingConstructor]
+        protected CopyClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
         }
     }
 }

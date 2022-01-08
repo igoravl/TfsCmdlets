@@ -4,8 +4,13 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController(typeof(ClassificationNode))]
-    partial class RemoveClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RemoveClassificationNodeController))]
+    partial class RemoveAreaController { }
+
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RemoveClassificationNodeController))]
+    partial class RemoveIterationController { }
+
+    internal class RemoveClassificationNodeController: ControllerBase<Models.ClassificationNode>
     {
         public override IEnumerable<ClassificationNode> Invoke()
         {
@@ -43,6 +48,12 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             }
 
             return null;
+        }
+
+        [ImportingConstructor]
+        protected RemoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
         }
     }
 }

@@ -4,8 +4,13 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController(typeof(ClassificationNode))]
-    partial class GetClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(GetClassificationNodeController))]
+    partial class GetAreaController { }
+
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(GetClassificationNodeController))]
+    partial class GetIterationController { }
+
+    internal class GetClassificationNodeController: ControllerBase<Models.ClassificationNode>
     {
         [Import]
         private INodeUtil NodeUtil { get; }
@@ -69,6 +74,13 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 
             yield return new ClassificationNode(client.GetClassificationNodeAsync(tp.Name, structureGroup, path, depth)
                 .GetResult($"Error retrieving {structureGroup} from path '{path}'"), tp.Name, null);
+        }
+
+        [ImportingConstructor]
+        protected GetClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
+            NodeUtil = nodeUtil;
         }
     }
 }

@@ -4,8 +4,13 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController(typeof(ClassificationNode))]
-    partial class RenameClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RenameClassificationNodeController))]
+    partial class RenameAreaController { }
+
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RenameClassificationNodeController))]
+    partial class RenameIterationController { }
+
+    internal class RenameClassificationNodeController: ControllerBase<Models.ClassificationNode>
     {
         [Import]
         private INodeUtil NodeUtil { get; }
@@ -37,6 +42,12 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 
             yield return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath.Substring(1))
                 .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, client);
+        }
+
+        [ImportingConstructor]
+        protected RenameClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
         }
     }
 }

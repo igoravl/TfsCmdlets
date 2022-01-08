@@ -4,8 +4,13 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
-    [CmdletController(typeof(ClassificationNode))]
-    partial class NewClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(NewClassificationNodeController))]
+    partial class NewAreaController { }
+
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(NewClassificationNodeController))]
+    partial class NewIterationController { }
+
+    internal class NewClassificationNodeController: ControllerBase<Models.ClassificationNode>
     {
         [Import]
         private INodeUtil NodeUtil { get; }
@@ -65,6 +70,13 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                 .GetResult($"Error creating node {nodePath}");
 
             yield return new ClassificationNode(result, tp.Name, client);
+        }
+
+        [ImportingConstructor]
+        protected NewClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
+        {
+            NodeUtil = nodeUtil;
         }
     }
 }

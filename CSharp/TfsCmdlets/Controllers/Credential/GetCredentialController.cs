@@ -7,7 +7,7 @@ using TfsCmdlets.Cmdlets.Credential;
 
 namespace TfsCmdlets.Controllers.Credential
 {
-    [CmdletController(typeof(VssCredentials))]
+    [CmdletController(typeof(VssCredentials), CustomCmdletName = "NewCredential")]
     partial class GetCredentialController
     {
         public override IEnumerable<VssCredentials> Invoke()

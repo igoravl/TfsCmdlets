@@ -6,7 +6,7 @@ using TfsCmdlets.Util;
 namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 {
     [CmdletController(typeof(ClassificationNode))]
-    partial class SetClassificationNodeController
+    partial class SetIterationController 
     {
         public override IEnumerable<ClassificationNode> Invoke()
         {

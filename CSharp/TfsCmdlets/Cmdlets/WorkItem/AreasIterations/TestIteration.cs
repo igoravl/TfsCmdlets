@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
     /// <summary>
     /// Determines whether the specified iteration exist.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(bool), CustomControllerName = "TestClassificationNode")]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(bool))]
     partial class TestIteration
     {
         /// <summary>
