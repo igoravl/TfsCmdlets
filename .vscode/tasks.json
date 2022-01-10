@@ -51,7 +51,8 @@
                 "-File",
                 "${workspaceRoot}/build.ps1",
                 "-Targets",
-                "Rebuild"
+                "Rebuild",
+                "-SkipTests"
             ],
             "problemMatcher": [
                 "$msCompile"
