@@ -21,7 +21,7 @@ namespace TfsCmdlets.SourceGenerators
         public string CtorArgs { get; }
         public string BaseCtorArgs { get; }
         public string ImportingConstructorBody { get; }
-        public IList<IPropertySymbol> DeclaredProperties { get; }
+        public IDictionary<string, GeneratedProperty> DeclaredProperties { get; }
         public IDictionary<string, GeneratedProperty> ImplicitProperties { get; }
         public string PropertyDeclarations { get; }
         public string ItemsProperty { get; }
@@ -50,7 +50,7 @@ namespace TfsCmdlets.SourceGenerators
             BaseCtorArgs = BaseClass.GetConstructorArguments();
             ImportingConstructorBody = GetImportingConstructorBody(controller);
             CmdletInfo = (CmdletInfo)generatorStates[Cmdlet.FullName()];
-            DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").ToList();
+            DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").Select(p => new GeneratedProperty(p, string.Empty)).ToDictionary(p => p.Name);
             ImplicitProperties = CmdletInfo.GeneratedProperties;
         }
 
