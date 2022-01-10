@@ -50,7 +50,7 @@ namespace TfsCmdlets.SourceGenerators
 
                             GeneratedTypes.Add(state.FullName, state);
 
-                            context.AddSource($"{state.FileName}.cs", 
+                            context.AddSource($"{state.FileName}.cs",
                                 SourceText.From(generator.Generate(state), Encoding.UTF8));
                         }
                         catch (Exception ex)
@@ -73,16 +73,23 @@ namespace TfsCmdlets.SourceGenerators
         void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax cds)) return;
-
-            var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(cds);
-
-            if (type.HasAttribute("TfsCmdletAttribute"))
+            
+            try
             {
-                CmdletTypes.Add(type);
+                var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(cds);
+
+                if (type.HasAttribute("TfsCmdletAttribute"))
+                {
+                    CmdletTypes.Add(type);
+                }
+                else if (type.HasAttribute("CmdletControllerAttribute"))
+                {
+                    ControllerTypes.Add(type);
+                }
             }
-            else if (type.HasAttribute("CmdletControllerAttribute"))
+            catch (Exception ex)
             {
-                ControllerTypes.Add(type);
+                Logger.LogError(ex);
             }
         }
     }

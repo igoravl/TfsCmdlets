@@ -64,15 +64,15 @@ namespace TfsCmdlets.SourceGenerators
             {
                 if (!condition(cmdlet))
                 {
-                    Logger.Log($"- N/A: '{generatorName}'");
+                    // Logger.Log($"- N/A: '{generatorName}'");
                     continue;
                 }
 
-                Logger.Log($"- Running generator {generatorName}");
+                // Logger.Log($"- Running generator {generatorName}");
 
                 foreach (var prop in generator(cmdlet))
                 {
-                    Logger.Log($"  - Rendering property {prop.Name}");
+                    // Logger.Log($"  - Rendering property {prop.Name}");
                     cmdlet.GeneratedProperties.Add(prop.Name, prop);
                 }
             }

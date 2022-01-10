@@ -65,7 +65,7 @@ namespace TfsCmdlets.SourceGenerators
                         continue;
                     }
 
-                    Logger.Log($"- Adding {prop.Name}");
+                    //Logger.Log($"- Adding {prop.Name}");
 
                     controller.GeneratedProperties.Add(prop.Name, prop);
                 }

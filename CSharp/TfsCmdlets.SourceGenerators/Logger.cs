@@ -13,13 +13,13 @@ namespace TfsCmdlets.SourceGenerators
 
         internal static void Log(string message)
         {
-            var msg = $"[{DateTime.Now.ToString("hh:mm:ss.fff")}] {message}";
+            var msg = $"[{DateTime.Now.ToString("HH:mm:ss.fff")}] {message}";
             
             Logs.Add($"/* {msg} */");
             Debug.WriteLine($"[TfsCmdlets.Generator] {msg}");
         }
 
-        internal static void LogError(Exception ex) => Log($"[ERROR] {ex} {ex.InnerException}");
+        internal static void LogError(Exception ex) => Log($"[ERROR] {ex.Demystify()}");
 
         internal static void FlushLogs(GeneratorExecutionContext context)
         {
