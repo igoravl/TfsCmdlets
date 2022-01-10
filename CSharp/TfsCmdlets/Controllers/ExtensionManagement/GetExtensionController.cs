@@ -16,11 +16,6 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
                             yield return ext;
                             break;
                         }
-                    case IEnumerable<InstalledExtension> exts:
-                        {
-                            foreach (var ext in exts) yield return ext;
-                            break;
-                        }
                     case string s when s.IsWildcard() || Publisher.IsWildcard():
                         {
                             var client = GetClient<ExtensionManagementHttpClient>();
