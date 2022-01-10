@@ -79,21 +79,21 @@ namespace TfsCmdlets.Cmdlets
         }
 
         /// <inheritdoc/>
+        protected sealed override void ProcessRecord() => DoProcessRecord();
+
+        /// <inheritdoc/>
         protected sealed override void EndProcessing()
         {
             DoEndProcessing();
 
-            Parameters.Reset();
+            // Parameters.Reset();
 
             base.EndProcessing();
         }
 
-        /// <inheritdoc/>
-        protected sealed override void ProcessRecord() => DoProcessRecord();
+        protected virtual void DoBeginProcessing() { Logger.Log("BeginProcessing"); }
 
-        protected virtual void DoBeginProcessing() { }
-
-        protected virtual void DoEndProcessing() { }
+        protected virtual void DoEndProcessing() { Logger.Log("EndProcessing"); }
 
         /// <summary>
         /// Performs execution of the command.
@@ -102,12 +102,16 @@ namespace TfsCmdlets.Cmdlets
         {
             try
             {
-                var results = DoInvokeCommand();
+                Logger.Log("ProcessRecord");
+
+                var results = DoInvokeCommand(); //.ToList();
 
                 if (results == null) return;
 
-                foreach (var result in results.Where(r => r != null && ReturnsValue))
+                foreach (var result in results)
                 {
+                    if(!ReturnsValue || result == null) continue;
+
                     WriteObject(result);
                 }
             }
@@ -119,14 +123,16 @@ namespace TfsCmdlets.Cmdlets
 
         private IEnumerable<object> DoInvokeCommand()
         {
-            var command = GetController();
+            var controller = GetController();
 
-            if (command == null) throw new Exception($"Controller '{CommandName}Controller' not found. Are you missing a [CmdletController] attribute?");
+            if (controller == null) throw new Exception($"Controller '{CommandName}Controller' not found. Are you missing a [CmdletController] attribute?");
 
             Parameters.Initialize(this);
             LogParameters();
 
-            var result = command.InvokeCommand();
+            controller.CacheParameters();
+
+            var result = controller.InvokeCommand();
 
             if (result is IEnumerable<object> objList) return objList;
 

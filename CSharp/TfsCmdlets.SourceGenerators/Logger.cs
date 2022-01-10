@@ -19,7 +19,7 @@ namespace TfsCmdlets.SourceGenerators
             Debug.WriteLine($"[TfsCmdlets.Generator] {msg}");
         }
 
-        internal static void LogError(Exception ex) => Log($"[ERROR] {ex.Demystify()}");
+        internal static void LogError(Exception ex) => Log($"[ERROR] {ex}");
 
         internal static void FlushLogs(GeneratorExecutionContext context)
         {

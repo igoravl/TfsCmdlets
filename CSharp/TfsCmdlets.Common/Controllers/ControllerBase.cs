@@ -29,6 +29,8 @@ namespace TfsCmdlets.Controllers
 
         public abstract object InvokeCommand();
 
+        public abstract void CacheParameters();
+
         [ImportingConstructor]
         public ControllerBase(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
         {

@@ -42,6 +42,7 @@ namespace TfsCmdlets.SourceGenerators
 
             BaseClass = GetBaseClass(context, controller);
             IsGeneric = customBaseClass == null && genericTypeArg != null;
+            DataType = IsGeneric ? genericTypeArg : null;
             GenericArg = IsGeneric ? $"<{genericTypeArg}>" : string.Empty;
             Verb = Cmdlet.Name.Substring(0, Cmdlet.Name.FindIndex(char.IsUpper, 1));
             Noun = Cmdlet.Name.Substring(Verb.Length);

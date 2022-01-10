@@ -20,6 +20,8 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
                         {
                             var client = GetClient<ExtensionManagementHttpClient>();
 
+                            Logger.Log($"Getting extensions matching name '{s}' with publisher '{Publisher}'");
+
                             foreach (var result in client.GetInstalledExtensionsAsync(
                                 includeDisabledExtensions: IncludeDisabledExtensions,
                                 includeErrors: IncludeErrors,
@@ -30,6 +32,14 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
                             {
                                 yield return result;
                             }
+                            break;
+                        }
+                        case string s: {
+                            var client = GetClient<ExtensionManagementHttpClient>();
+
+                            yield return client.GetInstalledExtensionByNameAsync(Publisher, s)
+                                .GetResult("Error getting installed extension.");
+
                             break;
                         }
                         default: {

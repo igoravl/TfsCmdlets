@@ -19,5 +19,7 @@ namespace TfsCmdlets.Services
         string CommandName {get;}
 
         Type DataType {get;}
+
+        void CacheParameters();
     }
 }

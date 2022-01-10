@@ -77,7 +77,7 @@ namespace TfsCmdlets.Services.Impl
             => Cmdlet.ShouldProcess(target, action);
 
         public bool ShouldProcess(Connection collection, string action)
-            => ShouldProcess($"Team Project Collection '{collection.DisplayName}'", action);
+            => ShouldProcess($"{(collection.IsHosted? "Organization": "Team Project Collection")} '{collection.DisplayName}'", action);
 
         public bool ShouldProcess(TeamProject tp, string action)
             => ShouldProcess($"Team Project '{tp.Name}'", action);

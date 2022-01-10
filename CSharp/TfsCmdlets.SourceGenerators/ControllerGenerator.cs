@@ -34,7 +34,8 @@ namespace TfsCmdlets.SourceGenerators
                 ((controller) => true, GenerateParameterSetProperty),
 
                 // 'Items' property
-                ((controller) => !controller.Verb.Equals("Get"), GenerateItemsProperty),
+                ((controller) => !controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 &&
+                    controller.DeclaredProperties[0].Type.ToString().Equals("object"), GenerateItemsProperty),
 
             };
 
@@ -78,10 +79,20 @@ namespace TfsCmdlets.SourceGenerators
         {
             var controller = (ControllerInfo)state;
             var props = new StringBuilder();
+            var cacheProps = new StringBuilder();
 
             foreach (var prop in controller.GeneratedProperties.Values)
             {
                 props.Append(prop.ToString());
+
+                if(prop.Name.Equals("Items") || 
+                    _scopeProperties.Contains(prop.Name) || 
+                    (controller.Verb.Equals("Get") && 
+                        controller.DeclaredProperties.Count > 0 && 
+                        controller.DeclaredProperties[0].Name.Equals(prop.Name))) continue;
+
+                cacheProps.Append($"            Has_{prop.Name} = Parameters.HasParameter(\"{prop.Name}\");\n");
+                cacheProps.Append($"            {prop.Name} = Parameters.Get<{prop.Type}>(\"{prop.Name}\");\n\n");
             }
 
             return $@"/*
@@ -102,6 +113,12 @@ namespace {controller.Namespace}
     internal partial class {controller.Name}: {controller.BaseClassName}{controller.GenericArg}
     {{
 {props}
+
+        public override void CacheParameters()
+        {{
+{cacheProps}
+        }}
+
         [ImportingConstructor]
         public {controller.Name}({controller.CtorArgs})
             : base({controller.BaseCtorArgs})
@@ -116,7 +133,8 @@ namespace {controller.Namespace}
         private static IEnumerable<GeneratedProperty> GenerateParameterSetProperty(ControllerInfo controller)
         {
             yield return new GeneratedProperty("ParameterSetName", "string", $@"        // ParameterSetName
-        protected string ParameterSetName => Parameters.Get<string>(""ParameterSetName"");
+        protected bool Has_ParameterSetName {{get;set;}}
+        protected string ParameterSetName {{get;set;}}
 ");
         }
 
@@ -130,7 +148,11 @@ namespace {controller.Namespace}
 " :
                 $@"
         // Items
-        protected IEnumerable{controller.GenericArg} Items => Data.GetItems{controller.GenericArg}();
+        protected IEnumerable{controller.GenericArg} Items => {controller.DeclaredProperties[0].Name} switch {{
+            {controller.DataType} item => new[] {{ item }},
+            IEnumerable{controller.GenericArg} items => items,
+            _ => Data.GetItems{controller.GenericArg}()
+        }};
 
 ");
         }
@@ -140,21 +162,14 @@ namespace {controller.Namespace}
             var prop = controller.DeclaredProperties[0];
 
             yield return new GeneratedProperty(prop.Name, "IEnumerable", $@"        // {prop.Name}
-        private IEnumerable _{prop.Name}; private bool _Init_{prop.Name};
-        protected bool Has_{prop.Name} => Parameters.HasParameter(""{prop.Name}"");
+        protected bool Has_{prop.Name} {{get;set;}}
         protected IEnumerable {prop.Name}
         {{
             get
             {{
-                if(_Init_{prop.Name}) return _{prop.Name};
-                
-                _Init_{prop.Name} = true;
-                
                 var paramValue = Parameters.Get<object>(""{prop.Name}"");
-                
-                if(paramValue is ICollection col) return _{prop.Name} = col;
-
-                return _{prop.Name} = new[] {{ paramValue }};
+                if(paramValue is ICollection col) return col;
+                return new[] {{ paramValue }};
             }}
         }}
 
@@ -168,16 +183,8 @@ namespace {controller.Namespace}
                 var type = prop.Type.ToString().EndsWith("SwitchParameter") ? "bool" : prop.Type.ToString();
 
                 yield return new GeneratedProperty(prop.Name, type.ToString(), $@"        // {prop.Name}
-        private {type} _{prop.Name}; private bool _Init_{prop.Name};
-        protected bool Has_{prop.Name} => Parameters.HasParameter(""{prop.Name}"");
-        protected {type} {prop.Name}
-        {{
-            get
-            {{
-                if(_Init_{prop.Name}) return _{prop.Name}; _Init_{prop.Name} = true;
-                return _{prop.Name} = Parameters.Get<{type}>(""{prop.Name}"");
-            }}
-        }}
+        protected bool Has_{prop.Name} {{get;set;}}// => Parameters.HasParameter(""{prop.Name}"");
+        protected {type} {prop.Name} {{get;set;}} // Parameters.Get<{type}>(""{prop.Name}"");
 
 ");
             }
@@ -194,16 +201,8 @@ namespace {controller.Namespace}
                 if (prop.IsHidden) continue;
 
                 yield return new GeneratedProperty(prop.Name, type, $@"        // {prop.Name}
-        private {type} _{prop.Name}; private bool _Init_{prop.Name};
-        protected bool Has_{prop.Name} => Parameters.HasParameter(""{prop.Name}"");
-        protected {type} {prop.Name}
-        {{
-            get
-            {{
-                if(_Init_{prop.Name}) return _{prop.Name}; _Init_{prop.Name} = true;
-                return _{prop.Name} = Parameters.Get<{type}>(""{prop.Name}"");
-            }}
-        }}
+        protected bool Has_{prop.Name} {{get;set;}} // => Parameters.HasParameter(""{prop.Name}"");
+        protected {type} {prop.Name} {{get;set;}} // => _{prop.Name}; // Parameters.Get<{type}>(""{prop.Name}"");
 
 ");
             }
@@ -213,8 +212,7 @@ namespace {controller.Namespace}
         private static IEnumerable<GeneratedProperty> GenerateScopeProperty(ControllerInfo controller, CmdletScope scope, string scopeType)
         {
             yield return new GeneratedProperty(scope.ToString(), "object", $@"        // {scope}
-        private {scopeType} _{scope};
-        protected {scopeType} {scope} => _{scope} ??= Data.Get{scope}();
+        protected {scopeType} {scope} => Data.Get{scope}();
 
 ");
         }
