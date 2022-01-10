@@ -9,14 +9,25 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(InstalledExtension))]
     partial class GetExtension
     {
+        /// <summary>
+        /// Specifies the ID or the name of the extensions. Wilcards are supported. 
+        /// When omitted, returns all extensions installed in the specified organization/collection.
+        /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards]
         public object Extension { get; set; } = "*";
 
+        /// <summary>
+        /// Specifies the ID or the name of the publisher. Wilcards are supported. 
+        /// When omitted, returns all extensions installed in the specified organization/collection.
+        /// </summary>
         [Parameter(Position = 1)]
         [SupportsWildcards]
         public string Publisher { get; set; } = "*";
 
+        /// <summary>
+        /// Includes disabled extensions in the result. When omitted, disabled extensions are not included in the result.
+        /// </summary>
         [Parameter]
         public SwitchParameter IncludeDisabledExtensions { get; set; }
 
