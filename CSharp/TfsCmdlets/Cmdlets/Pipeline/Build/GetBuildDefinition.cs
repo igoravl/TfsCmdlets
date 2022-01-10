@@ -22,6 +22,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
         /// Specifies the query order. When omitted, defaults to None.
         /// </summary>
         [Parameter]
-        public DefinitionQueryOrder QueryOrder { get; set; } = DefinitionQueryOrder.None;
+        public DefinitionQueryOrder QueryOrder { get; set; }
     }
 }

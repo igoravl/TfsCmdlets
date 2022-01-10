@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.Build.WebApi;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
@@ -23,6 +22,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         /// Specifies the query order. When omitted, defaults to None.
         /// </summary>
         [Parameter]
-        public FolderQueryOrder QueryOrder {get;set;} = FolderQueryOrder.None;
+        public Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder QueryOrder {get;set;}
     }
 }

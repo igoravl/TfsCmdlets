@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
@@ -23,6 +22,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         /// Specifies the query order. When omitted, defaults to None.
         /// </summary>
         [Parameter]
-        public FolderPathQueryOrder QueryOrder { get; set; } = FolderPathQueryOrder.None;
+        public Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder QueryOrder { get; set; } 
     }
 }

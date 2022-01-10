@@ -6,13 +6,13 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
     /// <summary>
     /// Disables an extension installed in the specified collection/organization.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(InstalledExtension))]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(InstalledExtension))]
     partial class DisableExtension
     {
         /// <summary>
         /// Specifies the ID or the name of the extensions. Wilcards are supported. 
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards]
         public object Extension { get; set; } 
 
