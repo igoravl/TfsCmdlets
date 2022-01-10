@@ -11,15 +11,13 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
 
             foreach (var item in Items)
             {
-                Logger.Log(item.ToString());
-
                 if (!PowerShell.ShouldProcess(Collection, $"Uninstall extension '{item.ExtensionDisplayName}' by '{item.PublisherDisplayName}' ({item.ExtensionName}.{item.PublisherName})"))
                     continue;
 
                 try
                 {
-                    // client.UninstallExtensionByNameAsync(item.PublisherName, item.ExtensionName)
-                    //     .Wait("Error uninstalling extension.");
+                    client.UninstallExtensionByNameAsync(item.PublisherName, item.ExtensionName)
+                        .Wait("Error uninstalling extension.");
                 }
                 catch (Exception ex)
                 {
