@@ -1,5 +1,4 @@
 ---
 layout: module
-title: Identities, Users and Groups
+title: Identities, Users, and Groups
 ---
-
