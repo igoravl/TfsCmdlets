@@ -6,7 +6,7 @@
     [CmdletController(CustomBaseClass = typeof(TestClassificationNodeController))]
     partial class TestIterationController { }
 
-    internal class TestClassificationNodeController: ControllerBase
+    internal abstract class TestClassificationNodeController: ControllerBase
     {
         public override object InvokeCommand()
         {

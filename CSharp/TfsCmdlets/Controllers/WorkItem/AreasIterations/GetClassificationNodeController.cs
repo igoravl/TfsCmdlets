@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(GetClassificationNodeController))]
     partial class GetIterationController { }
 
-    internal class GetClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    internal abstract class GetClassificationNodeController: ControllerBase<Models.ClassificationNode>
     {
         [Import]
         private INodeUtil NodeUtil { get; }
