@@ -15,8 +15,6 @@ namespace TfsCmdlets.SourceGenerators
         internal GeneratedProperty(IPropertySymbol prop, string generatedCode)
             : this(prop.Name, prop.Type.ToString(), generatedCode)
         {
-            Logger.Log(prop.ToString());
-
             var node = (PropertyDeclarationSyntax) prop.DeclaringSyntaxReferences.First().GetSyntax();
             var initializer = node.Initializer;
             
