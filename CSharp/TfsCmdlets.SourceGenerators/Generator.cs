@@ -48,7 +48,7 @@ namespace TfsCmdlets.SourceGenerators
                             var state = generator.ProcessType(context, type);
                             if (state == null) continue;
 
-                            GeneratedTypes.Add(state.FullName, state);
+                            GeneratedTypes[state.FullName] = state;
 
                             context.AddSource($"{state.FileName}.cs",
                                 SourceText.From(generator.Generate(state), Encoding.UTF8));
