@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
     [CmdletController(typeof(WebApiFolder))]
     partial class RemoveReleaseDefinitionFolderController
     {
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var folders = Data.GetItems<WebApiFolder>();
             var recurse = Parameters.Get<bool>(nameof(RemoveReleaseDefinitionFolder.Recurse));

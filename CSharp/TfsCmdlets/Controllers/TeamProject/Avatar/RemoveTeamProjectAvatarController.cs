@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.TeamProject.Avatar
     [CmdletController]
     partial class RemoveTeamProjectAvatarController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var client = Data.GetClient<ProjectHttpClient>();

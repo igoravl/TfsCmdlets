@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.TestManagement
     [CmdletController(typeof(TestPlan))]
     partial class GetTestPlanController
     {
-        public override IEnumerable<TestPlan> Invoke()
+        protected override IEnumerable Run()
         {
             var testPlan = Parameters.Get<object>(nameof(GetTestPlan.TestPlan));
             var owner = Parameters.Get<string>(nameof(GetTestPlan.Owner));

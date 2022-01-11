@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.ServiceHook
     [CmdletController(typeof(Notification))]
     partial class GetServiceHookNotificationHistoryController
     {
-       public override IEnumerable<WebApiServiceHookNotification> Invoke()
+       protected override IEnumerable Run()
        {
            var subscription = Data.GetItem<WebApiSubscription>();
            var client = Data.GetClient<ServiceHooksPublisherHttpClient>();

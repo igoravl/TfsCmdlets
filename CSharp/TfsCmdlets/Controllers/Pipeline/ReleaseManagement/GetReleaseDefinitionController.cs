@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
     [CmdletController(typeof(ReleaseDefinition))]
     partial class GetReleaseDefinitionController
     {
-        public override IEnumerable<ReleaseDefinition> Invoke()
+        protected override IEnumerable Run()
         {
             throw new NotImplementedException();
         }

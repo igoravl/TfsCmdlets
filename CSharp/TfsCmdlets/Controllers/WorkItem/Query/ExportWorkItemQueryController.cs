@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
     [CmdletController()]
     partial class ExportWorkItemQueryController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var queries = Data.GetItems<QueryHierarchyItem>(new { ItemType = "Query" });
             var encoding = Parameters.Get<string>(nameof(ExportWorkItemQuery.Encoding));

@@ -130,8 +130,6 @@ namespace TfsCmdlets.Cmdlets
             Parameters.Initialize(this);
             LogParameters();
 
-            controller.CacheParameters();
-
             var result = controller.InvokeCommand();
 
             if (result is IEnumerable<object> objList) return objList;

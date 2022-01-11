@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class CopyWorkItemController
     {
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var wi = Data.GetItem<WebApiWorkItem>();
             var tp = Data.GetProject(new { Project = (string)wi.Fields["System.TeamProject"] });

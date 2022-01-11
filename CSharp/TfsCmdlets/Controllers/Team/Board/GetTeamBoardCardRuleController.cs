@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Team.Board
     [CmdletController(typeof(Models.CardRule))]
     partial class GetTeamBoardCardRuleController
     {
-        public override IEnumerable<Models.CardRule> Invoke()
+        protected override IEnumerable Run()
         {
             var board = Data.GetItem<Models.Board>();
 

@@ -3,7 +3,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class DisconnectTeamProjectController
     {
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             CurrentConnections.Set(
                 CurrentConnections.Server,

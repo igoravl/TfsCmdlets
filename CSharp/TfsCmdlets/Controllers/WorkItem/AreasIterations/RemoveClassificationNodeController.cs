@@ -10,9 +10,9 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RemoveClassificationNodeController))]
     partial class RemoveIterationController { }
 
-    internal abstract class RemoveClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    internal abstract class RemoveClassificationNodeController: ControllerBase
     {
-        public override IEnumerable<ClassificationNode> Invoke()
+        protected override IEnumerable Run()
         {
             var nodes = Data.GetItems<ClassificationNode>().OrderByDescending(n => n.Path).ToList();
             var moveTo = Parameters.Get<object>("MoveTo");

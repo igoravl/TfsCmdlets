@@ -5,10 +5,10 @@ namespace TfsCmdlets.Controllers.Git
     [CmdletController(typeof(GitRepository))]
     partial class RemoveGitRepositoryController 
     {
-        public override IEnumerable<GitRepository> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
-            var repos = GetItems();
+            var repos = Data.GetItems<GitRepository>();
             var force = Parameters.Get<bool>(nameof(Cmdlets.Git.RemoveGitRepository.Force));
 
             var client = Data.GetClient<GitHttpClient>();

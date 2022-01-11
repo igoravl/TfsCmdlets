@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.TestManagement
     [CmdletController(typeof(TestPlan))]
     partial class RemoveTestPlanController
     {
-        public override IEnumerable<TestPlan> Invoke()
+        protected override IEnumerable Run()
         {
             var plans = Data.GetItems<TestPlan>();
             var force = Parameters.Get<bool>(nameof(RemoveTestPlan.Force));

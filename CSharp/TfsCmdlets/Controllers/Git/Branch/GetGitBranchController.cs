@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.Git.Branch
     [CmdletController(typeof(GitBranchStats))]
     partial class GetGitBranchController 
     {
-        public override IEnumerable<GitBranchStats> Invoke()
+        protected override IEnumerable Run()
         {
 
             var branch = Parameters.Get<object>("Branch");

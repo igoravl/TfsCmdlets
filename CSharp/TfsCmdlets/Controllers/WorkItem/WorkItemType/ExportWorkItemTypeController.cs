@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
         [Import]
         private IWorkItemStore Store { get; set; }
 
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var types = Data.GetItems<WebApiWorkItemType>();
             var encoding = Parameters.Get<string>(nameof(ExportWorkItemType.Encoding));

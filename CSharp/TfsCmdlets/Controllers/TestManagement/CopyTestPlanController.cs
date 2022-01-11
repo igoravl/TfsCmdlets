@@ -7,9 +7,9 @@ namespace TfsCmdlets.Controllers.TestManagement
     [CmdletController(typeof(TestPlan))]
     partial class CopyTestPlanController
     {
-        public override IEnumerable<TestPlan> Invoke()
+        protected override IEnumerable Run()
         {
-            var plan = GetItem();
+            var plan = Data.GetItem<TestPlan>();
             var destinationProject = Parameters.Get<string>(nameof(CopyTestPlan.Destination));
             var destTp = Data.GetItem<WebApiTeamProject>(new { Project = destinationProject });
             var tp = Data.GetProject(new { Project = plan.Project.Name });

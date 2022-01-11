@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.Admin
         [Import]
         private IRestApiService RestApi { get; set; }
 
-        public override IEnumerable<ServerVersion> Invoke()
+        protected override IEnumerable Run()
         {
            var tpc = Data.GetCollection();
 

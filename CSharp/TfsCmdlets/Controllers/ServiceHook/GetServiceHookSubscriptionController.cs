@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.ServiceHook
     [CmdletController(typeof(WebApiSubscription))]
     partial class GetServiceHookSubscriptionController
     {
-        public override IEnumerable<WebApiSubscription> Invoke()
+        protected override IEnumerable Run()
         {
             var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
             var subscription = Parameters.Get<object>(nameof(GetServiceHookSubscription.Subscription));

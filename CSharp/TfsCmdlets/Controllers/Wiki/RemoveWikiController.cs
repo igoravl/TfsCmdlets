@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Wiki
     [CmdletController(typeof(WikiV2))]
     partial class RemoveWikiController
     {
-        public override IEnumerable<WikiV2> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var client = Data.GetClient<WikiHttpClient>();

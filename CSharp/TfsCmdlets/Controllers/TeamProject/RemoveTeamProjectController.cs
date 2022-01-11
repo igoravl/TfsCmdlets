@@ -8,10 +8,10 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class RemoveTeamProjectController
     {
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
-            var tps = GetItems();
+            var tps = Data.GetItems<WebApiTeamProject>();
             var hard = Parameters.Get<bool>(nameof(RemoveTeamProject.Hard));
             var force = Parameters.Get<bool>(nameof(RemoveTeamProject.Force));
 

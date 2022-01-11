@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.TeamProject.Avatar
         [Import]
         private IRestApiService RestApiService{get;set;}
 
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         { 
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();

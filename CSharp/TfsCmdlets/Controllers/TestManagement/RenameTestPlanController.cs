@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.TestManagement
     [CmdletController(typeof(TestPlan))]
     partial class RenameTestPlanController
     {
-        public override IEnumerable<TestPlan> Invoke()
+        protected override IEnumerable Run()
         {
             var plan = Data.GetItem<TestPlan>();
             var newName = Parameters.Get<string>("NewName");

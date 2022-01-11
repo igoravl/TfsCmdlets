@@ -13,12 +13,12 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
     [CmdletController(typeof(Connection))]
     partial class NewTeamProjectCollectionController
     {
-        public override IEnumerable<Connection> Invoke()
+        protected override IEnumerable Run()
         {
 #if NET471_OR_GREATER
             var tpc = Data.GetCollection();
 
-            if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) return null;
+            if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) yield break;
 
             var configServer = Data.GetServer();
             var collectionName = Parameters.Get<string>(nameof(Cmdlets.TeamProjectCollection.NewTeamProjectCollection.Collection));
@@ -69,7 +69,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
                 var jobDetail = collectionInfo.ServicingDetails.Cast<ServicingJobDetail>().FirstOrDefault(job => job.JobId == tpcJob.JobId);
 
-                if (jobDetail == null) return GetItems();
+                if (jobDetail == null) yield break;
 
                 switch (jobDetail.JobStatus)
                 {
@@ -80,8 +80,8 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
                     case ServicingJobStatus.Failed:
                         throw new Exception($"Error creating team project collection {collectionName}");
                     case ServicingJobStatus.Complete:
-                        GetItem();
-                        break;
+                        yield return Data.GetItem<WebApiTeamProject>();
+                        yield break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
@@ -89,7 +89,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
             throw new TimeoutException($"Operation timed out during creation of team project collection {collectionName}");
 #else
-            return null;
+            yield break;
 #endif
         }
     }

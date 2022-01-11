@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Build
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<BuildDefinitionReference> Invoke()
+        protected override IEnumerable Run()
         {
             var definition = Parameters.Get<object>(nameof(GetBuildDefinition.Definition));
             var queryOrder = Parameters.Get<DefinitionQueryOrder>(nameof(GetBuildDefinition.QueryOrder), DefinitionQueryOrder.None);

@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Team
         [Import]
         private ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<Models.Team> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Shell
     [CmdletController]
     partial class EnterShellController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             if (IsInShell) return null;
 

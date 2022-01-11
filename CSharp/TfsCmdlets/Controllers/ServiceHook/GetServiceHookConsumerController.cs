@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.ServiceHook
     [CmdletController(typeof(WebApiConsumer))]
     partial class GetServiceHookConsumerController
     {
-        public override IEnumerable<WebApiConsumer> Invoke()
+        protected override IEnumerable Run()
         {
             var consumer = Parameters.Get<object>("Consumer");
 

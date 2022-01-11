@@ -30,6 +30,9 @@ namespace TfsCmdlets.SourceGenerators
         internal ControllerInfo(INamedTypeSymbol controller, IDictionary<string, GeneratorState> generatorStates, GeneratorExecutionContext context)
             : base(controller)
         {
+            if(controller == null) throw new ArgumentNullException(nameof(controller));
+            if(generatorStates == null) throw new ArgumentNullException(nameof(generatorStates));
+
             var genericTypeArg = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute");
             var customBaseClass = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "CustomBaseClass");
             var customCmdletName = controller.GetAttributeNamedValue<string>("CmdletControllerAttribute", "CustomCmdletName");
@@ -40,7 +43,7 @@ namespace TfsCmdlets.SourceGenerators
 
             if (Cmdlet == null) throw new ArgumentException($"Unable to find cmdlet class '{CmdletName}'");
 
-            BaseClass = GetBaseClass(context, controller);
+            BaseClass = customBaseClass ??  ControllerGenerator.ControllerBase;
             IsGeneric = customBaseClass == null && genericTypeArg != null;
             DataType = IsGeneric ? genericTypeArg : null;
             GenericArg = IsGeneric ? $"<{genericTypeArg}>" : string.Empty;

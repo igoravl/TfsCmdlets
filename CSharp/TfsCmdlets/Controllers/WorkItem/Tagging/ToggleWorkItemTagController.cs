@@ -8,9 +8,9 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
     [CmdletController(typeof(WebApiTagDefinition), CustomBaseClass = typeof(ToggleWorkItemTagController))]
     partial class DisableWorkItemTagController { }
 
-    internal abstract class ToggleWorkItemTagController: ControllerBase<WebApiTagDefinition>
+    internal abstract class ToggleWorkItemTagController: ControllerBase
     {
-        public override IEnumerable<WebApiTagDefinition> Invoke()
+        protected override IEnumerable Run()
         {
             var tags = Data.GetItems<WebApiTagDefinition>();
             var tp = Data.GetProject();

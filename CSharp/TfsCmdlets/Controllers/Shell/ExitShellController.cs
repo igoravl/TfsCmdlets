@@ -3,7 +3,7 @@ namespace TfsCmdlets.Controllers.Shell
     [CmdletController]
     partial class ExitShellController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
            if(!EnterShellController.IsInShell) return null;
 

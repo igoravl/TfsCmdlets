@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.GlobalList
         [Import]
         private IWorkItemStore Store { get; set; }
 
-        public override IEnumerable<Models.GlobalList> Invoke()
+        protected override IEnumerable Run()
         {
             var globalList = Parameters.Get<string>("GlobalList");
             var tpc = Data.GetCollection();

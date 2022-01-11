@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
         [Import]
         private IDescriptorService DescriptorService { get; set; }
 
-        public override IEnumerable<GraphGroup> Invoke()
+        protected override IEnumerable Run()
         {
             var group = Parameters.Get<object>(nameof(GetGroup.Group));
             var scope = Parameters.Get<GroupScope>(nameof(GetGroup.Scope));

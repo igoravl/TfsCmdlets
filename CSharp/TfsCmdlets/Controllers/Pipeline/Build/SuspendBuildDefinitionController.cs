@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Build
     [CmdletController(typeof(BuildDefinitionReference))]
     partial class SuspendBuildDefinitionController
     {
-        public override IEnumerable<BuildDefinitionReference> Invoke()
+        protected override IEnumerable Run()
         {
             var def = Data.GetItem<BuildDefinition>();
             var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();

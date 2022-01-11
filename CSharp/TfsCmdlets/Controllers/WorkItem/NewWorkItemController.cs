@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class NewWorkItemController
     {
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var type = Data.GetItem<WebApiWorkItemType>();

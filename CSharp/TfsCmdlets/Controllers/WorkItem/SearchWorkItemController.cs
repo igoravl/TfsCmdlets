@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class SearchWorkItemController
     {
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var text = Parameters.Get<string>(nameof(SearchWorkItem.Query));
             var results = Parameters.Get<int>(nameof(SearchWorkItem.Results));

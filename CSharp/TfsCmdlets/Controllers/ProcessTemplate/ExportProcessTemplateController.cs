@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     [CmdletController]
     partial class ExportProcessTemplateController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
 #if NET471_OR_GREATER
             var processTemplate = Parameters.Get<object>(nameof(ExportProcessTemplate.ProcessTemplate));

@@ -25,7 +25,7 @@ namespace TfsCmdlets.Services.Impl
         public IEnumerable<T> Invoke<T>(string verb, object overridingParameters = null)
         {
             var dataType = typeof(T);
-            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType == dataType)?.Value as ITypedController<T>;
+            IController controller = Commands.FirstOrDefault(c => c.Value.Verb == verb && c.Value.DataType == dataType)?.Value;
 
             if (controller == null)
             {

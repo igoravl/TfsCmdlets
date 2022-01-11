@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
     [CmdletController(typeof(WebApiTagDefinition))]
     partial class NewWorkItemTagController
     {
-        public override IEnumerable<WebApiTagDefinition> Invoke()
+        protected override IEnumerable Run()
         {
             var tag = Parameters.Get<string>(nameof(NewWorkItemTag.Tag));
             var tp = Data.GetProject();

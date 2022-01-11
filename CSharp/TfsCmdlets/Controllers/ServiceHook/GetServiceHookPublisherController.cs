@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.ServiceHook
     [CmdletController(typeof(WebApiPublisher))]
     partial class GetServiceHookPublisherController
     {
-       public override IEnumerable<WebApiPublisher> Invoke()
+       protected override IEnumerable Run()
        {
            var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
            var publisher = Parameters.Get<object>(nameof(GetServiceHookPublisher.Publisher));

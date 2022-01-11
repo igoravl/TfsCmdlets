@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode))]
     partial class SetIterationController 
     {
-        public override IEnumerable<ClassificationNode> Invoke()
+        protected override IEnumerable Run()
         {
             var nodeToSet = Data.GetItem<ClassificationNode>();
             var startDate = Parameters.Get<DateTime?>("StartDate");

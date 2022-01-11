@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     partial class RenameTeamProjectController
     {
 
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();
@@ -54,7 +54,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                 throw new Exception($"Error renaming team project '{tp.Name}': {opsToken.ResultMessage}");
             }
 
-            return GetItems(new { Project = tp.Id });
+            return Data.GetItems<WebApiTeamProject>(new { Project = tp.Id });
         }
 
         [Import]

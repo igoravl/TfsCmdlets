@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.Admin
         [Import]
         private ITfsVersionTable TfsVersionTable { get; }
 
-        public override IEnumerable<TfsInstallationPath> Invoke()
+        protected override IEnumerable Run()
         {
             if (Parameters.HasParameter("Session"))
             {

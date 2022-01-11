@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Identity
     [CmdletController(typeof(Models.Identity))]
     partial class GetIdentityController
     {
-        public override IEnumerable<Models.Identity> Invoke()
+        protected override IEnumerable Run()
         {
             var current = Parameters.Get<bool>("Current");
             var queryMembership = Parameters.Get<TfsQueryMembership>("QueryMembership");

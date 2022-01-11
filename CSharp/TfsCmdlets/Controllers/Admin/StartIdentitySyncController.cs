@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Admin
     [CmdletController]
     partial class StartIdentitySyncController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             throw new System.NotImplementedException();
         }

@@ -8,14 +8,14 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class NewTeamProjectController
     {
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
             var project = Parameters.Get<string>(nameof(NewTeamProject.Project));
 
             if (!PowerShell.ShouldProcess(tpc, $"Create team project '{project}'"))
             {
-                return null;
+                yield break;
             }
 
             var processTemplate = Parameters.Get<object>(nameof(NewTeamProject.ProcessTemplate));
@@ -76,7 +76,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                 throw new Exception($"Error creating team project {project}: {opsToken.ResultMessage}");
             }
 
-            return GetItems();
+            yield return Data.GetItem<WebApiTeamProject>();;
         }
     }
 }

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class SetTeamProjectController
     {
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var avatarImage = Parameters.Get<string>(nameof(SetTeamProject.AvatarImage));

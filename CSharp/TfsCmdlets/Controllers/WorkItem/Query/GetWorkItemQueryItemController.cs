@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<QueryHierarchyItem> Invoke()
+        protected override IEnumerable Run()
         {
             var itemType = Parameters.Get<string>("ItemType");
             var isFolder = itemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.TeamProject
         [Import]
         private IRestApiService RestApiService { get; }
 
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var project = Parameters.Get<object>("Project");
             var references = new List<WebApiTeamProjectRef>();
@@ -20,7 +20,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                 }
                 case string s:
                 {
-                    references.AddRange(GetItems(new { Project = s, Deleted = true }));
+                    references.AddRange(Data.GetItems<WebApiTeamProject>(new { Project = s, Deleted = true }));
                     break;
                 }
                 default:
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Controllers.TeamProject
                         $"{{\"state\":1,\"name\":\"{tp.Name}\"}}")
                     .GetResult($"Error restoring team project '{tp.Name}'");
 
-                yield return GetItem(tp);
+                yield return Data.GetItem<WebApiTeamProject>(tp);
             }
         }
     }

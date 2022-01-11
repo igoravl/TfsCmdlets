@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Wiki
     [CmdletController(typeof(WikiV2))]
     partial class GetWikiController
     {
-       public override IEnumerable<WikiV2> Invoke()
+       protected override IEnumerable Run()
        {
            var tp = Data.GetProject();
            var wiki = Parameters.Get<object>("Wiki");

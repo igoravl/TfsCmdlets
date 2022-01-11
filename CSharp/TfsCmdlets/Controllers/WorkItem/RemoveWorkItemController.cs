@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class RemoveWorkItemController
     {
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var wis = Data.GetItems<WebApiWorkItem>();
             var tpc = Data.GetCollection();

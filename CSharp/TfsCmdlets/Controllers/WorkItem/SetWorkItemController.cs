@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.WorkItem
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var wi = Data.GetItem<WebApiWorkItem>();
             var tpc = Data.GetCollection();

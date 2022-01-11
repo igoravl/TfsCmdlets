@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.TestManagement
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<TestPlan> Invoke()
+        protected override IEnumerable Run()
         {
             var testPlan = Parameters.Get<string>(nameof(NewTestPlan.TestPlan));
             var owner = Parameters.Get<object>(nameof(NewTestPlan.Owner));

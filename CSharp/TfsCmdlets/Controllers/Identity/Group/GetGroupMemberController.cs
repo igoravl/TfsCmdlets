@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
     [CmdletController(typeof(Models.Identity))]
     partial class GetGroupMemberController
     {
-        public override IEnumerable<Models.Identity> Invoke()
+        protected override IEnumerable Run()
         {
             var group = Parameters.Get<object>(nameof(GetGroupMember.Group));
             var member = Parameters.Get<string>(nameof(AddGroupMember.Member));

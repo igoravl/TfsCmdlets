@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Linking
     [CmdletController(typeof(WorkItemRelationType))]
     partial class GetWorkItemLinkTypeController
     {
-        public override IEnumerable<WorkItemRelationType> Invoke()
+        protected override IEnumerable Run()
         {
             var linkType = Parameters.Get<object>(nameof(GetWorkItemLinkType.LinkType));
 

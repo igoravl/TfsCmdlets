@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Linking
         [Import]
         private IKnownWorkItemLinkTypes KnownLinkTypes { get; set; }
 
-        public override IEnumerable<WorkItemRelation> Invoke()
+        protected override IEnumerable Run()
         {
             var wi = Data.GetItem<WebApiWorkItem>(new { IncludeLinks = true });
 

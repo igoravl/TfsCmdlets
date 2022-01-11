@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.GlobalList
     {
         private IWorkItemStore Store { get; set; }
 
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var lists = Data.GetItems<Models.GlobalList>();
             var encoding = Parameters.Get<string>(nameof(ExportGlobalList.Encoding));

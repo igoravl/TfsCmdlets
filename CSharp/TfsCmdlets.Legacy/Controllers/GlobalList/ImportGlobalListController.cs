@@ -12,7 +12,7 @@
 //         [Import]	
 //         private IWorkItemStore Store { get; set; }
 
-//         public override IEnumerable<Models.GlobalList> Invoke()
+//         protected override IEnumerable Run()
 //         {
          
 //         }

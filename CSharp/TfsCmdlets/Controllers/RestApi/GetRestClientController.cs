@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.RestApi
     [CmdletController(typeof(VssHttpClientBase))]
     partial class GetRestClientController
     {
-        public override IEnumerable<VssHttpClientBase> Invoke()
+        protected override IEnumerable Run()
         {
             var parameterSetName = Parameters.Get<string>("ParameterSetName");
             var typeName = Parameters.Get<string>("TypeName");

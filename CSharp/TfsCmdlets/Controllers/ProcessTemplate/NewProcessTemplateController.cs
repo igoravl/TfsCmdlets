@@ -3,7 +3,7 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     [CmdletController(typeof(WebApiProcess))]
     partial class NewProcessTemplateController
     {
-        public override IEnumerable<WebApiProcess> Invoke()
+        protected override IEnumerable Run()
         {
             throw new NotImplementedException();
             //    {

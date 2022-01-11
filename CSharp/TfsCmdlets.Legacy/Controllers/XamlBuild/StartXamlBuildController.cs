@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Pipeline.XamlBuild
     [CmdletController]
     partial class StartXamlBuildController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             throw new NotImplementedException();
         }

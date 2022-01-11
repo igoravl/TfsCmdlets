@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class MoveWorkItemController
     {
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var wis = Data.GetItems<WebApiWorkItem>();
             var targetTp = Data.GetProject();

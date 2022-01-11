@@ -3,14 +3,9 @@ using System.Collections.Generic;
 
 namespace TfsCmdlets.Services
 {
-    public interface ITypedController<T>: IController
-    {
-        IEnumerable<T> Invoke();
-    }
-
     public interface IController
     {
-        object InvokeCommand();
+        IEnumerable InvokeCommand();
 
         string Verb {get;}
 
@@ -19,7 +14,5 @@ namespace TfsCmdlets.Services
         string CommandName {get;}
 
         Type DataType {get;}
-
-        void CacheParameters();
     }
 }

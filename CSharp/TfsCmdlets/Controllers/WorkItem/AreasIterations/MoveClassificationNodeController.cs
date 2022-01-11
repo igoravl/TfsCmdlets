@@ -11,9 +11,9 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(MoveClassificationNodeController))]
     partial class MoveIterationController { }
 
-    internal abstract class MoveClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    internal abstract class MoveClassificationNodeController: ControllerBase
     {
-        public override IEnumerable<ClassificationNode> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var projectName = tp.Name;

@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Admin.Registry
         [Import]
         private IRestApiService RestApi { get; }
 
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var scope = Parameters.Get<RegistryScope>("Scope");
             var path = Parameters.Get<string>("Path");

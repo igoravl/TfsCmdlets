@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Team.Backlog
     [CmdletController(typeof(Models.BacklogLevelConfiguration))]
     partial class GetTeamBacklogLevelController
     {
-        public override IEnumerable<Models.BacklogLevelConfiguration> Invoke()
+        protected override IEnumerable Run()
         {
             var backlog = Parameters.Get<object>(nameof(GetTeamBacklogLevel.Backlog), "*");
             var tp = Data.GetProject();

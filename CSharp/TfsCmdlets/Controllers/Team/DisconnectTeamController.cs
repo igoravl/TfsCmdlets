@@ -3,7 +3,7 @@ namespace TfsCmdlets.Controllers.Team
     [CmdletController(typeof(Models.Team))]
     partial class DisconnectTeamController
     {
-        public override IEnumerable<Models.Team> Invoke()
+        protected override IEnumerable Run()
         {
             CurrentConnections.Set(
                 CurrentConnections.Server,

@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.RestApi
         [Import]
         private IRestApiService RestApiService {get;set;}
         
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var path = Parameters.Get<string>("path");
             var method = Parameters.Get<string>("Method");
@@ -109,13 +109,13 @@ namespace TfsCmdlets.Controllers.RestApi
 
             Logger.Log($"{method} {RestApiService.Url.AbsoluteUri}");
 
-            if (asTask) return task;
+            if (asTask) yield return task;
 
             var result = task.GetResult("Unknown error when calling REST API");
             var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
             var responseType = result.Content.Headers.ContentType.MediaType;
 
-            return !raw && responseType.Equals("application/json")
+            yield return !raw && responseType.Equals("application/json")
                 ? PSJsonConverter.Deserialize(responseBody, (bool) noAutoUnwrap)
                 : responseBody;
         }

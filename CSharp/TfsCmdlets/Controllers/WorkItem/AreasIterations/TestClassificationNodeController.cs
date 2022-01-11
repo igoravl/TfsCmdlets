@@ -8,9 +8,9 @@
 
     internal abstract class TestClassificationNodeController: ControllerBase
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
-            return Data.TestItem<Models.ClassificationNode>();
+            yield return Data.TestItem<Models.ClassificationNode>();
         }
 
         [ImportingConstructor]

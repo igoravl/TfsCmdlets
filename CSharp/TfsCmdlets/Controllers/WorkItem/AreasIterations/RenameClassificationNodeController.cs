@@ -10,12 +10,12 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RenameClassificationNodeController))]
     partial class RenameIterationController { }
 
-    internal abstract class RenameClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    internal abstract class RenameClassificationNodeController: ControllerBase
     {
         [Import]
         private INodeUtil NodeUtil { get; }
 
-        public override IEnumerable<ClassificationNode> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var client = Data.GetClient<WorkItemTrackingHttpClient>();

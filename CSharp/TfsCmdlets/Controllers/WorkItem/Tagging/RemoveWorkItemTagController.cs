@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
     [CmdletController(typeof(WebApiTagDefinition))]
     partial class RemoveWorkItemTagController
     {
-        public override IEnumerable<WebApiTagDefinition> Invoke()
+        protected override IEnumerable Run()
         {
             var tags = Data.GetItems<WebApiTagDefinition>();
             var force = Parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));

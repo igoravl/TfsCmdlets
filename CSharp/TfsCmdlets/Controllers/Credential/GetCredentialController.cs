@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.Credential
     [CmdletController(typeof(VssCredentials), CustomCmdletName = "NewCredential")]
     partial class GetCredentialController
     {
-        public override IEnumerable<VssCredentials> Invoke()
+        protected override IEnumerable Run()
         {
             var credential = Parameters.Get<object>(nameof(NewCredential.Credential));
             var userName = Parameters.Get<string>(nameof(NewCredential.UserName));

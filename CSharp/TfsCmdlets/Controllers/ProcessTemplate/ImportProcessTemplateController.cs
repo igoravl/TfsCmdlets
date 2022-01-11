@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     [CmdletController]
     partial class ImportProcessTemplateController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
 #if NET471_OR_GREATER
             var path = Parameters.Get<string>(nameof(ImportProcessTemplate.Path));

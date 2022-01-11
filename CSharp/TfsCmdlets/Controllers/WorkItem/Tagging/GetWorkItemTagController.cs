@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Tagging
     [CmdletController(typeof(WebApiTagDefinition))]
     partial class GetWorkItemTagController
     {
-        public override IEnumerable<WebApiTagDefinition> Invoke()
+        protected override IEnumerable Run()
         {
             var tag = Parameters.Get<object>(nameof(GetWorkItemTag.Tag));
             var includeInactive = Parameters.Get<bool>(nameof(GetWorkItemTag.IncludeInactive));

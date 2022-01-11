@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Identity
     [CmdletController(typeof(AccountEntitlement))]
     partial class GetUserController
     {
-        public override IEnumerable<AccountEntitlement> Invoke()
+        protected override IEnumerable Run()
         {
             var user = Parameters.Get<object>(nameof(GetUser.User));
             var current = Parameters.Get<bool>(nameof(GetUser.Current));

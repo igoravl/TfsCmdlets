@@ -27,9 +27,16 @@ namespace TfsCmdlets.Controllers
 
         protected IPowerShellService PowerShell { get; }
 
-        public abstract object InvokeCommand();
+        protected abstract IEnumerable Run();
 
-        public abstract void CacheParameters();
+        protected abstract void CacheParameters();
+
+        public IEnumerable InvokeCommand()
+        {
+            CacheParameters();
+            
+            return Run();
+        }
 
         [ImportingConstructor]
         public ControllerBase(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)

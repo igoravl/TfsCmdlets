@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class GetTeamProjectController
     {
-        public override IEnumerable<WebApiTeamProject> Invoke()
+        protected override IEnumerable Run()
         {
             var project = Parameters.Get<object>(nameof(Cmdlets.TeamProject.GetTeamProject.Project));
             var current = Parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Current));

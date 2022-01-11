@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
     [CmdletController]
     partial class AddGroupMemberController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var member = Parameters.Get<object>(nameof(AddGroupMember.Member));
             var group = Parameters.Get<object>(nameof(AddGroupMember.Group));

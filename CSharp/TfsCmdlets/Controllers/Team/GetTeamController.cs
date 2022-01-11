@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.Team
         [Import]
         public ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<Models.Team> Invoke()
+        protected override IEnumerable Run()
         {
             var team = Parameters.Get<object>(nameof(GetTeam.Team));
             var current = Parameters.Get<bool>(nameof(GetTeam.Current));

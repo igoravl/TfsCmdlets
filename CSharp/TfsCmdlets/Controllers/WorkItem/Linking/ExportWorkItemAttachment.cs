@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Linking
     [CmdletController(typeof(WorkItemRelation))]
     partial class ExportWorkItemAttachmentController
     {
-        public override IEnumerable<WorkItemRelation> Invoke()
+        protected override IEnumerable Run()
         {
             var links = Data.GetItems<WorkItemRelation>(new { LinkType = WorkItemLinkType.AttachedFile, IncludeAttachments = true });
             var attachment = Parameters.Get<object>(nameof(ExportWorkItemAttachment.Attachment));

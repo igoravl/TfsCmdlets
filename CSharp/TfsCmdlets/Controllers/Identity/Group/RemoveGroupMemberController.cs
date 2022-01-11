@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
     [CmdletController]
     partial class RemoveGroupMemberController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var member = Parameters.Get<object>(nameof(AddGroupMember.Member));
             var group = Parameters.Get<object>(nameof(AddGroupMember.Group));

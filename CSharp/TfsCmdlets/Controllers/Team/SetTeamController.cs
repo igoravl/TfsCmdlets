@@ -16,7 +16,7 @@ namespace TfsCmdlets.Controllers.Team
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<Models.Team> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
             var tp = Data.GetProject();

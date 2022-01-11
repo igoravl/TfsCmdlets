@@ -31,7 +31,7 @@
 //             {
 //             }
 
-//             public override IEnumerable<object> Invoke()
+//             protected override IEnumerable Run()
 //             {
 //                 throw new System.NotImplementedException();
 //             }

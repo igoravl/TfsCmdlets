@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
     [CmdletController(typeof(InstalledExtension))]
     partial class GetExtensionController
     {
-        public override IEnumerable<InstalledExtension> Invoke()
+        protected override IEnumerable Run()
         {
             foreach (var input in Extension)
             {

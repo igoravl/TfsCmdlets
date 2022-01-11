@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
     [CmdletController(typeof(Models.TeamAdmin))]
     partial class AddTeamAdminController
     {
-        public override IEnumerable<Models.TeamAdmin> Invoke()
+        protected override IEnumerable Run()
         {
             var team = Data.GetTeam();
             var member = Parameters.Get<object>(nameof(AddTeamAdmin.Admin));

@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Folder
     [CmdletController(typeof(WebApiFolder))]
     partial class GetBuildDefinitionFolderController
     {
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var folder = Parameters.Get<object>("Folder");
             var queryOrder = Parameters.Get<FolderQueryOrder>("QueryOrder");

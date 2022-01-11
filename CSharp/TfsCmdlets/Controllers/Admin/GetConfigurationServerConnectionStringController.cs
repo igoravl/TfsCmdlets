@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Admin
     [CmdletController]
     partial class GetConfigurationConnectionStringController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             if (Parameters.HasParameter("Session"))
             {

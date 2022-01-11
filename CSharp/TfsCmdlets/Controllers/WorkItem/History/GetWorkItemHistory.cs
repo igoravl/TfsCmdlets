@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.WorkItem.History
             "System.CreatedBy", "System.ChangedDate", "System.ChangedBy", 
             "System.AuthorizedAs"};
 
-        public override IEnumerable<Models.WorkItemHistoryEntry> Invoke()
+        protected override IEnumerable Run()
         {
             var wi = Data.GetItem<WebApiWorkItem>();
             var client = Data.GetClient<WorkItemTrackingHttpClient>();

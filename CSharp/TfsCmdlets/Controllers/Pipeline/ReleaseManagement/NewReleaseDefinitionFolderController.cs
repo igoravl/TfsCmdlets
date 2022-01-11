@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var folder = Parameters.Get<string>(nameof(NewReleaseDefinitionFolder.Folder));

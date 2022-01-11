@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Folder
     [CmdletController(typeof(WebApiFolder))]
     partial class RemoveBuildDefinitionFolderController
     {
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var folders = Data.GetItems<WebApiFolder>();
             var recurse = Parameters.Get<bool>(nameof(RemoveBuildDefinitionFolder.Recurse));

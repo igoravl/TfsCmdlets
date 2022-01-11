@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.TeamProject.Avatar
     [CmdletController]
     partial class ImportTeamProjectAvatarController
     {
-        public override object InvokeCommand()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var path = Parameters.Get<string>(nameof(ImportTeamProjectAvatar.Path));

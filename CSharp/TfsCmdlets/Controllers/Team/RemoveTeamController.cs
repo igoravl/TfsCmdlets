@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.Team
     [CmdletController(typeof(Models.Team))]
     partial class RemoveTeamController
     {
-        public override IEnumerable<Models.Team> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var teams = Data.GetItems<WebApiTeam>();

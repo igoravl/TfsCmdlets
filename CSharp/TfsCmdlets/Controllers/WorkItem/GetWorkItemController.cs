@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.WorkItem
         [Import]
         private IProcessUtil ProcessUtil { get; set; }
 
-        public override IEnumerable<WebApiWorkItem> Invoke()
+        protected override IEnumerable Run()
         {
             var workItem = Parameters.Get<object>(nameof(GetWorkItem.WorkItem));
             var revision = Parameters.Get<int>(nameof(GetWorkItem.Revision));

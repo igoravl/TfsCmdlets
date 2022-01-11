@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Git
     [CmdletController(typeof(GitRepository))]
     partial class NewGitRepositoryController
     {
-        public override IEnumerable<GitRepository> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var repo = Parameters.Get<string>(nameof(Cmdlets.Git.NewGitRepository.Repository));

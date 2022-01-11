@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
     [CmdletController(typeof(Models.TeamAdmin))]
     partial class RemoveTeamAdminController
     {
-        public override IEnumerable<Models.TeamAdmin> Invoke()
+        protected override IEnumerable Run()
         {
             var admin = Parameters.GetRaw<object>(nameof(RemoveTeamAdmin.Admin));
 

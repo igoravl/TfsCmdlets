@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Team.Board
     [CmdletController(typeof(Models.Board))]
     partial class GetTeamBoardController
     {
-        public override IEnumerable<Models.Board> Invoke()
+        protected override IEnumerable Run()
         {
             var board = Parameters.Get<object>(nameof(GetTeamBoard.Board));
 

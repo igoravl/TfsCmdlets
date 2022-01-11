@@ -10,9 +10,9 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(Models.ClassificationNode), CustomBaseClass = typeof(CopyClassificationNodeController))]
     partial class CopyIterationController { }
 
-    internal abstract class CopyClassificationNodeController: ControllerBase<Models.ClassificationNode>
+    internal abstract class CopyClassificationNodeController: ControllerBase
     {
-        public override IEnumerable<ClassificationNode> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var projectName = tp.Name;

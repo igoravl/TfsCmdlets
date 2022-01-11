@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Folder
     [CmdletController(typeof(WebApiFolder))]
     partial class NewBuildDefinitionFolderController
     {
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var folder = Parameters.Get<string>(nameof(NewBuildDefinitionFolder.Folder))?.Trim('\\');
             var description = Parameters.Get<string>(nameof(NewBuildDefinitionFolder.Description));

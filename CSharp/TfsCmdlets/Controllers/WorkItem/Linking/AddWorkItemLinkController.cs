@@ -14,7 +14,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Linking
         [Import]
         private IKnownWorkItemLinkTypes KnownLinkTypes { get; set; }
 
-        public override IEnumerable<WebApiWorkItemRelation> Invoke()
+        protected override IEnumerable Run()
         {
             {
                 var sourceWi = Data.GetItem<WebApiWorkItem>();

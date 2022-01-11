@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
         [Import]
         private ICurrentConnections CurrentConnections { get; }
 
-        public override IEnumerable<Connection> Invoke()
+        protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
 

@@ -5,7 +5,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
     [CmdletController(typeof(PolicyType))]
     partial class GetGitPolicyTypeController
     {
-        public override IEnumerable<PolicyType> Invoke()
+        protected override IEnumerable Run()
         {
             var policyType = Parameters.Get<object>("PolicyType");
 

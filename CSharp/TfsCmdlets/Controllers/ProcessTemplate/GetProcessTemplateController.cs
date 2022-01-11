@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     [CmdletController(typeof(WebApiProcess))]
     partial class GetProcessTemplateController
     {
-       public override IEnumerable<WebApiProcess> Invoke()
+       protected override IEnumerable Run()
        {
            var process = Parameters.Get<object>(nameof(GetProcessTemplate.ProcessTemplate));
            var isDefault = Parameters.Get<bool>(nameof(GetProcessTemplate.Default));

@@ -13,7 +13,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
         [Import] 
         private INodeUtil NodeUtil { get; set; }
 
-        public override IEnumerable<WebApiFolder> Invoke()
+        protected override IEnumerable Run()
         {
             var folder = Parameters.Get<object>("Folder");
             var queryOrder = Parameters.Get<FolderPathQueryOrder>("QueryOrder");

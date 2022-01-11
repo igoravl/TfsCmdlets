@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
     [CmdletController(typeof(WebApiWorkItemType))]
     partial class GetWorkItemTypeController
     {
-        public override IEnumerable<WebApiWorkItemType> Invoke()
+        protected override IEnumerable Run()
         {
             var type = Parameters.Get<object>(nameof(GetWorkItemType.Type));
 

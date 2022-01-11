@@ -6,10 +6,10 @@ namespace TfsCmdlets.Controllers.Git
     [CmdletController(typeof(GitRepository))]
     partial class RenameGitRepositoryController 
     {
-        public override IEnumerable<GitRepository> Invoke()
+        protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
-            var repoToRename = GetItem();
+            var repoToRename = Data.GetItem<GitRepository>();
             var newName = Parameters.Get<string>(nameof(RenameGitRepository.NewName));
 
             if (!PowerShell.ShouldProcess(tp, $"Rename Git repository [{repoToRename.Name}] to '{newName}'"))

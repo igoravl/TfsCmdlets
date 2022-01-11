@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers.Git.Policy
     [CmdletController(typeof(PolicyConfiguration))]
     partial class GetGitBranchPolicyController 
     {
-        public override IEnumerable<PolicyConfiguration> Invoke()
+        protected override IEnumerable Run()
         {
             var repo = Data.GetItem<GitRepository>();
             var branch = $"refs/heads/{Data.GetItem<GitBranchStats>().Name}";
