@@ -8,27 +8,27 @@ using Microsoft.CodeAnalysis.Text;
 namespace TfsCmdlets.SourceGenerators
 {
     [Generator]
-    public class Generator : ISourceGenerator, ISyntaxContextReceiver
+    public class Generator : ISourceGenerator
     {
-        private IDictionary<string, INamedTypeSymbol> CmdletTypes { get; } = new Dictionary<string, INamedTypeSymbol>();
-        private IDictionary<string, INamedTypeSymbol> ControllerTypes { get; } = new Dictionary<string, INamedTypeSymbol>();
-        private Dictionary<string, GeneratorState> GeneratedTypes { get; } = new Dictionary<string, GeneratorState>();
+        private IDictionary<string, GeneratorState> _generatedTypes;
 
         void ISourceGenerator.Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterForSyntaxNotifications(() => this);
+            Logger.Log("=== Initializing generator ===");
+            _generatedTypes = new Dictionary<string, GeneratorState>();
+            context.RegisterForSyntaxNotifications(() => new SyntaxContextReceiver());
         }
 
         void ISourceGenerator.Execute(GeneratorExecutionContext context)
         {
-            if (context.SyntaxContextReceiver == null || context.SyntaxContextReceiver.GetType() != this.GetType()) return;
+            if (!(context.SyntaxContextReceiver is SyntaxContextReceiver receiver)) return;
 
             try
             {
                 var generators = new List<(IGenerator, ICollection<INamedTypeSymbol>)>()
                 {
-                    (new CmdletGenerator(), CmdletTypes.Values),
-                    (new ControllerGenerator(GeneratedTypes), ControllerTypes.Values)
+                    (new CmdletGenerator(), receiver.CmdletTypes.Values),
+                    (new ControllerGenerator(_generatedTypes), receiver.ControllerTypes.Values)
                 };
 
                 foreach (var (generator, types) in generators)
@@ -41,12 +41,6 @@ namespace TfsCmdlets.SourceGenerators
 
                     foreach (var type in types)
                     {
-                        if(GeneratedTypes.ContainsKey(type.FullName()))
-                        {
-                            Logger.Log("[WARN] Type already generated. Skipping.");
-                            continue;
-                        }
-
                         Logger.Log($"{generatorName}: Processing '{type.FullName()}'");
 
                         try
@@ -54,7 +48,7 @@ namespace TfsCmdlets.SourceGenerators
                             var state = generator.ProcessType(context, type);
                             if (state == null) continue;
 
-                            GeneratedTypes[state.FullName] = state;
+                            _generatedTypes[state.FullName] = state;
 
                             context.AddSource($"{state.FileName}.cs",
                                 SourceText.From(generator.Generate(state), Encoding.UTF8));
@@ -76,40 +70,46 @@ namespace TfsCmdlets.SourceGenerators
             }
         }
 
-        void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
+        private class SyntaxContextReceiver : ISyntaxContextReceiver
         {
-            if (!(context.Node is ClassDeclarationSyntax cds)) return;
-            
-            try
+            internal IDictionary<string, INamedTypeSymbol> CmdletTypes { get; set; } = new Dictionary<string, INamedTypeSymbol>();
+            internal IDictionary<string, INamedTypeSymbol> ControllerTypes { get; set; } = new Dictionary<string, INamedTypeSymbol>();
+
+            public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
             {
-                var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(cds);
+                if (!(context.Node is ClassDeclarationSyntax cds)) return;
 
-                Logger.Log($"Visiting class '{type.FullName()}'");
-
-                if (type.HasAttribute("TfsCmdletAttribute"))
+                try
                 {
-                    if(CmdletTypes.ContainsKey(type.FullName()))
-                    {
-                        Logger.Log($"[WARN] Type '{type.FullName()}' already registered. Skipping.");
-                        return;
-                    }
+                    var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(cds);
 
-                    CmdletTypes.Add(type.FullName(), type);
+                    Logger.Log($"Visiting class '{type.FullName()}'");
+
+                    if (type.HasAttribute("TfsCmdletAttribute"))
+                    {
+                        if (CmdletTypes.ContainsKey(type.FullName()))
+                        {
+                            Logger.Log($"[WARN] Type '{type.FullName()}' already registered. Skipping.");
+                            return;
+                        }
+
+                        CmdletTypes.Add(type.FullName(), type);
+                    }
+                    else if (type.HasAttribute("CmdletControllerAttribute"))
+                    {
+                        if (ControllerTypes.ContainsKey(type.FullName()))
+                        {
+                            Logger.Log($"[WARN] Type '{type.FullName()}' already registered. Skipping.");
+                            return;
+                        }
+
+                        ControllerTypes.Add(type.FullName(), type);
+                    }
                 }
-                else if (type.HasAttribute("CmdletControllerAttribute"))
+                catch (Exception ex)
                 {
-                    if(ControllerTypes.ContainsKey(type.FullName()))
-                    {
-                        Logger.Log($"[WARN] Type '{type.FullName()}' already registered. Skipping.");
-                        return;
-                    }
-
-                    ControllerTypes.Add(type.FullName(), type);
+                    Logger.LogError(ex);
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex);
             }
         }
     }
