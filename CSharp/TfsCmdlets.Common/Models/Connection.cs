@@ -106,7 +106,7 @@ namespace TfsCmdlets.Models
 #if NETCOREAPP3_1_OR_GREATER
             var uri = new Uri(InnerObject.GetService<ILocationService>()
                 .GetLocationData(Guid.Empty)
-                .LocationForCurrentConnection("LocationService2", LocationServiceConstants.ApplicationIdentifier));
+                .LocationForCurrentConnection("LocationService2", Microsoft.VisualStudio.Services.Location.LocationServiceConstants.ApplicationIdentifier));
             var srv = new AdoConnection(uri, InnerObject.Credentials, InnerObject.Settings);
 #else
             if (!(InnerObject is TfsTeamProjectCollection tpc)) return InnerObject;
