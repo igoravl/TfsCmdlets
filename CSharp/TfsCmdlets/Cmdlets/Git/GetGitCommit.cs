@@ -12,52 +12,73 @@ namespace TfsCmdlets.Cmdlets.Git
         /* ParameterSetName: Get by commit SHA */
 
         [Parameter(ParameterSetName = "Get by commit SHA", Mandatory = true, Position = 0)]
-        public string Commit { get; set; }
+        public object Commit { get; set; }
+
+        /* ParameterSetName: Get by tag */
+
+        [Parameter(ParameterSetName = "Get by tag", Mandatory = true)]
+        public string Tag { get; set; }
+
+        /* ParameterSetName: Get by branch */
+
+        [Parameter(ParameterSetName = "Get by branch", Mandatory = true)]
+        public string Branch { get; set; }
 
         /* ParameterSetName: Search commits */
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public string Author { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public string Committer { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public GitVersionDescriptor CompareVersion { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public string FromCommit { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public DateTime FromDate { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public string ItemPath { get; set; }
 
         /// <summary>
         /// </summary>
-        [Parameter(ParameterSetName = "Search commits")]
-        public GitVersionDescriptor ItemVersion { get; set; }
-
-        /// <summary>
-        /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public string ToCommit { get; set; }
 
         /// <summary>
         /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
         [Parameter(ParameterSetName = "Search commits")]
         public DateTime ToDate { get; set; }
 
@@ -66,27 +87,27 @@ namespace TfsCmdlets.Cmdlets.Git
         /// <summary>
         /// </summary>
         [Parameter()]
-        public bool ExcludeDeletes { get; set; }
+        public SwitchParameter ExcludeDeletes { get; set; }
 
         /// <summary>
         /// </summary>
         [Parameter()]
-        public bool IncludeLinks { get; set; }
+        public SwitchParameter IncludeLinks { get; set; }
 
         /// <summary>
         /// </summary>
         [Parameter()]
-        public bool IncludePushData { get; set; }
+        public SwitchParameter IncludePushData { get; set; }
 
         /// <summary>
         /// </summary>
         [Parameter()]
-        public bool IncludeUserImageUrl { get; set; }
+        public SwitchParameter IncludeUserImageUrl { get; set; }
 
         /// <summary>
         /// </summary>
         [Parameter()]
-        public bool ShowOldestCommitsFirst { get; set; }
+        public SwitchParameter ShowOldestCommitsFirst { get; set; }
 
         /// <summary>
         /// </summary>

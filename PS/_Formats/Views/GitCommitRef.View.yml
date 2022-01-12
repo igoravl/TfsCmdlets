@@ -1,0 +1,15 @@
+ViewSelectedBy:
+  - Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef
+TableControl:
+  ID:
+    ScriptBlock: $_.CommitId.Substring(0, 8)
+  Comment:
+    ScriptBlock: ($_.Comment -split "`n")[0]
+  Author:
+    ScriptBlock: $_.Author.Name
+  Committer:
+    ScriptBlock: $_.Committer.Name
+  Date:
+    ScriptBlock: $_.Committer.Date
+  ChangeCounts:
+    Label: 'Change Counts'

@@ -178,7 +178,7 @@ namespace {controller.Namespace}
             var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
 
             yield return new GeneratedProperty(prop.Name, "IEnumerable", $@"        // {prop.Name}
-        protected bool Has_{prop.Name} {{get;set;}}
+        protected bool Has_{prop.Name} => Parameters.HasParameter(""{prop.Name}"");
         protected IEnumerable {prop.Name}
         {{
             get

@@ -8,99 +8,89 @@ namespace TfsCmdlets.Controllers.Git
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var repository = Data.GetItem<GitRepository>();
+            var client = GetClient<GitHttpClient>();
+            var repository = GetItem<GitRepository>();
+            string commitSha;
 
-            var client = Data.GetClient<GitHttpClient>();
+            if (Has_Commit)
+            {
+                // Get commits by SHA
 
-            return null;
+                foreach (var commit in Commit)
+                {
+                    switch (commit)
+                    {
+                        case GitCommitRef gcr:
+                            {
+                                yield return gcr;
+                                yield break;
+                            }
+                        case string s:
+                            {
+                                commitSha = s;
+                                break;
+                            }
+                        default:
+                            {
+                                Logger.LogError(new ArgumentException($"Invalid or non-existent commit '{commit}'"));
+                                continue;
+                            }
+                    }
 
-            // var criteria = new GitQueryCommitsCriteria() {
-            //     Author = Parameters.Get<string>(nameof(GetGitCommit.Author)),
-            //     Committer = Parameters.Get<string>(nameof(GetGitCommit.Committer)),
-            //     CompareVersion = Parameters.Get<GitVersionDescriptor>(nameof(GetGitCommit.CompareVersion)),
-            //     ExcludeDeletes = Parameters.Get<bool>(nameof(GetGitCommit.ExcludeDeletes)),
-            //     FromCommitId = Parameters.Get<string>(nameof(GetGitCommit.FromCommit)),
-            //     FromDate = Parameters.Get<DateTime>(nameof(GetGitCommit.FromDate)),
-            //     ItemPath = Parameters.Get<string>(nameof(GetGitCommit.ItemPath)),
-            //     ItemVersion = Parameters.Get<GitVersionDescriptor>(nameof(GetGitCommit.ItemVersion)),
-            //     IncludeLinks = Parameters.Get<bool>(nameof(GetGitCommit.IncludeLinks)),
-            //     IncludePushData = Parameters.Get<bool>(nameof(GetGitCommit.IncludePushData)),
-            //     IncludeUserImageUrl = Parameters.Get<bool>(nameof(GetGitCommit.IncludeUserImageUrl)),
-            //     ShowOldestCommitsFirst = Parameters.Get<bool>(nameof(GetGitCommit.ShowOldestCommitsFirst)),
-            //     ToCommitId = Parameters.Get<string>(nameof(GetGitCommit.ToCommit)),
-            //     ToDate = Parameters.Get<DateTime>(nameof(GetGitCommit.ToDate)),
-            //     Skip = Parameters.Get<int>(nameof(GetGitCommit.Skip)),
-            //     Top = Parameters.Get<int>(nameof(GetGitCommit.Top)),
-            // };
+                    yield return client.GetCommitAsync(repository.ProjectReference.Id.ToString(), commitSha, repository.Id.ToString())
+                        .GetResult($"Error getting commit '{commitSha}' in repository '{repository.Name}'");
+                }
+                yield break;
+            }
 
-            // client.GetCommitsBatchAsync())
+            GitVersionDescriptor itemVersion = null;
 
-            // while (true) switch (repository)
-            // {
-            //     case null:
-            //     case string s when string.IsNullOrEmpty(s):
-            //     {
-            //         repository = tp.Name;
-            //         continue;
-            //     }
-            //     case GitRepository repo:
-            //     {
-            //         yield return repo;
-            //         yield break;
-            //     }
-            //     case Guid guid:
-            //     {
-            //         yield return Data.GetClient<GitHttpClient>()
-            //             .GetRepositoryAsync(tp.Name, guid)
-            //             .GetResult($"Error getting repository with ID {guid}");
+            if (Has_Tag)
+            {
+                itemVersion = new GitVersionDescriptor()
+                {
+                    VersionType = GitVersionType.Tag,
+                    Version = Tag
+                };
+            }
+            else if (Has_Branch)
+            {
+                itemVersion = new GitVersionDescriptor()
+                {
+                    VersionType = GitVersionType.Branch,
+                    Version = Branch
+                };
+            }
 
-            //         yield break;
-            //     }
-            //     case string s when s.IsGuid():
-            //     {
-            //         repository = new Guid(s);
-            //         continue;
-            //     }
-            //     case string s when !s.IsWildcard():
-            //     {
-            //         GitRepository result;
+            // Search for commits
 
-            //         try
-            //         {
-            //             result = Data.GetClient<GitHttpClient>()
-            //                 .GetRepositoryAsync(tp.Name, s)
-            //                 .GetResult($"Error getting repository '{s}'");
-            //         }
-            //         catch
-            //         {
-            //             // Workaround to retrieve disabled repositories
-            //             result = Data.GetClient<GitHttpClient>()
-            //                 .GetRepositoriesAsync(tp.Name)
-            //                 .GetResult($"Error getting repository(ies) '{s}'")
-            //                 .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
-            //         }
+            var criteria = new GitQueryCommitsCriteria()
+            {
+                Author = Author,
+                Committer = Committer,
+                CompareVersion = CompareVersion,
+                ExcludeDeletes = ExcludeDeletes,
+                FromCommitId = FromCommit,
+                ItemPath = ItemPath,
+                ItemVersion = itemVersion,
+                IncludeLinks = IncludeLinks,
+                IncludePushData = IncludePushData,
+                IncludeUserImageUrl = IncludeUserImageUrl,
+                ShowOldestCommitsFirst = ShowOldestCommitsFirst,
+                ToCommitId = ToCommit,
+                Skip = Skip,
+                Top = Top,
+                FromDate = Has_FromDate ? this.FromDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
+                ToDate = Has_ToDate ? this.ToDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
+            };
 
-            //         yield return result;
-            //         yield break;
-            //     }
-            //     case string s:
-            //     {
-            //         foreach (var repo in Data.GetClient<GitHttpClient>()
-            //             .GetRepositoriesAsync(tp.Name)
-            //             .GetResult($"Error getting repository(ies) '{s}'")
-            //             .Where(r => r.Name.IsLike(s)))
-            //         {
-            //             yield return repo;
-            //         }
+            var result = client.GetCommitsBatchAsync(criteria, repository.Id)
+                .GetResult("Error getting Git commits");
 
-            //         yield break;
-            //     }
-            //     default:
-            //     {
-            //         throw new ArgumentException("Repository");
-            //     }
-            // }
+            foreach (var commit in result)
+            {
+                yield return commit;
+            }
         }
     }
 }
