@@ -9,12 +9,18 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
         {
             var client = GetClient<ExtensionManagementHttpClient>();
 
-            foreach (var item in Items)
+            foreach (var item in GetItems<InstalledExtension>(new { IncludeDisabledExtensions = true }))
             {
-                if (!PowerShell.ShouldProcess(Collection, $"Disable extension '{item.ExtensionDisplayName}' ({item.PublisherName}.{item.ExtensionName})"))
+                if ((item.InstallState.Flags & ExtensionStateFlags.Disabled) == ExtensionStateFlags.None)
+                {
+                    Logger.Log($"Extension '{item.ExtensionDisplayName}' ({item.PublisherName}.{item.ExtensionName}) is already enabled. Ignoring.");
+                    continue;
+                }
+
+                if (!PowerShell.ShouldProcess(Collection, $"Enable extension '{item.ExtensionDisplayName}' ({item.PublisherName}.{item.ExtensionName})"))
                     continue;
 
-                item.InstallState.Flags = item.InstallState.Flags & (~ ExtensionStateFlags.Disabled);
+                item.InstallState.Flags = item.InstallState.Flags & (~ExtensionStateFlags.Disabled);
 
                 InstalledExtension result;
 

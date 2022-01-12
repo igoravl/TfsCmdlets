@@ -11,6 +11,12 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
 
             foreach (var item in Items)
             {
+                if ((item.InstallState.Flags & ExtensionStateFlags.Disabled) != 0)
+                {
+                    Logger.Log($"Extension '{item.ExtensionDisplayName}' ({item.PublisherName}.{item.ExtensionName}) is already disabled. Ignoring.");
+                    continue;
+                }
+
                 if (!PowerShell.ShouldProcess(Collection, $"Disable extension '{item.ExtensionDisplayName}' ({item.PublisherName}.{item.ExtensionName})"))
                     continue;
 

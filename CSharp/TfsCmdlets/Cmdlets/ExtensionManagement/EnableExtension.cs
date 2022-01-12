@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
     /// <summary>
     /// Enables an extension installed in the specified collection/organization.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(InstalledExtension))]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(InstalledExtension))]
     partial class EnableExtension
     {
         /// <summary>

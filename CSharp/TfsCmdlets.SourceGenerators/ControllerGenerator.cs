@@ -154,7 +154,7 @@ namespace {controller.Namespace}
 
         private static IEnumerable<GeneratedProperty> GenerateItemsProperty(ControllerInfo controller)
         {
-            yield return new GeneratedProperty("Items", "object", !controller.IsGeneric ?
+            yield return new GeneratedProperty("Items", "object", controller.DataType == null ?
                 $@"
         // Items
         protected IEnumerable Items => Data.Invoke(""Get"", ""{controller.Noun}"");
