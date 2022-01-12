@@ -1,4 +1,3 @@
-using System.Composition;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 

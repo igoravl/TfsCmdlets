@@ -1,6 +1,4 @@
-using System.Management.Automation;
 using WebApiBacklogLevelConfiguration = Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Models
 {

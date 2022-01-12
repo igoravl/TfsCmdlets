@@ -1,8 +1,3 @@
-using System;
-using System.Composition;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
-
 namespace TfsCmdlets.Controllers
 {
     public abstract class ControllerBase : IController

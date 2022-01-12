@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace TfsCmdlets.Extensions
 {
     public static class HashtableExtensions

@@ -4,7 +4,6 @@ using System.Reflection;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Models;
-using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services.Impl
 {

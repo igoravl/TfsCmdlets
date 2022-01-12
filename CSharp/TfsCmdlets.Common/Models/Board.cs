@@ -1,7 +1,4 @@
-using System;
-using System.Management.Automation;
 using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Models
 {

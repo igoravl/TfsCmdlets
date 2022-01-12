@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using TfsCmdlets.Services;
-
 namespace TfsCmdlets
 {
     public static class ShellHelper

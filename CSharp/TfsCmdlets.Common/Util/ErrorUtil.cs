@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TfsCmdlets.Util
+﻿namespace TfsCmdlets.Util
 {
     public static class ErrorUtil
     {

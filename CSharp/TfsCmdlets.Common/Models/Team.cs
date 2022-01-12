@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Work.WebApi;
-using TfsCmdlets.Extensions;
 using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
 
 namespace TfsCmdlets.Models

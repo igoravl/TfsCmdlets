@@ -1,5 +1,3 @@
-using System.Composition;
-
 namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(IKnownWorkItemLinkTypes)), Shared]

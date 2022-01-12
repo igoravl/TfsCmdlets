@@ -1,6 +1,4 @@
-﻿using System;
-using System.Composition;
-using Microsoft.TeamFoundation.Core.WebApi;
+﻿using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl

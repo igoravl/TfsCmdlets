@@ -1,8 +1,4 @@
-﻿using System;
-using System.Composition;
-using TfsCmdlets.Services;
-
-namespace TfsCmdlets
+﻿namespace TfsCmdlets
 {
     [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public class CmdletControllerAttribute: ExportAttribute

@@ -1,7 +1,5 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Models;
-using TfsCmdlets.Util;
 using Microsoft.VisualStudio.Services.Common;
 using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 

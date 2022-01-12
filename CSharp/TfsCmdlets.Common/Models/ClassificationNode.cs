@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using WebApiNode = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Models
 {

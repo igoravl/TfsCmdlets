@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TfsCmdlets.Cmdlets
+﻿namespace TfsCmdlets.Cmdlets
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public sealed class TfsCmdletAttribute : Attribute

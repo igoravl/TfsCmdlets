@@ -1,6 +1,3 @@
-using System;
-using System.Composition;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace TfsCmdlets.Services.Impl

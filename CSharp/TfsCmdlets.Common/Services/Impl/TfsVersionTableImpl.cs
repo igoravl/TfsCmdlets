@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Composition;
-using System.Linq;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl

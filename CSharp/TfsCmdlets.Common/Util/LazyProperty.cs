@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Util
 {

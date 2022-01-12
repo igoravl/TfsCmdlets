@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace TfsCmdlets.Services
 {
     public interface IController

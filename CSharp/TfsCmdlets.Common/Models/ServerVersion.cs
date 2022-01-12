@@ -1,5 +1,3 @@
-using System;
-
 namespace TfsCmdlets.Models
 {
     /// <summary>

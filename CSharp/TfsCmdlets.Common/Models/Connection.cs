@@ -1,6 +1,4 @@
-﻿using System.Management.Automation;
-using System.Reflection;
-using Microsoft.VisualStudio.Services.Location;
+﻿using System.Reflection;
 using Microsoft.VisualStudio.Services.WebApi;
 
 #if NETCOREAPP3_1_OR_GREATER

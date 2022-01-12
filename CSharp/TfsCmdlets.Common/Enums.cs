@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TfsCmdlets
+﻿namespace TfsCmdlets
 {
     /// <summary>
     /// Indicates a TFS component

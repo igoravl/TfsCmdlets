@@ -1,4 +1,3 @@
-using System;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services

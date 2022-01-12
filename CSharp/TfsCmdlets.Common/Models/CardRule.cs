@@ -1,4 +1,3 @@
-using TfsCmdlets.Extensions;
 using WebApiCardRule = Microsoft.TeamFoundation.Work.WebApi.Rule;
 using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 

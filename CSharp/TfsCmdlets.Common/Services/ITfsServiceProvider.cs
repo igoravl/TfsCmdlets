@@ -1,5 +1,3 @@
-using System;
-
 namespace TfsCmdlets.Services
 {
     public interface ITfsServiceProvider
