@@ -39,6 +39,6 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         /// When omitted, returns all subscriptions regardless of their event types.
         /// </summary>
         [Parameter]
-        public object EventType { get; set; }
+        public string EventType { get; set; }
     }
 }

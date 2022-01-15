@@ -10,19 +10,15 @@ namespace TfsCmdlets.Controllers.ServiceHook
     {
        protected override IEnumerable Run()
        {
-           var subscription = Data.GetItem<WebApiSubscription>();
+           var ids = GetItems<WebApiSubscription>().Select(i => i.Id).ToArray();
            var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
-
-           var from = Parameters.Get<DateTime?>(nameof(GetServiceHookNotificationHistory.From));
-           var to = Parameters.Get<DateTime?>(nameof(GetServiceHookNotificationHistory.To));
-           var status = Parameters.Get<NotificationStatus?>(nameof(GetServiceHookNotificationHistory.Status));
 
            var query = new NotificationsQuery()
            {
-               SubscriptionIds = new[] { subscription.Id },
-               MinCreatedDate = from,
-               MaxCreatedDate = to,
-               Status = status
+               SubscriptionIds = ids,
+               MinCreatedDate = From,
+               MaxCreatedDate = To,
+               Status = Status
            };
 
            var result = client.QueryNotificationsAsync(query)

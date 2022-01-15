@@ -320,11 +320,9 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Project":
                         {
-                            if (!Parameters.HasParameter("Project")) continue;
+                            if (!Has_Project) continue;
 
-                            var tp = Data.GetProject();
-
-                            sb.Append($"([System.TeamProject] = '{tp.Name}')");
+                            sb.Append($"([System.TeamProject] = '{Project.Name}')");
 
                             break;
                         }

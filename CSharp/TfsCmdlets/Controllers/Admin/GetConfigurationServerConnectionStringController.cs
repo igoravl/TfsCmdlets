@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Admin
     {
         protected override IEnumerable Run()
         {
-            if (Parameters.HasParameter("Session"))
+            if (Has_Session)
             {
                 throw new NotImplementedException("Remote sessions are currently not supported");
             }

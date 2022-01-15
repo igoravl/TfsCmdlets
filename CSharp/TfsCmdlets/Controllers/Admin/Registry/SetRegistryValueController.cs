@@ -10,25 +10,27 @@ namespace TfsCmdlets.Controllers.Admin.Registry
 
         protected override IEnumerable Run()
         {
-            var scope = Parameters.Get<RegistryScope>("Scope");
-            var path = Parameters.Get<string>("Path");
-            var value = Parameters.Get<object>("Value");
-            var provider = scope switch
+            var provider = Scope switch
             {
                 RegistryScope.User => throw new NotImplementedException("User scopes are currently not supported"),
-                RegistryScope.Collection => Data.GetCollection(),
-                RegistryScope.Server => Data.GetServer(),
-                _ => throw new Exception($"Invalid scope {scope}")
+                RegistryScope.Collection => Collection,
+                RegistryScope.Server => Server,
+                _ => throw new Exception($"Invalid scope {Scope}")
             };
 
-            if (!PowerShell.ShouldProcess($"Registry key '{path}' in {scope} '{provider}'", $"Set value to '{value}'"))
+            if(Scope == RegistryScope.Server && provider.IsHosted)
+            {
+                throw new NotSupportedException("Server scopes are not supported in Azure DevOps Services.");
+            }
+
+            if (!PowerShell.ShouldProcess($"Registry key '{Path}' in {Scope} '{provider}'", $"Set value to '{Value}'"))
                 return null;
 
             var soapEnvelope = $@"<s:Envelope xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
                                     <s:Body>
                                         <UpdateRegistryEntries xmlns='http://microsoft.com/webservices/'>
                                             <registryEntries>
-                                                <RegistryEntry Path='{path}'><Value>{value}</Value></RegistryEntry>
+                                                <RegistryEntry Path='{Path}'><Value>{Value}</Value></RegistryEntry>
                                             </registryEntries>
                                         </UpdateRegistryEntries>
                                     </s:Body>

@@ -1,5 +1,4 @@
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
-using TfsCmdlets.Cmdlets.ServiceHook;
 using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;
 using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 using WebApiSubscription = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription;
@@ -11,21 +10,18 @@ namespace TfsCmdlets.Controllers.ServiceHook
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
-            var subscription = Parameters.Get<object>(nameof(GetServiceHookSubscription.Subscription));
-            var eventType = Parameters.Get<string>(nameof(GetServiceHookSubscription.EventType));
+            var client = GetClient<ServiceHooksPublisherHttpClient>();
+            var publisher = Has_Publisher ? GetItem<WebApiPublisher>() : null;
+            var consumer = Has_Consumer ? GetItem<WebApiConsumer>() : null;
 
-            var publisher = Parameters.HasParameter(nameof(GetServiceHookSubscription.Publisher)) ?
-                Data.GetItem<WebApiPublisher>() : null;
-            var consumer = Parameters.HasParameter(nameof(GetServiceHookSubscription.Consumer)) ?
-                Data.GetItem<WebApiConsumer>() : null;
-
-            while (true) switch (subscription)
+            foreach (var subscription in Subscription)
+            {
+                switch (subscription)
                 {
                     case WebApiSubscription p:
                         {
                             yield return p;
-                            yield break;
+                            break;
                         }
                     case string s:
                         {
@@ -33,7 +29,7 @@ namespace TfsCmdlets.Controllers.ServiceHook
                             {
                                 PublisherId = publisher?.Id,
                                 ConsumerId = consumer?.Id,
-                                EventType = eventType
+                                EventType = EventType
                             };
 
                             var result = client.QuerySubscriptionsAsync(query)
@@ -42,13 +38,15 @@ namespace TfsCmdlets.Controllers.ServiceHook
                                 .Where(sub => sub.ActionDescription.IsLike(s));
 
                             foreach (var r in result) yield return r;
-                            yield break;
+                            break;
                         }
                     default:
                         {
-                            throw new ArgumentException($"Invalid or non-existent Subscription '{subscription}'");
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent Subscription '{subscription}'"));
+                            break;
                         }
                 }
+            }
         }
     }
 }

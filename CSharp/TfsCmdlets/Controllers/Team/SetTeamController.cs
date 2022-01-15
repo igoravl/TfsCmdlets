@@ -71,7 +71,7 @@ namespace TfsCmdlets.Controllers.Team
 
             // Set description
 
-            if (Parameters.HasParameter("Description") && PowerShell.ShouldProcess(t, $"Set team's description to '{description}'"))
+            if (Has_Description && PowerShell.ShouldProcess(t, $"Set team's description to '{description}'"))
             {
                 teamClient.UpdateTeamAsync(new WebApiTeam()
                 {

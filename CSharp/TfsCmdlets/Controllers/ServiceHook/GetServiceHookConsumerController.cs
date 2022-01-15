@@ -8,31 +8,34 @@ namespace TfsCmdlets.Controllers.ServiceHook
     {
         protected override IEnumerable Run()
         {
-            var consumer = Parameters.Get<object>("Consumer");
-
-            while (true) switch (consumer)
+            foreach (var consumer in Consumer)
+            {
+                switch (consumer)
                 {
                     case WebApiConsumer c:
                         {
                             yield return c;
-                            yield break;
+                            break;
                         }
                     case string s:
                         {
-                            var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
-                            var result = client.GetConsumersAsync().GetResult("Error getting service hook consumers");
+                            var client = GetClient<ServiceHooksPublisherHttpClient>();
+                            var result = client.GetConsumersAsync()
+                                .GetResult("Error getting service hook consumers");
 
                             foreach (var shc in result.Where(c => c.Name.IsLike(s) || c.Id.IsLike(s)))
                             {
                                 yield return shc;
                             }
-                            yield break;
+                            break;
                         }
                     default:
                         {
-                            throw new ArgumentException($"Invalid or non-existent service hook consumer {consumer}");
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent service hook consumer {consumer}"));
+                            break;
                         }
                 }
+            }
         }
     }
 }
