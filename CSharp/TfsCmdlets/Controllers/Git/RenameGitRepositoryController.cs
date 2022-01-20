@@ -8,16 +8,20 @@ namespace TfsCmdlets.Controllers.Git
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var repoToRename = Data.GetItem<GitRepository>();
-            var newName = Parameters.Get<string>(nameof(RenameGitRepository.NewName));
+            var repoToRename = Items.FirstOrDefault();
 
-            if (!PowerShell.ShouldProcess(tp, $"Rename Git repository [{repoToRename.Name}] to '{newName}'"))
+            if(repoToRename == null)
+            {
+                Logger.LogError(new ArgumentException($"Invalid or non-existent repository '{Repository}'"));
+                yield break;
+            }
+
+            if (!PowerShell.ShouldProcess(Project, $"Rename repository '{repoToRename.Name}' to '{NewName}'"))
                 yield break;
 
-            var client = Data.GetClient<GitHttpClient>();
+            var client = GetClient<GitHttpClient>();
 
-            yield return client.RenameRepositoryAsync(repoToRename, newName)
+            yield return client.RenameRepositoryAsync(repoToRename, NewName)
                 .GetResult("Error renaming repository");
         }
    }

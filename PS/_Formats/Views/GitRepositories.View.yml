@@ -10,3 +10,5 @@ TableControl:
     Label: Default Branch
   RemoteUrl:
     Label: Remote URL
+  IsDisabled:
+    Label: 'Is Disabled?'

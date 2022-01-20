@@ -8,19 +8,15 @@ namespace TfsCmdlets.Controllers.Git
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var repos = Data.GetItems<GitRepository>();
+            var client = GetClient<GitExtendedHttpClient>();
 
-            var client = Data.GetClient<GitExtendedHttpClient>();
-
-            foreach (var repo in repos)
+            foreach (var repo in Items)
             {
-                if (!PowerShell.ShouldProcess($"Team project '{tp.Name}'", $"Disable Git repository '{repo.Name}'"))
-                    continue;
+                if (!PowerShell.ShouldProcess(Project, $"Disable Git repository '{repo.Name}'")) continue;
 
-                client.UpdateRepositoryEnabledStatus(tp.Name, repo.Id, true);
+                client.UpdateRepositoryEnabledStatus(Project.Name, repo.Id, true);
 
-                yield return repo;
+                yield return GetItem<GitRepository>();
             }
         }
     }

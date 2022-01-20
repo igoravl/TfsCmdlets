@@ -7,20 +7,15 @@ namespace TfsCmdlets.Controllers.Git
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var repos = Data.GetItems<GitRepository>();
-            var force = Parameters.Get<bool>(nameof(Cmdlets.Git.RemoveGitRepository.Force));
+            var client = GetClient<GitHttpClient>();
 
-            var client = Data.GetClient<GitHttpClient>();
-
-            foreach (var r in repos)
+            foreach (var repo in Items)
             {
-                if (!PowerShell.ShouldProcess(tp, $"Delete Git repository '{r.Name}'")) continue;
+                if (!PowerShell.ShouldProcess(Project, $"Delete Git repository '{repo.Name}'")) continue;
 
-                if (!force &&
-                    !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{r.Name}'?")) continue;
+                if (!Force && !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{repo.Name}'?")) continue;
 
-                client.DeleteRepositoryAsync(r.Id).Wait();
+                client.DeleteRepositoryAsync(repo.Id).Wait();
             }
 
             return null;

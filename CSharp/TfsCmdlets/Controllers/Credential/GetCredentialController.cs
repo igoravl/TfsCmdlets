@@ -12,22 +12,15 @@ namespace TfsCmdlets.Controllers.Credential
     {
         protected override IEnumerable Run()
         {
-            var credential = Parameters.Get<object>(nameof(NewCredential.Credential));
-            var userName = Parameters.Get<string>(nameof(NewCredential.UserName));
-            var password = Parameters.Get<SecureString>(nameof(NewCredential.Password));
-            var accessToken = Parameters.Get<string>(nameof(NewCredential.PersonalAccessToken));
-            var interactive = Parameters.Get<bool>(nameof(NewCredential.Interactive));
-            var url = Parameters.Get<Uri>(nameof(NewCredential.Url));
-
             var connectionMode = ConnectionMode.CachedCredentials;
 
-            if (credential != null)
+            if (Has_Credential)
                 connectionMode = ConnectionMode.CredentialObject;
-            else if (!string.IsNullOrEmpty(userName) || password != null)
+            else if (Has_UserName && Has_Password)
                 connectionMode = ConnectionMode.UserNamePassword;
-            else if (!string.IsNullOrEmpty(accessToken))
+            else if (Has_PersonalAccessToken)
                 connectionMode = ConnectionMode.AccessToken;
-            else if (interactive)
+            else if (Interactive)
                 connectionMode = ConnectionMode.Interactive;
 
             NetworkCredential netCred = null;
@@ -45,20 +38,20 @@ namespace TfsCmdlets.Controllers.Credential
                 case ConnectionMode.UserNamePassword:
                     {
                         Logger.Log("Using username/password credentials from UserName/Password arguments");
-                        netCred = new NetworkCredential(userName, password);
+                        netCred = new NetworkCredential(UserName, Password);
                         break;
                     }
 
                 case ConnectionMode.AccessToken:
                     {
                         Logger.Log("Using credential from supplied Personal Access Token");
-                        netCred = new NetworkCredential(string.Empty, accessToken);
+                        netCred = new NetworkCredential(string.Empty, PersonalAccessToken);
                         break;
                     }
 
                 case ConnectionMode.CredentialObject:
                     {
-                        switch (credential)
+                        switch (Credential)
                         {
                             case VssCredentials cred:
                                 {
@@ -110,7 +103,7 @@ namespace TfsCmdlets.Controllers.Credential
 
             if (netCred == null) yield break;
 
-            yield return IsHosted(url) ?
+            yield return IsHosted(Url) ?
                 new VssClientCredentials(
                     new WindowsCredential(netCred),
                     new VssBasicCredential(netCred)) :

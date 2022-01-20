@@ -14,11 +14,9 @@ namespace TfsCmdlets.Controllers.Admin
 
         protected override IEnumerable Run()
         {
-           var tpc = Data.GetCollection();
-
            Logger.Log("Trying Azure DevOps Services detection logic");
 
-           var result = RestApi.InvokeAsync(tpc, "/").GetResult("Error accessing Azure DevOps home page (/)");
+           var result = RestApi.InvokeAsync(Collection, "/").GetResult("Error accessing Azure DevOps home page (/)");
            var html = result.Content.ReadAsStringAsync().GetResult("Error accessing Azure DevOps home page (/)");
            var matches = (new Regex(@"""serviceVersion"":""(.+?)( \((.+?)\))?""")).Matches(html);
 
@@ -47,8 +45,8 @@ namespace TfsCmdlets.Controllers.Admin
                {
                    LongVersion = longVersion,
                    Update = version.Minor,
-                   FriendlyVersion = "Azure DevOps " + (tpc.IsHosted ? $"Services, Sprint {version.Minor}" : $"Server {TfsVersionTable.GetYear(version.Major)}"),
-                   IsHosted = tpc.IsHosted,
+                   FriendlyVersion = "Azure DevOps " + (Collection.IsHosted ? $"Services, Sprint {version.Minor}" : $"Server {TfsVersionTable.GetYear(version.Major)}"),
+                   IsHosted = Collection.IsHosted,
                    YearVersion = TfsVersionTable.GetYear(version.Major)
                };
 
@@ -57,7 +55,7 @@ namespace TfsCmdlets.Controllers.Admin
 
            Logger.Log("Response does not contain 'serviceVersion' information. Trying TFS detection logic");
 
-           result = RestApi.InvokeAsync(tpc, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
+           result = RestApi.InvokeAsync(Collection, "/_home/About").GetResult("Error accessing About page (/_home/About) in TFS");
            html = result.Content.ReadAsStringAsync().GetResult("Error accessing About page (/_home/About) in TFS");
            matches = (new Regex(@"\>Version (.+?)\<")).Matches(html);
 

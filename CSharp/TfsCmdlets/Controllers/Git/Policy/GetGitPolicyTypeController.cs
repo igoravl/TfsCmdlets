@@ -7,45 +7,45 @@ namespace TfsCmdlets.Controllers.Git.Policy
     {
         protected override IEnumerable Run()
         {
-            var policyType = Parameters.Get<object>("PolicyType");
+            var client = GetClient<PolicyHttpClient>();
 
-            while (true) switch (policyType)
+            foreach (var input in PolicyType)
             {
-                case PolicyType pt:
-                    {
-                        yield return pt;
-                        yield break;
-                    }
-                case string s when s.IsGuid():
-                    {
-                        policyType = new Guid(s);
-                        continue;
-                    }
-                case Guid g:
-                    {
-                        var tp = Data.GetProject();
-                        var client = Data.GetClient<PolicyHttpClient>();
-                        yield return client.GetPolicyTypeAsync(tp.Name, g)
-                            .GetResult("Error retrieving policy types");
-                        yield break;
-                    }
-                case string s:
-                    {
-                        var tp = Data.GetProject();
-                        var client = Data.GetClient<PolicyHttpClient>();
-                        foreach (var pt in client.GetPolicyTypesAsync(tp.Name)
-                            .GetResult("Error retrieving policy types")
-                            .Where(p => p.DisplayName.IsLike(s)))
+                var policyType = input switch
+                {
+                    string s when s.IsGuid() => new Guid(s),
+                    _ => input
+                };
+
+                switch (policyType)
+                {
+                    case PolicyType pt:
                         {
                             yield return pt;
+                            break;
                         }
-
-                        yield break;
-                    }
-                default:
-                    {
-                        throw new ArgumentException($"Invalid policy type '{policyType}'", nameof(policyType));
-                    }
+                    case Guid g:
+                        {
+                            yield return client.GetPolicyTypeAsync(Project.Name, g)
+                                .GetResult("Error retrieving policy types");
+                            break;
+                        }
+                    case string s:
+                        {
+                            foreach (var pt in client.GetPolicyTypesAsync(Project.Name)
+                                .GetResult("Error retrieving policy types")
+                                .Where(p => p.DisplayName.IsLike(s)))
+                            {
+                                yield return pt;
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid policy type '{policyType}'", nameof(policyType)));
+                            break;
+                        }
+                }
             }
         }
     }

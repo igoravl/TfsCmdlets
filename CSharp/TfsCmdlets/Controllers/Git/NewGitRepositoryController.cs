@@ -8,26 +8,23 @@ namespace TfsCmdlets.Controllers.Git
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var repo = Parameters.Get<string>(nameof(Cmdlets.Git.NewGitRepository.Repository));
+            if (!PowerShell.ShouldProcess(Project, $"Create Git repository '{Repository}'")) yield break;
 
-            if (!PowerShell.ShouldProcess(tp, $"Create Git repository '{repo}'")) yield break;
-
-            var client = Data.GetClient<GitHttpClient>();
+            var client = GetClient<GitHttpClient>();
 
             var tpRef = new TeamProjectReference
             {
-                Id = tp.Id,
-                Name = tp.Name
+                Id = Project.Id,
+                Name = Project.Name
             };
 
             var repoToCreate = new GitRepository
             {
-                Name = repo,
+                Name = Repository,
                 ProjectReference = tpRef
             };
 
-            yield return client.CreateRepositoryAsync(repoToCreate, tp.Name)
+            yield return client.CreateRepositoryAsync(repoToCreate, Project.Name)
                 .GetResult("Error creating Git repository");
         }
     }
