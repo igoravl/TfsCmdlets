@@ -14,6 +14,8 @@
         public int RequiresVersion { get; set; }
 
         public bool SkipAutoProperties { get; set; }
+        
+        public bool SkipGetProperty { get; set; }
 
         public bool NoAutoPipeline { get; set; }
 

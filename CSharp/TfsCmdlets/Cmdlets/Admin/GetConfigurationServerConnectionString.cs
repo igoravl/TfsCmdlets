@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// </summary>
     /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationConnectionstring/">Online version:</related>
     /// <related>Get-TfsInstallationPath</related>
-    [TfsCmdlet(CmdletScope.None, WindowsOnly = true, OutputType = typeof(string))]
+    [TfsCmdlet(CmdletScope.None, WindowsOnly = true, OutputType = typeof(string), SkipGetProperty = true)]
     partial class GetConfigurationConnectionString
     {
         /// <summary>

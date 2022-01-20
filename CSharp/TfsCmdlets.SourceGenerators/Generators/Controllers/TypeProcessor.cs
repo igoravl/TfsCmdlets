@@ -22,6 +22,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 if (prop.IsHidden || prop.Name.Equals("Items") ||
                     prop.IsScope || (controller.Verb.Equals("Get") &&
                         controller.DeclaredProperties.Count > 0 &&
+                        !controller.SkipGetProperty &&
                         controller.DeclaredProperties.Values.First().Name.Equals(prop.Name))) continue;
 
                 var type = prop.Type.ToString().EndsWith("SwitchParameter") ? "bool" : prop.Type.ToString();

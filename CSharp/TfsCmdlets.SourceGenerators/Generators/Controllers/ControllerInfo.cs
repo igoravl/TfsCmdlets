@@ -25,6 +25,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string PropertyDeclarations { get; }
         public string ItemsProperty { get; }
         public string BaseClassName => BaseClass.Name;
+        public bool SkipGetProperty => CmdletInfo.SkipGetProperty;
 
         internal ControllerInfo(INamedTypeSymbol controller, GeneratorExecutionContext context)
             : base(controller)
@@ -39,38 +40,19 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             if (!string.IsNullOrEmpty(customCmdletClass)) cmdletName = cmdletName.Replace(controller.Name, $"{customCmdletClass}Controller");
 
             CmdletName = cmdletName.Substring(0, cmdletName.Length - "Controller".Length);
-            Logger.Log($"   - CmdletName: {CmdletName}");
-
             Cmdlet = context.Compilation.GetTypeByMetadataName(CmdletName);
 
             if (Cmdlet == null) throw new ArgumentException($"Unable to find cmdlet class '{CmdletName}'");
 
             BaseClass = customBaseClass ?? context.Compilation.GetTypeByMetadataName("TfsCmdlets.Controllers.ControllerBase"); ;
-            Logger.Log($"   - BaseClass: {BaseClass}");
-
             DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute"); ;
-            Logger.Log($"   - DataType: {DataType}");
-
             GenericArg = DataType == null ? string.Empty : $"<{DataType}>";
-            Logger.Log($"   - GenericArg: {GenericArg}");
-
             Verb = Cmdlet.Name.Substring(0, Cmdlet.Name.FindIndex(char.IsUpper, 1));
-            Logger.Log($"   - Verb: {Verb}");
-
             Noun = Cmdlet.Name.Substring(Verb.Length);
-            Logger.Log($"   - Noun: {Noun}");
-
             CtorArgs = controller.GetImportingConstructorArguments(BaseClass);
-            Logger.Log($"   - CtorArgs: {CtorArgs}");
-
             BaseCtorArgs = BaseClass.GetConstructorArguments();
-            Logger.Log($"   - BaseCtorArgs: {BaseCtorArgs}");
-
             ImportingConstructorBody = GetImportingConstructorBody(controller);
-            Logger.Log($"   - ImportingConstructorBody: {ImportingConstructorBody}");
-
             CmdletInfo = new CmdletInfo(Cmdlet);
-            Logger.Log($"   - CmdletInfo: {CmdletInfo}");
 
             DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").Select(p => new GeneratedProperty(p, string.Empty)).ToDictionary(p => p.Name);
             ImplicitProperties = CmdletInfo.GeneratedProperties;
@@ -160,7 +142,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
         private static IEnumerable<GeneratedProperty> GenerateDeclaredParameters(ControllerInfo controller)
         {
-            foreach (var prop in controller.DeclaredProperties.Values.Skip(controller.Verb.Equals("Get") ? 1 : 0))
+            foreach (var prop in controller.DeclaredProperties.Values.Skip(controller.Verb.Equals("Get") && !controller.SkipGetProperty ? 1 : 0))
             {
                 var type = prop.Type.EndsWith("SwitchParameter") ? "bool" : prop.Type;
 
@@ -206,7 +188,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             new List<(Predicate<ControllerInfo>, Func<ControllerInfo, IEnumerable<GeneratedProperty>>, string)>()
             {
                 // Get "input" property
-                ((controller) => controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0, GenerateGetInputProperty, "Get->Input"),
+                ((controller) => controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 && !controller.SkipGetProperty, GenerateGetInputProperty, "Get->Input"),
 
                 // Cmdlet declared parameters
                 ((controller) => controller.DeclaredProperties.Count > 0, GenerateDeclaredParameters, "Declared Parameters"),

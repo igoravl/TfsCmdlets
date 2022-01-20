@@ -21,6 +21,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public INamedTypeSymbol OutputType { get; private set; }
         public bool SupportsShouldProcess { get; private set; }
         public bool ReturnsValue { get; private set; }
+        public bool SkipGetProperty { get; private set; }
         public string CmdletAttribute { get; private set; }
         public string OutputTypeAttribute { get; private set; }
 
@@ -44,6 +45,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "DefaultParameterSetName");
             CustomControllerName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "CustomControllerName");
             ReturnsValue = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "ReturnsValue");
+            SkipGetProperty = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipGetProperty");
             CmdletAttribute = GenerateCmdletAttribute(this);
             OutputTypeAttribute = GenerateOutputTypeAttribute(this);
 
