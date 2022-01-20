@@ -29,7 +29,7 @@ namespace TfsCmdlets
                     case "dev.azure.com":
                     {
                         segments.Add("dev.azure.com");
-                        segments.Add(tpc.DisplayName);
+                        segments.Add(tpc.DisplayName.TrimEnd('/'));
                         break;
                     }
                     case { } s when s.EndsWith(".visualstudio.com"):
