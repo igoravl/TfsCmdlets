@@ -79,7 +79,7 @@ namespace TfsCmdlets.Controllers.Git
                 ShowOldestCommitsFirst = ShowOldestCommitsFirst,
                 ToCommitId = ToCommit,
                 Skip = Skip,
-                Top = Top,
+                Top = Top == 0? null: Top,
                 FromDate = Has_FromDate ? this.FromDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
                 ToDate = Has_ToDate ? this.ToDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
             };
