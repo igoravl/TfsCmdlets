@@ -8,51 +8,55 @@ namespace TfsCmdlets.Controllers.Git.Policy
     {
         protected override IEnumerable Run()
         {
-            var repo = Data.GetItem<GitRepository>();
-            var branch = $"refs/heads/{Data.GetItem<GitBranchStats>().Name}";
-            var policyType = Parameters.Get<object>("PolicyType");
+            var repo = GetItem<GitRepository>();
+            var branch = $"refs/heads/{GetItem<GitBranchStats>().Name}";
+            var client = GetClient<GitHttpClient>();
 
-            while (true) switch (policyType)
+            Logger.Log($"Getting branch policies in repository '{repo.Name}'");
+
+            foreach (var policyType in PolicyType)
             {
-                case PolicyType pt:
-                    {
-                        policyType = pt.Id;
-                        continue;
-                    }
-                case string s when s.IsGuid():
-                    {
-                        policyType = new Guid(s);
-                        continue;
-                    }
-                case Guid g:
-                    {
-                        foreach (var pol in Data.GetClient<GitHttpClient>()
-                            .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, g)
-                            .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
-                            .PolicyConfigurations)
-                        {
-                            yield return pol;
-                        }
+                Guid policyTypeId = Guid.Empty;
+                string pattern = null;
 
-                        yield break;
-                    }
-                case string s:
-                    {
-                        foreach (var pol in Data.GetClient<GitHttpClient>()
-                            .GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch)
-                            .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
-                            .PolicyConfigurations
-                            .Where(pc => pc.Type.DisplayName.IsLike(s)))
+                switch (policyType)
+                {
+                    case PolicyType pt:
                         {
-                            yield return pol;
+                            policyTypeId = pt.Id;
+                            break;
                         }
+                    case string s when s.IsGuid():
+                        {
+                            policyTypeId = new Guid(s);
+                            break;
+                        }
+                    case string s:
+                        {
+                            pattern = s;
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid policy type '{policyType}'"));
+                            break;
+                        }
+                }
 
-                        yield break;
-                    }
-                default:
-                    {
-                        throw new ArgumentException($"Invalid policy type '{policyType}'");
-                    }
+                bool getById = (policyTypeId != Guid.Empty);
+
+                var policies = (getById ?
+                        client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, policyTypeId): 
+                        client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch))
+                    .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
+                    .PolicyConfigurations;
+
+                foreach (var pol in policies) 
+                {
+                    if(!getById && !pol.Type.DisplayName.IsLike(pattern)) continue;
+
+                    yield return pol;
+                }
             }
         }
     }

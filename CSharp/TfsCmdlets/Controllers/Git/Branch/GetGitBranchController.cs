@@ -7,80 +7,71 @@ namespace TfsCmdlets.Controllers.Git.Branch
     {
         protected override IEnumerable Run()
         {
-
-            var branch = Parameters.Get<object>("Branch");
-            var defaultBranch = Parameters.Get<bool>("Default");
-            var repo = Data.GetItem<GitRepository>();
+            var repo = GetItem<GitRepository>();
 
             if (repo.Size == 0)
             {
-                Logger.Log($"Repository {repo.Name} is empty. Skipping.");
+                Logger.Log($"Repository {repo.Name} is empty.");
                 yield break;
             }
 
-            var client = Data.GetClient<GitHttpClient>();
+            var client = GetClient<GitHttpClient>();
             string branchName = null;
-            var done = false;
 
-            while (!done) switch (branch)
+            foreach(var branch in Branch)
             {
-                case string s when defaultBranch:
-                case null:
+                switch (branch)
                 {
-                    if (repo.DefaultBranch == null)
+                    case GitBranchStats gbs:
                     {
-                        throw new Exception($"Repository {repo.Name} does not have a default branch set.");
+                        yield return gbs;
+                        continue;
                     }
+                    case null:
+                    case string s when Default:
+                    {
+                        if (repo.DefaultBranch == null)
+                        {
+                            throw new Exception($"Repository {repo.Name} does not have a default branch set.");
+                        }
 
-                    branchName = repo.DefaultBranch.Substring("refs/heads/".Length);
-                    done = true;
-                    break;
+                        branchName = repo.DefaultBranch.Substring("refs/heads/".Length);
+                        break;
+                    }
+                    case string s when !string.IsNullOrEmpty(s):
+                    {
+                        branchName = s;
+                        break;
+                    }
+                    default:
+                    {
+                        Logger.LogError(new ArgumentException($"Invalid branch '{branch}'", "Branch"));
+                        break;
+                    }
                 }
-                case string s when string.IsNullOrEmpty(s):
-                {
-                    throw new ArgumentNullException("Branch", "Branch argument is required.");
-                }
-                case GitBranchStats gbs:
-                {
-                    branchName = gbs.Name;
-                    done = true;
-                    break;
-                }
-                case string s:
-                {
-                    branchName = s;
-                    done = true;
-                    break;
-                }
-                default:
-                {
-                    throw new ArgumentException($"Invalid branch '{branch.ToString()}'", "Branch");
-                }
-            }
 
-            IEnumerable<GitBranchStats> result;
+                IEnumerable<GitBranchStats> result;
 
-            try
-            {
-                result = client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
-                    .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
-                    .Where(b => b.Name.IsLike(branchName));
-            }
-            catch (Exception ex)
-            {
-                if (ex.InnerException?.Message?.StartsWith("VS403403") ?? false)
+                try
                 {
-                    result = new List<GitBranchStats>();
+                    result = client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
+                        .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
+                        .Where(b => b.Name.IsLike(branchName));
                 }
-                else
+                catch (Exception ex)
                 {
-                    throw;
+                    if (ex.InnerException?.Message?.StartsWith("VS403403") ?? false)
+                    {
+                        result = new List<GitBranchStats>();
+                    }
+                    else
+                    {
+                        Logger.LogError(ex);
+                        continue;
+                    }
                 }
-            }
 
-            foreach (var b in result)
-            {
-                yield return b;
+                foreach (var b in result) yield return b;
             }
         }
     }
