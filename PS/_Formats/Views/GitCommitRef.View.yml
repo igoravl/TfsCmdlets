@@ -5,6 +5,7 @@ TableControl:
     ScriptBlock: $_.CommitId.Substring(0, 8)
   Comment:
     ScriptBlock: ($_.Comment -split "`n")[0]
+    Width: 30
   Author:
     ScriptBlock: $_.Author.Name
   Committer:
