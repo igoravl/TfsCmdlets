@@ -5,24 +5,30 @@ Passthru: |
       <CustomEntries>
         <CustomEntry>
           <CustomItem>
+            <NewLine/>
+            <Text>Team Project: </Text>
+            <ExpressionBinding>
+              <ScriptBlock>$_.Project</ScriptBlock>
+            </ExpressionBinding>
+            <NewLine/>
             <Frame>
-              <LeftIndent>4</LeftIndent>
+              <LeftIndent>2</LeftIndent>
               <CustomItem>
-                <Text>Team Project: </Text>
-                <ExpressionBinding>
-                  <ScriptBlock>$_.Project</ScriptBlock>
-                </ExpressionBinding>
-                <NewLine/>
-                <Text>  Repository: </Text>
+                <Text>Repository: </Text>
                 <ExpressionBinding>
                   <ScriptBlock>$_.Repository</ScriptBlock>
                 </ExpressionBinding>
                 <NewLine/>
-                <Text>    Branch  : </Text>
-                <ExpressionBinding>
-                  <ScriptBlock>$_.Branch</ScriptBlock>
-                </ExpressionBinding>
-                <NewLine/>
+                <Frame>
+                  <LeftIndent>2</LeftIndent>
+                  <CustomItem>
+                    <Text>Branch  : </Text>
+                    <ExpressionBinding>
+                      <ScriptBlock>$_.Branch</ScriptBlock>
+                    </ExpressionBinding>
+                    <NewLine/>
+                  </CustomItem>
+                </Frame>
               </CustomItem>
             </Frame>
           </CustomItem>

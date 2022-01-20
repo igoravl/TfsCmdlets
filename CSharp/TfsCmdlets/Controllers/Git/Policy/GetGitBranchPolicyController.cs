@@ -8,9 +8,14 @@ namespace TfsCmdlets.Controllers.Git.Policy
     {
         protected override IEnumerable Run()
         {
-            var repo = GetItem<GitRepository>();
-            var branch = $"refs/heads/{GetItem<GitBranchStats>().Name}";
+            var b = GetItem<GitBranchStats>();
+            var url = new Uri(b.Commit.Url);
+            var repoId = url.Segments[url.Segments.Length - 3].TrimEnd('/');
+            var projectId = url.Segments[url.Segments.Length - 7].TrimEnd('/');
+            var repo = GetItem<GitRepository>(new{Repository = repoId, Project = projectId});
             var client = GetClient<GitHttpClient>();
+
+            var branch = $"refs/heads/{b.Name}";
 
             Logger.Log($"Getting branch policies in repository '{repo.Name}'");
 
