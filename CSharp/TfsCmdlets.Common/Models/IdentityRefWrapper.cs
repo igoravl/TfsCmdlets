@@ -2,7 +2,6 @@ using System.Xml;
 using System.Xml.Schema;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
-using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
 
 namespace TfsCmdlets.Models
 {

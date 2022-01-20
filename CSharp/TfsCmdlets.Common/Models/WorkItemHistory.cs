@@ -1,5 +1,4 @@
 using System.Runtime.Serialization;
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 
 namespace TfsCmdlets.Models
 {

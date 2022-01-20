@@ -39,7 +39,7 @@ namespace TfsCmdlets.Services
 
         bool ShouldProcess(Connection collection, string action);
 
-        bool ShouldProcess(TeamProject tp, string action);
+        bool ShouldProcess(WebApiTeamProject tp, string action);
 
         bool ShouldProcess(WebApiTeam t, string action);
 

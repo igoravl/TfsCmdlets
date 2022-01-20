@@ -1,7 +1,5 @@
-using System.Management.Automation;
 using TfsCmdlets.Models;
 using Microsoft.VisualStudio.Services.Common;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 #if NETCOREAPP3_1_OR_GREATER
 using AdoConnection = Microsoft.VisualStudio.Services.WebApi.VssConnection;

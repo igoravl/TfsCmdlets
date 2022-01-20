@@ -1,6 +1,3 @@
-using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
-using WebApiIdentityRef = Microsoft.VisualStudio.Services.WebApi.IdentityRef;
-
 namespace TfsCmdlets.Extensions
 {
     public static class WorkItemExtensions

@@ -1,5 +1,4 @@
 using TfsCmdlets.Models;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
 
 namespace TfsCmdlets.Services
 {

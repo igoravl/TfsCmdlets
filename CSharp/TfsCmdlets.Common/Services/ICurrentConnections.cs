@@ -1,5 +1,4 @@
-﻿using Microsoft.TeamFoundation.Core.WebApi;
-using TfsCmdlets.Models;
+﻿using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
 {
@@ -9,7 +8,7 @@ namespace TfsCmdlets.Services
 
         Models.Connection Collection { get; set; }
 
-        TeamProject Project { get; set; }
+        WebApiTeamProject Project { get; set; }
 
         WebApiTeam Team { get; set; }
 
@@ -21,7 +20,7 @@ namespace TfsCmdlets.Services
 
         void Set(Connection server);
         void Set(Connection server, Models.Connection collection);
-        void Set(Connection server, Models.Connection collection, TeamProject project);
-        void Set(Connection server, Models.Connection collection, TeamProject project, WebApiTeam team);
+        void Set(Connection server, Models.Connection collection, WebApiTeamProject project);
+        void Set(Connection server, Models.Connection collection, WebApiTeamProject project, WebApiTeam team);
     }
 }

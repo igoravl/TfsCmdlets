@@ -1,7 +1,3 @@
-using System.Management.Automation;
-using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;
-using Microsoft.TeamFoundation.Core.WebApi;
-
 namespace TfsCmdlets.Services.Impl
 {
     [Export(typeof(ILogger)), Shared]

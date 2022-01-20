@@ -1,5 +1,3 @@
-using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
-
 namespace TfsCmdlets.Models
 {
     /// <summary>

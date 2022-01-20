@@ -1,6 +1,3 @@
-using Microsoft.TeamFoundation.Core.WebApi;
-using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
-
 namespace TfsCmdlets.Models
 {
     /// <summary>

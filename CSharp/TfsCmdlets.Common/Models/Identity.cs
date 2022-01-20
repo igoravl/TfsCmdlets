@@ -1,7 +1,5 @@
-﻿using WebApiIdentity = Microsoft.VisualStudio.Services.Identity.Identity;
-using Microsoft.VisualStudio.Services.Identity;
+﻿using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.Common;
-using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Models
 {
@@ -58,13 +56,6 @@ namespace TfsCmdlets.Models
             AddProperty(nameof(ProjectId), team.ProjectId);
             AddProperty(nameof(TeamName), team.Name);
             AddProperty(nameof(ProjectName), team.ProjectName);
-        }
-
-        protected override void AddProperty(string name, object value)
-        {
-            InnerObject.Properties[name] = value;
-            
-            base.AddProperty(name, value);
         }
     }
 }

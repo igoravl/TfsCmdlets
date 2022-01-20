@@ -10,7 +10,7 @@ namespace TfsCmdlets.Services.Impl
 
         public Models.Connection Collection {get;set;}
 
-        public TeamProject Project {get;set;}
+        public WebApiTeamProject Project {get;set;}
 
         public WebApiTeam Team {get;set;}
 
@@ -55,13 +55,13 @@ namespace TfsCmdlets.Services.Impl
             // TODO: Mru.Collection.Set(Collection.Uri.ToString());
         }
 
-        public void Set(Connection server, Models.Connection collection, TeamProject project)
+        public void Set(Connection server, Models.Connection collection, WebApiTeamProject project)
         {
             Set(server, collection);
             Project = project;
         }
 
-        public void Set(Connection server, Models.Connection collection, TeamProject project, WebApiTeam team)
+        public void Set(Connection server, Models.Connection collection, WebApiTeamProject project, WebApiTeam team)
         {
             Set(server, collection, project);
             Team = team;
