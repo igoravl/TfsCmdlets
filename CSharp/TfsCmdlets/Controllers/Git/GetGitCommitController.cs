@@ -61,6 +61,20 @@ namespace TfsCmdlets.Controllers.Git
                     Version = Branch
                 };
             }
+            else
+            {
+                if(repository.DefaultBranch == null)
+                {
+                    Logger.LogError($"Repository '{repository.Name}' has no default branch set. Please specify a different repository or branch.");
+                    yield break;
+                }
+
+                itemVersion = new GitVersionDescriptor()
+                {
+                    VersionType = GitVersionType.Branch,
+                    Version = repository.DefaultBranch.Substring(repository.DefaultBranch.LastIndexOf('/') + 1)
+                };
+            }
 
             // Search for commits
 
@@ -79,7 +93,7 @@ namespace TfsCmdlets.Controllers.Git
                 ShowOldestCommitsFirst = ShowOldestCommitsFirst,
                 ToCommitId = ToCommit,
                 Skip = Skip,
-                Top = Top == 0? null: Top,
+                Top = Top == 0 ? null : Top,
                 FromDate = Has_FromDate ? this.FromDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
                 ToDate = Has_ToDate ? this.ToDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
             };
