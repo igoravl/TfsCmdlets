@@ -113,7 +113,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 attributes.Add(("Parameter", $"{parameterSetName}{(isGetScopedCmdlet && isPipeline ? ", " : string.Empty)}{valueFromPipeline}"));
             }
 
-            yield return GenerateParameter(scopeName, "object", attributes, $"HELP_PARAM_{scopeName.ToUpper()}");
+            var parm = GenerateParameter(scopeName, "object", attributes, $"HELP_PARAM_{scopeName.ToUpper()}");
+            parm.IsScope = true;
+
+            yield return parm;
         }
 
         private static IEnumerable<GeneratedProperty> GenerateCredentialProperties(CmdletInfo settings)

@@ -10,6 +10,7 @@ namespace TfsCmdlets.SourceGenerators
         public string Type { get; }
         public string DefaultValue { get; set; }
         public bool IsHidden { get; }
+        public bool IsScope { get; set; }
         public string GeneratedCode { get; set; }
 
         internal GeneratedProperty(IPropertySymbol prop, string generatedCode)
