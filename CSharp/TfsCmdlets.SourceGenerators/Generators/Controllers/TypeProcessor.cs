@@ -1,19 +1,31 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
     public class TypeProcessor : BaseTypeProcessor
     {
-        protected override void OnInitialize() { }
+        private ControllerInfo _controller;
+
+        protected override void OnInitialize()
+        {
+            try
+            {
+                _controller = new ControllerInfo(Type, Context);
+            }
+            catch(Exception ex)
+            {
+                Logger.LogError(ex, $"Error initializing ControllerInfo for {Type.FullName()}");
+                Ignore = true;
+            }
+        }
 
         public override string GenerateCode()
         {
-            Logger.Log(" - Initializing ControllerInfo");
-
-            var controller = new ControllerInfo(Type, Context);
             var props = new StringBuilder();
             var cacheProps = new StringBuilder();
+            var controller = _controller;
 
             foreach (var prop in controller.GeneratedProperties.Values)
             {
@@ -52,6 +64,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         }}
     }}
 }}
-";        }
+";
+        }
     }
 }

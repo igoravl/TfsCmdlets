@@ -41,7 +41,7 @@ namespace TfsCmdlets.SourceGenerators
 
                     if (processedType.Ignore)
                     {
-                        Logger.Log($" - Ignore property returned true. Skipping");
+                        Logger.Log($" - [WARN] Ignore property returned true. Skipping");
                         continue;
                     }
 

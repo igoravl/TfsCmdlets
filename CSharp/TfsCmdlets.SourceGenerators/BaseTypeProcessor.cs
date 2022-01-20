@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TfsCmdlets.SourceGenerators
 {
-    public abstract class BaseTypeProcessor: ITypeProcessor
+    public abstract class BaseTypeProcessor : ITypeProcessor
     {
         public INamedTypeSymbol Type { get; set; }
 
@@ -19,7 +19,7 @@ namespace TfsCmdlets.SourceGenerators
 
         public string Namespace => Type.FullNamespace();
 
-        public virtual bool Ignore => false;
+        public virtual bool Ignore { get; set; } = false;
 
         public abstract string GenerateCode();
 

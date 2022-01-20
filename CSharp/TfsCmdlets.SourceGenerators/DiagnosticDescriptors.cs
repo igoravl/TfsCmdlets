@@ -13,5 +13,12 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ClassMustHaveControllerSuffix { get; } = new DiagnosticDescriptor(
+            "TFS002",
+            "Class must have 'Controller' suffix", "Class '{0}' should be called '{0}Controller'",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
     }
 }

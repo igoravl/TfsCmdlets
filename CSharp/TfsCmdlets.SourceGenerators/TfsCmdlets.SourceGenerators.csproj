@@ -2,14 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="_Old\**" />
-    <EmbeddedResource Remove="_Old\**" />
-    <None Remove="_Old\**" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
