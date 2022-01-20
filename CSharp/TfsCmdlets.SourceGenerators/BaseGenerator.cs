@@ -9,63 +9,69 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace TfsCmdlets.SourceGenerators
 {
-    public abstract class BaseGenerator : ISourceGenerator, ISyntaxContextReceiver
+    public abstract class BaseGenerator<TReceiver, TProcessor> : ISourceGenerator
+        where TReceiver : IFilter, new()
+        where TProcessor : ITypeProcessor, new()
     {
-        protected List<INamedTypeSymbol> Types { get; } = new List<INamedTypeSymbol>();
-
-        protected abstract string AttributeName { get; }
-
-        void ISourceGenerator.Initialize(GeneratorInitializationContext context)
+        public void Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterForSyntaxNotifications(() => this);
+            Logger.Log($"=== Initializing generator (from {GetType().Assembly.Location}) ===");
+            context.RegisterForSyntaxNotifications(() => new TReceiver());
         }
 
-        void ISourceGenerator.Execute(GeneratorExecutionContext context)
+        public void Execute(GeneratorExecutionContext context)
         {
-            if (context.SyntaxContextReceiver == null || context.SyntaxContextReceiver.GetType() != this.GetType()) return;
+            if (!(context.SyntaxContextReceiver is TReceiver receiver)) return;
 
-            OnBeforeGenerate(context);
-
-            foreach (var type in this.Types)
+            try
             {
-                Logger.Log($"Processing {type.FullName()}");
+                var typesToProcess = new List<(INamedTypeSymbol, ClassDeclarationSyntax)>(
+                    receiver.TypesToProcess?.Values ?? Enumerable.Empty<(INamedTypeSymbol, ClassDeclarationSyntax)>());
 
-                try
+                Logger.Log($"Preparing to generate code for {typesToProcess.Count} types");
+
+                foreach (var (type, cds) in typesToProcess)
                 {
-                    var state = ProcessType(context, type);
+                    Logger.Log($"{type.FullName()}");
 
-                    if(state == null) continue;
+                    Logger.Log($" - Initializing type processor");
 
-                    context.AddSource($"{state.FileName}.cs", SourceText.From(GetGeneratedText(state), Encoding.UTF8));
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex);
+                    var processedType = new TProcessor();
+                    processedType.Initialize(type, cds, context);
+
+                    if (processedType.Ignore)
+                    {
+                        Logger.Log($" - Ignore property returned true. Skipping");
+                        continue;
+                    }
+
+                    if (!processedType.ClassDeclaration.IsPartial())
+                    {
+                        Logger.Log($" - Type is not marked as partial. Skipping");
+                        Logger.ReportDiagnostic_ClassMustBePartial(context, cds);
+                        continue;
+                    }
+
+                    try
+                    {
+                        Logger.Log($" - Generating code");
+                        context.AddSource($"{processedType.FullName}.cs", SourceText.From(processedType.GenerateCode(), Encoding.UTF8));
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogError(ex, $" - Error adding source '{processedType.FullName}.cs'. Aborting");
+                        throw;
+                    }
                 }
             }
-
-            Logger.FlushLogs(context);
-        }
-
-        protected virtual void OnBeforeGenerate(GeneratorExecutionContext context) { }
-
-        protected abstract GeneratorState ProcessType(GeneratorExecutionContext context, INamedTypeSymbol type);
-
-        protected abstract string GetGeneratedText(GeneratorState state);
-
-        protected virtual bool ShouldSkip(INamedTypeSymbol type) => false;
-
-        void ISyntaxContextReceiver.OnVisitSyntaxNode(GeneratorSyntaxContext context)
-        {
-            var node = context.Node;
-
-            if (!(node is ClassDeclarationSyntax cds)) return;
-
-            var type = (INamedTypeSymbol) context.SemanticModel.GetDeclaredSymbol(cds);
-
-            if (type == null || !type.GetAttributes().Any(a => a.AttributeClass.Name.Equals(AttributeName)) || ShouldSkip(type)) return;
-
-            Types.Add(type);
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Unexpected error while generating code");
+            }
+            finally
+            {
+                Logger.FlushLogs(context);
+            }
         }
     }
 }
