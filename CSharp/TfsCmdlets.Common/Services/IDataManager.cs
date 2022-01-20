@@ -25,12 +25,20 @@ namespace TfsCmdlets.Services
         IEnumerable Invoke(string verb, string noun, object overridingParameters = null);
 
         Connection GetServer(object overridingParameters = null);
+        
+        bool TryGetServer(out Models.Connection server, object overridingParameters = null);
 
         Connection GetCollection(object overridingParameters = null);
         
+        bool TryGetCollection(out Models.Connection collection, object overridingParameters = null);
+
         WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null);
         
+        bool TryGetProject(out WebApiTeamProject project, object overridingParameters = null);
+
         Models.Team GetTeam(object overridingParameters = null, string contextValue = null);
+
+        bool TryGetTeam(out WebApiTeam team, object overridingParameters = null);
 
         T GetClient<T>(object overridingParameters = null);
 

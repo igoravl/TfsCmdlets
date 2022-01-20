@@ -44,6 +44,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         ///  instead of the full URL. 
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
+        [Alias("Organization")]
         [ValidateNotNull]
         public object Collection { get; set; }
     }

@@ -129,7 +129,7 @@ namespace TfsCmdlets.Cmdlets
             }
             finally
             {
-                Console.TreatControlCAsInput = true;
+                Console.TreatControlCAsInput = false;
             }
         }
 

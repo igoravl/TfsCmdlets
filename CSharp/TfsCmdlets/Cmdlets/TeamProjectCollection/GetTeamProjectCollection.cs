@@ -23,6 +23,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [Parameter(Position = 0, ParameterSetName = "Credential object")]
         [Parameter(Position = 0, ParameterSetName = "Personal Access Token")]
         [Parameter(Position = 0, ParameterSetName = "Prompt for credential")]
+        [Alias("Organization")]
         [SupportsWildcards]
         public object Collection { get; set; }
 
