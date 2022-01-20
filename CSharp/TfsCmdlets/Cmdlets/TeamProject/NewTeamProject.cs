@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         ///  Specifies the name of the new team project.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        public object Project { get; set; }
+        public string[] Project { get; set; }
 
         /// <summary>
         /// Specifies a description for the new team project.
