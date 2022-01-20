@@ -37,6 +37,14 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Deleted { get; set; }
 
         /// <summary>
+        /// Returns only those team projects matching the specified process template(s).
+        /// Wildcards are supported. When omitted returns all team projects, regardless of process template.
+        /// </summary>
+        [Parameter]
+        [SupportsWildcards]
+        public string[] Process { get; set; }
+
+        /// <summary>
         /// Includes details about the team projects, such as the process template name and other properties.
         /// Specifying this argument signficantly increases the time it takes to complete the operation.
         /// </summary>

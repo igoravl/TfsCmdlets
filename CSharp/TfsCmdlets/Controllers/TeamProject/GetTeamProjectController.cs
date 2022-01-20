@@ -7,15 +7,20 @@ namespace TfsCmdlets.Controllers.TeamProject
     {
         protected override IEnumerable Run()
         {
-            if (!Has_Project || Current)
+            var client = GetClient<ProjectHttpClient>();
+
+            if (Parameters.Get<object>("Project") == null || Current)
             {
                 Logger.Log("Get currently connected team project");
 
-                yield return CurrentConnections.Project;
+                yield return IncludeDetails ?
+                    FetchProject(CurrentConnections.Project.Name, client, true) : 
+                    CurrentConnections.Project;
+
                 yield break;
             }
 
-            var client = GetClient<ProjectHttpClient>();
+            var includeDetails = IncludeDetails || Has_Process;
 
             foreach (var project in Project)
             {
@@ -28,12 +33,22 @@ namespace TfsCmdlets.Controllers.TeamProject
                         }
                     case Guid g:
                         {
-                            yield return FetchProject(g.ToString(), client, IncludeDetails);
-                            continue;
+                            var p = FetchProject(g.ToString(), client, includeDetails);
+
+                            if(Has_Process && !Process.Any(process => p.Capabilities["processTemplate"]["templateName"].IsLike(process))) continue;
+                            
+                            yield return p;
+
+                            break;
                         }
                     case string s when !s.IsWildcard() && !Deleted:
                         {
-                            yield return FetchProject(s, client, IncludeDetails);
+                            var p = FetchProject(s, client, includeDetails);
+                            
+                            if(Has_Process && !Process.Any(process => p.Capabilities["processTemplate"]["templateName"].IsLike(process))) continue;
+                            
+                            yield return p;
+
                             break;
                         }
                     case string s:
@@ -43,13 +58,15 @@ namespace TfsCmdlets.Controllers.TeamProject
 
                             foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
-                                var proj = Deleted || !IncludeDetails?
+                                var p = Deleted || !includeDetails?
                                     new WebApiTeamProject(tpRef) :
                                     FetchProject(tpRef.Id.ToString(), client, true);
 
-                                if (proj == null) continue;
+                                if (p == null) continue;
 
-                                yield return proj;
+                                if(Has_Process && !Process.Any(process => p.Capabilities["processTemplate"]["templateName"].IsLike(process))) continue;
+
+                                yield return p;
                             }
                             break;
                         }
