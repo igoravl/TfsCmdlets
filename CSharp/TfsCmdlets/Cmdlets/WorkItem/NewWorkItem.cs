@@ -30,13 +30,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies the area path of the work item.
         /// </summary>
         [Parameter]
-        public string Area { get; set; }
+        public string AreaPath { get; set; }
 
         /// <summary>
         /// Specifies the iteration path of the work item.
         /// </summary>
         [Parameter]
-        public string Iteration { get; set; }
+        public string IterationPath { get; set; }
 
         /// <summary>
         /// Specifies the user this work item is assigned to.

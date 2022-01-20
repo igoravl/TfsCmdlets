@@ -8,6 +8,9 @@ namespace TfsCmdlets.Controllers.WorkItem
     [CmdletController(typeof(WebApiWorkItem))]
     partial class NewWorkItemController
     {
+        [Import]
+        private INodeUtil NodeUtil { get; }
+
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
@@ -25,6 +28,11 @@ namespace TfsCmdlets.Controllers.WorkItem
             {
                 var refName = GetWorkItemController.SimpleQueryFields[argName].Item2;
                 var value = Parameters.Get<object>(argName);
+
+                if(refName.Equals("System.AreaPath") || refName.Equals("System.IterationPath"))
+                {
+                    value = NodeUtil.NormalizeNodePath((string)value, tp.Name, includeTeamProject: true);
+                }
 
                 patch.Add(new JsonPatchOperation()
                 {
