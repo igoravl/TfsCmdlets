@@ -76,7 +76,7 @@ namespace TfsCmdlets.Services.Impl
             => Cmdlet.ShouldProcess(target, action);
 
         public bool ShouldProcess(Connection collection, string action)
-            => ShouldProcess($"{(collection.IsHosted? "Organization": "Team Project Collection")} '{collection.DisplayName}'", action);
+            => ShouldProcess($"{(collection.IsHosted ? "Organization" : "Team Project Collection")} '{collection.DisplayName}'", action);
 
         public bool ShouldProcess(WebApiTeamProject tp, string action)
             => ShouldProcess($"Team Project '{tp.Name}'", action);
@@ -140,6 +140,36 @@ namespace TfsCmdlets.Services.Impl
 
             return Path.GetFullPath(relativePath);
         }
+
+        public void StartPipeline()
+        {
+            if(!IsInteractive) return;
+            Console.TreatControlCAsInput = true;
+        }
+
+        public void EndPipeline()
+        {
+            if(!IsInteractive) return;
+            Console.TreatControlCAsInput = false;
+        }
+
+        public bool CtrlCIsPressed()
+        {
+            if(!IsInteractive) return false;
+
+            try
+            {
+                if (!Console.KeyAvailable) return false;
+                var key = Console.ReadKey(true);
+
+                return key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public bool IsVerbose
         {
             get
@@ -153,6 +183,9 @@ namespace TfsCmdlets.Services.Impl
                     ((ActionPreference)GetVariableValue("VerbosePreference")) != ActionPreference.SilentlyContinue;
             }
         }
+
+        public bool IsInteractive => Environment.UserInteractive && 
+            !Environment.GetCommandLineArgs().Any(x => x.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase));
 
         public string Edition => RuntimeUtil.Platform;
 

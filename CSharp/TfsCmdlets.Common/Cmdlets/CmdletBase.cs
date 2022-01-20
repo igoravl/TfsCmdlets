@@ -1,5 +1,4 @@
-﻿using System.Management.Automation;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.Versioning;
 using TfsCmdlets.Util;
 
@@ -17,7 +16,7 @@ namespace TfsCmdlets.Cmdlets
             .GetCustomAttribute<TargetFrameworkAttribute>()?
             .FrameworkName;
 
-        [Import] protected IPowerShellService PSService { get; set; }
+        [Import] protected IPowerShellService PowerShell { get; set; }
         [Import] protected IParameterManager Parameters { get; set; }
         [Import] protected ILogger Logger { get; set; }
         [Import] protected IRuntimeUtil RuntimeUtil { get; set; }
@@ -108,18 +107,18 @@ namespace TfsCmdlets.Cmdlets
 
                 if (results == null) return;
 
-                Console.TreatControlCAsInput = true;
+                PowerShell.StartPipeline();
 
                 foreach (var result in results)
                 {
-                    if(CtrlCIsPressed()) throw new PipelineStoppedException();
+                    if (PowerShell.CtrlCIsPressed()) throw new PipelineStoppedException();
 
-                    if(!ReturnsValue || result == null) continue;
+                    if (!ReturnsValue || result == null) continue;
 
                     WriteObject(result);
                 }
             }
-            catch(PipelineStoppedException)
+            catch (PipelineStoppedException)
             {
                 throw; // Bubble up
             }
@@ -129,17 +128,8 @@ namespace TfsCmdlets.Cmdlets
             }
             finally
             {
-                Console.TreatControlCAsInput = false;
+                PowerShell.EndPipeline();
             }
-        }
-
-        private bool CtrlCIsPressed()
-        {
-            if(!Console.KeyAvailable) return false;
-
-            var key = Console.ReadKey(true);
-
-            return key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control;
         }
 
         private IEnumerable<object> DoInvokeCommand()

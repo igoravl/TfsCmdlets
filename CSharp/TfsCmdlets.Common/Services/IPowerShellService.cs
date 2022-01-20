@@ -56,5 +56,13 @@ namespace TfsCmdlets.Services
         string ResolvePath(string basePath, string path = "");
 
         string GetCurrentDirectory();
+
+        void StartPipeline();
+
+        void EndPipeline();
+
+        bool CtrlCIsPressed();
+
+        bool IsInteractive { get; }
     }
 }
