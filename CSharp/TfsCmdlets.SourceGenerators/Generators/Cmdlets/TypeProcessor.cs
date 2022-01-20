@@ -19,9 +19,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
             foreach(var prop in cmdlet.GeneratedProperties.Values) props.Append(prop.ToString());
 
-            return $@"using System.Management.Automation;
-using TfsCmdlets.Cmdlets;
-            
+            return $@"
 namespace {Namespace}
 {{
     {cmdlet.CmdletAttribute}{cmdlet.OutputTypeAttribute}
