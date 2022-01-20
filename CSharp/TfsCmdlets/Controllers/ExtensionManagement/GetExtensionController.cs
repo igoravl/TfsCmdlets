@@ -7,20 +7,31 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
     {
         protected override IEnumerable Run()
         {
+            var client = GetClient<ExtensionManagementHttpClient>();
+
             foreach (var input in Extension)
             {
-                switch (input)
+                object extension = input;
+                string publisher = Publisher;
+
+                if(extension is string s0 && s0.Contains("."))
+                {
+                    var (pub, ext, _) = s0.Split('.');
+
+                    publisher = pub;
+                    extension = ext;
+                }
+
+                switch (extension)
                 {
                     case InstalledExtension ext:
                         {
                             yield return ext;
                             break;
                         }
-                    case string s when s.IsWildcard() || Publisher.IsWildcard():
+                    case string s when s.IsWildcard() || publisher.IsWildcard():
                         {
-                            var client = GetClient<ExtensionManagementHttpClient>();
-
-                            Logger.Log($"Getting extensions matching name '{s}' with publisher '{Publisher}'");
+                            Logger.Log($"Getting extensions matching name '{s}' with publisher '{publisher}'");
 
                             foreach (var result in client.GetInstalledExtensionsAsync(
                                 includeDisabledExtensions: IncludeDisabledExtensions,
@@ -28,21 +39,20 @@ namespace TfsCmdlets.Controllers.ExtensionManagement
                                 includeInstallationIssues: IncludeInstallationIssues)
                                 .GetResult("Error getting installed extensions")
                                 .Where(ext => (ext.ExtensionName.IsLike(s) || ext.ExtensionDisplayName.IsLike(s)) &&
-                                    (ext.PublisherName.IsLike(Publisher) || ext.PublisherDisplayName.IsLike(Publisher))))
+                                    (ext.PublisherName.IsLike(publisher) || ext.PublisherDisplayName.IsLike(publisher))))
                             {
                                 yield return result;
                             }
                             break;
                         }
-                        case string s: {
-                            var client = GetClient<ExtensionManagementHttpClient>();
-
-                            yield return client.GetInstalledExtensionByNameAsync(Publisher, s)
+                    case string s:
+                        {
+                            yield return client.GetInstalledExtensionByNameAsync(publisher, s)
                                 .GetResult("Error getting installed extension.");
-
                             break;
                         }
-                        default: {
+                    default:
+                        {
                             Logger.LogError(new ArgumentException($"Invalid or unknown extension '{input}'"));
                             break;
                         }

@@ -6,6 +6,7 @@ Properties {
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
     $PSDir = Join-Path $RootProjectDir 'PS'
+    $PSTestsDir = Join-Path $PSDir '_Tests'
     $SolutionDir = Join-Path $RootProjectDir 'CSharp'
     $TestsDir = Join-Path $RootProjectDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
@@ -22,7 +23,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1'}
+    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1' }
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -71,8 +72,7 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
 
     Write-Verbose "Cleaning output path $ModuleDir"
     
-    if (Test-Path $ModuleDir -PathType Container)
-    { 
+    if (Test-Path $ModuleDir -PathType Container) { 
         Remove-Item $ModuleDir -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     }
 
@@ -83,16 +83,14 @@ Task CleanOutputDir -PreCondition { -not $Incremental } {
 
 Task CreateOutputDir {
 
-    if(-not (Test-Path $OutDir -PathType Container))
-    {
+    if (-not (Test-Path $OutDir -PathType Container)) {
         New-Item $OutDir -ItemType Directory | Write-Verbose
     }
 }
 
 Task BuildLibrary {
 
-    foreach($tfkey in $TargetFrameworks.Keys)
-    {
+    foreach ($tfkey in $TargetFrameworks.Keys) {
         $tf = $TargetFrameworks[$tfkey]
 
         Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
@@ -109,21 +107,19 @@ Task GenerateHelp {
     $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
 
     exec { & $xmldocExePath `
-        "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
-        -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
+            "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
+            -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
     $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
 
-    foreach($token in $helpTokens.GetEnumerator())
-    {
+    foreach ($token in $helpTokens.GetEnumerator()) {
         $helpContents = $helpContents -replace $token.Key, $token.Value
     }
 
     $helpContents | Out-File $helpFile -Encoding utf8
 
-    if($helpContents -match 'HELP_[A-Z_]+')
-    {
+    if ($helpContents -match 'HELP_[A-Z_]+') {
         Write-Warning 'Undefined tokens found in documentation:'
         Get-Content $helpFile -Encoding utf8 | Select-String -Pattern 'HELP_[A-Z_]+' | Write-Warning
     }
@@ -146,8 +142,7 @@ Task GenerateTypesXml {
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Types.ps1xml')
     $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Types') -Include '*.yml')
 
-    if (_IsUpToDate $inputFiles $outputFile)
-    {
+    if (_IsUpToDate $inputFiles $outputFile) {
         Write-Verbose "Output file is up-to-date; skipping"
         return
     }
@@ -160,8 +155,7 @@ Task GenerateFormatXml {
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.Format.ps1xml')
     $inputFiles = (Get-ChildItem (Join-Path $PSDir '_Formats') -Recurse -Include '*.yml')
 
-    if (_IsUpToDate $inputFiles $outputFile)
-    {
+    if (_IsUpToDate $inputFiles $outputFile) {
         Write-Verbose "Output file is up-to-date; skipping"
         return
     }
@@ -173,8 +167,7 @@ Task GenerateNestedModule {
 
     $outputFile = (Join-Path $ModuleDir 'TfsCmdlets.psm1')
 
-    foreach($m in (Get-ChildItem (Join-Path $PSDir '_Private') -Recurse -Filter *.ps*))
-    {
+    foreach ($m in (Get-ChildItem (Join-Path $PSDir '_Private') -Recurse -Filter *.ps*)) {
         Get-Content $m.FullName -Encoding utf8 | Out-File $outputFile -Encoding utf8 -Append
     }
 }
@@ -236,19 +229,29 @@ Task UpdateModuleManifest {
     Write-Verbose $manifestText
 }
 
-Task UnitTests -PreCondition { -not $SkipTests }  {
+Task UnitTests -PreCondition { -not $SkipTests } {
 
-    Remove-Item $OutDir/TfsCmdlets.Tests.UnitTests.log
-    Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
+    Remove-Item $OutDir/TfsCmdlets.Tests.UnitTests.log -Force -ErrorAction SilentlyContinue
+    #Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
 }
 
 Task AllTests -PreCondition { -not $SkipTests } {
 
-    # Write-Output '= PowerShell Core ='
-    # Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Core.xml) -OutputFormat NUnitXml -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSDesktop" }
+    Push-Location $PSTestsDir
 
-    # Write-Output '= Windows PowerShell ='
-    # Exec { powershell.exe -NoLogo -Command "Invoke-Pester -Path $TestsDir -OutputFile $(Join-Path $OutDir TestResults-Desktop.xml) -OutputFormat NUnitXml  -PesterOption (New-PesterOption -IncludeVSCodeMarker) -Strict -Show ([Pester.OutputTypes]'Failed,Summary') $(if($IsCI) {return '-EnableExit'}) -ExcludeTag PSCore" }
+    $outputLevel =if($isCi) { "Detailed" } else { "None" }
+
+    try {
+        Write-Output ' - PowerShell Core'
+        Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Core.xml" }
+    
+        Write-Output ' - PowerShell Desktop'
+        Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Desktop.xml" }
+    }
+    finally {
+        Remove-Item '*.xml' -Force -ErrorAction SilentlyContinue
+        Pop-Location
+    }
 }
 
 Task RemoveEmptyFolders {
@@ -261,14 +264,12 @@ Task RemoveEmptyFolders {
 
 Task Clean {
 
-    if (Test-Path $OutDir -PathType Container)
-    {
+    if (Test-Path $OutDir -PathType Container) {
         Write-Verbose "Removing $OutDir..."
         Remove-Item $OutDir -Recurse -Force -ErrorAction SilentlyContinue
     }
 
-    if (Test-Path $NugetPackagesDir -PathType Container)
-    {
+    if (Test-Path $NugetPackagesDir -PathType Container) {
         Write-Verbose "Removing $NugetPackagesDir..."
         Remove-Item $NugetPackagesDir -Recurse -Force -ErrorAction SilentlyContinue
     }
@@ -298,8 +299,7 @@ Task PackageNuget -Depends Build, GenerateNuspec {
 
 Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerificationFile {
 
-    if (-not (Test-Path $ChocolateyPath))
-    {
+    if (-not (Test-Path $ChocolateyPath)) {
         & $NugetExePath Install Chocolatey -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
     }
 
@@ -337,8 +337,7 @@ Task PackageMsi -Depends Build {
 
     Write-Verbose "Restoring WiX Nuget package"
 
-    if (-not (Test-Path $WixToolsDir))
-    {
+    if (-not (Test-Path $WixToolsDir)) {
         & $NugetExePath Install Wix -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
     }
 
@@ -420,8 +419,7 @@ Task PackageMsi -Depends Build {
 
 Task PackageWinget -Depends PackageMsi {
 
-    Function GetMsiProperty($Path, $Property)
-    {
+    Function GetMsiProperty($Path, $Property) {
         try {
             $windowsInstaller = New-Object -ComObject 'WindowsInstaller.Installer'
             $database = $windowsInstaller.GetType().InvokeMember('OpenDatabase', 'InvokeMethod', $null, $windowsInstaller, @((Get-Item -Path $Path).FullName, 0))
@@ -438,7 +436,7 @@ Task PackageWinget -Depends PackageMsi {
             Write-Error -Message $_.ToString()
         }
         finally {
-            if($windowsInstaller) {
+            if ($windowsInstaller) {
                 [Void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($windowsInstaller)
             }
         }
@@ -451,8 +449,7 @@ Task PackageWinget -Depends PackageMsi {
 
     New-Item -Path $WinGetOutDir -ItemType Directory -Force | Write-Verbose
 
-    foreach($f in (Get-ChildItem $WinGetProjectDir -File))
-    {
+    foreach ($f in (Get-ChildItem $WinGetProjectDir -File)) {
         $outputPath = (Join-Path $WinGetOutDir $f.Name)
         Get-Content $f.FullName -Raw | Invoke-Expression | Out-File $outputPath -Force
     }
@@ -465,7 +462,7 @@ Task PackageDocs -Depends GenerateDocs {
 
 Task GenerateDocs {
 
-    exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1')}
+    exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1') }
 }
 
 Task GenerateNuspec {
@@ -504,8 +501,7 @@ Task GenerateLicenseFile {
  
     $outLicenseFile = Join-Path $ChocolateyToolsDir 'LICENSE.txt'
 
-    if (-not (Test-Path $ChocolateyToolsDir -PathType Container))
-    {
+    if (-not (Test-Path $ChocolateyToolsDir -PathType Container)) {
         New-Item $ChocolateyToolsDir -Force -ItemType Directory | Write-Verbose
     }
     
@@ -513,25 +509,20 @@ Task GenerateLicenseFile {
 
     $specFiles = Get-ChildItem $NugetPackagesDir -Include *.nuspec -Recurse
 
-    foreach ($f in $specFiles)
-    {
+    foreach ($f in $specFiles) {
         $spec = [xml] (Get-Content $f -Raw -Encoding UTF8)
         $packageUrl = "https://nuget.org/packages/$($spec.package.metadata.id)/$($spec.package.metadata.version)"
 
-        if ($spec.package.metadata.license)
-        {
-            if ($spec.package.metadata.license.type -eq 'file')
-            {
+        if ($spec.package.metadata.license) {
+            if ($spec.package.metadata.license.type -eq 'file') {
                 $licenseFile = Join-Path $f.Directory $spec.package.metadata.license.'#text'
                 $licenseText = Get-Content $licenseFile -Raw -Encoding Utf8
             }
-            else
-            {
+            else {
                 $licenseText = "Please refer to https://spdx.org/licenses/$($spec.package.metadata.license.type).html for license information for this package."
             }
         }
-        else
-        {
+        else {
             $licenseUrl = $spec.package.metadata.licenseUrl
             $licenseText = "Please refer to $licenseUrl for license information for this package."
         }
@@ -578,27 +569,21 @@ $($packageUrls -join "`r`n")
 
 }
 
-Function _IsUpToDate($Inputs, $Output)
-{
-    if (-not $Incremental -or (-not (Test-Path $Output)))
-    {
+Function _IsUpToDate($Inputs, $Output) {
+    if (-not $Incremental -or (-not (Test-Path $Output))) {
         return $false
     }
 
-    if ($Output -isnot [System.IO.FileSystemInfo])
-    {
+    if ($Output -isnot [System.IO.FileSystemInfo]) {
         $Output = Get-ChildItem $Output
     }
     
-    foreach ($input in $Inputs)
-    {
-        if ($input -isnot [System.IO.FileSystemInfo])
-        {
+    foreach ($input in $Inputs) {
+        if ($input -isnot [System.IO.FileSystemInfo]) {
             $input = Get-ChildItem $input
         }
 
-        if ($input.LastWriteTimeUtc -gt $Output.LastWriteTimeUtc)
-        {
+        if ($input.LastWriteTimeUtc -gt $Output.LastWriteTimeUtc) {
             return $false
         }
     }
