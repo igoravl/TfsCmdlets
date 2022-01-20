@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     {
         protected override IEnumerable Run()
         {
-            if (Project == null || Current)
+            if (!Has_Project || Current)
             {
                 Logger.Log("Get currently connected team project");
 
