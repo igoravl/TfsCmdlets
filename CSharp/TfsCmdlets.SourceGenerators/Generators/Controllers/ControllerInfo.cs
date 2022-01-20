@@ -62,19 +62,19 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
         private void GenerateProperties()
         {
+            Logger.Log($" - GenerateProperties");
+
             foreach (var (condition, generator, generatorName) in _generators)
             {
-                Logger.Log($"   - {generatorName}");
-
                 if (!condition(this))
                 {
-                    Logger.Log($"     - Skipping");
+                    Logger.Log($"   - {generatorName}: skipped");
                     continue;
                 };
 
                 foreach (var prop in generator(this))
                 {
-                    Logger.Log($"     - Generated!");
+                    Logger.Log($"   - {generatorName} [{prop.Name}]");
                     GeneratedProperties.Add(prop.Name, prop);
                 }
             }
