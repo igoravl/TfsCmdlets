@@ -42,7 +42,21 @@ namespace TfsCmdlets.Controllers.Identity.Group
             {
                 case GroupScope.Server:
                     {
-                        throw new NotImplementedException("Server scope is currently not supported");
+                        do
+                        {
+                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                                     .GetResult<PagedGraphGroups>("Error getting groups in collection");
+
+                            foreach (var g in result.GraphGroups
+                                .Where(g =>
+                                    (g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)) &&
+                                    (recurse || g.PrincipalName.StartsWith("[TEAM FOUNDATION]"))))
+                            {
+                                yield return g;
+                            }
+                        } while (result?.ContinuationToken != null);
+                        
+                        break;
                     }
                 case GroupScope.Collection:
                     {
