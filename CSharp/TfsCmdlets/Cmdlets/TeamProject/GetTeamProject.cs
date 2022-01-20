@@ -37,6 +37,13 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Deleted { get; set; }
 
         /// <summary>
+        /// Includes details about the team projects, such as the process template name and other properties.
+        /// Specifying this argument signficantly increases the time it takes to complete the operation.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter IncludeDetails { get; set; }
+
+        /// <summary>
         /// Returns the team project specified in the last call to Connect-TfsTeamProject 
         /// (i.e. the "current" team project)
         /// </summary>

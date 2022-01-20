@@ -7,11 +7,7 @@ namespace TfsCmdlets.Controllers.TeamProject
     {
         protected override IEnumerable Run()
         {
-            var project = Parameters.Get<object>(nameof(Cmdlets.TeamProject.GetTeamProject.Project));
-            var current = Parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Current));
-            var deleted = Parameters.Get<bool>(nameof(Cmdlets.TeamProject.GetTeamProject.Deleted));
-
-            if (project == null || current)
+            if (Project == null || Current)
             {
                 Logger.Log("Get currently connected team project");
 
@@ -19,78 +15,58 @@ namespace TfsCmdlets.Controllers.TeamProject
                 yield break;
             }
 
-            var client = Data.GetClient<ProjectHttpClient>();
+            var client = GetClient<ProjectHttpClient>();
 
-            while (true) switch (project)
+            foreach (var project in Project)
+            {
+                switch (project)
                 {
                     case Microsoft.TeamFoundation.Core.WebApi.TeamProject tp:
                         {
                             yield return tp;
-                            yield break;
+                            break;
                         }
                     case Guid g:
                         {
-                            project = g.ToString();
+                            yield return FetchProject(g.ToString(), client, IncludeDetails);
                             continue;
                         }
-                    case string s when !s.IsWildcard() && !deleted:
+                    case string s when !s.IsWildcard() && !Deleted:
                         {
-                            yield return FetchProject(s, client);
-                            yield break;
+                            yield return FetchProject(s, client, IncludeDetails);
+                            break;
                         }
                     case string s:
                         {
-                            var stateFilter = deleted ? ProjectState.Deleted : ProjectState.All;
+                            var stateFilter = Deleted ? ProjectState.Deleted : ProjectState.All;
                             var tpRefs = FetchProjects(stateFilter, client);
 
-                            foreach (var tpRef in tpRefs.Where(r => StringExtensions.IsLike(r.Name, s)))
+                            foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
-                                var proj = deleted ?
-                                    new Microsoft.TeamFoundation.Core.WebApi.TeamProject(tpRef) :
-                                    FetchProject(tpRef.Id.ToString(), client);
+                                var proj = Deleted || !IncludeDetails?
+                                    new WebApiTeamProject(tpRef) :
+                                    FetchProject(tpRef.Id.ToString(), client, true);
 
                                 if (proj == null) continue;
 
                                 yield return proj;
                             }
-
-                            yield break;
+                            break;
                         }
                     default:
                         {
                             Logger.LogError(new ArgumentException($"Invalid or non-existent team project {project}"));
-                            yield break;
+                            break;
                         }
                 }
+            }
         }
 
-        private WebApiTeamProject FetchProject(string project, ProjectHttpClient client)
-        {
-            try
-            {
-                return client.GetProject(project, true).GetResult($"Error getting team project '{project}'");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex);
-            }
-
-            return null;
-        }
+        private WebApiTeamProject FetchProject(string project, ProjectHttpClient client, bool includeDetails = true)
+            => client.GetProject(project, includeDetails).GetResult($"Error getting team project '{project}'");
 
         private IEnumerable<TeamProjectReference> FetchProjects(ProjectState stateFilter, ProjectHttpClient client)
-        {
-            try
-            {
-                return client.GetProjects(stateFilter).GetResult($"Error getting team project(s)");
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError(ex);
-            }
-
-            return null;
-        }
+            => client.GetProjects(stateFilter).GetResult($"Error getting team project(s)");
 
         [Import]
         private ICurrentConnections CurrentConnections { get; }
