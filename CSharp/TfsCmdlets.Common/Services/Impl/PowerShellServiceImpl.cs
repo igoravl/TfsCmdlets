@@ -143,19 +143,29 @@ namespace TfsCmdlets.Services.Impl
 
         public void StartPipeline()
         {
-            if(!IsInteractive) return;
-            Console.TreatControlCAsInput = true;
+            if (!IsInteractive) return;
+
+            try
+            {
+                Console.TreatControlCAsInput = true;
+            }
+            catch { }
         }
 
         public void EndPipeline()
         {
-            if(!IsInteractive) return;
-            Console.TreatControlCAsInput = false;
+            if (!IsInteractive) return;
+
+            try
+            {
+                Console.TreatControlCAsInput = false;
+            }
+            catch { }
         }
 
         public bool CtrlCIsPressed()
         {
-            if(!IsInteractive) return false;
+            if (!IsInteractive) return false;
 
             try
             {
@@ -184,7 +194,7 @@ namespace TfsCmdlets.Services.Impl
             }
         }
 
-        public bool IsInteractive => Environment.UserInteractive && 
+        public bool IsInteractive => Environment.UserInteractive &&
             !Environment.GetCommandLineArgs().Any(x => x.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase));
 
         public string Edition => RuntimeUtil.Platform;
