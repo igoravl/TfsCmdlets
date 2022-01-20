@@ -6,8 +6,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="_Old\**" />
+    <EmbeddedResource Remove="_Old\**" />
+    <None Remove="_Old\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.9.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.0.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.9.0" />
   </ItemGroup>
 
   <ItemGroup>
