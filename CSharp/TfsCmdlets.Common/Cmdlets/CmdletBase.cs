@@ -108,17 +108,38 @@ namespace TfsCmdlets.Cmdlets
 
                 if (results == null) return;
 
+                Console.TreatControlCAsInput = true;
+
                 foreach (var result in results)
                 {
+                    if(CtrlCIsPressed()) throw new PipelineStoppedException();
+
                     if(!ReturnsValue || result == null) continue;
 
                     WriteObject(result);
                 }
             }
+            catch(PipelineStoppedException)
+            {
+                throw; // Bubble up
+            }
             catch (Exception ex)
             {
                 Logger.LogError(ex);
             }
+            finally
+            {
+                Console.TreatControlCAsInput = true;
+            }
+        }
+
+        private bool CtrlCIsPressed()
+        {
+            if(!Console.KeyAvailable) return false;
+
+            var key = Console.ReadKey(true);
+
+            return key.Key == ConsoleKey.C && key.Modifiers == ConsoleModifiers.Control;
         }
 
         private IEnumerable<object> DoInvokeCommand()
