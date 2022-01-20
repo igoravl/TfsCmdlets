@@ -194,7 +194,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         {
             yield return new GeneratedProperty(scope.ToString(), "object", $@"        // {scope}
         protected bool Has_{scope} => Parameters.HasParameter(""{scope}"");
-        protected {scopeType} {scope} => Data.Get{scope}();
+        private {scopeType} _{scope};
+        protected {scopeType} {scope} => _{scope} ??= Data.Get{scope}();
 
 ") { IsScope = true };
         }
