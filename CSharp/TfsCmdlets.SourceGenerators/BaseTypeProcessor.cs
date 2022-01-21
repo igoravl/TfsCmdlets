@@ -25,11 +25,14 @@ namespace TfsCmdlets.SourceGenerators
 
         protected abstract void OnInitialize();
 
-        public void Initialize(INamedTypeSymbol type, ClassDeclarationSyntax cds, GeneratorExecutionContext context)
+        protected Logger Logger { get; private set; }
+
+        public void Initialize(Logger logger, INamedTypeSymbol type, ClassDeclarationSyntax cds, GeneratorExecutionContext context)
         {
             Type = type;
             ClassDeclaration = cds;
             Context = context;
+            Logger = logger;
 
             OnInitialize();
         }

@@ -9,11 +9,11 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
         public override string GenerateCode()
         {
-            Logger.Log(" - Initializing CmdletInfo");
+            //Logger.Log(" - Initializing CmdletInfo");
 
-            var cmdlet = new CmdletInfo(Type);
+            var cmdlet = new CmdletInfo(Type, Logger);
 
-            Logger.Log($" - {cmdlet.Name} has the following properties: {string.Join(", ", cmdlet.GeneratedProperties.Values.Select(p => p.Name))}");
+            //Logger.Log($" - {cmdlet.Name} has the following properties: {string.Join(", ", cmdlet.GeneratedProperties.Values.Select(p => p.Name))}");
 
             var props = new StringBuilder();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -13,10 +14,21 @@ namespace TfsCmdlets.SourceGenerators
         where TReceiver : IFilter, new()
         where TProcessor : ITypeProcessor, new()
     {
+        protected Logger Logger { get; private set; }
+
         public void Initialize(GeneratorInitializationContext context)
         {
-            Logger.Log($"=== Initializing generator (from {GetType().Assembly.Location}) ===");
-            context.RegisterForSyntaxNotifications(() => new TReceiver());
+            Logger = new Logger(GeneratorName);
+
+            Logger.Log($"=== Initializing generator ===");
+            Logger.Log($"=== Path : {GetType().Assembly.Location}) ===");
+            Logger.Log($"=== Built: {(new FileInfo(GetType().Assembly.Location)).LastWriteTime} ===");
+
+            context.RegisterForSyntaxNotifications(() =>
+            {
+                var receiver = new TReceiver();
+                return receiver;
+            });
         }
 
         public void Execute(GeneratorExecutionContext context)
@@ -34,33 +46,32 @@ namespace TfsCmdlets.SourceGenerators
                 {
                     Logger.Log($"{type.FullName()}");
 
-                    Logger.Log($" - Initializing type processor");
+                    //Logger.Log($" - Initializing type processor");
 
                     var processedType = new TProcessor();
-                    processedType.Initialize(type, cds, context);
+                    processedType.Initialize(Logger, type, cds, context);
 
                     if (processedType.Ignore)
                     {
-                        Logger.Log($" - [WARN] Ignore property returned true. Skipping");
+                        Logger.Log($" - [WARN] Ignore==true. Skipping");
                         continue;
                     }
 
                     if (!processedType.ClassDeclaration.IsPartial())
                     {
-                        Logger.Log($" - Type is not marked as partial. Skipping");
+                        Logger.Log($" - [WARN] Type is not marked as partial. Skipping");
                         Logger.ReportDiagnostic_ClassMustBePartial(context, cds);
                         continue;
                     }
 
                     try
                     {
-                        Logger.Log($" - Generating code");
+                        //Logger.Log($" - Generating code");
                         context.AddSource($"{processedType.FullName}.cs", SourceText.From(processedType.GenerateCode(), Encoding.UTF8));
                     }
                     catch (Exception ex)
                     {
                         Logger.LogError(ex, $" - Error adding source '{processedType.FullName}.cs'. Aborting");
-                        throw;
                     }
                 }
             }
@@ -68,10 +79,8 @@ namespace TfsCmdlets.SourceGenerators
             {
                 Logger.LogError(ex, $"Unexpected error while generating code");
             }
-            finally
-            {
-                Logger.FlushLogs(context);
-            }
         }
+
+        protected abstract string GeneratorName { get; }
     }
 }

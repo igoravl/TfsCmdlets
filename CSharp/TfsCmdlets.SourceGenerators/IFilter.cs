@@ -8,6 +8,8 @@ namespace TfsCmdlets.SourceGenerators
 {
     public interface IFilter: ISyntaxContextReceiver
     {
+        void Initialize(Logger logger);
+
         IDictionary<string, (INamedTypeSymbol, ClassDeclarationSyntax)> TypesToProcess { get; }
 
         bool ShouldProcessType(INamedTypeSymbol type);

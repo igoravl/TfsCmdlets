@@ -8,7 +8,7 @@ namespace TfsCmdlets.SourceGenerators
 {
     public interface ITypeProcessor
     {
-        void Initialize(INamedTypeSymbol type, ClassDeclarationSyntax cds, GeneratorExecutionContext context);
+        void Initialize(Logger Logger, INamedTypeSymbol type, ClassDeclarationSyntax cds, GeneratorExecutionContext context);
         INamedTypeSymbol Type { get; }
         ClassDeclarationSyntax ClassDeclaration { get; }
         GeneratorExecutionContext Context { get; }

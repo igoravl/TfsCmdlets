@@ -11,7 +11,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string Noun { get; }
         public CmdletInfo CmdletInfo { get; }
         public string GenericArg { get; }
-        public INamedTypeSymbol CustomBaseClass { get; }
         internal string Verb { get; }
         public INamedTypeSymbol DataType { get; }
         public INamedTypeSymbol BaseClass { get; }
@@ -22,13 +21,11 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string ImportingConstructorBody { get; }
         public IDictionary<string, GeneratedProperty> DeclaredProperties { get; }
         public IDictionary<string, GeneratedProperty> ImplicitProperties { get; }
-        public string PropertyDeclarations { get; }
-        public string ItemsProperty { get; }
         public string BaseClassName => BaseClass.Name;
         public bool SkipGetProperty => CmdletInfo.SkipGetProperty;
 
-        internal ControllerInfo(INamedTypeSymbol controller, GeneratorExecutionContext context)
-            : base(controller)
+        internal ControllerInfo(INamedTypeSymbol controller, GeneratorExecutionContext context, Logger logger)
+            : base(controller, logger)
         {
             if (controller == null) throw new ArgumentNullException(nameof(controller));
 
@@ -52,7 +49,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             CtorArgs = controller.GetImportingConstructorArguments(BaseClass);
             BaseCtorArgs = BaseClass.GetConstructorArguments();
             ImportingConstructorBody = GetImportingConstructorBody(controller);
-            CmdletInfo = new CmdletInfo(Cmdlet);
+            CmdletInfo = new CmdletInfo(Cmdlet, Logger);
 
             DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").Select(p => new GeneratedProperty(p, string.Empty)).ToDictionary(p => p.Name);
             ImplicitProperties = CmdletInfo.GeneratedProperties;
@@ -62,19 +59,19 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
         private void GenerateProperties()
         {
-            Logger.Log($" - GenerateProperties");
+            //Logger.Log($" - GenerateProperties");
 
             foreach (var (condition, generator, generatorName) in _generators)
             {
                 if (!condition(this))
                 {
-                    Logger.Log($"   - {generatorName}: skipped");
+                    //Logger.Log($"   - {generatorName} [-]");
                     continue;
                 };
 
                 foreach (var prop in generator(this))
                 {
-                    Logger.Log($"   - {generatorName} [{prop.Name}]");
+                    //Logger.Log($"   - {generatorName} [{prop.Name}]");
                     GeneratedProperties.Add(prop.Name, prop);
                 }
             }
@@ -188,24 +185,30 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             new List<(Predicate<ControllerInfo>, Func<ControllerInfo, IEnumerable<GeneratedProperty>>, string)>()
             {
                 // Get "input" property
+
                 ((controller) => controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 && !controller.SkipGetProperty, GenerateGetInputProperty, "Get->Input"),
 
                 // Cmdlet declared parameters
+
                 ((controller) => controller.DeclaredProperties.Count > 0, GenerateDeclaredParameters, "Declared Parameters"),
 
                 // Cmdlet implicit (source-gen'ed) parameters
+
                 ((controller) => controller.ImplicitProperties.Count > 0, GenerateImplicitParameters, "Implicit Parameters"),
 
-                // Scope parameters
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(ci, CmdletScope.Team, "WebApiTeam"), "Team"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(ci, CmdletScope.Project, "WebApiTeamProject"), "Project"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(ci, CmdletScope.Collection, "Models.Connection"), "Collection"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(ci, CmdletScope.Server, "Models.Connection"), "Server"), 
+                // Scope properties
+
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(ci, CmdletScope.Team, "WebApiTeam"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(ci, CmdletScope.Project, "WebApiTeamProject"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(ci, CmdletScope.Collection, "Models.Connection"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(ci, CmdletScope.Server, "Models.Connection"), "Scope properties"), 
 
                 // ParameterSetName
+
                 ((controller) => true, GenerateParameterSetProperty, "ParameterSetName"),
 
                 // 'Items' property
+
                 ((controller) => !controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 &&
                     controller.DeclaredProperties.Values.First().Type.Equals("object"), GenerateItemsProperty, "Items"),
 

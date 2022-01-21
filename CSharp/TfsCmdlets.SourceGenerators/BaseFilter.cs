@@ -11,6 +11,13 @@ namespace TfsCmdlets.SourceGenerators
 
         public abstract bool ShouldProcessType(INamedTypeSymbol type);
 
+        protected Logger Logger { get; private set; }
+
+        public void Initialize(Logger logger)
+        {
+            Logger = logger;
+        }
+
         public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
         {
             if (!(context.Node is ClassDeclarationSyntax cds)) return;
@@ -27,7 +34,8 @@ namespace TfsCmdlets.SourceGenerators
 
                 if (!ShouldProcessType(type)) return;
 
-                Logger.Log($"Found '{type.FullName()}'");
+                //Logger.Log($"Found '{type.FullName()}'");
+
                 TypesToProcess[type.FullName()] = (type, cds);
             }
             catch (Exception ex)

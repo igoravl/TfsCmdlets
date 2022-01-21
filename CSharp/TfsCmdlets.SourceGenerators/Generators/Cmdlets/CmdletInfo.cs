@@ -25,12 +25,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public string CmdletAttribute { get; private set; }
         public string OutputTypeAttribute { get; private set; }
 
-        public CmdletInfo(INamedTypeSymbol cmdlet)
-            : base(cmdlet)
+        public CmdletInfo(INamedTypeSymbol cmdlet, Logger logger)
+            : base(cmdlet, logger)
         {
             if (cmdlet == null) throw new ArgumentNullException(nameof(cmdlet));
 
-            Verb = cmdlet.Name.Substring(0, cmdlet.Name.FindIndex(c => char.IsUpper(c), 1));
+            Verb = cmdlet.Name.Substring(0, cmdlet.Name.FindIndex(char.IsUpper, 1));
             Noun = cmdlet.Name.Substring(Verb.Length);
             Scope = cmdlet.GetAttributeConstructorValue<CmdletScope>("TfsCmdletAttribute");
             SkipAutoProperties = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipAutoProperties");
@@ -56,17 +56,15 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         {
             foreach (var (condition, generator, generatorName) in _generators)
             {
-                Logger.Log($"   - {generatorName}");
-
                 if (!condition(this))
                 {
-                    Logger.Log($"     - Skipping");
+                    //Logger.Log($"   - {generatorName} [-]");
                     continue;
                 };
 
                 foreach (var prop in generator(this))
                 {
-                    Logger.Log($"     - Generated!");
+                    //Logger.Log($"   - {generatorName} [{prop.Name}]");
                     GeneratedProperties.Add(prop.Name, prop);
                 }
             }
@@ -214,12 +212,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 ((cmdlet) => cmdlet.Verb == "Disable",
                     ci => GenerateParameterAsList("Passthru", "SwitchParameter", string.Empty, "HELP_PARAM_PASSTHRU"), "Disable->Passthru"), 
 
-                // Context-dependent properties
+                // Scope properties
 
-                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(CmdletScope.Team, ci), "Scope->Team"),
-                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(CmdletScope.Project, ci), "Scope->Project"),
-                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(CmdletScope.Collection, ci), "Scope->Collection"),
-                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(CmdletScope.Server, ci), "Scope->Server"), 
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(CmdletScope.Team, ci), "Scope properties"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(CmdletScope.Project, ci), "Scope properties"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(CmdletScope.Collection, ci), "Scope properties"),
+                ((cmdlet) => (int)cmdlet.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(CmdletScope.Server, ci), "Scope properties"), 
 
                 // Credential properties
 

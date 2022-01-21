@@ -12,7 +12,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         {
             try
             {
-                _controller = new ControllerInfo(Type, Context);
+                _controller = new ControllerInfo(Type, Context, Logger);
             }
             catch(Exception ex)
             {
