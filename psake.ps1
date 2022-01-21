@@ -239,13 +239,13 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     Push-Location $PSTestsDir
 
-    $outputLevel =if($isCi) { "Detailed" } else { "None" }
+    $outputLevel =if($isCi) { "Detailed" } else { "Minimal" }
 
     try {
-        Write-Output ' - PowerShell Core'
+        Write-Output ' == PowerShell Core =='
         Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Core.xml" }
     
-        Write-Output ' - PowerShell Desktop'
+        Write-Output ' == PowerShell Desktop =='
         Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Desktop.xml" }
     }
     finally {
