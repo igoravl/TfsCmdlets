@@ -1,8 +1,7 @@
-using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.Cmdlets.WorkItem;
 
 namespace TfsCmdlets.Controllers.WorkItem
 {
@@ -14,203 +13,249 @@ namespace TfsCmdlets.Controllers.WorkItem
 
         protected override IEnumerable Run()
         {
-            var workItem = Parameters.Get<object>(nameof(GetWorkItem.WorkItem));
-            var revision = Parameters.Get<int>(nameof(GetWorkItem.Revision));
-            var asOf = Parameters.Get<DateTime?>(nameof(GetWorkItem.AsOf));
-            var ever = Parameters.Get<bool>(nameof(GetWorkItem.Ever));
-            var query = Parameters.Get<string>(nameof(GetWorkItem.Query));
-            var filter = Parameters.Get<string>(nameof(GetWorkItem.Where));
-            var fields = Parameters.Get<object>(nameof(GetWorkItem.Fields)) as string[];
-            var showWindow = Parameters.Get<bool>(nameof(GetWorkItem.ShowWindow));
-            var deleted = Parameters.Get<bool>(nameof(GetWorkItem.Deleted));
-            var timePrecision = Parameters.Get<bool>(nameof(GetWorkItem.TimePrecision));
-            var includeLinks = Parameters.Get<bool>(nameof(GetWorkItem.IncludeLinks));
-            var expand = (includeLinks ? WorkItemExpand.All : WorkItemExpand.Fields);
+            var client = GetClient<WorkItemTrackingHttpClient>();
+            var expand = IncludeLinks ? WorkItemExpand.All : WorkItemExpand.Fields;
+            IEnumerable<string> fields = null;
 
-            var tp = Data.GetProject();
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
+            if (Deleted && !Has_Project)
+            {
+                throw new ArgumentException("You must specify a project to get deleted work items.");
+            }
 
-            var done = false;
+            if (Fields.Length > 0 && Fields[0] != "*")
+            {
+                expand = IncludeLinks ? WorkItemExpand.All : (ShowWindow ? WorkItemExpand.Links : WorkItemExpand.None);
+                fields = FixWellKnownFields(Fields);
+            }
 
-            while (!done) switch (workItem)
+            var ids = new List<int>();
+
+            foreach (var input in WorkItem)
+            {
+                var workItem = input switch
                 {
-                    case int id:
-                        {
-                            workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
-                            continue;
-                        }
-                    case string s when int.TryParse(s, out var id):
-                        {
-                            workItem = FetchWorkItem(id, revision, asOf, expand, fields, client);
-                            continue;
-                        }
-                    case IEnumerable<object> wis:
-                        {
-                            var list = new List<int>();
-                            foreach (var o in wis)
-                            {
-                                switch (o)
-                                {
-                                    case int i: list.Add(i); break;
-                                    case WebApiWorkItem wi: list.Add((int)wi.Id); break;
-                                }
-                            }
-                            workItem = list.ToArray();
-                            continue;
-                        }
-                    case null when deleted:
-                    case object o when deleted:
-                        {
-                            IEnumerable<WorkItemDeleteReference> result;
+                    string s when int.TryParse(s, out var id) => id,
+                    WebApiWorkItem wi when IncludeLinks && wi.Relations == null => wi.Id,
+                    WorkItemReference wiRef => wiRef.Id,
+                    WorkItemRelation rel => new Uri(rel.Url),
+                    _ => input
+                };
 
-                            if (workItem is IEnumerable<int> ids)
-                            {
-                                result = client.GetDeletedWorkItemsAsync(ids)
-                                    .GetResult($"Error getting deleted work items {string.Join(", ", ids)}");
-                            }
-                            else
-                            {
-                                var refs = client.GetDeletedWorkItemShallowReferencesAsync(tp.Name)
-                                    .GetResult($"Error getting references for deleted work items")
-                                    .Select(r => (int)r.Id)
-                                    .ToList();
-
-                                if (refs.Count == 0) yield break;
-
-                                result = client.GetDeletedWorkItemsAsync(refs)
-                                    .GetResult($"Error getting deleted work items");
-                            }
-
-                            foreach (var wi in result)
-                            {
-                                yield return new WebApiWorkItem()
-                                {
-                                    Id = wi.Id,
-                                    Fields = new Dictionary<string, object>()
-                                    {
-                                        ["System.WorkItemType"] = wi.Type,
-                                        ["System.Title"] = wi.Name,
-                                        ["System.AreaPath"] = wi.Project,
-                                        ["System.State"] = "<Deleted>",
-                                        ["System.IterationPath"] = wi.Project,
-                                        ["System.ChangedDate"] = wi.DeletedDate,
-                                        ["DeletedBy"] = wi.DeletedBy,
-                                        ["DeletedDate"] = wi.DeletedDate,
-                                        ["WorkItemDeleteReference"] = wi
-                                    },
-                                    Url = wi.Url
-                                };
-                            }
-                            yield break;
-                        }
-                    case WebApiWorkItem wi when showWindow:
-                        {
-                            ProcessUtil.OpenInBrowser(((ReferenceLink)wi.Links.Links["html"]).Href);
-                            yield break;
-                        }
-                    case WebApiWorkItem wi when includeLinks && wi.Relations == null:
-                        {
-                            workItem = new[] { (int)wi.Id };
-                            continue;
-                        }
+                switch (workItem)
+                {
                     case WebApiWorkItem wi:
                         {
                             yield return wi;
-                            yield break;
+                            break;
                         }
-                    case WorkItemReference wiRef:
+                    case int id:
                         {
-                            workItem = wiRef.Id;
-                            continue;
-                        }
-                    case WorkItemRelation rel:
-                        {
-                            workItem = new Uri(rel.Url);
-                            continue;
+                            if (!Has_Revision)
+                            {
+                                ids.Add(id);
+                                continue;
+                            }
+                            yield return GetWorkItemById(id, expand, fields, client);
+                            break;
                         }
                     case Uri url:
                         {
-                            if (!url.LocalPath
-                                .Substring(0, url.LocalPath.Length - url.Segments[url.Segments.Length - 1].Length)
-                                .EndsWith("/_apis/wit/workItems/", StringComparison.OrdinalIgnoreCase)) yield break;
+                            var lastSegment = url.Segments[url.Segments.Length - 1];
+                            var length = url.LocalPath.Length - lastSegment.Length;
 
-                            if (!int.TryParse(url.Segments[url.Segments.Length - 1], out var id)) yield break;
+                            if (!url.LocalPath.Substring(0, length).EndsWith("/_apis/wit/workItems/", StringComparison.OrdinalIgnoreCase)) continue;
+                            if (!int.TryParse(lastSegment, out var id)) continue;
 
-                            workItem = id;
-                            continue;
-                        }
-                    case IEnumerable<int> ids:
-                        {
-                            if (showWindow)
+                            if (!Has_Revision)
                             {
-                                Logger.LogWarn("ShowWindow is being ignored, since it cannot be used with multiple work items");
+                                ids.Add(id);
+                                continue;
                             }
-
-                            foreach (int id in ids) yield return FetchWorkItem(id, revision, asOf, expand, fields, client);
-
-                            yield break;
+                            yield return GetWorkItemById(id, expand, fields, client);
+                            break;
                         }
-                    case null when !string.IsNullOrEmpty(filter):
+                    case null when !string.IsNullOrEmpty(Where):
                         {
-                            query = $"SELECT [System.Id] FROM WorkItems WHERE {filter}";
-                            filter = null;
-                            continue;
-                        }
-                    case null when !string.IsNullOrEmpty(query) && query.StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase):
-                        {
-                            var result = client.QueryByWiqlAsync(new Wiql() { Query = query }, tp.Name, timePrecision)
-                                .GetResult($"Error running work item query '{query}'");
+                            var fieldList = expand == WorkItemExpand.None ? string.Join(",", fields) : "*";
+                            var wiql = $"SELECT {fieldList} FROM WorkItems WHERE {Where}";
 
-                            foreach (var wiRef in result.WorkItems)
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+
+                            break;
+                        }
+                    case null when !string.IsNullOrEmpty(Query):
+                        {
+                            var wiql = GetItem<QueryHierarchyItem>(new { ItemType = "Query" }).Wiql;
+
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+
+                            break;
+                        }
+                    case null when Deleted:
+                        {
+                            foreach (var wi in GetDeletedWorkItems(null, client))
                             {
-                                yield return FetchWorkItem(wiRef.Id, 0, DateTime.MinValue, expand, fields, client);
+                                yield return wi;
                             }
-
                             yield break;
-                        }
-                    case null when !string.IsNullOrEmpty(query):
-                        {
-                            var savedQuery = client.GetQueryAsync(tp.Name, query)
-                                .GetResult($"Error running work item query '{query}'");
-                            query = savedQuery.Wiql;
-                            continue;
                         }
                     default:
                         {
-                            query = BuildSimpleQuery(timePrecision, ever);
-                            continue;
+                            if (!ParameterSetName.Equals("Simple query"))
+                            {
+                                throw new ArgumentException($"Invalid work item '{workItem}'");
+                            }
+
+                            var wiql = BuildSimpleQuery(fields);
+
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+
+                            break;
                         }
                 }
+            }
+
+            if (ids.Count == 0) yield break;
+
+            foreach (var wi in GetWorkItemsById(ids, Has_AsOf ? AsOf : null, expand, expand != WorkItemExpand.None ? null : fields, client))
+            {
+                if (ShowWindow)
+                {
+                    ProcessUtil.OpenInBrowser(((ReferenceLink)wi.Links.Links["html"]).Href);
+                    continue;
+                }
+
+                yield return wi;
+            }
+
         }
 
-        private WebApiWorkItem FetchWorkItem(int id, int revision, DateTime? asOf, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
+        private WebApiWorkItem GetWorkItemById(int id, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
         {
-            if (expand != WorkItemExpand.None)
-            {
-                fields = null;
-            }
-            else
-            {
-                fields = FixWellKnownFields(fields).ToList();
-            }
+            WebApiWorkItem wi = null;
 
             try
             {
-                if (revision > 0)
-                    return client.GetRevisionAsync(id, revision, expand)
+                if (Deleted)
+                {
+                    return GetDeletedWorkItems(new[] { id }, client).FirstOrDefault();
+                }
+                else if (Has_Revision)
+                {
+                    wi = client.GetRevisionAsync(id, Revision, expand)
                         .GetResult($"Error getting work item '{id}'");
-                else if (asOf.HasValue && asOf.Value > DateTime.MinValue)
-                    return client.GetWorkItemAsync(id, fields, asOf, expand)
+                }
+                else if (Has_AsOf)
+                {
+                    wi = client.GetWorkItemAsync(id, fields, AsOf, expand)
                         .GetResult($"Error getting work item '{id}'");
+                }
                 else
-                    return client.GetWorkItemAsync(id, fields, null, expand)
+                {
+                    wi = client.GetWorkItemAsync(id, fields, null, expand)
                         .GetResult($"Error getting work item '{id}'");
+                }
+
+                if (ShowWindow)
+                {
+                    ProcessUtil.OpenInBrowser(((ReferenceLink)wi.Links.Links["html"]).Href);
+                    return null;
+                }
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, ex.InnerException.GetType().Name, ErrorCategory.ReadError, id);
-                return null;
+                Logger.LogError(ex);
             }
+
+            return wi;
+        }
+
+        private IEnumerable<WebApiWorkItem> GetWorkItemsById(IEnumerable<int> ids, DateTime? asOf, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
+        {
+            IList<int> idList;
+
+            if ((idList = (ids ?? Enumerable.Empty<int>()).ToList()).Count == 0)
+            {
+                return Enumerable.Empty<WebApiWorkItem>();
+            }
+
+            return client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail).GetResult();;
+        }
+
+        private IEnumerable<WebApiWorkItem> GetDeletedWorkItems(IEnumerable<int> ids, WorkItemTrackingHttpClient client)
+        {
+            IEnumerable<WorkItemDeleteReference> result;
+
+            if (ids != null)
+            {
+                result = client.GetDeletedWorkItemsAsync(ids)
+                    .GetResult($"Error getting deleted work item {ids}");
+            }
+            else
+            {
+                IList<WorkItemDeleteShallowReference> refs;
+                var projectName = GetItem<WebApiTeamProject>(new { Deleted = false }).Name;
+
+                refs = client.GetDeletedWorkItemShallowReferencesAsync(Project.Name)
+                   .GetResult($"Error getting references for deleted work items");
+
+                if (refs.Count == 0) yield break;
+
+                result = client.GetDeletedWorkItemsAsync(refs.Select(r => (int)r.Id))
+                    .GetResult($"Error getting deleted work items");
+            }
+
+            foreach (var wi in result)
+            {
+                yield return new WebApiWorkItem()
+                {
+                    Id = wi.Id,
+                    Fields = new Dictionary<string, object>()
+                    {
+                        ["System.WorkItemType"] = wi.Type,
+                        ["System.Title"] = wi.Name,
+                        ["System.AreaPath"] = wi.Project,
+                        ["System.State"] = "<Deleted>",
+                        ["System.IterationPath"] = wi.Project,
+                        ["System.ChangedDate"] = wi.DeletedDate,
+                        ["DeletedBy"] = wi.DeletedBy,
+                        ["DeletedDate"] = wi.DeletedDate,
+                        ["WorkItemDeleteReference"] = wi
+                    },
+                    Url = wi.Url
+                };
+            }
+        }
+
+        private IEnumerable<WebApiWorkItem> GetWorkItemsByWiql(string query, WorkItemExpand expand, WorkItemTrackingHttpClient client)
+        {
+            TeamContext tc = null;
+            ProjectReference pr = null;
+
+            if (Data.TryGetTeam(out var team)) tc = new TeamContext(team.ProjectId, team.Id);
+            if (Data.TryGetProject(out var project)) pr = new ProjectReference { Id = project.Id };
+
+            var wiql = new Wiql { Query = query };
+
+            WorkItemQueryResult result;
+
+            if (tc != null)
+            {
+                result = client.QueryByWiqlAsync(wiql, tc, TimePrecision)
+                    .GetResult($"Error querying work items");
+            }
+            else if (pr != null)
+            {
+                result = client.QueryByWiqlAsync(wiql, pr.Id, TimePrecision)
+                    .GetResult($"Error querying work items");
+            }
+            else
+            {
+                result = client.QueryByWiqlAsync(wiql, TimePrecision)
+                    .GetResult($"Error querying work items");
+            }
+
+            return GetWorkItemsById(result.WorkItems.Select(w => w.Id), result.AsOf, expand, expand != WorkItemExpand.None ? null : result.Columns.Select(f => f.ReferenceName), client);
         }
 
         private IEnumerable<string> FixWellKnownFields(IEnumerable<string> fields)
@@ -219,25 +264,17 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             foreach (var f in fields)
             {
-                if (f.IndexOf('.') > 0)
-                {
-                    yield return f;
-                    continue;
-                }
-
-                yield return WellKnownFields.FirstOrDefault(s =>
-                    s.Equals($"System.{f}", StringComparison.OrdinalIgnoreCase) ||
-                    s.Equals($"Microsoft.VSTS.Common.{f}", StringComparison.OrdinalIgnoreCase)) ?? f;
+                yield return f.IndexOf('.') > 0 ?
+                f :
+                WellKnownFields.FirstOrDefault(s => s.EndsWith(f, StringComparison.OrdinalIgnoreCase)) ?? f;
             }
         }
 
-        private string BuildSimpleQuery(bool timePrecision, bool ever)
+        private string BuildSimpleQuery(IEnumerable<string> fields)
         {
             var sb = new StringBuilder();
 
-            sb.Append("SELECT [System.Id] FROM WorkItems Where");
-
-            // TODO: Ever
+            sb.Append($"SELECT {string.Join(", ", fields)} FROM WorkItems Where");
 
             var hasCriteria = false;
 
@@ -261,12 +298,12 @@ namespace TfsCmdlets.Controllers.WorkItem
                 {
                     case "Text":
                         {
-                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
                                 var v = values[i];
-                                var op = ever ? "ever" : (v.IsWildcard() ? "contains" : "=");
+                                var op = Ever ? "ever" : (v.IsWildcard() ? "contains" : "=");
                                 sb.Append($"{(i > 0 ? " OR " : "")}([{kvp.Value.Item2}] {op} '{v}')");
                             }
                             sb.Append(")");
@@ -274,12 +311,12 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "LongText":
                         {
-                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
                                 var v = values[i];
-                                var op = ever ? "ever contains" : "contains";
+                                var op = Ever ? "ever contains" : "contains";
                                 sb.Append($"{(i > 0 ? " OR " : "")}([{kvp.Value.Item2}] {op} '{v}')");
                             }
                             sb.Append(")");
@@ -287,24 +324,26 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Number":
                         {
-                            var values = ((paramValue as IEnumerable<int>) ?? (IEnumerable<int>)new[]{(int)paramValue}).ToList();
+                            var values = ((paramValue as IEnumerable<int>) ?? (IEnumerable<int>)new[] { (int)paramValue }).ToList();
+                            var op = Ever ? "ever" : "=";
                             sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v})")));
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] {op} {v})")));
                             sb.Append(")");
                             break;
                         }
                     case "Date":
                         {
-                            var values = ((paramValue as IEnumerable<DateTime>) ?? (IEnumerable<DateTime>)new[]{(DateTime)paramValue}).ToList();
-                            var format = $"yyyy-MM-dd HH:mm:ss{(timePrecision ? "HH:mm:ss" : "")}";
+                            var values = ((paramValue as IEnumerable<DateTime>) ?? (IEnumerable<DateTime>)new[] { (DateTime)paramValue }).ToList();
+                            var op = Ever ? "ever" : "=";
+                            var format = $"yyyy-MM-dd HH:mm:ss{(TimePrecision ? "HH:mm:ss" : "")}";
                             sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v.ToString(format)})")));
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] {op} {v.ToString(format)})")));
                             sb.Append(")");
                             break;
                         }
                     case "Tree":
                         {
-                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[]{(string)paramValue}).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{v}')")));
                             sb.Append(")");
@@ -312,9 +351,10 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Boolean":
                         {
-                            var values = ((paramValue as IEnumerable<bool>) ?? (IEnumerable<bool>)new[]{(bool)paramValue}).ToList();
+                            var values = ((paramValue as IEnumerable<bool>) ?? (IEnumerable<bool>)new[] { (bool)paramValue }).ToList();
+                            var op = Ever ? "ever" : "=";
                             sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] = {v})")));
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] {op} {v})")));
                             sb.Append(")");
                             break;
                         }
@@ -329,16 +369,18 @@ namespace TfsCmdlets.Controllers.WorkItem
                 }
             }
 
-            // TODO: AsOf
-
-            // TODO: Set Team Context
-
-            var query = sb.ToString().Trim();
-
-            if (query.EndsWith(" FROM WorkItems Where"))
+            if (!hasCriteria)
             {
                 throw new ArgumentException("No filter arguments have been specified. Unable to perform a simple query.");
             }
+
+            if (Has_AsOf)
+            {
+                var asOf = AsOf.ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ssZ");
+                sb.Append($" ASOF '{asOf}'");
+            }
+
+            var query = sb.ToString().Trim();
 
             Logger.Log($"Simple query generated: \"{query}\"");
 

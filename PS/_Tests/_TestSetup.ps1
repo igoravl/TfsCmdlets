@@ -1,8 +1,8 @@
 $scriptRoot = $PSScriptRoot
 $solutionDir = Join-Path $scriptRoot '../..' -Resolve
 $outDir = Join-Path $solutionDir 'out' -Resolve
-$projectDir = Join-Path $solutionDir 'Module' 
 $modulePath = Join-Path $outDir Module
+$manifestPath = Join-Path $modulePath 'TfsCmdlets.psd1'
 $hasBuild = Test-Path $modulePath
 
 $global:tfsAccessToken = $env:TFSCMDLETS_ACCESS_TOKEN
@@ -14,5 +14,11 @@ if (-not $hasBuild)
     throw "Module TfsCmdlets not found at $modulePath. Build project prior to running tests."
 }
 
-Get-Module TfsCmdlets | Remove-Module
-Import-Module (Join-Path $modulePath 'TfsCmdlets.psd1') -Force
+$module = Get-Module TfsCmdlets
+
+if($module -and ($module.ModuleBase -ne $modulePath))
+{
+    Get-Module TfsCmdlets | Remove-Module
+    Import-Module $manifestPath -Force
+}
+

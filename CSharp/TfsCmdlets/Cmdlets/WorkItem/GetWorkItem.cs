@@ -5,7 +5,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
     /// <summary>
     /// Gets the contents of one or more work items.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Team, DefaultParameterSetName = "Query by revision", OutputType = typeof(WebApiWorkItem))]
+    [TfsCmdlet(CmdletScope.Team, DefaultParameterSetName = "Query by revision", OutputType = typeof(WebApiWorkItem), NoAutoPipeline = true)]
     partial class GetWorkItem
     {
         /// <summary>
@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </seealso>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by revision", ValueFromPipeline = true)]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Query by date", ValueFromPipeline = true)]
-        [Parameter(Position = 0, ParameterSetName = "Get deleted")]
+        [Parameter(Position = 0, ParameterSetName = "Get deleted", ValueFromPipeline = true)]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
@@ -174,10 +174,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         /// <summary>
         /// Specifies which fields should be retrieved. When omitted, defaults to a set of
-        /// standard fields that include Id, Title, Description, some state-related fields and more.
+        /// standard fields that include Id, Title, Description, some state-related fields and more. 
+        /// To retrive all fields, pass an asterisk ('*') to this argument.
         /// </summary>
         [Parameter]
-        [Parameter(Position = 0, ParameterSetName = "Query by filter")]
+        [Parameter(ParameterSetName = "Query by date")]
+        [Parameter(ParameterSetName = "Query by revision")]
+        [Parameter(ParameterSetName = "Query by filter")]
+        [Parameter(ParameterSetName = "Simple query")]
+        [SupportsWildcards]
+        [ValidateNotNullOrEmpty]
         public string[] Fields { get; set; } = new[] 
             {"System.AreaPath", "System.TeamProject", "System.IterationPath",
              "System.WorkItemType", "System.State", "System.Reason",
@@ -199,6 +205,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter(ParameterSetName = "Query by WIQL")]
         [Parameter(ParameterSetName = "Query by filter")]
+        [Parameter(ParameterSetName = "Query by date")]
         [Parameter(ParameterSetName = "Simple query")]
         public SwitchParameter TimePrecision { get; set; }
 

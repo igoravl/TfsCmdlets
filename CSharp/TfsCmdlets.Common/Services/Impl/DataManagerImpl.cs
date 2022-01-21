@@ -28,9 +28,9 @@ namespace TfsCmdlets.Services.Impl
                 throw new ArgumentException($"Command '{verb}' not found for data type '{dataType.Name}'");
             }
 
-            foreach(var item in DoInvokeCommand(controller, overridingParameters))
+            foreach (var item in DoInvokeCommand(controller, overridingParameters))
             {
-                yield return (T) item;
+                yield return (T)item;
             }
         }
 
@@ -76,28 +76,56 @@ namespace TfsCmdlets.Services.Impl
                 throw new ArgumentException("No server information available. Either supply a valid -Server argument or use Connect-TfsConfigurationServer prior to invoking this cmdlet.");
 
         public bool TryGetServer(out Models.Connection server, object overridingParameters = null)
-            => (server = CreateConnection(ClientScope.Server, overridingParameters)) != null;
+        {
+            server = null;
+
+            try { server = CreateConnection(ClientScope.Server, overridingParameters); }
+            catch { }
+
+            return server != null;
+        }
 
         public Connection GetCollection(object overridingParameters = null)
             => CreateConnection(ClientScope.Collection, overridingParameters) ??
                 throw new ArgumentException("No team project collection (organization) information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection (or Connect-TfsOrganization) prior to invoking this cmdlet.");
 
         public bool TryGetCollection(out Models.Connection collection, object overridingParameters = null)
-            => (collection = CreateConnection(ClientScope.Collection, overridingParameters)) != null;
+        {
+            collection = null;
+
+            try { collection = CreateConnection(ClientScope.Collection, overridingParameters); }
+            catch { }
+
+            return collection != null;
+        }
 
         public WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null)
-            => GetItem<WebApiTeamProject>(overridingParameters) ??
+            => GetItems<WebApiTeamProject>(overridingParameters).FirstOrDefault() ??
                 throw new ArgumentException("No team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
 
         public bool TryGetProject(out WebApiTeamProject project, object overridingParameters = null)
-            => (project = GetItem<WebApiTeamProject>(overridingParameters)) != null;
+        {
+            project = null;
+
+            try { project = GetItem<WebApiTeamProject>(overridingParameters); }
+            catch { }
+
+            return project != null;
+        }
 
         public Models.Team GetTeam(object overridingParameters = null, string contextValue = null)
-            => GetItem<Models.Team>(overridingParameters) ??
+            => GetItems<Models.Team>(overridingParameters).FirstOrDefault() ??
                 throw new ArgumentException("No team information available. Either supply a valid -Team argument or use Connect-TfsTeam prior to invoking this cmdlet.");
 
         public bool TryGetTeam(out WebApiTeam team, object overridingParameters = null)
-            => (team = GetItem<WebApiTeam>(overridingParameters)) != null;
+        {
+            team = null;
+
+            try { team = GetItem<Models.Team>(overridingParameters); }
+            catch { }
+
+            return team != null;
+        }
 
         public T GetClient<T>(object overridingParameters = null)
         {
