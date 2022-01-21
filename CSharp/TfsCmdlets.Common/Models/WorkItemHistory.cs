@@ -19,10 +19,12 @@ namespace TfsCmdlets.Models
     [DataContract]
     public class WorkItemHistoryChangedField
     {
-        public int Id { get; set; }
-        public int Revision { get; set; }
         public string ReferenceName { get; set; }
         public object OriginalValue { get; set; }
         public object NewValue { get; set; }
+        public int Id { get; set; }
+        public int Revision { get; set; }
+
+        public override string ToString() => $"[{ReferenceName}] {{{OriginalValue}}}->{{{NewValue}}}";
     }
 }
