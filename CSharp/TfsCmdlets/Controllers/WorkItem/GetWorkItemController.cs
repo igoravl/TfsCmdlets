@@ -17,9 +17,16 @@ namespace TfsCmdlets.Controllers.WorkItem
             var expand = IncludeLinks ? WorkItemExpand.All : WorkItemExpand.Fields;
             IEnumerable<string> fields = null;
 
-            if (Deleted && !Has_Project)
+            var hasProject = Data.TryGetProject(out var _, new {Deleted=false});
+
+            if (Deleted && !hasProject)
             {
-                throw new ArgumentException("You must specify a project to get deleted work items.");
+                throw new ArgumentException($"'{Parameters.Get<object>("Project")}' is not a valid project, which is required to get deleted work items. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
+            }
+
+            if (Has_SavedQuery && !hasProject)
+            {
+                throw new ArgumentException($"'{Parameters.Get<object>("Project")}' is not a valid project, which is required to execute a saved query. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
             }
 
             if (Fields.Length > 0 && Fields[0] != "*")
@@ -83,9 +90,15 @@ namespace TfsCmdlets.Controllers.WorkItem
 
                             break;
                         }
-                    case null when !string.IsNullOrEmpty(Query):
+                    case null when !string.IsNullOrEmpty(Wiql):
                         {
-                            var wiql = GetItem<QueryHierarchyItem>(new { ItemType = "Query" }).Wiql;
+                            foreach (var wi in GetWorkItemsByWiql(Wiql, expand, client)) yield return wi;
+
+                            break;
+                        }
+                    case null when !string.IsNullOrEmpty(SavedQuery):
+                        {
+                            var wiql = GetItem<QueryHierarchyItem>(new { Query = SavedQuery, ItemType = "Query" }).Wiql;
 
                             foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
 
@@ -179,7 +192,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 return Enumerable.Empty<WebApiWorkItem>();
             }
 
-            return client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail).GetResult();;
+            return client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail).GetResult();
         }
 
         private IEnumerable<WebApiWorkItem> GetDeletedWorkItems(IEnumerable<int> ids, WorkItemTrackingHttpClient client)
@@ -196,7 +209,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 IList<WorkItemDeleteShallowReference> refs;
                 var projectName = GetItem<WebApiTeamProject>(new { Deleted = false }).Name;
 
-                refs = client.GetDeletedWorkItemShallowReferencesAsync(Project.Name)
+                refs = client.GetDeletedWorkItemShallowReferencesAsync(projectName)
                    .GetResult($"Error getting references for deleted work items");
 
                 if (refs.Count == 0) yield break;
@@ -255,7 +268,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                     .GetResult($"Error querying work items");
             }
 
-            return GetWorkItemsById(result.WorkItems.Select(w => w.Id), result.AsOf, expand, expand != WorkItemExpand.None ? null : result.Columns.Select(f => f.ReferenceName), client);
+            return GetWorkItemsById(result.WorkItems.Select(w => w.Id), result.AsOf, expand, expand != WorkItemExpand.None ? null : result.Columns.Select(f => f.ReferenceName).ToList(), client);
         }
 
         private IEnumerable<string> FixWellKnownFields(IEnumerable<string> fields)

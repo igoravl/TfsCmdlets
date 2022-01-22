@@ -12,15 +12,11 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
         protected override IEnumerable Run()
         {
-            var itemType = Parameters.Get<string>("ItemType");
-            var isFolder = itemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
-            var item = Parameters.Get<object>(itemType);
-            var scope = Parameters.Get<string>(nameof(GetWorkItemQuery.Scope));
-
-            var tp = Data.GetProject();
+            var isFolder = ItemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
+            var item = Parameters.Get<object>(ItemType);
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
-            var rootFolders = GetRootFolders(tp.Name, scope, client);
+            var rootFolders = GetRootFolders(Project.Name, Scope, client);
 
             switch (item)
             {
@@ -38,9 +34,9 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
                     {
                         foreach (var rootFolder in rootFolders)
                         {
-                            var path = NodeUtil.NormalizeNodePath(s, tp.Name, rootFolder.Name, includeScope: true, separator: '/');
+                            var path = NodeUtil.NormalizeNodePath(s, Project.Name, rootFolder.Name, includeScope: true, separator: '/');
 
-                            foreach (var c in GetItemsRecursively(rootFolder, path, tp.Name, !isFolder, client))
+                            foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, client))
                             {
                                 yield return c;
                             }

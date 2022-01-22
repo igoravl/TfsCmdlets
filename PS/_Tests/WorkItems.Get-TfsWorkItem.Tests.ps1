@@ -13,17 +13,21 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should get by ID and revision' {
-            (Get-TfsWorkItem -ID 150).Rev | Should -Be 3
+            (Get-TfsWorkItem -ID 150).Rev | Should -Be 4
             (Get-TfsWorkItem -ID 150 -Revision 2).Rev | Should -Be 2
         }
 
         It 'Should support ASOF when getting by ID' {
-            (Get-TfsWorkItem 150 -AsOf (Get-Date)).Rev | Should -Be 3
+            (Get-TfsWorkItem 150 -AsOf (Get-Date)).Rev | Should -Be 4
             (Get-TfsWorkItem -ID 150 -Revision 2).Rev | Should -Be 2
         }
 
+        It 'Should throw when getting deleted WIs without a project' {
+            {Get-TfsWorkItem -Deleted} | Should -Throw
+        }
+
         It 'Should get deleted WIs' {
-            (Get-TfsWorkItem -Deleted).Id | Should -Be 180
+            (Get-TfsWorkItem -Project $tfsProject -Deleted).Id | Should -Be 180
         }
 
         It 'Should support EVER for simple queries' {
@@ -37,6 +41,11 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         It 'Should support WIQL queries' {
             $result = Get-TfsWorkItem -Wiql 'SELECT System.Id, System.Title FROM WorkItems WHERE System.Id = 150'
             $result.Count | Should -Be 1
+        }
+
+        It 'Should support saved queries' {
+            $result = Get-TfsWorkItem -SavedQuery 'Shared Queries\All Bugs' -Project $tfsProject
+            $result.Count | Should -Be 2
         }
 
         It 'Should limit fields when getting by ID' {
@@ -55,6 +64,11 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             $result = Get-TfsWorkItem -Wiql 'SELECT System.Id, System.Title FROM WorkItems WHERE System.Id = 150'
             $result.Count | Should -Be 1
             $result.Fields.Count | Should -Be 2
+        }
+
+        It 'Should limit fields in saved queries' {
+            $result = Get-TfsWorkItem -SavedQuery 'Shared Queries\All Bugs' -Project $tfsProject
+            $result.Fields.Count | Should -BeLessOrEqual 6
         }
 
         It 'Should not get links and relations when not requested' {

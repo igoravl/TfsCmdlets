@@ -13,7 +13,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should get all revisions' {
-            (Get-TfsWorkItemHistory 150).Count | Should -Be 3
+            (Get-TfsWorkItemHistory 150).Count | Should -Be 4
         }
         
         AfterAll {

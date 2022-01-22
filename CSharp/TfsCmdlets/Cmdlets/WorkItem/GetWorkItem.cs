@@ -147,9 +147,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// "WAS EVER" where possible.
         /// </summary>
         [Parameter(ParameterSetName = "Simple query")]
+        [Alias("WasEver")]
         public SwitchParameter Ever { get; set; }
 
-        /// <summary>
+        /// <summary>B
         /// Specifies a work item revision number to retrieve. When omitted, returns
         /// the latest revision of the work item.
         /// </summary>
@@ -169,8 +170,21 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies a query written in WIQL (Work Item Query Language)
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Query by WIQL")]
-        [Alias("WIQL", "QueryText", "SavedQuery", "QueryPath")]
-        public string Query { get; set; }
+        [Alias("Query", "QueryText")]
+        public string Wiql { get; set; }
+
+        /// <summary>
+        /// Specifies the path of a saved query to be executed. 
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Query by saved query")]
+        [Alias("QueryPath")]
+        public string SavedQuery { get; set; }
+
+        /// <summary>
+        /// Specifies the path of a saved query to be executed. 
+        /// </summary>
+        [Parameter(ParameterSetName = "Query by saved query")]
+        public Hashtable QueryParameters { get; set; }
 
         /// <summary>
         /// Specifies which fields should be retrieved. When omitted, defaults to a set of
@@ -203,10 +217,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Fetches work items in "time-precision mode": search criteria in WIQL queries 
         /// take into account time information as well, not only dates.
         /// </summary>
-        [Parameter(ParameterSetName = "Query by WIQL")]
-        [Parameter(ParameterSetName = "Query by filter")]
-        [Parameter(ParameterSetName = "Query by date")]
-        [Parameter(ParameterSetName = "Simple query")]
+        [Parameter]
         public SwitchParameter TimePrecision { get; set; }
 
         /// <summary>
