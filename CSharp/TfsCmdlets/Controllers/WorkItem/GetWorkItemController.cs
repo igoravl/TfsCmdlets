@@ -17,7 +17,7 @@ namespace TfsCmdlets.Controllers.WorkItem
             var expand = IncludeLinks ? WorkItemExpand.All : WorkItemExpand.Fields;
             IEnumerable<string> fields = null;
 
-            var hasProject = Data.TryGetProject(out var _, new {Deleted=false});
+            var hasProject = Data.TryGetProject(out var _, new { Deleted = false });
 
             if (Deleted && !hasProject)
             {
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 throw new ArgumentException($"'{Parameters.Get<object>("Project")}' is not a valid project, which is required to execute a saved query. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
             }
 
-            if (Fields.Length > 0 && Fields[0] != "*")
+            if (!Deleted && Fields.Length > 0 && Fields[0] != "*")
             {
                 expand = IncludeLinks ? WorkItemExpand.All : (ShowWindow ? WorkItemExpand.Links : WorkItemExpand.None);
                 fields = FixWellKnownFields(Fields);
@@ -50,9 +50,19 @@ namespace TfsCmdlets.Controllers.WorkItem
 
                 switch (workItem)
                 {
+                    case WebApiWorkItem wi when Deleted:
+                        {
+                            yield return GetWorkItemById((int)wi.Id, WorkItemExpand.None, null, client);
+                            break;
+                        }
                     case WebApiWorkItem wi:
                         {
                             yield return wi;
+                            break;
+                        }
+                    case int id when Deleted:
+                        {
+                            yield return GetWorkItemById(id, WorkItemExpand.None, null, client);
                             break;
                         }
                     case int id:
