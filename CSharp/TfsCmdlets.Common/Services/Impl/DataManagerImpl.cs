@@ -153,9 +153,23 @@ namespace TfsCmdlets.Services.Impl
                 var connection = Parameters.Get<object>(scope.ToString());
                 var current = Parameters.Get<bool>("Current");
 
-                if (connection is string u && Uri.IsWellFormedUriString(u, UriKind.Absolute))
+                switch (connection)
                 {
-                    connection = new Uri(u);
+                    case string s when !string.IsNullOrEmpty(s) && Uri.IsWellFormedUriString(s, UriKind.Absolute):
+                        {
+                            connection = new Uri(s);
+                            break;
+                        }
+                    case string s when !string.IsNullOrEmpty(s) && !Uri.IsWellFormedUriString(s, UriKind.Absolute):
+                        {
+                            if (TryGetServer(out var server) && !server.IsHosted)
+                            {
+                                throw new NotImplementedException("Connecting to an on-premises collection by name is not yet supported.");
+                            }
+
+                            connection = new Uri($"https://dev.azure.com/{s.Trim('/')}");
+                            break;
+                        }
                 }
 
                 switch (connection)

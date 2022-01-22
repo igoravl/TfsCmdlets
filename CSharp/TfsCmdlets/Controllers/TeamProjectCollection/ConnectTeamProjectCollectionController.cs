@@ -10,28 +10,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
         protected override IEnumerable Run()
         {
-            object collection;
-
-            switch (Collection)
-            {
-                case string s when !string.IsNullOrEmpty(s) && !Uri.IsWellFormedUriString(s, UriKind.Absolute):
-                    {
-                        if (Data.TryGetServer(out var server) && !server.IsHosted)
-                        {
-                            throw new NotImplementedException("Connecting to an on-premises collection by name is not yet supported.");
-                        }
-
-                        collection = $"https://dev.azure.com/{s.Trim('/')}";
-                        break;
-                    }
-                default:
-                    {
-                        collection = Collection;
-                        break;
-                    }
-            }
-
-            var tpc = Data.GetCollection(new { Collection = collection });
+            var tpc = Data.GetCollection();
 
             tpc.Connect();
             var srv = tpc.ConfigurationServer;
