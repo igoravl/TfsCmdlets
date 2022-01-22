@@ -41,6 +41,8 @@ namespace TfsCmdlets.Services.Impl
 
         public string CurrentCommand => Cmdlet.DisplayName;
 
+        public string CurrentCommandLine => Cmdlet.MyInvocation.Line.Trim();
+
         public string WindowTitle { get => Cmdlet.Host.UI.RawUI.WindowTitle; set => Cmdlet.Host.UI.RawUI.WindowTitle = value; }
 
         public PSModuleInfo Module => Cmdlet.MyInvocation.MyCommand.Module;

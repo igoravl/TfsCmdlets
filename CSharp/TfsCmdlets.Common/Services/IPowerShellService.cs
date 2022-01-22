@@ -35,6 +35,8 @@ namespace TfsCmdlets.Services
 
         string CurrentCommand {get;}
 
+        string CurrentCommandLine {get;}
+
         bool ShouldProcess(string target, string action);
 
         bool ShouldProcess(Connection collection, string action);
