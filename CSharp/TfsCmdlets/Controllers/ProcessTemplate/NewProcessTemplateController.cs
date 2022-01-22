@@ -1,3 +1,6 @@
+using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models;
+
 namespace TfsCmdlets.Controllers.ProcessTemplate
 {
     [CmdletController(typeof(WebApiProcess))]
@@ -5,44 +8,31 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     {
         protected override IEnumerable Run()
         {
-            throw new NotImplementedException();
-            //    {
-            //        var tpc = Collection;
+            var parent = GetItem<WebApiProcess>(new { ProcessTemplate = Parent });
+            var exists = TestItem<WebApiProcess>();
 
-            //        var process = parameters.Get<string>(nameof(NewProcessTemplate.ProcessTemplate));
-            //        var description = parameters.Get<string>(nameof(NewProcessTemplate.Description));
-            //        var referenceName = parameters.Get<string>(nameof(NewProcessTemplate.ReferenceName));
-            //        var parent = Data.GetItem<WebApiProcess>(new { ProcessTemplate = parameters.Get<object>(nameof(NewProcessTemplate.Parent)) });
-            //        var exists = TestItem<WebApiProcess>();
-            //        var force = parameters.Get<bool>(nameof(NewProcessTemplate.Force));
+            if (!PowerShell.ShouldProcess(Collection, $"{(exists ? "Overwrite" : "Create")} process '{ProcessTemplate}', inheriting from '{parent.Name}'")) yield break;
 
-            //        if (!PowerShell.ShouldProcess(tpc, $"{(exists ? "Overwrite" : "Create")} process '{process}', inheriting from '{parent.Name}'")) return null;
+            if (exists && !(Force || PowerShell.ShouldContinue($"Are you sure you want to overwrite existing process '{ProcessTemplate}'?"))) yield break;
 
-            //        if (exists && !(force || ShouldContinue($"Are you sure you want to overwrite existing process '{process}'?"))) return null;
+            var client = Data.GetClient<WorkItemTrackingProcessHttpClient>();
 
-            //        var client = Data.GetClient<WorkItemTrackingProcessHttpClient>();
+            var tmpProcessName = exists ? $"{ProcessTemplate}_{new Random().Next():X}" : ProcessTemplate;
 
-            //        var tmpProcessName = exists? $"{process}_{(new Random().Next()):X}": process;
+            client.CreateNewProcessAsync(new CreateProcessModel() {
+                    Name = tmpProcessName,
+                    Description = Description,
+                    ParentProcessTypeId = parent.Id,
+                    ReferenceName = ReferenceName})
+                .GetResult($"Error creating process '{tmpProcessName}'");
 
-            //        var newProcess = client.CreateNewProcessAsync(new CreateProcessModel()
-            //        {
-            //            Name = tmpProcessName,
-            //            Description = description,
-            //            ParentProcessTypeId = parent.Id,
-            //            ReferenceName = referenceName
-            //        }).GetResult($"Error creating process '{tmpProcessName}'");
+            if (exists)
+            {
+                Data.RemoveItem<WebApiProcess>();
+                Data.RenameItem<WebApiProcess>(new { ProcessTemplate = tmpProcessName, NewName = ProcessTemplate });
+            }
 
-            //        if(exists)
-            //        {
-            //            RemoveItem();
-            //            Parameters["ProcessTemplate"] = tmpProcessName;
-            //            Parameters["NewName"] = process;
-            //            RenameItem();
-            //        }
-
-            //        return GetItem<WebApiProcess>(new { ProcessTemplate = process });
-            //    }
-            //}
+            yield return GetItem<WebApiProcess>();
         }
     }
 }

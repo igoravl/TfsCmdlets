@@ -16,6 +16,8 @@ namespace TfsCmdlets.Controllers
 
         protected T GetItem<T>(object overridingParameters = null) => Data.GetItem<T>(overridingParameters);
         
+        protected bool TestItem<T>(object overridingParameters = null) => Data.TestItem<T>(overridingParameters);
+        
         protected IEnumerable<T> GetItems<T>(object overridingParameters = null) => Data.GetItems<T>(overridingParameters);
 
         protected IParameterManager Parameters { get; }

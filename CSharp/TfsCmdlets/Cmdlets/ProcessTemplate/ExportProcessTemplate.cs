@@ -30,6 +30,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards()]
+        [Alias("Name", "Process")]
         public object ProcessTemplate { get; set; } = "*";
 
         /// <summary>

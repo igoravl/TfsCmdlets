@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// When omitted, all process templates in the given project collection are returned.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by name")]
-        [Alias("Name")]
+        [Alias("Name", "Process")]
         [SupportsWildcards()]
         public object ProcessTemplate { get; set; } = "*";
 

@@ -12,9 +12,9 @@ namespace TfsCmdlets.Services
 
         bool HasParameter(string parameter);
 
-        IDisposable PushContext(object overridingParameters);
+        IDisposable PushContext(object overridingParameters, string contextName);
 
-        void PopContext();
+        void PopContext(string contextName = null);
 
         void Reset();
 

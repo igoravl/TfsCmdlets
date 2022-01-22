@@ -145,7 +145,9 @@ namespace TfsCmdlets.Services.Impl
 
         private Connection CreateConnection(ClientScope scope, object overridingParameters = null)
         {
-            using (Parameters.PushContext(overridingParameters))
+            var contextName = $"Create{scope}Connection-{(new Random()).Next():X}";
+
+            using (Parameters.PushContext(overridingParameters, contextName))
             {
                 AdoConnection result;
                 var connection = Parameters.Get<object>(scope.ToString());
@@ -237,14 +239,16 @@ namespace TfsCmdlets.Services.Impl
 
         private IEnumerable DoInvokeCommand(IController controller, object overridingParameters)
         {
-            Parameters.PushContext(overridingParameters);
+            var contextName = $"{controller.CommandName}-{(new Random()).Next():X}";
+
+            Parameters.PushContext(overridingParameters, contextName);
 
             var result = controller.InvokeCommand();
 
-            return new EnumerableWrapper(result is IEnumerable list ? list : new[] { result }, () => Parameters.PopContext());
+            return new EnumerableWrapper(result is IEnumerable list ? list : new[] { result }, () => Parameters.PopContext(contextName));
         }
 
-        private sealed class EnumerableWrapper : IEnumerable, IEnumerator
+        private sealed class EnumerableWrapper : IEnumerable, IEnumerator, IDisposable
         {
             private readonly IEnumerator _inner;
             private readonly Action _onEnumerationCompleted;

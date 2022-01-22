@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// Specifies the name of the process to create.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        [Alias("Name")]
+        [Alias("Name", "Process")]
         public string ProcessTemplate { get; set; }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// <summary>
         /// Specifies the name of the parent process from which the new process will inherit.
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true)]
         public object Parent { get; set; }
 
         /// <summary>

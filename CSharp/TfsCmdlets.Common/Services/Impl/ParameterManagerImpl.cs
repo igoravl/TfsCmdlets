@@ -10,7 +10,7 @@ namespace TfsCmdlets.Services.Impl
         private Cmdlet _cmdlet;
         private IDictionary<string, object> _parameterValues;
         private IList<string> _boundParameters;
-        private readonly Stack<(Cmdlet, IDictionary<string, object>, IList<string>)> _contextStack = new Stack<(Cmdlet, IDictionary<string, object>, IList<string>)>();
+        private readonly Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)> _contextStack = new Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)>();
 
         /// <summary>
         /// Creates a new dictionary, copying the properties of supplied object
@@ -84,25 +84,19 @@ namespace TfsCmdlets.Services.Impl
             set => throw new InvalidOperationException("Cannot set parameter values directly. Use Override() method instead.");
         }
 
-        public IDisposable PushContext(object overridingParameters)
+        public IDisposable PushContext(object overridingParameters, string contextName)
         {
-            _contextStack.Push(new(_cmdlet, _parameterValues, _boundParameters));
+            _contextStack.Push(new(contextName, _cmdlet, _parameterValues, _boundParameters));
             (_parameterValues, _boundParameters) = Override(overridingParameters);
 
             return this;
         }
 
-        public void PushContext(Cmdlet cmdlet, object overridingParameters)
-        {
-            _contextStack.Push(new(cmdlet, _parameterValues, _boundParameters));
-            (_parameterValues, _boundParameters) = Override(overridingParameters);
-        }
-
-        public void PopContext()
+        public void PopContext(string contextName = null)
         {
             if (_contextStack.Count > 0)
             {
-                (_cmdlet, _parameterValues, _boundParameters) = _contextStack.Pop();
+                (var actualContextName, _cmdlet, _parameterValues, _boundParameters) = _contextStack.Pop();
                 return;
             }
 
