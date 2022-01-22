@@ -14,11 +14,5 @@ if (-not $hasBuild)
     throw "Module TfsCmdlets not found at $modulePath. Build project prior to running tests."
 }
 
-$module = Get-Module TfsCmdlets
-
-if($module -and ($module.ModuleBase -ne $modulePath))
-{
-    Get-Module TfsCmdlets | Remove-Module
-    Import-Module $manifestPath -Force
-}
-
+Get-Module TfsCmdlets | Remove-Module
+Import-Module $manifestPath -Force
