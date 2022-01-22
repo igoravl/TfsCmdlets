@@ -16,3 +16,5 @@ if (-not $hasBuild)
 
 Get-Module TfsCmdlets | Remove-Module
 Import-Module $manifestPath -Force
+
+$PSDefaultParameterValues['*:ErrorAction'] = 'Stop'

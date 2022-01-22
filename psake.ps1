@@ -243,10 +243,10 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     try {
         Write-Output ' == PowerShell Core =='
-        Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Core.xml" }
+        Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru -ExcludeTagFilter 'Desktop' | Export-JUnitReport -Path ../../out/TestResults-Core.xml" }
     
         Write-Output ' == PowerShell Desktop =='
-        Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru | Export-JUnitReport -Path ../../out/TestResults-Desktop.xml" }
+        Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru -ExcludeTagFilter 'Core' | Export-JUnitReport -Path ../../out/TestResults-Desktop.xml" }
     }
     finally {
         Remove-Item '*.xml' -Force -ErrorAction SilentlyContinue
