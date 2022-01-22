@@ -1,10 +1,9 @@
-using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Graph.Client;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
     /// <summary>
-    /// Gets information about an Azure DevOps user.
+    /// Creates a new Azure DevOps group.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup), SupportsShouldProcess = true)]
     partial class NewGroup

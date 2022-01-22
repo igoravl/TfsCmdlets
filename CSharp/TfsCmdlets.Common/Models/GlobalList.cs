@@ -15,7 +15,7 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Converts an XElement to a GlobalList
         /// </summary>
-        public static implicit operator GlobalList(XElement el) => new GlobalList(el);
+        public static implicit operator GlobalList(XElement el) => new(el);
 
         /// <summary>
         /// Creates an empty instance of GlobalList
@@ -85,7 +85,7 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Converts a well-formed &lt;gl:GLOBALLISTS&gt; document to a collection of global lists
         /// </summary>
-        public static implicit operator GlobalListCollection(XDocument doc) => new GlobalListCollection(doc);
+        public static implicit operator GlobalListCollection(XDocument doc) => new(doc);
 
         /// <summary>
         /// Creates an empty collection

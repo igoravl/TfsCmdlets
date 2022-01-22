@@ -169,7 +169,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             }
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateScopeProperty(ControllerInfo controller, CmdletScope scope, string scopeType)
+        private static IEnumerable<GeneratedProperty> GenerateScopeProperty(CmdletScope scope, string scopeType)
         {
             yield return new GeneratedProperty(scope.ToString(), "object", $@"        // {scope}
         protected bool Has_{scope} => Parameters.HasParameter(""{scope}"");
@@ -198,10 +198,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
                 // Scope properties
 
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(ci, CmdletScope.Team, "WebApiTeam"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(ci, CmdletScope.Project, "WebApiTeamProject"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(ci, CmdletScope.Collection, "Models.Connection"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(ci, CmdletScope.Server, "Models.Connection"), "Scope properties"), 
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(CmdletScope.Team, "WebApiTeam"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(CmdletScope.Project, "WebApiTeamProject"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(CmdletScope.Collection, "Models.Connection"), "Scope properties"),
+                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(CmdletScope.Server, "Models.Connection"), "Scope properties"), 
 
                 // ParameterSetName
 

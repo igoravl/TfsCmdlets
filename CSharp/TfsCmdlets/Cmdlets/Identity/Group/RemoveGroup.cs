@@ -1,17 +1,15 @@
-using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Graph.Client;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
     /// <summary>
-    /// Gets information about an Azure DevOps user.
+    /// Removes an Azure DevOps group.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup), SupportsShouldProcess = true)]
     partial class RemoveGroup
     {
         /// <summary>
-        /// Specifies the user or group to be retrieved. Supported values are: 
-        /// User/group name, email, or ID
+        /// Specifies the group to be removed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards]

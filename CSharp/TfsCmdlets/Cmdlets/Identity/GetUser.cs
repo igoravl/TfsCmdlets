@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.Licensing;
 namespace TfsCmdlets.Cmdlets.Identity
 {
     /// <summary>
-    /// Gets information about an Azure DevOps user.
+    /// Gets information about one or more Azure DevOps users.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(AccountEntitlement), DefaultParameterSetName = "Get by ID or Name")]
     partial class GetUser

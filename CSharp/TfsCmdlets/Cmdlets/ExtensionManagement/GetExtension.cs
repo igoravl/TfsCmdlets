@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
     /// <summary>
-    /// Gets an installed extension in the specified collection.
+    /// Gets one or more installed extensions in the specified collection.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(InstalledExtension))]
     partial class GetExtension

@@ -16,7 +16,6 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
                 _ => null
             };
 
-            var tp = Data.GetProject(pipelineParms);
             var t = Data.GetTeam(pipelineParms);
 
             var adminIdentity = Data.GetItem<Models.TeamAdmin>(new { Identity = admin });

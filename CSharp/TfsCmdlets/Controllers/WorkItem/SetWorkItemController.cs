@@ -43,8 +43,8 @@ namespace TfsCmdlets.Controllers.WorkItem
                     {
                         Operation = Operation.Add,
                         Path = $"/fields/{field.Key}",
-                        Value = field.Value is IEnumerable<string> ?
-                            string.Join(";", (IEnumerable<string>)field.Value) :
+                        Value = field.Value is IEnumerable<string> enumerable ?
+                            string.Join(";", enumerable) :
                             field.Value
                     });
                 }
@@ -151,7 +151,7 @@ namespace TfsCmdlets.Controllers.WorkItem
             return value;
         }
  
-         internal static readonly Dictionary<string, Tuple<string, string>> WellKnownFields = new Dictionary<string, Tuple<string, string>>()
+         internal static readonly Dictionary<string, Tuple<string, string>> WellKnownFields = new()
         {
             ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
             ["ChangedBy"] = new Tuple<string, string>("Identifier", "System.ChangedBy"),

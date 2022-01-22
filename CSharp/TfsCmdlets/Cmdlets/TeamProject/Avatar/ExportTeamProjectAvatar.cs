@@ -3,7 +3,7 @@ using System.Management.Automation;
 namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
 {
     /// <summary>
-    /// Exports the team project avatar (image).
+    /// Exports the current avatar (image) of the specified team project.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, HostedOnly = true)]
     partial class ExportTeamProjectAvatar

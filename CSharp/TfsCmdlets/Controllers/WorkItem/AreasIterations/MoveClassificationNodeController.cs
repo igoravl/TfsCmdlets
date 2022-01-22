@@ -37,7 +37,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             {
                 Logger.Log($"Source node: '{sourceNode.FullPath}'");
 
-                var moveTo = $@"{destinationNode.Path}\{sourceNode.Name}";
+                // var moveTo = $@"{destinationNode.Path}\{sourceNode.Name}";
 
                 if (!PowerShell.ShouldProcess($"Team Project '{sourceNode.TeamProject}'", $"Move {structureGroup} '{sourceNode.FullPath}'"))
                 {

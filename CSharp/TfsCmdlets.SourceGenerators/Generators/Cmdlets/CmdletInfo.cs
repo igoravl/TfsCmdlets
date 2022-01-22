@@ -93,7 +93,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         {
             var scopeName = currentScope.ToString();
             var isGetScopedCmdlet = IsGetScopeCmdlet(settings);
-            var isPipeline = IsPipelineProperty(scopeName, currentScope, settings);
+            var isPipeline = IsPipelineProperty(currentScope, settings);
             var valueFromPipeline = isPipeline ? "ValueFromPipeline=true" : string.Empty;
             var parameterSetNames = isGetScopedCmdlet ? _credentialParameterSetNames.Select(s => $"ParameterSetName=\"{s}\"") : new[] { string.Empty };
             var attributes = new List<(string, string)>();
@@ -184,9 +184,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         private static bool IsGetScopeCmdlet(CmdletInfo cmdlet)
             => _scopeNames.Contains(cmdlet.Noun) && cmdlet.Verb == "Get";
 
-        private static bool IsPipelineProperty(string propertyName, CmdletScope currentScope, CmdletInfo settings)
-            => settings.NoAutoPipeline ? false :
-                ((settings.Verb.Equals("Get") || settings.Verb.StartsWith("Connect") || settings.Verb.StartsWith("Export")) && ((int)settings.Scope == (int)currentScope));
+        private static bool IsPipelineProperty(CmdletScope currentScope, CmdletInfo cmdlet)
+            => !cmdlet.NoAutoPipeline && 
+                (cmdlet.Verb.Equals("Get") || 
+                 cmdlet.Verb.StartsWith("Connect") || 
+                 cmdlet.Verb.StartsWith("Export")
+                ) && ((int)cmdlet.Scope == (int)currentScope);
 
         private static readonly string[] _scopeNames = new[]{
             "ConfigurationServer", "TeamProjectCollection", "TeamProject", "Team" };

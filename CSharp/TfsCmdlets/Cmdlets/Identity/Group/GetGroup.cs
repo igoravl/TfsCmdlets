@@ -1,17 +1,16 @@
-using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Graph.Client;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
     /// <summary>
-    /// Gets information about an Azure DevOps user.
+    /// Gets one or more Azure DevOps groups.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GraphGroup))]
     partial class GetGroup
     {
         /// <summary>
-        /// Specifies the user or group to be retrieved. Supported values are: 
-        /// User/group name, email, or ID
+        /// Specifies the group to be retrieved. Supported values are: 
+        /// Group name or ID. Wildcards are supported.
         /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards]

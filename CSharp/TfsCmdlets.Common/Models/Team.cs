@@ -17,7 +17,7 @@ namespace TfsCmdlets.Models
         /// <summary>
         /// Converts from WebApiTeam
         /// </summary>
-        public static implicit operator Team(WebApiTeam c) => new Team(c);
+        public static implicit operator Team(WebApiTeam c) => new(c);
 
         public Team(WebApiTeam t) : base(t)
         {

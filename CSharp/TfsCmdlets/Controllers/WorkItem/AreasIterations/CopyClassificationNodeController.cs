@@ -15,7 +15,6 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
-            var projectName = tp.Name;
             var sourceNodes = Data.GetItems<ClassificationNode>();
             var destination = Parameters.Get<object>("Destination");
             var destinationProject = Data.GetProject(new { Project = Parameters.Get<object>("DestinationProject", tp) });

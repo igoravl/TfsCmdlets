@@ -43,8 +43,8 @@ namespace TfsCmdlets.Controllers.Git
                 yield break;
             }
 
-            GitVersionDescriptor itemVersion = null;
-
+            GitVersionDescriptor itemVersion;
+            
             if (Has_Tag)
             {
                 itemVersion = new GitVersionDescriptor()

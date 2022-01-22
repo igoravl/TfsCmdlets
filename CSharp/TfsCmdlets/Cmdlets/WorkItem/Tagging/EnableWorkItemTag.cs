@@ -1,4 +1,3 @@
-using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
@@ -10,7 +9,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     partial class EnableWorkItemTag
     {
         /// <summary>
-        /// Specifies the name of the work item tag to rename.
+        /// Specifies the tag to enable. Wildcards are supported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards]

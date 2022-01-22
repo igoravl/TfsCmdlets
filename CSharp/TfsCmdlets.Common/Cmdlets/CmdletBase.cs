@@ -11,11 +11,6 @@ namespace TfsCmdlets.Cmdlets
     {
         private static readonly IEnumerable<string> _valueReturningVerbs = new[] { "Get", "Test", "Invoke", "Export", "Search" };
 
-        private static readonly string _netFx = Assembly
-            .GetExecutingAssembly()?
-            .GetCustomAttribute<TargetFrameworkAttribute>()?
-            .FrameworkName;
-
         [Import] protected IPowerShellService PowerShell { get; set; }
         [Import] protected IParameterManager Parameters { get; set; }
         [Import] protected ILogger Logger { get; set; }

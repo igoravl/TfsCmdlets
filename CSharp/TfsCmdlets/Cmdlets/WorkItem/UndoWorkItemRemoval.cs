@@ -3,17 +3,14 @@ using System.Management.Automation;
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
     /// <summary>
-    /// Deletes a work item from a team project collection.
+    /// Restores a deleted work item.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true)]
     partial class UndoWorkItemRemoval
     {
         /// <summary>
-        /// Specifies the work item to remove.
+        /// Specifies the ID of the work item to be restored. Can also receive the output of `Get-WorkItem -Deleted`.
         /// </summary>
-        /// <seealso cref="Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem">
-        /// A WorkItem object
-        /// </seealso>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("Id")]
         [ValidateNotNull()]

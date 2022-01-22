@@ -192,7 +192,7 @@ namespace TfsCmdlets.Services.Impl
             return _tfsMajorVersionTable.ContainsKey(majorVersion);
         }
 
-        private readonly Dictionary<int, int> _tfsMajorVersionTable = new Dictionary<int, int>
+        private readonly Dictionary<int, int> _tfsMajorVersionTable = new()
         {
             [8] = 2005,
             [9] = 2008,

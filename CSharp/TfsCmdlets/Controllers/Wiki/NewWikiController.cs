@@ -9,22 +9,20 @@ namespace TfsCmdlets.Controllers.Wiki
     {
         protected override IEnumerable Run()
         {
-            var tpc = Data.GetCollection();
-            var tp = Data.GetProject();
             var isProjectWiki = Parameters.Get<bool>(nameof(NewWiki.ProjectWiki));
 
             var createParams = new WikiCreateParametersV2()
             {
                 Name = Parameters.Get<string>(nameof(NewWiki.Wiki)),
                 Type = isProjectWiki ? WikiType.ProjectWiki : WikiType.CodeWiki,
-                ProjectId = tp.Id
+                ProjectId = Project.Id
             };
 
             if(createParams.Type == WikiType.CodeWiki)
             {
                 var repo = Data.GetItem<GitRepository>(new {
                     Repository = Parameters.Get<object>(nameof(NewWiki.Repository)),
-                    Project = tp
+                    Project
                 });
 
                 createParams.RepositoryId = repo.Id;

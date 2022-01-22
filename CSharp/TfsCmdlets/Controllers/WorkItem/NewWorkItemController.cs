@@ -38,7 +38,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 {
                     Operation = Operation.Add,
                     Path = $"/fields/{refName}",
-                    Value = (value is IEnumerable<string> ? string.Join(";", (IEnumerable<string>)value) : value)
+                    Value = value is IEnumerable<string> enumerable ? string.Join(";", enumerable) : value
                 });
             }
 

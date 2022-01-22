@@ -17,7 +17,6 @@ namespace TfsCmdlets.Controllers.WorkItem
             var iteration = Parameters.Get<string>("Iteration");
             var state = Parameters.Get<string>("State");
             var comment = Parameters.Get<string>("Comment");
-            var passthru = Parameters.Get<bool>("Passthru");
 
             string targetAreaPath;
             string targetIterationPath;
@@ -69,7 +68,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 targetIterationPath = targetTp.Name;
             }
 
-            List<int> ids = new List<int>();
+            var ids = new List<int>();
 
             foreach (var wi in wis)
             {

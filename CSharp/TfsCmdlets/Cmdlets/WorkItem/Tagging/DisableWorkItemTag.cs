@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
     partial class DisableWorkItemTag
     {
         /// <summary>
-        /// Specifies the name of the work item tag to rename.
+        /// Specifies the tag to disable. Wildcards are supported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [SupportsWildcards]

@@ -23,7 +23,6 @@ namespace TfsCmdlets.Controllers.Admin
                 throw new NotImplementedException("Remote computers are currently not supported");
             }
 
-            var computerName = Parameters.Get<string>("ComputerName");
             var versionNumber = Parameters.Get<int>("Version");
             var component = Parameters.Get<TfsComponent>("Component");
 

@@ -115,7 +115,7 @@ namespace TfsCmdlets.Models
             return srv;
         }
 
-        public object CallGenericMethod(Type T, string methodName, object[] args = null)
+        public object CallGenericMethod(Type T, string methodName)
         {
             var m = InnerObject.GetType()
                 .GetMethods(BindingFlags.Public | BindingFlags.Instance)

@@ -20,7 +20,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             var node = Parameters.Get<object>("Node");
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");
             var tp = Data.GetProject();
-            string path = null;
+            string path;
 
             switch (node)
             {
@@ -62,7 +62,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                         .GetResult($"Error retrieving {structureGroup} from path '{path}'"),
                     tp.Name, client);
 
-                foreach (var n in root.GetChildren(path, true))
+                foreach (var n in root.GetChildren(path))
                 {
                     yield return n;
                 }

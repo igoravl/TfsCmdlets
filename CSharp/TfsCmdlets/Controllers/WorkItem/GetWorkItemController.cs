@@ -433,7 +433,7 @@ namespace TfsCmdlets.Controllers.WorkItem
            "System.Description",
            "System.Tags" };
 
-        internal static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new Dictionary<string, Tuple<string, string>>()
+        internal static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new()
         {
             ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
             ["BoardColumn"] = new Tuple<string, string>("Text", "System.BoardColumn"),

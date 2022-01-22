@@ -10,7 +10,7 @@ namespace TfsCmdlets.Services.Impl
         private Cmdlet _cmdlet;
         private IDictionary<string, object> _parameterValues;
         private IList<string> _boundParameters;
-        private readonly Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)> _contextStack = new Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)>();
+        private readonly Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)> _contextStack = new();
 
         /// <summary>
         /// Creates a new dictionary, copying the properties of supplied object
@@ -96,7 +96,7 @@ namespace TfsCmdlets.Services.Impl
         {
             if (_contextStack.Count > 0)
             {
-                (var actualContextName, _cmdlet, _parameterValues, _boundParameters) = _contextStack.Pop();
+                (var _, _cmdlet, _parameterValues, _boundParameters) = _contextStack.Pop();
                 return;
             }
 
@@ -181,6 +181,8 @@ namespace TfsCmdlets.Services.Impl
             => _boundParameters.Contains(parameter, StringComparer.OrdinalIgnoreCase);
 
         public IEnumerable<string> Keys => _parameterValues.Keys;
+
+        public Stack<(string, Cmdlet, IDictionary<string, object>, IList<string>)> ContextStack => _contextStack;
 
         [ImportingConstructor]
         public ParameterManagerImpl(IPowerShellService powerShell)

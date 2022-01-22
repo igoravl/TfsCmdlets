@@ -54,7 +54,7 @@ namespace TfsCmdlets.Models
 
         public IEnumerable<WorkItemClassificationNode> Children => InnerObject.Children;
 
-        public IEnumerable<ClassificationNode> GetChildren(string pattern = "**", bool recurse = true) =>
+        public IEnumerable<ClassificationNode> GetChildren(string pattern = "**") =>
             GetNodesRecursively(this, pattern);
 
         private IEnumerable<ClassificationNode> GetNodesRecursively(ClassificationNode node, string pattern)

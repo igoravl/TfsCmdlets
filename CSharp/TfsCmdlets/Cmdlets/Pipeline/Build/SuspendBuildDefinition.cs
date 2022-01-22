@@ -4,13 +4,13 @@ using Microsoft.TeamFoundation.Build.WebApi;
 namespace TfsCmdlets.Cmdlets.Pipeline.Build
 {
     /// <summary>
-    /// Gets one or more build/pipeline definitions in a team project.
+    /// Suspends (pauses) a build/pipeline definition.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
     partial class SuspendBuildDefinition
     {
         /// <summary>
-        /// Specifies the pipeline path.
+        /// Specifies the pipeline name/path.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         [Alias("Path")]

@@ -30,11 +30,11 @@ namespace TfsCmdlets.Extensions
         /// <returns>The converted document</returns>
         public static XDocument ToXDocument(this XmlDocument xmlDocument)
         {
-            using (var nodeReader = new XmlNodeReader(xmlDocument))
-            {
-                nodeReader.MoveToContent();
-                return XDocument.Load(nodeReader);
-            }
+            using var nodeReader = new XmlNodeReader(xmlDocument);
+
+            nodeReader.MoveToContent();
+            
+            return XDocument.Load(nodeReader);
         }
     }
 }

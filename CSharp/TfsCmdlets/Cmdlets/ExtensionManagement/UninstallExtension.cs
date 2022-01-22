@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
     /// <summary>
-    /// Uninstalls one of more extensoins from the specified organization/collection.
+    /// Uninstalls one of more extensions from the specified organization/collection.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(InstalledExtension))]
     partial class UninstallExtension

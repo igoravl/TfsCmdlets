@@ -17,9 +17,7 @@ namespace TfsCmdlets.Util
         /// <returns>The value of the property</returns>
         public static object Get(PSObject obj, string property, ScriptBlock sb)
         {
-            var propertyBag = obj.Members?.Match("__PropertyBag").FirstOrDefault()?.Value as Dictionary<string, object>;
-
-            if (propertyBag == null)
+            if (obj.Members?.Match("__PropertyBag").FirstOrDefault()?.Value is not Dictionary<string, object> propertyBag)
             {
                 propertyBag = new Dictionary<string, object>();
                 obj.AddNoteProperty("__PropertyBag", propertyBag);

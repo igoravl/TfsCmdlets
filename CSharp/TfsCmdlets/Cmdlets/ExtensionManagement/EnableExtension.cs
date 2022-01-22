@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
     /// <summary>
-    /// Enables an extension installed in the specified collection/organization.
+    /// Enables a previously disabled extension installed in the specified collection/organization.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(InstalledExtension))]
     partial class EnableExtension

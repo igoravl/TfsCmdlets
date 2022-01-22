@@ -8,15 +8,12 @@ namespace TfsCmdlets.Controllers.TeamProject
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var avatarImage = Parameters.Get<string>(nameof(SetTeamProject.AvatarImage));
-
-            if(!string.IsNullOrEmpty(avatarImage))
+            if(!string.IsNullOrEmpty(AvatarImage))
             {
                 Logger.LogWarn($"The -AvatarImage parameter is deprecated and will be removed in a future version. Use the Import-TfsTeamProjectAvatar cmdlet instead.");
 
                 Data.Invoke(VerbsData.Import, "TeamProjectAvatar", new {
-                    Path = avatarImage
+                    Path = AvatarImage
                 });
             }
 

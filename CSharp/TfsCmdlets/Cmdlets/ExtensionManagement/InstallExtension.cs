@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
     /// <summary>
-    /// Installs an extension to the specified organization/collection.
+    /// Installs an extension in the specified organization/collection.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(InstalledExtension))]
     partial class InstallExtension
