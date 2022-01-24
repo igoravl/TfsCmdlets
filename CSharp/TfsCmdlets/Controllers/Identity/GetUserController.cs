@@ -9,50 +9,63 @@ namespace TfsCmdlets.Controllers.Identity
     {
         protected override IEnumerable Run()
         {
-            var user = Parameters.Get<object>(nameof(GetUser.User));
-            var current = Parameters.Get<bool>(nameof(GetUser.Current));
+            var client = GetClient<AccountLicensingHttpClient>();
 
-            var client = Data.GetClient<AccountLicensingHttpClient>();
-
-            if (current)
+            if (Current)
             {
-                user = Data.GetItem<Models.Identity>(new { Identity = user });
+                var user = Data.GetItem<Models.Identity>(new { Identity = User });
 
-                if (user == null) return null;
+                yield return user;
+                yield break;
             }
 
-            switch (user)
+            foreach (var input in User)
             {
-                case AccountEntitlement entitlement:
-                    {
-                        return new[] { entitlement };
-                    }
-                case WebApiIdentity i:
-                    {
-                        return new[] { client.GetAccountEntitlementAsync(i.Id).GetResult("Error getting account entitlement") };
-                    }
-                case WebApiIdentityRef ir:
-                    {
-                        return new[] { client.GetAccountEntitlementAsync(ir.Id).GetResult("Error getting account entitlement") };
-                    }
-                case string s when s.IsGuid():
-                    {
-                        return new[] { client.GetAccountEntitlementAsync(new Guid(s)).GetResult("Error getting account entitlement") };
-                    }
-                case Guid g:
-                    {
-                        return new[] { client.GetAccountEntitlementAsync(g).GetResult("Error getting account entitlement") };
-                    }
-                case string s:
-                    {
-                        return client.GetAccountEntitlementsAsync()
-                            .GetResult("Error getting account entitlements")
-                            .Where(u => u.User.DisplayName.IsLike(s) || u.User.UniqueName.IsLike(s));
-                    }
-            }
+                var user = input switch
+                {
+                    string s when s.IsGuid() => new Guid(s),
+                    _ => input
+                };
 
-            Logger.LogError(new ArgumentException($"Invalid or non-existent user {user}"));
-            return null;
+                switch (user)
+                {
+                    case AccountEntitlement entitlement:
+                        {
+                            yield return entitlement;
+                            break;
+                        }
+                    case WebApiIdentity i:
+                        {
+                            yield return client.GetAccountEntitlementAsync(i.Id).GetResult("Error getting account entitlement");
+                            break;
+                        }
+                    case WebApiIdentityRef ir:
+                        {
+                            yield return client.GetAccountEntitlementAsync(ir.Id).GetResult("Error getting account entitlement");
+                            break;
+                        }
+                    case Guid g:
+                        {
+                            yield return client.GetAccountEntitlementAsync(g).GetResult("Error getting account entitlement");
+                            break;
+                        }
+                    case string s:
+                        {
+                            foreach (var u in client.GetAccountEntitlementsAsync()
+                                .GetResult("Error getting account entitlements")
+                                .Where(u => u.User.DisplayName.IsLike(s) || u.User.UniqueName.IsLike(s)))
+                            {
+                                yield return u;
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent user {user}"));
+                            break;
+                        }
+                }
+            }
         }
     }
 }

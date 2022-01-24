@@ -6,14 +6,15 @@ namespace TfsCmdlets.Cmdlets.Identity
     /// <summary>
     /// Gets information about one or more Azure DevOps users.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(AccountEntitlement), DefaultParameterSetName = "Get by ID or Name")]
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(AccountEntitlement), NoAutoPipeline = true, DefaultParameterSetName = "Get by ID or Name")]
     partial class GetUser
     {
         /// <summary>
         /// Specifies the user or group to be retrieved. Supported values are: 
         /// User/group name, email, or ID
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "Get by ID or Name")]
+        [Parameter(Position = 0, ParameterSetName = "Get by ID or Name", ValueFromPipeline = true)]
+        [Alias("UserId")]
         [SupportsWildcards]
         public object User { get; set; } = "*";
 
