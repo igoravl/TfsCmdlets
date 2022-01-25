@@ -110,7 +110,7 @@ namespace TfsCmdlets.Cmdlets
 
                     if (!ReturnsValue || result == null) continue;
 
-                    WriteObject(result);
+                    WriteObject(result, true);
                 }
             }
             catch (PipelineStoppedException)

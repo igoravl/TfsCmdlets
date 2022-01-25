@@ -120,8 +120,7 @@ namespace TfsCmdlets.Cmdlets.Git
         public int Top { get; set; }
  
         /// <summary>
-        /// Specifies the name or ID of a Git repository. Wildcards are supported. 
-        /// When omitted, all Git repositories in the supplied team project are returned.
+        /// HELP_PARAM_GIT_REPOSITORY
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Repository { get; set; }
