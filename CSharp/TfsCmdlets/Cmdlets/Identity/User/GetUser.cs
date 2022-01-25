@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Licensing;
 
-namespace TfsCmdlets.Cmdlets.Identity
+namespace TfsCmdlets.Cmdlets.Identity.User
 {
     /// <summary>
     /// Gets information about one or more Azure DevOps users.

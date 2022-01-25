@@ -2,7 +2,7 @@ using Microsoft.VisualStudio.Services.Licensing;
 using TfsCmdlets.Cmdlets.Identity;
 using Microsoft.VisualStudio.Services.Licensing.Client;
 
-namespace TfsCmdlets.Controllers.Identity
+namespace TfsCmdlets.Controllers.Identity.User
 {
     [CmdletController(typeof(AccountEntitlement))]
     partial class GetUserController
