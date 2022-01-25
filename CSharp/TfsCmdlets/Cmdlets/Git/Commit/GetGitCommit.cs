@@ -1,7 +1,6 @@
-using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Git
+namespace TfsCmdlets.Cmdlets.Git.Commit
 {
     /// <summary>
     /// Gets information from one or more Git commits in a remote repository.

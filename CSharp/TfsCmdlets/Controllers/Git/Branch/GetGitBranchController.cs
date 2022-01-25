@@ -7,7 +7,7 @@ namespace TfsCmdlets.Controllers.Git.Branch
     {
         protected override IEnumerable Run()
         {
-            var repo = GetItem<GitRepository>();
+            var repo = GetItem<GitRepository>(new { Repository = Has_Repository? Repository: Project.Name });
 
             if (repo.Size == 0)
             {

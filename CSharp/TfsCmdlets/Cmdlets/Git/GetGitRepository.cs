@@ -13,9 +13,16 @@ namespace TfsCmdlets.Cmdlets.Git
         /// Specifies the name or ID of a Git repository. Wildcards are supported. 
         /// When omitted, all Git repositories in the supplied team project are returned.
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ParameterSetName = "Get by ID or Name")]
         [SupportsWildcards()]
         [Alias("Name")]
         public object Repository { get; set; } = "*";
+
+        /// <summary>
+        /// Returns the default repository in the given team project.
+        /// The default repository is the one that is created when a team project is created, and has the same name as the team project.
+        /// </summary>
+        [Parameter(ParameterSetName = "Get default", Mandatory = true)]
+        public SwitchParameter Default { get; set; }
     }
 }

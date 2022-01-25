@@ -1,3 +1,16 @@
 - ScriptProperty:
     Name: ProcessTemplate
     GetScriptBlock: if($this.Capabilities) {$this.Capabilities.processTemplate.templateName} else {'(N/A)'}
+- ScriptProperty:
+    Name: Properties
+    GetScriptBlock: |
+        if($this.Capabilities) {
+            [TfsCmdlets.Util.LazyProperty]::Get($this, 'Properties', {
+            $projectClient = Get-TfsRestClient 'Microsoft.TeamFoundation.Core.WebApi.ProjectHttpClient'
+            $props = $projectClient.GetProjectPropertiesAsync($_.Id).Result
+            $val = @{}
+            $props | % { $val.Add($_.Name, $_.Value) }
+            return $val })
+        } else {
+            $null
+        }

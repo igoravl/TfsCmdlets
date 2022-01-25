@@ -1,0 +1,4 @@
+- ScriptProperty:
+    Name: Folder
+    GetScriptBlock: |
+        if($this.Path -eq '/' -or ($this.Path.LastIndexOf('/') -eq 0)) { '/' } else { $this.Path.Substring(1, $this.Path.LastIndexOf('/')-1) }

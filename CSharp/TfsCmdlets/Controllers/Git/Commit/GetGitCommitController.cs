@@ -1,7 +1,7 @@
 using Microsoft.TeamFoundation.SourceControl.WebApi;
 using TfsCmdlets.Cmdlets.Git;
 
-namespace TfsCmdlets.Controllers.Git
+namespace TfsCmdlets.Controllers.Git.Commit
 {
     [CmdletController(typeof(GitCommitRef))]
     partial class GetGitCommitController
@@ -9,7 +9,7 @@ namespace TfsCmdlets.Controllers.Git
         protected override IEnumerable Run()
         {
             var client = GetClient<GitHttpClient>();
-            var repository = GetItem<GitRepository>();
+            var repository = GetItem<GitRepository>(new { Repository = Has_Repository? Repository: Project.Name });
             string commitSha;
 
             if (Has_Commit)

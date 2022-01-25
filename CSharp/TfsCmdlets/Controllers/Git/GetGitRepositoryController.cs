@@ -11,7 +11,8 @@ namespace TfsCmdlets.Controllers.Git
 
             foreach (var input in Repository)
             {
-                var repository = input switch {
+                var repository = input switch
+                {
                     string s when string.IsNullOrEmpty(s) => Project.Name,
                     string s when s.IsGuid() => new Guid(s),
                     null => Project.Name,
@@ -30,6 +31,13 @@ namespace TfsCmdlets.Controllers.Git
                             yield return client
                                 .GetRepositoryAsync(Project.Name, guid)
                                 .GetResult($"Error getting repository with ID {guid}");
+                            break;
+                        }
+                    case { } when Default:
+                        {
+                            yield return client
+                                .GetRepositoryAsync(Project.Name, Project.Name)
+                                .GetResult($"Error getting repository '{Project.Name}'");
                             break;
                         }
                     case string s when !s.IsWildcard():

@@ -4,7 +4,7 @@ namespace TfsCmdlets.Extensions
 {
     public static class PSObjectExtensions
     {
-        public static void AddNoteProperty(this PSObject obj, string name, object value)
+        public static void SetProperty(this PSObject obj, string name, object value)
         {
             if (obj.Properties[name] == null)
             {
@@ -20,7 +20,7 @@ namespace TfsCmdlets.Extensions
         {
             if (obj.Properties[name] == null)
             {
-                AddNoteProperty(obj, name, null);
+                SetProperty(obj, name, null);
             }
 
             return obj.Properties[name];
