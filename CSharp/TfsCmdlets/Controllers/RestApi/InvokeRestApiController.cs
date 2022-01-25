@@ -7,117 +7,157 @@ namespace TfsCmdlets.Controllers.RestApi
     partial class InvokeRestApiController
     {
         [Import]
-        private IRestApiService RestApiService {get;set;}
-        
+        private IRestApiService RestApiService { get; set; }
+
         protected override IEnumerable Run()
         {
-            var path = Parameters.Get<string>("path");
-            var method = Parameters.Get<string>("Method");
-            var body = Parameters.Get<string>("Body");
-            var useHost = Parameters.Get<string>("UseHost");
-            var apiVersion = Parameters.Get<string>("ApiVersion");
-            var requestContentType = Parameters.Get<string>("RequestContentType");
-            var responseContentType = Parameters.Get<string>("ResponseContentType");
-            var additionalHeaders = Parameters.Get<Hashtable>("AdditionalHeaders");
-            var queryParameters = Parameters.Get<Hashtable>("QueryParameters");
-            var asTask = Parameters.Get<bool>("AsTask");
-            var raw = Parameters.Get<bool>("Raw");
-            var noAutoUnwrap = Parameters.Get<bool>("NoAutoUnwrap");
-
-            if (path.Contains(" "))
+            if (Path.Contains(" "))
             {
-                var tokens = path.Split(' ');
+                var tokens = Path.Split(' ');
 
                 if (IsHttpMethod(tokens[0]))
                 {
-                    method = tokens[0];
-                    path = path.Substring(tokens[0].Length+1);
+                    Method = tokens[0];
+                    Path = Path.Substring(tokens[0].Length + 1).Trim();
                 }
             }
 
-            var tpc = Data.GetCollection();
+            Path = Path.Replace("https://{instance}/{collection}/", "http://tfs/");
 
-            path = path.Replace("https://{instance}/{collection}/", "http://tfs/");
+            var queryParams = new Dictionary<string, string>();
 
-            if (Uri.TryCreate(path, UriKind.Absolute, out var uri))
+            if (QueryParameters != null)
             {
-                if(string.IsNullOrEmpty(useHost) && !uri.Host.Equals(tpc.Uri.Host, StringComparison.OrdinalIgnoreCase))
+                foreach (var key in QueryParameters.Keys)
                 {
-                    useHost = uri.Host;
+                    queryParams.Add(key.ToString(), QueryParameters[key]?.ToString());
                 }
-                
-                path = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
+            }
 
-                if (uri.AbsoluteUri.StartsWith((string) tpc.Uri.AbsoluteUri))
+            if (Uri.TryCreate(Path, UriKind.Absolute, out var uri))
+            {
+                if (string.IsNullOrEmpty(UseHost) && !uri.Host.Equals(Collection.Uri.Host, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = path.Substring(tpc.Uri.AbsoluteUri.Length);
+                    UseHost = uri.Host;
+                }
+
+                Path = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
+
+                var collectionName = Collection.DisplayName.Trim('/');
+
+                if (Path.StartsWith($"/{collectionName}"))
+                {
+                    Path = Path.Substring(collectionName.Length + 1);
                 }
 
                 var query = uri.ParseQueryString();
 
-                if(query["api-version"] != null)
+                if (query["api-version"] != null) ApiVersion = query["api-version"];
+
+                foreach (var key in query.AllKeys.Where(k => !k.Equals("api-version")))
                 {
-                    apiVersion = query["api-version"];
+                    if ($"{{{key}}}".Equals(query[key], StringComparison.OrdinalIgnoreCase) && !queryParams.ContainsKey(key))
+                    {
+                        Logger.LogWarn($"Parameter '{key}' found in the URL query string, but missing from QueryParameters argument. To keep this parameter, add it to the QueryParameters argument.");
+                        continue;
+                    }
+
+                    if (queryParams.ContainsKey(key)) continue;
+
+                    queryParams.Add(key, query[key]);
                 }
             }
 
-            if (path.Contains("%7Bproject%7D") || path.Contains("%7BprojectId%7D"))
+            if (Path.Contains("%7Bproject%7D") || Path.Contains("%7BprojectId%7D"))
             {
-                var tp = Data.GetProject();
-
-                path = path
-                    .Replace("%7Bproject%7D", tp.Id.ToString())
-                    .Replace("%7BprojectId%7D", tp.Id.ToString());
-
-                Logger.Log($"Replace token {{project[Id]}} in URL with [{tp.Id}]");
+                Path = Path.Replace($"%7Bproject%7D", Project.Name);
+                Path = Path.Replace($"%7BprojectId%7D", Project.Id.ToString());
             }
 
-            if (path.Contains("%7Bteam%7D") || path.Contains("%7BteamId%7D"))
+            if (Path.Contains("%7Bteam%7D") || Path.Contains("%7BteamId%7D"))
             {
-                var t = Data.GetTeam();
-
-                path = path
-                    .Replace("%7Bteam%7D", t.Id.ToString())
-                    .Replace("%7BteamId%7D", t.Id.ToString());
-
-                Logger.Log($"Replace token {{team}} in URL with [{t.Id}]");
+                Path = Path.Replace($"%7Bteam%7D", Team.Name);
+                Path = Path.Replace($"%7BteamId%7D", Team.Id.ToString());
             }
 
-            Logger.Log($"path '{path}', version '{apiVersion}'");
+            var keysToRemove = new List<string>();
+
+            foreach (var kvp in queryParams.Where(kvp => Path.Contains($"%7B{kvp.Key}%7D")))
+            {
+                keysToRemove.Add(kvp.Key);
+                Path = Path.Replace($"%7B{kvp.Key}%7D", kvp.Value);
+            }
+
+            keysToRemove.ForEach(k => queryParams.Remove(k));
+
+            Logger.Log($"Path '{Path}', version '{ApiVersion}'");
 
             string host = null;
 
-            if(tpc.IsHosted)
+            if (Collection.IsHosted)
             {
-                if(!string.IsNullOrEmpty(useHost))
+                if (!string.IsNullOrEmpty(UseHost))
                 {
-                    host = useHost;
+                    host = UseHost;
                 }
-                else if (!tpc.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
+                else if (!Collection.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
                 {
-                    host = tpc.Uri.Host;
+                    host = Collection.Uri.Host;
                 }
             }
 
-            var task = RestApiService.InvokeAsync(tpc, path, method, body,
-                requestContentType, 
-                responseContentType,
-                HashtableExtensions.ToDictionary<string, string>(additionalHeaders),
-                HashtableExtensions.ToDictionary<string, string>(queryParameters),
-                apiVersion,
+            var task = RestApiService.InvokeAsync(Collection, Path, Method, Body,
+                RequestContentType,
+                ResponseContentType,
+                AdditionalHeaders.ToDictionary<string, string>(),
+                queryParams,
+                ApiVersion,
                 host);
 
-            Logger.Log($"{method} {RestApiService.Url.AbsoluteUri}");
+            Logger.Log($"{Method} {RestApiService.Url.AbsoluteUri}");
 
-            if (asTask) yield return task;
+            if (AsTask)
+            {
+                yield return task;
+                yield break;
+            }
 
             var result = task.GetResult("Unknown error when calling REST API");
-            var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            if(Has_Destination)
+            {
+                using var file = File.Create(Destination);
+                result.Content.ReadAsStreamAsync().GetAwaiter().GetResult().CopyTo(file);
+
+                yield break;
+            }
+
             var responseType = result.Content.Headers.ContentType.MediaType;
 
-            yield return !raw && responseType.Equals("application/json")
-                ? PSJsonConverter.Deserialize(responseBody, (bool) noAutoUnwrap)
-                : responseBody;
+            switch (responseType)
+            {
+                case "application/json" when !Raw:
+                    {
+                        var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        yield return PSJsonConverter.Deserialize(responseBody, (bool)NoAutoUnwrap);
+                        break;
+                    }
+                case "application/json":
+                case "application/xml":
+                case "text/plain":
+                case "text/html":
+                    {
+                        var responseBody = result.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                        yield return responseBody;
+                        break;
+                    }
+                default:
+                    {
+                        var responseBody = result.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                        yield return responseBody;
+                        break;
+                    }
+            }
         }
 
         private bool IsHttpMethod(string method)

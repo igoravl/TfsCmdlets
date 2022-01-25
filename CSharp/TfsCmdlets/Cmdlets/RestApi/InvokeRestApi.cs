@@ -79,7 +79,8 @@ namespace TfsCmdlets.Cmdlets.RestApi
         /// <summary>
         /// Specifies a hashtable with additional query parameters to send to the API endpoint.
         /// </summary>
-        [Parameter]
+        [Parameter(Position=1)]
+        [Alias("Parameters")]
         public Hashtable QueryParameters { get; set; }
 
         /// <summary>
@@ -107,6 +108,12 @@ namespace TfsCmdlets.Cmdlets.RestApi
         /// </summary>
         [Parameter]
         public SwitchParameter Raw { get; set; }
+
+        /// <summary>
+        /// Saves the API response to a file. If omitted, the response will be written to the stardard output stream.
+        /// </summary>
+        [Parameter]
+        public string Destination { get; set; }
 
         /// <summary>
         /// Returns the System.Threading.Tasks.Task object used to issue the asynchronous call to the API. 
