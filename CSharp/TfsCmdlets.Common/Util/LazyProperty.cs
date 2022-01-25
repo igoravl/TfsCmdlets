@@ -20,7 +20,7 @@ namespace TfsCmdlets.Util
             if (obj.Members?.Match("__PropertyBag").FirstOrDefault()?.Value is not Dictionary<string, object> propertyBag)
             {
                 propertyBag = new Dictionary<string, object>();
-                obj.AddNoteProperty("__PropertyBag", propertyBag);
+                obj.SetProperty("__PropertyBag", propertyBag);
             }
 
             if (propertyBag.ContainsKey(property))

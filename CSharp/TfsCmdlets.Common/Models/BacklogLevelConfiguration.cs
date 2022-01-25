@@ -10,8 +10,8 @@ namespace TfsCmdlets.Models
         public BacklogLevelConfiguration(WebApiBacklogLevelConfiguration b, string project, string team)
             : base(b)
         {
-            this.AddNoteProperty(nameof(Project), project);
-            this.AddNoteProperty(nameof(Team), team);
+            PSObjectExtensions.SetProperty(this, nameof(Project), project);
+            PSObjectExtensions.SetProperty(this, nameof(Team), team);
         }
 
         public string Id => InnerObject.Id;

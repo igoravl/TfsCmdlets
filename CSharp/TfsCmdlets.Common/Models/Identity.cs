@@ -52,10 +52,10 @@ namespace TfsCmdlets.Models
 
         internal void SetTeam(WebApiTeam team)
         {
-            AddProperty(nameof(TeamId), team.Id);
-            AddProperty(nameof(ProjectId), team.ProjectId);
-            AddProperty(nameof(TeamName), team.Name);
-            AddProperty(nameof(ProjectName), team.ProjectName);
+            this.SetProperty(nameof(TeamId), team.Id);
+            this.SetProperty(nameof(ProjectId), team.ProjectId);
+            this.SetProperty(nameof(TeamName), team.Name);
+            this.SetProperty(nameof(ProjectName), team.ProjectName);
         }
     }
 }
