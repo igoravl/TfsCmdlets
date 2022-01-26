@@ -1,12 +1,6 @@
-BeforeAll {
-    . "$(Join-Path $PSCommandPath.Substring(0, $PSCommandPath.IndexOf('_Tests') + 6) '_TestSetup.ps1')"
-}
+. $PSScriptRoot/_TestSetup.ps1
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
-
-    BeforeAll {
-        Connect-TfsTeamProjectCollection -Collection $tfsCollectionUrl -PersonalAccessToken $tfsAccessToken
-    }
 
     Context 'Unit Tests' {
         It 'Should get version from hosted service' -Tag 'Hosted' {
@@ -20,7 +14,4 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
     }
 
-    AfterAll {
-        Disconnect-TfsTeamProjectCollection
-    }
 }

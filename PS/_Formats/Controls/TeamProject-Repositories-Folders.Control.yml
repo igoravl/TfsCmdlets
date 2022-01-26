@@ -18,7 +18,6 @@ Passthru: |
                 <ExpressionBinding>
                   <ScriptBlock>$_.Folder</ScriptBlock>
                 </ExpressionBinding>
-                <NewLine/>
               </CustomItem>
             </Frame>
           </CustomItem>

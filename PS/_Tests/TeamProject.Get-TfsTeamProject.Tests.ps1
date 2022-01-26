@@ -1,16 +1,8 @@
-BeforeAll {
-    $setupFilePath = (Join-Path $PSCommandPath.Substring(0, $PSCommandPath.IndexOf('_Tests') + 6) '_TestSetup.ps1')
-    . $setupFilePath
-}
+. $PSScriptRoot/_TestSetup.ps1
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
     Context 'Integration Tests' {
-
-        BeforeAll  {
-            Connect-TfsTeamProjectCollection -Collection $tfsCollectionUrl -PersonalAccessToken $tfsAccessToken
-            $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
-        }
 
         It 'Should not throw on parameterless invocation' {
             { Get-TfsTeamProject } | Should -Not -Throw
@@ -32,8 +24,5 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Get-TfsTeamProject -Deleted | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('DeletedProject')
         }
 
-        AfterAll {
-            Disconnect-TfsTeamProjectCollection
-        }
     }
 }

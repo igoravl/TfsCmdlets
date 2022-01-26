@@ -1,16 +1,8 @@
-BeforeAll {
-    $setupFilePath = (Join-Path $PSCommandPath.Substring(0, $PSCommandPath.IndexOf('_Tests') + 6) '_TestSetup.ps1')
-    . $setupFilePath
-}
+. $PSScriptRoot/_TestSetup.ps1
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
     Context 'Integration Tests' {
-
-        BeforeAll  {
-            Connect-TfsTeamProjectCollection -Collection $tfsCollectionUrl -PersonalAccessToken $tfsAccessToken
-            $PSDefaultParameterValues['*:ErrorAction'] = 'Stop'
-        }
 
         It 'Should parse a Azure DevOps REST API-style string' {
             Invoke-TfsRestApi 'GET https://dev.azure.com/{organization}/_apis/projects?api-version=6.1' `
@@ -64,8 +56,5 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             $result | ConvertFrom-Json | Select-Object -ExpandProperty Count | Should -Be 3
         }
 
-        AfterAll {
-            Disconnect-TfsTeamProjectCollection
-        }
     }
 }
