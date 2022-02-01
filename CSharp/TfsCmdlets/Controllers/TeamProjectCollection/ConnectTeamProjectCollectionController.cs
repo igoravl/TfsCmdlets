@@ -10,8 +10,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
 
         protected override IEnumerable Run()
         {
-            var tpc = Data.GetCollection();
-
+            var tpc = Data.GetCollection(new { Collection = Collection ?? Parameters.Get<object>("Organization") });
             tpc.Connect();
             var srv = tpc.ConfigurationServer;
             CurrentConnections.Set(srv, tpc);

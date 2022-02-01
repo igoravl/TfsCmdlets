@@ -182,7 +182,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 ");
 
         private static bool IsGetScopeCmdlet(CmdletInfo cmdlet)
-            => _scopeNames.Contains(cmdlet.Noun) && cmdlet.Verb == "Get";
+            => _scopeNames.Contains(cmdlet.Noun) && cmdlet.Verb.Equals("Get");
 
         private static bool IsPipelineProperty(CmdletScope currentScope, CmdletInfo cmdlet)
             => !cmdlet.NoAutoPipeline && 
@@ -192,7 +192,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 ) && ((int)cmdlet.Scope == (int)currentScope);
 
         private static readonly string[] _scopeNames = new[]{
-            "ConfigurationServer", "TeamProjectCollection", "TeamProject", "Team" };
+            "ConfigurationServer", "Organization", "TeamProjectCollection", "TeamProject", "Team" };
         private static readonly string[] _credentialParameterSetNames = new[]{
             "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential" };
 

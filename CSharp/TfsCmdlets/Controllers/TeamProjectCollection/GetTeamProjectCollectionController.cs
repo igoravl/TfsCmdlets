@@ -18,7 +18,7 @@ namespace TfsCmdlets.Controllers.TeamProjectCollection
                 yield break;
             }
 
-            yield return Data.GetCollection();
+            yield return Data.GetCollection(new { Collection = Collection ?? Parameters.Get<object>("Organization") });
         }
     }
 }
