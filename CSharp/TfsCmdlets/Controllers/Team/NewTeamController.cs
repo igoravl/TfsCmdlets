@@ -8,36 +8,27 @@ namespace TfsCmdlets.Controllers.Team
     {
         protected override IEnumerable Run()
         {
-            var team = Parameters.Get<string>(nameof(NewTeam.Team));
-            var description = Parameters.Get<string>(nameof(NewTeam.Description));
-            var noAreaPath = Parameters.Get<bool>(nameof(NewTeam.NoDefaultArea));
-            var defaultAreaPath = Parameters.Get<string>(nameof(NewTeam.DefaultAreaPath), team);
-            var noBacklogIteration = Parameters.Get<bool>(nameof(NewTeam.NoBacklogIteration));
-            var backlogIteration = Parameters.Get<string>(nameof(NewTeam.BacklogIteration));
-            var defaultIterationMacro = Parameters.Get<string>(nameof(NewTeam.DefaultIterationMacro));
+            if (!PowerShell.ShouldProcess(Project, $"Create team {Team}")) yield break;
 
-            var tp = Data.GetProject();
+            var client = GetClient<TeamHttpClient>();
 
-            if (!PowerShell.ShouldProcess(tp, $"Create team {team}")) yield break;
-
-            var t = Data.GetClient<TeamHttpClient>().CreateTeamAsync(new WebApiTeam()
-            {
-                Name = team,
-                Description = description,
-            }, tp.Name).GetResult($"Error creating team {team}");
-
-            if (!noAreaPath || !noBacklogIteration)
-            {
-                Data.SetItem<Models.Team>(new
+            var t = client.CreateTeamAsync(new WebApiTeam()
                 {
-                    Team = t,
-                    DefaultAreaPath = noAreaPath ? null : defaultAreaPath,
-                    BacklogIteration = noBacklogIteration ? null : backlogIteration,
-                    DefaultBacklogMacro = defaultIterationMacro
-                });
+                    Name = Team,
+                    Description = Description,
+                }, Project.Name)
+                .GetResult($"Error creating team {Team}");
+
+            if (NoDefaultArea && NoBacklogIteration)
+            {
+                yield return t;
+                yield break;
             }
 
-            yield return t;
+            yield return Data.SetItem<Models.Team>(new {
+                DefaultAreaPath = DefaultAreaPath ?? t.Name,
+                BacklogIteration = BacklogIteration ?? t.Name
+            });
         }
     }
 }

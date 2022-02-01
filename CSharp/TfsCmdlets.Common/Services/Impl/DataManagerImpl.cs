@@ -50,6 +50,17 @@ namespace TfsCmdlets.Services.Impl
         public IEnumerable<T> GetItems<T>(object overridingParameters = null)
             => Invoke<T>(VerbsCommon.Get, overridingParameters);
 
+        public bool TryGetItem<T>(out T item, object overridingParameters = null)
+            where T: class
+        {
+            item = null;
+
+            try { item = GetItem<T>(overridingParameters); }
+            catch { }
+
+            return item != null;
+        }
+
         public bool TestItem<T>(object overridingParameters = null)
         {
             try { return GetItems<T>(overridingParameters).Any(); }

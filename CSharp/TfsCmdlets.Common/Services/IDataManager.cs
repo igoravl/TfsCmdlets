@@ -8,6 +8,8 @@ namespace TfsCmdlets.Services
 
         IEnumerable<T> GetItems<T>(object overridingParameters = null);
 
+        bool TryGetItem<T>(out T item, object overridingParameters = null) where T: class;
+
         T AddItem<T>(object overridingParameters = null);
 
         T NewItem<T>(object overridingParameters = null);

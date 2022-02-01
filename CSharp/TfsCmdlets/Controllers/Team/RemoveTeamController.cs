@@ -7,15 +7,14 @@ namespace TfsCmdlets.Controllers.Team
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var teams = Data.GetItems<WebApiTeam>();
+            var client = Data.GetClient<TeamHttpClient>();
 
-            foreach (var t in teams)
+            foreach (var team in Items)
             {
-                if (!PowerShell.ShouldProcess(tp, $"Delete team '{t.Name}'")) continue;
+                if (!PowerShell.ShouldProcess(Project, $"Delete team '{team.Name}'")) continue;
 
-                Data.GetClient<TeamHttpClient>().DeleteTeamAsync(tp.Name, t.Name)
-                    .Wait($"Error deleting team {t.Name}");
+                client.DeleteTeamAsync(Project.Name, team.Name)
+                    .Wait($"Error deleting team {team.Name}");
             }
 
             return null;

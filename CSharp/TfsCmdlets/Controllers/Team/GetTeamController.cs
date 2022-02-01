@@ -13,79 +13,83 @@ namespace TfsCmdlets.Controllers.Team
 
         protected override IEnumerable Run()
         {
-            var team = Parameters.Get<object>(nameof(GetTeam.Team));
-            var current = Parameters.Get<bool>(nameof(GetTeam.Current));
-            var includeMembers = Parameters.Get<bool>(nameof(GetTeam.QueryMembership));
-            var includeSettings = Parameters.Get<bool>(nameof(GetTeam.IncludeSettings));
-            var defaultTeam = Parameters.Get<bool>(nameof(GetTeam.Default));
-
-            var tp = Data.GetProject();
             var client = Data.GetClient<TeamHttpClient>();
 
-            switch (team)
+            foreach (var input in Team)
             {
-                case Guid g:
-                    {
-                        team = g.ToString();
-                        break;
-                    }
-                case { } when defaultTeam:
-                    {
-                        Logger.Log("Get default team");
-                        var projectClient = Data.GetClient<ProjectHttpClient>();
-                        var props = projectClient
-                            .GetProjectPropertiesAsync(tp.Id)
-                            .GetResult("Error retrieving project's default team");
-                        team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
-                            .FirstOrDefault()?.Value;
-                        defaultTeam = false;
-                        break;
-                    }
-                case null:
-                case { } when current:
-                    {
-                        Logger.Log("Get currently connected team");
+                var team = input switch
+                {
+                    string s when s.IsGuid() => new Guid(s),
+                    WebApiTeam t when IncludeSettings || QueryMembership => t.Id,
+                    _ => input
+                };
 
-                        if (CurrentConnections.Team == null) yield break;
-                        team = CurrentConnections.Team.Id.ToString();
-                        current = false;
-                        break;
-                    }
-                case WebApiTeam t when (includeMembers || includeSettings):
-                    {
-                        team = t.Id.ToString();
-                        break;
-                    }
-            }
+                if (Default)
+                {
+                    Logger.Log("Get default team");
 
-            switch (team)
-            {
-                case WebApiTeam t:
+                    var projectClient = Data.GetClient<ProjectHttpClient>();
+                    var props = projectClient
+                        .GetProjectPropertiesAsync(Project.Id)
+                        .GetResult("Error retrieving project's default team");
+                    team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
+                        .FirstOrDefault()?.Value;
+                }
+
+                if (Current)
+                {
+                    Logger.Log("Get currently connected team");
+
+                    if (CurrentConnections.Team == null) yield break;
+
+                    var t = CurrentConnections.Team;
+
+                    if (!IncludeSettings && !QueryMembership)
                     {
-                        yield return CreateTeamObject(t);
+                        yield return t;
                         yield break;
                     }
-                case string s when !s.IsWildcard():
-                    {
-                        var result = client.GetTeamAsync(tp.Name, s)
-                            .GetResult($"Error getting team '{s}'");
-                        yield return CreateTeamObject(result);
-                        yield break;
-                    }
-                case string s:
-                    {
-                        foreach (var result in client.GetTeamsAsync(tp.Name)
-                            .GetResult($"Error getting team(s) '{s}'")
-                            .Where(t => t.Name.IsLike(s)))
+
+                    team = t.Id;
+                }
+
+                switch (team)
+                {
+                    case WebApiTeam t:
                         {
-                            yield return CreateTeamObject(result);
+                            yield return CreateTeamObject(t);
+                            yield break;
                         }
-                        yield break;
-                    }
-                default:
-                    {
-                        throw new ArgumentException($"Invalid or non-existent team {team}");
-                    }
+                    case Guid g:
+                        {
+                            var result = client.GetTeamAsync(Project.Name, g.ToString())
+                                .GetResult($"Error getting team '{g}'");
+                            yield return CreateTeamObject(result);
+                            yield break;
+                        }
+                    case string s when !s.IsWildcard():
+                        {
+                            var result = client.GetTeamAsync(Project.Name, s)
+                                .GetResult($"Error getting team '{s}'");
+                            yield return CreateTeamObject(result);
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            foreach (var result in client.GetTeamsAsync(Project.Name)
+                                .GetResult($"Error getting team(s) '{s}'")
+                                .Where(t => t.Name.IsLike(s)))
+                            {
+                                yield return CreateTeamObject(result);
+                            }
+                            yield break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent team {team}"));
+                            break;
+                        }
+                }
             }
         }
 
@@ -93,10 +97,7 @@ namespace TfsCmdlets.Controllers.Team
         {
             var team = new Models.Team(innerTeam);
 
-            var includeMembers = Parameters.Get<bool>(nameof(GetTeam.QueryMembership));
-            var includeSettings = Parameters.Get<bool>(nameof(GetTeam.IncludeSettings));
-
-            if (includeMembers)
+            if (QueryMembership)
             {
                 var client = Data.GetClient<TeamHttpClient>();
                 Logger.Log($"Retrieving team membership information for team '{team.Name}'");
@@ -107,7 +108,7 @@ namespace TfsCmdlets.Controllers.Team
                 team.TeamMembers = members;
             }
 
-            if (includeSettings)
+            if (IncludeSettings)
             {
                 var workClient = Data.GetClient<WorkHttpClient>();
                 Logger.Log($"Retrieving team settings for team '{team.Name}'");

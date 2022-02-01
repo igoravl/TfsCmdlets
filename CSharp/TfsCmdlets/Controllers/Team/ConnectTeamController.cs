@@ -10,15 +10,13 @@ namespace TfsCmdlets.Controllers.Team
 
         protected override IEnumerable Run()
         {
-            var tpc = Data.GetCollection();
-            var tp = Data.GetProject();
-            var t = Data.GetTeam();
+            var team = Data.GetTeam();
 
-            CurrentConnections.Set(tpc.ConfigurationServer, tpc, tp, t);
+            CurrentConnections.Set(Collection.ConfigurationServer, Collection, Project, team);
 
-            Logger.Log($"Connected to '{t.Name}'");
+            Logger.Log($"Connected to '{team.Name}'");
 
-            yield return t;
+            yield return Team;
         }
     }
 }

@@ -8,19 +8,14 @@ namespace TfsCmdlets.Controllers.Team
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
-            var t = Data.GetItem<WebApiTeam>();
-            var newName = Parameters.Get<string>(nameof(RenameTeam.NewName));
-
-            if (!PowerShell.ShouldProcess(tp, $"Rename team '{t.Name}' to '{newName}'")) yield break;
-
             var client = Data.GetClient<TeamHttpClient>();
 
-            yield return client.UpdateTeamAsync(new WebApiTeam()
-            {
-                Name = newName
-            }, tp.Id.ToString(), t.Id.ToString())
-                .GetResult($"Error renaming team '{t.Name}' to '{newName}'");
+            var team = Data.GetTeam(new { Default = false });
+
+            if (!PowerShell.ShouldProcess(Project, $"Rename team '{team.Name}' to '{NewName}'")) yield break;
+
+            yield return client.UpdateTeamAsync(new WebApiTeam() { Name = NewName }, Project.Id.ToString(), team.Id.ToString())
+                .GetResult($"Error renaming team '{team.Name}' to '{NewName}'");
         }
     }
 }
