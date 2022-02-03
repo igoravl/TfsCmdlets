@@ -20,5 +20,12 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ParameterMustBeProperty { get; } = new DiagnosticDescriptor(
+            "TFS003",
+            "Parameter must be property", "'{0}' is marked with [Parameter] attribute, but it is a field. Parameters must be properties.",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
     }
 }
