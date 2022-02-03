@@ -114,8 +114,12 @@ namespace TfsCmdlets.Controllers.Team
                 Logger.Log($"Retrieving team settings for team '{team.Name}'");
 
                 var ctx = new TeamContext(team.ProjectName, team.Name);
+
                 team.Settings = workClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");
+
+                team.TeamField = workClient.GetTeamFieldValuesAsync(ctx)
+                    .GetResult($"Error retrieving team field values for team {team.Name}");
             }
 
             return team;
