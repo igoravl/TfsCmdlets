@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Team
     /// Changes the details of a team.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiTeam))]
-    partial class SetTeam 
+    partial class SetTeam
     {
         /// <summary>
         /// HELP_PARAM_TEAM
@@ -42,8 +42,9 @@ namespace TfsCmdlets.Cmdlets.Team
         /// <summary>
         /// Specifies the backlog area paths that are associated with this team. Provide a list 
         /// of area paths in the form '/path1/path2/[*]'. When the path ends with an asterisk, all
-        /// child area path will be included recursively. Otherwise, only the area itself (without 
+        /// child area paths will be included recursively. Otherwise, only the area itself (without 
         /// its children) will be included.
+        /// When specifying a default area path, to include it
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
         public string[] AreaPaths { get; set; }
@@ -71,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.Team
         ///  Specifies the team's Working Days. When omitted, defaults to Monday thru Friday
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
-        public IEnumerable<DayOfWeek> WorkingDays = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+        public IEnumerable<DayOfWeek> WorkingDays { get; set; } = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
 
         /// <summary>
         /// Specifies how bugs should behave when added to a board.
@@ -85,5 +86,11 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
         public Hashtable BacklogVisibilities { get; set; }
+
+        /// <summary>
+        /// Allows the cmdlet to create target area and/or iteration nodes if they're missing.
+        /// </summary>
+        [Parameter(ParameterSetName = "Set team settings")]
+        public SwitchParameter Force { get; set; }
     }
 }

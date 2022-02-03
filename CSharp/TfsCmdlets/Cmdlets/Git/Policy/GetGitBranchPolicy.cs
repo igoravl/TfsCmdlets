@@ -7,7 +7,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
     /// Gets the Git branch policy configuration of the given Git branches.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, OutputType = typeof(PolicyConfiguration))]
-    partial class GetGitBranchPolicy 
+    partial class GetGitBranchPolicy
     {
         /// <summary>
         /// Specifies the policy type of the branch policy to return. Wildcards are supported. 
@@ -28,6 +28,6 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         /// HELP_PARAM_GIT_REPOSITORY
         /// </summary>
         [Parameter]
-        public object Repository;
+        public object Repository { get; set; }
     }
 }
