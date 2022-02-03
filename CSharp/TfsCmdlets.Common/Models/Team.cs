@@ -48,5 +48,11 @@ namespace TfsCmdlets.Models
             get => this.GetProperty(nameof(Settings)).Value as TeamSetting;
             set => this.GetProperty(nameof(Settings)).Value = value;
         }
+
+        public TeamFieldValues TeamField
+        {
+            get => this.GetProperty(nameof(TeamField)).Value as TeamFieldValues;
+            set => this.GetProperty(nameof(TeamField)).Value = value;
+        }
     }
 }
