@@ -50,10 +50,23 @@ namespace TfsCmdlets.Cmdlets.Team
         public string[] AreaPaths { get; set; }
 
         /// <summary>
+        /// Replaces the existing area paths with the specified list of area paths. 
+        /// When omitted, the new area paths are added alongside the previously defined ones.
+        /// </summary>
+        [Parameter(ParameterSetName = "Set team settings")]
+        public SwitchParameter OverwriteAreaPaths { get; set; }
+
+        /// <summary>
         /// Specifies the team's backlog iteration path. When omitted, defaults to the team project's root iteration.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
         public string BacklogIteration { get; set; } = "\\";
+
+        /// <summary>
+        /// Specifies the default iteration macro. 
+        /// </summary>
+        [Parameter(ParameterSetName = "Set team settings")]
+        public string DefaultIterationMacro { get; set; }
 
         /// <summary>
         /// Specifies the backlog iteration paths that are associated with this team. Provide a list 
@@ -63,22 +76,22 @@ namespace TfsCmdlets.Cmdlets.Team
         public string[] IterationPaths { get; set; }
 
         /// <summary>
-        /// Specifies the default iteration macro. When omitted, defaults to "@CurrentIteration".
+        /// Replaces the existing iteration paths with the specified list of iteration paths. 
+        /// When omitted, the new iteration paths are added alongside the previously defined ones.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
-        public string DefaultIterationMacro { get; set; } = "@CurrentIteration";
+        public SwitchParameter OverwriteIterationPaths { get; set; }
 
         /// <summary>
-        ///  Specifies the team's Working Days. When omitted, defaults to Monday thru Friday
+        ///  Specifies the team's Working Days.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
-        public IEnumerable<DayOfWeek> WorkingDays { get; set; } = new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday };
+        public DayOfWeek[] WorkingDays { get; set; }
 
         /// <summary>
         /// Specifies how bugs should behave when added to a board.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
-        [ValidateSet("AsTasks", "AsRequirements", "Off")]
         public BugsBehavior BugsBehavior { get; set; }
 
         /// <summary>

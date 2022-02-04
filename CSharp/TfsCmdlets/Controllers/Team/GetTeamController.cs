@@ -99,27 +99,29 @@ namespace TfsCmdlets.Controllers.Team
 
             if (QueryMembership)
             {
-                var client = Data.GetClient<TeamHttpClient>();
+                var client = GetClient<TeamHttpClient>();
+
                 Logger.Log($"Retrieving team membership information for team '{team.Name}'");
-
-                var members = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
+                team.TeamMembers = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
                     .GetResult($"Error retrieving membership information for team {team.Name}");
-
-                team.TeamMembers = members;
             }
 
             if (IncludeSettings)
             {
-                var workClient = Data.GetClient<WorkHttpClient>();
-                Logger.Log($"Retrieving team settings for team '{team.Name}'");
-
+                var workClient = GetClient<WorkHttpClient>();
                 var ctx = new TeamContext(team.ProjectName, team.Name);
 
+                Logger.Log($"Retrieving team settings for team '{team.Name}'");
                 team.Settings = workClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");
 
+                Logger.Log($"Retrieving default team field (area path) for team '{team.Name}'");
                 team.TeamField = workClient.GetTeamFieldValuesAsync(ctx)
                     .GetResult($"Error retrieving team field values for team {team.Name}");
+
+                Logger.Log($"Retrieving iterations for team '{team.Name}'");
+                team.IterationPaths = workClient.GetTeamIterationsAsync(ctx)
+                    .GetResult("Error getting team's current iterations");
             }
 
             return team;

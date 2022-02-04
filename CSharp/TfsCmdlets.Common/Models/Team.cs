@@ -54,5 +54,11 @@ namespace TfsCmdlets.Models
             get => this.GetProperty(nameof(TeamField)).Value as TeamFieldValues;
             set => this.GetProperty(nameof(TeamField)).Value = value;
         }
+
+        public IList<TeamSettingsIteration> IterationPaths
+        {
+            get => this.GetProperty(nameof(IterationPaths)).Value as IList<TeamSettingsIteration>;
+            set => this.GetProperty(nameof(IterationPaths)).Value = value;
+        }
     }
 }

@@ -49,11 +49,6 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Returns the default team in the given team project.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName="Get default team")]
-        [Parameter(ParameterSetName="Cached credentials")]
-        [Parameter(ParameterSetName="User name and password")]
-        [Parameter(ParameterSetName="Credential object")]
-        [Parameter(ParameterSetName="Personal Access Token")]
-        [Parameter(ParameterSetName="Prompt for credential")]
         public SwitchParameter Default { get; set; }
     }
 }
