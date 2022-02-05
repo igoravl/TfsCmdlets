@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 
 namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
 {
@@ -10,35 +11,30 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
     {
         protected override IEnumerable Run()
         {
-            throw new NotImplementedException();
+            var client = GetClient<ReleaseHttpClient2>();
+
+            foreach(var input in Definition)
+            {
+                var definition = input switch {
+                    _ => input,
+                };
+
+                switch (definition)
+                {
+                    case ReleaseDefinition rd: 
+                        yield return rd;
+                        break;
+                    case string s when s.IsWildcard():
+                        yield return client.GetReleaseDefinitionsAsync(Project.Name)
+                            .GetResult($"Error getting release definition(s) '{s}'")
+                            .Where(r => r.Name.IsLike(s));
+                        break;
+                    case string s: 
+                        yield return client.GetReleaseDefinitionsAsync(Project.Name, searchText: s)
+                            .GetResult($"Error getting release definition '{s}'");
+                        break;
+                }
+            }
         }
-
-        //         /// <summary>
-        //         /// Performs execution of the command
-        //         /// </summary>
-        //         protected override void DoProcessRecord()
-        //     {
-        //         if (Definition is Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition) { Logger.Log("Input item is of type Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ReleaseDefinition; returning input item immediately, without further processing."; WriteObject(Definition }); return;);
-
-        //         # if(_TestGuid(Definition))
-        //         # {
-        //         #     tpc = Get-TfsTeamProjectCollection -Collection Collection; if (! tpc || (tpc.Count != 1)) {throw new Exception($"Invalid or non-existent team project collection {Collection}."})
-
-        //         #     var client = Data.GetClient<Microsoft.TeamFoundation.SourceControl.WebApi.GitHttpClient>();
-
-        //         #     task = client.GetRepositoryAsync(guid); result = task.Result; if(task.IsFaulted) { _throw new Exception($"Error getting repository with ID {guid}" task.Exception.InnerExceptions })
-
-        //         #     WriteObject(result); return;
-        //         # }
-
-        //         tp = this.GetProject();; if (! tp || (tp.Count != 1)) {throw new Exception($"Invalid or non-existent team project {Project}."}; tpc = tp.Store.TeamProjectCollection)
-
-        //         var client = Data.GetClient<Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients.ReleaseHttpClient2>();
-
-        //         task = client.GetReleaseDefinitionsAsync(tp.Name); result = task.Result; if(task.IsFaulted) { _throw new Exception( $"Error getting release definition '{Definition}'" task.Exception.InnerExceptions })
-
-        //         WriteObject(result | Where-Object Name -Like Definition); return;
-        //     }
-        // }
     }
 }
