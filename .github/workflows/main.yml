@@ -160,10 +160,12 @@ jobs:
           | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  }
           Set-GitHubRelease -Release $rel.id -Draft:$false
           Write-Output "::set-output name=RELEASE_URL::$($rel.html_url)"
+          Write-Output "::set-output name=RELEASE_TAG::$($env:BUILD_NAME.Replace('+', '%2B'))"
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
       RELEASE_URL: ${{ steps.promote_release.outputs.RELEASE_URL }}
+      RELEASE_TAG: ${{ steps.promote_release.outputs.RELEASE_TAG }}
 
   Site:
 
@@ -328,10 +330,12 @@ jobs:
         id: tweet
         uses: snow-actions/tweet@v1.1.0
         env:
+          BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
           CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
           CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
           ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          RELEASE_TAG: ${{ needs.Release.outputs.RELEASE_TAG }}
         with:
           status: |
-            TfsCmdlets version {{ env.BUILD_NAME }} has just been released. Check it out! ${{ needs.Release.outputs.RELEASE_URL }}
+            TfsCmdlets version ${{ env.BUILD_NAME }} has just been released. Check it out! https://github.com/igoravl/TfsCmdlets/releases/tag/v${{ env.RELEASE_TAG }}
