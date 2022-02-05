@@ -17,7 +17,7 @@ By using TfsCmdlets, Azure DevOps administrators and/or power users can create s
 
 TfsCmdlets is available in many installation formats. It also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with Azure DevOps via command line a joy!
 
-![Azure DevOps Shell](Assets/TfsShell.png)
+![Azure DevOps Shell](assets/TfsShell.png)
 
 ## Quick start guide
 
