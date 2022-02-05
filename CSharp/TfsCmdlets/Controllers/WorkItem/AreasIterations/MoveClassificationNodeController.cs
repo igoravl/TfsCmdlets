@@ -11,24 +11,30 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(MoveClassificationNodeController))]
     partial class MoveIterationController { }
 
-    internal abstract class MoveClassificationNodeController: ControllerBase
+    internal abstract class MoveClassificationNodeController : ControllerBase
     {
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
             var projectName = tp.Name;
-            var sourceNodes = Data.GetItems<ClassificationNode>();
+            var sourceNodes = Data.GetItems<ClassificationNode>().ToList();
             var destination = Parameters.Get<object>("Destination");
             var force = Parameters.Get<bool>("Force");
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");
 
             if (sourceNodes == null) yield break;
 
-            var destinationNode = Data.GetItem<ClassificationNode>(new { Node = destination });
-
-            if (destinationNode == null && !force)
+            if (!Data.TryGetItem<ClassificationNode>(out var destinationNode, new { Node = destination }))
             {
-                ErrorUtil.ThrowIfNotFound(destinationNode, "Destination", destination);
+                if (!force)
+                {
+                    ErrorUtil.ThrowIfNotFound(destinationNode, "Destination", destination);
+                    yield break;
+                }
+
+                Logger.Log($"Creating missing destination node '{destinationNode}'");
+
+                destinationNode = Data.NewItem<ClassificationNode>( new { Node = destination });
             }
 
             Logger.Log($"Destination node: '{destinationNode.FullPath}'");
@@ -51,8 +57,8 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
 
                 var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
-                var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, destinationNode.RelativePath.Substring(1))
-                    .GetResult($"Error moving node {sourceNode.RelativePath} to {destinationNode.RelativePath}");
+                var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, destinationNode.RelativePath)
+                    .GetResult($"Error moving node '{sourceNode.RelativePath}' to '{destinationNode.RelativePath}'");
 
                 yield return new ClassificationNode(result, projectName, client);
             }
