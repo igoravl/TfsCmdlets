@@ -7,49 +7,49 @@ nav_order: 0
 
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/igoravl/tfscmdlets/master/LICENSE.md) [![Build status](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml/badge.svg?label=Build)](https://github.com/igoravl/TfsCmdlets/actions/workflows/main.yml) [![GitHub release](https://img.shields.io/github/release/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/releases) [![Issues](https://img.shields.io/github/issues/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/issues) [![Forks](https://img.shields.io/github/forks/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/forks) [![Stars](https://img.shields.io/github/stars/igoravl/tfscmdlets.svg)](https://github.com/igoravl/tfscmdlets/stargazers)
 
-[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](http://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](http://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub) 
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/dt/tfscmdlets?label=PSGallery)](https://www.powershellgallery.com/packages/TfsCmdlets) [![NuGet](https://img.shields.io/nuget/dt/TfsCmdlets.svg?label=Nuget)](https://nuget.org/packages/tfscmdlets) [![Chocolatey](https://img.shields.io/chocolatey/dt/TfsCmdlets.svg?label=Chocolatey)](https://chocolatey.org/packages/tfscmdlets) ![GitHub all releases](https://img.shields.io/github/downloads/igoravl/tfscmdlets/total?label=GitHub)
 
 ## What is TfsCmdlets?
 
-TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Azure DevOps (Server 2019+ and Services) and Team Foundation Server (up to 2018). 
+TfsCmdlets is a PowerShell module which provides many commands ("cmdlets" in PowerShell parlance) to simplify automated interaction with Team Foundation Server (2010 to 2018) and Azure DevOps (Server 2019+ and Services).
 
-By using TfsCmdlets, TFS administrators (even power users) can create scripts to automate many different tasks, ranging from retrieving work items to create new team project collections.
+By using TfsCmdlets, Azure DevOps administrators and/or power users can create scripts to automate many different tasks, ranging from retrieving work items to creating new team project collections.
 
-TfsCmdlets is available in many formats. The full (MSI-based) installer also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with TFS via command line a joy!
+TfsCmdlets is available in many installation formats. It also includes **Azure DevOps Shell**, a PowerShell window pre-configured to make interacting with Azure DevOps via command line a joy!
 
-![Azure DevOps Shell](assets/images/TfsShell.png)
+![Azure DevOps Shell](Assets/TfsShell.png)
 
-## Quick start guide 
+## Quick start guide
 
-Firstly, download and configure the latest version of the [Visual Studio ALM Virtual Machine](http://aka.ms/almvm) (a.k.a "_Brian Keller VM_") in your computer in order to have a sandbox to play with. 
+Do you have an Azure DevOps account created? Awesome! If not, you might want to [create one](https://azure.microsoft.com/en-us/services/devops/).
 
-Next, install TfsCmdlets inside the virtual machine (see section "_How to install_", below), open a PowerShell window and try the following commands:
+> **HINT**: Optionally, you may consider to leverage the [Azure DevOps Demo Generator](https://azuredevopsdemogenerator.azurewebsites.net/) to fill a team project with sample data, in order to have a sandbox to play with. The examples below will assume that you created a team project called **PartsUnlimited**, based on the namesake template available at the Azure DevOps Generator web site.
 
+Next, install TfsCmdlets in your computer (see section "_How to install_", below), open a PowerShell window and try the following commands:
 
 ```PowerShell
-# Connect to the FabrikamFiber team project collection
+# Connect to your Azure DevOps organization
 # (Will be used as default for the -Collection argument when required by a cmdlet)
-Connect-TfsTeamProjectCollection http://vsalm:8080/tfs/FabrikamFiberCollection
+Connect-TfsTeamProjectCollection https://dev.azure.com/<your_organization_name>
 
-# Get a list of team projects in the currently connected TPC
+# Get a list of team projects in the currently connected organization
 Get-TfsTeamProject
 
-# List the existing iterations in the FabrikamFiber team project
-Get-TfsIteration -Project FabrikamFiber
+# List the existing iterations in the PartsUnlimited team project
+Get-TfsIteration -Project PartsUnlimited
 
-# Connect to the FabrikamFiber team project
+# Connect to the PartsUnlimited team project
 # (will be used as default for the -Project argument when required by a cmdlet)
-Connect-TfsTeamProject FabrikamFiber
+Connect-TfsTeamProject PartsUnlimited
 
 # Create a new iteration
-New-TfsIteration 'Release 3'
+New-TfsIteration 'Sprint 7'
 
 # Get all bugs in the current team project
-Get-TfsWorkItem -Filter '[System.WorkItemType] = "Bug"'
+Get-TfsWorkItem -WorkItemType 'Bug'
 
-# Create a new PBI in the 'Release 3' iteration
-New-TfsWorkItem -Title 'New product backlog item' -Type 'Product Backlog Item' -Fields @{'System.IterationPath'='Release 3'}
-
+# Create a new PBI in the 'Sprint 7' iteration
+New-TfsWorkItem -Title 'New product backlog item' -Type 'Product Backlog Item' -Iteration 'Sprint 7'
 ```
 
 ## How to install
@@ -58,7 +58,7 @@ TfsCmdlets can be obtained from many different sources and in many different for
 
 ### PowerShell Gallery
 
-If you're using Windows 10, Windows Server 2016 (or later) or installed Windows Management Framework 5 (or later) then the simplest way to install TfsCmdlets is via [PowerShell Gallery](https://www.powershellgallery.com/).
+If you're using Windows 10, Windows Server 2016 (or later) or have installed Windows Management Framework 5 (or later) then the simplest way to install TfsCmdlets is via [PowerShell Gallery](https://www.powershellgallery.com/).
 
 Open an elevated PowerShell prompt and type:
 
@@ -72,19 +72,29 @@ Optionally, you can install it locally in your user profile. That is particularl
 Install-Module TfsCmdlets -Scope CurrentUser
 ```
 
-[Additional information](https://www.powershellgallery.com/packages/TfsCmdlets/)
+[Package details](https://www.powershellgallery.com/packages/TfsCmdlets/)
+
+### Windows Package Manager (winget)
+
+The new [Windows Package Manager](https://github.com/microsoft/winget-cli) ("winget") is a command line tool that enables developers to discover, install, upgrade, remove and configure applications on Windows 10 computers. This tool is the client interface to the Windows Package Manager service.
+
+To install TfsCmdlets via `winget`, open a command prompt and type:
+
+```PowerShell
+winget install TfsCmdlets
+```
+
+[Package details](https://github.com/microsoft/winget-pkgs/tree/master/manifests/i/Igoravl/TfsCmdlets/)
 
 ### Chocolatey
 
-Using Chocolatey? Then open an elevated PowerShell prompt and type:
+Using [Chocolatey](https://www.chocolatey.org/)? Then open an elevated PowerShell prompt and type:
 
 ```PowerShell
-# To install the latest pre-release (alpha, beta) version of TfsCmdlets, type:
-choco install TfsCmdlets -pre
-
-# To install the latest final release version of TfsCmdlets, type:
 choco install TfsCmdlets
 ```
+
+[Package details](https://community.chocolatey.org/packages/TfsCmdlets/)
 
 ### Nuget
 
@@ -94,7 +104,7 @@ To add TfsCmdlets to your solution, search for **TfsCmdlets** in the Visual Stud
 
 - Note: To add the latest pre-release version of TfsCmdlets, don't forget check the "Include prerelease" checkbox
 
-[Additional information](http://www.nuget.org/packages/tfscmdlets)
+[Package details](https://www.nuget.org/packages/tfscmdlets)
 
 ### Offline installation
 
@@ -110,7 +120,8 @@ The full installer will install the module files to the Program Files folder in 
 
 - Download the MSI file from the [Releases](https://github.com/igoravl/tfscmdlets/releases) page;
 - Open the downloaded MSI file
-	- **NOTE**: If Windows SmartScreen flags the file as insecure and refuses to run it, you can click the "More info" button/link in the dialog and select the "Run anyway" option.
+
+> **NOTE**: If Windows SmartScreen flags the file as insecure and refuses to run it, you can click the "More info" button/link in the dialog and select the "Run anyway" option.
 
 **To uninstall the full installer**:
 
@@ -118,16 +129,16 @@ The full installer will install the module files to the Program Files folder in 
 
 #### Portable installer
 
-The portable installer is a zip file containing all the required the module files. 
+The portable installer is a zip file containing all the required the module files.
 
 **To install the portable installer**:
 
 - Download the zip file from the [Releases](https://github.com/igoravl/tfscmdlets/releases) page;
-- Open your Documents folder in Windows, then open the ```WindowsPowerShell``` folder in it;
-- Inside the WindowsPowerShell folder, create a new folder called ```Modules``` in it (if missing) and then create a new folder called ```TfsCmdlets``` in ```Modules```;
-- Extract the contents of the zip file to the ```TfsCmdlets``` folder.
+- Open your Documents folder in Windows, then open folder `WindowsPowerShell` (for PowerShell 5.1) or `PowerShell` (for PowerShell 6+);
+- Inside the PowerShell folder, create a new folder called `Modules` in it (if missing) and then create a new folder called `TfsCmdlets` in `Modules`;
+- Extract the contents of the zip file to the `TfsCmdlets` folder.
 
-You must end up with a folder structure similar to ```[Documents]\WindowsPowerShell\Modules\TfsCmdlets```. Files such as ```TfsCmdlets.psd1``` must be located in the TfsCmdlets folder.
+You must end up with a folder structure similar to `[Documents]\[Windows]PowerShell\Modules\TfsCmdlets`. Files such as `TfsCmdlets.psd1` must be located in the TfsCmdlets folder.
 
 To test the installation, open a new PowerShell window and type:
 
@@ -135,10 +146,10 @@ To test the installation, open a new PowerShell window and type:
 Import-Module TfsCmdlets
 ```
 
-**To uninstall the portable installer**
+**To uninstall the portable installer**:
 
 - Close all PowerShell windows where you were using TfsCmdlets (to free files in use);
-- Delete the ```TfsCmdlets``` folder from the ```[Documents]\WindowsPowerShell\Modules``` folder.
+- Delete the `TfsCmdlets` folder from the `[Documents]\[Windows]PowerShell\Modules` folder.
 
 ## Contribution Guidelines
 
