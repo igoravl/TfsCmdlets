@@ -442,7 +442,7 @@ namespace TfsCmdlets.Controllers.WorkItem
             ["ChangedDate"] = new Tuple<string, string>("Date", "System.ChangedDate"),
             ["CreatedBy"] = new Tuple<string, string>("Identifier", "System.CreatedBy"),
             ["CreatedDate"] = new Tuple<string, string>("Date", "System.CreatedDate"),
-            ["Description"] = new Tuple<string, string>("Text", "System.Description"),
+            ["Description"] = new Tuple<string, string>("LongText", "System.Description"),
             ["IterationPath"] = new Tuple<string, string>("Tree", "System.IterationPath"),
             ["Priority"] = new Tuple<string, string>("Number", "Microsoft.VSTS.Common.Priority"),
             ["Project"] = new Tuple<string, string>("Project", "System.TeamProject"),
