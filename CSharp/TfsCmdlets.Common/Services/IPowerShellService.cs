@@ -25,7 +25,7 @@ namespace TfsCmdlets.Services
 
         object GetVariableValue(string name);
 
-        void SetVariableValue(string name, object value);
+        // void SetVariableValue(string name, object value);
 
         string Edition { get; }
 

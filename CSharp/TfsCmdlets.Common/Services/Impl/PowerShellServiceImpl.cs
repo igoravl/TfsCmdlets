@@ -71,8 +71,8 @@ namespace TfsCmdlets.Services.Impl
         public object GetVariableValue(string name)
             => Cmdlet.GetVariableValue(name);
 
-        public void SetVariableValue(string name, object value)
-            => throw new NotImplementedException();
+        // public void SetVariableValue(string name, object value)
+        //   => ...;
 
         public bool ShouldProcess(string target, string action)
             => Cmdlet.ShouldProcess(target, action);
