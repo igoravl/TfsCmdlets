@@ -20,7 +20,7 @@ namespace TfsCmdlets.Controllers.Team
                 var team = input switch
                 {
                     string s when s.IsGuid() => new Guid(s),
-                    WebApiTeam t when IncludeSettings || QueryMembership => t.Id,
+                    WebApiTeam t when IncludeSettings || IncludeMembers => t.Id,
                     _ => input
                 };
 
@@ -44,7 +44,7 @@ namespace TfsCmdlets.Controllers.Team
 
                     var t = CurrentConnections.Team;
 
-                    if (!IncludeSettings && !QueryMembership)
+                    if (!IncludeSettings && !IncludeMembers)
                     {
                         yield return t;
                         yield break;
@@ -97,7 +97,7 @@ namespace TfsCmdlets.Controllers.Team
         {
             var team = new Models.Team(innerTeam);
 
-            if (QueryMembership)
+            if (IncludeMembers)
             {
                 var client = GetClient<TeamHttpClient>();
 

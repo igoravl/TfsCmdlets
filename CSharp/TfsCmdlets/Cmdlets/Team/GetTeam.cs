@@ -30,11 +30,11 @@ namespace TfsCmdlets.Cmdlets.Team
         /// When omitted, only basic team information (such as name, description and ID) are returned.
         /// </summary>
         [Parameter]
-        public SwitchParameter QueryMembership { get; set; }
+        [Alias("QueryMembership")]
+        public SwitchParameter IncludeMembers { get; set; }
 
         /// <summary>
-        /// Gets the team's backlog settings (fills the Settings property with a
-        /// Microsoft.TeamFoundation.Work.WebApi.TeamSetting object)
+        /// Gets team settings (fills the Settings, TeamField, and IterationPaths properties).
         /// </summary>
         [Parameter]
         public SwitchParameter IncludeSettings { get; set; }
@@ -49,6 +49,11 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Returns the default team in the given team project.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName="Get default team")]
+        [Parameter(ParameterSetName="Cached credentials")]
+        [Parameter(ParameterSetName="User name and password")]
+        [Parameter(ParameterSetName="Credential object")]
+        [Parameter(ParameterSetName="Personal Access Token")]
+        [Parameter(ParameterSetName="Prompt for credential")]
         public SwitchParameter Default { get; set; }
     }
 }
