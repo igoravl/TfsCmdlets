@@ -40,13 +40,13 @@ namespace TfsCmdlets.Cmdlets.Team
         public string DefaultAreaPath { get; set; }
 
         /// <summary>
-        /// Specifies the backlog area paths that are associated with this team. Provide a list 
-        /// of area paths in the form '/path1/path2/[*]'. When the path ends with an asterisk, all
-        /// child area paths will be included recursively. Otherwise, only the area itself (without 
-        /// its children) will be included.
-        /// When specifying a default area path, to include it
+        /// Specifies the backlog area path(s) that are associated with this team. Wildcards are supported. 
+        /// When the path ends with an asterisk, all child area paths will be included recursively. 
+        /// Otherwise, only the area itself (without its children) will be included.
+        /// To include the children of the default area path, use the wildcard character (*) without a path.
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
+        [SupportsWildcards]
         public string[] AreaPaths { get; set; }
 
         /// <summary>
@@ -69,8 +69,8 @@ namespace TfsCmdlets.Cmdlets.Team
         public string DefaultIterationMacro { get; set; }
 
         /// <summary>
-        /// Specifies the backlog iteration paths that are associated with this team. Provide a list 
-        /// of iteration paths in the form '/path1/path2'.
+        /// Specifies the backlog iteration path(s) that are associated with this team. 
+        /// Wildcards are supported. 
         /// </summary>
         [Parameter(ParameterSetName = "Set team settings")]
         public string[] IterationPaths { get; set; }

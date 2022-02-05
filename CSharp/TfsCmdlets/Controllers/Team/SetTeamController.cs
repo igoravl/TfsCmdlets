@@ -126,37 +126,28 @@ namespace TfsCmdlets.Controllers.Team
 
                 foreach (var a in AreaPaths)
                 {
+                    Logger.Log($"Processing area path(s) '{a}'");
+
                     var includeChildren = a.Equals("*") || a.EndsWith("\\*") || a.EndsWith("/*");
+                    var path = a.Equals("*") ?
+                        t.TeamField.DefaultValue :
+                        NodeUtil.NormalizeNodePath(includeChildren ? a.Substring(0, a.Length - 2) : a, Project.Name, "Areas", includeTeamProject: true);
 
-                    switch (a)
+                    if (path.IsWildcard())
                     {
-                        case { } when a.Equals("*"):
-                            {
-                                values.Add(new TeamFieldValue()
-                                {
-                                    Value = teamFieldPatch.DefaultValue,
-                                    IncludeChildren = true
-                                });
-                                break;
-                            }
-                            // TODO: Distinguir entre includechildren e wildcard no nome
-                        case { } when a.IsWildcard():
-                            {
-                                var p = includeChildren ? a.Substring(0, a.Length-2) : a;
+                        Logger.Log($"Area path is an wildcard. Searching for matching area paths.");
+                        var matchingAreas = GetItems<Models.ClassificationNode>(new { Node = path, StructureGroup = TreeStructureGroup.Areas });
 
-                                values.AddRange(
-                                    GetItems<Models.ClassificationNode>(new { Node = p, StructureGroup = TreeStructureGroup.Areas })
-                                    .Select(n => new TeamFieldValue() {
-                                        Value = n.FullPath,
-                                        IncludeChildren = includeChildren
-                                    }));
-                                break;
-                            }
+                        foreach (var matchingArea in matchingAreas)
+                        {
+                            Logger.Log($"Adding area '{matchingArea.FullPath}'");
+                            values.Add(new TeamFieldValue() { Value = matchingArea.FullPath, IncludeChildren = includeChildren });
+                        }
+
+                        continue;
                     }
 
-                    var path = a.Equals("*") ?
-                        teamFieldPatch.DefaultValue :
-                        NodeUtil.NormalizeNodePath(a.TrimEnd('\\', '*'), Project.Name, scope: "Areas", includeTeamProject: true);
+                    Logger.Log($"Adding area '{path}'");
 
                     values.Add(new TeamFieldValue()
                     {
@@ -252,20 +243,24 @@ namespace TfsCmdlets.Controllers.Team
                     .GetResult("Error getting team's current iterations");
 
                 var newIterations = IterationPaths
-                    .Select(i => GetItem<Models.ClassificationNode>(new { Node = i, StructureGroup = TreeStructureGroup.Iterations }))
-                    .Select(n => new TeamSettingsIteration() { Id = n.Identifier })
+                    .SelectMany(i => GetItems<Models.ClassificationNode>(new { Node = i, StructureGroup = TreeStructureGroup.Iterations }))
+                    .Select(n => new TeamSettingsIteration() { Id = n.Identifier, Name = n.Name })
                     .ToList();
 
                 foreach (var iteration in newIterations)
                 {
+                    Logger.Log($"Adding iteration '{iteration.Name}'");
                     workClient.PostTeamIterationAsync(iteration, ctx)
                         .GetResult($"Error setting iteration {iteration.Id} as a sprint iteration");
                 }
 
-                foreach (var iteration in currentIterations.Where(i => !newIterations.Any(ni => ni.Id == i.Id)))
+                if (OverwriteIterationPaths)
                 {
-                    workClient.DeleteTeamIterationAsync(ctx, iteration.Id)
-                        .Wait($"Error removing iteration '{iteration.Id}' from the team's sprint iterations");
+                    foreach (var iteration in currentIterations.Where(i => !newIterations.Any(ni => ni.Id == i.Id)))
+                    {
+                        workClient.DeleteTeamIterationAsync(ctx, iteration.Id)
+                            .Wait($"Error removing iteration '{iteration.Id}' from the team's sprint iterations");
+                    }
                 }
             }
 
