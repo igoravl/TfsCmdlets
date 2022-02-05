@@ -5,12 +5,15 @@ parent: "RestApi"
 description: "Invoke an Azure DevOps REST API. "
 remarks: "Invoke-TfsRestApi can automatically parse an example URL from https://docs.microsoft.com/en-us/rest/api/azure/devops/ and replace its various tokens (such as {organization}, {project} and {team}) as long as collection / project / team information are available via either the their respective arguments in this command or the corresponding Connect-Tfs* cmdlet. HTTP method and API version are also automatically extracted from the supplied example, when available. "
 parameterSets: 
-  "_All_": [ AdditionalHeaders, ApiVersion, AsTask, Body, Collection, Method, NoAutoUnwrap, Path, Project, QueryParameters, Raw, RequestContentType, ResponseContentType, Team, UseHost ] 
+  "_All_": [ AdditionalHeaders, ApiVersion, AsTask, Body, Collection, Destination, Method, NoAutoUnwrap, Path, Project, QueryParameters, Raw, RequestContentType, ResponseContentType, Server, Team, UseHost ] 
   "__AllParameterSets":  
     Path: 
       type: "string"  
       position: "0"  
       required: true  
+    QueryParameters: 
+      type: "Hashtable"  
+      position: "1"  
     AdditionalHeaders: 
       type: "Hashtable"  
     ApiVersion: 
@@ -21,20 +24,22 @@ parameterSets:
       type: "string"  
     Collection: 
       type: "object"  
+    Destination: 
+      type: "string"  
     Method: 
       type: "string"  
     NoAutoUnwrap: 
       type: "SwitchParameter"  
     Project: 
       type: "object"  
-    QueryParameters: 
-      type: "Hashtable"  
     Raw: 
       type: "SwitchParameter"  
     RequestContentType: 
       type: "string"  
     ResponseContentType: 
       type: "string"  
+    Server: 
+      type: "object"  
     Team: 
       type: "object"  
     UseHost: 
@@ -78,7 +83,15 @@ parameters:
   - name: "QueryParameters" 
     description: "Specifies a hashtable with additional query parameters to send to the API endpoint. " 
     globbing: false 
+    position: 1 
     type: "Hashtable" 
+    aliases: [ Parameters ] 
+  - name: "Parameters" 
+    description: "Specifies a hashtable with additional query parameters to send to the API endpoint. This is an alias of the QueryParameters parameter." 
+    globbing: false 
+    position: 1 
+    type: "Hashtable" 
+    aliases: [ Parameters ] 
   - name: "ApiVersion" 
     description: "Specifies the desired API version. When omitted, defaults to \"4.1\". " 
     globbing: false 
@@ -98,6 +111,10 @@ parameters:
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
+  - name: "Destination" 
+    description: "Saves the API response to a file. If omitted, the response will be written to the stardard output stream. " 
+    globbing: false 
+    type: "string" 
   - name: "AsTask" 
     description: "Returns the System.Threading.Tasks.Task object used to issue the asynchronous call to the API. The caller is responsible for finishing the asynchronous call by e.g. accessing the Result property. " 
     globbing: false 
@@ -113,6 +130,16 @@ parameters:
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 
     type: "object"
 inputs: 

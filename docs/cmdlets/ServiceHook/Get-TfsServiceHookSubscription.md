@@ -5,7 +5,7 @@ parent: "ServiceHook"
 description: "Gets one or more service hook subscriptions "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Consumer, EventType, Publisher, Subscription ] 
+  "_All_": [ Collection, Consumer, EventType, Publisher, Server, Subscription ] 
   "__AllParameterSets":  
     Subscription: 
       type: "object"  
@@ -15,8 +15,10 @@ parameterSets:
     Consumer: 
       type: "object"  
     EventType: 
-      type: "object"  
+      type: "string"  
     Publisher: 
+      type: "object"  
+    Server: 
       type: "object" 
 parameters: 
   - name: "Subscription" 
@@ -44,12 +46,26 @@ parameters:
   - name: "EventType" 
     description: "Specifies the event type to filter subscriptions by. When omitted, returns all subscriptions regardless of their event types. " 
     globbing: false 
-    type: "object" 
+    type: "string" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
+    globbing: false 
     type: "object"
 inputs: 
+  - type: "System.Object" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). "
 outputs: 
   - type: "Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription" 
     description: 

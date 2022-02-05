@@ -5,7 +5,7 @@ parent: "WorkItem.Query"
 description: "Exports a saved work item query to XML. "
 remarks: "Work item queries can be exported to XML files (.WIQ extension) in order to be shared and reused. Visual Studio Team Explorer has the ability to open and save WIQ files. Use this cmdlet to generate WIQ files compatible with the format supported by Team Explorer. "
 parameterSets: 
-  "_All_": [ AsXml, Collection, Destination, Encoding, FlattenFolders, Force, Project, Query, Scope ] 
+  "_All_": [ AsXml, Collection, Destination, Encoding, FlattenFolders, Force, Project, Query, Scope, Server ] 
   "Export to file":  
     Query: 
       type: "object"  
@@ -26,6 +26,8 @@ parameterSets:
       type: "object"  
     Scope: 
       type: "string"  
+    Server: 
+      type: "object"  
   "Export to output stream":  
     Query: 
       type: "object"  
@@ -39,7 +41,9 @@ parameterSets:
     Project: 
       type: "object"  
     Scope: 
-      type: "string" 
+      type: "string"  
+    Server: 
+      type: "object" 
 parameters: 
   - name: "Query" 
     description: "Specifies one or more saved queries to export. Wildcards supported. " 
@@ -96,15 +100,22 @@ parameters:
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
+    globbing: false 
     type: "object"
 inputs: 
   - type: "System.Object" 
     description: "Specifies one or more saved queries to export. Wildcards supported. " 
   - type: "System.Object" 
-    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
-  - type: "System.Object" 
-    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). "
+    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. "
 outputs: 
   - type: "System.String" 
     description: 

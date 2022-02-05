@@ -49,3 +49,5 @@ defaults:
       nav_exclude: true
 
 build_info: TfsCmdlets v2.1.4+2594.1, released 2021-11-30
+build_info: TfsCmdlets v2.2.0+2661.12, released 2022-02-05
+

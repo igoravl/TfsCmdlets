@@ -1,4 +1,5 @@
 ---
 layout: module
-title: Administration
+title: Pipeline Definition Folders
 ---
+

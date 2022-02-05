@@ -5,7 +5,25 @@ parent: "WorkItem.WorkItemType"
 description: "Exports an XML work item type definition from a team project. "
 remarks: 
 parameterSets: 
-  "_All_": [ AsXml, Collection, Destination, Force, IncludeGlobalLists, Project, Type ] 
+  "_All_": [ AsXml, Collection, Destination, Encoding, Force, IncludeGlobalLists, Project, Server, Type ] 
+  "Export to file":  
+    Type: 
+      type: "string"  
+      position: "0"  
+    Collection: 
+      type: "object"  
+    Destination: 
+      type: "string"  
+    Encoding: 
+      type: "string"  
+    Force: 
+      type: "SwitchParameter"  
+    IncludeGlobalLists: 
+      type: "SwitchParameter"  
+    Project: 
+      type: "object"  
+    Server: 
+      type: "object"  
   "Export to output stream":  
     Type: 
       type: "string"  
@@ -19,17 +37,7 @@ parameterSets:
       type: "SwitchParameter"  
     Project: 
       type: "object"  
-  "Export to file":  
-    Destination: 
-      type: "string"  
-      required: true  
-    Collection: 
-      type: "object"  
-    Force: 
-      type: "SwitchParameter"  
-    IncludeGlobalLists: 
-      type: "SwitchParameter"  
-    Project: 
+    Server: 
       type: "object" 
 parameters: 
   - name: "Type" 
@@ -53,9 +61,13 @@ parameters:
     defaultValue: "False" 
   - name: "Destination" 
     description: "Specifies the path to the folder where exported types are saved. " 
-    required: true 
     globbing: false 
     type: "string" 
+  - name: "Encoding" 
+    description: "Specifies the encoding for the exported XML files. When omitted, defaults to UTF-8. " 
+    globbing: false 
+    type: "string" 
+    defaultValue: "UTF-8" 
   - name: "Force" 
     description: "Allows the cmdlet to overwrite an existing file in the destination folder. " 
     globbing: false 
@@ -74,6 +86,16 @@ parameters:
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 
     type: "object"
 inputs: 

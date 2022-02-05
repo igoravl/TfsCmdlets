@@ -5,7 +5,7 @@ parent: "Admin.Registry"
 description: "Sets the value of a given Team Foundation Server registry entry. "
 remarks: "The 'Set-TfsRegistry' cmdlet changes the value of a TFS registry key to the value specified in the command. "
 parameterSets: 
-  "_All_": [ Collection, Path, Scope, Server, Value ] 
+  "_All_": [ Collection, Passthru, Path, Scope, Server, Value ] 
   "__AllParameterSets":  
     Path: 
       type: "string"  
@@ -17,6 +17,8 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
+    Passthru: 
+      type: "SwitchParameter"  
     Scope: 
       type: "RegistryScope"  
     Server: 
@@ -39,10 +41,21 @@ parameters:
     globbing: false 
     type: "RegistryScope" 
     defaultValue: "Server" 
+  - name: "Passthru" 
+    description: "Returns the results of the command. By default, this cmdlet does not generate any output. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
     type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
   - name: "Server" 
     description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 

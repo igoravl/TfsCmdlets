@@ -5,11 +5,13 @@ parent: "Shell"
 description: "Activates the Azure DevOps Shell "
 remarks: 
 parameterSets: 
-  "_All_": [ DoNotClearHost, NoLogo, WindowTitle ] 
+  "_All_": [ DoNotClearHost, NoLogo, NoProfile, WindowTitle ] 
   "__AllParameterSets":  
     DoNotClearHost: 
       type: "SwitchParameter"  
     NoLogo: 
+      type: "SwitchParameter"  
+    NoProfile: 
       type: "SwitchParameter"  
     WindowTitle: 
       type: "string" 
@@ -26,6 +28,11 @@ parameters:
     defaultValue: "False" 
   - name: "NoLogo" 
     description: "Do not show the version banner when activating the Azure DevOps Shell. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "NoProfile" 
+    description: "Do not load the user profile TfsCmdlets.Profile.ps1 (if present) when activating the Azure DevOps Shell. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False"

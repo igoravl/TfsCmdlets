@@ -5,7 +5,7 @@ parent: "WorkItem.Query"
 description: "Gets the definition of one or more work item saved queries. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Deleted, Project, Query, Scope ] 
+  "_All_": [ Collection, Deleted, Project, Query, Scope, Server ] 
   "__AllParameterSets":  
     Query: 
       type: "object"  
@@ -17,7 +17,9 @@ parameterSets:
     Project: 
       type: "object"  
     Scope: 
-      type: "string" 
+      type: "string"  
+    Server: 
+      type: "object" 
 parameters: 
   - name: "Query" 
     description: "Specifies one or more saved queries to return. Wildcards supported. When omitted, returns all saved queries in the given scope of the given team project. " 
@@ -33,11 +35,6 @@ parameters:
     type: "object" 
     aliases: [ Path ] 
     defaultValue: "**" 
-  - name: "Project" 
-    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
-    globbing: false 
-    pipelineInput: "true (ByValue)" 
-    type: "object" 
   - name: "Scope" 
     description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. " 
     globbing: false 
@@ -48,8 +45,23 @@ parameters:
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
+  - name: "Project" 
+    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
+    globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 
     type: "object"
 inputs: 

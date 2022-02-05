@@ -5,7 +5,7 @@ parent: "Wiki"
 description: "Gets information from one or more Wiki repositories in a team project. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Project, ProjectWiki, Wiki ] 
+  "_All_": [ Collection, Project, ProjectWiki, Server, Wiki ] 
   "Get all wikis":  
     Wiki: 
       type: "object"  
@@ -14,6 +14,8 @@ parameterSets:
       type: "object"  
     Project: 
       type: "object"  
+    Server: 
+      type: "object"  
   "Get Project Wiki":  
     ProjectWiki: 
       type: "SwitchParameter"  
@@ -21,6 +23,8 @@ parameterSets:
     Collection: 
       type: "object"  
     Project: 
+      type: "object"  
+    Server: 
       type: "object" 
 parameters: 
   - name: "Wiki" 
@@ -57,6 +61,16 @@ parameters:
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 
     type: "object"
 inputs: 

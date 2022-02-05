@@ -5,7 +5,7 @@ parent: "WorkItem.Linking"
 description: "Downloads one or more attachments from work items "
 remarks: 
 parameterSets: 
-  "_All_": [ Attachment, Collection, Destination, Force, WorkItem ] 
+  "_All_": [ Attachment, Collection, Destination, Force, Server, WorkItem ] 
   "__AllParameterSets":  
     Attachment: 
       type: "object"  
@@ -19,7 +19,9 @@ parameterSets:
     Destination: 
       type: "string"  
     Force: 
-      type: "SwitchParameter" 
+      type: "SwitchParameter"  
+    Server: 
+      type: "object" 
 parameters: 
   - name: "Attachment" 
     description: "Specifies the attachment to download. Wildcards are supported. When omitted, all attachments in the specified work item are downloaded. " 
@@ -46,10 +48,24 @@ parameters:
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
+    globbing: false 
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem. "
+    description: "Specifies a work item. Valid values are the work item ID or an instance of Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem. " 
+  - type: "System.Object" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). "
 outputs: 
 notes: 
 relatedLinks: 

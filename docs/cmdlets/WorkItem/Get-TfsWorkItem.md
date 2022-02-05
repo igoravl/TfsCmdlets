@@ -5,7 +5,7 @@ parent: "WorkItem"
 description: "Gets the contents of one or more work items. "
 remarks: 
 parameterSets: 
-  "_All_": [ AreaPath, AsOf, BoardColumn, BoardColumnDone, ChangedBy, ChangedDate, Collection, CreatedBy, CreatedDate, Deleted, Description, Ever, Fields, IncludeLinks, IterationPath, Priority, Project, Query, Reason, Revision, ShowWindow, State, StateChangeDate, Tags, Team, TimePrecision, Title, ValueArea, Where, WorkItem, WorkItemType ] 
+  "_All_": [ AreaPath, AsOf, BoardColumn, BoardColumnDone, ChangedBy, ChangedDate, Collection, CreatedBy, CreatedDate, Deleted, Description, Ever, Fields, IncludeLinks, IterationPath, Priority, Project, QueryParameters, Reason, Revision, SavedQuery, Server, ShowWindow, State, StateChangeDate, Tags, Team, TimePrecision, Title, ValueArea, Where, Wiql, WorkItem, WorkItemType ] 
   "Query by revision":  
     WorkItem: 
       type: "object"  
@@ -21,10 +21,14 @@ parameterSets:
       type: "object"  
     Revision: 
       type: "int"  
+    Server: 
+      type: "object"  
     ShowWindow: 
       type: "SwitchParameter"  
     Team: 
       type: "object"  
+    TimePrecision: 
+      type: "SwitchParameter"  
   "Query by date":  
     WorkItem: 
       type: "object"  
@@ -41,8 +45,12 @@ parameterSets:
       type: "SwitchParameter"  
     Project: 
       type: "object"  
+    Server: 
+      type: "object"  
     Team: 
       type: "object"  
+    TimePrecision: 
+      type: "SwitchParameter"  
   "Get deleted":  
     WorkItem: 
       type: "object"  
@@ -58,8 +66,12 @@ parameterSets:
       type: "SwitchParameter"  
     Project: 
       type: "object"  
+    Server: 
+      type: "object"  
     Team: 
       type: "object"  
+    TimePrecision: 
+      type: "SwitchParameter"  
   "Simple query":  
     AreaPath: 
       type: "string"  
@@ -95,6 +107,8 @@ parameterSets:
       type: "object"  
     Reason: 
       type: "string[]"  
+    Server: 
+      type: "object"  
     State: 
       type: "string[]"  
     StateChangeDate: 
@@ -112,7 +126,7 @@ parameterSets:
     WorkItemType: 
       type: "string[]"  
   "Query by WIQL":  
-    Query: 
+    Wiql: 
       type: "string"  
       required: true  
     Collection: 
@@ -122,6 +136,28 @@ parameterSets:
     IncludeLinks: 
       type: "SwitchParameter"  
     Project: 
+      type: "object"  
+    Server: 
+      type: "object"  
+    Team: 
+      type: "object"  
+    TimePrecision: 
+      type: "SwitchParameter"  
+  "Query by saved query":  
+    SavedQuery: 
+      type: "string"  
+      required: true  
+    Collection: 
+      type: "object"  
+    Fields: 
+      type: "string[]"  
+    IncludeLinks: 
+      type: "SwitchParameter"  
+    Project: 
+      type: "object"  
+    QueryParameters: 
+      type: "Hashtable"  
+    Server: 
       type: "object"  
     Team: 
       type: "object"  
@@ -138,6 +174,8 @@ parameterSets:
     IncludeLinks: 
       type: "SwitchParameter"  
     Project: 
+      type: "object"  
+    Server: 
       type: "object"  
     Team: 
       type: "object"  
@@ -239,15 +277,22 @@ parameters:
     description: "Switches the query to historical query mode, by changing operators to \"WAS EVER\" where possible. " 
     globbing: false 
     type: "SwitchParameter" 
+    aliases: [ WasEver ] 
+    defaultValue: "False" 
+  - name: "WasEver" 
+    description: "Switches the query to historical query mode, by changing operators to \"WAS EVER\" where possible. This is an alias of the Ever parameter." 
+    globbing: false 
+    type: "SwitchParameter" 
+    aliases: [ WasEver ] 
     defaultValue: "False" 
   - name: "Revision" 
-    description: "Specifies a work item revision number to retrieve. When omitted, returns the latest revision of the work item. " 
+    description: "B Specifies a work item revision number to retrieve. When omitted, returns the latest revision of the work item. " 
     globbing: false 
     type: "int" 
     aliases: [ rev ] 
     defaultValue: "0" 
   - name: "rev" 
-    description: "Specifies a work item revision number to retrieve. When omitted, returns the latest revision of the work item. This is an alias of the Revision parameter." 
+    description: "B Specifies a work item revision number to retrieve. When omitted, returns the latest revision of the work item. This is an alias of the Revision parameter." 
     globbing: false 
     type: "int" 
     aliases: [ rev ] 
@@ -258,38 +303,42 @@ parameters:
     globbing: false 
     type: "DateTime" 
     defaultValue: "1/1/0001 12:00:00 AM" 
-  - name: "Query" 
+  - name: "Wiql" 
     description: "Specifies a query written in WIQL (Work Item Query Language) " 
     required: true 
     globbing: false 
     type: "string" 
-    aliases: [ WIQL,QueryText,SavedQuery,QueryPath ] 
-  - name: "WIQL" 
-    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Query parameter." 
+    aliases: [ Query,QueryText ] 
+  - name: "Query" 
+    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Wiql parameter." 
     required: true 
     globbing: false 
     type: "string" 
-    aliases: [ WIQL,QueryText,SavedQuery,QueryPath ] 
+    aliases: [ Query,QueryText ] 
   - name: "QueryText" 
-    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Query parameter." 
+    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Wiql parameter." 
     required: true 
     globbing: false 
     type: "string" 
-    aliases: [ WIQL,QueryText,SavedQuery,QueryPath ] 
+    aliases: [ Query,QueryText ] 
   - name: "SavedQuery" 
-    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Query parameter." 
+    description: "Specifies the path of a saved query to be executed. " 
     required: true 
     globbing: false 
     type: "string" 
-    aliases: [ WIQL,QueryText,SavedQuery,QueryPath ] 
+    aliases: [ QueryPath ] 
   - name: "QueryPath" 
-    description: "Specifies a query written in WIQL (Work Item Query Language) This is an alias of the Query parameter." 
+    description: "Specifies the path of a saved query to be executed. This is an alias of the SavedQuery parameter." 
     required: true 
     globbing: false 
     type: "string" 
-    aliases: [ WIQL,QueryText,SavedQuery,QueryPath ] 
+    aliases: [ QueryPath ] 
+  - name: "QueryParameters" 
+    description: "Specifies the path of a saved query to be executed. " 
+    globbing: false 
+    type: "Hashtable" 
   - name: "Fields" 
-    description: "Specifies which fields should be retrieved. When omitted, defaults to a set of standard fields that include Id, Title, Description, some state-related fields and more. " 
+    description: "Specifies which fields should be retrieved. When omitted, defaults to a set of standard fields that include Id, Title, Description, some state-related fields and more. To retrive all fields, pass an asterisk ('*') to this argument. " 
     globbing: false 
     type: "string[]" 
     defaultValue: "System.AreaPath, System.TeamProject, System.IterationPath, System.WorkItemType, System.State, System.Reason, System.CreatedDate, System.CreatedBy, System.ChangedDate, System.ChangedBy, System.CommentCount, System.Title, System.BoardColumn, System.BoardColumnDone, Microsoft.VSTS.Common.StateChangeDate, Microsoft.VSTS.Common.Priority, Microsoft.VSTS.Common.ValueArea, System.Description, System.Tags" 
@@ -329,6 +378,16 @@ parameters:
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Organization" 
+    description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). This is an alias of the Collection parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Organization ] 
+  - name: "Server" 
+    description: "Specifies the URL to the Team Foundation Server to connect to, a TfsConfigurationServer object (Windows PowerShell only), or a VssConnection object. When omitted, it defaults to the connection set by Connect-TfsConfiguration (if any). For more details, see the Get-TfsConfigurationServer cmdlet. " 
     globbing: false 
     type: "object"
 inputs: 
