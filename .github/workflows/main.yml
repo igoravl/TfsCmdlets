@@ -16,6 +16,9 @@ jobs:
   Build:
 
     runs-on: windows-latest
+    env:
+      TFSCMDLETS_ACCESS_TOKEN: ${{ secrets.TFSCMDLETS_TOKEN }}
+      TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

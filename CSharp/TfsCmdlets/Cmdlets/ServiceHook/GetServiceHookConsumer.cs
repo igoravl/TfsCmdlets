@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiConsumer = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
@@ -18,9 +12,8 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// Slack, Trello ou the generic WebHook consumer. Use this cmdlet to list the available consumers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookConsumer")]
-    [OutputType(typeof(WebApiConsumer))]
-    public class GetServiceHookConsumer : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiConsumer))]
+    partial class GetServiceHookConsumer
     {
         /// <summary>
         /// Specifies the name or ID of the service hook consumer to return. Wildcards are supported. 
@@ -31,53 +24,5 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [SupportsWildcards()]
         [Alias("Name", "Id")]
         public string Consumer { get; set; } = "*";
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        /// <value></value>
-        [Parameter()]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            WriteItems<WebApiConsumer>();
-        }
-    }
-
-    [Exports(typeof(WebApiConsumer))]
-    internal class ServiceHookConsumerDataService : BaseDataService<WebApiConsumer>
-    {
-        protected override IEnumerable<WebApiConsumer> DoGetItems()
-        {
-            var consumer = GetParameter<object>("Consumer");
-
-            while (true) switch (consumer)
-                {
-                    case WebApiConsumer c:
-                        {
-                            yield return c;
-                            yield break;
-                        }
-                    case string s:
-                        {
-                            var client = GetClient<ServiceHooksPublisherHttpClient>();
-                            var result = client.GetConsumersAsync().GetResult("Error getting service hook consumers");
-
-                            foreach(var shc in result.Where(c=>c.Name.IsLike(s) || c.Id.IsLike(s)))
-                            {
-                                yield return shc;
-                            }
-                            yield break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent service hook consumer {consumer}");
-                        }
-                }
-        }
     }
 }

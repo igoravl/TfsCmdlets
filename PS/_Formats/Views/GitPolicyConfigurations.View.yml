@@ -1,17 +1,18 @@
 ViewSelectedBy:
   - Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration
-GroupBy:
-  PropertyName: Branch
+GroupBy: 
+  ScriptBlock: $_.ProjectId + '/' + $_.RepositoryId + '/' + $_.RefName
+  CustomControlName: TeamProjects-Repositories-Branches
 TableControl: 
   DisplayName: 
-    Label: DisplayName
+    Label: Display Name
   Details:
     ScriptBlock: |
       $buildDef = $_.BuildDefinition
       switch ($_.DisplayName)
       {
         'Build' { 'Build Definition: ' + $buildDef }
-        default { 'N/A' }
+        default { '' }
       }
       
   IsEnabled:

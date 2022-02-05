@@ -1,17 +1,13 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.Core.WebApi;
-using Microsoft.TeamFoundation.SourceControl.WebApi;
 using Microsoft.TeamFoundation.Wiki.WebApi;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Wiki
 {
     /// <summary>
     /// Creates a new Wiki repository in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsWiki", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    [OutputType(typeof(WikiV2))]
-    public class NewWiki : NewCmdletBase<WikiV2>
+    [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WikiV2))]
+    partial class NewWiki
     {
         /// <summary>
         /// Specifies the name of the new Wiki
@@ -27,40 +23,21 @@ namespace TfsCmdlets.Cmdlets.Wiki
         public object Repository { get; set; }
 
         /// <summary>
+        /// Specifies the name or ID of the source branch to publish as a Wiki. When ommited, the default branch is used.
+        /// </summary>
+        [Parameter(ParameterSetName = "Create Code Wiki")]
+        public string Branch { get; set; }
+
+        /// <summary>
+        /// Specifies the path to the folder in the repository to publish as a Wiki. When ommited, defaults to the root folder.
+        /// </summary>
+        [Parameter(ParameterSetName = "Create Code Wiki")]
+        public string Path { get; set; } = "/";
+
+        /// <summary>
         /// Creates a provisioned ("project") Wiki in the specified Team Project.
         /// </summary>
         [Parameter(ParameterSetName = "Provision Project Wiki", Mandatory = true)]
         public SwitchParameter ProjectWiki { get; set; }
-    }
-
-    partial class WikiDataService
-    {
-        protected override WikiV2 DoNewItem()
-        {
-            var (tpc, tp) = GetCollectionAndProject();
-            var isProjectWiki = GetParameter<bool>(nameof(NewWiki.ProjectWiki));
-
-            var createParams = new WikiCreateParametersV2()
-            {
-                Name = GetParameter<string>(nameof(NewWiki.Wiki)),
-                Type = isProjectWiki ? WikiType.ProjectWiki : WikiType.CodeWiki,
-                ProjectId = tp.Id
-            };
-
-            if(createParams.Type == WikiType.CodeWiki)
-            {
-                var repo = GetItem<GitRepository>(new {
-                    Repository = GetParameter<object>(nameof(NewWiki.Repository)),
-                    Project = tp
-                });
-
-                createParams.RepositoryId = repo.Id;
-            }
-
-            var client = GetClient<WikiHttpClient>();
-
-            return client.CreateWikiAsync(createParams)
-                .GetResult("Error creating Wiki repository");
-        }
     }
 }

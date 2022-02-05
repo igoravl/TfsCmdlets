@@ -217,4 +217,4 @@ CSharp/.idea/**
 
 # Miscellaneous files
 
-.testtemplate.cs
+CSharp/*/Generated/**

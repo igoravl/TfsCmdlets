@@ -1,9 +1,27 @@
 - ScriptProperty:
+    Name: Project
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'TeamProject', {
+            return (Get-TfsTeamProject -Project $this.ProjectId).Name
+        })
+- ScriptProperty:
+    Name: Repository
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Repository', {
+            return (Get-TfsGitRepository -Repository $this.RepositoryId -Project $this.ProjectId).Name
+        })
+- ScriptProperty:
     Name: PolicySettings
     GetScriptBlock: |
         return [TfsCmdlets.Util.LazyProperty]::Get($this, 'PolicySettings', {
             return $_.Settings.ToString() | ConvertFrom-Json
         })
+- ScriptProperty:
+    Name: RepositoryId
+    GetScriptBlock: $this.PolicySettings.scope[0].repositoryId
+- ScriptProperty:
+    Name: ProjectId
+    GetScriptBlock: ([uri] $this.Url).Segments[-5].TrimEnd('/')
 - ScriptProperty:
     Name: Branch
     GetScriptBlock: $this.PolicySettings.scope[0].refName.SubString(11)

@@ -1,0 +1,10 @@
+ViewSelectedBy: 
+  - Microsoft.TeamFoundation.SourceControl.WebApi.GitItem
+GroupBy: 
+  ScriptBlock: $_.Project + '/' + $_.Repository + '/' + $_.Folder
+  CustomControlName: TeamProjects-Repositories-Folders
+TableControl: 
+  Path:
+  IsFolder:
+  IsSymbolicLink:
+  Content:

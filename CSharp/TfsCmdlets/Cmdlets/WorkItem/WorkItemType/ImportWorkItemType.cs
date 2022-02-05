@@ -5,34 +5,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     /// <summary>
     /// Imports a work item type definition into a team project.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "TfsWorkItemType", ConfirmImpact = ConfirmImpact.Medium)]
-    public class ImportWorkItemType : CmdletBase
+    [TfsCmdlet(CmdletScope.Project, DesktopOnly = true)]
+    partial class ImportWorkItemType
     {
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord() => throw new System.NotImplementedException();
+        [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Import from XML")]
+        [ValidateNotNull]
+        public string Xml { get; set; }
 
-        
-        //         [Parameter(Position=0, ValueFromPipeline=true)]
-        //         [xml] 
-        //         Xml,
-
-        //         [Parameter()]
-        //         public object Project { get; set; }
-
-        //         [Parameter()]
-        //         public object Collection { get; set; }
-
-        // /// <summary>
-        // /// Performs execution of the command
-        // /// </summary>
-        // protected override void DoProcessRecord()
-        //     {
-        //         tp = Get-TfsTeamProject Project Collection
-        //         tp.WorkItemTypes.Import(Xml.OuterXml)
-        //     }
-        // }
-        
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Import from file")]
+        [ValidateNotNull]
+        public string Path { get; set; }
     }
 }
