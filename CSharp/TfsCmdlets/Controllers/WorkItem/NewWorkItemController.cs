@@ -13,53 +13,58 @@ namespace TfsCmdlets.Controllers.WorkItem
 
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
             var type = Data.GetItem<WebApiWorkItemType>();
 
             if (type == null) throw new ArgumentException($"Invalid or non-existent work item type {type}");
 
-            if (!PowerShell.ShouldProcess(tp, $"Create new '{type}' work item")) yield break;
+            if (!PowerShell.ShouldProcess(Project, $"Create new '{type}' work item")) yield break;
 
-            var fields = Parameters.Get<Hashtable>(nameof(NewWorkItem.Fields), new Hashtable());
-            var bypassRules = Parameters.Get<bool>(nameof(NewWorkItem.BypassRules));
             var patch = new JsonPatchDocument();
 
-            foreach (var argName in Parameters.Keys.Where(f => Parameters.HasParameter(f) && !fields.ContainsKey(f) && SetWorkItemController.WellKnownFields.ContainsKey(f)))
+            foreach (var argName in Parameters.Keys.Where(f => Parameters.HasParameter(f) && !Fields.ContainsKey(f) && SetWorkItemController.WellKnownFields.ContainsKey(f)))
             {
                 var refName = GetWorkItemController.SimpleQueryFields[argName].Item2;
-                var value = Parameters.Get<object>(argName);
 
-                if(refName.Equals("System.AreaPath") || refName.Equals("System.IterationPath"))
-                {
-                    value = NodeUtil.NormalizeNodePath((string)value, tp.Name, includeTeamProject: true);
-                }
+                var value = refName switch {
+                    "System.AreaPath" => NodeUtil.NormalizeNodePath(Parameters.Get<string>(argName), Project.Name, includeTeamProject: true),
+                    "System.IterationPath" => NodeUtil.NormalizeNodePath(Parameters.Get<string>(argName), Project.Name, includeTeamProject: true),
+                    _ =>  Parameters.Get<object>(argName)
+                };
 
                 patch.Add(new JsonPatchOperation()
                 {
                     Operation = Operation.Add,
-                    Path = $"/fields/{refName}",
+                    Path = $"/Fields/{refName}",
                     Value = value is IEnumerable<string> enumerable ? string.Join(";", enumerable) : value
+                });
+            }
+
+            foreach(DictionaryEntry de in Fields)
+            {
+                patch.Add(new JsonPatchOperation()
+                {
+                    Operation = Operation.Add,
+                    Path = $"/Fields/{de.Key}",
+                    Value = de.Value is IEnumerable<string> enumerable ? string.Join(";", enumerable) : de.Value
                 });
             }
 
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
-            var wi = client.CreateWorkItemAsync(patch, tp.Name, type.Name, false, bypassRules)
+            var wi = client.CreateWorkItemAsync(patch, Project.Name, type.Name, false, BypassRules)
                 .GetResult("Error creating work item");
 
             // New board column
 
-            if (Parameters.HasParameter(nameof(NewWorkItem.BoardColumn)) ||
-                Parameters.HasParameter(nameof(NewWorkItem.BoardColumnDone)) ||
-                Parameters.HasParameter(nameof(NewWorkItem.BoardLane)))
+            if (Has_BoardColumn || Has_BoardColumnDone || Has_BoardLane)
             {
                 wi = Data.SetItem<WebApiWorkItem>(new
                 {
                     WorkItem = wi,
-                    BoardColumn = Parameters.Get<string>(nameof(NewWorkItem.BoardColumn)),
-                    BoardColumnDone = Parameters.Get<bool>(nameof(NewWorkItem.BoardColumnDone)),
-                    BoardLane = Parameters.Get<string>(nameof(NewWorkItem.BoardLane)),
-                    BypassRules = bypassRules
+                    BoardColumn = BoardColumn,
+                    BoardColumnDone = BoardColumnDone,
+                    BoardLane = BoardLane,
+                    BypassRules = BypassRules
                 });
             }
 
