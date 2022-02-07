@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
     [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RenameClassificationNodeController))]
     partial class RenameIterationController { }
 
-    internal abstract class RenameClassificationNodeController: ControllerBase
+    public abstract class RenameClassificationNodeController: ControllerBase
     {
         [Import]
         private INodeUtil NodeUtil { get; }
@@ -40,14 +40,15 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                 Attributes = nodeToRename.Attributes
             };
 
-            yield return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath.Substring(1))
+            yield return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath)
                 .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, client);
         }
 
         [ImportingConstructor]
-        protected RenameClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected RenameClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
             : base(powerShell, data, parameters, logger)
         {
+            NodeUtil = nodeUtil;
         }
     }
 }
