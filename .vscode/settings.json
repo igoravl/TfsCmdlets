@@ -20,5 +20,25 @@
         ".idea": true
     },
     "search.usePCRE2": true,
-    "csharp.suppressDotnetRestoreNotification": true
+    "csharp.suppressDotnetRestoreNotification": true,
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#6800b5",
+        "activityBar.activeBorder": "#000000",
+        "activityBar.background": "#6800b5",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#000000",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "sash.hoverBorder": "#6800b5",
+        "statusBar.background": "#4b0082",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#6800b5",
+        "statusBarItem.remoteBackground": "#4b0082",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#4b0082",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#4b008299",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "Indigo"
 }
