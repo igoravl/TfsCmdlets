@@ -4,8 +4,6 @@ GroupBy:
   Label: Team Project
   PropertyName: TeamProject
 TableControl: 
-  Name: 
-    Width: 20
   RelativePath: 
     Label: Relative Path
     Width: 60
@@ -17,6 +15,3 @@ TableControl:
     Label: Fin. Date
     Width: 10
     FormatString: "{0:d}"
-  StructureType: 
-    Label: Type
-    Width: 10
