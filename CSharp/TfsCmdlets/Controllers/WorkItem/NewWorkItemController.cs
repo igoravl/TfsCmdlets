@@ -1,7 +1,6 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.VisualStudio.Services.WebApi.Patch;
 using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
-using TfsCmdlets.Cmdlets.WorkItem;
 
 namespace TfsCmdlets.Controllers.WorkItem
 {
@@ -34,7 +33,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                 patch.Add(new JsonPatchOperation()
                 {
                     Operation = Operation.Add,
-                    Path = $"/Fields/{refName}",
+                    Path = $"/fields/{refName}",
                     Value = value is IEnumerable<string> enumerable ? string.Join(";", enumerable) : value
                 });
             }
@@ -44,8 +43,28 @@ namespace TfsCmdlets.Controllers.WorkItem
                 patch.Add(new JsonPatchOperation()
                 {
                     Operation = Operation.Add,
-                    Path = $"/Fields/{de.Key}",
+                    Path = $"/fields/{de.Key}",
                     Value = de.Value is IEnumerable<string> enumerable ? string.Join(";", enumerable) : de.Value
+                });
+            }
+
+            if(!patch.Any(p => p.Path.EndsWith("System.AreaPath")))
+            {
+                patch.Add(new JsonPatchOperation()
+                {
+                    Operation = Operation.Add,
+                    Path = "/fields/System.AreaPath",
+                    Value = Project.Name
+                });
+            }
+
+            if(!patch.Any(p => p.Path.EndsWith("System.IterationPath")))
+            {
+                patch.Add(new JsonPatchOperation()
+                {
+                    Operation = Operation.Add,
+                    Path = "/fields/System.IterationPath",
+                    Value = Project.Name
                 });
             }
 
