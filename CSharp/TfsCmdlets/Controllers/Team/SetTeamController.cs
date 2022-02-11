@@ -93,7 +93,7 @@ namespace TfsCmdlets.Controllers.Team
                         area = Data.NewItem<Models.ClassificationNode>(a);
                     }
 
-                    DefaultAreaPath = area.FullPath;
+                    DefaultAreaPath = area.FullPath.Substring(1);
                 }
 
                 if (AreaPaths == null ||
@@ -114,7 +114,9 @@ namespace TfsCmdlets.Controllers.Team
                 isDirty = true;
             }
 
-            if (Has_AreaPaths && PowerShell.ShouldProcess(t, $"Set {string.Join(", ", AreaPaths)} as team's area paths"))
+            // Set area path values
+
+            if (Has_AreaPaths && PowerShell.ShouldProcess(t, $"Set [{string.Join("; ", AreaPaths)}] as team's area path(s)"))
             {
                 var values = new List<TeamFieldValue>();
                 teamFieldPatch.DefaultValue ??= t.TeamField.DefaultValue;
@@ -149,11 +151,20 @@ namespace TfsCmdlets.Controllers.Team
 
                     Logger.Log($"Adding area '{path}'");
 
-                    values.Add(new TeamFieldValue()
+                    TeamFieldValue existingValue;
+
+                    if ((existingValue = values.FirstOrDefault(v => v.Value.Equals(path))) != null)
                     {
-                        Value = path,
-                        IncludeChildren = includeChildren
-                    });
+                        existingValue.IncludeChildren = includeChildren;
+                    }
+                    else
+                    {
+                        values.Add(new TeamFieldValue()
+                        {
+                            Value = path,
+                            IncludeChildren = includeChildren
+                        });
+                    }
                 }
 
                 if (!values.Any(v => v.Value.Equals(teamFieldPatch.DefaultValue)))
