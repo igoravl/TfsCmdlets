@@ -27,7 +27,8 @@ namespace TfsCmdlets.Controllers.Team
 
             yield return Data.SetItem<Models.Team>(new {
                 DefaultAreaPath = DefaultAreaPath ?? t.Name,
-                BacklogIteration = BacklogIteration ?? t.Name
+                BacklogIteration = BacklogIteration ?? t.Name,
+                Force = true
             });
         }
     }

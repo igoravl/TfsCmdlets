@@ -24,5 +24,11 @@ namespace TfsCmdlets.Cmdlets.Git
         /// </summary>
         [Parameter(ParameterSetName = "Get default", Mandatory = true)]
         public SwitchParameter Default { get; set; }
+
+        /// <summary>
+        /// Returns details about the repository's parent (forked) repository, if it has one.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter IncludeParent { get; set; }
     }
 }

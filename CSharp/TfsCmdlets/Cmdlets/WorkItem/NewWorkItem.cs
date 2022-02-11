@@ -100,7 +100,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// to this cmdlet.
         /// </summary>
         [Parameter]
-        public Hashtable Fields { get; set; }
+        public Hashtable Fields { get; set; } = new Hashtable();
 
         /// <summary>
         /// Bypasses any rule validation when saving the work item. Use it with caution, as this 

@@ -10,7 +10,7 @@ namespace TfsCmdlets.Services.Impl
             bool includeTrailingSeparator = false, bool includeTeamProject = false, char separator = '\\')
         {
             if (path == null) throw new ArgumentNullException("path");
-            if (projectName == null) throw new ArgumentNullException("projectName");
+            //if (projectName == null) throw new ArgumentNullException("projectName");
             if (includeTeamProject && string.IsNullOrEmpty(projectName)) throw new ArgumentNullException("projectName");
             if (includeScope && string.IsNullOrEmpty(scope)) throw new ArgumentNullException("scope");
             if (excludePath && !includeScope && !includeTeamProject) throw new ArgumentException("excludePath is only valid when either includeScope or includeTeamProject are true");
@@ -29,7 +29,7 @@ namespace TfsCmdlets.Services.Impl
 
             if (!excludePath)
             {
-                if (path.Equals(projectName) || path.StartsWith($"{projectName}{separator}"))
+                if (path.Equals(projectName) || path.StartsWith($@"{projectName}{separator}"))
                 {
                     if (Regex.IsMatch(path, $@"^{projectName}\{separator}{scope}\{separator}"))
                     {
@@ -46,7 +46,7 @@ namespace TfsCmdlets.Services.Impl
                 }
                 else if (path.Equals(scope) || path.StartsWith($"{scope}{separator}"))
                 {
-                    if (Regex.IsMatch(path, $@"^{scope}{separator}"))
+                    if (Regex.IsMatch(path, $@"^{scope}\{separator}"))
                     {
                         path = path.Substring(path.IndexOf(separator) + 1);
                     }
@@ -63,7 +63,7 @@ namespace TfsCmdlets.Services.Impl
             {
                 newPath.Append(separator);
             }
-            else if (!includeTrailingSeparator && newPath.Length > 0 && newPath[newPath.Length - 1].Equals(separator))
+            else if (!includeTrailingSeparator && newPath.Length > 1 && newPath[newPath.Length - 1].Equals(separator))
             {
                 newPath.Remove(newPath.Length - 1, 1);
             }
