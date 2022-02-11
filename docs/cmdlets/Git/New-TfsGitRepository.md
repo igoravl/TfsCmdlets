@@ -5,7 +5,7 @@ parent: "Git"
 description: "Creates a new Git repository in a team project. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Passthru, Project, Repository, Server ] 
+  "_All_": [ Collection, ForkFrom, Passthru, Project, Repository, Server, SourceBranch ] 
   "__AllParameterSets":  
     Repository: 
       type: "string"  
@@ -13,12 +13,16 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
+    ForkFrom: 
+      type: "object"  
     Passthru: 
       type: "SwitchParameter"  
     Project: 
       type: "object"  
     Server: 
-      type: "object" 
+      type: "object"  
+    SourceBranch: 
+      type: "string" 
 parameters: 
   - name: "Repository" 
     description: "Specifies the name of the new repository " 
@@ -36,6 +40,14 @@ parameters:
     position: 0 
     type: "string" 
     aliases: [ Name ] 
+  - name: "ForkFrom" 
+    description: "Forks the specified reposity. To fork a repository from another team project, specify the repository name in the form \"project/repository\" or pass in the result of a previous call to Get-TfsGitRepository that returns the source repository. " 
+    globbing: false 
+    type: "object" 
+  - name: "SourceBranch" 
+    description: "Forks the specified branch in the source repository. When omitted, forks all branches. " 
+    globbing: false 
+    type: "string" 
   - name: "Passthru" 
     description: "Returns the results of the command. By default, this cmdlet does not generate any output. " 
     globbing: false 

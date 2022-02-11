@@ -5,13 +5,15 @@ parent: "Git"
 description: "Gets information from one or more Git repositories in a team project. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Default, Project, Repository, Server ] 
+  "_All_": [ Collection, Default, IncludeParent, Project, Repository, Server ] 
   "Get by ID or Name":  
     Repository: 
       type: "object"  
       position: "0"  
     Collection: 
       type: "object"  
+    IncludeParent: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Server: 
@@ -22,6 +24,8 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
+    IncludeParent: 
+      type: "SwitchParameter"  
     Project: 
       type: "object"  
     Server: 
@@ -44,6 +48,11 @@ parameters:
   - name: "Default" 
     description: "Returns the default repository in the given team project. The default repository is the one that is created when a team project is created, and has the same name as the team project. " 
     required: true 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "IncludeParent" 
+    description: "Returns details about the repository's parent (forked) repository, if it has one. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
