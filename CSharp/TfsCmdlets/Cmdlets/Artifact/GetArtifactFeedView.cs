@@ -1,18 +1,26 @@
+using Microsoft.VisualStudio.Services.Feed.WebApi;
+
 namespace TfsCmdlets.Cmdlets.Artifact
 {
     /// <summary>
-    /// Gets information from one or more artifact feeds.
+    /// Gets information from one or more Git repositories in a team project.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WebApiFeed))]
-    partial class GetArtifactFeed
+    [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, OutputType = typeof(FeedView))]
+    partial class GetArtifactFeedView 
     {
         /// <summary>
-        /// Specifies the feed name. Wildcards are supported. 
-        /// When omitted, returns all feeds.
+        /// Specifies the view name. Wildcards are supported. 
+        /// When omitted, returns all views.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true)]
+        [Parameter(Position = 0)]
         [SupportsWildcards]
-        public object Feed { get; set; } = "*";
+        public object View { get; set; } = "*";
+
+        /// <summary>
+        /// Specifies the parent feed.
+        /// </summary>
+        [Parameter(Position = 1, ValueFromPipeline = true)]
+        public object Feed { get; set; }
 
         /// <summary>
         /// Returns only feeds from the given scope (collection or project). 

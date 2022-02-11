@@ -74,6 +74,28 @@
     }
 
     /// <summary>
+    /// Project or Collection scope
+    /// </summary>
+    [Flags]
+    public enum ProjectOrCollectionScope
+    {
+        /// <summary>
+        /// Collection-level scope
+        /// </summary>
+        Collection = 1,
+
+        /// <summary>
+        /// Project-level scope
+        /// </summary>
+        Project = 2,
+
+        /// <summary>
+        /// Both scopes
+        /// </summary>
+        All = 3,
+    }
+
+    /// <summary>
     /// Board card rule
     /// </summary>
     [Flags]
