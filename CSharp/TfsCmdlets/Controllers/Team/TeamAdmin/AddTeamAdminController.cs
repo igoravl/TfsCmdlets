@@ -12,7 +12,6 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
             var member = Parameters.Get<object>(nameof(AddTeamAdmin.Admin));
 
             var identities = Data.GetItems<Models.Identity>(new { Identity = member })
-                .Where(i => !i.IsContainer)
                 .ToDictionary(i => i.Id.ToString());
 
             if (identities.Count == 0)
