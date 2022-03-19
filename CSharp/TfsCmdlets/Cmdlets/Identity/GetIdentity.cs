@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.Identity
         /// information. When omitted, defaults to Direct.
         /// </summary>
         [Parameter(ParameterSetName = "Get Identity")]
-        public TfsQueryMembership QueryMembership { get; set; } = TfsQueryMembership.Direct;
+        public WebApiQueryMembership QueryMembership { get; set; } = WebApiQueryMembership.Direct;
 
         /// <summary>
         /// Returns an identity representing the user currently logged in to
