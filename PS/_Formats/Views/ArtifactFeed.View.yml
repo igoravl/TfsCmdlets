@@ -1,0 +1,12 @@
+ViewSelectedBy:
+- Microsoft.VisualStudio.Services.Feed.WebApi.Feed
+GroupBy:
+  Label: Team Project
+  ScriptBlock: 'if ($_.Project) { $_.Project.Name } else { "(N/A: Organization-Level Feeds)" }'
+TableControl:
+  Name:
+    Width: 30
+  Description:
+    Width: 40
+  Visibility:
+  UpstreamEnabled:
