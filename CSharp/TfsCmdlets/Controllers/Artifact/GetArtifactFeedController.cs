@@ -13,6 +13,7 @@ namespace TfsCmdlets.Controllers.Artifact
             {
                 var feed = input switch
                 {
+                    string s when s.IsGuid() => Guid.Parse(s),
                     _ => input
                 };
 
@@ -21,6 +22,13 @@ namespace TfsCmdlets.Controllers.Artifact
                     case Feed f:
                         {
                             yield return f;
+                            break;
+                        }
+                    case Guid g:
+                        {
+                            yield return client.GetFeedsAsync(Role)
+                                .GetResult($"Error getting artifact feed(s) '{g}'")
+                                .Where(f => f.Id == g);
                             break;
                         }
                     case string s when !string.IsNullOrEmpty(s):

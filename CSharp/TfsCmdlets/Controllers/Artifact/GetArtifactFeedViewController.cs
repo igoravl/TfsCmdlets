@@ -25,9 +25,16 @@ namespace TfsCmdlets.Controllers.Artifact
                             yield return fv;
                             break;
                         }
-                    case string s when !string.IsNullOrEmpty(s):
+                    case string s when !string.IsNullOrEmpty(s) && feed.Project == null:
                         {
                             yield return client.GetFeedViewsAsync(feed.Id.ToString())
+                                .GetResult($"Error getting artifact feed view(s) '{s}'")
+                                .Where(fv => fv.Name.IsLike(s));
+                            break;
+                        }
+                    case string s when !string.IsNullOrEmpty(s):
+                        {
+                            yield return client.GetFeedViewsAsync(feed.Project.Id, feed.Id.ToString())
                                 .GetResult($"Error getting artifact feed view(s) '{s}'")
                                 .Where(fv => fv.Name.IsLike(s));
                             break;
