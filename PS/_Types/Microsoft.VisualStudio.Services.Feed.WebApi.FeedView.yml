@@ -1,0 +1,16 @@
+﻿- ScriptProperty:
+    Name: Project
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Project', {
+            $url = [uri] $_.Url.SubString(0, $_.Url.IndexOf('/Views/'))
+            $id = $url.Segments[-5].Trim('/')
+            return Get-TfsTeamProject -Project $id
+        })
+- ScriptProperty:
+    Name: Feed
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Feed', {
+            $url = [uri] $_.Url.SubString(0, $_.Url.IndexOf('/Views/'))
+            $id = $url.Segments[-1].Trim('/')
+            return Get-TfsArtifactFeed -Feed $id -Project $_.Project
+        })
