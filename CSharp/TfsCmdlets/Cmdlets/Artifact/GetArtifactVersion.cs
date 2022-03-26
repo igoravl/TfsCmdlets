@@ -4,7 +4,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
     /// Gets information from one or more artifact feeds.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WebApiFeed))]
-    partial class GetArtifactFeed
+    partial class GetArtifactVersion
     {
         /// <summary>
         /// Specifies the feed name. Wildcards are supported. 
@@ -28,6 +28,6 @@ namespace TfsCmdlets.Cmdlets.Artifact
         /// </summary>
         [Parameter()]
         [ValidateSet("Administrator", "Contributor", "Reader")]
-        public Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole Role { get; set; } = Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole.Reader;
+        public Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole Role { get; set; } = Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole.Administrator;
     }
 }
