@@ -20,3 +20,5 @@ global using WebApiQueryMembership = Microsoft.VisualStudio.Services.Identity.Qu
 global using WebApiWorkItemRelation = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemRelation;
 global using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 global using WebApiTeam = Microsoft.TeamFoundation.Core.WebApi.WebApiTeam;
+global using WebApiFeed = Microsoft.VisualStudio.Services.Feed.WebApi.Feed;
+global using WebApiPackage = Microsoft.VisualStudio.Services.Feed.WebApi.Package;

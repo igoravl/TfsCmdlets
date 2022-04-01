@@ -13,13 +13,15 @@ namespace TfsCmdlets.Cmdlets.Artifact
         /// When omitted, returns all views.
         /// </summary>
         [Parameter(Position = 0)]
+        [ValidateNotNullOrEmpty]
         [SupportsWildcards]
         public object View { get; set; } = "*";
 
         /// <summary>
         /// Specifies the parent feed.
         /// </summary>
-        [Parameter(Position = 1, ValueFromPipeline = true)]
+        [Parameter(Position = 1, ValueFromPipeline = true, Mandatory = true)]
+        [ValidateNotNullOrEmpty]
         public object Feed { get; set; }
 
         /// <summary>

@@ -13,6 +13,8 @@ namespace TfsCmdlets.Controllers.Artifact
             {
                 var feed = input switch
                 {
+                    null => throw new ArgumentException("Feed name cannot be empty", "Feed"),
+                    string s when string.IsNullOrEmpty(s) => throw new ArgumentException("Feed name cannot be empty", "Feed"),
                     string s when s.IsGuid() => Guid.Parse(s),
                     _ => input
                 };
@@ -33,14 +35,11 @@ namespace TfsCmdlets.Controllers.Artifact
                         }
                     case string s when !string.IsNullOrEmpty(s):
                         {
-                            foreach (var o in client.GetFeedsAsync(Role)
+                            yield return client.GetFeedsAsync(Role)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(f1 => f1.Name.IsLike(s) && (
                                     (string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Collection) > 0)) ||
-                                    (!string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Project) > 0)))))
-                            {
-                                yield return o;
-                            }
+                                    (!string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Project) > 0))));
                             break;
                         }
                     default:

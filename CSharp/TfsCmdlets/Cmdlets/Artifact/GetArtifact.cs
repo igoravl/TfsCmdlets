@@ -7,16 +7,19 @@ namespace TfsCmdlets.Cmdlets.Artifact
     partial class GetArtifact
     {
         /// <summary>
-        /// Specifies the artifact name. Wildcards are supported. 
+        /// Specifies the package (artifact) name. Wildcards are supported. 
         /// When omitted, returns all packages in the specified feed.
         /// </summary>
         [Parameter(Position = 0)]
-        public object Artifact { get; set; } = '*';
+        [ValidateNotNullOrEmpty]
+        [Alias("Package")]
+        public object Artifact { get; set; } = "*";
 
         /// <summary>
         /// Specifies the feed name. 
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true)]
+        [ValidateNotNullOrEmpty]
         public object Feed { get; set; }
 
         /// <summary>
