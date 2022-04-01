@@ -1,8 +1,8 @@
 ViewSelectedBy:
 - Microsoft.VisualStudio.Services.Feed.WebApi.Feed
-GroupBy:
-  Label: Team Project
-  ScriptBlock: 'if ($_.Project) { $_.Project.Name } else { "(N/A: Organization-Level Feeds)" }'
+GroupBy: 
+  ScriptBlock: $_.Project.Name
+  CustomControlName: ArtifactFeeds
 TableControl:
   Name:
     Width: 30
