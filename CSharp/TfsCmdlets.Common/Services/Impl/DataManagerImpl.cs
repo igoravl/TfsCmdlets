@@ -51,7 +51,7 @@ namespace TfsCmdlets.Services.Impl
         }
 
         public T GetItem<T>(object overridingParameters = null)
-            => GetItems<T>(overridingParameters).First();
+            => GetItems<T>(overridingParameters).FirstOrDefault() ?? throw new ArgumentException($"Invalid or non-existent {typeof(T).Name}. Check the supplied arguments and try again.");
 
         public IEnumerable<T> GetItems<T>(object overridingParameters = null)
             => Invoke<T>(VerbsCommon.Get, overridingParameters);
