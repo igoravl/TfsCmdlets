@@ -38,18 +38,6 @@ namespace TfsCmdlets.Cmdlets.Artifact
         public SwitchParameter IncludeDeleted { get; set; }
 
         /// <summary>
-        /// Includes the package description in the results. 
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter IncludeDescription { get; set; }
-
-        /// <summary>
-        /// Includes prerelease packages in the results. Applies only to Nuget packages.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter IncludePrerelease { get; set; }
-
-        /// <summary>
         /// Includes delisted packages in the results. Applies only to Nuget packages.
         /// </summary>
         [Parameter()]

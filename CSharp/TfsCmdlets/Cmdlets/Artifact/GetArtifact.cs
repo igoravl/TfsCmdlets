@@ -51,5 +51,8 @@ namespace TfsCmdlets.Cmdlets.Artifact
         /// </summary>
         [Parameter()]
         public string ProtocolType { get; set; }
+
+        [Parameter()]
+        internal bool IncludeAllVersions { get; set; }
     }
 }
