@@ -5,6 +5,7 @@ GroupBy:
   CustomControlName: TeamProjects-FeedItems
 TableControl:
   Name:
+  Description: 
   ProtocolType:
     Label: Protocol Type
   LatestVersion:

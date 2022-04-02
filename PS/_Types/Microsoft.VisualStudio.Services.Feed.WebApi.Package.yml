@@ -7,6 +7,9 @@
             return Get-TfsArtifactFeed -Feed $id
         })
 - ScriptProperty:
+    Name: Description
+    GetScriptBlock: $this.Versions[0].PackageDescription
+- ScriptProperty:
     Name: LatestVersion
     GetScriptBlock: $this.Versions[0].Version
 - ScriptProperty:
@@ -16,7 +19,7 @@
     Name: IsDeleted
     GetScriptBlock: $this.Versions[0].IsDeleted
 - ScriptProperty:
-    Name: View
+    Name: Views
     GetScriptBlock: $this.Versions[0].Views
 - ScriptProperty:
     Name: PublishDate

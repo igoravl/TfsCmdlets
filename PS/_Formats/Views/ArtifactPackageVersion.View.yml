@@ -1,0 +1,21 @@
+ViewSelectedBy:
+- Microsoft.VisualStudio.Services.Feed.WebApi.PackageVersion
+GroupBy: 
+  ScriptBlock: $_.ProjectName + '/' + $_.FeedName + '/' + $_.PackageName
+  CustomControlName: TeamProjects-Feeds-Packages
+TableControl:
+  Version:
+  Description: 
+    Width: 40
+  PublishDate:
+    Label: Publish Date
+  IsLatest:
+    Label: Latest?
+  IsCachedVersion:
+    Label: Cached?
+  IsListed:
+    Label: Listed?
+  IsDeleted:
+    Label: Deleted?
+  Views:
+  Dependencies:
