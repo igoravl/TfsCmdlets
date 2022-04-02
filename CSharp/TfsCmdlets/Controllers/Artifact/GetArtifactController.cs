@@ -28,30 +28,50 @@ namespace TfsCmdlets.Controllers.Artifact
                 var feed = GetItem<WebApiFeed>();
                 var feedId = feed.Id.ToString();
                 var projectId = feed.Project?.Id == null ? null : feed.Project.Id.ToString();
+                var getTopPackageVersions = (IncludeDeleted || IncludeDelisted || IncludePrerelease) && !IncludeAllVersions;
 
                 switch (artifact)
                 {
                     case Guid g:
                         {
-                            yield return client.GetPackageAsync(packageId: g.ToString(), feedId: feedId, project: projectId)
+                            yield return client.GetPackageAsync(
+                                    packageId: g.ToString(), 
+                                    feedId: feedId, 
+                                    project: projectId)
                                 .GetResult($"Error getting artifact feed(s) '{g}'");
                             break;
                         }
                     case string s when s.IsWildcard():
                         {
-                            yield return client.GetPackagesAsync(projectId, feedId, protocolType: ProtocolType,
-                                    includeDeleted: IncludeDeleted, includeDescription: IncludeDescription, includeAllVersions: true,
-                                    isListed: !IncludeDelisted, getTopPackageVersions: true, isRelease: !IncludePrerelease)
+                            yield return client.GetPackagesAsync(
+                                    project: projectId, 
+                                    feedId: feedId, 
+                                    protocolType: ProtocolType,
+                                    getTopPackageVersions: getTopPackageVersions, 
+                                    includeAllVersions: getTopPackageVersions || IncludeAllVersions,
+                                    includeDeleted: IncludeDeleted? null: true, 
+                                    includeDescription: !getTopPackageVersions, 
+                                    isListed: IncludeDelisted? null: true, 
+                                    isRelease: IncludePrerelease? null: true)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(p => p.Name.IsLike(s));
                             break;
                         }
                     case string s:
                         {
-                            yield return client.GetPackageAsync(project: projectId, feedId: feedId, packageId: s,
-                                    includeDeleted: IncludeDeleted, includeDescription: IncludeDescription, includeAllVersions: true,
-                                    isListed: !IncludeDelisted, isRelease: !IncludePrerelease)
-                                .GetResult($"Error getting artifact feed(s) '{s}'");
+                            yield return client.GetPackagesAsync(
+                                    project: projectId, 
+                                    feedId: feedId, 
+                                    protocolType: ProtocolType, 
+                                    getTopPackageVersions: getTopPackageVersions, 
+                                    includeAllVersions: getTopPackageVersions || IncludeAllVersions,
+                                    includeDeleted: IncludeDeleted? null: true, 
+                                    includeDescription: !getTopPackageVersions, 
+                                    isListed: IncludeDelisted? null: true, 
+                                    isRelease: IncludePrerelease? null: true,
+                                    packageNameQuery: s)
+                                .GetResult($"Error getting artifact feed(s) '{s}'")
+                                .Where(p => p.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
                             break;
                         }
                     default:
