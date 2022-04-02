@@ -12,6 +12,6 @@ namespace TfsCmdlets.Services
 
         void LogError(Exception ex, string errorId = null, ErrorCategory category = ErrorCategory.NotSpecified, object targetObject = null);
 
-        void LogParameters(IParameterManager parameters);
+        void LogParameters(string commandName, IParameterManager parameters);
     }
 }

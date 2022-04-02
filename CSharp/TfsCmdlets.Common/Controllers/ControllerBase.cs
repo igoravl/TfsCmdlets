@@ -15,9 +15,9 @@ namespace TfsCmdlets.Controllers
         protected T GetClient<T>() => Data.GetClient<T>();
 
         protected T GetItem<T>(object overridingParameters = null) => Data.GetItem<T>(overridingParameters);
-        
+
         protected bool TestItem<T>(object overridingParameters = null) => Data.TestItem<T>(overridingParameters);
-        
+
         protected IEnumerable<T> GetItems<T>(object overridingParameters = null) => Data.GetItems<T>(overridingParameters);
 
         protected IParameterManager Parameters { get; }
@@ -35,7 +35,9 @@ namespace TfsCmdlets.Controllers
         public IEnumerable InvokeCommand()
         {
             CacheParameters();
-            
+
+            Logger.LogParameters(DisplayName, Parameters);
+
             return Run();
         }
 

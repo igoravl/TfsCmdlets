@@ -33,7 +33,7 @@ namespace TfsCmdlets.Services.Impl
         }
 
 
-        public void LogParameters(IParameterManager parameters)
+        public void LogParameters(string commandName, IParameterManager parameters)
         {
             if (!PowerShell.IsVerbose) return;
 
@@ -78,7 +78,7 @@ namespace TfsCmdlets.Services.Impl
                     .Replace("\":", "\" = ")
                     .Replace(",\"", "; \"");
 
-            Log($"<START> Running cmdlet with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}the following implicit and explicit arguments:");
+            Log($"Running [{commandName}] with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}the following implicit and explicit arguments:");
             Log(args);
 
         }

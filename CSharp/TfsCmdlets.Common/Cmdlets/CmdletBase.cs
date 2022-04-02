@@ -151,7 +151,7 @@ namespace TfsCmdlets.Cmdlets
 
         private void LogParameters()
         {
-            Logger.LogParameters(Parameters);
+            Logger.LogParameters(DisplayName, Parameters);
         }
 
         private string GetVerb()
