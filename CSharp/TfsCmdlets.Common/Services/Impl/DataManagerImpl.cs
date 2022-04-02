@@ -30,6 +30,12 @@ namespace TfsCmdlets.Services.Impl
 
             foreach (var item in DoInvokeCommand(controller, overridingParameters))
             {
+                if (item is IEnumerable<T> items)
+                {
+                    foreach (var i in items) yield return i;
+                    continue;
+                }
+
                 yield return (T)item;
             }
         }
