@@ -5,12 +5,14 @@ parent: "Team"
 description: "Creates a new team. "
 remarks: 
 parameterSets: 
-  "_All_": [ BacklogIteration, Collection, DefaultAreaPath, DefaultIterationMacro, Description, IterationPaths, NoBacklogIteration, NoDefaultArea, Passthru, Project, Server, Team ] 
-  "__AllParameterSets":  
+  "_All_": [ AreaPaths, BacklogIteration, Collection, DefaultAreaPath, DefaultIterationMacro, Description, IterationPaths, NoBacklogIteration, NoDefaultArea, Passthru, Project, Server, Team ] 
+  "Set team settings":  
     Team: 
       type: "string"  
       position: "0"  
       required: true  
+    AreaPaths: 
+      type: "string[]"  
     BacklogIteration: 
       type: "string"  
     Collection: 
@@ -22,7 +24,7 @@ parameterSets:
     Description: 
       type: "string"  
     IterationPaths: 
-      type: "object"  
+      type: "string[]"  
     NoBacklogIteration: 
       type: "SwitchParameter"  
     NoDefaultArea: 
@@ -65,20 +67,24 @@ parameters:
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
+  - name: "AreaPaths" 
+    description: "Specifies the backlog area path(s) that are associated with this team. Wildcards are supported. When the path ends with an asterisk, all child area paths will be included recursively. Otherwise, only the area itself (without its children) will be included. To include the children of the default area path, use the wildcard character (*) without a path. " 
+    globbing: false 
+    type: "string[]" 
   - name: "BacklogIteration" 
     description: "Specifies the team's backlog iteration path. When omitted, defaults to the team project's root iteration. " 
     globbing: false 
     type: "string" 
     defaultValue: "\\" 
-  - name: "IterationPaths" 
-    description: "Specifies the backlog iteration paths that are associated with this team. Provide a list of iteration paths in the form '/path1/path2'. " 
-    globbing: false 
-    type: "object" 
   - name: "DefaultIterationMacro" 
     description: "Specifies the default iteration macro. When omitted, defaults to \"@CurrentIteration\". " 
     globbing: false 
     type: "string" 
     defaultValue: "@CurrentIteration" 
+  - name: "IterationPaths" 
+    description: "Specifies the backlog iteration path(s) that are associated with this team. Wildcards are supported. " 
+    globbing: false 
+    type: "string[]" 
   - name: "NoBacklogIteration" 
     description: "Do not associate an iteration path automatically to the new team. When omitted, an iteration path is created (if needed) and then is set as the default backlog iteration " 
     globbing: false 
