@@ -132,7 +132,7 @@ namespace TfsCmdlets.Controllers.Team
 
                     var includeChildren = a.Equals("*") || a.EndsWith("\\*") || a.EndsWith("/*");
                     var path = a.Equals("*") ?
-                        t.TeamField.DefaultValue :
+                        teamFieldPatch.DefaultValue :
                         NodeUtil.NormalizeNodePath(includeChildren ? a.Substring(0, a.Length - 2) : a, Project.Name, "Areas", includeTeamProject: true);
 
                     if (path.IsWildcard())
