@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.3.0 (_02/Apr/2022_)
+## Version 2.3.0 (_03/Apr/2022_)
 
 This release adds initial support for Azure Artifacts and fixes a few bugs related to team membership handling.
 

@@ -20,9 +20,9 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Get-TfsTeamProject -IncludeDetails | Select-Object -ExpandProperty ProcessTemplate | Sort-Object | Should -Be @('Agile', 'Agile', 'Scrum')
         }
 
-        It 'Should get deleted projects' {
-            Get-TfsTeamProject -Deleted | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('DeletedProject')
-        }
+        # It 'Should get deleted projects' {
+        #     Get-TfsTeamProject -Deleted | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('DeletedProject')
+        # }
 
     }
 }
