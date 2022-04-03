@@ -33,6 +33,17 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter]
         public SwitchParameter NoDefaultArea { get; set; }
 
+
+        /// <summary>
+        /// Specifies the backlog area path(s) that are associated with this team. Wildcards are supported. 
+        /// When the path ends with an asterisk, all child area paths will be included recursively. 
+        /// Otherwise, only the area itself (without its children) will be included.
+        /// To include the children of the default area path, use the wildcard character (*) without a path.
+        /// </summary>
+        [Parameter(ParameterSetName = "Set team settings")]
+        [SupportsWildcards]
+        public string[] AreaPaths { get; set; }
+
         /// <summary>
         /// Specifies the team's backlog iteration path. When omitted, defaults to the team project's root iteration.
         /// </summary>
@@ -40,17 +51,17 @@ namespace TfsCmdlets.Cmdlets.Team
         public string BacklogIteration { get; set; } = "\\";
 
         /// <summary>
-        /// Specifies the backlog iteration paths that are associated with this team. Provide a list 
-        /// of iteration paths in the form '/path1/path2'.
-        /// </summary>
-        [Parameter]
-        public object IterationPaths { get; set; }
-
-        /// <summary>
         /// Specifies the default iteration macro. When omitted, defaults to "@CurrentIteration".
         /// </summary>
         [Parameter]
         public string DefaultIterationMacro { get; set; } = "@CurrentIteration";
+
+        /// <summary>
+        /// Specifies the backlog iteration path(s) that are associated with this team. 
+        /// Wildcards are supported. 
+        /// </summary>
+        [Parameter(ParameterSetName = "Set team settings")]
+        public string[] IterationPaths { get; set; }
 
         /// <summary>
         /// Do not associate an iteration path automatically to the new team. When omitted, 

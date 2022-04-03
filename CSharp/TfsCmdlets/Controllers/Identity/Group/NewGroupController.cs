@@ -20,6 +20,11 @@ namespace TfsCmdlets.Controllers.Identity.Group
             {
                 case GroupScope.Server:
                     {
+                        if(Collection.IsHosted)
+                        {
+                            throw new NotSupportedException("Server scope is not supported in Azure DevOps Services");
+                        }
+
                         throw new NotImplementedException("Server scope is currently not supported");
                     }
                 case GroupScope.Collection:

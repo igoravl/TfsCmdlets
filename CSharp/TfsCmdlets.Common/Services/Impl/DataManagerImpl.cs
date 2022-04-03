@@ -30,6 +30,12 @@ namespace TfsCmdlets.Services.Impl
 
             foreach (var item in DoInvokeCommand(controller, overridingParameters))
             {
+                if (item is IEnumerable<T> items)
+                {
+                    foreach (var i in items) yield return i;
+                    continue;
+                }
+
                 yield return (T)item;
             }
         }
@@ -45,7 +51,7 @@ namespace TfsCmdlets.Services.Impl
         }
 
         public T GetItem<T>(object overridingParameters = null)
-            => GetItems<T>(overridingParameters).First();
+            => GetItems<T>(overridingParameters).FirstOrDefault() ?? throw new ArgumentException($"Invalid or non-existent {typeof(T).Name}. Check the supplied arguments and try again.");
 
         public IEnumerable<T> GetItems<T>(object overridingParameters = null)
             => Invoke<T>(VerbsCommon.Get, overridingParameters);

@@ -11,6 +11,8 @@ namespace TfsCmdlets.Controllers.WorkItem
         [Import]
         private IProcessUtil ProcessUtil { get; set; }
 
+        private const int MAX_WORKITEMS = 200;
+
         protected override IEnumerable Run()
         {
             var client = GetClient<WorkItemTrackingHttpClient>();
@@ -199,10 +201,25 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             if ((idList = (ids ?? Enumerable.Empty<int>()).ToList()).Count == 0)
             {
-                return Enumerable.Empty<WebApiWorkItem>();
+                yield break;
             }
 
-            return client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail).GetResult();
+            if(idList.Count <= MAX_WORKITEMS)
+            {
+                var wis = client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail)
+                    .GetResult("Error getting work items");
+
+                foreach(var wi in wis) yield return wi;
+                
+                yield break;
+            }
+
+            Logger.LogWarn($"Your query resulted in {idList.Count} work items, therefore items must be fetched one at a time. This may take a while. For best performance, write queries that return less than 200 items.");
+
+            foreach(var id in idList)
+            {
+                yield return GetWorkItemById(id, expand, fields, client);
+            }
         }
 
         private IEnumerable<WebApiWorkItem> GetDeletedWorkItems(IEnumerable<int> ids, WorkItemTrackingHttpClient client)

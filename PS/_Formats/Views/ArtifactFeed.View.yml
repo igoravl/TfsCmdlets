@@ -1,0 +1,12 @@
+ViewSelectedBy:
+- Microsoft.VisualStudio.Services.Feed.WebApi.Feed
+GroupBy: 
+  ScriptBlock: $_.Project.Name
+  CustomControlName: ArtifactFeeds
+TableControl:
+  Name:
+    Width: 30
+  Description:
+    Width: 40
+  Visibility:
+  UpstreamEnabled:

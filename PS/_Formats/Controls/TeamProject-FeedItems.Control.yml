@@ -1,0 +1,26 @@
+Passthru: |
+  <Control>
+    <Name>TeamProjects-FeedItems</Name>
+    <CustomControl>
+      <CustomEntries>
+        <CustomEntry>
+          <CustomItem>
+            <Frame>
+              <LeftIndent>4</LeftIndent>
+              <CustomItem>
+                <ExpressionBinding>
+                  <ScriptBlock>if ($_.Project) { "Team Project: $($_.Project.Name)" } else { "Organization-Level Feeds" }</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+                <Text>  Feed: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Feed.Name</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+              </CustomItem>
+            </Frame>
+          </CustomItem>
+        </CustomEntry>
+      </CustomEntries>
+    </CustomControl>
+  </Control>

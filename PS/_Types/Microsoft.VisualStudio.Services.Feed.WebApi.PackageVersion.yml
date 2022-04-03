@@ -1,0 +1,24 @@
+﻿- ScriptProperty:
+    Name: Package
+    GetScriptBlock: |
+        return [TfsCmdlets.Util.LazyProperty]::Get($this, 'Package', {
+            $url = [uri] $_.Links.Links.package.href
+            $id = $url.Segments[-1].Trim('/')
+            $feedId = $url.Segments[-3].Trim('/')
+            return Get-TfsArtifact -Package $id -Feed $feedId
+        })
+- ScriptProperty:
+    Name: Feed
+    GetScriptBlock: $this.Package.Feed
+- ScriptProperty:
+    Name: Project
+    GetScriptBlock: $this.Feed.Project
+- ScriptProperty:
+    Name: ProjectName
+    GetScriptBlock: $this.Project.Name
+- ScriptProperty:
+    Name: FeedName
+    GetScriptBlock: $this.Feed.Name
+- ScriptProperty:
+    Name: PackageName
+    GetScriptBlock: $this.Package.Name
