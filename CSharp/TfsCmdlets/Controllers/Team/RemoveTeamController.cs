@@ -11,9 +11,9 @@ namespace TfsCmdlets.Controllers.Team
 
             foreach (var team in Items)
             {
-                if (!PowerShell.ShouldProcess(Project, $"Delete team '{team.Name}'")) continue;
+                if (!PowerShell.ShouldProcess($"[Project: {team.ProjectName}]/[Team: {team.Name}]", $"Delete team")) continue;
 
-                client.DeleteTeamAsync(Project.Name, team.Name)
+                client.DeleteTeamAsync(team.ProjectName, team.Name)
                     .Wait($"Error deleting team {team.Name}");
             }
 
