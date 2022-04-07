@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.Core.WebApi.Types;
 using Microsoft.TeamFoundation.Work.WebApi;
@@ -9,7 +10,10 @@ namespace TfsCmdlets.Controllers.Team
     partial class GetTeamController
     {
         [Import]
-        public ICurrentConnections CurrentConnections { get; }
+        private ICurrentConnections CurrentConnections { get; }
+
+        [Import]
+        private IPaginator Paginator { get; }
 
         protected override IEnumerable Run()
         {
@@ -76,8 +80,9 @@ namespace TfsCmdlets.Controllers.Team
                         }
                     case string s:
                         {
-                            foreach (var result in client.GetTeamsAsync(Project.Name)
-                                .GetResult($"Error getting team(s) '{s}'")
+
+                            foreach (var result in Paginator.Paginate(
+                                    (top, skip) => client.GetTeamsAsync(Project.Name, top: top, skip: skip).GetResult($"Error getting team(s) '{s}'"))
                                 .Where(t => t.Name.IsLike(s)))
                             {
                                 yield return CreateTeamObject(result);

@@ -5,6 +5,12 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class GetTeamProjectController
     {
+        [Import]
+        private ICurrentConnections CurrentConnections { get; }
+
+        [Import]
+        private IPaginator Paginator { get; }
+
         protected override IEnumerable Run()
         {
             var client = GetClient<ProjectHttpClient>();
@@ -83,9 +89,6 @@ namespace TfsCmdlets.Controllers.TeamProject
             => client.GetProject(project, includeDetails).GetResult($"Error getting team project '{project}'");
 
         private IEnumerable<TeamProjectReference> FetchProjects(ProjectState stateFilter, ProjectHttpClient client)
-            => client.GetProjects(stateFilter).GetResult($"Error getting team project(s)");
-
-        [Import]
-        private ICurrentConnections CurrentConnections { get; }
+            => Paginator.Paginate((top, skip) => client.GetProjects(stateFilter, top: top, skip: skip).GetResult($"Error getting team project(s)"));
     }
 }
