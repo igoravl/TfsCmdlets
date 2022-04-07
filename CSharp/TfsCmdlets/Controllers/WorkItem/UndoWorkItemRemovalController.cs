@@ -11,7 +11,7 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             foreach (var wi in GetItems<WebApiWorkItem>(new { Deleted = true }))
             {
-                if (!PowerShell.ShouldProcess(Collection, $"Restore {wi.Fields["System.WorkItemType"]} #{wi.Id} ('{wi.Fields["System.Title"]}')")) continue;
+                if (!PowerShell.ShouldProcess($"[Organization: {Collection.DisplayName}]/[Work Item: {wi.Id}]", $"Restore work item")) continue;
 
                 client.RestoreWorkItemAsync(new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemDeleteUpdate()
                 {

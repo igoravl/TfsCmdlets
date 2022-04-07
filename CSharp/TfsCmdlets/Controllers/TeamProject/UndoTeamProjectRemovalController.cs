@@ -31,6 +31,8 @@ namespace TfsCmdlets.Controllers.TeamProject
 
             foreach (var tp in references)
             {
+                if (!PowerShell.ShouldProcess($"[Organization: {Collection.DisplayName}]/[Project: {tp.Name}]", "Restore deleted team project")) continue;
+
                 RestApiService.InvokeAsync(
                         Data.GetCollection(),
                         $"/_apis/projects/{tp.Id}",
