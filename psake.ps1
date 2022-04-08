@@ -59,7 +59,7 @@ Properties {
 Task Rebuild -Depends Clean, Build {
 }
 
-Task Package -Depends Build, AllTests, RemoveEmptyFolders, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
+Task Package -Depends Build, AllTests, RemoveEmptyFolders, ValidateReleaseNotes, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
 Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest, GenerateDocs {
@@ -278,6 +278,29 @@ Task Clean {
     Get-ChildItem (Join-Path $SolutionDir '*/obj') -Directory | Remove-Item -Recurse
 
 } 
+
+Task ValidateReleaseNotes {
+
+    $path = Join-Path $RootProjectDir "Docs/ReleaseNotes/${ThreePartVersion}.md"
+
+    if(-not (Test-Path $path -PathType Leaf)) {
+        throw "Release notes file '$path' not found"
+    }
+    
+    $releaseNotes = Get-Content $path -Encoding utf8
+    $topVersionLine = $releaseNotes[2]
+
+    if($topVersionLine -notlike "*$ThreePartVersion*") {
+        throw "File '$path' does not contain the release notes for version $threePartVersion."
+    }
+
+    $releaseNotes = (Get-Content (Join-Path $RootProjectDir 'RELEASENOTES.md') -Encoding utf8)
+    $topVersionLine = $releaseNotes[2]
+
+    if($topVersionLine -notmatch "$ThreePartVersion") {
+        throw "File 'RELEASENOTES.md' does not contain the release notes for version $threePartVersion"
+    }
+}
 
 Task PackageModule -Depends Build {
 
