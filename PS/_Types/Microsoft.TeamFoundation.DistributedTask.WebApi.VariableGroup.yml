@@ -1,0 +1,3 @@
+﻿- ScriptProperty:
+    Name: ProjectName
+    GetScriptBlock: $this.Project.Name
