@@ -11,9 +11,9 @@ namespace TfsCmdlets.Controllers.Git
 
             foreach (var repo in Items)
             {
-                if (!PowerShell.ShouldProcess(Project, $"Delete Git repository '{repo.Name}'")) continue;
+                if (!PowerShell.ShouldProcess($"[Project: {repo.ProjectReference.Name}]/[Repository: {repo.Name}]", $"Delete repository")) continue;
 
-                if (!Force && !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{repo.Name}'?")) continue;
+                if (!(repo.DefaultBranch == null || Force) && !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{repo.Name}'?")) continue;
 
                 client.DeleteRepositoryAsync(repo.Id).Wait();
             }

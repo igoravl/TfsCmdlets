@@ -1,36 +1,24 @@
 # TfsCmdlets Release Notes
 
-## Version 2.3.0 (_03/Apr/2022_)
+## Version 2.3.1 (_08/Apr/2022_)
 
-This release adds initial support for Azure Artifacts and fixes a few bugs related to team membership handling.
-
-## New cmdlets
-
-### Artifacts
-
-* [`Get-TfsArtifact`](https://tfscmdlets.dev/docs/cmdlets/Artifact/Get-TfsArtifact)
-* [`Get-TfsArtifactFeed`](https://tfscmdlets.dev/docs/cmdlets/Artifact/Get-TfsArtifactFeed)
-* [`Get-TfsArtifactVersion`](https://tfscmdlets.dev/docs/cmdlets/Artifact/Get-TfsArtifactVersion)
-* [`Get-TfsArtifactFeedView`](https://tfscmdlets.dev/docs/cmdlets/Artifact/Get-TfsArtifactFeedView)
-
-### Git
-
-* [`Remove-TfsGitBranch`](https://tfscmdlets.dev/docs/cmdlets/Git/Branch/Remove-TfsGitBranch)
-
-## Improvements
-  
-* Add `-AreaPaths` argument to `New-TfsTeam` so team area paths can be defined at team creation time.
-* `Get-TfsWorkItem` supports long result sets again. In the previous release, query results were limited to 200 work items due to a limitation in the Azure DevOps "Get Work Items Batch" API. In this version we added back the original behavior as a fallback logic: to fetch work items one at a time to circumvent the limitation. Though slower, it can fetch any number of work items (fixes [#164](https://github.com/igoravl/TfsCmdlets/issues/164)).
+This release brings a few minor fixes to Team cmdlets and to pipeline handling. No new features and/or cmdlets have been introduced in this version.
 
 ## Fixes
 
-* `Add-TfsTeamAdmin` limited team administrators to users (groups could not be added as admins), even though Azure DevOps supports it. This release lifts this restriction.
-* Fixes a bug introduced in the last version where `Get-TfsTeamMember` and `Get-TfsTeamAdmin` would not return group members
-* Under some circumstances `New-TfsTeam` would not respect `-NoDefaultArea` and `-NoBacklogIteration`
+* `Get-TfsTeam` and `Get-TfsTeamProject` were limited to a maximum of 100 results. This has been fixed. Now they will return all results.
+* Under certain circumstances, `Get-TfsTeamProjectCollection` (and, by extension, Get-TfsOrganization) would throw an error with the message "_Invalid or non-existent Collection System.Object[]._" (fixes [#165](https://github.com/igoravl/TfsCmdlets/issues/165))
+* Fixes a caching bug in the handling of the -Project parameter that could lead to the wrong project being returned.
+* Fixes pipelining bugs in several cmdlets (most noticeably `Get-TfsReposity`, which wouldn't work when connected to a pipeline).
+* Improves the readability of ShouldProcess (Confirm / WhatIf) output in several cmdlets.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.3.0 (_04/Mar/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.0.md).
 
 ### Version 2.2.1 (_10/Feb/2022_)
 
