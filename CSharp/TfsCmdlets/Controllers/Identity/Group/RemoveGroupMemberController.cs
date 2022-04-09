@@ -24,10 +24,9 @@ namespace TfsCmdlets.Controllers.Identity.Group
 
             Logger.Log($"Adding {m.IdentityType} '{m.DisplayName} ({m.UniqueName})' to group '{g.DisplayName}'");
 
-            if (!PowerShell.ShouldProcess($"Group '{g.DisplayName}'",
-                    $"Remove member '{m.DisplayName} ({m.UniqueName})'")) return null;
+            if (!PowerShell.ShouldProcess($"[Group: {g.DisplayName}]/[Member: '{m.DisplayName} ({m.UniqueName})']", "Remove member")) return null;
 
-            Logger.Log($"Removing '{m.DisplayName} ({m.UniqueName}))' from group '{g.DisplayName}'");
+            Logger.Log($"Removing '{m.DisplayName} ({m.UniqueName})' from group '{g.DisplayName}'");
 
             client.RemoveMemberFromGroupAsync(g.Descriptor, m.Descriptor)
                 .GetResult($"Error removing '{m.DisplayName} ({m.UniqueName}))' from group '{g.DisplayName}'");

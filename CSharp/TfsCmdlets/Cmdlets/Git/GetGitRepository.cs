@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git
     /// <summary>
     /// Gets information from one or more Git repositories in a team project.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GitRepository))]
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GitRepository), DefaultParameterSetName = "Get by ID or Name")]
     partial class GetGitRepository
     {
         /// <summary>

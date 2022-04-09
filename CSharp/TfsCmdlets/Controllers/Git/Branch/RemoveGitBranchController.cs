@@ -16,7 +16,7 @@ namespace TfsCmdlets.Controllers.Git.Branch
                 var projectId = commitUrl.Segments[commitUrl.Segments.Length - 7].Trim('/');
                 var repo = GetItem<GitRepository>(new { Repository = repoId, Project = projectId });
 
-                if (!PowerShell.ShouldProcess($"Git repository '{repo.Name}'", $"Delete branch '{branch.Name}'")) continue;
+                if (!PowerShell.ShouldProcess($"[Project: {repo.ProjectReference.Name}]/[Repository: {repo.Name}]/[Branch: {branch.Name}]", $"Delete branch")) continue;
 
                 try
                 {

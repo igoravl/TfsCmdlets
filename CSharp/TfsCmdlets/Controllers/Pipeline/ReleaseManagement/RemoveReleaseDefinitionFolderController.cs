@@ -19,10 +19,7 @@ namespace TfsCmdlets.Controllers.Pipeline.ReleaseManagement
 
             foreach (var f in folders)
             {
-                if (!PowerShell.ShouldProcess(tp, $"Remove release folder '{f.Path}'"))
-                {
-                    continue;
-                }
+                if (!PowerShell.ShouldProcess($"[Project: {tp.Name}]/[Folder: {f.Path}]", "Remove release definition folder")) continue;
 
                 if (!recurse)
                 {

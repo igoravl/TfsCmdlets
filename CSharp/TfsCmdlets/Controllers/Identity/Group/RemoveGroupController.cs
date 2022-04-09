@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.Identity.Group
 
             foreach (var group in Items)
             {
-                if (!PowerShell.ShouldProcess($"Group '{group.PrincipalName}'", "Remove group")) continue;
+                if (!PowerShell.ShouldProcess(group.PrincipalName, "Remove group")) continue;
 
                 client.DeleteGroupAsync(group.Descriptor)
                     .Wait($"Error removing group '{group.PrincipalName}'");

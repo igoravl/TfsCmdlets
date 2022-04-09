@@ -8,7 +8,6 @@ namespace TfsCmdlets.Controllers.Wiki
     {
         protected override IEnumerable Run()
         {
-            var tp = Data.GetProject();
             var client = Data.GetClient<WikiHttpClient>();
 
             var wikis = Data.GetItems<WikiV2>();
@@ -16,7 +15,10 @@ namespace TfsCmdlets.Controllers.Wiki
 
             foreach (var w in wikis)
             {
-                if (!PowerShell.ShouldProcess(tp, $"Remove wiki '{w.Name}'")) continue;
+                var tp = Data.GetProject(new { Project = w.ProjectId });
+
+                if (!PowerShell.ShouldProcess($"[Project: {tp.Name}]/[Wiki: {w.Name}]", $"Remove wiki '{w.Name}'")) continue;
+
                 if (!force && !PowerShell.ShouldContinue($"Are you sure you want to delete wiki '{w.Name}'?")) continue;
 
                 if (w.Type == WikiType.ProjectWiki)

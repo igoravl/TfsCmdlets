@@ -19,7 +19,7 @@ namespace TfsCmdlets.Controllers.TeamProject
 
             foreach (var tp in tps)
             {
-                if (!PowerShell.ShouldProcess(tpc, $"Delete team project '{tp.Name}'")) continue;
+                if (!PowerShell.ShouldProcess($"[Organization: {tpc.DisplayName}]/[Project: {tp.Name}]", "Delete team project")) continue;
 
                 if (!force && !PowerShell.ShouldContinue($"Are you sure you want to delete team project '{tp.Name}'?")) continue;
 
