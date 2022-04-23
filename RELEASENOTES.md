@@ -1,20 +1,22 @@
 # TfsCmdlets Release Notes
 
-## Version 2.3.1 (_08/Apr/2022_)
+## Version 2.4.0 (_23/Apr/2022_)
 
-This release brings a few minor fixes to Team cmdlets and to pipeline handling. No new features and/or cmdlets have been introduced in this version.
+This release adds support for interactive logons in PowerShell Core (6+) shells.
 
-## Fixes
+## Improvements
 
-* `Get-TfsTeam` and `Get-TfsTeamProject` were limited to a maximum of 100 results. This has been fixed. Now they will return all results.
-* Under certain circumstances, `Get-TfsTeamProjectCollection` (and, by extension, Get-TfsOrganization) would throw an error with the message "_Invalid or non-existent Collection System.Object[]._" (fixes [#165](https://github.com/igoravl/TfsCmdlets/issues/165))
-* Fixes a caching bug in the handling of the -Project parameter that could lead to the wrong project being returned.
-* Fixes pipelining bugs in several cmdlets (most noticeably `Get-TfsReposity`, which wouldn't work when connected to a pipeline).
-* Improves the readability of ShouldProcess (Confirm / WhatIf) output in several cmdlets.
+All the `Connect-*` cmdlets now support interactive (`-Interactive`) logon in PowerShell Core (6+) shells. Previously, only Windows PowerShell (5.*) terminals supported interactive authentication.
+
+**NOTE**: Notice, however, that interactive logon in PowerShell Core requires Azure DevOps Services. TFS / Azure DevOps Server remain unsupported for interactive logons in PowerShell Core. To connect to an on-premises server in a PowerShell Core shell, you're still required to use either username/password credentials or a personal access token.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.3.1 (_08/Apr/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.1.md).
 
 ### Version 2.3.0 (_04/Mar/2022_)
 
