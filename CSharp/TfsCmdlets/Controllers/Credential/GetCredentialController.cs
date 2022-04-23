@@ -1,15 +1,16 @@
-﻿using System.Management.Automation;
-using System.Net;
-using System.Security;
+﻿using System.Net;
 using Microsoft.VisualStudio.Services.Client;
 using Microsoft.VisualStudio.Services.Common;
-using TfsCmdlets.Cmdlets.Credential;
+using Microsoft.VisualStudio.Services.OAuth;
 
 namespace TfsCmdlets.Controllers.Credential
 {
     [CmdletController(typeof(VssCredentials), CustomCmdletName = "NewCredential")]
     partial class GetCredentialController
     {
+        [Import]
+        private IInteractiveAuthentication InteractiveAuthentication { get; }
+
         protected override IEnumerable Run()
         {
             var connectionMode = ConnectionMode.CachedCredentials;
@@ -81,18 +82,25 @@ namespace TfsCmdlets.Controllers.Credential
 
                 case ConnectionMode.Interactive:
                     {
-                        if (PowerShell.Edition.Equals("Core"))
-                        {
-                            throw new Exception("Interactive logins are currently not supported in PowerShell Core. Use personal access tokens instead.");
-                        }
-
                         Logger.Log("Using interactive credential");
 
-                        yield return new VssClientCredentials(
-                            new WindowsCredential(false),
-                            new VssFederatedCredential(false),
-                            CredentialPromptType.PromptIfNeeded);
-                        break;
+                        if(IsHosted(Url))
+                        {
+                            yield return new VssCredentials(
+                                new VssOAuthAccessTokenCredential(InteractiveAuthentication.GetToken(Url)));
+                        }
+                        else if (!PowerShell.Edition.Equals("Core"))
+                        {
+                            yield return new VssClientCredentials(
+                                new WindowsCredential(false),
+                                new VssFederatedCredential(false),
+                                CredentialPromptType.PromptIfNeeded);
+                        }
+                        else
+                        {
+                            throw new Exception("Interactive authentication is not supported for TFS / Azure DevOps Server in PowerShell Core. Please use either a username/password credential or a Personal Access Token.");
+                        }
+                        yield break;
                     }
 
                 default:
