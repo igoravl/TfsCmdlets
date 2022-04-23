@@ -28,6 +28,8 @@
     <PackageReference Include="System.Composition" Version="5.0.1" />
     <PackageReference Include="System.Composition.Hosting" Version="5.0.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
+    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
