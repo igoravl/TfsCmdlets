@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.4.0 (_23/Apr/2022_)
+## Version 2.4.0 (_03/May/2022_)
 
 This release adds support for interactive logons in PowerShell Core (6+) shells.
 
