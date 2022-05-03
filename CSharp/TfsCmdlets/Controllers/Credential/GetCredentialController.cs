@@ -84,23 +84,28 @@ namespace TfsCmdlets.Controllers.Credential
                     {
                         Logger.Log("Using interactive credential");
 
-                        if(IsHosted(Url))
+                        if (PowerShell.Edition.Equals("Desktop"))
                         {
-                            yield return new VssCredentials(
-                                new VssOAuthAccessTokenCredential(InteractiveAuthentication.GetToken(Url)));
-                        }
-                        else if (!PowerShell.Edition.Equals("Core"))
-                        {
+                            // Windows PowerShell 
+
                             yield return new VssClientCredentials(
                                 new WindowsCredential(false),
                                 new VssFederatedCredential(false),
                                 CredentialPromptType.PromptIfNeeded);
+
+                            yield break;
                         }
-                        else
+
+                        if (IsHosted(Url))
                         {
-                            throw new Exception("Interactive authentication is not supported for TFS / Azure DevOps Server in PowerShell Core. Please use either a username/password credential or a Personal Access Token.");
+                            // PowerShell Core
+
+                            yield return new VssCredentials(
+                                new VssOAuthAccessTokenCredential(InteractiveAuthentication.GetToken(Url)));
+                            yield break;
                         }
-                        yield break;
+
+                        throw new Exception("Interactive authentication is not supported for TFS / Azure DevOps Server in PowerShell Core. Please use either a username/password credential or a Personal Access Token.");
                     }
 
                 default:
