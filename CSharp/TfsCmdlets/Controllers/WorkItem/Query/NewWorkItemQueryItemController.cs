@@ -20,8 +20,11 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var force = Parameters.Get<bool>("Force");
 
             var tp = Data.GetProject();
+            var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
-            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, scope, includeScope: true, separator: '/');
+            var root = GetItem<QueryHierarchyItem>(new { Folder = @"\" });
+
+            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, root.Name, includeScope: true, separator: '/');
             var queryName = Path.GetFileName(fullPath);
             var parentPath = Path.GetDirectoryName(fullPath);
 
@@ -38,8 +41,6 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
             if (!PowerShell.ShouldProcess(tp, $"{(existingItem ? "Create" : "Overwrite")} " +
                 $"work item query{(isFolder ? " folder" : "")} '{fullPath}'")) return null;
-
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
             var newItem = new QueryHierarchyItem()
             {
@@ -58,7 +59,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var result = client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
                 .GetResult($"Error creating new work item {itemType} '{fullPath}'");
 
-            return new[]{result};
+            return new[] { result };
         }
     }
 }
