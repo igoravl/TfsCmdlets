@@ -2,9 +2,9 @@
 
 namespace TfsCmdlets.SourceGenerators.Generators.Models
 {
-    // [Generator]
-    public class Generator : BaseGenerator<Filter, TypeProcessor>
+    [Generator]
+    public class ModelGenerator : BaseGenerator<Filter, TypeProcessor>
     {
-        protected override string GeneratorName => "ModelGenerator";
+        protected override string GeneratorName => nameof(ModelGenerator);
     }
 }

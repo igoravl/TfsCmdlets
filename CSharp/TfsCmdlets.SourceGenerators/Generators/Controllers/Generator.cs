@@ -3,8 +3,8 @@
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
     [Generator]
-    public class CmdletGenerator : BaseGenerator<Filter, TypeProcessor>
+    public class ControllerGenerator : BaseGenerator<Filter, TypeProcessor>
     {
-        protected override string GeneratorName => "ControllerGenerator";
+        protected override string GeneratorName => nameof(ControllerGenerator);
     }
 }
