@@ -6,7 +6,7 @@ GroupBy:
 TableControl:
   Name:
     Width: 20
-  QueryType:
+  ItemType:
     Label: Type
     Width: 6
   Columns:
