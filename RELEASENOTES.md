@@ -8,7 +8,6 @@ This release fixes a [bug]([#172](https://github.com/igoravl/TfsCmdlets/issues/1
 
 * Under certain circumstances, `Get-TfsWorkItem` would return an invalid ID, due to a change in the response from the WorkItem REST API (fixes [#172](https://github.com/igoravl/TfsCmdlets/issues/172))
 
-
 -----------------------
 
 ## Previous Versions
