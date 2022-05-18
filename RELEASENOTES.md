@@ -14,6 +14,10 @@ All the `Connect-*` cmdlets now support interactive (`-Interactive`) logon in Po
 
 ## Previous Versions
 
+### Version 2.3.2 (_18/May/2022_)
+
+This release fixes a [bug]([#172](https://github.com/igoravl/TfsCmdlets/issues/172)) in `Get-TfsWorkItem`.
+
 ### Version 2.3.1 (_08/Apr/2022_)
 
 See release notes [here](Docs/ReleaseNotes/2.3.1.md).
