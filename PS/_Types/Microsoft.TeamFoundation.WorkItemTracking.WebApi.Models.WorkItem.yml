@@ -1,6 +1,6 @@
 - ScriptProperty:
     Name: Id
-    GetScriptBlock: ([uri]$this.Url).Segments[-1]
+    GetScriptBlock: $this.Fields['System.Id']
 - ScriptProperty:
     Name: Title
     GetScriptBlock: $this.Fields['System.Title']
