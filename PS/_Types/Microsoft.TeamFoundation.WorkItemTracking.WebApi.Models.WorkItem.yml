@@ -1,6 +1,6 @@
 - ScriptProperty:
     Name: Id
-    GetScriptBlock: $this.Fields['System.Id']
+    GetScriptBlock: $uri = ([uri]$this.Url); if($uri.Segments[-2] -eq 'workItems/'){[int]$uri.Segments[-1]}else{[int]$uri.Segments[-3]}
 - ScriptProperty:
     Name: Title
     GetScriptBlock: $this.Fields['System.Title']
