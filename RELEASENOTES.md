@@ -1,20 +1,21 @@
 # TfsCmdlets Release Notes
 
-## Version 2.3.1 (_08/Apr/2022_)
+## Version 2.3.2 (_18/May/2022_)
 
-This release brings a few minor fixes to Team cmdlets and to pipeline handling. No new features and/or cmdlets have been introduced in this version.
+This release fixes a [bug]([#172](https://github.com/igoravl/TfsCmdlets/issues/172)) in `Get-TfsWorkItem`.
 
 ## Fixes
 
-* `Get-TfsTeam` and `Get-TfsTeamProject` were limited to a maximum of 100 results. This has been fixed. Now they will return all results.
-* Under certain circumstances, `Get-TfsTeamProjectCollection` (and, by extension, Get-TfsOrganization) would throw an error with the message "_Invalid or non-existent Collection System.Object[]._" (fixes [#165](https://github.com/igoravl/TfsCmdlets/issues/165))
-* Fixes a caching bug in the handling of the -Project parameter that could lead to the wrong project being returned.
-* Fixes pipelining bugs in several cmdlets (most noticeably `Get-TfsReposity`, which wouldn't work when connected to a pipeline).
-* Improves the readability of ShouldProcess (Confirm / WhatIf) output in several cmdlets.
+* Under certain circumstances, `Get-TfsWorkItem` would return an invalid ID, due to a change in the response from the WorkItem REST API (fixes [#172](https://github.com/igoravl/TfsCmdlets/issues/172))
+
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.3.1 (_08/Apr/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.1.md).
 
 ### Version 2.3.0 (_04/Mar/2022_)
 
