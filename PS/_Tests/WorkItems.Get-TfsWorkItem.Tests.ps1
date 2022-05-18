@@ -11,7 +11,8 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
         It 'Should get by Where' {
             (Get-TfsWorkItem -Where '[System.Id] = 150').Id | Should -Be 150
-            (Get-TfsWorkItem -Where '[System.Id] = 150').Rev | Should -Be 2
+            (Get-TfsWorkItem -Where '[System.Id] = 150').Rev | Should -Be 4
+            (Get-TfsWorkItem -Where '[System.Id] = 150 And [System.Rev] = 2').Rev | Should -Be 2
         }
 
         It 'Should support ASOF when getting by ID' {
