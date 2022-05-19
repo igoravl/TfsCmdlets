@@ -23,7 +23,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
                         if (queryItem.IsFolder == isFolder) yield return queryItem;
                         yield break;
                     }
-                case string s when string.IsNullOrEmpty(s) || s.Equals("/") || s.Equals("\\"):
+                case string s when isFolder && (string.IsNullOrEmpty(s) || s.Equals("/") || s.Equals("\\")):
                     {
                         var rootFolders = GetRootFolders(Project.Name, Scope, client, 0, QueryExpand.None);
 
@@ -45,7 +45,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
                         foreach (var rootFolder in rootFolders)
                         {
-                            var path = NodeUtil.NormalizeNodePath(s, Project.Name, rootFolder.Name, includeScope: true, separator: '/');
+                            var path = NodeUtil.NormalizeNodePath(s, Project.Name, rootFolder.Name, includeScope: false, separator: '/');
 
                             foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, client))
                             {
@@ -76,7 +76,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
         private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, WorkItemTrackingHttpClient client)
         {
-            if (!(item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0))
+            if ((item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0))
             {
                 Logger.Log($"Fetching child nodes for node '{item.Path}'");
 
@@ -89,9 +89,14 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             foreach (var c in item.Children)
             {
                 var isFolder = c.IsFolder ?? false;
+                var isMatch = c.Name.IsLike(pattern) || c.Path.IsLike(pattern) || c.Path.Substring(c.Path.IndexOf("/") + 1).IsLike(pattern);
 
-                if ((c.Path.IsLike(pattern) || c.Name.IsLike(pattern)) && (!isFolder == queriesOnly)) yield return c;
+                if (isMatch && (!isFolder == queriesOnly)) yield return c;
             }
+
+            // var shouldRecurse = pattern.Contains("**") || (pattern.IndexOf("/") > 0);
+
+            // if (!shouldRecurse) yield break;
 
             foreach (var c in item.Children)
             {
