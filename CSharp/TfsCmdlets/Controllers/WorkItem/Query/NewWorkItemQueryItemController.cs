@@ -15,7 +15,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var itemType = Parameters.Get<string>("ItemType");
             var isFolder = itemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
             var item = Parameters.Get<string>(itemType);
-            var scope = Parameters.Get<string>(nameof(GetWorkItemQuery.Scope));
+            var scope = Parameters.Get<QueryItemScope>(nameof(GetWorkItemQuery.Scope));
             var wiql = Parameters.Get<string>("Wiql");
             var force = Parameters.Get<bool>("Force");
 
