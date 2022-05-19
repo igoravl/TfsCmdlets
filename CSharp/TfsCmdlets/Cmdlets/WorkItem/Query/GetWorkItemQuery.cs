@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// When omitted, returns all saved queries in the given scope of the given team project.
         /// </summary>
         [Parameter(Position = 0)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [SupportsWildcards()]
         [Alias("Path")]
         public object Query { get; set; } = "**";
