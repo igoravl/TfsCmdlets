@@ -16,6 +16,8 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var item = Parameters.Get<object>(ItemType);
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
+            var (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, client, 0, QueryExpand.Minimal);
+
             switch (item)
             {
                 case QueryHierarchyItem queryItem:
@@ -25,28 +27,49 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
                     }
                 case string s when isFolder && (string.IsNullOrEmpty(s) || s.Equals("/") || s.Equals("\\")):
                     {
-                        var rootFolders = GetRootFolders(Project.Name, Scope, client, 0, QueryExpand.None);
-
                         if ((Scope & QueryItemScope.Personal) == QueryItemScope.Personal)
                         {
-                            yield return rootFolders.First(f => !(bool)f.IsPublic);
+                            yield return myQueriesFolder;
                         }
 
                         if ((Scope & QueryItemScope.Shared) == QueryItemScope.Shared)
                         {
-                            yield return rootFolders.First(f => (bool)f.IsPublic);
+                            yield return sharedQueriesFolder;
                         }
 
                         yield break;
                     }
                 case string s:
                     {
-                        var rootFolders = GetRootFolders(Project.Name, Scope, client);
+                        var path = NodeUtil.NormalizeNodePath(s, separator: '/');
+
+                        if(path.StartsWith($"{myQueriesFolder.Name}/", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            Scope = QueryItemScope.Personal;
+                            path = path.Substring(myQueriesFolder.Name.Length);
+                        }
+                        else if(path.StartsWith($"{sharedQueriesFolder.Name}/", System.StringComparison.OrdinalIgnoreCase))
+                        {
+                            Scope = QueryItemScope.Shared;
+                            path = path.Substring(sharedQueriesFolder.Name.Length + 1);
+                        }
+
+                        var rootFolders = new List<QueryHierarchyItem>();
+
+                        (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, client, 2, QueryExpand.All);
+
+                        if ((Scope & QueryItemScope.Personal) == QueryItemScope.Personal)
+                        {
+                            rootFolders.Add(myQueriesFolder);
+                        }
+
+                        if ((Scope & QueryItemScope.Shared) == QueryItemScope.Shared)
+                        {
+                            rootFolders.Add(sharedQueriesFolder);
+                        }
 
                         foreach (var rootFolder in rootFolders)
                         {
-                            var path = NodeUtil.NormalizeNodePath(s, Project.Name, rootFolder.Name, includeScope: false, separator: '/');
-
                             foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, client))
                             {
                                 yield return c;
@@ -63,15 +86,13 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             }
         }
 
-        private IEnumerable<QueryHierarchyItem> GetRootFolders(string projectName, QueryItemScope scope, WorkItemTrackingHttpClient client, int depth = 2, QueryExpand expand = QueryExpand.All)
+        private (QueryHierarchyItem personal, QueryHierarchyItem shared) GetRootFolders(string projectName, QueryItemScope scope, WorkItemTrackingHttpClient client, int depth = 2, QueryExpand expand = QueryExpand.All)
         {
             var result = client.GetQueriesAsync(projectName, expand, depth)
-                .GetResult("Error getting work item query root folders");
+                .GetResult("Error getting work item query root folders")
+                .ToList();
 
-            var isPublic = (scope & QueryItemScope.Shared) == QueryItemScope.Shared;
-            var isPrivate = (scope & QueryItemScope.Personal) == QueryItemScope.Personal;
-
-            return result.Where(q => isPublic && ((bool)q.IsPublic) || isPrivate && (!(bool)q.IsPublic)).ToList();
+            return (result.First(q => !(bool)q.IsPublic), result.First(q => (bool)q.IsPublic));
         }
 
         private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, WorkItemTrackingHttpClient client)
@@ -89,14 +110,15 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             foreach (var c in item.Children)
             {
                 var isFolder = c.IsFolder ?? false;
-                var isMatch = c.Name.IsLike(pattern) || c.Path.IsLike(pattern) || c.Path.Substring(c.Path.IndexOf("/") + 1).IsLike(pattern);
+                var relativePath = c.Path.Substring(c.Path.IndexOf("/") + 1);
+                var isMatch = relativePath.IsLike(pattern);
 
                 if (isMatch && (!isFolder == queriesOnly)) yield return c;
             }
 
-            // var shouldRecurse = pattern.Contains("**") || (pattern.IndexOf("/") > 0);
+            var shouldRecurse = pattern.Contains("/") || pattern.Contains("**");
 
-            // if (!shouldRecurse) yield break;
+            if(!shouldRecurse) yield break;
 
             foreach (var c in item.Children)
             {
