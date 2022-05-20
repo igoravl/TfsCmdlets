@@ -8,16 +8,6 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Connect-TfsTeamProject $tfsProject
         }
 
-        It 'Debug' {
-
-            (Get-TfsWorkItemQueryFolder "Team*").Path | Sort-Object | Should -Be @(
-                "Shared Queries/Team Queries", 
-                "Shared Queries/Team Queries/Team1 Queries", 
-                "Shared Queries/Team Queries/Team2 Queries"
-            )
-
-        }
-
         It 'Should get all folders' {
             
             (Get-TfsWorkItemQueryFolder).Path | Sort-Object | Should -Be @(
@@ -72,9 +62,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             (Get-TfsWorkItemQueryFolder "Pers*").Path | Should -Be "My Queries/Personal Queries"
 
             (Get-TfsWorkItemQueryFolder "Team*").Path | Sort-Object | Should -Be @(
-                "Shared Queries/Team Queries", 
-                "Shared Queries/Team Queries/Team1 Queries", 
-                "Shared Queries/Team Queries/Team2 Queries"
+                "Shared Queries/Team Queries"
             )
 
             (Get-TfsWorkItemQueryFolder "Team*/*").Path | Sort-Object | Should -Be @(
