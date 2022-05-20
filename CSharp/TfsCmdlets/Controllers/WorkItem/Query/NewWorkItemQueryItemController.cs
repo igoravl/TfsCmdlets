@@ -24,9 +24,9 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
             var root = GetItem<QueryHierarchyItem>(new { Folder = @"\" });
 
-            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, root.Name, includeScope: true, separator: '/');
-            var queryName = Path.GetFileName(fullPath);
-            var parentPath = Path.GetDirectoryName(fullPath);
+            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, root.Name, includeScope: false, separator: '/');
+            var queryName = fullPath.Substring(fullPath.LastIndexOf('/') + 1);
+            var parentPath = fullPath.Substring(0, fullPath.Length - queryName.Length - 1);
 
             var existingItem = Data.TestItem<QueryHierarchyItem>();
 
