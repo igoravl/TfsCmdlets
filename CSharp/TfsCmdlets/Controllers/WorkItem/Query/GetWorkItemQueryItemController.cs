@@ -14,7 +14,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
         {
             var isFolder = ItemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
             var item = Parameters.Get<object>(ItemType);
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
             var (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, client, 0, QueryExpand.Minimal);
 
