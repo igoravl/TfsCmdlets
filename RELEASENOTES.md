@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.4.0 (_20/May/2022_)
+## Version 2.4.0 (_23/May/2022_)
 
 This release adds support for interactive logons in PowerShell Core (6+) shells.
 
@@ -12,6 +12,7 @@ This release adds support for interactive logons in PowerShell Core (6+) shells.
 ## Fixes
 
 * Under certain circumstances, `Get-TfsWorkItem` would return an invalid ID, due to a change in the response from the WorkItem REST API (fixes [#172](https://github.com/igoravl/TfsCmdlets/issues/172))
+* Fix a bug in `New-TfsWorkItemQuery` and `New-TfsWorkItemQueryFolder`, where queries and folders could not be created when their parent did not exist.
 
 -----------------------
 
