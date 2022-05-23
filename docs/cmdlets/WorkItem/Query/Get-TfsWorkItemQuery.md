@@ -17,7 +17,7 @@ parameterSets:
     Project: 
       type: "object"  
     Scope: 
-      type: "string"  
+      type: "QueryItemScope"  
     Server: 
       type: "object" 
 parameters: 
@@ -36,9 +36,9 @@ parameters:
     aliases: [ Path ] 
     defaultValue: "**" 
   - name: "Scope" 
-    description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. " 
+    description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. Possible values: Personal, Shared, Both" 
     globbing: false 
-    type: "string" 
+    type: "QueryItemScope" 
     defaultValue: "Both" 
   - name: "Deleted" 
     description: "Returns deleted items. " 

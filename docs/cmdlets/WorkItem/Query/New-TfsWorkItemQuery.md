@@ -17,7 +17,7 @@ parameterSets:
     Project: 
       type: "object"  
     Scope: 
-      type: "string"  
+      type: "QueryItemScope"  
     Server: 
       type: "object"  
     Wiql: 
@@ -36,10 +36,10 @@ parameters:
     type: "string" 
     aliases: [ Path ] 
   - name: "Scope" 
-    description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. " 
+    description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. Possible values: Personal, Shared, Both" 
     globbing: false 
-    type: "string" 
-    defaultValue: "Both" 
+    type: "QueryItemScope" 
+    defaultValue: "Personal" 
   - name: "Wiql" 
     description: "Specifies the query definition text in WIQL (Work Item Query Language). " 
     globbing: false 
