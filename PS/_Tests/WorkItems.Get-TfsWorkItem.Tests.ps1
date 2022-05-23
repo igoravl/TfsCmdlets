@@ -5,13 +5,19 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
     Context 'Integration Tests' {
 
         It 'Should get by ID and revision' {
-            (Get-TfsWorkItem -ID 150).Rev | Should -Be 4
+            (Get-TfsWorkItem -ID 150).Id | Should -Be 150
+            (Get-TfsWorkItem -ID 150).Rev | Should -Be 4 
             (Get-TfsWorkItem -ID 150 -Revision 2).Rev | Should -Be 2
+        }
+
+        It 'Should get by Where' {
+            (Get-TfsWorkItem -Where '[System.Id] = 150').Id | Should -Be 150
+            (Get-TfsWorkItem -Where '[System.Id] = 150').Rev | Should -Be 4
         }
 
         It 'Should support ASOF when getting by ID' {
             (Get-TfsWorkItem 150 -AsOf (Get-Date)).Rev | Should -Be 4
-            (Get-TfsWorkItem -ID 150 -Revision 2).Rev | Should -Be 2
+            (Get-TfsWorkItem 150 -AsOf (Get-Date '2022-01-21')).Rev | Should -Be 3
         }
 
         It 'Should throw when getting deleted WIs without a project' {

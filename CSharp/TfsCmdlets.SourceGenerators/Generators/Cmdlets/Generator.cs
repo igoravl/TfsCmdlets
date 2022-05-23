@@ -5,6 +5,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
     [Generator]
     public class CmdletGenerator : BaseGenerator<Filter, TypeProcessor>
     {
-        protected override string GeneratorName => "CmdletGenerator";
+        protected override string GeneratorName => nameof(CmdletGenerator);
     }
 }

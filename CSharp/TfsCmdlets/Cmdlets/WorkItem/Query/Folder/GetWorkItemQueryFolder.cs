@@ -26,8 +26,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query.Folder
         /// in both scopes.
         /// </summary>
         [Parameter()]
-        [ValidateSet("Personal", "Shared", "Both")]
-        public string Scope { get; set; } = "Both";
+        public QueryItemScope Scope { get; set; } = QueryItemScope.Both;
 
         /// <summary>
         /// Returns deleted items.

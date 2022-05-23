@@ -25,8 +25,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// in both scopes.
         /// </summary>
         [Parameter()]
-        [ValidateSet("Personal", "Shared", "Both")]
-        public string Scope { get; set; } = "Both";
+        public QueryItemScope Scope { get; set; } = QueryItemScope.Personal;
 
         /// <summary>
         /// Specifies the query definition text in WIQL (Work Item Query Language).

@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// When omitted, returns all saved queries in the given scope of the given team project.
         /// </summary>
         [Parameter(Position = 0)]
-        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
         [SupportsWildcards()]
         [Alias("Path")]
         public object Query { get; set; } = "**";
@@ -26,8 +26,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// in both scopes.
         /// </summary>
         [Parameter()]
-        [ValidateSet("Personal", "Shared", "Both")]
-        public string Scope { get; set; } = "Both";
+        public QueryItemScope Scope { get; set; } = QueryItemScope.Both;
 
         /// <summary>
         /// Returns deleted items.

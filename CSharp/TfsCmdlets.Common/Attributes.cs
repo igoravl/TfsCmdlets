@@ -23,6 +23,17 @@
         }
     }
 
+    [AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    public class ModelAttribute: Attribute
+    {
+        public Type DataType { get; }
+
+        public ModelAttribute(Type dataType)
+        {
+            DataType = dataType;
+        }
+    }
+
     // [AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     // public sealed class DesktopOnlyAttribute : Attribute
     // {
