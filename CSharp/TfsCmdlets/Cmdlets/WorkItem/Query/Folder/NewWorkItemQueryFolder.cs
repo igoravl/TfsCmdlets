@@ -1,4 +1,3 @@
-using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query.Folder
@@ -20,13 +19,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query.Folder
 
         /// <summary>
         /// Specifies the scope of the returned item. Personal refers to the 
-        /// "My Queries" folder", whereas Shared refers to the "Shared Queries" 
+        /// "My Queries" folder, whereas Shared refers to the "Shared Queries" 
         /// folder. When omitted defaults to "Both", effectively searching for items 
         /// in both scopes.
         /// </summary>
         [Parameter()]
-        [ValidateSet("Personal", "Shared", "Both")]
-        public string Scope { get; set; } = "Both";
+        public QueryItemScope Scope { get; set; } = QueryItemScope.Personal;
 
         [Parameter]
         internal string ItemType => "Folder";

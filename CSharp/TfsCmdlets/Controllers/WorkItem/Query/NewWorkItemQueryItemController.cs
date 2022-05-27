@@ -15,50 +15,51 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var itemType = Parameters.Get<string>("ItemType");
             var isFolder = itemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
             var item = Parameters.Get<string>(itemType);
-            var scope = Parameters.Get<string>(nameof(GetWorkItemQuery.Scope));
-            var wiql = Parameters.Get<string>("Wiql");
-            var force = Parameters.Get<bool>("Force");
-
             var tp = Data.GetProject();
+            var client = GetClient<WorkItemTrackingHttpClient>();
 
-            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, scope, includeScope: true, separator: '/');
-            var queryName = Path.GetFileName(fullPath);
-            var parentPath = Path.GetDirectoryName(fullPath);
+            var root = GetItem<QueryHierarchyItem>(new { Folder = @"\" });
+            var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, root.Name, includeScope: false, separator: '/');
+            var itemExists = Data.TryGetItem<QueryHierarchyItem>(out var existingItem);
 
-            var existingItem = Data.TestItem<QueryHierarchyItem>();
-
-            if (existingItem && isFolder)
+            if (itemExists && isFolder)
             {
-                Logger.Log("Folder already exists.");
-
-                if (!force) Logger.LogError(new Exception($"A folder with the specified name '{fullPath}' already exists."));
-
-                return null;
+                Logger.LogWarn($"A folder with the specified name '{fullPath}' already exists. Ignoring.");
+                yield return existingItem;
+                yield break;
             }
 
-            if (!PowerShell.ShouldProcess(tp, $"{(existingItem ? "Create" : "Overwrite")} " +
-                $"work item query{(isFolder ? " folder" : "")} '{fullPath}'")) return null;
+            if (!PowerShell.ShouldProcess(tp, $"{(itemExists ? "Create" : "Overwrite")} " +
+                $"work item query{(isFolder ? " folder" : "")} '{fullPath}'"))
+            {
+                yield break;
+            }
 
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
+            var queryName = fullPath.Substring(fullPath.LastIndexOf('/') + 1);
+
+            var parentPath = fullPath.Equals(queryName) ?
+                string.Empty :
+                fullPath.Substring(0, fullPath.Length - queryName.Length - 1);
 
             var newItem = new QueryHierarchyItem()
             {
                 Name = queryName,
                 Path = parentPath,
                 IsFolder = isFolder,
-                Wiql = wiql
+                Wiql = Wiql
             };
 
-            var parentFolder = Data.TestItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" }) ?
-                Data.GetItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" }) :
-                Data.NewItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" });
+            var parentFolder = string.IsNullOrEmpty(parentPath) ? root :
+                Data.TestItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" }) ?
+                    Data.GetItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" }) :
+                    Data.NewItem<QueryHierarchyItem>(new { Folder = parentPath, ItemType = "Folder" });
 
             Logger.Log($"Creating query '{queryName}' in folder '{parentPath}'");
 
             var result = client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
                 .GetResult($"Error creating new work item {itemType} '{fullPath}'");
 
-            return new[]{result};
+            yield return result;
         }
     }
 }

@@ -1,20 +1,26 @@
 # TfsCmdlets Release Notes
 
-## Version 2.3.1 (_08/Apr/2022_)
+## Version 2.4.0 (_23/May/2022_)
 
-This release brings a few minor fixes to Team cmdlets and to pipeline handling. No new features and/or cmdlets have been introduced in this version.
+This release adds support for interactive logons in PowerShell Core (6+) shells.
+
+## Improvements
+
+* All the `Connect-*` cmdlets now support interactive (`-Interactive`) logon in PowerShell Core (6+) shells. Previously, only Windows PowerShell (5.*) terminals supported interactive authentication. **NOTE**: Interactive logons in PowerShell Core require Azure DevOps Services. TFS / Azure DevOps Server remain unsupported for interactive logons in PowerShell Core. To connect to an on-premises server in a PowerShell Core shell, you're still required to use either username/password credentials or a personal access token.
+* Some minor consistency improvements to the way Work Item Query cmdlets `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder` handle paths. Additionally, `Get-TfsWorkItemQueryFolder` can now return the "root" folders (My Queries and/or Shared Queries) when specifying `/` as the folder path. That comes in handy when you want to e.g. use some Security APIs that require the ID of the folders all the way from the beginning of the hierarchy.
 
 ## Fixes
 
-* `Get-TfsTeam` and `Get-TfsTeamProject` were limited to a maximum of 100 results. This has been fixed. Now they will return all results.
-* Under certain circumstances, `Get-TfsTeamProjectCollection` (and, by extension, Get-TfsOrganization) would throw an error with the message "_Invalid or non-existent Collection System.Object[]._" (fixes [#165](https://github.com/igoravl/TfsCmdlets/issues/165))
-* Fixes a caching bug in the handling of the -Project parameter that could lead to the wrong project being returned.
-* Fixes pipelining bugs in several cmdlets (most noticeably `Get-TfsReposity`, which wouldn't work when connected to a pipeline).
-* Improves the readability of ShouldProcess (Confirm / WhatIf) output in several cmdlets.
+* Under certain circumstances, `Get-TfsWorkItem` would return an invalid ID, due to a change in the response from the WorkItem REST API (fixes [#172](https://github.com/igoravl/TfsCmdlets/issues/172))
+* Fix a bug in `New-TfsWorkItemQuery` and `New-TfsWorkItemQueryFolder`, where queries and folders could not be created when their parent did not exist.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.3.1 (_08/Apr/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.1.md).
 
 ### Version 2.3.0 (_04/Mar/2022_)
 

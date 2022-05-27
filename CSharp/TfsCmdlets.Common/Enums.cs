@@ -205,4 +205,25 @@
         ArtifactLink = 1 << 31,
     }
 
+    /// <summary>
+    /// Work Item Query Item Scope
+    /// </summary>
+    [Flags]
+    public enum QueryItemScope
+    {
+        /// <summary>
+        /// Personal Scope ("My Queries" folder)
+        /// </summary>
+        Personal = 1,
+
+        /// <summary>
+        /// Shared Scope ("Shared Queries" folder)
+        /// </summary>
+        Shared = 2,
+
+        /// <summary>
+        /// Both scopes (all folders)
+        /// </summary>
+        Both = 3
+    }
 }

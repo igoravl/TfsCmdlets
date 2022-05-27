@@ -1,20 +1,15 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.CodeAnalysis;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Models
 {
     public class TypeProcessor : BaseTypeProcessor
     {
-        public object InnerType { get; set; }
+        public object DataType { get; set; }
 
         protected override void OnInitialize()
         {
-            var node = Type.BaseType.TypeArguments.FirstOrDefault();
-
-            InnerType = node;
-
+            DataType = Type.GetAttributeConstructorValue<INamedTypeSymbol>("ModeleAttribute"); ;
         }
 
         public override string GenerateCode()
@@ -22,12 +17,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.Models
             return $@"namespace {Namespace}
 {{
 /*
-InnerType: {InnerType.GetType()}
+InnerType: {DataType.GetType()}
 */
-    public partial class {Type.Name}
+    public partial class {Type.Name}: ModelBase<{DataType}>
     {{
-        public static implicit operator {Type}({InnerType} obj) => new {Type}(obj);
-        public static implicit operator {InnerType}({Type} obj) => obj.InnerObject;
+        public static implicit operator {Type}({DataType} obj) => new {Type}(obj);
+        public static implicit operator {DataType}({Type} obj) => obj.InnerObject;
     }}
 }}
 ";

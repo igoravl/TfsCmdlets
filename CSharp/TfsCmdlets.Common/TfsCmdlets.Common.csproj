@@ -16,6 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Source Generators -->
+    <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
@@ -29,6 +34,8 @@
     <PackageReference Include="System.Composition" Version="5.0.1" />
     <PackageReference Include="System.Composition.Hosting" Version="5.0.1" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
+    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
@@ -38,6 +45,12 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
     <Compile Remove="**/*-core.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Generated\**" />
+    <EmbeddedResource Remove="Generated\**" />
+    <None Remove="Generated\**" />
   </ItemGroup>
 
   <ItemGroup>

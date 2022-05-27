@@ -50,6 +50,8 @@
                 "-NoProfile",
                 "-File",
                 "${workspaceRoot}/build.ps1",
+                "-Configuration",
+                "Debug",
                 "-Targets",
                 "Rebuild",
                 "-SkipTests"
