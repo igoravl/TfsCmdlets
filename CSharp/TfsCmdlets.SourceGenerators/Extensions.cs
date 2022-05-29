@@ -23,6 +23,14 @@ namespace TfsCmdlets.SourceGenerators
             return (T)arg.Value;
         }
 
+        public static IReadOnlyCollection<AttributeData> GetAttributes(this INamedTypeSymbol symbol, string attributeName)
+        {
+            return symbol
+                .GetAttributes()
+                .Where(a => a.AttributeClass.Name.Equals(attributeName))
+                .ToList();
+        }
+
         public static T GetAttributeNamedValue<T>(this INamedTypeSymbol symbol, string attributeName, string argumentName)
         {
             var attr = symbol

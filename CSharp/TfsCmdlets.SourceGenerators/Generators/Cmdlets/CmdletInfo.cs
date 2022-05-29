@@ -19,6 +19,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public string CustomControllerName { get; private set; }
         public INamedTypeSymbol DataType { get; private set; }
         public INamedTypeSymbol OutputType { get; private set; }
+        public IReadOnlyCollection<AttributeData> OutputTypeAttributes { get; private set; }
         public bool SupportsShouldProcess { get; private set; }
         public bool ReturnsValue { get; private set; }
         public bool SkipGetProperty { get; private set; }
@@ -40,6 +41,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             NoAutoPipeline = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "NoAutoPipeline");
             DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("CmdletAttribute", "DefaultParameterSetName");
             OutputType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "OutputType");
+            OutputTypeAttributes = cmdlet.GetAttributes("OutputTypeAttribute");
             DataType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "DataType") ?? OutputType;
             SupportsShouldProcess = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess");
             DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "DefaultParameterSetName");
@@ -82,11 +84,23 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
         private static string GenerateOutputTypeAttribute(CmdletInfo cmdlet)
         {
+            var outputTypeAttrs = cmdlet.OutputTypeAttributes;
+
+            if (outputTypeAttrs.Any())
+            {
+                var attrs = outputTypeAttrs.Select(a => a.ToString()
+                    .Replace("System.Management.Automation.OutputTypeAttribute", "\n    [OutputType")
+                    .Replace("({", "(")
+                    .Replace("}, ", ", ")
+                    .Replace(" = {", " = new[]{")
+                    .Replace("})", "})]")
+                    ).ToList();
+                return string.Join("", attrs);
+            }
+
             if (cmdlet.OutputType == null && cmdlet.DataType == null) return string.Empty;
 
-            return cmdlet.OutputType != null ?
-                $"\n    [OutputType(typeof({cmdlet.OutputType.FullName()}))]" :
-                $"\n    [OutputType(typeof({cmdlet.DataType.FullName()}))]";
+            return $"\n    [OutputType(typeof({(cmdlet.OutputType ?? cmdlet.DataType).FullName()}))]";
         }
 
         private static IEnumerable<GeneratedProperty> GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
