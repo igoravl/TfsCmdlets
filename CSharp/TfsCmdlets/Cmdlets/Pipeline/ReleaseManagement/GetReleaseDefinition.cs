@@ -13,5 +13,8 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         [SupportsWildcards()]
         [Alias("Name")]
         public object Definition { get; set; } = "*";
+
+        [Parameter]
+        public bool DoNotIncludeDetails { get; set; }
     }
 }
