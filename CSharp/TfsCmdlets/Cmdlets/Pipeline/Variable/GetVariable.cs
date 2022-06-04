@@ -1,16 +1,18 @@
 using System.Management.Automation;
 using Microsoft.Azure.Pipelines.WebApi;
+using WebApiBuildVariable = Microsoft.TeamFoundation.Build.WebApi.BuildDefinitionVariable;
 using WebApiPipelineVariable = Microsoft.Azure.Pipelines.WebApi.Variable;
-using WebApiVariableGroup = Microsoft.TeamFoundation.DistributedTask.WebApi.VariableGroup;
+using WebApiReleaseVariable = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.ConfigurationVariableValue;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Variables
+namespace TfsCmdlets.Cmdlets.Pipeline.Variable
 {
     /// <summary>
     /// Gets one or more variables from a pipeline, a release or a variable group.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, DataType = typeof(Models.Pipeline.VariableGroup))]
     [OutputType(typeof(WebApiPipelineVariable), ParameterSetName = new[]{"By Pipeline"})]
-    [OutputType(typeof(WebApiVariableGroup), ParameterSetName = new[] { "By Variable Group" })]
+    [OutputType(typeof(KeyValuePair<string, WebApiBuildVariable>), ParameterSetName = new[] { "By Variable Group" })]
+    [OutputType(typeof(KeyValuePair<string, WebApiReleaseVariable>), ParameterSetName = new[] { "By Release" })]
     partial class GetVariable
     {
         /// <summary>

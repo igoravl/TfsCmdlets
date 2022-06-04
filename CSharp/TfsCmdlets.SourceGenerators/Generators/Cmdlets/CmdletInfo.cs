@@ -86,19 +86,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         {
             var outputTypeAttrs = cmdlet.OutputTypeAttributes;
 
-            if (outputTypeAttrs.Any())
-            {
-                var attrs = outputTypeAttrs.Select(a => a.ToString()
-                    .Replace("System.Management.Automation.OutputTypeAttribute", "\n    [OutputType")
-                    .Replace("({", "(")
-                    .Replace("}, ", ", ")
-                    .Replace(" = {", " = new[]{")
-                    .Replace("})", "})]")
-                    ).ToList();
-                return string.Join("", attrs);
-            }
-
-            if (cmdlet.OutputType == null && cmdlet.DataType == null) return string.Empty;
+            if (outputTypeAttrs.Any() || (cmdlet.OutputType == null && cmdlet.DataType == null)) return string.Empty;
 
             return $"\n    [OutputType(typeof({(cmdlet.OutputType ?? cmdlet.DataType).FullName()}))]";
         }
