@@ -62,7 +62,7 @@ namespace TfsCmdlets.Services.Impl
                 _ => _parameterValues[name]
             };
 
-            return (T)val;
+            return (val is T tVal)? tVal : defaultValue;
         }
 
         /// <summary>
