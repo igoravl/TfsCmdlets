@@ -39,7 +39,21 @@ namespace TfsCmdlets.Controllers.WorkItem
 
                 foreach (DictionaryEntry field in fields)
                 {
-                    patch.Add(new JsonPatchOperation()
+                    switch (field.Key)
+                    {
+                        case "System.Tags" when field.Value is string s && string.IsNullOrEmpty(s):
+                        case "System.Tags" when field.Value is ICollection<string> tags && tags.Count == 0:
+                            {
+                                patch.Add(new JsonPatchOperation()
+                                {
+                                    Operation = Operation.Remove,
+                                    Path = "/fields/System.Tags"
+                                });
+                                break;
+                            }
+                        default:
+                            {
+                                patch.Add(new JsonPatchOperation()
                     {
                         Operation = Operation.Add,
                         Path = $"/fields/{field.Key}",
@@ -47,6 +61,7 @@ namespace TfsCmdlets.Controllers.WorkItem
                             string.Join(";", enumerable) :
                             field.Value
                     });
+                    }
                 }
 
                 var client = Data.GetClient<WorkItemTrackingHttpClient>();
