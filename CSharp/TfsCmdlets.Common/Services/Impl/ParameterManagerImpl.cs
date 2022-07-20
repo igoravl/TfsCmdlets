@@ -33,7 +33,7 @@ namespace TfsCmdlets.Services.Impl
                 var value = prop.GetValue(cmdlet);
                 value = value is PSObject psObject ? psObject.BaseObject : value;
 
-                if (value != null) _parameterValues.Add(name, value);
+                if (value != null || _boundParameters.Contains(name)) _parameterValues.Add(name, value);
             }
 
             if (cmdlet is PSCmdlet psCmdlet)
@@ -148,11 +148,8 @@ namespace TfsCmdlets.Services.Impl
                             var value = prop.GetValue(overridingParameters);
                             value = value is PSObject psObject ? psObject.BaseObject : value;
 
-                            if (value != null)
-                            {
-                                overridden[name] = value;
-                                if (!boundParams.Contains(name)) boundParams.Add(name);
-                            }
+                            overridden[name] = value;
+                            if (!boundParams.Contains(name)) boundParams.Add(name);
                         }
                         break;
                     }
