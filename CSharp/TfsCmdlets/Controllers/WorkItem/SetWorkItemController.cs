@@ -21,10 +21,12 @@ namespace TfsCmdlets.Controllers.WorkItem
             var boardColumn = Parameters.Get<string>(nameof(SetWorkItem.BoardColumn));
             var boardColumnDone = Parameters.Get<bool>(nameof(SetWorkItem.BoardColumnDone));
             var boardLane = Parameters.Get<string>(nameof(SetWorkItem.BoardLane));
+            var fieldTypes = new Dictionary<string, string>();
 
             foreach (var argName in Parameters.Keys.Where(f => Parameters.HasParameter(f) && WellKnownFields.ContainsKey(f)))
             {
                 fields[WellKnownFields[argName].Item2] = GetFieldValue(argName, (string)wi.Fields["System.TeamProject"]);
+                fieldTypes[WellKnownFields[argName].Item2] = WellKnownFields[argName].Item1;
             }
 
             if (fields.Keys.Count > 0)
@@ -51,16 +53,41 @@ namespace TfsCmdlets.Controllers.WorkItem
                                 });
                                 break;
                             }
+                        case string key when fieldTypes[key].Equals("Identifier"):
+                            {
+                                if (field.Value is string s && s.Equals(string.Empty))
+                                {
+                                    patch.Add(new JsonPatchOperation()
+                                    {
+                                        Operation = Operation.Remove,
+                                        Path = $"/fields/{field.Key}"
+                                    });
+                                    break;
+                                }
+
+                                var identity = GetItem<Models.Identity>(new { Identity = field.Value });
+
+                                patch.Add(new JsonPatchOperation()
+                                {
+                                    Operation = Operation.Add,
+                                    Path = $"/fields/{field.Key}",
+                                    Value = identity.DisplayName
+                                });
+
+                                break;
+                            }
                         default:
                             {
                                 patch.Add(new JsonPatchOperation()
-                    {
-                        Operation = Operation.Add,
-                        Path = $"/fields/{field.Key}",
-                        Value = field.Value is IEnumerable<string> enumerable ?
-                            string.Join(";", enumerable) :
-                            field.Value
-                    });
+                                {
+                                    Operation = Operation.Add,
+                                    Path = $"/fields/{field.Key}",
+                                    Value = field.Value is IEnumerable<string> enumerable ?
+                                        string.Join(";", enumerable) :
+                                        field.Value
+                                });
+                                break;
+                            }
                     }
                 }
 
@@ -165,10 +192,12 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             return value;
         }
- 
-         internal static readonly Dictionary<string, Tuple<string, string>> WellKnownFields = new()
+
+
+        internal static readonly Dictionary<string, Tuple<string, string>> WellKnownFields = new()
         {
             ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
+            ["AssignedTo"] = new Tuple<string, string>("Identifier", "System.AssignedTo"),
             ["ChangedBy"] = new Tuple<string, string>("Identifier", "System.ChangedBy"),
             ["ChangedDate"] = new Tuple<string, string>("Date", "System.ChangedDate"),
             ["CreatedBy"] = new Tuple<string, string>("Identifier", "System.CreatedBy"),
@@ -185,5 +214,5 @@ namespace TfsCmdlets.Controllers.WorkItem
             ["ValueArea"] = new Tuple<string, string>("Text", "Microsoft.VSTS.Common.ValueArea"),
             ["WorkItemType"] = new Tuple<string, string>("Text", "System.WorkItemType")
         };
-   }
+    }
 }
