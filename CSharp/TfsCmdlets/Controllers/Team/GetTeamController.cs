@@ -40,7 +40,7 @@ namespace TfsCmdlets.Controllers.Team
                         .FirstOrDefault()?.Value;
                 }
 
-                if (Current)
+                if (Current || (team is string s1 && string.IsNullOrEmpty(s1)))
                 {
                     Logger.Log("Get currently connected team");
 

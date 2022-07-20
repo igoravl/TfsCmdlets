@@ -15,7 +15,7 @@ namespace TfsCmdlets.Controllers.Wiki
 
             foreach (var w in wikis)
             {
-                var tp = Data.GetProject(new { Project = w.ProjectId });
+                var tp = Data.GetItem<WebApiTeamProject>(new { Project = w.ProjectId });
 
                 if (!PowerShell.ShouldProcess($"[Project: {tp.Name}]/[Wiki: {w.Name}]", $"Remove wiki '{w.Name}'")) continue;
 
