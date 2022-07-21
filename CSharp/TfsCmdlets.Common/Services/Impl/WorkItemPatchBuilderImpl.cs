@@ -8,43 +8,42 @@ namespace TfsCmdlets.Services.Impl
     [Export(typeof(IWorkItemPatchBuilder))]
     public class WorkItemPatchBuilderImpl : IWorkItemPatchBuilder
     {
-        private JsonPatchDocument _patch;
-        private string _projectName;
-        private string _workItemType;
-
         private IParameterManager Parameters { get; }
         private IDataManager Data { get; }
         private INodeUtil NodeUtil { get; }
         private IPowerShellService PowerShell { get; }
 
-        public void Initialize(WebApiWorkItem wi)
+        public JsonPatchDocument GetJson(WebApiWorkItem wi)
         {
-            _projectName = (string)wi.Fields["System.TeamProject"];
+            var projectName = (string)wi.Fields["System.TeamProject"];
+            var workItemType = (string)wi.Fields["System.WorkItemType"];
 
-            _workItemType = (string)wi.Fields["System.WorkItemType"];
+            var patch = new JsonPatchDocument();
 
-            ParseCmdlet(PowerShell.CurrentCmdlet);
-            
+            if (wi.Rev > 0)
+            {
+                patch.Add(new JsonPatchOperation()
+                {
+                    Operation = Operation.Test,
+                    Path = "/rev",
+                    Value = wi.Rev
+                });
+            }
+
+            patch.AddRange(ParseCmdlet(PowerShell.CurrentCmdlet, projectName, workItemType));
+
             var fields = Parameters.Get<Hashtable>("Fields").ToDictionary<string, object>();
 
             if (fields != null && fields.Count > 0)
             {
-                var wit = Data.GetItem<WebApiWorkItemType>(new { Type = wi.Fields["System.WorkItemType"], WorkItem = 0, Project = _projectName });
-                ParseFields(fields, wit);
+                var wit = Data.GetItem<WebApiWorkItemType>(new { Type = wi.Fields["System.WorkItemType"], WorkItem = 0, Project = projectName });
+                patch.AddRange(ParseFields(fields, wit, projectName, workItemType));
             }
 
-            _patch = new JsonPatchDocument() {
-                    new JsonPatchOperation() {
-                        Operation = Operation.Test,
-                        Path = "/rev",
-                        Value = wi.Rev
-                    }
-                };
+            return patch;
         }
 
-        public JsonPatchDocument GetJson() => _patch;
-
-        private void ParseCmdlet(Cmdlet cmdlet)
+        private IEnumerable<JsonPatchOperation> ParseCmdlet(Cmdlet cmdlet, string projectName, string workItemType)
         {
             var properties = cmdlet.GetType().GetProperties()
                 .Where(p => p.GetCustomAttribute<WorkItemFieldAttribute>() != null && Parameters.HasParameter(p.Name));
@@ -55,13 +54,13 @@ namespace TfsCmdlets.Services.Impl
 
                 var fieldName = attr.Name;
                 var fieldType = attr.Type;
-                var value = ParseValue(Parameters.Get<object>(pi.Name), fieldName, fieldType);
+                var value = ParseValue(Parameters.Get<object>(pi.Name), fieldName, fieldType, projectName, workItemType);
 
-                AddPatchOperation(fieldName, value);
+                yield return CreateOperation(fieldName, value);
             }
         }
 
-        private void ParseFields(IDictionary<string, object> fields, WebApiWorkItemType wit)
+        private IEnumerable<JsonPatchOperation> ParseFields(IDictionary<string, object> fields, WebApiWorkItemType wit, string projectName, string workItemType)
         {
             var fieldDefinitions = wit.Fields.Distinct(new WorkItemTypeFieldInstanceComparer()).ToDictionary(f => f.ReferenceName, f => f);
 
@@ -69,18 +68,18 @@ namespace TfsCmdlets.Services.Impl
             {
                 var fieldName = field.Key;
                 var fieldDef = fieldDefinitions[fieldName];
-                var value = ParseValue(field.Value, fieldDef);
+                var value = ParseValue(field.Value, fieldDef, projectName, workItemType);
 
-                AddPatchOperation(fieldName, value);
+                yield return CreateOperation(fieldName, value);
             }
         }
 
-        private object ParseValue(object value, string fieldName, FieldType fieldType)
+        private object ParseValue(object value, string fieldName, FieldType fieldType, string projectName, string workItemType)
         {
             switch (fieldType)
             {
                 case FieldType.TreePath:
-                    return NodeUtil.NormalizeNodePath((string)value, _projectName, includeTeamProject: true, includeLeadingSeparator: true);
+                    return NodeUtil.NormalizeNodePath((string)value, projectName, includeTeamProject: true, includeLeadingSeparator: true);
                 case FieldType.Identity:
                     if (value is string s && s.Equals(string.Empty)) return null;
                     var identity = Data.GetItem<Models.Identity>(new { Identity = value });
@@ -92,13 +91,13 @@ namespace TfsCmdlets.Services.Impl
                 case { } when fieldName.Equals("System.BoardColumn"):
                 case { } when fieldName.Equals("System.BoardColumnDone"):
                 case { } when fieldName.Equals("System.BoardLane"):
-                    return GetBoardValue(value, fieldName);
+                    return GetBoardValue(value, fieldName, workItemType);
             }
 
             return value;
         }
 
-        private object ParseValue(object value, WorkItemTypeFieldInstance fieldRef)
+        private object ParseValue(object value, WorkItemTypeFieldInstance fieldRef, string projectName, string workItemType)
         {
             if (fieldRef.IsIdentity)
             {
@@ -109,35 +108,34 @@ namespace TfsCmdlets.Services.Impl
 
             return fieldRef.ReferenceName switch
             {
-                "System.AreaPath" or "System.IterationPath" => NodeUtil.NormalizeNodePath((string)value, _projectName, includeTeamProject: true, includeLeadingSeparator: true),
+                "System.AreaPath" or "System.IterationPath" => NodeUtil.NormalizeNodePath((string)value, projectName, includeTeamProject: true, includeLeadingSeparator: true),
                 "System.Tags" when value is ICollection<string> enumerable && enumerable.Count == 0 => null,
                 "System.Tags" when value is IEnumerable<string> enumerable => string.Join(";", enumerable),
-                "System.BoardColumn" or "System.BoardColumnDone" or "System.BoardLane" => GetBoardValue(value, fieldRef.ReferenceName),
+                "System.BoardColumn" or "System.BoardColumnDone" or "System.BoardLane" => GetBoardValue(value, fieldRef.ReferenceName, workItemType),
                 _ => value,
             };
         }
 
-        private void AddPatchOperation(string fieldName, object value)
+        private JsonPatchOperation CreateOperation(string fieldName, object value)
         {
             if (value is JsonPatchOperation jsonOp)
             {
-                _patch.Add(jsonOp);
-                return;
+                return jsonOp;
             }
 
             var op = value == null ? Operation.Remove : Operation.Add;
 
-            _patch.Add(new JsonPatchOperation()
+            return new JsonPatchOperation()
             {
                 Operation = op,
                 Path = $"/fields/{fieldName}",
                 Value = value
-            });
+            };
         }
 
-        private JsonPatchOperation GetBoardValue(object value, string referenceName)
+        private JsonPatchOperation GetBoardValue(object value, string referenceName, string workItemType)
         {
-            var board = FindBoard(_workItemType);
+            var board = FindBoard(workItemType);
 
             var boardFieldName = referenceName switch
             {
@@ -192,6 +190,7 @@ namespace TfsCmdlets.Services.Impl
             Parameters = parameters;
             Data = dataManager;
             NodeUtil = nodeUtil;
+            PowerShell = powerShell;
         }
     }
 }

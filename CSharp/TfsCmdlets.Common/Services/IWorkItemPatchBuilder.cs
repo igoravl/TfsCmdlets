@@ -4,7 +4,6 @@ namespace TfsCmdlets.Services
 {
     public interface IWorkItemPatchBuilder
     {
-        void Initialize(WebApiWorkItem wi);
-        JsonPatchDocument GetJson();
+        JsonPatchDocument GetJson(WebApiWorkItem wi);
     }
 }
