@@ -1,12 +1,16 @@
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Controllers.Pipeline.Build
+namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
 {
+    /// <summary>
+    /// Gets one or more build/pipeline definitions in a team project.
+    /// </summary>
     [CmdletController(typeof(BuildDefinitionReference))]
-    partial class EnableBuildDefinitionController
+    partial class ResumeBuildDefinitionController
     {
         protected override IEnumerable Run()
         {
+
             var def = Data.GetItem<BuildDefinition>();
             var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
@@ -16,11 +20,11 @@ namespace TfsCmdlets.Controllers.Pipeline.Build
                 yield return def;
             }
 
-            if (!PowerShell.ShouldProcess(def.Project.Name, $"Enable Build Definition '{def.GetFullPath()}'")) yield break;
+            if (!PowerShell.ShouldProcess(def.Project.Name, $"Resume Build Definition '{def.GetFullPath()}'")) yield break;
 
-            if (def.QueueStatus == DefinitionQueueStatus.Paused)
+            if (def.QueueStatus == DefinitionQueueStatus.Disabled)
             {
-                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is paused, not disabled. To re-enable a paused pipeline, use Resume-TfsBuildDefinition instead."));
+                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is disabled. Disabled builds cannot be resumed. Use Enable-TfsBuildDefinition instead."));
                 yield return def;
             }
 

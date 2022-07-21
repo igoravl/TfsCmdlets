@@ -1,13 +1,13 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build
+namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
 {
     /// <summary>
-    /// Resumes (unpauses) a previously suspended build/pipeline definition.
+    /// Suspends (pauses) a build/pipeline definition.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
-    partial class ResumeBuildDefinition
+    partial class SuspendBuildDefinition
     {
         /// <summary>
         /// Specifies the pipeline name/path.

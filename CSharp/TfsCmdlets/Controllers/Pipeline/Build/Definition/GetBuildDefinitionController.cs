@@ -1,7 +1,7 @@
 using Microsoft.TeamFoundation.Build.WebApi;
 using TfsCmdlets.Cmdlets.Pipeline.Build;
 
-namespace TfsCmdlets.Controllers.Pipeline.Build
+namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
 {
     [CmdletController(typeof(BuildDefinitionReference))]
     partial class GetBuildDefinitionController
@@ -11,8 +11,8 @@ namespace TfsCmdlets.Controllers.Pipeline.Build
 
         protected override IEnumerable Run()
         {
-            var definition = Parameters.Get<object>(nameof(GetBuildDefinition.Definition));
-            var queryOrder = Parameters.Get<DefinitionQueryOrder>(nameof(GetBuildDefinition.QueryOrder), DefinitionQueryOrder.None);
+            var definition = Parameters.Get<object>("Definition");
+            var queryOrder = Parameters.Get<DefinitionQueryOrder>("QueryOrder", DefinitionQueryOrder.None);
 
             var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
             var tp = Data.GetProject();
