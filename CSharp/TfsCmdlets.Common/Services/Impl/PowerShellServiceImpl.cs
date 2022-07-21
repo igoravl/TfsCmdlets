@@ -19,7 +19,7 @@ namespace TfsCmdlets.Services.Impl
         private static PropertyInfo _CurrentCommandProcessor;
         private static PropertyInfo _Command;
 
-        private CmdletBase Cmdlet
+        public CmdletBase CurrentCmdlet
         {
             get
             {
@@ -39,22 +39,22 @@ namespace TfsCmdlets.Services.Impl
             }
         }
 
-        public string CurrentCommand => Cmdlet.DisplayName;
+        public string CurrentCommand => CurrentCmdlet.DisplayName;
 
-        public string CurrentCommandLine => Cmdlet.MyInvocation.Line.Trim();
+        public string CurrentCommandLine => CurrentCmdlet.MyInvocation.Line.Trim();
 
-        public string WindowTitle { get => Cmdlet.Host.UI.RawUI.WindowTitle; set => Cmdlet.Host.UI.RawUI.WindowTitle = value; }
+        public string WindowTitle { get => CurrentCmdlet.Host.UI.RawUI.WindowTitle; set => CurrentCmdlet.Host.UI.RawUI.WindowTitle = value; }
 
-        public PSModuleInfo Module => Cmdlet.MyInvocation.MyCommand.Module;
+        public PSModuleInfo Module => CurrentCmdlet.MyInvocation.MyCommand.Module;
 
         public void WriteObject(object items, bool enumerateCollection = true)
-            => Cmdlet.WriteObject(items, enumerateCollection);
+            => CurrentCmdlet.WriteObject(items, enumerateCollection);
 
         public void WriteVerbose(string message)
-            => Cmdlet.WriteVerbose(message);
+            => CurrentCmdlet.WriteVerbose(message);
 
         public void WriteWarning(string message)
-            => Cmdlet.WriteWarning(message);
+            => CurrentCmdlet.WriteWarning(message);
 
         public void WriteError(string message)
             => WriteError(new Exception(message));
@@ -63,19 +63,19 @@ namespace TfsCmdlets.Services.Impl
             => WriteError(new ErrorRecord(ex, "", ErrorCategory.NotSpecified, null));
 
         public void WriteError(ErrorRecord errorRecord)
-            => Cmdlet.WriteError(errorRecord);
+            => CurrentCmdlet.WriteError(errorRecord);
 
         public IReadOnlyDictionary<string, object> GetBoundParameters()
-            => new Dictionary<string, object>(Cmdlet.MyInvocation.BoundParameters);
+            => new Dictionary<string, object>(CurrentCmdlet.MyInvocation.BoundParameters);
 
         public object GetVariableValue(string name)
-            => Cmdlet.GetVariableValue(name);
+            => CurrentCmdlet.GetVariableValue(name);
 
         // public void SetVariableValue(string name, object value)
         //   => ...;
 
         public bool ShouldProcess(string target, string action)
-            => Cmdlet.ShouldProcess(target, action);
+            => CurrentCmdlet.ShouldProcess(target, action);
 
         public bool ShouldProcess(Connection collection, string action)
             => ShouldProcess($"{(collection.IsHosted ? "Organization" : "Team Project Collection")} '{collection.DisplayName}'", action);
@@ -87,7 +87,7 @@ namespace TfsCmdlets.Services.Impl
             => ShouldProcess($"Team '{t.Name}'", action);
 
         public bool ShouldContinue(string query, string caption = null)
-            => Cmdlet.ShouldContinue(query, caption);
+            => CurrentCmdlet.ShouldContinue(query, caption);
 
         /// <summary>
         /// Executes a PowerShell script in the current session context
@@ -96,7 +96,7 @@ namespace TfsCmdlets.Services.Impl
         /// <param name="arguments">Arguments passed to the script, represented as an array named <c>$args</c></param>
         /// <returns>The output of the script, if any</returns>
         public virtual object InvokeScript(string script, params object[] arguments)
-            => Cmdlet.InvokeCommand.InvokeScript(script, arguments);
+            => CurrentCmdlet.InvokeCommand.InvokeScript(script, arguments);
 
         /// <summary>
         /// Executes a PowerShell script in the current session context
@@ -115,17 +115,17 @@ namespace TfsCmdlets.Services.Impl
         /// <typeparam name="T">The expected type of the objects outputted by the script</typeparam>
         /// <returns>The output of the script, if any</returns>
         public T InvokeScript<T>(string script, params object[] arguments)
-            => (T)Cmdlet.InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
+            => (T)CurrentCmdlet.InvokeCommand.InvokeScript(script, arguments)?.FirstOrDefault()?.BaseObject;
 
         public object InvokeScript(string script, bool useNewScope, PipelineResultTypes writeToPipeline, IList input, params object[] args)
-            => Cmdlet.InvokeCommand.InvokeScript(script, useNewScope, writeToPipeline, input, args);
+            => CurrentCmdlet.InvokeCommand.InvokeScript(script, useNewScope, writeToPipeline, input, args);
 
         /// <summary>
         /// Gets the current directory in PowerShell
         /// </summary>
         public string GetCurrentDirectory()
         {
-            return Cmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
+            return CurrentCmdlet.SessionState.Path.CurrentFileSystemLocation.Path;
         }
 
         /// <summary>

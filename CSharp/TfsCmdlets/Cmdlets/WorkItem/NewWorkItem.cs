@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -18,80 +19,91 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies the title of the work item.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.Title", FieldType.String)]
         public string Title { get; set; }
 
         /// <summary>
         /// Specifies the description of the work item.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.Description", FieldType.String)]
         public string Description { get; set; }
 
         /// <summary>
         /// Specifies the area path of the work item.
         /// </summary>
         [Parameter]
-        [Alias("Area")]
+        [WorkItemField("System.AreaPath", FieldType.TreePath)]
         public string AreaPath { get; set; }
 
         /// <summary>
         /// Specifies the iteration path of the work item.
         /// </summary>
         [Parameter]
-        [Alias("Iteration")]
+        [WorkItemField("System.AreaPath", FieldType.TreePath)]
         public string IterationPath { get; set; }
 
         /// <summary>
         /// Specifies the user this work item is assigned to.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.AssignedTo", FieldType.Identity)]
         public object AssignedTo { get; set; }
 
         /// <summary>
         /// Specifies the state of the work item.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.State", FieldType.String)]
         public string State { get; set; }
 
         /// <summary>
         /// Specifies the reason (field 'System.Reason') of the work item. 
         /// </summary>
         [Parameter]
+        [WorkItemField("System.Reason", FieldType.String)]
         public string Reason { get; set; }
 
         /// <summary>
         /// Specifies the Value Area of the work item. 
         /// </summary>
         [Parameter]
+        [WorkItemField("Microsoft.VSTS.Common.ValueArea", FieldType.String)]
         public string ValueArea { get; set; }
 
         /// <summary>
         /// Specifies the board column of the work item. 
         /// </summary>
         [Parameter]
+        [WorkItemField("System.BoardColumn", FieldType.String)]
         public string BoardColumn { get; set; }
 
         /// <summary>
         /// Specifies whether the work item is in the sub-column Doing or Done in a board.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.BoardColumnDone", FieldType.Boolean)]
         public bool BoardColumnDone { get; set; }
 
         /// <summary>
         /// Specifies the board lane of the work item
         /// </summary>
         [Parameter]
+        [WorkItemField("System.BoardLane", FieldType.String)]
         public string BoardLane { get; set; }
 
         /// <summary>
         /// Specifies the priority of the work item.
         /// </summary>
         [Parameter]
+        [WorkItemField("Microsoft.VSTS.Common.Priority", FieldType.Integer)]
         public int Priority { get; set; }
 
         /// <summary>
         /// Specifies the tags of the work item.
         /// </summary>
         [Parameter]
+        [WorkItemField("System.Tags", FieldType.PlainText)]
         public string[] Tags { get; set; }
 
         /// <summary>
@@ -100,7 +112,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// to this cmdlet.
         /// </summary>
         [Parameter]
-        public Hashtable Fields { get; set; } = new Hashtable();
+        public Hashtable Fields { get; set; }
 
         /// <summary>
         /// Bypasses any rule validation when saving the work item. Use it with caution, as this 
@@ -108,6 +120,5 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter]
         public SwitchParameter BypassRules { get; set; }
-
     }
 }

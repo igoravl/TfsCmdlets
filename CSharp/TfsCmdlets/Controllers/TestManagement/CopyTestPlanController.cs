@@ -12,7 +12,7 @@ namespace TfsCmdlets.Controllers.TestManagement
             var plan = Data.GetItem<TestPlan>();
             var destinationProject = Parameters.Get<string>(nameof(CopyTestPlan.Destination));
             var destTp = Data.GetItem<WebApiTeamProject>(new { Project = destinationProject });
-            var tp = Data.GetProject(new { Project = plan.Project.Name });
+            var tp = Data.GetItem<WebApiTeamProject>(new { Project = plan.Project.Name });
             var newName = Parameters.Get<string>(nameof(CopyTestPlan.NewName), $"{plan.Name}{(tp.Name.Equals(destTp.Name, StringComparison.OrdinalIgnoreCase) ? $" (cloned {DateTime.Now.ToShortDateString()})" : string.Empty)}");
             var areaPath = Parameters.Get<string>(nameof(CopyTestPlan.AreaPath), destTp.Name);
             var iterationPath = Parameters.Get<string>(nameof(CopyTestPlan.IterationPath), destTp.Name);

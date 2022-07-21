@@ -436,6 +436,7 @@ namespace TfsCmdlets.Controllers.WorkItem
            "System.WorkItemType",
            "System.State",
            "System.Reason",
+           "System.AssignedTo",
            "System.CreatedDate",
            "System.CreatedBy",
            "System.ChangedDate",
@@ -453,6 +454,7 @@ namespace TfsCmdlets.Controllers.WorkItem
         internal static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new()
         {
             ["AreaPath"] = new Tuple<string, string>("Tree", "System.AreaPath"),
+            ["AssignedTo"] = new Tuple<string, string>("Identifier", "System.AssignedTo"),
             ["BoardColumn"] = new Tuple<string, string>("Text", "System.BoardColumn"),
             ["BoardColumnDone"] = new Tuple<string, string>("Boolean", "System.BoardColumnDone"),
             ["ChangedBy"] = new Tuple<string, string>("Identifier", "System.ChangedBy"),

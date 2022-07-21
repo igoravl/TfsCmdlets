@@ -1,6 +1,7 @@
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using Microsoft.TeamFoundation.Core.WebApi;
+using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
@@ -34,6 +35,8 @@ namespace TfsCmdlets.Services
         PSModuleInfo Module { get; }
 
         string CurrentCommand {get;}
+
+        CmdletBase CurrentCmdlet { get; }
 
         string CurrentCommandLine {get;}
 

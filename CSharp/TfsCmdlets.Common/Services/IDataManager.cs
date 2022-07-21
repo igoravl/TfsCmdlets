@@ -34,13 +34,13 @@ namespace TfsCmdlets.Services
         
         bool TryGetCollection(out Models.Connection collection, object overridingParameters = null);
 
-        WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null);
+        WebApiTeamProject GetProject();
         
         bool TryGetProject(out WebApiTeamProject project, object overridingParameters = null);
 
-        Models.Team GetTeam(object overridingParameters = null, string contextValue = null);
+        Models.Team GetTeam(bool includeSettings = false, bool includeMembers = false);
 
-        bool TryGetTeam(out WebApiTeam team, object overridingParameters = null);
+        bool TryGetTeam(out WebApiTeam returnTeam, bool includeSettings = false, bool includeMembers = false);
 
         T GetClient<T>(object overridingParameters = null);
 

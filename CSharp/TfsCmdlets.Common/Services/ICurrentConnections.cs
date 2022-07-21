@@ -10,7 +10,7 @@ namespace TfsCmdlets.Services
 
         WebApiTeamProject Project { get; set; }
 
-        WebApiTeam Team { get; set; }
+        Models.Team Team { get; set; }
 
         T Get<T>(string name);
 
