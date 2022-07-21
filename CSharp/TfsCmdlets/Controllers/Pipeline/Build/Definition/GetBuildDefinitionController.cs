@@ -1,5 +1,4 @@
 using Microsoft.TeamFoundation.Build.WebApi;
-using TfsCmdlets.Cmdlets.Pipeline.Build;
 
 namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
 {
@@ -11,14 +10,15 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
 
         protected override IEnumerable Run()
         {
-            var definition = Parameters.Get<object>("Definition");
-            var queryOrder = Parameters.Get<DefinitionQueryOrder>("QueryOrder", DefinitionQueryOrder.None);
-
             var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
-            var tp = Data.GetProject();
 
+            foreach(var input in Definition)
+            {
+                var definition = input switch {
+                    _ => input
+                };
 
-            while (true) switch (definition)
+                switch(definition)
                 {
                     case BuildDefinition bd:
                         {
@@ -27,30 +27,31 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
                         }
                     case int id:
                         {
-                            yield return client.GetDefinitionAsync(tp.Name, id)
-                                .GetResult($"Error getting pipeline definition #{id}");
+                            yield return client.GetDefinitionAsync(Project.Name, id)
+                                .GetResult($"Error getting pipeline definition '{id}'");
                             yield break;
                         }
                     case string s:
                         {
                             var path = NodeUtil.NormalizeNodePath(s, includeLeadingSeparator: true);
 
-                            var defs = client.GetDefinitionsAsync(tp.Name, queryOrder: queryOrder)
-                                .GetResult($"Error getting pipeline definitions matching {s}");
+                            var defs = client.GetDefinitionsAsync(Project.Name, queryOrder: QueryOrder)
+                                .GetResult($"Error getting pipeline definitions matching '{s}'");
 
                             foreach (var i in defs.Where(bd => bd.GetFullPath().IsLike(path)))
                             {
-                                yield return client.GetDefinitionAsync(tp.Name, i.Id)
-                                    .GetResult($"Error getting pipeline definition {i.Id}");
+                                yield return client.GetDefinitionAsync(Project.Name, i.Id)
+                                    .GetResult($"Error getting pipeline definition '{i.Id}'");
                             }
-
                             yield break;
                         }
                     default:
                         {
-                            throw new ArgumentException($"Invalid or non-existent pipeline definition '{definition}'");
+                            Logger.LogError($"Invalid or non-existent pipeline definition '{definition}'");
+                            break;
                         }
                 }
+            }
         }
     }
 }
