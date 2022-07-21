@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.Team
 
         protected override IEnumerable Run()
         {
-            var team = Data.GetTeam();
+            var team = Data.GetItem<Models.Team>();
 
             CurrentConnections.Set(Collection.ConfigurationServer, Collection, Project, team);
 

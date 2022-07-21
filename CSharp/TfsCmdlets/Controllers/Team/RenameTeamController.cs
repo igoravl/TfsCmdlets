@@ -10,7 +10,7 @@ namespace TfsCmdlets.Controllers.Team
         {
             var client = Data.GetClient<TeamHttpClient>();
 
-            var team = Data.GetTeam(new { Default = false });
+            var team = Data.GetItem<Models.Team>();
 
             if (!PowerShell.ShouldProcess(Project, $"Rename team '{team.Name}' to '{NewName}'")) yield break;
 

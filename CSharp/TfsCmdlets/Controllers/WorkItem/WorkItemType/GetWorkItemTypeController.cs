@@ -13,7 +13,10 @@ namespace TfsCmdlets.Controllers.WorkItem.WorkItemType
         {
             var type = Parameters.Get<object>(nameof(GetWorkItemType.Type));
 
-            if (Parameters.HasParameter(nameof(GetWorkItemType.WorkItem)))
+            var shouldSkipWi = !Parameters.HasParameter(nameof(GetWorkItemType.WorkItem)) ||
+                (Parameters.Get<object>(nameof(GetWorkItemType.WorkItem)) is int i && i == 0);
+
+            if (Parameters.HasParameter(nameof(GetWorkItemType.WorkItem)) && !shouldSkipWi)
             {
                 var workItem = Data.GetItem<WebApiWorkItem>(nameof(GetWorkItemType.WorkItem));
                 type = workItem.Fields["System.WorkItemType"];

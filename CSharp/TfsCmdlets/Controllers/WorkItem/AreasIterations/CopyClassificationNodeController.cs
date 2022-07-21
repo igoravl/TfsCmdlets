@@ -17,7 +17,7 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
             var tp = Data.GetProject();
             var sourceNodes = Data.GetItems<ClassificationNode>();
             var destination = Parameters.Get<object>("Destination");
-            var destinationProject = Data.GetProject(new { Project = Parameters.Get<object>("DestinationProject", tp) });
+            var destinationProject = Data.GetItem<WebApiTeamProject>(new { Project = Parameters.Get<object>("DestinationProject", tp) });
             var force = Parameters.Get<bool>("Force");
             var recurse = Parameters.Get<bool>("Recurse");
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");

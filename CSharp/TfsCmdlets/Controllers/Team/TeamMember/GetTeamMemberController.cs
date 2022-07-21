@@ -8,7 +8,7 @@ namespace TfsCmdlets.Controllers.Team.TeamMember
     {
         protected override IEnumerable Run()
         {
-            var team = Data.GetTeam(new { IncludeMembers = true });
+            var team = Data.GetTeam(includeMembers: true);
             var member = Parameters.Get<string>(nameof(GetTeamMember.Member));
 
             ErrorUtil.ThrowIfNotFound(team, nameof(team), Parameters.Get<object>(nameof(GetTeamMember.Team)));

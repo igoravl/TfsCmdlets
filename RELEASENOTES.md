@@ -1,22 +1,25 @@
 # TfsCmdlets Release Notes
 
-## Version 2.4.0 (_23/May/2022_)
+## Version 2.4.1 (_20/Jul/2022_)
 
-This release adds support for interactive logons in PowerShell Core (6+) shells.
+This release fixes bugs and add improvements to `New-TfsWorkItem` and `Set-TfsWorkItem`.
 
 ## Improvements
 
-* All the `Connect-*` cmdlets now support interactive (`-Interactive`) logon in PowerShell Core (6+) shells. Previously, only Windows PowerShell (5.*) terminals supported interactive authentication. **NOTE**: Interactive logons in PowerShell Core require Azure DevOps Services. TFS / Azure DevOps Server remain unsupported for interactive logons in PowerShell Core. To connect to an on-premises server in a PowerShell Core shell, you're still required to use either username/password credentials or a personal access token.
-* Some minor consistency improvements to the way Work Item Query cmdlets `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder` handle paths. Additionally, `Get-TfsWorkItemQueryFolder` can now return the "root" folders (My Queries and/or Shared Queries) when specifying `/` as the folder path. That comes in handy when you want to e.g. use some Security APIs that require the ID of the folders all the way from the beginning of the hierarchy.
+* Identity fields in `New-TfsWorkItem` and `Set-TfsWorkItem` (such as _"Assigned To"_) now support either email addresses or user display names as valid values. Previously, only user display names were supported.
 
 ## Fixes
 
-* Under certain circumstances, `Get-TfsWorkItem` would return an invalid ID, due to a change in the response from the WorkItem REST API (fixes [#172](https://github.com/igoravl/TfsCmdlets/issues/172))
-* Fix a bug in `New-TfsWorkItemQuery` and `New-TfsWorkItemQueryFolder`, where queries and folders could not be created when their parent did not exist.
+* Fix _"Set-TfsWorkItem fails with {type} to {type}[] (array) conversion error"_ ([#172](https://github.com/igoravl/TfsCmdlets/issues/172))
+* Fix a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where changes to the **AssignedTo** field would not be reflected in the Work Item.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.4.0 (_23/May/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.4.0.md).
 
 ### Version 2.3.1 (_08/Apr/2022_)
 

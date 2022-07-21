@@ -10,13 +10,9 @@ namespace TfsCmdlets.Controllers.Team.TeamAdmin
         {
             var admin = Parameters.GetRaw<object>(nameof(RemoveTeamAdmin.Admin));
 
-            object pipelineParms = admin switch
-            {
-                WebApiIdentity identity => new { Team = identity.Properties["TeamId"], Project = identity.Properties["ProjectId"] },
-                _ => null
-            };
-
-            var t = Data.GetTeam(pipelineParms);
+            Models.Team t = (admin is WebApiIdentity identity)? 
+                Data.GetItem<Models.Team>(new { Team = identity.Properties["TeamId"], Project = identity.Properties["ProjectId"] }) : 
+                Data.GetTeam();
 
             var adminIdentity = Data.GetItem<Models.TeamAdmin>(new { Identity = admin });
 

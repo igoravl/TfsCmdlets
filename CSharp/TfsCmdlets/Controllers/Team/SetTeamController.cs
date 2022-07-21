@@ -18,7 +18,7 @@ namespace TfsCmdlets.Controllers.Team
 
         protected override IEnumerable Run()
         {
-            var t = Data.GetTeam(new { Default = false, IncludeSettings = true });
+            var t = Data.GetTeam(includeSettings: true);
 
             var backlogVisibilities = (BacklogVisibilities ?? new Hashtable()).ToDictionary<string, bool>();
             var workingDays = (WorkingDays ?? Enumerable.Empty<DayOfWeek>()).ToList();
@@ -275,7 +275,7 @@ namespace TfsCmdlets.Controllers.Team
                 }
             }
 
-            yield return Data.GetTeam(new { Default = false, IncludeSettings = true });
+            yield return Data.GetItem<Models.Team>(new { Default = false, IncludeSettings = true });
         }
     }
 }

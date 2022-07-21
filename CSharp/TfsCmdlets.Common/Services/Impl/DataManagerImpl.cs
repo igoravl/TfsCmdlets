@@ -116,8 +116,8 @@ namespace TfsCmdlets.Services.Impl
             return collection != null;
         }
 
-        public WebApiTeamProject GetProject(object overridingParameters = null, string contextValue = null)
-            => GetItems<WebApiTeamProject>(overridingParameters).FirstOrDefault() ??
+        public WebApiTeamProject GetProject()
+            => GetItems<WebApiTeamProject>().FirstOrDefault() ??
                 throw new ArgumentException("No team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
 
         public bool TryGetProject(out WebApiTeamProject project, object overridingParameters = null)
@@ -130,15 +130,20 @@ namespace TfsCmdlets.Services.Impl
             return project != null;
         }
 
-        public Models.Team GetTeam(object overridingParameters = null, string contextValue = null)
-            => GetItems<Models.Team>(overridingParameters).FirstOrDefault() ??
+        public Models.Team GetTeam(bool includeSettings = false, bool includeMembers = false)
+            => GetItems<Models.Team>(new {
+                Team = Parameters.Get<object>("Team", string.Empty), 
+                IncludeSettings = includeSettings, 
+                IncludeMembers = includeMembers,
+                Default = false
+            }).FirstOrDefault() ??
                 throw new ArgumentException("No team information available. Either supply a valid -Team argument or use Connect-TfsTeam prior to invoking this cmdlet.");
 
-        public bool TryGetTeam(out WebApiTeam team, object overridingParameters = null)
+        public bool TryGetTeam(out WebApiTeam team, bool includeSettings = false, bool includeMembers = false)
         {
             team = null;
 
-            try { team = GetItem<Models.Team>(overridingParameters); }
+            try { team = GetTeam(includeSettings, includeMembers); }
             catch { }
 
             return team != null;
