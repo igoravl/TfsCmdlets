@@ -71,22 +71,10 @@ parameters:
     description: "Specifies the area path of the work item. " 
     globbing: false 
     type: "string" 
-    aliases: [ Area ] 
-  - name: "Area" 
-    description: "Specifies the area path of the work item. This is an alias of the AreaPath parameter." 
-    globbing: false 
-    type: "string" 
-    aliases: [ Area ] 
   - name: "IterationPath" 
     description: "Specifies the iteration path of the work item. " 
     globbing: false 
     type: "string" 
-    aliases: [ Iteration ] 
-  - name: "Iteration" 
-    description: "Specifies the iteration path of the work item. This is an alias of the IterationPath parameter." 
-    globbing: false 
-    type: "string" 
-    aliases: [ Iteration ] 
   - name: "AssignedTo" 
     description: "Specifies the user this work item is assigned to. " 
     globbing: false 

@@ -5,12 +5,12 @@ parent: "WorkItem"
 description: "Sets the contents of one or more work items. "
 remarks: 
 parameterSets: 
-  "_All_": [ Area, AssignedTo, BoardColumn, BoardColumnDone, BoardLane, BypassRules, Collection, Description, Fields, Iteration, Passthru, Priority, Project, Reason, Server, State, Tags, Title, ValueArea, WorkItem ] 
+  "_All_": [ AreaPath, AssignedTo, BoardColumn, BoardColumnDone, BoardLane, BypassRules, Collection, Description, Fields, IterationPath, Passthru, Priority, Project, Reason, Server, State, Tags, Title, ValueArea, WorkItem ] 
   "__AllParameterSets":  
     WorkItem: 
       type: "object"  
       position: "0"  
-    Area: 
+    AreaPath: 
       type: "string"  
     AssignedTo: 
       type: "object"  
@@ -28,7 +28,7 @@ parameterSets:
       type: "string"  
     Fields: 
       type: "Hashtable"  
-    Iteration: 
+    IterationPath: 
       type: "string"  
     Passthru: 
       type: "SwitchParameter"  
@@ -71,11 +71,11 @@ parameters:
     description: "Specifies the description of the work item. " 
     globbing: false 
     type: "string" 
-  - name: "Area" 
+  - name: "AreaPath" 
     description: "Specifies the area path of the work item. " 
     globbing: false 
     type: "string" 
-  - name: "Iteration" 
+  - name: "IterationPath" 
     description: "Specifies the iteration path of the work item. " 
     globbing: false 
     type: "string" 
