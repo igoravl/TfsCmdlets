@@ -8,6 +8,9 @@ namespace TfsCmdlets.Controllers.TeamProject
     [CmdletController(typeof(WebApiTeamProject))]
     partial class NewTeamProjectController
     {
+        [Import]
+        private IAsyncOperationAwaiter AsyncAwaiter { get; }
+
         protected override IEnumerable Run()
         {
             var client = GetClient<ProjectHttpClient>();
@@ -43,28 +46,11 @@ namespace TfsCmdlets.Controllers.TeamProject
 
                 // Trigger the project creation
 
-                var token = client.QueueCreateProject(tpInfo)
-                    .GetResult("Error queueing project creation");
+                var (result, resultMessage) = AsyncAwaiter.Wait(client.QueueCreateProject(tpInfo), "Error queueing project creation");
 
-                // Wait for the operation to complete
-
-                var opsClient = Data.GetClient<OperationsHttpClient>();
-                var opsToken = opsClient.GetOperation(token.Id)
-                    .GetResult("Error getting operation status");
-
-                while (
-                    (opsToken.Status != OperationStatus.Succeeded) &&
-                    (opsToken.Status != OperationStatus.Failed) &&
-                    (opsToken.Status != OperationStatus.Cancelled))
+                if (result != OperationStatus.Succeeded)
                 {
-                    Thread.Sleep(2);
-                    opsToken = opsClient.GetOperation(token.Id)
-                        .GetResult("Error getting operation status");
-                }
-
-                if (opsToken.Status != OperationStatus.Succeeded)
-                {
-                    Logger.LogError(new Exception($"Error creating team project {project}: {opsToken.ResultMessage}"));
+                    Logger.LogError(new Exception($"Error creating team project '{project}': {resultMessage}"));
                     continue;
                 }
 
