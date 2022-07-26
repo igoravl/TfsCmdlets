@@ -46,11 +46,11 @@ namespace TfsCmdlets.Controllers.TeamProject
 
                 // Trigger the project creation
 
-                var (result, resultMessage) = AsyncAwaiter.Wait(client.QueueCreateProject(tpInfo), "Error queueing project creation");
+                var result = AsyncAwaiter.Wait(client.QueueCreateProject(tpInfo), "Error queueing project creation");
 
-                if (result != OperationStatus.Succeeded)
+                if (result.Status != OperationStatus.Succeeded)
                 {
-                    Logger.LogError(new Exception($"Error creating team project '{project}': {resultMessage}"));
+                    Logger.LogError(new Exception($"Error creating team project '{project}': {result.ResultMessage}"));
                     continue;
                 }
 

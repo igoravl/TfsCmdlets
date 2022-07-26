@@ -5,7 +5,7 @@ namespace TfsCmdlets.Services
 {
     public interface IAsyncOperationAwaiter
     {
-        (OperationStatus, string) Wait(Task<OperationReference> operation, string errorMessage, int waitTimeInSecs = 2);
-        (OperationStatus, string) Wait(OperationReference operation, int waitTimeInSecs = 2);
+        Operation Wait(Task<OperationReference> operation, string errorMessage, int waitTimeInSecs = 2);
+        Operation Wait(OperationReference operation, int waitTimeInSecs = 2);
     }
 }

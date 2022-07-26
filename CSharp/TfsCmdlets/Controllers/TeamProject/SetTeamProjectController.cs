@@ -36,11 +36,11 @@ namespace TfsCmdlets.Controllers.TeamProject
                 var tp = Data.GetProject();
                 var tpInfo = new WebApiTeamProject() { Description = Description };
 
-                var (result, resultMessage) = AsyncAwaiter.Wait(client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");
+                var result = AsyncAwaiter.Wait(client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");
 
-                if (result != OperationStatus.Succeeded)
+                if (result.Status != OperationStatus.Succeeded)
                 {
-                    Logger.LogError(new Exception($"Error updating team project '{tp.Name}': {resultMessage}"));
+                    Logger.LogError(new Exception($"Error updating team project '{tp.Name}': {result.ResultMessage}"));
                 }
             }
 
