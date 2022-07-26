@@ -22,3 +22,4 @@ global using WebApiBoard = Microsoft.TeamFoundation.Work.WebApi.Board;
 global using WebApiTeam = Microsoft.TeamFoundation.Core.WebApi.WebApiTeam;
 global using WebApiFeed = Microsoft.VisualStudio.Services.Feed.WebApi.Feed;
 global using WebApiPackage = Microsoft.VisualStudio.Services.Feed.WebApi.Package;
+global using WebApiBuild = Microsoft.TeamFoundation.Build.WebApi.Build;

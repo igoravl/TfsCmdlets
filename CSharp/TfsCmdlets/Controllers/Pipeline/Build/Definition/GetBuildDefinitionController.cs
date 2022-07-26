@@ -11,14 +11,16 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
         protected override IEnumerable Run()
         {
             var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
+            var ids = new List<int>();
 
-            foreach(var input in Definition)
+            foreach (var input in Definition)
             {
-                var definition = input switch {
+                var definition = input switch
+                {
                     _ => input
                 };
 
-                switch(definition)
+                switch (definition)
                 {
                     case BuildDefinition bd:
                         {
@@ -27,23 +29,16 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
                         }
                     case int id:
                         {
-                            yield return client.GetDefinitionAsync(Project.Name, id)
-                                .GetResult($"Error getting pipeline definition '{id}'");
-                            yield break;
+                            ids.Add(id);
+                            break;
                         }
                     case string s:
                         {
                             var path = NodeUtil.NormalizeNodePath(s, includeLeadingSeparator: true);
-
-                            var defs = client.GetDefinitionsAsync(Project.Name, queryOrder: QueryOrder)
+                            var defs = client.GetDefinitionsAsync(project: Project.Name)
                                 .GetResult($"Error getting pipeline definitions matching '{s}'");
-
-                            foreach (var i in defs.Where(bd => bd.GetFullPath().IsLike(path)))
-                            {
-                                yield return client.GetDefinitionAsync(Project.Name, i.Id)
-                                    .GetResult($"Error getting pipeline definition '{i.Id}'");
-                            }
-                            yield break;
+                            ids.AddRange(defs.Where(bd => bd.GetFullPath().IsLike(path) || bd.Name.IsLike(s)).Select(bd => bd.Id));
+                            break;
                         }
                     default:
                         {
@@ -51,6 +46,14 @@ namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
                             break;
                         }
                 }
+            }
+
+            if(ids.Count == 0) yield break;
+
+            foreach (var def in client.GetFullDefinitionsAsync(project: Project.Name, definitionIds: ids, queryOrder: QueryOrder)
+                .GetResult($"Error getting pipeline definitions"))
+            {
+                yield return def;
             }
         }
     }
