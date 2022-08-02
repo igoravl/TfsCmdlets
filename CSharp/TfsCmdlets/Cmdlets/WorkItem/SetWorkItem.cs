@@ -51,7 +51,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// Specifies the iteration path of the work item.
         /// </summary>
         [Parameter]
-        [WorkItemField("System.AreaPath", FieldType.TreePath)]
+        [WorkItemField("System.IterationPath", FieldType.TreePath)]
         public string IterationPath { get; set; }
 
         /// <summary>
