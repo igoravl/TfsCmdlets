@@ -1,5 +1,5 @@
 ---
 layout: module
-title: Builds
+title: Pipelines (Classic Builds & YAML Pipelines)
 ---
 

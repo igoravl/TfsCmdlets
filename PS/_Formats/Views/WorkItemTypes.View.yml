@@ -7,3 +7,5 @@ TableControl:
   Name: 
     Width: 30
   Description:
+  IsDisabled:
+    Label: Disabled?

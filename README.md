@@ -25,7 +25,7 @@ Next, install TfsCmdlets in your computer (see section "_How to install_", below
 ```PowerShell
 # Connect to your Azure DevOps organization
 # (Will be used as default for the -Collection argument when required by a cmdlet)
-Connect-TfsTeamProjectCollection https://dev.azure.com/<your_organization_name>
+Connect-TfsTeamProjectCollection 'https://dev.azure.com/<your_organization_name>'
 
 # Get a list of team projects in the currently connected organization
 Get-TfsTeamProject

@@ -1,16 +1,13 @@
 using System.Management.Automation;
-using Microsoft.TeamFoundation.Core.WebApi;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.Git
 {
     /// <summary>
     /// Creates a new Git repository in a team project.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "TfsGitRepository", ConfirmImpact = ConfirmImpact.Medium, SupportsShouldProcess = true)]
-    [OutputType(typeof(GitRepository))]
-    public class NewGitRepository : NewCmdletBase<GitRepository>
+    [TfsCmdlet(CmdletScope.Project, OutputType = typeof(GitRepository))]
+    partial class NewGitRepository
     {
         /// <summary>
         /// Specifies the name of the new repository
@@ -19,37 +16,18 @@ namespace TfsCmdlets.Cmdlets.Git
         [Alias("Name")]
         public string Repository { get; set; }
 
-    }
-
-    partial class GitRepositoryDataService
-    {
         /// <summary>
-        /// Performs execution of the command
+        /// Forks the specified reposity. To fork a repository from another team project, 
+        /// specify the repository name in the form "project/repository" or pass in the result of a 
+        /// previous call to Get-TfsGitRepository that returns the source repository.
         /// </summary>
-        protected override GitRepository DoNewItem()
-        {
-            var (_, tp) = GetCollectionAndProject();
+        [Parameter()]
+        public object ForkFrom { get; set; }
 
-            var repo = GetParameter<string>(nameof(NewGitRepository.Repository));
-
-            if (!ShouldProcess(tp, $"Create Git repository '{repo}'")) return null;
-
-            var client = GetClient<GitHttpClient>();
-
-            var tpRef = new TeamProjectReference()
-            {
-                Id = tp.Id,
-                Name = tp.Name
-            };
-
-            var repoToCreate = new GitRepository()
-            {
-                Name = repo,
-                ProjectReference = tpRef
-            };
-
-            return client.CreateRepositoryAsync(repoToCreate, tp.Name)
-                .GetResult("Error creating Git repository");
-        }
+        /// <summary>
+        /// Forks the specified branch in the source repository. When omitted, forks all branches.
+        /// </summary>
+        [Parameter()]
+        public string SourceBranch { get; set; }
     }
 }

@@ -1,5 +1,5 @@
 @"
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.0.0.schema.json
+# yaml-language-server: `$schema=https://aka.ms/winget-manifest.installer.1.0.0.schema.json
 
 PackageIdentifier: Igoravl.TfsCmdlets
 PackageVersion: $FourPartVersion
@@ -11,14 +11,11 @@ InstallModes:
 Installers:
 - InstallerLocale: en-US
   Architecture: x64
-  InstallerType: msi
+  InstallerType: wix
   Scope: user
   InstallerUrl: https://github.com/igoravl/TfsCmdlets/releases/download/v$($BuildName.Replace('+', '%2B'))/$ModuleName-$($VersionMetadata.NugetVersion).msi
   InstallerSha256: $MsiHash
-  InstallerSwitches:
-    Silent: /qn
-    SilentWithProgress: /qb
-  ProductCode: ""$MsiProductCode""
+  ProductCode: "$MsiProductCode"
   UpgradeBehavior: install
 ManifestType: installer
 ManifestVersion: 1.0.0

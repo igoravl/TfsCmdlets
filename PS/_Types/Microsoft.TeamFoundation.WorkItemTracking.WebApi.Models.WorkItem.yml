@@ -1,6 +1,6 @@
 - ScriptProperty:
     Name: Id
-    GetScriptBlock: ([uri]$this.Url).Segments[-1]
+    GetScriptBlock: $uri = ([uri]$this.Url); if($uri.Segments[-2] -eq 'revisions/'){[int]$uri.Segments[-3].TrimEnd('/')}else{[int]$uri.Segments[-1].TrimEnd('/')}
 - ScriptProperty:
     Name: Title
     GetScriptBlock: $this.Fields['System.Title']

@@ -1,18 +1,49 @@
 # TfsCmdlets Release Notes
 
-## Version 2.1.4 (_30/Nov/2021_)
+## Version 2.5.0 (_03/Aug/2022_)
 
-This release fixes a couple issues in `Get-TfsIdentity` and `Invoke-TfsRestApi`.
+This release introduces new cmdlets and fixes a few bugs.
+
+## New cmdlets
+
+* **[Start-TfsBuild](https://tfscmdlets.dev/docs/cmdlets/Pipeline/Build/Start-TfsBuild/)**: Starts a pipeline (YAML) / build (Classic).
+* **[Get-TfsTeamProjectMember](https://tfscmdlets.dev/docs/cmdlets/TeamProject/Members/Get-TfsTeamProjectMember/)**: Returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
 
 ## Fixes
 
-- **Error when using Get-TfsIdentity with Azure DevOps Services**: Get-TfsIdentity is a cmdlet that helps to deal with legacy APIs, such as the Azure DevOps Security API. To fetch an identiy, it connected to a configuration server (the "root" of an Azure DevOps installation) and called the required API. However, connecting to a configuration server is not supported when using Azure DevOps Services. Now, when used with Azure DevOps Services, Get-TfsIdentity will use the collection (organization) scope for the API, whereas calls to the on-prem server still target the configuration server.
-
-- **Error calling Invoke-TfsRestApi for alternate hosts under Windows PowerShell (Desktop)**: There was a bug in the implementation of Invoke-TfsRestApi that caused it to fail when using alternate hosts in Windows PowerShell. This has been fixed.
+* Fixes a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where IterationPath was not being set.
 
 -----------------------
 
 ## Previous Versions
+
+## Version 2.4.1 (_20/Jul/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.4.1.md).
+
+### Version 2.4.0 (_23/May/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.4.0.md).
+
+### Version 2.3.1 (_08/Apr/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.1.md).
+
+### Version 2.3.0 (_04/Mar/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.3.0.md).
+
+### Version 2.2.1 (_10/Feb/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.2.1.md).
+
+### Version 2.2.0 (_05/Feb/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.2.0.md).
+
+### Version 2.1.4 (_30/Nov/2021_)
+
+See release notes [here](Docs/ReleaseNotes/2.1.4.md).
 
 ### Version 2.1.3 (_25/Nov/2021_)
 

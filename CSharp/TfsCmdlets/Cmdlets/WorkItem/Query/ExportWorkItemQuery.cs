@@ -1,9 +1,4 @@
-using System;
-using System.IO;
 using System.Management.Automation;
-using System.Xml;
-using System.Xml.Linq;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Query
 {
@@ -15,9 +10,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     /// and reused. Visual Studio Team Explorer has the ability to open and save WIQ files. Use 
     /// this cmdlet to generate WIQ files compatible with the format supported by Team Explorer.
     /// </remarks>
-    [Cmdlet(VerbsData.Export, "TfsWorkItemQuery", DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium)]
-    [OutputType(typeof(string))]
-    public class ExportWorkItemQuery : CmdletBase
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true,
+     OutputType = typeof(string))]
+    partial class ExportWorkItemQuery
     {
         /// <summary>
         /// Specifies one or more saved queries to export. Wildcards supported. 
@@ -34,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// folder. When omitted defaults to "Both", effectively searching for items 
         /// in both scopes.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateSet("Personal", "Shared", "Both")]
         public string Scope { get; set; } = "Both";
 
@@ -59,7 +54,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         public SwitchParameter FlattenFolders { get; set; }
 
         /// <summary>
-        /// Allows the cmdlet to overwrite an existing file in the destination folder.
+        /// HELP_PARAM_FORCE_OVERWRITE
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "Export to file")]
@@ -69,67 +64,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         /// Exports the saved query to the standard output stream as a string-encoded 
         /// XML document.
         /// </summary>
-        [Parameter(ParameterSetName = "Export to output stream", Mandatory=true)]
+        [Parameter(ParameterSetName = "Export to output stream", Mandatory = true)]
         public SwitchParameter AsXml { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_PROJECT
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Project { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
-
-        /// <summary>
-        /// Performs execution of the command
-        /// </summary>
-        protected override void DoProcessRecord()
-        {
-            var queries = GetItems<QueryHierarchyItem>(new { ItemType = "Query" });
-            var (tpc, tp) = GetCollectionAndProject();
-
-            foreach (var query in queries)
-            {
-                if (!ShouldProcess($"Team Project '{tp.Name}'", $"Export work item query '{query.Path}'")) continue;
-
-                var doc = XDocument.Parse($@"<?xml version=""1.0"" encoding=""{Encoding}""?>
-<WorkItemQuery Version=""1"">
-    <!-- Original Query Path: {query.Path} -->
-    <TeamFoundationServer>{tpc.Uri}</TeamFoundationServer>
-    <TeamProject>{tp.Name}</TeamProject>
-    <Wiql><![CDATA[{query.Wiql}]]></Wiql>
-</WorkItemQuery>");
-
-                if (AsXml)
-                {
-                    WriteObject(doc.ToString());
-                    continue;
-                }
-
-                var relativePath = $"{(FlattenFolders ? query.Path.Replace('/', '_') : query.Path)}.wiq";
-                var outputPath = ResolvePath(Destination, relativePath);
-                var destDir = Path.GetDirectoryName(outputPath);
-
-                if (!Directory.Exists(destDir))
-                {
-                    this.Log($"Destination path '{Destination}' not found.");
-
-                    if (!ShouldProcess(Destination, "Create output directory")) continue;
-
-                    Directory.CreateDirectory(destDir);
-                }
-
-                if(File.Exists(outputPath) && !(Force || ShouldContinue($"Are you sure you want to overwrite existing file '{outputPath}'", "Confirm")))
-                {
-                    throw new Exception($"Cannot overwrite existing file '{outputPath}'");
-                }
-
-                doc.Save(outputPath);
-            }
-        }
     }
 }

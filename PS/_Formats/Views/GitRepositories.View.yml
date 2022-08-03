@@ -2,11 +2,15 @@ ViewSelectedBy:
   - Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository
 GroupBy:
   Label: Team Project
-  PropertyName: ProjectReference.Name
+  PropertyName: TeamProject
 TableControl: 
   Name: 
-  DefaultBranch:
+  'Default Branch':
     Width: 20
-    Label: Default Branch
+    ScriptBlock: $_.DefaultBranch.Substring(11)
   RemoteUrl:
     Label: Remote URL
+  IsDisabled:
+    Label: 'Is Disabled?'
+  'Parent Repository':
+    ScriptBlock: if($_.ParentRepository) { $_.ParentRepository.Name } else { '' }

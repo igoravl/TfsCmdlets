@@ -1,6 +1,6 @@
 - ScriptProperty:
     Name: LinkType
-    GetScriptBlock: if($this.Rel -eq 'AttachedFile') { 'Attachment' } else { $this.Attributes['name'] }
+    GetScriptBlock: if($this.Rel -eq 'AttachedFile') { 'Attachment' } elseif($this.Attributes['name']) {$this.Attributes['name']} else {$this.Rel}
 - ScriptProperty:
     Name: Comment
     GetScriptBlock: $this.Attributes['comment']
@@ -10,6 +10,16 @@
         if($this.Rel -eq 'AttachedFile')
         { 
           return $this.Attributes['name']
+        }
+        elseif (-not $this.Attributes['name'])
+        {
+            return $this.Url
+        }
+        elseif ($this.Url -like 'vstfs:/*')
+        {
+            $segments = $this.Url.Substring(9).Split('/')
+            if($segments.Length -eq 3) { $segments[2] = [uri]::UnescapeDataString($segments[2]) }
+            return $segments -join ' '
         }
         
         $id = [int] ([uri] $this.Url).Segments[-1]

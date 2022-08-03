@@ -21,9 +21,8 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     ///   <code>Export-TfsProcessTemplate -Process "Scrum" -DestinationPath C:\PT -Collection http://vsalm:8080/tfs/DefaultCollection -NewName "MyScrum" -NewDescription "A customized version of the Scrum process template"</code>
     ///   <para>Exports the Scrum process template from the DefaultCollection project collection in the VSALM server, saving the template files to the C:\PT\MyScrum directory in the local computer. Notice that the process template is being renamed from Scrum to MyScrum, so that it can be later reimported as a new process template instead of overwriting the original one.</para>
     /// </example>
-    [Cmdlet(VerbsData.Export, "TfsProcessTemplate")]
-    [DesktopOnly]
-    public partial class ExportProcessTemplate : CmdletBase
+    [TfsCmdlet(CmdletScope.Collection, DesktopOnly = true)]
+    partial class ExportProcessTemplate 
     {
         /// <summary>
         /// Specifies the name of the process template(s) to be exported. Wildcards are supported. 
@@ -31,6 +30,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards()]
+        [Alias("Name", "Process")]
         public object ProcessTemplate { get; set; } = "*";
 
         /// <summary>
@@ -38,14 +38,14 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// A folder with the process template name will be created under this path. When omitted, templates  
         /// are exported in the current directory.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public string DestinationPath { get; set; }
 
         /// <summary>
         /// Saves the exported process template with a new name. Useful when exporting a base template 
         /// which will be used as a basis for a new process template. When omitted, the original name is used.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty()]
         public string NewName { get; set; }
 
@@ -53,21 +53,14 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         /// Saves the exported process template with a new description. Useful when exporting a base template 
         /// which will be used as a basis for a new process template.  When omitted, the original description is used.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         [ValidateNotNullOrEmpty()]
         public string NewDescription { get; set; }
-
 
         /// <summary>
         /// Allows the cmdlet to overwrite an existing destination folder.
         /// </summary>
-        [Parameter()]
+        [Parameter]
         public SwitchParameter Force { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_COLLECTION
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Collection { get; set; }
     }
 }

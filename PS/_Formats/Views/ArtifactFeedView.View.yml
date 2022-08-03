@@ -1,0 +1,10 @@
+ViewSelectedBy:
+- Microsoft.VisualStudio.Services.Feed.WebApi.FeedView
+GroupBy: 
+  ScriptBlock: $_.Project.Name + '/' + $_.Feed.Name
+  CustomControlName: TeamProjects-FeedItems
+TableControl:
+  Name:
+    Width: 30
+  Type:
+  Visibility:

@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
@@ -17,9 +11,8 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     /// event such as "work item changed" or "build queued". Use this cmdlet to list the available publishers and get 
     /// the ID of the desired one to be able to manage service hook subscriptions.
     /// </remarks>
-    [Cmdlet(VerbsCommon.Get, "TfsServiceHookPublisher")]
-    [OutputType(typeof(WebApiPublisher))]
-    public class GetServiceHookPublisher : GetCmdletBase<WebApiPublisher>
+    [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WebApiPublisher))]
+    partial class GetServiceHookPublisher
     {
         /// <summary>
         /// Specifies the name or ID of the service hook publisher to return. Wildcards are supported. 
@@ -30,37 +23,5 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [SupportsWildcards()]
         [Alias("Name", "Id")]
         public object Publisher { get; set; } = "*";
-    }
-
-    [Exports(typeof(WebApiPublisher))]
-    internal partial class ServiceHookPublisherDataService : BaseDataService<WebApiPublisher>
-    {
-        protected override IEnumerable<WebApiPublisher> DoGetItems()
-        {
-            var client = GetClient<ServiceHooksPublisherHttpClient>();
-            var publisher = GetParameter<object>(nameof(GetServiceHookPublisher.Publisher));
-
-            while (true) switch (publisher)
-                {
-                    case WebApiPublisher p:
-                        {
-                            yield return p;
-                            yield break;
-                        }
-                    case string s:
-                        {
-                            var result = client.GetPublishersAsync()
-                                .GetResult("Error getting service hook publishers")
-                                .Where(p => p.Name.IsLike(s) || p.Id.IsLike(s));
-
-                            foreach (var r in result) yield return r;
-                            yield break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent publisher '{publisher}'");
-                        }
-                }
-        }
     }
 }

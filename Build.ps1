@@ -15,8 +15,7 @@ Param
     [switch] $Incremental
 )
 
-Function Install-Dependencies
-{
+Function Install-Dependencies {
     $NugetPackages = @('GitVersion.CommandLine')
     $PsModules = @('psake', 'PsScriptAnalyzer', 'VSSetup', 'powershell-yaml', 'ps1xmlgen', 'PlatyPS')
 
@@ -28,90 +27,74 @@ Function Install-Dependencies
 
     Write-Verbose "Restoring NuGet package(s) ($($NugetPackages -join ', '))"
 
-    foreach($pkg in $NugetPackages)
-    {
+    foreach ($pkg in $NugetPackages) {
         Install-NugetPackage $pkg
     }
 
     Write-Verbose "Restoring PowerShell module(s) ($($PsModules -join ', '))"
 
-    foreach($mod in $PsModules)
-    {
+    foreach ($mod in $PsModules) {
         Install-PsModule $mod
     }
 }
 
-Function Install-Nuget
-{
+Function Install-Nuget {
     Write-Verbose "Restoring Nuget client"
 
     $BuildToolsDir = Join-Path $RootProjectDir 'BuildTools'
     $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
 
-    if (-not (Test-Path $PackagesDir -PathType Container))
-    {
+    if (-not (Test-Path $PackagesDir -PathType Container)) {
         mkdir $PackagesDir -Force | Write-Verbose
     }
 
-    if (-not (Test-Path $BuildToolsDir -PathType Container))
-    {
+    if (-not (Test-Path $BuildToolsDir -PathType Container)) {
         mkdir $BuildToolsDir -Force | Write-Verbose
     }
 
-    if (-not (Test-Path $NugetExePath -PathType Leaf))
-    {
+    if (-not (Test-Path $NugetExePath -PathType Leaf)) {
         Write-Verbose "Nuget.exe not found. Downloading from https://dist.nuget.org"
         Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NugetExePath | Write-Verbose
     }
-    else
-    {
+    else {
         Write-Verbose "NuGet client found; Skipping..."    
     }
 
     Write-Verbose "NugetExePath: $NugetExePath"
 }
 
-Function Install-NugetPackage($Package)
-{
+Function Install-NugetPackage($Package) {
     Write-Verbose "Restoring NuGet package $Package"
 
     $modulePath = Join-Path $RootProjectDir "packages/$Package"
 
-    if (-not (Test-Path "$modulePath/*" -PathType Leaf))
-    {
+    if (-not (Test-Path "$modulePath/*" -PathType Leaf)) {
         Write-Verbose "Package not found. Downloading from Nuget.org"
         & $NugetExePath Install $Package -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
     }
-    else
-    {
+    else {
         Write-Verbose "NuGet package $Package found; Skipping..."    
     }
 }
 
-Function Install-PsModule($Module)
-{
+Function Install-PsModule($Module) {
     Write-Verbose "Restoring module $Module"
 
-    if (-not (Get-Module $Module -ListAvailable))
-    {
-        if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue))
-        {
+    if (-not (Get-Module $Module -ListAvailable)) {
+        if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue)) {
             Write-Verbose "Installing required Nuget package provider in order to install modules from PowerShell Gallery"
             Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
         }
 
         Install-Module $Module -Scope CurrentUser -Force | Write-Verbose
     }
-    else
-    {
+    else {
         Write-Verbose "PowerShell module $Module found; Skipping..."    
     }
 }
 
-try
-{
-    if (-not $RootProjectDir)
-    {
+try {
+    if (-not $RootProjectDir) {
         $RootProjectDir = $PSScriptRoot
     }
 
@@ -143,13 +126,11 @@ try
 
     $isCI = $false
 
-    if ($env:BUILD_BUILDURI)
-    {
+    if ($env:BUILD_BUILDURI) {
         Write-Output "##vso[build.updatebuildnumber]$BuildName"
         $isCI = $true
     }
-    elseif ($env:GITHUB_ACTIONS)
-    {
+    elseif ($env:GITHUB_ACTIONS) {
         Write-Output "::set-output name=BUILD_NAME::$BuildName"
         $isCI = $true
     }
@@ -162,38 +143,39 @@ try
     Write-Verbose "=== BEGIN PSAKE ==="
     Write-Verbose "Invoking Psake script $psakeScript"
 
-    Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose `
-      -Parameters @{
-        RootProjectDir = $RootProjectDir
-        Configuration = $Configuration
-        ModuleName = $ModuleName
-        ModuleAuthor = $ModuleAuthor
+    Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose -ErrorAction SilentlyContinue `
+        -Parameters @{
+        RootProjectDir    = $RootProjectDir
+        Configuration     = $Configuration
+        ModuleName        = $ModuleName
+        ModuleAuthor      = $ModuleAuthor
         ModuleDescription = $ModuleDescription
-        BuildName = $BuildName
-        BuildNumber = $ProjectBuildNumber
-        VersionMetadata = $VersionMetadata 
-        SkipTests = $SkipTests.IsPresent
-        Incremental = $Incremental.IsPresent
-        IsCI = $isCI
+        BuildName         = $BuildName
+        BuildNumber       = $ProjectBuildNumber
+        VersionMetadata   = $VersionMetadata 
+        SkipTests         = $SkipTests.IsPresent
+        Incremental       = $Incremental.IsPresent
+        IsCI              = $isCI
     }
 
     Write-Verbose "=== END PSAKE ==="
-
 }
-finally
-{
+finally {
     Pop-Location
 }
 
-if (-not $psake.build_success)
-{
-    $msbuildLog = (Join-Path $RootProjectDir 'out/MSBuild.log')
-
-    if (Test-Path $msbuildLog)
+if (-not $psake.build_success) {
+    foreach($logFile in (Get-ChildItem (Join-Path $RootProjectDir 'out/*.log')))
     {
-        Write-Host '========== MSBUILD LOG ===========' -ForegroundColor Red
-        Get-Content $msbuildLog | Write-Host -ForegroundColor Red
-        Write-Host '======== END MSBUILD LOG =========' -ForegroundColor Red
+        Write-Host -ForegroundColor Red @"
+
+========== MSBUILD LOG ===========
+
+$(Get-Content $logFile -Raw)
+
+======== END MSBUILD LOG =========
+
+"@
     }
 
     throw "Build failed. See log above for details."

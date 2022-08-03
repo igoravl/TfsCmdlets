@@ -1,6 +1,4 @@
 ﻿using System.Management.Automation;
-using TfsCmdlets.Extensions;
-using TfsCmdlets.Services;
 
 namespace TfsCmdlets
 {
@@ -14,10 +12,10 @@ namespace TfsCmdlets
         /// </summary>
         void IModuleAssemblyInitializer.OnImport()
         {
+            ServiceLocator.SetSite(this);
+
             var resolver = new AssemblyResolver();
             resolver.Register();
-
-            ServiceManager.Register(new CmdletServiceProviderImpl());
         }
     }
 }

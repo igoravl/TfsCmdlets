@@ -1,0 +1,38 @@
+Passthru: |
+  <Control>
+    <Name>TeamProjects-Repositories-Branches</Name>
+    <CustomControl>
+      <CustomEntries>
+        <CustomEntry>
+          <CustomItem>
+            <NewLine/>
+            <Text>Team Project: </Text>
+            <ExpressionBinding>
+              <ScriptBlock>$_.Project</ScriptBlock>
+            </ExpressionBinding>
+            <NewLine/>
+            <Frame>
+              <LeftIndent>2</LeftIndent>
+              <CustomItem>
+                <Text>Repository: </Text>
+                <ExpressionBinding>
+                  <ScriptBlock>$_.Repository</ScriptBlock>
+                </ExpressionBinding>
+                <NewLine/>
+                <Frame>
+                  <LeftIndent>2</LeftIndent>
+                  <CustomItem>
+                    <Text>Branch  : </Text>
+                    <ExpressionBinding>
+                      <ScriptBlock>$_.Branch</ScriptBlock>
+                    </ExpressionBinding>
+                    <NewLine/>
+                  </CustomItem>
+                </Frame>
+              </CustomItem>
+            </Frame>
+          </CustomItem>
+        </CustomEntry>
+      </CustomEntries>
+    </CustomControl>
+  </Control>

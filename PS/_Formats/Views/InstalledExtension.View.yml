@@ -1,0 +1,11 @@
+ViewSelectedBy:
+  - Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension
+TableControl:
+  ExtensionDisplayName:
+    Label: 'Extension Name'
+  PublisherDisplayName:
+    Label: 'Publisher Name'
+  FullyQualifiedName:
+    Label: 'Id'
+  Status:
+    ScriptBlock: if(($_.InstallState.Flags -band [Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.ExtensionStateFlags]::Disabled) -eq [Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.ExtensionStateFlags]::Disabled) {'Disabled'} else {'Enabled'}
