@@ -12,6 +12,7 @@ Param
     $Targets = @("Package"),
     $RepoCreationDate = (Get-Date '2014-10-24'),
     [switch] $SkipTests,
+    [switch] $SkipReleaseNotes,
     [switch] $Incremental
 )
 
@@ -154,6 +155,7 @@ try {
         BuildNumber       = $ProjectBuildNumber
         VersionMetadata   = $VersionMetadata 
         SkipTests         = $SkipTests.IsPresent
+        SkipReleaseNotes  = $SkipReleaseNotes.IsPresent
         Incremental       = $Incremental.IsPresent
         IsCI              = $isCI
     }

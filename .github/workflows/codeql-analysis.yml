@@ -39,7 +39,7 @@ jobs:
     - name: Build module
       id: build_module
       shell: pwsh
-      run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipTests
+      run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipTests -SkipReleaseNotes
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
