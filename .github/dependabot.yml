@@ -5,7 +5,15 @@
 
 version: 2
 updates:
-  - package-ecosystem: "nuget" # See documentation for possible values
-    directory: "CSharp/TfsCmdlets" # Location of package manifests
-    schedule:
-      interval: "daily"
+- package-ecosystem: "nuget"
+  directory: "CSharp/TfsCmdlets"
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "nuget"
+  directory: "Setup"
+  schedule:
+    interval: "weekly"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "weekly"
