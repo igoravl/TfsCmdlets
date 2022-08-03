@@ -6,7 +6,8 @@ This release introduces new cmdlets and fixes a few bugs.
 
 ## New cmdlets
 
-* **Get-TfsTeamProjectMember**: This cmdlet returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
+* **[Start-TfsBuild](https://tfscmdlets.dev/docs/cmdlets/Pipeline/Build/Start-TfsBuild/)**: Starts a pipeline (YAML) / build (Classic).
+* **[Get-TfsTeamProjectMember](https://tfscmdlets.dev/docs/cmdlets/TeamProject/Members/Get-TfsTeamProjectMember/)**: Returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
 
 ## Fixes
 
