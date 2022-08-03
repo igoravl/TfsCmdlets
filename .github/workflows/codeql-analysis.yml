@@ -13,8 +13,7 @@ on:
     - cron: '34 23 * * 0'
 
 jobs:
-  analyze:
-    name: Analyze
+  Analyze:
     runs-on: windows-latest
     permissions:
       actions: read
@@ -27,18 +26,20 @@ jobs:
         language: [ 'csharp' ]
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
       with:
         languages: ${{ matrix.language }}
 
-    - name: Build
+    - name: Build module
+      id: build_module
       shell: pwsh
-      run: |
-        ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+      run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
