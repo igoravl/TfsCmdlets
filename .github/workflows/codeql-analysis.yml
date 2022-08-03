@@ -5,10 +5,6 @@ env:
   Debug: ${{ false }}
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   schedule:
     - cron: '34 23 * * 0'
 
