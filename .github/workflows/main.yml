@@ -37,37 +37,37 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
       - name: Publish Nuget
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nuget
           path: "out/Nuget/*.nupkg"
       - name: Publish Chocolatey
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: chocolatey
           path: "out/Chocolatey/*.nupkg"
       - name: Publish Portable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: portable
           path: "out/Portable/*.zip"
       - name: Publish MSI
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: msi
           path: "out/msi/*"
       - name: Publish WinGet
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: winget
           path: "out/winget/**"
       - name: Publish Docs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: "out/docs/*.zip"
       - name: Publish Release Notes
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: releasenotes
           path: "docs/ReleaseNotes/**"
