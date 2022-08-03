@@ -1,44 +1,38 @@
 ﻿---
-title: Set-TfsTeamProject
-breadcrumbs: [ "TeamProject" ]
-parent: "TeamProject"
-description: "Changes the details of a team project. "
+title: Get-TfsTeamProjectMember
+breadcrumbs: [ "TeamProject", "Member" ]
+parent: "TeamProject.Member"
+description: "Gets the members of a team project. "
 remarks: 
 parameterSets: 
-  "_All_": [ AvatarImage, Collection, Description, Passthru, Project, Server ] 
+  "_All_": [ AsIdentity, Collection, Member, Project, Server ] 
   "__AllParameterSets":  
-    Project: 
-      type: "object"  
-      position: "0"  
-    AvatarImage: 
-      type: "string"  
+    AsIdentity: 
+      type: "SwitchParameter"  
     Collection: 
       type: "object"  
-    Description: 
-      type: "string"  
-    Passthru: 
-      type: "SwitchParameter"  
+    Member: 
+      type: "object"  
+    Project: 
+      type: "object"  
     Server: 
       type: "object" 
 parameters: 
-  - name: "Project" 
-    description: "Specifies the name of the Team Project. " 
+  - name: "Member" 
+    description: "Specifies the name of a team project member. Wildcards are supported. When omitted, all team project members are returned. " 
     globbing: false 
-    position: 0 
     type: "object" 
-  - name: "Description" 
-    description: "Specifies the description of the team project. To remove a previously set description, pass a blank string ('') to this argument. " 
-    globbing: false 
-    type: "string" 
-  - name: "AvatarImage" 
-    description: "Specifies the name of a local image file to be uploaded and used as the team project icon (\"avatar\"). To remove a previously set image, pass either $null or a blank string ('') to this argument. " 
-    globbing: false 
-    type: "string" 
-  - name: "Passthru" 
-    description: "Returns the results of the command. By default, this cmdlet does not generate any output. " 
+    defaultValue: "*" 
+  - name: "AsIdentity" 
+    description: "Returns the members as fully resolved Identity objects. When omitted, it returns only the name, ID and email of the users. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
+  - name: "Project" 
+    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
+    globbing: false 
+    pipelineInput: "true (ByValue)" 
+    type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
@@ -54,13 +48,17 @@ parameters:
     globbing: false 
     type: "object"
 inputs: 
+  - type: "System.Object" 
+    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. "
 outputs: 
-  - type: "Microsoft.TeamFoundation.Core.WebApi.TeamProject" 
+  - type: "Microsoft.VisualStudio.Services.Identity.Identity" 
+    description:  
+  - type: "TfsCmdlets.Models.TeamProjectMember" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProject/Set-TfsTeamProject"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/TeamProject/Member/Get-TfsTeamProjectMember"
 aliases: 
 examples: 
 ---
