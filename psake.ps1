@@ -279,7 +279,7 @@ Task Clean {
 
 } 
 
-Task ValidateReleaseNotes {
+Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes }  {
 
     $path = Join-Path $RootProjectDir "Docs/ReleaseNotes/${ThreePartVersion}.md"
 

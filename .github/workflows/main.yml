@@ -3,6 +3,7 @@ name: Build
 env:
   Config: Release
   Debug: ${{ false }}
+  SkipReleaseNotes: ${{ true }}
   
 on:
   push:
@@ -24,22 +25,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      # - name: Dump environment variables
-      #   run: "dir env:"
-      #   shell: pwsh
-      #   if: env.Debug 
-      # - name: Dump GitHub objects
-      #   run: |
-      #     echo @'
-      #       ${{ toJSON(github) }}
-      #     '@
-      #   shell: pwsh
-      #   if: env.Debug 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp
       - name: Build module
         id: build_module
         shell: pwsh
         run: |
-          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
       - name: Publish Nuget
         uses: actions/upload-artifact@v2
         with:
