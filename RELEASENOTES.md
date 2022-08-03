@@ -1,21 +1,25 @@
 # TfsCmdlets Release Notes
 
-## Version 2.4.1 (_20/Jul/2022_)
+## Version 2.5.0 (_03/Aug/2022_)
 
-This release fixes bugs and add improvements to `New-TfsWorkItem` and `Set-TfsWorkItem`.
+This release introduces new cmdlets and fixes a few bugs.
 
-## Improvements
+## New cmdlets
 
-* Identity fields in `New-TfsWorkItem` and `Set-TfsWorkItem` (such as _"Assigned To"_) now support either email addresses or user display names as valid values. Previously, only user display names were supported.
+* **[Start-TfsBuild](https://tfscmdlets.dev/docs/cmdlets/Pipeline/Build/Start-TfsBuild/)**: Starts a pipeline (YAML) / build (Classic).
+* **[Get-TfsTeamProjectMember](https://tfscmdlets.dev/docs/cmdlets/TeamProject/Members/Get-TfsTeamProjectMember/)**: Returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
 
 ## Fixes
 
-* Fix _"Set-TfsWorkItem fails with {type} to {type}[] (array) conversion error"_ ([#172](https://github.com/igoravl/TfsCmdlets/issues/172))
-* Fix a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where changes to the **AssignedTo** field would not be reflected in the Work Item.
+* Fixes a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where IterationPath was not being set.
 
 -----------------------
 
 ## Previous Versions
+
+## Version 2.4.1 (_20/Jul/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.4.1.md).
 
 ### Version 2.4.0 (_23/May/2022_)
 

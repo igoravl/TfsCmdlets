@@ -36,8 +36,8 @@ namespace TfsCmdlets.Controllers.Team
                     var props = projectClient
                         .GetProjectPropertiesAsync(Project.Id)
                         .GetResult("Error retrieving project's default team");
-                    team = props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
-                        .FirstOrDefault()?.Value;
+                    team = new Guid((string) props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
+                        .FirstOrDefault()?.Value);
                 }
 
                 if (Current || (team is string s1 && string.IsNullOrEmpty(s1)))

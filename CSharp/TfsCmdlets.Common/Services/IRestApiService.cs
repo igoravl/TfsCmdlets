@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services
 {
@@ -42,6 +43,14 @@ namespace TfsCmdlets.Services
             string apiVersion = "4.1",
             string serviceHostName = null);
 
-        Uri Url {get;}
+        Task<ContributionNodeResponse> QueryContributionNodeAsync(
+            Models.Connection connection,
+            ContributionNodeQuery query,
+            Dictionary<string, string> additionalHeaders = null,
+            Dictionary<string, string> queryParameters = null,
+            string apiVersion = "6.1",
+            string serviceHostName = null);
+
+        Uri Url { get; }
     }
 }

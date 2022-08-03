@@ -1,6 +1,6 @@
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Controllers.Pipeline.Build
+namespace TfsCmdlets.Controllers.Pipeline.Build.Definition
 {
     /// <summary>
     /// Gets one or more build/pipeline definitions in a team project.

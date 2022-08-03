@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.HttpClient;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -10,7 +11,7 @@ namespace TfsCmdlets.Services.Impl
     public class RestApiServiceImpl : IRestApiService
     {
         private GenericHttpClient _client;
-        private ILogger Logger {get;set;}
+        private ILogger Logger { get; set; }
         public Uri Url => _client.Uri;
 
         Task<HttpResponseMessage> IRestApiService.InvokeAsync(
@@ -63,7 +64,7 @@ namespace TfsCmdlets.Services.Impl
         {
             return GetClient(connection, serviceHostName)
                 .InvokeAsync<OperationReference>(new HttpMethod(method), path.TrimStart('/'), body,
-                                                 requestContentType, responseContentType, additionalHeaders, 
+                                                 requestContentType, responseContentType, additionalHeaders,
                                                  queryParameters, apiVersion);
         }
 
@@ -98,11 +99,31 @@ namespace TfsCmdlets.Services.Impl
 
             return _client = client;
         }
- 
+
+        public Task<ContributionNodeResponse> QueryContributionNodeAsync(
+            Models.Connection connection,
+            ContributionNodeQuery query,
+            Dictionary<string, string> additionalHeaders,
+            Dictionary<string, string> queryParameters,
+            string apiVersion,
+            string serviceHostName)
+        {
+            return GetClient(connection, serviceHostName)
+                .InvokeAsync<ContributionNodeResponse>(
+                    HttpMethod.Post,
+                    "_apis/Contribution/HierarchyQuery",
+                    query.ToJsonString(), 
+                    "application/json",
+                    "application/json",
+                    additionalHeaders, 
+                    queryParameters,
+                    apiVersion);
+        }
+
         [ImportingConstructor]
         public RestApiServiceImpl(IDataManager data, ILogger logger)
         {
             Logger = logger;
         }
-   }
+    }
 }
