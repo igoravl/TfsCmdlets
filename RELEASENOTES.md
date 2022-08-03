@@ -6,7 +6,7 @@ This release introduces new cmdlets and fixes a few bugs.
 
 ## New cmdlets
 
-* **Get-TfsTeamProjectMember**: This cmdlet returns the members of a team project, as shown in the "Members" widget in the team project's Summary page.
+* **Get-TfsTeamProjectMember**: This cmdlet returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
 
 ## Fixes
 
