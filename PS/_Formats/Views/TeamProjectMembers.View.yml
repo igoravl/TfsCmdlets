@@ -1,0 +1,9 @@
+ViewSelectedBy: 
+  - TfsCmdlets.Models.TeamProjectMember
+GroupBy: 
+  Label: Team Project
+  PropertyName: TeamProject
+TableControl: 
+    Name: 
+    Email:
+    Id: 

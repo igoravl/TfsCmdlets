@@ -17,7 +17,7 @@ namespace TfsCmdlets.Models
         public Guid Id { get; set; }
 
         [DataMember(Name = "mail")]
-        public string Mail { get; set; }
+        public string Email { get; set; }
     }
 
     [DataContract]

@@ -18,10 +18,10 @@ namespace TfsCmdlets.Controllers.TeamProject.Member
                     Properties = new Dictionary<string, object>() {
                         ["forceRefresh"] = true,
                         ["sourcePage"] = new Dictionary<string,object>() {
-                            ["url"] = $"{Project.GetLink("web")}",
+                            ["url"] = Project.GetLink("web"),
                             ["routeId"] = "ms.vss-tfs-web.project-overview-route",
                             ["routeValues"] = new Dictionary<string,string>() {
-                                ["project"] = $"{Project.Name}",
+                                ["project"] = Project.Name,
                                 ["controller"] = "Apps",
                                 ["action"] = "ContributedHub"
                             },
@@ -29,26 +29,6 @@ namespace TfsCmdlets.Controllers.TeamProject.Member
                     }
                 }
             };
-
-            // var body = $@"{{
-            //     'contributionIds': [
-            //         'ms.vss-tfs-web.project-members-data-provider-verticals'
-            //     ],
-            //     'dataProviderContext': {{
-            //         'properties': {{
-            //             'forceRefresh': true,
-            //             'sourcePage': {{
-            //                 'url': '{Project.GetLink("web")}',
-            //                 'routeId': 'ms.vss-tfs-web.project-overview-route',
-            //                 'routeValues': {{
-            //                     'project': '{Project.Name}',
-            //                     'controller': 'Apps',
-            //                     'action': 'ContributedHub' }} }} }} }} }}".Replace(" ", "");
-
-            // var result = RestApiService.InvokeAsync<ContributionNodeResponse>(Collection, "/_apis/Contribution/HierarchyQuery",
-            //     method: "POST",
-            //     body: body,
-            //     apiVersion: "6.1").GetResult("Error invoking Contribution API");
 
             var result = RestApiService.QueryContributionNodeAsync(Collection, query)
                 .GetResult("Error invoking Contribution API");
@@ -59,6 +39,12 @@ namespace TfsCmdlets.Controllers.TeamProject.Member
 
             foreach(var member in col.Members)
             {
+                if(AsIdentity)
+                {
+                    yield return GetItem<Models.Identity>(new {Identity=member.Email});
+                    continue;
+                }
+
                 member.TeamProject = Project.Name;
                 yield return member;
             }
