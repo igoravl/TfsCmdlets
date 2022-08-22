@@ -1,23 +1,22 @@
 # TfsCmdlets Release Notes
 
-## Version 2.5.0 (_03/Aug/2022_)
+## Version 2.5.1 (_22/Aug/2022_)
 
-This release introduces new cmdlets and fixes a few bugs.
-
-## New cmdlets
-
-* **[Start-TfsBuild](https://tfscmdlets.dev/docs/cmdlets/Pipeline/Build/Start-TfsBuild/)**: Starts a pipeline (YAML) / build (Classic).
-* **[Get-TfsTeamProjectMember](https://tfscmdlets.dev/docs/cmdlets/TeamProject/Members/Get-TfsTeamProjectMember/)**: Returns the members of a team project, as shown in the "Members" widget in the team project's Summary page (closes [#59](https://github.com/igoravl/TfsCmdlets/issues/59)).
+This release fixes a bug in `New-TfsWorkItem`.
 
 ## Fixes
 
-* Fixes a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where IterationPath was not being set.
+* Fixes a bug in `New-TfsWorkItem` where AreaPath and IterationPath arguments are switched.
 
 -----------------------
 
 ## Previous Versions
 
-## Version 2.4.1 (_20/Jul/2022_)
+### Version 2.5.0 (_03/Aug/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.5.0.md).
+
+### Version 2.4.1 (_20/Jul/2022_)
 
 See release notes [here](Docs/ReleaseNotes/2.4.1.md).
 
