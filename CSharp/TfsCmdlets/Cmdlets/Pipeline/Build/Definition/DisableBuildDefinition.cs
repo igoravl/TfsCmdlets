@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build
+namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
 {
     /// <summary>
     /// Disables a build/pipeline definition.

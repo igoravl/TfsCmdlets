@@ -40,7 +40,7 @@ namespace TfsCmdlets.Extensions
             return method.Invoke(self, parameters);
         }
 
-        public static object ToJsonString(this object self)
+        public static string ToJsonString(this object self)
         {
             return Newtonsoft.Json.JsonConvert.SerializeObject(self, Newtonsoft.Json.Formatting.None);
         }

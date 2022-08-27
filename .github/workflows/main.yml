@@ -3,6 +3,7 @@ name: Build
 env:
   Config: Release
   Debug: ${{ false }}
+  SkipReleaseNotes: ${{ true }}
   
 on:
   push:
@@ -21,57 +22,52 @@ jobs:
       TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      # - name: Dump environment variables
-      #   run: "dir env:"
-      #   shell: pwsh
-      #   if: env.Debug 
-      # - name: Dump GitHub objects
-      #   run: |
-      #     echo @'
-      #       ${{ toJSON(github) }}
-      #     '@
-      #   shell: pwsh
-      #   if: env.Debug 
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: csharp
       - name: Build module
         id: build_module
         shell: pwsh
         run: |
-          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }}
+          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
       - name: Publish Nuget
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nuget
           path: "out/Nuget/*.nupkg"
       - name: Publish Chocolatey
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: chocolatey
           path: "out/Chocolatey/*.nupkg"
       - name: Publish Portable
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: portable
           path: "out/Portable/*.zip"
       - name: Publish MSI
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: msi
           path: "out/msi/*"
       - name: Publish WinGet
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: winget
           path: "out/winget/**"
       - name: Publish Docs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: "out/docs/*.zip"
       - name: Publish Release Notes
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: releasenotes
           path: "docs/ReleaseNotes/**"
@@ -88,7 +84,7 @@ jobs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
       - name: Extract release notes
         id: extract_release_notes
         shell: pwsh
@@ -142,7 +138,7 @@ jobs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.8.0
+        uses: styfle/cancel-workflow-action@0.10.0
         with:
           access_token: ${{ github.token }}
       - name: Promote release
@@ -177,12 +173,12 @@ jobs:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
           path: site
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: docs
       - name: Publish site
@@ -210,7 +206,7 @@ jobs:
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: portable
       - name: Publish artifact
@@ -230,7 +226,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: nuget
       - name: Install Nuget 5.x
@@ -252,7 +248,7 @@ jobs:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: chocolatey
       - name: Install Chocolatey
@@ -284,7 +280,7 @@ jobs:
           git fetch upstream
           git checkout -b "TfsCmdlets_$BUILD_NAME"
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: winget
           path: winget-pkgs
@@ -328,7 +324,7 @@ jobs:
     steps:
       - name: Tweet
         id: tweet
-        uses: snow-actions/tweet@v1.1.0
+        uses: snow-actions/tweet@v1.3.0
         env:
           BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
           CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}

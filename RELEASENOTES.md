@@ -1,21 +1,24 @@
 # TfsCmdlets Release Notes
 
-## Version 2.4.1 (_20/Jul/2022_)
+## Version 2.5.1 (_22/Aug/2022_)
 
-This release fixes bugs and add improvements to `New-TfsWorkItem` and `Set-TfsWorkItem`.
-
-## Improvements
-
-* Identity fields in `New-TfsWorkItem` and `Set-TfsWorkItem` (such as _"Assigned To"_) now support either email addresses or user display names as valid values. Previously, only user display names were supported.
+This release fixes a bug in `New-TfsWorkItem`.
 
 ## Fixes
 
-* Fix _"Set-TfsWorkItem fails with {type} to {type}[] (array) conversion error"_ ([#172](https://github.com/igoravl/TfsCmdlets/issues/172))
-* Fix a bug in `New-TfsWorkItem` and `Set-TfsWorkItem` where changes to the **AssignedTo** field would not be reflected in the Work Item.
+* Fixes a bug in `New-TfsWorkItem` where AreaPath and IterationPath arguments are switched.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.5.0 (_03/Aug/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.5.0.md).
+
+### Version 2.4.1 (_20/Jul/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.4.1.md).
 
 ### Version 2.4.0 (_23/May/2022_)
 
