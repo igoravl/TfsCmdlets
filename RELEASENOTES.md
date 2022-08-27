@@ -6,7 +6,7 @@ This release fixes a bug in `New-TfsWorkItem`.
 
 ## Fixes
 
-* Fixes a bug in `New-TfsWorkItem` where AreaPath and IterationPath arguments are switched.
+* Fixes [#191](https://github.com/igoravl/TfsCmdlets/issues/191), where AreaPath and IterationPath arguments are switched.
 
 -----------------------
 
