@@ -24,7 +24,7 @@ namespace TfsCmdlets.Controllers.Pipeline.Variable
 
         private IEnumerable GetByRelease()
         {
-            var releaseDefinition = GetItem
+            throw new NotImplementedException();
         }
 
         private IEnumerable GetByPipeline()

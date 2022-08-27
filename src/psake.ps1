@@ -13,7 +13,7 @@ Properties {
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
-    $OutDir = Join-Path $RootProjectDir 'out'
+    $OutDir = Resolve-Path (Join-Path $RootProjectDir '../out')
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
@@ -32,7 +32,7 @@ Properties {
     $Copyright = "(c) 2014 ${ModuleAuthor}. All rights reserved."
     
     # Nuget packaging
-    $NugetExePath = Join-Path $RootProjectDir 'BuildTools/nuget.exe'
+    $NugetExePath = Join-Path $RootProjectDir 'build-tools/nuget.exe'
     $NugetPackagesDir = Join-Path $RootProjectDir 'Packages'
     $NugetToolsDir = Join-Path $NugetDir 'Tools'
     $NugetSpecPath = Join-Path $NugetDir "TfsCmdlets.nuspec"
@@ -103,7 +103,7 @@ Task BuildLibrary {
 
 Task GenerateHelp {
 
-    $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
+    $xmldocExePath = Join-Path $RootProjectDir 'build-tools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
     $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
 
     exec { & $xmldocExePath `
@@ -485,7 +485,7 @@ Task PackageDocs -Depends GenerateDocs {
 
 Task GenerateDocs {
 
-    exec { powershell.exe -NoProfile -File (Join-Path $RootProjectDir 'BuildDoc.ps1') }
+    exec { pwsh.exe -NoProfile -File (Join-Path $RootProjectDir 'build-docs.ps1') }
 }
 
 Task GenerateNuspec {

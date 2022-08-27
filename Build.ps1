@@ -42,15 +42,15 @@ Function Install-Dependencies {
 Function Install-Nuget {
     Write-Verbose "Restoring Nuget client"
 
-    $BuildToolsDir = Join-Path $RootProjectDir 'BuildTools'
-    $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
+    $buildToolsDir = Join-Path $RootProjectDir 'build-tools'
+    $script:NugetExePath = Join-Path $buildToolsDir 'nuget.exe'
 
     if (-not (Test-Path $PackagesDir -PathType Container)) {
         mkdir $PackagesDir -Force | Write-Verbose
     }
 
-    if (-not (Test-Path $BuildToolsDir -PathType Container)) {
-        mkdir $BuildToolsDir -Force | Write-Verbose
+    if (-not (Test-Path $buildToolsDir -PathType Container)) {
+        mkdir $buildToolsDir -Force | Write-Verbose
     }
 
     if (-not (Test-Path $NugetExePath -PathType Leaf)) {
@@ -96,7 +96,7 @@ Function Install-PsModule($Module) {
 
 try {
     if (-not $RootProjectDir) {
-        $RootProjectDir = $PSScriptRoot
+        $RootProjectDir = (Join-Path $PSScriptRoot 'src')
     }
 
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan

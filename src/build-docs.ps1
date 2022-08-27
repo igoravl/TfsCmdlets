@@ -113,9 +113,9 @@ Function _Text($text) {
 ### Main script ###
 
 if (-not $RootProjectDir) { $RootProjectDir = $PSScriptRoot }
-if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'CSharp/TfsCmdlets/Cmdlets' ) }
-if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir 'out/module') }
-if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir 'out/docs/cmdlets') }
+if (-not $CommonProjectDir) { $CommonProjectDir = (Join-Path $RootProjectDir 'csharp/TfsCmdlets/Cmdlets' ) }
+if (-not $ModuleDir) { $ModuleDir = (Join-Path $RootProjectDir '../out/module') }
+if (-not $DocsDir) { $DocsDir = (Join-Path $RootProjectDir '../out/docs/cmdlets') }
 if (-not $RootUrl) { $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets/' }
 
 $RootUrl = $RootUrl.TrimEnd('/')
@@ -123,6 +123,13 @@ $RootUrl = $RootUrl.TrimEnd('/')
 $CommonParameters = @('ErrorAction', 'WarningAction', 'InformationAction', 
     'Verbose', 'Debug', 'ErrorVariable', 'WarningVariable', 'InformationVariable', 
     'OutVariable', 'OutBuffer', 'PipelineVariable')
+
+if(-not (Test-Path $DocsDir))
+{
+    New-Item $DocsDir -ItemType Directory | Out-Null
+}
+
+$DocsDir = Resolve-Path $DocsDir
 
 $doc = [xml] (Get-Content (Join-Path $ModuleDir 'TfsCmdlets.dll-Help.xml'))
 
