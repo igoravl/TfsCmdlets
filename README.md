@@ -154,4 +154,4 @@ Import-Module TfsCmdlets
 ## Additional Information
 
 - [Online Documentation](https://tfscmdlets.dev/)
-- [Release Notes](https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md)
+- [Release Notes](RELEASENOTES.md)
