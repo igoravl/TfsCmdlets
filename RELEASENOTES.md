@@ -1,16 +1,16 @@
 # TfsCmdlets Release Notes
 
-## Version 2.5.1 (_22/Aug/2022_)
+## Version 2.6.0 (_27/Aug/2022_)
 
-This release fixes a bug in `New-TfsWorkItem`.
-
-## Fixes
-
-* Fixes [#191](https://github.com/igoravl/TfsCmdlets/issues/191), where AreaPath and IterationPath arguments are switched.
+TBD.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.5.1 (_22/Aug/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.5.0.md).
 
 ### Version 2.5.0 (_03/Aug/2022_)
 

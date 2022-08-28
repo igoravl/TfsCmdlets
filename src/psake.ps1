@@ -239,7 +239,7 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     Push-Location $PSTestsDir
 
-    $outputLevel =if($isCi) { "Detailed" } else { "Minimal" }
+    $outputLevel = if ($isCi) { "Detailed" } else { "Minimal" }
 
     try {
         Write-Output ' == PowerShell Core =='
@@ -279,26 +279,51 @@ Task Clean {
 
 } 
 
-Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes }  {
+Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes } {
 
-    $path = Join-Path $RootProjectDir "docs/ReleaseNotes/${ThreePartVersion}.md"
+    try {
+        $path = Join-Path $RootProjectDir "docs/ReleaseNotes/${ThreePartVersion}.md"
 
-    if(-not (Test-Path $path -PathType Leaf)) {
-        throw "Release notes file '$path' not found"
-    }
+        if (-not (Test-Path $path -PathType Leaf)) {
+            throw "Release notes file '$path' not found"
+        }
     
-    $releaseNotes = Get-Content $path -Encoding utf8
-    $topVersionLine = $releaseNotes[2]
+        $releaseNotes = Get-Content $path -Encoding utf8
+        $topVersionLine = $releaseNotes[2]
 
-    if($topVersionLine -notlike "*$ThreePartVersion*") {
-        throw "File '$path' does not contain the release notes for version $threePartVersion."
+        if ($topVersionLine -notlike "*$ThreePartVersion*") {
+            throw "File '$path' does not contain the release notes for version $threePartVersion."
+        }
+
+        $releaseNotesText = $releaseNotes -join "`n"
+    }
+    catch {
+        throw "Error retrieving release notes from file '$path': $_"
     }
 
-    $releaseNotes = (Get-Content (Join-Path $RootProjectDir 'RELEASENOTES.md') -Encoding utf8)
-    $topVersionLine = $releaseNotes[2]
+    try {
+        $path = Resolve-Path (Join-Path $RootProjectDir '../RELEASENOTES.md')
 
-    if($topVersionLine -notmatch "$ThreePartVersion") {
-        throw "File 'RELEASENOTES.md' does not contain the release notes for version $threePartVersion"
+        if (-not (Test-Path $path -PathType Leaf)) {
+            throw "Release notes file '$path' not found"
+        }
+    
+        $releaseNotes = Get-Content $path -Encoding utf8
+
+        $topVersionLine = $releaseNotes[2]
+
+        if ($topVersionLine -notmatch "$ThreePartVersion") {
+            throw "File does not contain the release notes for version $threePartVersion."
+        }
+
+        $masterReleaseNotesText = $releaseNotes -join "`n"
+
+        if ( $releaseNotesText -ne $masterReleaseNotesText.Substring(0, $releaseNotesText.Length)) {
+            throw "Release notes in file does not match the contents of file '$threePartVersion.md'."
+        }
+    }
+    catch {
+        throw "Error retrieving release notes from file 'RELEASENOTES.md': $($_.Exception.Message)"
     }
 }
 
