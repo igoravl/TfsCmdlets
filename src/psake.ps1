@@ -111,7 +111,7 @@ Task GenerateHelp {
             -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
-    $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
+    $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'docs/CommonHelpText.psd1') -Raw -Encoding utf8))
 
     foreach ($token in $helpTokens.GetEnumerator()) {
         $helpContents = $helpContents -replace $token.Key, $token.Value
@@ -281,7 +281,7 @@ Task Clean {
 
 Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes }  {
 
-    $path = Join-Path $RootProjectDir "Docs/ReleaseNotes/${ThreePartVersion}.md"
+    $path = Join-Path $RootProjectDir "docs/ReleaseNotes/${ThreePartVersion}.md"
 
     if(-not (Test-Path $path -PathType Leaf)) {
         throw "Release notes file '$path' not found"
