@@ -29,11 +29,11 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: csharp
+          source-root: ${{ github.workspace }}/src
       - name: Build module
         id: build_module
         shell: pwsh
-        run: |
-          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
+        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
       - name: Publish Nuget
