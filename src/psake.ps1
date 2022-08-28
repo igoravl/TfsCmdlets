@@ -13,7 +13,7 @@ Properties {
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
-    $OutDir = Resolve-Path (Join-Path $RootProjectDir '../out')
+    $OutDir = Join-Path $RootProjectDir '../out' -Resolve
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'
@@ -48,6 +48,9 @@ Properties {
     $ThreePartVersion = $VersionMetadata.MajorMinorPatch
     $FourPartVersion = "$($VersionMetadata.MajorMinorPatch).$BuildNumber"
     $WixOutputPath = Join-Path $RootProjectDir "Setup\bin\$Configuration"
+    $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
+    $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
+    $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
 
     # WinGet packaging
     $WinGetProjectDir = Join-Path $WixProjectDir 'winget'
@@ -302,7 +305,7 @@ Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes } {
     }
 
     try {
-        $path = Resolve-Path (Join-Path $RootProjectDir '../RELEASENOTES.md')
+        $path = Join-Path $RootProjectDir '../RELEASENOTES.md' -Resolve
 
         if (-not (Test-Path $path -PathType Leaf)) {
             throw "Release notes file '$path' not found"
@@ -378,9 +381,6 @@ Task PackageMsi -Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
-    $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
-    $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
     $WixSuppressedWarnings = '1076'
 
     Write-Verbose "Restoring WiX Nuget package"
@@ -420,6 +420,8 @@ Task PackageMsi -Depends Build {
         "-d`"AUTHOR=$ModuleAuthor`"",
         "-dSourceDir=$ModuleDir\",
         "-dSolutionDir=$RootProjectDir\",
+        "-dWixSourceDir=$RootProjectDir\setup\",
+        "-dAssetsDir=$RootProjectDir\",
         "-dConfiguration=$Configuration"
         "-dOutDir=$WixBinDir\"
         "-dPlatform=x86",

@@ -1,7 +1,7 @@
 BeforeAll { 
     $scriptRoot = $PSScriptRoot
     $solutionDir = Join-Path $scriptRoot '../..' -Resolve
-    $outDir = Join-Path $solutionDir 'out' -Resolve
+    $outDir = Join-Path $solutionDir '../out' -Resolve
     $modulePath = Join-Path $outDir Module
     $manifestPath = Join-Path $modulePath 'TfsCmdlets.psd1'
     $hasBuild = Test-Path $modulePath

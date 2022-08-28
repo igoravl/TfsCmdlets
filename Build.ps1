@@ -144,7 +144,7 @@ try {
     # Run Psake
 
     $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent -or ($VerbosePreference -eq 'Continue'))
-    $psakeScript = (Resolve-Path 'psake.ps1')
+    $psakeScript = Resolve-Path 'psake.ps1'
 
     Write-Verbose "=== BEGIN PSAKE ==="
     Write-Verbose "Invoking Psake script $psakeScript"

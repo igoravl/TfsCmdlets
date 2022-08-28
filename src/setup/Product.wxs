@@ -19,7 +19,7 @@
         <Property Id="WixAppFolder" Value="WixPerUserFolder" />
 
         <WixVariable Id="WixUISupportPerUser" Value="1" />
-        <WixVariable Id="WixUILicenseRtf" Value="$(var.SourceDir)License.rtf" />
+        <WixVariable Id="WixUILicenseRtf" Value="$(var.WixSourceDir)License.rtf" />
         <WixVariable Id="WixUIDialogBmp" Value="$(var.SourceDir)Wix-01.bmp" />
         <WixVariable Id="WixUIBannerBmp" Value="$(var.SourceDir)Wix-02.bmp" />
 
