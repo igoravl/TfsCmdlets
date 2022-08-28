@@ -13,7 +13,6 @@ Properties {
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
 
     # Output destination
-    $OutDir = Join-Path $RootProjectDir '../out' -Resolve
     $ChocolateyDir = Join-Path $OutDir 'chocolatey'
     $MSIDir = Join-Path $OutDir 'msi'
     $NugetDir = Join-Path $OutDir 'nuget'

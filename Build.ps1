@@ -152,6 +152,7 @@ try {
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose -ErrorAction SilentlyContinue `
         -Parameters @{
         RootProjectDir    = $RootProjectDir
+        OutDir            = $OutDir
         Configuration     = $Configuration
         ModuleName        = $ModuleName
         ModuleAuthor      = $ModuleAuthor
