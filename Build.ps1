@@ -4,6 +4,7 @@
 Param
 (
     $RootProjectDir,
+    $OutDir,
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
@@ -99,6 +100,10 @@ try {
         $RootProjectDir = (Join-Path $PSScriptRoot 'src')
     }
 
+    if (-not $OutDir) {
+        $OutDir = (Join-Path $PSScriptRoot 'out')
+    }
+
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
 
     Write-Verbose "SolutionDir: $RootProjectDir"
@@ -167,7 +172,7 @@ finally {
 }
 
 if (-not $psake.build_success) {
-    foreach($logFile in (Get-ChildItem (Join-Path $PSScriptRoot 'out/*.log')))
+    foreach($logFile in (Get-ChildItem (Join-Path $OutDir '*.log')))
     {
         Write-Host -ForegroundColor Red @"
 
