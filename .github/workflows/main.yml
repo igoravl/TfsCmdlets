@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: releasenotes
-          path: "docs/ReleaseNotes/**"
+          path: "src/docs/ReleaseNotes/**"
     outputs:
       BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
 
