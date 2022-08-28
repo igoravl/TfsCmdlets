@@ -96,7 +96,7 @@ Task BuildLibrary {
         $tf = $TargetFrameworks[$tfkey]
 
         Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
-        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /p:UseSharedCompilation=false > $OutDir/MSBuild_$tfkey.log }
+        Exec { dotnet publish "$SolutionDir/TfsCmdlets/TfsCmdlets.csproj" -o $ModuleDir/Lib/$tfkey -f $tf --self-contained true -c $Configuration /p:Version=$FourPartVersion /p:AssemblyVersion=$FourPartVersion /p:AssemblyInformationalVersion=$BuildName /p:UseSharedCompilation=$(-not $IsCI) > $OutDir/MSBuild_$tfkey.log }
         Remove-Item $OutDir/MSBuild_$tfkey.log -Force -ErrorAction SilentlyContinue
     }
 
