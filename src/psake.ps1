@@ -5,9 +5,9 @@ Properties {
 
     # Source information
     $RepoCreationDate = Get-Date '2014-10-24'
-    $PSDir = Join-Path $RootProjectDir 'PS'
+    $PSDir = Join-Path $RootProjectDir 'ps'
     $PSTestsDir = Join-Path $PSDir '_Tests'
-    $SolutionDir = Join-Path $RootProjectDir 'CSharp'
+    $SolutionDir = Join-Path $RootProjectDir 'csharp'
     $TestsDir = Join-Path $RootProjectDir 'Tests'
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $ProjectMetadataInfo = "$(Get-Date -Format 'yyyyMMdd').$ProjectBuildNumber"
@@ -23,7 +23,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1' }
+    $TargetFrameworks = @{ Desktop = 'net471'; Core = 'netcoreapp3.1' }
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
