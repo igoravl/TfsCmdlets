@@ -29,7 +29,7 @@ jobs:
         uses: github/codeql-action/init@v2
         with:
           languages: csharp
-          source-root: ${{ github.workspace }}/src
+          source-root: ${{ github.workspace }}/src/csharp
       - name: Build module
         id: build_module
         shell: pwsh
