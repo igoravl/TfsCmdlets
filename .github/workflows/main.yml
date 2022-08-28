@@ -30,10 +30,10 @@ jobs:
         with:
           languages: csharp
           source-root: ${{ github.workspace }}/src/csharp/TfsCmdlets
+          command: pwsh.exe ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Build module
+        uses: github/codeql-action/autobuild@v2
         id: build_module
-        shell: pwsh
-        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
       - name: Publish Nuget
