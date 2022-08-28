@@ -6,11 +6,11 @@
 version: 2
 updates:
 - package-ecosystem: "nuget"
-  directory: "CSharp/TfsCmdlets"
+  directory: "src/csharp/TfsCmdlets"
   schedule:
     interval: "weekly"
 - package-ecosystem: "nuget"
-  directory: "Setup"
+  directory: "src/setup"
   schedule:
     interval: "weekly"
 - package-ecosystem: "github-actions"
