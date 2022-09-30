@@ -21,10 +21,10 @@ Undo-TfsWorkItemQueryRemoval 'My Deleted Query' -Scope Personal
 The same applies to query folders - with the distinction that folder can be restored recursively by specifying the `-Recursive` switch. When `-Recursive` is omitted, only the folder itself is restored, without any of its contents. You can then restore its contents by issuing further calls to `Undo-TfsWorkItemQueryRemoval` and/or `Undo-TfsWorkItemQueryFolderRemoval`.
 
 ```powershell
-# You can either pipe the deleted query from Get-TfsWorkItemQuery to Undo-TfsWorkItemQueryRemoval...
+# You can either pipe the deleted folder from Get-TfsWorkItemQueryFolder to Undo-TfsWorkItemQueryFolderRemoval...
 Get-TfsWorkItemQueryFolder 'My Deleted Folder' -Scope Personal -Deleted | Undo-TfsWorkItemQueryRemoval -Recursive
 
-# ... or you can specify the query directly when calling Undo-TfsWorkItemQueryRemoval
+# ... or you can specify the folder directly when calling Undo-TfsWorkItemQueryFolderRemoval
 Undo-TfsWorkItemQueryFolderRemoval 'My Deleted Folder' -Scope Personal -Recursive
 ```
 
