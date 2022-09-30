@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         public QueryItemScope Scope { get; set; } = QueryItemScope.Both;
 
         /// <summary>
-        /// Returns deleted items.
+        /// Returns only deleted items.
         /// </summary>
         [Parameter()]
         public SwitchParameter Deleted { get; set; }
