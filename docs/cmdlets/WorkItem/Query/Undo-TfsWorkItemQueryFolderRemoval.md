@@ -1,54 +1,56 @@
 ﻿---
-title: Get-TfsWorkItemQuery
+title: Undo-TfsWorkItemQueryFolderRemoval
 breadcrumbs: [ "WorkItem", "Query" ]
 parent: "WorkItem.Query"
-description: "Gets the definition of one or more work item saved queries. "
+description: "Restores a deleted work item query folder. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Deleted, Project, Query, Scope, Server ] 
+  "_All_": [ Collection, Folder, Project, Recursive, Scope, Server ] 
   "__AllParameterSets":  
-    Query: 
+    Folder: 
       type: "object"  
       position: "0"  
+      required: true  
     Collection: 
       type: "object"  
-    Deleted: 
-      type: "SwitchParameter"  
     Project: 
       type: "object"  
+    Recursive: 
+      type: "SwitchParameter"  
     Scope: 
       type: "QueryItemScope"  
     Server: 
       type: "object" 
 parameters: 
-  - name: "Query" 
-    description: "Specifies one or more saved queries to return. Wildcards supported. When omitted, returns all saved queries in the given scope of the given team project. " 
+  - name: "Folder" 
+    description: "Specifies one or more query folders to restore. Wildcards supported. " 
+    required: true 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
     aliases: [ Path ] 
-    defaultValue: "**" 
   - name: "Path" 
-    description: "Specifies one or more saved queries to return. Wildcards supported. When omitted, returns all saved queries in the given scope of the given team project. This is an alias of the Query parameter." 
+    description: "Specifies one or more query folders to restore. Wildcards supported. This is an alias of the Folder parameter." 
+    required: true 
     globbing: false 
+    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
     aliases: [ Path ] 
-    defaultValue: "**" 
   - name: "Scope" 
-    description: "Specifies the scope of the returned item. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. Possible values: Personal, Shared, Both" 
+    description: "Specifies the scope of the item to restore. Personal refers to the \"My Queries\" folder\", whereas Shared refers to the \"Shared Queries\" folder. When omitted defaults to \"Both\", effectively searching for items in both scopes. Possible values: Personal, Shared, Both" 
     globbing: false 
     type: "QueryItemScope" 
     defaultValue: "Both" 
-  - name: "Deleted" 
-    description: "Returns only deleted items. " 
+  - name: "Recursive" 
+    description: "Restores the specified query folder and all its descendants. When omitted, the specified folder is restored but not its contents (queries and/or sub-folders). " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
     type: "object" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
@@ -66,14 +68,14 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. "
+    description: "Specifies one or more query folders to restore. Wildcards supported. "
 outputs: 
   - type: "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.QueryHierarchyItem" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/Query/Get-TfsWorkItemQuery"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/Query/Undo-TfsWorkItemQueryFolderRemoval"
 aliases: 
 examples: 
 ---
