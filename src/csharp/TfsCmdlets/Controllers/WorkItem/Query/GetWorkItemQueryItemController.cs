@@ -70,7 +70,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
                         foreach (var rootFolder in rootFolders)
                         {
-                            foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, client))
+                            foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, Deleted, client))
                             {
                                 yield return c;
                             }
@@ -88,30 +88,30 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
         private (QueryHierarchyItem personal, QueryHierarchyItem shared) GetRootFolders(string projectName, QueryItemScope scope, WorkItemTrackingHttpClient client, int depth = 2, QueryExpand expand = QueryExpand.All)
         {
-            var result = client.GetQueriesAsync(projectName, expand, depth)
+            var result = client.GetQueriesAsync(projectName, expand, depth, true)
                 .GetResult("Error getting work item query root folders")
                 .ToList();
 
             return (result.First(q => !(bool)q.IsPublic), result.First(q => (bool)q.IsPublic));
         }
 
-        private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, WorkItemTrackingHttpClient client)
+        private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, bool deletedOnly, WorkItemTrackingHttpClient client)
         {
-            if ((item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0))
+            if ((item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0) && !item.IsDeleted)
             {
                 Logger.Log($"Fetching child nodes for node '{item.Path}'");
 
-                item = client.GetQueryAsync(projectName, item.Path, QueryExpand.All, 2, false)
+                item = client.GetQueryAsync(projectName, item.Path, QueryExpand.All, 2, true)
                     .GetResult($"Error retrieving folder from path '{item.Path}'");
             }
 
-            if (item.Children == null) yield break;
+            if (item.Children == null || item.IsDeleted) yield break;
 
             foreach (var c in item.Children)
             {
                 var isFolder = c.IsFolder ?? false;
                 var relativePath = c.Path.Substring(c.Path.IndexOf("/") + 1);
-                var isMatch = relativePath.IsLike(pattern);
+                var isMatch = relativePath.IsLike(pattern) && c.IsDeleted == deletedOnly;
 
                 if (isMatch && (!isFolder == queriesOnly)) yield return c;
             }
@@ -126,7 +126,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
                 if (!isFolder) continue;
 
-                foreach (var c1 in GetItemsRecursively(c, pattern, projectName, queriesOnly, client))
+                foreach (var c1 in GetItemsRecursively(c, pattern, projectName, queriesOnly, deletedOnly, client))
                 {
                     yield return c1;
                 }
