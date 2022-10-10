@@ -27,15 +27,16 @@ jobs:
           fetch-depth: 0
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
+        if: github.ref != 'refs/heads/main'
         with:
           languages: csharp
       - name: Build module
         id: build_module
         shell: pwsh
-        run: |
-          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
+        run: ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
+        if: github.ref != 'refs/heads/main'
       - name: Publish Nuget
         uses: actions/upload-artifact@v3
         with:
@@ -70,7 +71,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: releasenotes
-          path: "docs/ReleaseNotes/**"
+          path: "src/docs/ReleaseNotes/**"
     outputs:
       BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
 

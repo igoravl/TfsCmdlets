@@ -4,7 +4,7 @@
 
 This release fixes a bug in `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder`, and adds two new cmdlets.
 
-## New cmdlets
+### New cmdlets
 
 * `Undo-TfsWorkItemQueryRemoval` and `Undo-TfsWorkItemQueryFolderRemoval` allow you to undo the deletion of a query or query folder. This is useful when you accidentally delete a query or query folder and want to restore it.
 
@@ -28,7 +28,7 @@ Get-TfsWorkItemQueryFolder 'My Deleted Folder' -Scope Personal -Deleted | Undo-T
 Undo-TfsWorkItemQueryFolderRemoval 'My Deleted Folder' -Scope Personal -Recursive
 ```
 
-## Fixes
+### Fixes
 
 * Fixes a bug in `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder` where the `-Deleted` switch was not respected and deleted items would not be returned.
 

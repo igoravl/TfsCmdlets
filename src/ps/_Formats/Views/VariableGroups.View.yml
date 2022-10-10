@@ -1,0 +1,12 @@
+ViewSelectedBy:
+- Microsoft.TeamFoundation.DistributedTask.WebApi.VariableGroup
+GroupBy:
+  Label: Team Project
+  PropertyName: ProjectName
+TableControl: 
+  Name: 
+  Type: 
+  IsShared: 
+    Label: Is Shared?
+  Variables: 
+    ScriptBlock: $_.Variables.Keys

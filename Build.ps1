@@ -4,6 +4,7 @@
 Param
 (
     $RootProjectDir,
+    $OutDir,
     $Configuration = 'Release',
     $EnableFusionLog = $false,
     $ModuleName = 'TfsCmdlets',
@@ -42,15 +43,15 @@ Function Install-Dependencies {
 Function Install-Nuget {
     Write-Verbose "Restoring Nuget client"
 
-    $BuildToolsDir = Join-Path $RootProjectDir 'BuildTools'
-    $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
+    $buildToolsDir = Join-Path $RootProjectDir 'build-tools'
+    $script:NugetExePath = Join-Path $buildToolsDir 'nuget.exe'
 
     if (-not (Test-Path $PackagesDir -PathType Container)) {
         mkdir $PackagesDir -Force | Write-Verbose
     }
 
-    if (-not (Test-Path $BuildToolsDir -PathType Container)) {
-        mkdir $BuildToolsDir -Force | Write-Verbose
+    if (-not (Test-Path $buildToolsDir -PathType Container)) {
+        mkdir $buildToolsDir -Force | Write-Verbose
     }
 
     if (-not (Test-Path $NugetExePath -PathType Leaf)) {
@@ -96,7 +97,11 @@ Function Install-PsModule($Module) {
 
 try {
     if (-not $RootProjectDir) {
-        $RootProjectDir = $PSScriptRoot
+        $RootProjectDir = (Join-Path $PSScriptRoot 'src')
+    }
+
+    if (-not $OutDir) {
+        $OutDir = (Join-Path $PSScriptRoot 'out')
     }
 
     Write-Host "Building $ModuleName ($ModuleDescription)`n" -ForegroundColor Cyan
@@ -139,7 +144,7 @@ try {
     # Run Psake
 
     $IsVerbose = [bool] ($PSBoundParameters['Verbose'].IsPresent -or ($VerbosePreference -eq 'Continue'))
-    $psakeScript = (Resolve-Path 'psake.ps1')
+    $psakeScript = Resolve-Path 'psake.ps1'
 
     Write-Verbose "=== BEGIN PSAKE ==="
     Write-Verbose "Invoking Psake script $psakeScript"
@@ -147,6 +152,7 @@ try {
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose -ErrorAction SilentlyContinue `
         -Parameters @{
         RootProjectDir    = $RootProjectDir
+        OutDir            = $OutDir
         Configuration     = $Configuration
         ModuleName        = $ModuleName
         ModuleAuthor      = $ModuleAuthor
@@ -167,7 +173,7 @@ finally {
 }
 
 if (-not $psake.build_success) {
-    foreach($logFile in (Get-ChildItem (Join-Path $RootProjectDir 'out/*.log')))
+    foreach($logFile in (Get-ChildItem (Join-Path $OutDir '*.log')))
     {
         Write-Host -ForegroundColor Red @"
 
