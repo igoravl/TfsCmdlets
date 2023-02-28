@@ -32,8 +32,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="16.*-*" />
     <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" PrivateAssets="all" />
     <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-    <PackageReference Include="System.Composition" Version="7.0.0" />
-    <PackageReference Include="System.Composition.Hosting" Version="7.0.0" />
+    <PackageReference Include="System.Composition" Version="6.0.0" />
+    <PackageReference Include="System.Composition.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
   </ItemGroup>
 
