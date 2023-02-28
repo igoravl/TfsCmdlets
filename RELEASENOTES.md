@@ -1,6 +1,16 @@
 # TfsCmdlets Release Notes
 
-## Version 2.6.0 (_30/Sep/2022_)
+## Version 2.6.1 (_28/02/2023_)
+
+This release fixes a bug in `Get-TfsWorkItem`.
+
+### Fixes
+
+* Fixes [#211](https://github.com/igoravl/TfsCmdlets/issues/211), where specifying `-Fields '*'` throws an exception.
+
+## Older versions
+
+### Version 2.6.0 (_30/Sep/2022_)
 
 This release fixes a bug in `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder`, and adds two new cmdlets.
 
