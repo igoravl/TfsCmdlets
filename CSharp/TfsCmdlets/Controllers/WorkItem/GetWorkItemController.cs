@@ -31,10 +31,19 @@ namespace TfsCmdlets.Controllers.WorkItem
                 throw new ArgumentException($"'{Parameters.Get<object>("Project")}' is not a valid project, which is required to execute a saved query. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
             }
 
-            if (!Deleted && Fields.Length > 0 && Fields[0] != "*")
+            if (!Deleted && Fields.Length > 0)
             {
                 expand = IncludeLinks ? WorkItemExpand.All : (ShowWindow ? WorkItemExpand.Links : WorkItemExpand.None);
-                fields = FixWellKnownFields(Fields);
+
+                if (Fields.Any(s => s.Equals("*")))
+                {
+                    fields = IdField;
+                    expand = IncludeLinks ? WorkItemExpand.All : WorkItemExpand.Fields;
+                }
+                else
+                {
+                    fields = FixWellKnownFields(Fields);
+                }
             }
 
             var ids = new List<int>();
@@ -450,6 +459,9 @@ namespace TfsCmdlets.Controllers.WorkItem
            "Microsoft.VSTS.Common.ValueArea",
            "System.Description",
            "System.Tags" };
+
+        private static readonly string[] IdField = new[] {
+            "System.Id" };
 
         internal static readonly Dictionary<string, Tuple<string, string>> SimpleQueryFields = new()
         {
