@@ -1,6 +1,6 @@
 # Security Policy
 
-
+Thank you for using TfsCmdlets! We take security seriously and are committed to providing a secure and reliable experience for our users.
 
 ## Supported Versions
 
