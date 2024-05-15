@@ -36,12 +36,22 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                     }
                 case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
                     {
-                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), true, false, true, false, true);
+                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), 
+                            includeScope: false, 
+                            excludePath: false, 
+                            includeLeadingSeparator: true, 
+                            includeTrailingSeparator: false, 
+                            includeTeamProject: false);
                         break;
                     }
                 case string s when !string.IsNullOrEmpty(s):
                     {
-                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), false, false, true, false, false);
+                        path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), 
+                            includeScope: false, 
+                            excludePath: false, 
+                            includeLeadingSeparator: true, 
+                            includeTrailingSeparator: false, 
+                            includeTeamProject: false);
                         break;
                     }
                 default:
