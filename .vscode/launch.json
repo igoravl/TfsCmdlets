@@ -47,8 +47,7 @@
                 "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
             ],
             "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
-            "preLaunchTask": "Build"
+            "console": "externalTerminal"
         }
     ]
 }
