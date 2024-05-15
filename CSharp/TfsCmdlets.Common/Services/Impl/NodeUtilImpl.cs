@@ -10,7 +10,6 @@ namespace TfsCmdlets.Services.Impl
             bool includeTrailingSeparator = false, bool includeTeamProject = false, char separator = '\\')
         {
             if (path == null) throw new ArgumentNullException("path");
-            //if (projectName == null) throw new ArgumentNullException("projectName");
             if (includeTeamProject && string.IsNullOrEmpty(projectName)) throw new ArgumentNullException("projectName");
             if (includeScope && string.IsNullOrEmpty(scope)) throw new ArgumentNullException("scope");
             if (excludePath && !includeScope && !includeTeamProject) throw new ArgumentException("excludePath is only valid when either includeScope or includeTeamProject are true");
@@ -29,28 +28,28 @@ namespace TfsCmdlets.Services.Impl
 
             if (!excludePath)
             {
-                if (path.Equals(projectName) || path.StartsWith($@"{projectName}{separator}"))
+                if (path.Equals(projectName, StringComparison.OrdinalIgnoreCase) || path.StartsWith($@"{projectName}{separator}", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Regex.IsMatch(path, $@"^{projectName}\{separator}{scope}\{separator}"))
-                    {
-                        path = path.Substring($"{projectName}{separator}{scope}{separator}".Length);
-                    }
-                    if (Regex.IsMatch(path, $@"^{projectName}\{separator}"))
-                    {
-                        path = path.Substring($"{projectName}{separator}".Length);
-                    }
-                    else if (path.Equals(projectName, StringComparison.OrdinalIgnoreCase))
+                    if (path.Equals(projectName, StringComparison.OrdinalIgnoreCase))
                     {
                         path = "";
                     }
+                    else{
+                        var escapedProject = Regex.Escape(projectName);
+                        var escapedScope = Regex.Escape(scope);
+                        var escapedSep = Regex.Escape(separator.ToString());
+                        var pattern = $@"^{escapedProject}{escapedSep}({escapedScope}{separator}?)?";
+
+                        path = Regex.Replace(path, pattern, "");
+                    }
                 }
-                else if (path.Equals(scope) || path.StartsWith($"{scope}{separator}"))
+                else if (path.Equals(scope, StringComparison.OrdinalIgnoreCase) || path.StartsWith($"{scope}{separator}", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (Regex.IsMatch(path, $@"^{scope}\{separator}"))
+                    if(path.Length > scope.Length)
                     {
                         path = path.Substring(path.IndexOf(separator) + 1);
                     }
-                    else if (path.Equals(scope, StringComparison.OrdinalIgnoreCase))
+                    else
                     {
                         path = "";
                     }
