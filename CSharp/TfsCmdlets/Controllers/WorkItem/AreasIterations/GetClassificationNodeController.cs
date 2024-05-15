@@ -37,11 +37,11 @@ namespace TfsCmdlets.Controllers.WorkItem.AreasIterations
                 case string s when !string.IsNullOrEmpty(s) && s.IsWildcard():
                     {
                         path = NodeUtil.NormalizeNodePath(s, tp.Name, structureGroup.ToString().TrimEnd('s'), 
-                            includeScope: false, 
+                            includeScope: true, 
                             excludePath: false, 
                             includeLeadingSeparator: true, 
                             includeTrailingSeparator: false, 
-                            includeTeamProject: false);
+                            includeTeamProject: true);
                         break;
                     }
                 case string s when !string.IsNullOrEmpty(s):
