@@ -9,7 +9,7 @@
         <!--Properties-->
 
         <Property Id="ARPPRODUCTICON" Value="ProductIcon" />
-        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+        <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
         <Property Id="WixAppFolder" Value="WixPerUserFolder" />
 
         <WixVariable Id="WixUISupportPerUser" Value="1" />
@@ -35,11 +35,11 @@
 
         <!--Components-->
 
-        <DirectoryRef Id="INSTALLDIR" FileSource="$(var.SourceDir)">
+        <DirectoryRef Id="INSTALLFOLDER" FileSource="$(var.SourceDir)">
             <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}"
                 KeyPath="yes">
                 <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last"
-                    Separator=";" System="no" Permanent="no" Value="[INSTALLDIR]" />
+                    Separator=";" System="no" Permanent="no" Value="[INSTALLFOLDER]" />
             </Component>
         </DirectoryRef>
 
@@ -79,7 +79,7 @@
         </Feature>
 
         <StandardDirectory Id="LocalAppDataFolder">
-            <Directory Id="INSTALLDIR" Name="$(var.PRODUCTNAME)">
+            <Directory Id="INSTALLFOLDER" Name="$(var.PRODUCTNAME)">
                 <Directory Id="ModuleFolder" Name="TfsCmdlets" />
             </Directory>
         </StandardDirectory>
