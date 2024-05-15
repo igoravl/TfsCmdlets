@@ -10,7 +10,7 @@ This release fixes bugs in `Get-TfsWorkItem`, `Get-TfsArea`, `Get-TfsIteration`,
 
 * Fixes [#211](https://github.com/igoravl/TfsCmdlets/issues/211), where `Get-TfsWorkItem` would throw an error when the `-Fields` parameter was "*".
 * Fixes a bug in `Invoke-TfsRestApi` where Azure DevOps APIs whose responses were missing the `content-type` header would throw an error.
-* Fixes a bug in `Get-TfsArea` and `Get-TfsIteration` where team projects containing Regex-reserved characters (such as parentheses) would throw an error.
+* Fixes a bug in `Get-TfsArea` and `Get-TfsIteration` where team projects containing Regex-reserved characters (such as parentheses) would throw an error. This bug would indirectly affect `New-TfsTeam` and `Set-TfsTeam` due to their reliance on the same underlying class to handle area and iteration paths when creating/updating teams.
 * Fixes a bug in `Get-TfsWorkItem` where the `-AreaPath` and `-IterationPath` parameters would not work when the specified path either started with a backslash or did not contain the team project name.
 
 -----------------------
