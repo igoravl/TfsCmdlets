@@ -1,40 +1,23 @@
 # TfsCmdlets Release Notes
 
-## Version 2.6.0 (_30/Sep/2022_)
+## Version 2.6.1 (_15/May/2024_)
 
-This release fixes a bug in `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder`, and adds two new cmdlets.
-
-## New cmdlets
-
-* `Undo-TfsWorkItemQueryRemoval` and `Undo-TfsWorkItemQueryFolderRemoval` allow you to undo the deletion of a query or query folder. This is useful when you accidentally delete a query or query folder and want to restore it.
-
-To restore a deleted query:
-
-```powershell
-# You can either pipe the deleted query from Get-TfsWorkItemQuery to Undo-TfsWorkItemQueryRemoval...
-Get-TfsWorkItemQuery 'My Deleted Query' -Scope Personal -Deleted | Undo-TfsWorkItemQueryRemoval
-
-# ... or you can specify the query directly when calling Undo-TfsWorkItemQueryRemoval
-Undo-TfsWorkItemQueryRemoval 'My Deleted Query' -Scope Personal
-```
-
-The same applies to query folders - with the distinction that folder can be restored recursively by specifying the `-Recursive` switch. When `-Recursive` is omitted, only the folder itself is restored, without any of its contents. You can then restore its contents by issuing further calls to `Undo-TfsWorkItemQueryRemoval` and/or `Undo-TfsWorkItemQueryFolderRemoval`.
-
-```powershell
-# You can either pipe the deleted folder from Get-TfsWorkItemQueryFolder to Undo-TfsWorkItemQueryFolderRemoval...
-Get-TfsWorkItemQueryFolder 'My Deleted Folder' -Scope Personal -Deleted | Undo-TfsWorkItemQueryRemoval -Recursive
-
-# ... or you can specify the folder directly when calling Undo-TfsWorkItemQueryFolderRemoval
-Undo-TfsWorkItemQueryFolderRemoval 'My Deleted Folder' -Scope Personal -Recursive
-```
+This release fixes bugs in `Get-TfsWorkItem`, `Get-TfsArea`, `Get-TfsIteration`, `Invoke-TfsRestApi`, `New-TfsTeam` and `Set-TfsTeam`.
 
 ## Fixes
 
-* Fixes a bug in `Get-TfsWorkItemQuery` and `Get-TfsWorkItemQueryFolder` where the `-Deleted` switch was not respected and deleted items would not be returned.
+* Fixes [#211](https://github.com/igoravl/TfsCmdlets/issues/211), where `Get-TfsWorkItem` would throw an error when the `-Fields` parameter was "*".
+* Fixes a bug in `Invoke-TfsRestApi` where Azure DevOps APIs whose responses were missing the `content-type` header would throw an error.
+* Fixes a bug in `Get-TfsArea` and `Get-TfsIteration` where team projects containing Regex-reserved characters (such as parentheses) would throw an error.
+* Fixes a bug in `Get-TfsWorkItem` where the `-AreaPath` and `-IterationPath` parameters would not work when the specified path either started with a backslash or did not contain the team project name.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.6.0 (_30/Sep/2022_)
+
+See release notes [here](Docs/ReleaseNotes/2.6.0.md).
 
 ### Version 2.5.1 (_22/Aug/2022_)
 
