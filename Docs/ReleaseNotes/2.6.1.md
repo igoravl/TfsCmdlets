@@ -2,6 +2,8 @@
 
 ## Version 2.6.1 (_15/May/2024_)
 
+Ouch! It's been a while since the last release! Some times life gets in the way, but I'm back!
+
 This release fixes bugs in `Get-TfsWorkItem`, `Get-TfsArea`, `Get-TfsIteration`, `Invoke-TfsRestApi`, `New-TfsTeam` and `Set-TfsTeam`.
 
 ## Fixes
