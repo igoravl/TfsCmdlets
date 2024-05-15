@@ -105,10 +105,9 @@ Task GenerateHelp {
 
     $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
     $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
+    $assemblyFile = Join-Path $ModuleDir "Lib/Desktop/TfsCmdlets.dll"
 
-    exec { & $xmldocExePath `
-            "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
-            -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
+    exec { & $xmldocExePath $assemblyFile -out $helpFile -rootUrl $RootUrl | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
     $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
