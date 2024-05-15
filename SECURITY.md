@@ -17,7 +17,7 @@ If you believe you have found a security vulnerability in TfsCmdlets, please rep
 
 Please **do not report security vulnerabilities through public GitHub issues**, discussions, or pull requests.
 
-Instead, please send an email to security\[@\]tfscmdlets.dev.
+Instead, use the [private security report form](https://github.com/igoravl/TfsCmdlets/security/advisories/new).
 
 Please include as much of the information listed below as you can to help us better understand and resolve the issue:
 
