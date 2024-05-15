@@ -11,6 +11,9 @@ namespace TfsCmdlets.Controllers.WorkItem
         [Import]
         private IProcessUtil ProcessUtil { get; set; }
 
+        [Import]
+        private INodeUtil NodeUtil { get; set; }
+
         private const int MAX_WORKITEMS = 200;
 
         protected override IEnumerable Run()
@@ -384,8 +387,10 @@ namespace TfsCmdlets.Controllers.WorkItem
                                 .Where(v => !string.IsNullOrEmpty(v) && !v.Equals("\\")).ToList();
                             if (values.Count == 0) continue;
 
+                            var projectName = Project.Name;
+
                             sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{v}')")));
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{NodeUtil.NormalizeNodePath(v, projectName, includeTeamProject: true, includeLeadingSeparator: false, includeTrailingSeparator: false)}')")));
                             sb.Append(")");
                             break;
                         }
