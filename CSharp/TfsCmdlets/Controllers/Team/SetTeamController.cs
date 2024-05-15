@@ -82,7 +82,9 @@ namespace TfsCmdlets.Controllers.Team
                 if (usesAreaPath)
                 {
                     Logger.Log("Treating Team Field Value as Area Path");
-                    DefaultAreaPath = NodeUtil.NormalizeNodePath(DefaultAreaPath, Project.Name, "Areas", includeTeamProject: true);
+                    DefaultAreaPath = NodeUtil.NormalizeNodePath(DefaultAreaPath, Project.Name, "Areas", 
+                        includeTeamProject: true, 
+                        includeLeadingSeparator: true);
 
                     var a = new { Node = DefaultAreaPath, StructureGroup = TreeStructureGroup.Areas };
 

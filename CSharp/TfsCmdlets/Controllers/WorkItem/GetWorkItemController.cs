@@ -11,6 +11,9 @@ namespace TfsCmdlets.Controllers.WorkItem
         [Import]
         private IProcessUtil ProcessUtil { get; set; }
 
+        [Import]
+        private INodeUtil NodeUtil { get; set; }
+
         private const int MAX_WORKITEMS = 200;
 
         protected override IEnumerable Run()
@@ -31,10 +34,11 @@ namespace TfsCmdlets.Controllers.WorkItem
                 throw new ArgumentException($"'{Parameters.Get<object>("Project")}' is not a valid project, which is required to execute a saved query. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
             }
 
-            if (!Deleted && Fields.Length > 0 && Fields[0] != "*")
+            if (!Deleted && Fields.Length > 0)
             {
-                expand = IncludeLinks ? WorkItemExpand.All : (ShowWindow ? WorkItemExpand.Links : WorkItemExpand.None);
-                fields = FixWellKnownFields(Fields);
+                expand = IncludeLinks ? WorkItemExpand.All : (
+                    ShowWindow ? WorkItemExpand.Links : Fields[0] == "*" ? WorkItemExpand.Fields : WorkItemExpand.None);
+                fields = FixWellKnownFields(Fields).ToList();
             }
 
             var ids = new List<int>();
@@ -204,19 +208,19 @@ namespace TfsCmdlets.Controllers.WorkItem
                 yield break;
             }
 
-            if(idList.Count <= MAX_WORKITEMS)
+            if (idList.Count <= MAX_WORKITEMS)
             {
                 var wis = client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail)
                     .GetResult("Error getting work items");
 
-                foreach(var wi in wis) yield return wi;
-                
+                foreach (var wi in wis) yield return wi;
+
                 yield break;
             }
 
             Logger.LogWarn($"Your query resulted in {idList.Count} work items, therefore items must be fetched one at a time. This may take a while. For best performance, write queries that return less than 200 items.");
 
-            foreach(var id in idList)
+            foreach (var id in idList)
             {
                 yield return GetWorkItemById(id, expand, fields, client);
             }
@@ -312,33 +316,23 @@ namespace TfsCmdlets.Controllers.WorkItem
 
         private string BuildSimpleQuery(IEnumerable<string> fields)
         {
-            var sb = new StringBuilder();
-
-            sb.Append($"SELECT {string.Join(", ", fields)} FROM WorkItems Where");
-
-            var hasCriteria = false;
+            var criteria = new List<string>();
+            StringBuilder sb;
 
             foreach (var kvp in SimpleQueryFields)
             {
                 if (!Parameters.HasParameter(kvp.Key)) continue;
 
+                sb = new StringBuilder();
                 var paramValue = Parameters.Get<object>(kvp.Key);
-
-                if (hasCriteria)
-                {
-                    sb.Append(" AND ");
-                }
-                else
-                {
-                    sb.Append(" ");
-                    hasCriteria = true;
-                }
 
                 switch (kvp.Value.Item1)
                 {
                     case "Text":
                         {
                             var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
+                            if (values.Count == 0) continue;
+
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
@@ -352,6 +346,8 @@ namespace TfsCmdlets.Controllers.WorkItem
                     case "LongText":
                         {
                             var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
+                            if (values.Count == 0) continue;
+
                             sb.Append("(");
                             for (int i = 0; i < values.Count; i++)
                             {
@@ -365,6 +361,8 @@ namespace TfsCmdlets.Controllers.WorkItem
                     case "Number":
                         {
                             var values = ((paramValue as IEnumerable<int>) ?? (IEnumerable<int>)new[] { (int)paramValue }).ToList();
+                            if (values.Count == 0) continue;
+
                             var op = Ever ? "ever" : "=";
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] {op} {v})")));
@@ -374,6 +372,8 @@ namespace TfsCmdlets.Controllers.WorkItem
                     case "Date":
                         {
                             var values = ((paramValue as IEnumerable<DateTime>) ?? (IEnumerable<DateTime>)new[] { (DateTime)paramValue }).ToList();
+                            if (values.Count == 0) continue;
+
                             var op = Ever ? "ever" : "=";
                             var format = $"yyyy-MM-dd HH:mm:ss{(TimePrecision ? "HH:mm:ss" : "")}";
                             sb.Append("(");
@@ -383,15 +383,22 @@ namespace TfsCmdlets.Controllers.WorkItem
                         }
                     case "Tree":
                         {
-                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue }).ToList();
+                            var values = ((paramValue as IEnumerable<string>) ?? (IEnumerable<string>)new[] { (string)paramValue })
+                                .Where(v => !string.IsNullOrEmpty(v) && !v.Equals("\\")).ToList();
+                            if (values.Count == 0) continue;
+
+                            var projectName = Project.Name;
+
                             sb.Append("(");
-                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{v}')")));
+                            sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] UNDER '{NodeUtil.NormalizeNodePath(v, projectName, includeTeamProject: true, includeLeadingSeparator: false, includeTrailingSeparator: false)}')")));
                             sb.Append(")");
                             break;
                         }
                     case "Boolean":
                         {
                             var values = ((paramValue as IEnumerable<bool>) ?? (IEnumerable<bool>)new[] { (bool)paramValue }).ToList();
+                            if (values.Count == 0) continue;
+
                             var op = Ever ? "ever" : "=";
                             sb.Append("(");
                             sb.Append(string.Join(" OR ", values.Select(v => $"([{kvp.Value.Item2}] {op} {v})")));
@@ -407,12 +414,19 @@ namespace TfsCmdlets.Controllers.WorkItem
                             break;
                         }
                 }
+
+                if (sb.Length > 0)
+                {
+                    criteria.Add(sb.ToString());
+                }
             }
 
-            if (!hasCriteria)
+            if (criteria.Count == 0)
             {
                 throw new ArgumentException("No filter arguments have been specified. Unable to perform a simple query.");
             }
+
+            sb = new StringBuilder($"SELECT {string.Join(", ", fields)} FROM WorkItems WHERE {string.Join(" AND ", criteria)}");
 
             if (Has_AsOf)
             {

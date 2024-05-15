@@ -105,10 +105,9 @@ Task GenerateHelp {
 
     $xmldocExePath = Join-Path $RootProjectDir 'BuildTools/XmlDoc2CmdletDoc/XmlDoc2CmdletDoc.exe'
     $helpFile = Join-Path $ModuleDir "TfsCmdlets.dll-Help.xml"
+    $assemblyFile = Join-Path $ModuleDir "Lib/Desktop/TfsCmdlets.dll"
 
-    exec { & $xmldocExePath `
-            "`"$SolutionDir\TfsCmdlets\bin\$Configuration\$($TargetFrameworks.Desktop)\TfsCmdlets.dll`"" `
-            -out "`"$helpFile`"" -rootUrl `"$RootUrl`" | Write-Verbose }
+    exec { & $xmldocExePath $assemblyFile -out $helpFile -rootUrl $RootUrl | Write-Verbose }
 
     $helpContents = (Get-Content $helpFile -Raw -Encoding utf8)
     $helpTokens = (Invoke-Expression (Get-Content (Join-Path $RootProjectDir 'Docs/CommonHelpText.psd1') -Raw -Encoding utf8))
@@ -349,91 +348,35 @@ Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerif
     Invoke-Expression $cmdLine *>&1 | Write-Verbose
 }
 
-Task PackageMsi -Depends Build {
+Task PackageMsi { #-Depends Build {
 
     $WixProjectName = 'TfsCmdlets.Setup'
-    $WixProjectFileName = "$WixProjectName.wixproj"
-    $WixToolsDir = Join-Path $NugetPackagesDir 'Wix\Tools'
-    $WixObjDir = (Join-Path $WixProjectDir 'obj\Release')
-    $WixBinDir = (Join-Path $WixProjectDir 'bin\Release')
-    $WixSuppressedWarnings = '1076'
-
-    Write-Verbose "Restoring WiX Nuget package"
-
-    if (-not (Test-Path $WixToolsDir)) {
-        & $NugetExePath Install Wix -ExcludeVersion -OutputDirectory packages -Verbosity Detailed *>&1 | Write-Verbose
-    }
-
-    if (-not (Test-Path $WixObjDir)) { New-Item $WixObjDir -ItemType Directory | Write-Verbose }
-    if (-not (Test-Path $WixBinDir)) { New-Item $WixBinDir -ItemType Directory | Write-Verbose }
+    $WixProjectFileName = Join-Path $WixProjectDir "$WixProjectName.wixproj"
 
     Copy-Item -Path $RootProjectDir\License.rtf -Destination $ModuleDir -Force
     Copy-Item -Path $RootProjectDir\Assets\*.bmp -Destination $ModuleDir -Force
-    
-    $HeatArgs = @(
-        'dir', $ModuleDir,
-        "-cg", "ModuleComponent",
-        "-dr", "ModuleFolder",
-        "-scom",
-        "-sreg",
-        "-srd",
-        "-var", "var.SourceDir",
-        "-v",
-        "-ag",
-        "-sfrag",
-        "-sw$WixSuppressedWarnings",
-        "-out", "$WixObjDir\_ModuleComponent_dir.wxs"
-    )
-    Write-Verbose "Heat.exe $($HeatArgs -join ' ')"
-    & (Join-Path $WixToolsDir 'Heat.exe') $HeatArgs *>&1 | Write-Verbose
 
-    $CandleArgs = @(
-        "-sw$WixSuppressedWarnings",
-        "-dPRODUCTVERSION=$FourPartVersion",
-        "-d`"PRODUCTNAME=$ModuleName`"",
-        "-d`"DESCRIPTION=$ModuleDescription`"",
-        "-d`"AUTHOR=$ModuleAuthor`"",
-        "-dSourceDir=$ModuleDir\",
-        "-dSolutionDir=$RootProjectDir\",
-        "-dConfiguration=$Configuration"
-        "-dOutDir=$WixBinDir\"
-        "-dPlatform=x86",
-        "-dProjectDir=$WixProjectDir\",
-        "-dProjectExt=.wixproj",
-        "-dProjectFileName=$WixProjectFileName",
-        "-dProjectName=$WixProjectName"
-        "-dProjectPath=$WixProjectDir\$WixProjectFileName",
-        "-dTargetDir=$WixBinDir\",
-        "-dTargetExt=.msi"
-        "-dTargetFileName=$ModuleName-$($VersionMetadata.NugetVersion).msi",
-        "-dTargetName=$ModuleName-$($VersionMetadata.NugetVersion)",
-        "-dTargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi",
-        "-I$WixProjectDir",
-        "-out", "$WixObjDir\",
-        "-arch", "x86",
-        "-ext", "$WixToolsDir\WixUtilExtension.dll",
-        "-ext", "$WixToolsDir\WixUIExtension.dll",
-        "$WixProjectDir\Product.wxs",
-        "$WixObjDir\_ModuleComponent_dir.wxs"
-    ) 
-    Write-Verbose "Candle.exe $($CandleArgs -join ' ')"
-    Exec { & (Join-Path $WixToolsDir 'Candle.exe') $CandleArgs *>&1 | Write-Verbose }
-
-    $LightArgs = @(
-        "-out", "$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi",
-        "-pdbout", "$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).wixpdb",
-        "-sw1076",
-        "-cultures:null", 
-        "-ext", "$WixToolsDir\WixUtilExtension.dll",
-        "-ext", "$WixToolsDir\WixUIExtension.dll",
-        "-sval"
-        "-contentsfile", "$WixObjDir\$WixProjectFileName.BindContentsFileListnull.txt",
-        "-outputsfile", "$WixObjDir\$WixProjectFileName.BindOutputsFileListnull.txt"
-        "-builtoutputsfile", "$WixObjDir\$WixProjectFileName.BindBuiltOutputsFileListnull.txt"
-        "-wixprojectfile", "$WixProjectDir$WixProjectFileName", "$WixObjDir\Product.wixobj", "$WixObjDir\_ModuleComponent_dir.wixobj"
-    )
-    Write-Verbose "Light.exe $($LightArgs -join ' ')"
-    Exec { & (Join-Path $WixToolsDir 'Light.exe') $LightArgs *>&1 | Write-Verbose }
+    exec { 
+        dotnet build $WixProjectFileName -o $WixOutputPath -v d `
+            -p WixSourceDir=$ModuleDir\ `
+            -p WixProductVersion=$ThreePartVersion `
+            -p WixFileVersion=$($VersionMetadata.NugetVersion) `
+            -p SolutionDir=$RootProjectDir\ `
+            -p Configuration=$Configuration `
+            -p OutDir=$WixBinDir `
+            -p Platform=x86 `
+            -p ProjectDir=$WixProjectDir\ `
+            -p ProjectExt=.wixproj `
+            -p ProjectFileName=$WixProjectFileName `
+            -p ProjectName=$WixProjectNam `
+            -p ProjectPath=$WixProjectDir\$WixProjectFileName `
+            -p TargetDir=$WixBinDir\ `
+            -p TargetExt=.ms `
+            -p TargetFileName=$ModuleName-$($VersionMetadata.NugetVersion).msi `
+            -p TargetName=$ModuleName-$($VersionMetadata.NugetVersion) `
+            -p TargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi `
+        *>&1 | Write-Verbose
+    }
     
     if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }
 

@@ -132,7 +132,7 @@ namespace TfsCmdlets.Controllers.RestApi
                 yield break;
             }
 
-            var responseType = result.Content.Headers.ContentType.MediaType;
+            var responseType = result.Content.Headers.ContentType?.MediaType;
 
             switch (responseType)
             {

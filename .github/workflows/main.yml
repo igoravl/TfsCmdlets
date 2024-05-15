@@ -26,7 +26,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: csharp
       - name: Build module
@@ -35,7 +35,7 @@ jobs:
         run: |
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
       - name: Publish Nuget
         uses: actions/upload-artifact@v3
         with:
