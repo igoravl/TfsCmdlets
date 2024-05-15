@@ -357,12 +357,10 @@ Task PackageMsi { #-Depends Build {
     Copy-Item -Path $RootProjectDir\Assets\*.bmp -Destination $ModuleDir -Force
 
     exec { 
-        dotnet build $WixProjectFileName -o $WixOutputPath `
-            -p PRODUCTVERSION=$FourPartVersion `
-            -p `"PRODUCTNAME=$ModuleName`" `
-            -p `"DESCRIPTION=$ModuleDescription`" `
-            -p `"AUTHOR=$ModuleAuthor`" `
+        dotnet build $WixProjectFileName -o $WixOutputPath -v d `
             -p WixSourceDir=$ModuleDir\ `
+            -p WixProductVersion=$ThreePartVersion `
+            -p WixFileVersion=$($VersionMetadata.NugetVersion) `
             -p SolutionDir=$RootProjectDir\ `
             -p Configuration=$Configuration `
             -p OutDir=$WixBinDir `
@@ -376,7 +374,8 @@ Task PackageMsi { #-Depends Build {
             -p TargetExt=.ms `
             -p TargetFileName=$ModuleName-$($VersionMetadata.NugetVersion).msi `
             -p TargetName=$ModuleName-$($VersionMetadata.NugetVersion) `
-            -p TargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi
+            -p TargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi `
+        *>&1 | Write-Verbose
     }
     
     if (-not (Test-Path $MSIDir)) { New-Item $MSIDir -ItemType Directory | Out-Null }

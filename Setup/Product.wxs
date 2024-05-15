@@ -30,31 +30,37 @@
                 Type="raw" />
         </Property>
 
-        <!--Directories-->
+        <!--Directories and Components-->
 
-
-        <!--Components-->
-
-        <DirectoryRef Id="INSTALLFOLDER" FileSource="$(var.SourceDir)">
-            <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}"
-                KeyPath="yes">
-                <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last"
-                    Separator=";" System="no" Permanent="no" Value="[INSTALLFOLDER]" />
-            </Component>
-        </DirectoryRef>
-
-        <DirectoryRef Id="ShortcutsFolder">
-            <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}">
-                <Shortcut Id="ShellIconShortcut" Name="Azure DevOps Shell"
-                    Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe"
-                    Directory="ShortcutsFolder"
-                    Arguments="-noexit -command &quot;Import-Module TfsCmdlets; Enter-TfsShell&quot;"
-                    Icon="ProductIcon" />
-                <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall" Directory="ShortcutsFolder" />
-                <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets" Name="Installed"
-                    Type="integer" Value="1" KeyPath="yes" />
-            </Component>
-        </DirectoryRef>
+        <StandardDirectory Id="LocalAppDataFolder">
+            <Directory Id="INSTALLFOLDER" Name="$(var.PRODUCTNAME)">
+                <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}"
+                    KeyPath="yes">
+                    <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last"
+                        Separator=";" System="no" Permanent="no" Value="[INSTALLFOLDER]" />
+                </Component>
+                <Directory Id="ModuleFolder" Name="TfsCmdlets">
+                    <Files Include="$(SourceDir)/**" />
+                </Directory>
+            </Directory>
+        </StandardDirectory>
+        
+        <StandardDirectory Id="ProgramMenuFolder">
+            <Directory Id="ShortcutsFolder" Name="$(var.PRODUCTNAME)">
+                <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}">
+                    <Shortcut Id="ShellIconShortcut" Name="Azure DevOps Shell"
+                        Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe"
+                        Directory="ShortcutsFolder"
+                        Arguments="-noexit -command &quot;Import-Module TfsCmdlets -Version '$(var.PRODUCTVERSION)'; Enter-TfsShell&quot;"
+                        Icon="ProductIcon" />
+                    <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall"
+                        Directory="ShortcutsFolder" />
+                    <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
+                        Name="Installed"
+                        Type="integer" Value="1" KeyPath="yes" />
+                </Component>
+            </Directory>
+        </StandardDirectory>
 
         <!-- Custom Actions -->
 
@@ -70,22 +76,6 @@
             <Custom Action="CallSetx" After="InstallFinalize" />
         </InstallExecuteSequence>
 
-        <!--Features-->
-
-        <Feature Id="ProductFeature" Title="TfsCmdlets PowerShell Module" Level="1">
-            <ComponentRef Id="SetModulePath" />
-            <ComponentRef Id="ShellShortcut" />
-            <Files Include="$(SourceDir)" />
-        </Feature>
-
-        <StandardDirectory Id="LocalAppDataFolder">
-            <Directory Id="INSTALLFOLDER" Name="$(var.PRODUCTNAME)">
-                <Directory Id="ModuleFolder" Name="TfsCmdlets" />
-            </Directory>
-        </StandardDirectory>
-        <StandardDirectory Id="ProgramMenuFolder">
-            <Directory Id="ShortcutsFolder" Name="$(var.PRODUCTNAME)" />
-        </StandardDirectory>
     </Package>
 
 </Wix>

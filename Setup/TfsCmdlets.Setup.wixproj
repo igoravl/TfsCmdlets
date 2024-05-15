@@ -9,11 +9,9 @@
     <WixFileVersion Condition=" '$(WixFileVersion)' == '' ">1.0.0-alpha1</WixFileVersion>
     <WixProductName Condition=" '$(WixProductName)' == '' ">TfsCmdlets</WixProductName>
     <WixAuthor Condition=" '$(WixAuthor)' == '' ">Igor Abade</WixAuthor>
+    <WixDescription Condition=" '$(WixDescription)' == '' ">PowerShell Cmdlets for Azure DevOps and Team Foundation Server</WixDescription>
     <OutputName>TfsCmdlets-$(WixFileVersion)</OutputName>
-    <DefineConstants>PRODUCTVERSION=$(WixProductVersion);PRODUCTNAME=$(WixProductName);AUTHOR=$(WixAuthor);DESCRIPTION=$(Description);SourceDir=$(WixSourceDir)</DefineConstants>
-    <IncludeSearchPaths>../TfsCmdlets/</IncludeSearchPaths>
-    <HarvestDirectoryVerboseOutput>true</HarvestDirectoryVerboseOutput>
-    <HarvestDirectorySuppressRootDirectory>true</HarvestDirectorySuppressRootDirectory>
+    <DefineConstants>PRODUCTVERSION=$(WixProductVersion);PRODUCTNAME=$(WixProductName);AUTHOR=$(WixAuthor);DESCRIPTION=$(WixDescription);SourceDir=$(WixSourceDir)</DefineConstants>
     <SuppressValidation>true</SuppressValidation>
   </PropertyGroup>
   <!-- <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
