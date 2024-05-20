@@ -230,7 +230,7 @@ jobs:
         with:
           name: nuget
       - name: Install Nuget 5.x
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v2
         with:
           nuget-api-key: ${{ secrets.API_KEY }}
           nuget-version: '5.x'
