@@ -87,7 +87,7 @@ namespace TfsCmdlets.Services.Impl
             if (client.BaseAddress.Host != uri.Host)
             {
                 VssConnection vssConn;
-#if NET471_OR_GREATER
+#if net472_OR_GREATER
                 vssConn = conn.GetHiddenField<VssConnection>("m_vssConnection");;
 #else
                 vssConn = conn;

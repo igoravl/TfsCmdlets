@@ -1,4 +1,4 @@
-#if NET471_OR_GREATER
+#if net472_OR_GREATER
 using TfsCmdlets.Cmdlets.ProcessTemplate;
 using Microsoft.TeamFoundation.Server;
 using System.Xml;
@@ -13,7 +13,7 @@ namespace TfsCmdlets.Controllers.ProcessTemplate
     {
         protected override IEnumerable Run()
         {
-#if NET471_OR_GREATER
+#if net472_OR_GREATER
             var processTemplate = Parameters.Get<object>(nameof(ExportProcessTemplate.ProcessTemplate));
             var newName = Parameters.Get<string>(nameof(ExportProcessTemplate.NewName));
             var newDescription = Parameters.Get<string>(nameof(ExportProcessTemplate.NewDescription));

@@ -41,11 +41,6 @@
     <Compile Remove="**/*-desktop.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-    <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="19.*-*" />
-    <Compile Remove="**/*-core.cs" />
-  </ItemGroup>
-
   <ItemGroup>
     <Compile Remove="Generated\**" />
     <EmbeddedResource Remove="Generated\**" />
