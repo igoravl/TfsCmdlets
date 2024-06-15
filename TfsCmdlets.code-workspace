@@ -27,6 +27,6 @@
 			".idea": true
 		},
 		"csharp.suppressDotnetRestoreNotification": true,
-		"dotnetCoreExplorer.searchpatterns": "CSharp/TfsCmdlets.Tests.UnitTests/bin/Debug/netcoreapp3.1/TfsCmdlets.Tests.UnitTests.dll"
+		"dotnetCoreExplorer.searchpatterns": "CSharp/TfsCmdlets.Tests.UnitTests/bin/Debug/net6.0/TfsCmdlets.Tests.UnitTests.dll"
 	}
 }

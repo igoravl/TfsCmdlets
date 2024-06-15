@@ -23,7 +23,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1' }
+    $TargetFrameworks = @{Desktop = 'net471'; Core = 'net6.0' }
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
