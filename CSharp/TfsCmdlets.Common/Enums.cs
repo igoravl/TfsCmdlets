@@ -226,4 +226,31 @@
         /// </summary>
         Both = 3
     }
+
+
+    /// <summary>
+    /// License types available for Azure DevOps users.
+    /// </summary>
+    public enum AccountLicenseType
+    {
+        /// <summary>
+        /// "Basic" license
+        /// </summary>
+        Basic,
+
+        /// <summary>
+        /// "Basic + Test Plans" license
+        /// </summary>
+        BasicTestPlans,
+
+        /// <summary>
+        /// "Stakeholder" (free) license
+        /// </summary>
+        Stakeholder,
+
+        /// <summary>
+        /// "Visual Studio Subscriber" (Pro, Enterprise) license
+        /// </summary>
+        VisualStudio
+    }
 }
