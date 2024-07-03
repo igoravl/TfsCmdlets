@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.7.0 (_15/May/2024_)
+## Version 2.7.0 (_03/Jul/2024_)
 
 This release adds support for suppressing notifications when creating or updating work items.
 
