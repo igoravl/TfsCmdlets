@@ -1,16 +1,16 @@
 # TfsCmdlets Release Notes
 
-## Version 2.7.0 (_03/Jul/2024_)
+## Version 2.7.1 (_03/Jul/2024_)
 
-This release adds support for suppressing notifications when creating or updating work items.
-
-## New features
-
-* Adds `-SuppressNotifications` switch to `New-TfsWorkItem` and `Set-TfsWorkItem` to suppress notifications when creating or updating work items. This is useful when you are creating or updating a large number of work items and don't want to flood the notification feed of team members.
+This release fixes an issue with the Chocolatey publishing process. No changes have been made to the cmdlets.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.7.0 (_03/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.7.0.md).
 
 ### Version 2.6.1 (_15/May/2024_)
 
