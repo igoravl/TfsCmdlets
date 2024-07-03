@@ -120,5 +120,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter]
         public SwitchParameter BypassRules { get; set; }
+
+        /// <summary>
+        /// Do not fire any notifications for this change. Useful for bulk operations and automated processes.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SuppressNotifications { get; set; }
     }
 }

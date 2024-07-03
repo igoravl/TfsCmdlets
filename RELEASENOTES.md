@@ -1,22 +1,20 @@
 # TfsCmdlets Release Notes
 
-## Version 2.6.1 (_15/May/2024_)
+## Version 2.7.0 (_15/May/2024_)
 
-Ouch! It's been a while since the last release! Sometimes life gets in the way, but I'm back!
+This release adds support for suppressing notifications when creating or updating work items.
 
-This release fixes bugs in `Get-TfsWorkItem`, `Get-TfsArea`, `Get-TfsIteration`, `Invoke-TfsRestApi`, `New-TfsTeam` and `Set-TfsTeam`.
+## New features
 
-## Fixes
-
-* Fixes [#211](https://github.com/igoravl/TfsCmdlets/issues/211), where `Get-TfsWorkItem` would throw an error when the `-Fields` parameter was "*".
-* Fixes a bug in `Invoke-TfsRestApi` where Azure DevOps APIs whose responses were missing the `content-type` header would throw an error.
-* Fixes a bug in `Get-TfsArea` and `Get-TfsIteration` where team projects containing Regex-reserved characters (such as parentheses) would throw an error. This bug would indirectly affect `New-TfsTeam` and `Set-TfsTeam` due to their reliance on the same underlying class to handle area and iteration paths when creating/updating teams.
-* Fixes a bug in `Get-TfsWorkItem` where the `-AreaPath` and `-IterationPath` parameters would not work when the specified path either started with a backslash or did not contain the team project name.
-* Adds the installed module version to the _Azure DevOps Shell_ startup command to prevent loading an older version of the module when the PSModulePath variable contains an older version of the module listed earlier in the search path.
+* Adds `-SuppressNotifications` switch to `New-TfsWorkItem` and `Set-TfsWorkItem` to suppress notifications when creating or updating work items. This is useful when you are creating or updating a large number of work items and don't want to flood the notification feed of team members.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.6.1 (_15/May/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.6.1.md).
 
 ### Version 2.6.0 (_30/Sep/2022_)
 
