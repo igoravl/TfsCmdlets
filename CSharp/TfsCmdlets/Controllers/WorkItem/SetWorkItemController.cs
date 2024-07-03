@@ -19,7 +19,7 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             foreach (var wi in Items)
             {
-                var result = client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules)
+                var result = client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules, SuppressNotifications)
                     .GetResult("Error updating work item");
 
                 yield return result;

@@ -22,7 +22,7 @@ namespace TfsCmdlets.Controllers.WorkItem
 
             var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
-            var result = client.CreateWorkItemAsync(Builder.GetJson(wi), Project.Name, type.Name, false, BypassRules)
+            var result = client.CreateWorkItemAsync(Builder.GetJson(wi), Project.Name, type.Name, false, BypassRules, SuppressNotifications)
                 .GetResult("Error creating work item");
 
             yield return result;
