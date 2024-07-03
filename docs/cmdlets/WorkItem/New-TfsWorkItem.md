@@ -5,7 +5,7 @@ parent: "WorkItem"
 description: "Creates a new work item. "
 remarks: 
 parameterSets: 
-  "_All_": [ AreaPath, AssignedTo, BoardColumn, BoardColumnDone, BoardLane, BypassRules, Collection, Description, Fields, IterationPath, Passthru, Priority, Project, Reason, Server, State, Tags, Team, Title, Type, ValueArea ] 
+  "_All_": [ AreaPath, AssignedTo, BoardColumn, BoardColumnDone, BoardLane, BypassRules, Collection, Description, Fields, IterationPath, Passthru, Priority, Project, Reason, Server, State, SuppressNotifications, Tags, Team, Title, Type, ValueArea ] 
   "__AllParameterSets":  
     Type: 
       type: "object"  
@@ -43,6 +43,8 @@ parameterSets:
       type: "object"  
     State: 
       type: "string"  
+    SuppressNotifications: 
+      type: "SwitchParameter"  
     Tags: 
       type: "string[]"  
     Team: 
@@ -119,6 +121,11 @@ parameters:
     type: "Hashtable" 
   - name: "BypassRules" 
     description: "Bypasses any rule validation when saving the work item. Use it with caution, as this may leave the work item in an invalid state. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "SuppressNotifications" 
+    description: "Do not fire any notifications for this change. Useful for bulk operations and automated processes. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
