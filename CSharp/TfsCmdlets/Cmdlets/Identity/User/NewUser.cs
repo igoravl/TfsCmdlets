@@ -22,6 +22,7 @@ namespace TfsCmdlets.Cmdlets.Identity.User
         /// Specifies the friendly (display) name of the user to be created.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
+        [Alias("DisplayName")]
         public string FriendlyName { get; set; }
 
         /// <summary>
