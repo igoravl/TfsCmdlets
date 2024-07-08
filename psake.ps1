@@ -59,10 +59,10 @@ Properties {
 Task Rebuild -Depends Clean, Build {
 }
 
-Task Package -Depends Build, AllTests, RemoveEmptyFolders, ValidateReleaseNotes, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
+Task Package -Depends Build, GenerateDocs, AllTests, RemoveEmptyFolders, ValidateReleaseNotes, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest, GenerateDocs {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest {
 }
 
 Task Test -Depends UnitTests, AllTests {
