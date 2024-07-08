@@ -4,7 +4,7 @@
     "tasks": [
         {
             "label": "Build",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -35,7 +35,7 @@
         },
         {
             "label": "Rebuild",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -62,7 +62,7 @@
         },
         {
             "label": "Clean",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -86,7 +86,7 @@
         },
         {
             "label": "Package",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "group": "none",
             "presentation": {
                 "echo": true,
@@ -114,7 +114,7 @@
         },
         {
             "label": "Test",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -138,7 +138,7 @@
         },
         {
             "label": "Docs",
-            "command": "c:\\windows\\system32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
