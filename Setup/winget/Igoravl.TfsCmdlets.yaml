@@ -5,6 +5,6 @@ PackageIdentifier: Igoravl.TfsCmdlets
 PackageVersion: $FourPartVersion
 DefaultLocale: en-US
 ManifestType: version
-ManifestVersion: 1.0.0
+ManifestVersion: 1.6.0
 
 "@
