@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Versioning;
+using Newtonsoft.Json.Linq;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets
@@ -41,7 +42,7 @@ namespace TfsCmdlets.Cmdlets
         /// Returns the PowerShell command name of this cmdlet
         /// </summary>
         /// <value>The name of the this, as defined by the [Cmdlet] attribute. If the attribute is missing, returns the class name.</value>
-        public virtual string DisplayName
+        public virtual string CmdletDisplayName
         {
             get
             {
@@ -110,7 +111,19 @@ namespace TfsCmdlets.Cmdlets
 
                     if (!ReturnsValue || result == null) continue;
 
-                    WriteObject(result, true);
+                    switch (result)
+                    {
+                        case JToken j:
+                            {
+                                WriteObject(PSJsonConverter.Deserialize(j.ToString(), true), true);
+                                break;
+                            }
+                        default:
+                            {
+                                WriteObject(result, true);
+                                break;
+                            }
+                    }
                 }
             }
             catch (PipelineStoppedException)
@@ -151,7 +164,7 @@ namespace TfsCmdlets.Cmdlets
 
         private void LogParameters()
         {
-            Logger.LogParameters(DisplayName, Parameters);
+            Logger.LogParameters(CmdletDisplayName, Parameters);
         }
 
         private string GetVerb()

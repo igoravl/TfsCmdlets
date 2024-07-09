@@ -39,7 +39,7 @@ namespace TfsCmdlets.Services.Impl
             }
         }
 
-        public string CurrentCommand => CurrentCmdlet.DisplayName;
+        public string CurrentCommand => CurrentCmdlet.CmdletDisplayName;
 
         public string CurrentCommandLine => CurrentCmdlet.MyInvocation.Line.Trim();
 

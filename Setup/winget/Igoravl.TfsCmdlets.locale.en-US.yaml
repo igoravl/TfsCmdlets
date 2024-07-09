@@ -2,7 +2,7 @@
 # yaml-language-server: `$schema=https://aka.ms/winget-manifest.defaultLocale.1.0.0.schema.json
 
 PackageIdentifier: Igoravl.TfsCmdlets
-PackageVersion: $FourPartVersion
+PackageVersion: $ThreePartVersion
 PackageLocale: en-US
 Publisher: Igor Abade V. Leite
 PublisherUrl: https://github.com/igoravl/TfsCmdlets
@@ -29,6 +29,6 @@ Tags:
 - alm
 - teamfoundationserver
 ManifestType: defaultLocale
-ManifestVersion: 1.0.0
+ManifestVersion: 1.6.0
 
 "@

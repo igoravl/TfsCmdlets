@@ -226,4 +226,56 @@
         /// </summary>
         Both = 3
     }
+
+
+    /// <summary>
+    /// License types available for Azure DevOps users.
+    /// </summary>
+    public enum AccountLicenseType
+    {
+        /// <summary>
+        /// "Basic" license
+        /// </summary>
+        Basic,
+
+        /// <summary>
+        /// "Basic + Test Plans" license
+        /// </summary>
+        BasicTestPlans,
+
+        /// <summary>
+        /// "Stakeholder" (free) license
+        /// </summary>
+        Stakeholder,
+
+        /// <summary>
+        /// "Visual Studio Subscriber" (Pro, Enterprise) license
+        /// </summary>
+        VisualStudio
+    }
+
+    /// <summary>
+    /// Represents the type of group entitlement.
+    /// </summary>
+    public enum GroupEntitlementType {
+        /// <summary>
+        /// Represents an administrator role.
+        /// </summary>
+        Administrator,
+
+        /// <summary>
+        /// Represents a contributor.
+        /// </summary>
+        Contributor,
+
+        /// <summary>
+        /// Represents a reader.
+        /// </summary>
+        Reader,
+
+        /// <summary>
+        /// Represents a stakeholder.
+        /// </summary>
+        Stakeholder
+    }
 }
