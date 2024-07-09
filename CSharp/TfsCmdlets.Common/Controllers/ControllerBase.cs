@@ -6,7 +6,7 @@ namespace TfsCmdlets.Controllers
 
         public string Noun => GetType().Name.Substring(Verb.Length, GetType().Name.EndsWith("Controller") ? GetType().Name.Length - Verb.Length - 10 : GetType().Name.Length - Verb.Length);
 
-        public string DisplayName => $"{Verb}-Tfs{Noun}";
+        public string CmdletDisplayName => $"{Verb}-Tfs{Noun}";
 
         public string CommandName => $"{Verb}{Noun}";
 
@@ -36,7 +36,7 @@ namespace TfsCmdlets.Controllers
         {
             CacheParameters();
 
-            Logger.LogParameters(DisplayName, Parameters);
+            Logger.LogParameters(CmdletDisplayName, Parameters);
 
             return Run();
         }

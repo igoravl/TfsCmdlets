@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.Versioning;
 using TfsCmdlets.Util;
 
@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets
         /// Returns the PowerShell command name of this cmdlet
         /// </summary>
         /// <value>The name of the this, as defined by the [Cmdlet] attribute. If the attribute is missing, returns the class name.</value>
-        public virtual string DisplayName
+        public virtual string CmdletDisplayName
         {
             get
             {
