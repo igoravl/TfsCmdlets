@@ -253,4 +253,29 @@
         /// </summary>
         VisualStudio
     }
+
+    /// <summary>
+    /// Represents the type of group entitlement.
+    /// </summary>
+    public enum GroupEntitlementType {
+        /// <summary>
+        /// Represents an administrator role.
+        /// </summary>
+        Administrator,
+
+        /// <summary>
+        /// Represents a contributor.
+        /// </summary>
+        Contributor,
+
+        /// <summary>
+        /// Represents a reader.
+        /// </summary>
+        Reader,
+
+        /// <summary>
+        /// Represents a stakeholder.
+        /// </summary>
+        Stakeholder
+    }
 }
