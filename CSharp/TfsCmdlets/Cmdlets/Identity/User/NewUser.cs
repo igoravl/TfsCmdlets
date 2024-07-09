@@ -7,7 +7,7 @@ using TfsCmdlets.Util;
 namespace TfsCmdlets.Cmdlets.Identity.User
 {
     /// <summary>
-    /// Creates a new user in the account and optionally adds them to projects.
+    /// Creates a new user in the organization and optionally adds them to projects.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(AccountEntitlement))]
     partial class NewUser
@@ -53,6 +53,8 @@ namespace TfsCmdlets.Cmdlets.Identity.User
         public GroupEntitlementType DefaultGroup { get; set; } = GroupEntitlementType.Contributor;
     }
 }
+
+// Controller
 
 namespace TfsCmdlets.Controllers.Identity.User
 {
