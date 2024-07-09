@@ -25,8 +25,8 @@ namespace TfsCmdlets.Services.Impl
             string responseContentType,
             Dictionary<string, string> additionalHeaders,
             string apiVersion,
-            WebApiTeamProject project,
-            Models.Team team,
+            Func<WebApiTeamProject> project,
+            Func<Models.Team> team,
             string customServiceHost)
         {
             // Checks whether the HTTP method is included in the API template
@@ -94,14 +94,16 @@ namespace TfsCmdlets.Services.Impl
 
             if (apiTemplate.Contains("%7Bproject%7D") || apiTemplate.Contains("%7BprojectId%7D"))
             {
-                apiTemplate = apiTemplate.Replace($"%7Bproject%7D", project.Name);
-                apiTemplate = apiTemplate.Replace($"%7BprojectId%7D", project.Id.ToString());
+                var tp = project();
+                apiTemplate = apiTemplate.Replace($"%7Bproject%7D", tp.Name);
+                apiTemplate = apiTemplate.Replace($"%7BprojectId%7D", tp.Id.ToString());
             }
 
             if (apiTemplate.Contains("%7Bteam%7D") || apiTemplate.Contains("%7BteamId%7D"))
             {
-                apiTemplate = apiTemplate.Replace($"%7Bteam%7D", team.Name);
-                apiTemplate = apiTemplate.Replace($"%7BteamId%7D", team.Id.ToString());
+                var t = team();
+                apiTemplate = apiTemplate.Replace($"%7Bteam%7D", t.Name);
+                apiTemplate = apiTemplate.Replace($"%7BteamId%7D", t.Id.ToString());
             }
 
             var keysToRemove = new List<string>();

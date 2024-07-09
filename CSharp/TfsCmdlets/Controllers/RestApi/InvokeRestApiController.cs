@@ -18,8 +18,10 @@ namespace TfsCmdlets.Controllers.RestApi
                 method: Method, 
                 requestContentType: RequestContentType,
                 responseContentType: ResponseContentType,
-                additionalHeaders: AdditionalHeaders.ToDictionary<string, string>(),
+                additionalHeaders: AdditionalHeaders?.ToDictionary<string, string>(),
                 apiVersion: ApiVersion,
+                project: ()=>Project,
+                team: ()=>Team,
                 customServiceHost: UseHost);
 
             Logger.Log($"{Method} {RestApiService.Url.AbsoluteUri}");
