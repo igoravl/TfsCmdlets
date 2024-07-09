@@ -1,12 +1,21 @@
 # TfsCmdlets Release Notes
 
-## Version 2.7.1 (_03/Jul/2024_)
+## Version 2.8.0 (_09/Jul/2024_)
 
-This release fixes an issue with the Chocolatey publishing process. No changes have been made to the cmdlets.
+This release adds two new cmdlets: `New-TfsUser` and `Remove-TfsUser`.
+
+### New cmdlets
+
+- `New-TfsUser`: Creates a new user in the organization and optionally adds them to projects.
+- `Remove-TfsUser`: Removes a user from the organization.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.7.1 (_03/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.7.1.md).
 
 ### Version 2.7.0 (_03/Jul/2024_)
 
