@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using Newtonsoft.Json.Linq;
 
 namespace TfsCmdlets.Extensions
 {
@@ -31,11 +32,6 @@ namespace TfsCmdlets.Extensions
             }
 
             return -1;
-        }
-
-        public static T ToJsonObject<T>(this string self)
-        {
-            return (T) Newtonsoft.Json.JsonConvert.DeserializeObject(self);
         }
     }
 }
