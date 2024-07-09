@@ -7,6 +7,20 @@ namespace TfsCmdlets.Services
 {
     public interface IRestApiService
     {
+        Task<HttpResponseMessage> InvokeTemplateAsync(
+            Models.Connection connection,
+            string apiTemplate,
+            string body = null,
+            string method = "GET",
+            IDictionary queryParameters = null,
+            string requestContentType = "application/json",
+            string responseContentType = "application/json",
+            Dictionary<string, string> additionalHeaders = null,
+            string apiVersion = "4.1",
+            WebApiTeamProject project = null,
+            Models.Team team = null,
+            string customServiceHost = null);
+
         Task<HttpResponseMessage> InvokeAsync(
             Models.Connection connection,
             string path,

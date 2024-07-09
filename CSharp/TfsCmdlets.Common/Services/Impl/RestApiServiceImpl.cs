@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
+using Microsoft.VisualStudio.Services.Search.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.HttpClient;
 using TfsCmdlets.Models;
@@ -13,6 +14,125 @@ namespace TfsCmdlets.Services.Impl
         private GenericHttpClient _client;
         private ILogger Logger { get; set; }
         public Uri Url => _client.Uri;
+
+        Task<HttpResponseMessage> IRestApiService.InvokeTemplateAsync(
+            Models.Connection connection,
+            string apiTemplate,
+            string body,
+            string method,
+            IDictionary queryParameters,
+            string requestContentType,
+            string responseContentType,
+            Dictionary<string, string> additionalHeaders,
+            string apiVersion,
+            WebApiTeamProject project,
+            Models.Team team,
+            string customServiceHost)
+        {
+            // Checks whether the HTTP method is included in the API template
+
+            if (apiTemplate.Contains(" "))
+            {
+                var tokens = apiTemplate.Split(' ');
+
+                if (IsHttpMethod(tokens[0]))
+                {
+                    method = tokens[0];
+                    apiTemplate = apiTemplate.Substring(tokens[0].Length + 1).Trim();
+                }
+            }
+
+            apiTemplate = apiTemplate.Replace("https://{instance}/{connection}/", "http://tfs/");
+
+            var queryParams = new Dictionary<string, string>();
+
+            if (queryParameters != null)
+            {
+                foreach (var key in queryParameters.Keys)
+                {
+                    queryParams.Add(key.ToString(), queryParameters[key]?.ToString());
+                }
+            }
+
+            if (Uri.TryCreate(apiTemplate, UriKind.Absolute, out var uri))
+            {
+                if (string.IsNullOrEmpty(customServiceHost) && !uri.Host.Equals(connection.Uri.Host, StringComparison.OrdinalIgnoreCase))
+                {
+                    customServiceHost = uri.Host;
+                }
+
+                apiTemplate = uri.AbsolutePath.Replace("/%7Borganization%7D/", "");
+
+                var connectionName = connection.DisplayName.Trim('/');
+
+                if (apiTemplate.StartsWith($"/{connectionName}"))
+                {
+                    apiTemplate = apiTemplate.Substring(connectionName.Length + 1);
+                }
+
+                var query = uri.ParseQueryString();
+
+                if (query["api-version"] != null)
+                {
+                    apiVersion = query["api-version"];
+                    query.Remove("api-version");
+                }
+
+                foreach (var key in query.AllKeys)
+                {
+                    if ($"{{{key}}}".Equals(query[key], StringComparison.OrdinalIgnoreCase) && !queryParams.ContainsKey(key))
+                    {
+                        Logger.LogWarn($"Parameter '{key}' found in the URL query string, but missing from queryParameters argument. To keep this parameter, add it to the queryParameters argument.");
+                        continue;
+                    }
+
+                    if (queryParams.ContainsKey(key)) continue;
+
+                    queryParams.Add(key, query[key]);
+                }
+            }
+
+            if (apiTemplate.Contains("%7Bproject%7D") || apiTemplate.Contains("%7BprojectId%7D"))
+            {
+                apiTemplate = apiTemplate.Replace($"%7Bproject%7D", project.Name);
+                apiTemplate = apiTemplate.Replace($"%7BprojectId%7D", project.Id.ToString());
+            }
+
+            if (apiTemplate.Contains("%7Bteam%7D") || apiTemplate.Contains("%7BteamId%7D"))
+            {
+                apiTemplate = apiTemplate.Replace($"%7Bteam%7D", team.Name);
+                apiTemplate = apiTemplate.Replace($"%7BteamId%7D", team.Id.ToString());
+            }
+
+            var keysToRemove = new List<string>();
+
+            foreach (var kvp in queryParams.Where(kvp => apiTemplate.Contains($"%7B{kvp.Key}%7D")))
+            {
+                keysToRemove.Add(kvp.Key);
+                apiTemplate = apiTemplate.Replace($"%7B{kvp.Key}%7D", kvp.Value);
+            }
+
+            keysToRemove.ForEach(k => queryParams.Remove(k));
+
+            Logger.Log($"apiTemplate '{apiTemplate}', version '{apiVersion}'");
+
+            string host = null;
+
+            if (connection.IsHosted)
+            {
+                if (!string.IsNullOrEmpty(customServiceHost))
+                {
+                    host = customServiceHost;
+                }
+                else if (!connection.Uri.Host.Equals("dev.azure.com", StringComparison.OrdinalIgnoreCase))
+                {
+                    host = connection.Uri.Host;
+                }
+            }
+
+            return ((IRestApiService)this).InvokeAsync(
+                connection, apiTemplate, method, body, requestContentType, responseContentType, additionalHeaders, queryParams, apiVersion, host);
+        }
 
         Task<HttpResponseMessage> IRestApiService.InvokeAsync(
             Models.Connection connection,
@@ -112,12 +232,18 @@ namespace TfsCmdlets.Services.Impl
                 .InvokeAsync<ContributionNodeResponse>(
                     HttpMethod.Post,
                     "_apis/Contribution/HierarchyQuery",
-                    query.ToJsonString(), 
+                    query.ToJsonString(),
                     "application/json",
                     "application/json",
-                    additionalHeaders, 
+                    additionalHeaders,
                     queryParameters,
                     apiVersion);
+        }
+
+        private bool IsHttpMethod(string method)
+        {
+            const string methods = "|GET|POST|PUT|PATCH|DELETE|";
+            return methods.Contains($"|{method.ToUpperInvariant()}|");
         }
 
         [ImportingConstructor]
