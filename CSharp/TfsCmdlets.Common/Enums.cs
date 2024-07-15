@@ -278,4 +278,42 @@
         /// </summary>
         Stakeholder
     }
+
+    /// <summary>
+    /// Installation target for the Azure DevOps Shell
+    /// </summary>
+    [Flags]
+    public enum ShellInstallationTarget
+    {
+        /// <summary>
+        /// Installs to all available targets
+        /// </summary>
+        Auto = 15,
+
+        /// <summary>
+        /// Creates a shortcut in the Windows Start Menu
+        /// </summary>
+        StartMenu = 1,
+
+        /// <summary>
+        /// Creates a profile in Windows Terminal
+        /// </summary>
+        WindowsTerminal = 2
+    }
+
+    /// <summary>
+    /// Installation scope for the Azure DevOps Shell
+    /// </summary>
+    public enum ShellInstallationScope
+    {
+        /// <summary>
+        /// Installs for the current user
+        /// </summary>
+        CurrentUser,
+
+        /// <summary>
+        /// Installs for all users
+        /// </summary>
+        AllUsers
+    }
 }
