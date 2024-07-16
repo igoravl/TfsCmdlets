@@ -22,7 +22,7 @@ jobs:
       TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Initialize CodeQL
@@ -37,37 +37,37 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
       - name: Publish Nuget
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nuget
           path: "out/Nuget/*.nupkg"
       - name: Publish Chocolatey
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: chocolatey
           path: "out/Chocolatey/*.nupkg"
       - name: Publish Portable
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: portable
           path: "out/Portable/*.zip"
       - name: Publish MSI
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: msi
           path: "out/msi/*"
       - name: Publish WinGet
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: winget
           path: "out/winget/**"
       - name: Publish Docs
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docs
           path: "out/docs/*.zip"
       - name: Publish Release Notes
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: releasenotes
           path: "docs/ReleaseNotes/**"
@@ -84,7 +84,7 @@ jobs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Extract release notes
         id: extract_release_notes
         shell: pwsh
@@ -138,7 +138,7 @@ jobs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
       - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
+        uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
       - name: Promote release
@@ -173,12 +173,12 @@ jobs:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           path: site
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docs
       - name: Publish site
@@ -206,7 +206,7 @@ jobs:
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: portable
       - name: Publish artifact
@@ -226,11 +226,11 @@ jobs:
     if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nuget
       - name: Install Nuget 5.x
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v2
         with:
           nuget-api-key: ${{ secrets.API_KEY }}
           nuget-version: '5.x'
@@ -248,7 +248,7 @@ jobs:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: chocolatey
       - name: Install Chocolatey
@@ -280,7 +280,7 @@ jobs:
           git fetch upstream
           git checkout -b "TfsCmdlets_$BUILD_NAME"
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: winget
           path: winget-pkgs
