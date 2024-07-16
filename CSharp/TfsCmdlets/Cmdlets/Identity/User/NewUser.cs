@@ -42,7 +42,8 @@ namespace TfsCmdlets.Cmdlets.Identity.User
         /// When omitted, the user is not added to any projects.
         /// </summary>
         [Parameter]
-        public object Projects { get; set; }
+        [Alias("Projects")]
+        public object Project { get; set; }
 
         /// <summary>
         /// Specifies the default group to which the user should be added, when applicable.
@@ -79,7 +80,7 @@ namespace TfsCmdlets.Controllers.Identity.User
                 _ => "stakeholder"
             };
 
-            IDictionary<string, string> projects = Projects switch
+            IDictionary<string, string> projects = Project switch
             {
                 string p => new Dictionary<string, string> { { p, defaultGroup } },
                 IDictionary dict => dict.Cast<DictionaryEntry>().ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.ToString()),
@@ -87,7 +88,14 @@ namespace TfsCmdlets.Controllers.Identity.User
                 _ => null
             };
 
-            if (!PowerShell.ShouldProcess(Collection, $"Create user '{User}' with license type '{License}' and the project entitlements \n{string.Join(";", projects.Select(kv => $"{kv.Key}={kv.Value}"))}"))
+            var projectMsg = string.Empty;
+
+            if(projects != null && projects.Count > 0)
+            {
+                projectMsg = $" and the project entitlements [{string.Join("; ", projects.Select(kv => $"{kv.Key}={kv.Value}"))}]";
+            }
+
+            if (!PowerShell.ShouldProcess(Collection, $"Create user '{User}' with license type '{License}'{projectMsg}"))
             {
                 yield break;
             }
