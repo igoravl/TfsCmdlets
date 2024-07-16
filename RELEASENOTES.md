@@ -1,17 +1,20 @@
 # TfsCmdlets Release Notes
 
-## Version 2.8.0 (_09/Jul/2024_)
+## Version 2.8.1 (_16/Jul/2024_)
 
-This release adds two new cmdlets: `New-TfsUser` and `Remove-TfsUser`.
+This release fixes an issue with the `New-TfsUser` cmdlet.
 
-### New cmdlets
+### Fixes
 
-- `New-TfsUser`: Creates a new user in the organization and optionally adds them to projects.
-- `Remove-TfsUser`: Removes a user from the organization.
+- Fixed an issue where the `New-TfsUser` cmdlet could throw an error when not supplying project entitlements via the -Project argument.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.8.0 (_09/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.0.md).
 
 ### Version 2.7.1 (_03/Jul/2024_)
 

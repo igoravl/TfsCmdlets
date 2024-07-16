@@ -42,7 +42,8 @@ namespace TfsCmdlets.Cmdlets.Identity.User
         /// When omitted, the user is not added to any projects.
         /// </summary>
         [Parameter]
-        public object Projects { get; set; }
+        [Alias("Projects")]
+        public object Project { get; set; }
 
         /// <summary>
         /// Specifies the default group to which the user should be added, when applicable.
@@ -79,7 +80,7 @@ namespace TfsCmdlets.Controllers.Identity.User
                 _ => "stakeholder"
             };
 
-            IDictionary<string, string> projects = Projects switch
+            IDictionary<string, string> projects = Project switch
             {
                 string p => new Dictionary<string, string> { { p, defaultGroup } },
                 IDictionary dict => dict.Cast<DictionaryEntry>().ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.ToString()),
@@ -87,23 +88,34 @@ namespace TfsCmdlets.Controllers.Identity.User
                 _ => null
             };
 
-            if (!PowerShell.ShouldProcess(Collection, $"Create user '{User}' with license type '{License}' and the project entitlements \n{string.Join(";", projects.Select(kv => $"{kv.Key}={kv.Value}"))}"))
+            var projectMsg = string.Empty;
+
+            if (projects != null && projects.Count > 0)
+            {
+                projectMsg = $" and the project entitlements [{string.Join("; ", projects.Select(kv => $"{kv.Key}={kv.Value}"))}]";
+            }
+
+            if (!PowerShell.ShouldProcess(Collection, $"Create user '{User}' with license type '{License}'{projectMsg}"))
             {
                 yield break;
             }
 
             var parsedProjects = new Dictionary<Guid, string>();
 
-            foreach (var kv in projects)
+            if (projects != null && projects.Count > 0)
             {
-                var key = kv.Key switch
+                foreach (var kv in projects)
                 {
-                    string s when s.IsGuid() => Guid.Parse(s),
-                    string s => Data.GetItem<WebApiTeamProject>(new { Project = s }).Id,
-                    _ => throw new Exception("Invalid project name")
-                };
+                    var key = kv.Key switch
+                    {
+                        string s when s.IsGuid() => Guid.Parse(s),
+                        string s => Data.GetItem<WebApiTeamProject>(new { Project = s })?.Id ?? throw new Exception($"Invalid project name '{s}'"),
+                        _ => throw new Exception($"Invalid project name '{kv.Key}'")
+                    };
 
-                parsedProjects.Add(key, kv.Value);
+                    parsedProjects.Add(key, kv.Value);
+                }
+
             }
 
             var entitlements = new ProjectEntitlements(parsedProjects);
@@ -128,16 +140,16 @@ namespace TfsCmdlets.Controllers.Identity.User
                 .GetResult("Error creating user")
                 .ToJsonObject() ?? throw new Exception("Unknown error creating user");
 
-            if (!((bool) result.isSuccess))
+            if (!((bool)result.isSuccess))
             {
                 string errorMessage = result.operationResult.errors[0].value;
-                Logger.LogError($"Error creating user. {errorMessage}");
+                Logger.LogError($"Error creating user: {errorMessage}");
                 yield break;
             }
 
             if (Passthru)
             {
-                yield return Data.GetItem<AccountEntitlement>(new{User});
+                yield return Data.GetItem<AccountEntitlement>(new { User });
             }
         }
 
