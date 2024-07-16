@@ -29,14 +29,26 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects).
         /// When omitted, only basic team information (such as name, description and ID) are returned.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName="Get by team")]
+        [Parameter(ParameterSetName="Cached credentials")]
+        [Parameter(ParameterSetName="User name and password")]
+        [Parameter(ParameterSetName="Credential object")]
+        [Parameter(ParameterSetName="Personal Access Token")]
+        [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Get default team")]
         [Alias("QueryMembership")]
         public SwitchParameter IncludeMembers { get; set; }
 
         /// <summary>
         /// Gets team settings (fills the Settings, TeamField, and IterationPaths properties).
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName="Get by team")]
+        [Parameter(ParameterSetName="Cached credentials")]
+        [Parameter(ParameterSetName="User name and password")]
+        [Parameter(ParameterSetName="Credential object")]
+        [Parameter(ParameterSetName="Personal Access Token")]
+        [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Get default team")]
         public SwitchParameter IncludeSettings { get; set; }
 
         /// <summary>
@@ -49,11 +61,6 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Returns the default team in the given team project.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName="Get default team")]
-        [Parameter(ParameterSetName="Cached credentials")]
-        [Parameter(ParameterSetName="User name and password")]
-        [Parameter(ParameterSetName="Credential object")]
-        [Parameter(ParameterSetName="Personal Access Token")]
-        [Parameter(ParameterSetName="Prompt for credential")]
         public SwitchParameter Default { get; set; }
     }
 }
