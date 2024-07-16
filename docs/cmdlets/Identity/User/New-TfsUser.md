@@ -5,7 +5,7 @@ parent: "Identity.User"
 description: "Creates a new user in the organization and optionally adds them to projects. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, DefaultGroup, DisplayName, License, Passthru, Projects, Server, User ] 
+  "_All_": [ Collection, DefaultGroup, DisplayName, License, Passthru, Project, Server, User ] 
   "__AllParameterSets":  
     User: 
       type: "string"  
@@ -22,7 +22,7 @@ parameterSets:
       type: "AccountLicenseType"  
     Passthru: 
       type: "SwitchParameter"  
-    Projects: 
+    Project: 
       type: "object"  
     Server: 
       type: "object" 
@@ -50,10 +50,16 @@ parameters:
     globbing: false 
     type: "AccountLicenseType" 
     defaultValue: "Stakeholder" 
-  - name: "Projects" 
+  - name: "Project" 
     description: "Specifies the projects to which the user should be added. Can be supplied as an array of project names or a hashtable/dictionary with project names as keys and group names as values. When provided as an array, the user is added to the group specified in the DefaultGroup parameter. When omitted, the user is not added to any projects. " 
     globbing: false 
     type: "object" 
+    aliases: [ Projects ] 
+  - name: "Projects" 
+    description: "Specifies the projects to which the user should be added. Can be supplied as an array of project names or a hashtable/dictionary with project names as keys and group names as values. When provided as an array, the user is added to the group specified in the DefaultGroup parameter. When omitted, the user is not added to any projects. This is an alias of the Project parameter." 
+    globbing: false 
+    type: "object" 
+    aliases: [ Projects ] 
   - name: "DefaultGroup" 
     description: "Specifies the default group to which the user should be added, when applicable. When omitted, defaults to Contributor. Possible values: Administrator, Contributor, Reader, Stakeholder" 
     globbing: false 
