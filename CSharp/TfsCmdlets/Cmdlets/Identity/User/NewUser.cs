@@ -90,7 +90,7 @@ namespace TfsCmdlets.Controllers.Identity.User
 
             var projectMsg = string.Empty;
 
-            if(projects != null && projects.Count > 0)
+            if (projects != null && projects.Count > 0)
             {
                 projectMsg = $" and the project entitlements [{string.Join("; ", projects.Select(kv => $"{kv.Key}={kv.Value}"))}]";
             }
@@ -102,16 +102,20 @@ namespace TfsCmdlets.Controllers.Identity.User
 
             var parsedProjects = new Dictionary<Guid, string>();
 
-            foreach (var kv in projects)
+            if (projects != null && projects.Count > 0)
             {
-                var key = kv.Key switch
+                foreach (var kv in projects)
                 {
-                    string s when s.IsGuid() => Guid.Parse(s),
-                    string s => Data.GetItem<WebApiTeamProject>(new { Project = s }).Id,
-                    _ => throw new Exception("Invalid project name")
-                };
+                    var key = kv.Key switch
+                    {
+                        string s when s.IsGuid() => Guid.Parse(s),
+                        string s => Data.GetItem<WebApiTeamProject>(new { Project = s })?.Id ?? throw new Exception($"Invalid project name '{s}'"),
+                        _ => throw new Exception($"Invalid project name '{kv.Key}'")
+                    };
 
-                parsedProjects.Add(key, kv.Value);
+                    parsedProjects.Add(key, kv.Value);
+                }
+
             }
 
             var entitlements = new ProjectEntitlements(parsedProjects);
@@ -136,16 +140,16 @@ namespace TfsCmdlets.Controllers.Identity.User
                 .GetResult("Error creating user")
                 .ToJsonObject() ?? throw new Exception("Unknown error creating user");
 
-            if (!((bool) result.isSuccess))
+            if (!((bool)result.isSuccess))
             {
                 string errorMessage = result.operationResult.errors[0].value;
-                Logger.LogError($"Error creating user. {errorMessage}");
+                Logger.LogError($"Error creating user: {errorMessage}");
                 yield break;
             }
 
             if (Passthru)
             {
-                yield return Data.GetItem<AccountEntitlement>(new{User});
+                yield return Data.GetItem<AccountEntitlement>(new { User });
             }
         }
 
