@@ -35,4 +35,28 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [Parameter]
         public NotificationStatus Status { get; set; }
     }
+
+    [CmdletController(typeof(Notification))]
+    partial class GetServiceHookNotificationHistoryController
+    {
+       protected override IEnumerable Run()
+       {
+           var ids = GetItems<WebApiSubscription>().Select(i => i.Id).ToArray();
+           var client = Data.GetClient<ServiceHooksPublisherHttpClient>();
+
+           var query = new NotificationsQuery()
+           {
+               SubscriptionIds = ids,
+               MinCreatedDate = From,
+               MaxCreatedDate = To,
+               Status = Status
+           };
+
+           var result = client.QueryNotificationsAsync(query)
+               .GetResult("Error getting service hook notifications")
+               .Results;
+
+           foreach (var r in result) yield return r;
+       }
+    }
 }

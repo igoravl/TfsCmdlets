@@ -43,4 +43,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Parameter()]
         public SwitchParameter Recurse { get; set; }
     }
+
+    [CmdletController(typeof(Models.ClassificationNode), CustomBaseClass = typeof(CopyClassificationNodeController))]
+    partial class CopyAreaController { 
+        // See CopyClassificationNodeController
+    }
 }

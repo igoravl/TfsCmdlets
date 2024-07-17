@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -15,5 +16,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Alias("Area", "Path")]
         [SupportsWildcards()]
         public string Node { get; set; }
+    }
+
+    [CmdletController(CustomBaseClass = typeof(TestClassificationNodeController))]
+    partial class TestAreaController { 
+        // See TestClassificationNodeController
     }
 }
