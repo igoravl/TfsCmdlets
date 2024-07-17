@@ -1,16 +1,20 @@
 # TfsCmdlets Release Notes
 
-## Version 2.8.1 (_16/Jul/2024_)
+## Version 2.8.2 (_17/Jul/2024_)
 
-This release fixes an issue with the `New-TfsUser` cmdlet.
+This release fixes an issue with the `Get-TfsTeam` cmdlet.
 
 ### Fixes
 
-- Fixed an issue where the `New-TfsUser` cmdlet could throw an error when not supplying project entitlements via the -Project argument.
+- Fixed an issue where the `Get-TfsTeam` cmdlet would not work when specifying the `-Default` parameter.
 
 -----------------------
 
 ## Previous Versions
+
+### Version 2.8.1 (_16/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.1.md).
 
 ### Version 2.8.0 (_09/Jul/2024_)
 
