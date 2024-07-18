@@ -138,6 +138,7 @@ namespace TfsCmdlets.Cmdlets.RestApi
                 apiTemplate: Path, 
                 body: Body,
                 method: Method, 
+                queryParameters: QueryParameters,
                 requestContentType: RequestContentType,
                 responseContentType: ResponseContentType,
                 additionalHeaders: AdditionalHeaders?.ToDictionary<string, string>(),
