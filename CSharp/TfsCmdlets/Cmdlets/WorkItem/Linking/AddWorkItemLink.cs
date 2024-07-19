@@ -33,6 +33,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         public SwitchParameter Passthru { get; set; }
 
         [Parameter]
+        public SwitchParameter BypassRules { get; set; }
+
+        [Parameter]
+        public SwitchParameter SuppressNotifications { get; set; }
+
+        [Parameter]
         public string Comment { get; set; }
     }
 
@@ -70,7 +76,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                 };
 
                 var client = Data.GetClient<WorkItemTrackingHttpClient>();
-                var result = client.UpdateWorkItemAsync(patch, (int)sourceWi.Id)
+                var result = client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
+                        bypassRules: BypassRules, 
+                        suppressNotifications: SuppressNotifications)
                     .GetResult("Error updating target work item");
 
                 return result.Relations.Where(r => 
