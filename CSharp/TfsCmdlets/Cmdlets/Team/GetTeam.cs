@@ -8,20 +8,20 @@ namespace TfsCmdlets.Cmdlets.Team
     /// <summary>
     /// Gets information about one or more teams.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Get by team", OutputType = typeof(Models.Team))]
-    partial class GetTeam 
+    [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Get by team", OutputType = typeof(Models.Team), AdditionalCredentialParameterSets = "Get default team")]
+    partial class GetTeam
     {
         /// <summary>
         /// Specifies the team to return. Accepted values are its name, its ID, or a
         /// Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported.
         /// When omitted, all teams in the given team project are returned.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName="Get by team")]
-        [Parameter(Position = 0, ParameterSetName="Cached credentials")]
-        [Parameter(Position = 0, ParameterSetName="User name and password")]
-        [Parameter(Position = 0, ParameterSetName="Credential object")]
-        [Parameter(Position = 0, ParameterSetName="Personal Access Token")]
-        [Parameter(Position = 0, ParameterSetName="Prompt for credential")]
+        [Parameter(Position = 0, ParameterSetName = "Get by team")]
+        [Parameter(Position = 0, ParameterSetName = "Cached credentials")]
+        [Parameter(Position = 0, ParameterSetName = "User name and password")]
+        [Parameter(Position = 0, ParameterSetName = "Credential object")]
+        [Parameter(Position = 0, ParameterSetName = "Personal Access Token")]
+        [Parameter(Position = 0, ParameterSetName = "Prompt for credential")]
         [Alias("Name")]
         [SupportsWildcards]
         public object Team { get; set; } = "*";
@@ -31,26 +31,26 @@ namespace TfsCmdlets.Cmdlets.Team
         /// Microsoft.VisualStudio.Services.WebApi.TeamMember objects).
         /// When omitted, only basic team information (such as name, description and ID) are returned.
         /// </summary>
-        [Parameter(ParameterSetName="Get by team")]
-        [Parameter(ParameterSetName="Cached credentials")]
-        [Parameter(ParameterSetName="User name and password")]
-        [Parameter(ParameterSetName="Credential object")]
-        [Parameter(ParameterSetName="Personal Access Token")]
-        [Parameter(ParameterSetName="Prompt for credential")]
-        [Parameter(ParameterSetName="Get default team")]
+        [Parameter(ParameterSetName = "Get by team")]
+        [Parameter(ParameterSetName = "Cached credentials")]
+        [Parameter(ParameterSetName = "User name and password")]
+        [Parameter(ParameterSetName = "Credential object")]
+        [Parameter(ParameterSetName = "Personal Access Token")]
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        [Parameter(ParameterSetName = "Get default team")]
         [Alias("QueryMembership")]
         public SwitchParameter IncludeMembers { get; set; }
 
         /// <summary>
         /// Gets team settings (fills the Settings, TeamField, and IterationPaths properties).
         /// </summary>
-        [Parameter(ParameterSetName="Get by team")]
-        [Parameter(ParameterSetName="Cached credentials")]
-        [Parameter(ParameterSetName="User name and password")]
-        [Parameter(ParameterSetName="Credential object")]
-        [Parameter(ParameterSetName="Personal Access Token")]
-        [Parameter(ParameterSetName="Prompt for credential")]
-        [Parameter(ParameterSetName="Get default team")]
+        [Parameter(ParameterSetName = "Get by team")]
+        [Parameter(ParameterSetName = "Cached credentials")]
+        [Parameter(ParameterSetName = "User name and password")]
+        [Parameter(ParameterSetName = "Credential object")]
+        [Parameter(ParameterSetName = "Personal Access Token")]
+        [Parameter(ParameterSetName = "Prompt for credential")]
+        [Parameter(ParameterSetName = "Get default team")]
         public SwitchParameter IncludeSettings { get; set; }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace TfsCmdlets.Cmdlets.Team
         /// <summary>
         /// Returns the default team in the given team project.
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName="Get default team")]
+        [Parameter(Mandatory = true, ParameterSetName = "Get default team")]
         public SwitchParameter Default { get; set; }
     }
 
@@ -96,7 +96,7 @@ namespace TfsCmdlets.Cmdlets.Team
                     var props = projectClient
                         .GetProjectPropertiesAsync(Project.Id)
                         .GetResult("Error retrieving project's default team");
-                    team = new Guid((string) props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
+                    team = new Guid((string)props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
                         .FirstOrDefault()?.Value);
                 }
 

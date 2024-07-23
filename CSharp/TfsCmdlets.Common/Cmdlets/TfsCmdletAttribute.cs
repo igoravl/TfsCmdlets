@@ -31,6 +31,8 @@
 
         public bool ReturnsValue { get; set; }
 
+        public string AdditionalCredentialParameterSets { get; set; }
+
         public TfsCmdletAttribute(CmdletScope scope = CmdletScope.None)
         {
             Scope = scope;
