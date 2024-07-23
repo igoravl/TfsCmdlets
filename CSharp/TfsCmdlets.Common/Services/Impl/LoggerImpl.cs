@@ -24,7 +24,14 @@ namespace TfsCmdlets.Services.Impl
             var innerException = ex.InnerException ?? ex;
             var id = errorId ?? innerException.GetType().Name;
 
-            PowerShell.WriteError(new ErrorRecord(ex, id, category, targetObject));
+            try
+            {
+                Log($"Detailed Error:`n{ex.ToJsonString(false)})");
+            }
+            finally
+            {
+                PowerShell.WriteError(new ErrorRecord(ex, id, category, targetObject));
+            }
         }
 
         public void LogWarn(string message)
@@ -38,7 +45,7 @@ namespace TfsCmdlets.Services.Impl
             if (!PowerShell.IsVerbose) return;
 
             var parms = new Dictionary<string, object>();
-            var parameterSetName = parameters["ParameterSetName"]?? "__AllParameterSets";
+            var parameterSetName = parameters["ParameterSetName"] ?? "__AllParameterSets";
             var hasParameterSetName = !parameterSetName.Equals("__AllParameterSets");
 
             foreach (var key in parameters.Keys.Where(key => !key.Equals("ParameterSetName")))
@@ -57,18 +64,21 @@ namespace TfsCmdlets.Services.Impl
                             value = switchParameter.IsPresent;
                             break;
                         }
-                    case Models.Connection conn: {
-                        value = $"{{Connection Url={conn.Uri}}}";
-                        break;
-                    }
-                    case WebApiTeamProject tp: {
-                        value = $"{{Project Name='{tp.Name}' Id={tp.Id}}}";
-                        break;
-                    }
-                    case WebApiTeam t: {
-                        value = $"{{Team Name='{t.Name}' Id={t.Id}}}";
-                        break;
-                    }
+                    case Models.Connection conn:
+                        {
+                            value = $"{{Connection Url={conn.Uri}}}";
+                            break;
+                        }
+                    case WebApiTeamProject tp:
+                        {
+                            value = $"{{Project Name='{tp.Name}' Id={tp.Id}}}";
+                            break;
+                        }
+                    case WebApiTeam t:
+                        {
+                            value = $"{{Team Name='{t.Name}' Id={t.Id}}}";
+                            break;
+                        }
                 }
                 parms[key] = value;
             }
