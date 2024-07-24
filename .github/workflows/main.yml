@@ -165,7 +165,6 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
@@ -198,7 +197,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: psgallery
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
@@ -221,7 +219,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: nuget
-    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -241,7 +238,6 @@ jobs:
     runs-on: windows-latest
     needs: [ Release ]
     environment: chocolatey
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
@@ -264,7 +260,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: winget
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
