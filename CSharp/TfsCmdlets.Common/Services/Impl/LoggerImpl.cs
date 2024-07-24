@@ -26,7 +26,7 @@ namespace TfsCmdlets.Services.Impl
 
             try
             {
-                Log($"Detailed Error:`n{ex.ToJsonString(false)})");
+                Log($"Detailed Error:\n{ex.ToJsonString(false)})");
             }
             finally
             {
