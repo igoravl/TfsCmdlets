@@ -132,7 +132,7 @@ try {
         $isCI = $true
     }
     elseif ($env:GITHUB_ACTIONS) {
-        Write-Output "::set-output name=BUILD_NAME::$BuildName"
+        Write-Output "BUILD_NAME=$BuildName" >> $GITHUB_OUTPUT
         $isCI = $true
     }
 
