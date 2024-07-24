@@ -83,14 +83,14 @@ namespace TfsCmdlets.Services.Impl
                 parms[key] = value;
             }
 
-            var args = Newtonsoft.Json.Linq.JObject.FromObject(parms)
-                    .ToString(Newtonsoft.Json.Formatting.None)
-                    .Replace("\":", "\" = ")
-                    .Replace(",\"", "; \"");
+            var args = parms.ToJsonString(compress: false)
+                    .Replace("\":", "\" =")
+                    .Replace(",\"", "; \"")
+                    .Trim('{', '}')
+                    .Split(';');
 
-            Log($"Running [{commandName}] with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}the following implicit and explicit arguments:");
-            Log(args);
-
+            Log($"Running [{commandName}] with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}" +
+                $"the following implicit and explicit arguments:\n{string.Join("\n", args)}");
         }
 
         [ImportingConstructor]
