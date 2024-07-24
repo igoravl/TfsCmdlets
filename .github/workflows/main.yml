@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
 
   Build:
@@ -121,10 +125,6 @@ jobs:
           # Upload assets
           @('msi/TfsCmdlets*.msi', 'nuget/TfsCmdlets*.nupkg', 'portable/TfsCmdlets*.zip', 'docs/TfsCmdlets*.zip') `
           | ForEach-Object { New-GitHubReleaseAsset -Release $release.Id -Path $_ }
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
 
     outputs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
