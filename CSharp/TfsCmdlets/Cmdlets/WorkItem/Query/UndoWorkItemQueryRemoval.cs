@@ -36,4 +36,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
         [Parameter]
         internal string ItemType => "Query";
     }
+
+    // See UndoWorkItemQueryItemRemovalController
 }

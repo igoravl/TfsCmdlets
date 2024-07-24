@@ -15,4 +15,13 @@ namespace TfsCmdlets.Cmdlets.Team.TeamMember
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public object Member { get; set; }
     }
+
+    [CmdletController(typeof(Models.Identity))]
+    partial class RemoveTeamMemberController
+    {
+        protected override IEnumerable Run()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }
