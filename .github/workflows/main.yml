@@ -88,9 +88,11 @@ jobs:
         run: |
           $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
           echo $fileName
-          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
+          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
           echo $releaseNotes
-          echo "RELEASE_NOTES=$releaseNotes" >> $env:GITHUB_OUTPUT
+          echo 'RELEASE_NOTES<<EOF' >> $env:GITHUB_OUTPUT
+          echo $releaseNotes >> $env:GITHUB_OUTPUT
+          echo 'EOF' >> $env:GITHUB_OUTPUT
       - name: Create Draft Release
         id: create_release
         shell: pwsh
