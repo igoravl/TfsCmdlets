@@ -6,11 +6,8 @@ env:
   SkipReleaseNotes: ${{ true }}
   
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
 
@@ -132,7 +129,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
