@@ -29,8 +29,6 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
@@ -51,8 +49,6 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
@@ -70,8 +66,6 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
@@ -89,8 +83,6 @@ parameterSets:
       required: true  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
@@ -105,8 +97,6 @@ parameterSets:
       position: "0"  
     Collection: 
       type: "object"  
-    Default: 
-      type: "SwitchParameter"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
@@ -117,22 +107,24 @@ parameterSets:
       type: "object"  
     Server: 
       type: "object"  
-  "Get current":  
-    Current: 
-      type: "SwitchParameter"  
-      required: true  
-    IncludeMembers: 
-      type: "SwitchParameter"  
-    IncludeSettings: 
-      type: "SwitchParameter"  
   "Get default team":  
     Default: 
       type: "SwitchParameter"  
       required: true  
+    Collection: 
+      type: "object"  
     IncludeMembers: 
       type: "SwitchParameter"  
     IncludeSettings: 
-      type: "SwitchParameter" 
+      type: "SwitchParameter"  
+    Project: 
+      type: "object"  
+    Server: 
+      type: "object"  
+  "Get current":  
+    Current: 
+      type: "SwitchParameter"  
+      required: true 
 parameters: 
   - name: "Team" 
     description: "Specifies the team to return. Accepted values are its name, its ID, or a Microsoft.TeamFoundation.Core.WebApi.WebApiTeam object. Wildcards are supported. When omitted, all teams in the given team project are returned. " 

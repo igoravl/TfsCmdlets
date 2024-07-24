@@ -5,7 +5,7 @@ parent: "WorkItem.Linking"
 description: "Adds a link between two work items. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Comment, LinkType, Passthru, Server, TargetWorkItem, WorkItem ] 
+  "_All_": [ BypassRules, Collection, Comment, LinkType, Passthru, Server, SuppressNotifications, TargetWorkItem, WorkItem ] 
   "Link to work item":  
     WorkItem: 
       type: "object"  
@@ -19,6 +19,8 @@ parameterSets:
       type: "WorkItemLinkType"  
       position: "2"  
       required: true  
+    BypassRules: 
+      type: "SwitchParameter"  
     Collection: 
       type: "object"  
     Comment: 
@@ -26,7 +28,9 @@ parameterSets:
     Passthru: 
       type: "SwitchParameter"  
     Server: 
-      type: "object" 
+      type: "object"  
+    SuppressNotifications: 
+      type: "SwitchParameter" 
 parameters: 
   - name: "WorkItem" 
     description:  
@@ -92,6 +96,16 @@ parameters:
     defaultValue: "All" 
   - name: "Passthru" 
     description: "Returns the results of the command. By default, this cmdlet does not generate any output. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "BypassRules" 
+    description:  
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "SuppressNotifications" 
+    description:  
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
