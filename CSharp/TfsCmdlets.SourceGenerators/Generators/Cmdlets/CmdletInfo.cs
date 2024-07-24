@@ -25,6 +25,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public string CmdletAttribute { get; private set; }
         public string OutputTypeAttribute { get; private set; }
 
+        public string AdditionalCredentialParameterSets { get; private set; }
+
         public CmdletInfo(INamedTypeSymbol cmdlet, Logger logger)
             : base(cmdlet, logger)
         {
@@ -46,6 +48,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             CustomControllerName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "CustomControllerName");
             ReturnsValue = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "ReturnsValue");
             SkipGetProperty = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipGetProperty");
+            AdditionalCredentialParameterSets = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "AdditionalCredentialParameterSets");
             CmdletAttribute = GenerateCmdletAttribute(this);
             OutputTypeAttribute = GenerateOutputTypeAttribute(this);
 
@@ -95,7 +98,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             var isGetScopedCmdlet = IsGetScopeCmdlet(settings);
             var isPipeline = IsPipelineProperty(currentScope, settings);
             var valueFromPipeline = isPipeline ? "ValueFromPipeline=true" : string.Empty;
-            var parameterSetNames = isGetScopedCmdlet ? _credentialParameterSetNames.Select(s => $"ParameterSetName=\"{s}\"") : new[] { string.Empty };
+            var additionalParameterSets = settings.AdditionalCredentialParameterSets?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
+            var parameterSetNames = isGetScopedCmdlet ? _credentialParameterSetNames.Union(additionalParameterSets).Select(s => $"ParameterSetName=\"{s}\"") : new[] { string.Empty };
             var attributes = new List<(string, string)>();
 
             if (scopeName.Equals("Collection"))

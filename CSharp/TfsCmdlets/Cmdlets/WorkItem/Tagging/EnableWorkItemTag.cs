@@ -19,4 +19,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         [Parameter]
         internal bool Enabled => true;
     }
+
+    [CmdletController(typeof(WebApiTagDefinition), CustomBaseClass = typeof(ToggleWorkItemTagController))]
+    partial class EnableWorkItemTagController { 
+        // See ToggleWorkItemTagController
+    }
 }

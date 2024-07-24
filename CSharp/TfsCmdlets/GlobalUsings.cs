@@ -6,6 +6,7 @@ global using System.IO;
 global using System.Linq;
 global using System.Management.Automation;
 global using System.Text;
+global using TfsCmdlets.Controllers;
 global using TfsCmdlets.Extensions;
 global using TfsCmdlets.Services;
 

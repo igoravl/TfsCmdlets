@@ -6,11 +6,12 @@ env:
   SkipReleaseNotes: ${{ true }}
   
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -90,10 +91,12 @@ jobs:
         shell: pwsh
         run: |
           $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
-          echo $fileName
-          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
-          echo $releaseNotes
-          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
+          Write-Output $fileName
+          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
+          Write-Output $releaseNotes
+          Write-Output 'RELEASE_NOTES<<EOF' >> $env:GITHUB_OUTPUT
+          Write-Output $releaseNotes >> $env:GITHUB_OUTPUT
+          Write-Output 'EOF' >> $env:GITHUB_OUTPUT
       - name: Create Draft Release
         id: create_release
         shell: pwsh
@@ -132,15 +135,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.12.1
-        with:
-          access_token: ${{ github.token }}
       - name: Promote release
         id: promote_release
         shell: pwsh
@@ -155,8 +153,8 @@ jobs:
           $rel = Get-GitHubRelease `
           | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  }
           Set-GitHubRelease -Release $rel.id -Draft:$false
-          Write-Output "::set-output name=RELEASE_URL::$($rel.html_url)"
-          Write-Output "::set-output name=RELEASE_TAG::$($env:BUILD_NAME.Replace('+', '%2B'))"
+          Write-Output "RELEASE_URL=$($rel.html_url)" >> $env:GITHUB_OUTPUT
+          Write-Output "RELEASE_TAG=$($env:BUILD_NAME.Replace('+', '%2B'))" >> $env:GITHUB_OUTPUT
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
@@ -167,7 +165,6 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
@@ -187,8 +184,8 @@ jobs:
           git checkout --track origin/gh-pages
           unzip -o ../../TfsCmdlets-Docs-*.zip
           popd
-          echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
-          echo >> _config.yml
+          Write-Output build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
+          Write-Output >> _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
           git add *
@@ -200,7 +197,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: psgallery
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
@@ -223,7 +219,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: nuget
-    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -243,7 +238,6 @@ jobs:
     runs-on: windows-latest
     needs: [ Release ]
     environment: chocolatey
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
@@ -266,7 +260,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: winget
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
@@ -324,7 +317,7 @@ jobs:
     steps:
       - name: No-op
         shell: bash
-        run: echo "no-op"
+        run: Write-Output "no-op"
       # - name: Tweet
       #   id: tweet
       #   uses: snow-actions/tweet@v1.3.0

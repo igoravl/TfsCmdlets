@@ -409,7 +409,7 @@ Task PackageWinget -Depends PackageMsi {
     }
 
     $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
-    $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$FourPartVersion")
+    $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$ThreePartVersion")
     $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
     $MsiProductCode = "$(GetMsiProperty -Path $MsiPath -Property 'ProductCode')".Replace(' ', '')
 

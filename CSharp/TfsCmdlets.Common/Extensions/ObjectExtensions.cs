@@ -40,9 +40,9 @@ namespace TfsCmdlets.Extensions
             return method.Invoke(self, parameters);
         }
 
-        public static string ToJsonString(this object self)
+        public static string ToJsonString(this object self, bool compress = true)
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(self, Newtonsoft.Json.Formatting.None);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(self, compress? Newtonsoft.Json.Formatting.None: Newtonsoft.Json.Formatting.Indented);
         }
 
         private static T FindMember<T>(object self, string memberName)

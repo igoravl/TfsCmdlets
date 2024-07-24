@@ -218,3 +218,4 @@ CSharp/.idea/**
 # Miscellaneous files
 
 CSharp/*/Generated/**
+Docs/AzDO-Security-Actions.csv
