@@ -90,7 +90,7 @@ jobs:
           echo $fileName
           $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
           echo $releaseNotes
-          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
+          echo "RELEASE_NOTES=$releaseNotes" >> $GITHUB_OUTPUT
       - name: Create Draft Release
         id: create_release
         shell: pwsh
@@ -151,8 +151,8 @@ jobs:
           $rel = Get-GitHubRelease `
           | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  }
           Set-GitHubRelease -Release $rel.id -Draft:$false
-          Write-Output "::set-output name=RELEASE_URL::$($rel.html_url)"
-          Write-Output "::set-output name=RELEASE_TAG::$($env:BUILD_NAME.Replace('+', '%2B'))"
+          echo "RELEASE_URL=$($rel.html_url)" >> $GITHUB_OUTPUT
+          echo "RELEASE_TAG=$($env:BUILD_NAME.Replace('+', '%2B'))" >> $GITHUB_OUTPUT
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
