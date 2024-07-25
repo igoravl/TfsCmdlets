@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.Tests.UnitTests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{990DD3E9-3685-472A-AB57-2D304A5C86D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.Tests.Integration.PSCore", "TfsCmdlets.Tests.Integration.PSCore\TfsCmdlets.Tests.Integration.PSCore.csproj", "{6CC762DD-A6C9-435C-8CA2-ECE8CE615309}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.Tests.Integration.PSDesktop", "TfsCmdlets.Tests.Integration.PSDesktop\TfsCmdlets.Tests.Integration.PSDesktop.csproj", "{0A52A2C0-75EB-438A-BA6F-8FC28FAEBFDF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets", "TfsCmdlets\TfsCmdlets.csproj", "{63E2B0B3-DB12-4DE6-ADE8-660E8323E38A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators", "TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj", "{1045CB54-F17F-42EA-9497-5D60815BDC64}"
