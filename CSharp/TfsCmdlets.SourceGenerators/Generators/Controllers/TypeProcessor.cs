@@ -45,7 +45,9 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 cacheProps.Append($"            {prop.Name} = Parameters.Get<{type}>(\"{prop.Name}\"{initializer});\n\n");
             }
 
-            return $@"namespace {controller.Namespace}
+            return $@"{controller.Usings}
+
+namespace {controller.Namespace}
 {{
     internal partial class {controller.Name}: {controller.BaseClassName}
     {{

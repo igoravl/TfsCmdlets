@@ -36,18 +36,23 @@ namespace TfsCmdlets.SourceGenerators
             return (T)(arg.Value.Value ?? default(T));
         }
 
-        public static bool GetAttributeNamedValue(INamedTypeSymbol symbol, string attributeName, string argumentName, bool defaultValue = false)
-        {
-            var attr = symbol
-                .GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
+        // public static bool GetAttributeNamedValue(INamedTypeSymbol symbol, string attributeName, string argumentName, bool defaultValue = false)
+        // {
+        //     var attr = symbol
+        //         .GetAttributes()
+        //         .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
 
-            if (attr == null) return defaultValue;
+        //     if (attr == null) return defaultValue;
 
-            var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
+        //     var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
 
-            return (arg.Value.Value?.ToString() ?? string.Empty).Equals("True", StringComparison.OrdinalIgnoreCase);
-        }
+        //     return (arg.Value.Value?.ToString() ?? string.Empty).Equals("True", StringComparison.OrdinalIgnoreCase);
+        // }
+
+        public static bool HasAttributeNamedValue(this INamedTypeSymbol symbol, string attributeName, string argumentName)
+            => symbol.GetAttributes()
+            .First(a => a.AttributeClass.Name.Equals(attributeName))?
+            .NamedArguments.Any(a => a.Key.Equals(argumentName)) ?? false;
 
         public static bool HasAttribute(this ISymbol symbol, string attributeName)
             => symbol.GetAttributes().Any(a => a.AttributeClass.Name.Equals(attributeName));
@@ -152,5 +157,29 @@ namespace TfsCmdlets.SourceGenerators
         public static bool IsPartial(this ClassDeclarationSyntax cds) 
             => cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
 
+        public static T GetDeclaringSyntax<T>(this ISymbol symbol) where T : SyntaxNode
+        {
+            var syntaxRefs = symbol.DeclaringSyntaxReferences;
+            if (syntaxRefs.Length == 0) return null;
+            return syntaxRefs[0].GetSyntax() as T;
+        }
+
+        public static T FindParentOfType<T>(this SyntaxNode syntaxNode) where T : SyntaxNode
+        {
+            var parent = syntaxNode.Parent;
+
+            while(parent != null && !(parent is T))
+            {
+                parent = parent.Parent;
+            }
+
+            return parent as T;
+        }
+
+
+        public static IEnumerable<T> GetDeclaringSyntaxes<T>(this ISymbol symbol) where T : SyntaxNode
+        {
+            return symbol.DeclaringSyntaxReferences.Select(sr => sr.GetSyntax()).OfType<T>();
+        }
     }
 }

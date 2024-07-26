@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
@@ -19,6 +20,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string CtorArgs { get; }
         public string BaseCtorArgs { get; }
         public string ImportingConstructorBody { get; }
+        public object Usings { get; }
         public IDictionary<string, GeneratedProperty> DeclaredProperties { get; }
         public IDictionary<string, GeneratedProperty> ImplicitProperties { get; }
         public string BaseClassName => BaseClass.Name;
@@ -49,6 +51,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             CtorArgs = controller.GetImportingConstructorArguments(BaseClass);
             BaseCtorArgs = BaseClass.GetConstructorArguments();
             ImportingConstructorBody = GetImportingConstructorBody(controller);
+            Usings = GetUsingStatements(Cmdlet);
             CmdletInfo = new CmdletInfo(Cmdlet, Logger);
 
             DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").Select(p => new GeneratedProperty(p, string.Empty)).ToDictionary(p => p.Name);
@@ -81,6 +84,9 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             => string.Join("\n", type.GetPropertiesWithAttribute("ImportAttribute")
                 .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};"));
 
+        private string GetUsingStatements(INamedTypeSymbol cmdlet)
+            => cmdlet.GetDeclaringSyntax<ClassDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
+        
         private static IEnumerable<GeneratedProperty> GenerateParameterSetProperty(ControllerInfo controller)
         {
             yield return new GeneratedProperty("ParameterSetName", "string", $@"        // ParameterSetName
@@ -123,12 +129,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
 
             yield return new GeneratedProperty(prop.Name, "IEnumerable", $@"        // {prop.Name}
-        protected bool Has_{prop.Name} => Parameters.HasParameter(""{prop.Name}"");
+        protected bool Has_{prop.Name} => Parameters.HasParameter(nameof({prop.Name}));
         protected IEnumerable {prop.Name}
         {{
             get
             {{
-                var paramValue = Parameters.Get<object>(""{prop.Name}""{initializer});
+                var paramValue = Parameters.Get<object>(nameof({prop.Name}){initializer});
                 if(paramValue is ICollection col) return col;
                 return new[] {{ paramValue }};
             }}
@@ -162,8 +168,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 if (prop.IsHidden) continue;
 
                 yield return new GeneratedProperty(prop.Name, type, $@"        // {prop.Name}
-        protected bool Has_{prop.Name} {{get;set;}} // => Parameters.HasParameter(""{prop.Name}"");
-        protected {type} {prop.Name} {{get;set;}} // => _{prop.Name}; // Parameters.Get<{type}>(""{prop.Name}"");
+        protected bool Has_{prop.Name} {{get;set;}} // => Parameters.HasParameter(nameof({prop.Name}));
+        protected {type} {prop.Name} {{get;set;}} // => _{prop.Name}; // Parameters.Get<{type}>(nameof({prop.Name}));
 
 ");
             }
