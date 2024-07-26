@@ -1,14 +1,16 @@
 using System.Management.Automation;
-#if NET471_OR_GREATER
-using TfsCmdlets.Cmdlets.ProcessTemplate;
-using Microsoft.TeamFoundation.Server;
-using System.Xml;
-using System.Xml.Linq;
-using System.IO.Compression;
-#endif
 
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
+
+#if NET471_OR_GREATER
+    using TfsCmdlets.Cmdlets.ProcessTemplate;
+    using Microsoft.TeamFoundation.Server;
+    using System.Xml;
+    using System.Xml.Linq;
+    using System.IO.Compression;
+#endif
+
     /// <summary>
     /// Imports a process template definition from disk.
     /// </summary>

@@ -4,12 +4,13 @@ using System.Threading;
 using Microsoft.TeamFoundation.Framework.Common;
 using TfsCmdlets.Models;
 
-#if NET471_OR_GREATER
-using Microsoft.TeamFoundation.Framework.Client;
-#endif
-
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
+
+#if NET471_OR_GREATER
+    using Microsoft.TeamFoundation.Framework.Client;
+#endif
+
     /// <summary>
     /// Creates a new team project collection.
     /// </summary>
@@ -42,11 +43,11 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         [ValidateSet("Started", "Stopped")]
         public string InitialState { get; set; } = "Started";
 
-        [Parameter] 
+        [Parameter]
         [ValidateRange(5, 60)]
         public int PollingInterval { get; set; } = 5;
 
-        [Parameter] 
+        [Parameter]
         public TimeSpan Timeout { get; set; } = TimeSpan.MaxValue;
     }
 
