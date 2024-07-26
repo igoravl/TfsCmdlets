@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.Common", "TfsCmdlets.Common\TfsCmdlets.Common.csproj", "{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.SourceGeneratores.UnitTests", "TfsCmdlets.SourceGeneratores.UnitTests\TfsCmdlets.SourceGeneratores.UnitTests.csproj", "{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.SourceGenerators.UnitTests", "TfsCmdlets.SourceGenerators.UnitTests\TfsCmdlets.SourceGenerators.UnitTests.csproj", "{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
