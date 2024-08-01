@@ -1,5 +1,6 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using TfsCmdlets.HttpClients;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Field
 {
@@ -42,10 +43,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Field
     [CmdletController]
     partial class GetWorkItemFieldController
     {
+        [Import]
+        private IWorkItemTrackingHttpClient Client { get; set; }
+        
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
-
             string tpName;
 
             if(Has_Project) {
@@ -63,14 +65,14 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Field
                                 (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
                                 (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
 
-                            yield return client.GetFieldsAsync(expand)
+                            yield return Client.GetFieldsAsync(expand)
                                 .GetResult($"Error getting field '{s}'")
                                 .Where(field => field.Name.IsLike(s) || field.ReferenceName.IsLike(s));
                             break;
                         }
-                    case string s:
+                    case string s when !string.IsNullOrEmpty(s):
                         {
-                            yield return client.GetFieldAsync(fieldNameOrRefName: s)
+                            yield return Client.GetFieldAsync(fieldNameOrRefName: s)
                                 .GetResult($"Error getting field '{s}'");
                             break;
                         }
