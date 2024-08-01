@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Microsoft.VisualStudio.Services.Common;
 
-namespace TfsCmdlets.HttpClient
+namespace TfsCmdlets.HttpClients
 {
     /// <summary>
     /// Custom HTTP Client to handle team administrator management

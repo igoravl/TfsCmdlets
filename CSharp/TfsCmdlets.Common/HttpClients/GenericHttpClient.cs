@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 
-namespace TfsCmdlets.HttpClient
+namespace TfsCmdlets.HttpClients
 {
     /// <summary>
     /// Generic HTTP Client, used by the Invoke-TfsRestApi cmdlet

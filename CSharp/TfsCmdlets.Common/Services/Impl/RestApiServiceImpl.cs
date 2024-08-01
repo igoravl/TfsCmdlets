@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.Services.Operations;
 using Microsoft.VisualStudio.Services.Search.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
-using TfsCmdlets.HttpClient;
+using TfsCmdlets.HttpClients;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Services.Impl
