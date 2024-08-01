@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -35,6 +36,9 @@ namespace TfsCmdlets.SourceGenerators
 
             return (T)(arg.Value.Value ?? default(T));
         }
+
+        public static string GetUsingStatements(this INamedTypeSymbol symbol)
+            => symbol.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
 
         // public static bool GetAttributeNamedValue(INamedTypeSymbol symbol, string attributeName, string argumentName, bool defaultValue = false)
         // {
@@ -96,6 +100,15 @@ namespace TfsCmdlets.SourceGenerators
                 .Where(p => p.GetAttributes().Any(
                     a => a.AttributeClass.Name.Equals(attributeName)));
 
+        public static string FullName(this ITypeSymbol symbol)
+        {
+            if (symbol == null) return null;
+            
+            if(symbol.Name.Equals("Void")) return "void";
+
+            return symbol.ToDisplayString();
+        }
+
         public static string FullName(this INamedTypeSymbol symbol)
         {
             if (symbol == null)
@@ -154,7 +167,7 @@ namespace TfsCmdlets.SourceGenerators
 
         public static bool HasParameters(this IPropertySymbol symbol) => symbol.Parameters.Any();
 
-        public static bool IsPartial(this ClassDeclarationSyntax cds) 
+        public static bool IsPartial(this TypeDeclarationSyntax cds) 
             => cds.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
 
         public static T GetDeclaringSyntax<T>(this ISymbol symbol) where T : SyntaxNode
@@ -176,10 +189,27 @@ namespace TfsCmdlets.SourceGenerators
             return parent as T;
         }
 
-
         public static IEnumerable<T> GetDeclaringSyntaxes<T>(this ISymbol symbol) where T : SyntaxNode
         {
             return symbol.DeclaringSyntaxReferences.Select(sr => sr.GetSyntax()).OfType<T>();
+        }
+
+        public static IEnumerable<ISymbol> GetMembersRecursively(this ITypeSymbol type, SymbolKind kind, string stopAt)
+        {
+            while (type != null)
+            {
+                foreach (var member in type.GetMembers().Where(m => m.Kind == kind))
+                {
+                    yield return member;
+                }
+
+                if ((type.FullName().Equals(stopAt)) || (type.FullName().Equals("System.Object")))
+                {
+                    yield break;
+                }
+                
+                type = type.BaseType;
+            }
         }
     }
 }

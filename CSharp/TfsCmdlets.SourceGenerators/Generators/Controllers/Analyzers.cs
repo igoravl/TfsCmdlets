@@ -31,7 +31,7 @@ namespace TfsCmdlets.SourceGenerators.Analyzers
 
             foreach (var declaringSyntaxReference in type.DeclaringSyntaxReferences)
             {
-                if (!(declaringSyntaxReference.GetSyntax() is ClassDeclarationSyntax cds)) continue;
+                if (!(declaringSyntaxReference.GetSyntax() is TypeDeclarationSyntax cds)) continue;
                 if (cds.IsPartial()) continue;
                 if (!filters.Any(filter => filter.ShouldProcessType(type) && !type.Name.EndsWith("Controller"))) continue;
 

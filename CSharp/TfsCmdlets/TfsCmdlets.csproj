@@ -4,7 +4,7 @@
     <TargetFrameworks>netcoreapp3.1;net471</TargetFrameworks>
     <RootNamespace>TfsCmdlets</RootNamespace>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <LangVersion>preview</LangVersion>

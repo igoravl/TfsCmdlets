@@ -85,7 +85,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};"));
 
         private string GetUsingStatements(INamedTypeSymbol cmdlet)
-            => cmdlet.GetDeclaringSyntax<ClassDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
+            => cmdlet.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
         
         private static IEnumerable<GeneratedProperty> GenerateParameterSetProperty(ControllerInfo controller)
         {
