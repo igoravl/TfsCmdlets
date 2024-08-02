@@ -5,7 +5,7 @@ using TfsCmdlets.HttpClients;
 namespace TfsCmdlets.Cmdlets.WorkItem.Field
 {
     /// <summary>
-    /// Gets information from one or more process templates.
+    /// Gets information from one or more organization-wide work item fields.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WorkItemField))]
     partial class GetWorkItemField
