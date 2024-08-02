@@ -44,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public int Length { get; set; } = 0;
     }
 
-    [CmdletController(typeof(ClassificationNode))]
+    [CmdletController(typeof(ClassificationNode), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class SetIterationController 
     {
         protected override IEnumerable Run()
@@ -57,7 +57,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             ErrorUtil.ThrowIfNotFound(nodeToSet, "Node", Parameters.Get<string>("Node"));
 
             var tp = Data.GetProject();
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
             if (!PowerShell.ShouldProcess(tp, $"Set dates on iteration '{nodeToSet.RelativePath}'")) yield break;
 
@@ -70,10 +69,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 }
             };
 
-            var result = client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToSet.RelativePath.Substring(1))
+            var result = Client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToSet.RelativePath.Substring(1))
                 .GetResult($"Error setting dates on iteration '{nodeToSet.FullPath}'");
 
-            yield return new ClassificationNode(result, tp.Name, client);
+            yield return new ClassificationNode(result, tp.Name, Client);
         }
     }
 }

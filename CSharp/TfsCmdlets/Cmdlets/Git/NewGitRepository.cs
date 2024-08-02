@@ -32,14 +32,12 @@ namespace TfsCmdlets.Cmdlets.Git
         public string SourceBranch { get; set; }
     }
 
-    [CmdletController(typeof(GitRepository))]
+    [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
     partial class NewGitRepositoryController
     {
         protected override IEnumerable Run()
         {
             if (!PowerShell.ShouldProcess(Project, $"Create Git repository '{Repository}'")) yield break;
-
-            var client = GetClient<GitHttpClient>();
 
             var tpRef = new TeamProjectReference
             {
@@ -96,7 +94,7 @@ namespace TfsCmdlets.Cmdlets.Git
                     ParentRepository = parentRepoRef
                 };
 
-                yield return client.CreateRepositoryAsync(createOptions, Project.Name, sourceRef: sourceRef)
+                yield return Client.CreateRepositoryAsync(createOptions, Project.Name, sourceRef: sourceRef)
                     .GetResult("Error forking Git repository");
 
                 yield break;
@@ -108,7 +106,7 @@ namespace TfsCmdlets.Cmdlets.Git
                 ProjectReference = tpRef
             };
 
-            yield return client.CreateRepositoryAsync(repoToCreate, Project.Name)
+            yield return Client.CreateRepositoryAsync(repoToCreate, Project.Name)
                 .GetResult("Error creating Git repository");
         }
     }

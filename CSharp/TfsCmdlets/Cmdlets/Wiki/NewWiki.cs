@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
         public SwitchParameter ProjectWiki { get; set; }
     }
 
-    [CmdletController(typeof(WikiV2))]
+    [CmdletController(typeof(WikiV2), Client=typeof(IWikiHttpClient))]
     partial class NewWikiController
     {
         protected override IEnumerable Run()
@@ -66,9 +66,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
                 createParams.RepositoryId = repo.Id;
             }
 
-            var client = Data.GetClient<WikiHttpClient>();
-
-            yield return TaskExtensions.GetResult<WikiV2>(client.CreateWikiAsync(createParams), "Error creating Wiki repository");
+            yield return TaskExtensions.GetResult<WikiV2>(Client.CreateWikiAsync(createParams), "Error creating Wiki repository");
         }
     }
 }

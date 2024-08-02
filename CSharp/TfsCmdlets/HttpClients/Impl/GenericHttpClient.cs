@@ -10,8 +10,10 @@ namespace TfsCmdlets.HttpClients
     /// Generic HTTP Client, used by the Invoke-TfsRestApi cmdlet
     /// </summary>
     [Export]
-    public class GenericHttpClient : VssHttpClientBase
+    public class GenericHttpClient : VssHttpClientBase, IGenericHttpClient
     {
+        private Uri _Uri;
+
         #region Constructors and fields
 
         /// <summary>
@@ -54,7 +56,7 @@ namespace TfsCmdlets.HttpClients
         /// <summary>
         /// Gets the API URL
         /// </summary>
-        public Uri Uri { get; private set; }
+        public Uri GetUri() => _Uri;
 
         /// <summary>
         /// Sends a GET request to an Azure DevOps API
@@ -305,7 +307,7 @@ namespace TfsCmdlets.HttpClients
                 queryParameters,
                 mediaType);
  
-            Uri = msg.RequestUri;
+            _Uri = msg.RequestUri;
             
             return msg;
         }

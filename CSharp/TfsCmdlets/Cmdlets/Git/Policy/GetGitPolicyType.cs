@@ -19,13 +19,11 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         public object PolicyType { get; set; } = "*";
     }
 
-    [CmdletController(typeof(PolicyType))]
+    [CmdletController(typeof(PolicyType), Client=typeof(IPolicyHttpClient))]
     partial class GetGitPolicyTypeController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<PolicyHttpClient>();
-
             foreach (var input in PolicyType)
             {
                 var policyType = input switch
@@ -43,13 +41,13 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
                         }
                     case Guid g:
                         {
-                            yield return client.GetPolicyTypeAsync(Project.Name, g)
+                            yield return Client.GetPolicyTypeAsync(Project.Name, g)
                                 .GetResult("Error retrieving policy types");
                             break;
                         }
                     case string s:
                         {
-                            foreach (var pt in client.GetPolicyTypesAsync(Project.Name)
+                            foreach (var pt in Client.GetPolicyTypesAsync(Project.Name)
                                 .GetResult("Error retrieving policy types")
                                 .Where(p => p.DisplayName.IsLike(s)))
                             {

@@ -38,13 +38,11 @@ namespace TfsCmdlets.Cmdlets.Identity
         public SwitchParameter Current { get; set; }
     }
 
-    [CmdletController(typeof(Models.Identity))]
+    [CmdletController(typeof(Models.Identity), Client=typeof(IIdentityHttpClient))]
     partial class GetIdentityController
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<IdentityHttpClient>(); // ClientScope.Server
-
             foreach (var input in Identity)
             {
                 var identity = input switch
@@ -69,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.Identity
                         }
                     case WebApiIdentityRef ir:
                         {
-                            yield return new Models.Identity(client.ReadIdentityAsync(ir.Id, QueryMembership)
+                            yield return new Models.Identity(Client.ReadIdentityAsync(ir.Id, QueryMembership)
                                 .GetResult($"Error retrieving information from identity [{identity}]"));
                             break;
                         }
@@ -77,7 +75,7 @@ namespace TfsCmdlets.Cmdlets.Identity
                         {
                             Logger.Log($"Finding identity with ID [{g}] and QueryMembership={QueryMembership}");
 
-                            yield return new Models.Identity(client.ReadIdentityAsync(g, QueryMembership)
+                            yield return new Models.Identity(Client.ReadIdentityAsync(g, QueryMembership)
                                 .GetResult($"Error retrieving information from identity [{identity}]"));
                             break;
                         }
@@ -85,7 +83,7 @@ namespace TfsCmdlets.Cmdlets.Identity
                         {
                             Logger.Log($"Finding identity with account name [{identity}] and QueryMembership={QueryMembership}");
 
-                            foreach (var id in client.ReadIdentitiesAsync(IdentitySearchFilter.AccountName, s, ReadIdentitiesOptions.None, QueryMembership)
+                            foreach (var id in Client.ReadIdentitiesAsync(IdentitySearchFilter.AccountName, s, ReadIdentitiesOptions.None, QueryMembership)
                                 .GetResult($"Error retrieving information from identity [{identity}]")
                                 .Select(i => new Models.Identity(i)))
                             {

@@ -63,7 +63,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter Passthru { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class MoveWorkItemController
     {
         protected override IEnumerable Run()
@@ -169,8 +169,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                     });
                 }
 
-                var client = Data.GetClient<WorkItemTrackingHttpClient>();
-                var result = client.UpdateWorkItemAsync(patch, (int)wi.Id)
+                var result = Client.UpdateWorkItemAsync(patch, (int)wi.Id)
                     .GetResult("Error moving work item");
 
                 ids.Add((int)result.Id);

@@ -18,18 +18,16 @@ namespace TfsCmdlets.Cmdlets.Team
         public object Team { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team))]
+    [CmdletController(typeof(Models.Team), Client=typeof(TeamHttpClient))]
     partial class RemoveTeamController
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<TeamHttpClient>();
-
             foreach (var team in Items)
             {
                 if (!PowerShell.ShouldProcess($"[Project: {team.ProjectName}]/[Team: {team.Name}]", $"Delete team")) continue;
 
-                client.DeleteTeamAsync(team.ProjectName, team.Name)
+                Client.DeleteTeamAsync(team.ProjectName, team.Name)
                     .Wait($"Error deleting team {team.Name}");
             }
 

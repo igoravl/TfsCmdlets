@@ -36,10 +36,11 @@ namespace TfsCmdlets.Cmdlets.Artifact
     [CmdletController(typeof(Feed))]
     partial class GetArtifactFeedController
     {
+        [Import]
+        private IFeedHttpClient Client { get; set; }
+        
         protected override IEnumerable Run()
         {
-            var client = GetClient<FeedHttpClient>();
-
             foreach (var input in Feed)
             {
                 var feed = input switch
@@ -59,14 +60,14 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case Guid g:
                         {
-                            yield return client.GetFeedsAsync(Role)
+                            yield return Client.GetFeedsAsync(Role, false, false)
                                 .GetResult($"Error getting artifact feed(s) '{g}'")
                                 .Where(f => f.Id == g);
                             break;
                         }
                     case string s when !string.IsNullOrEmpty(s):
                         {
-                            yield return client.GetFeedsAsync(Role)
+                            yield return Client.GetFeedsAsync(Role, false, false)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(f1 => f1.Name.IsLike(s) && (
                                     (string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Collection) > 0)) ||

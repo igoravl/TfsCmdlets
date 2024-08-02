@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
         public object Repository { get; set; }
     }
 
-    [CmdletController(typeof(GitItem))]
+    [CmdletController(typeof(GitItem), Client=typeof(IGitHttpClient))]
     partial class GetGitItemController
     {
         [Import]
@@ -49,7 +49,6 @@ namespace TfsCmdlets.Cmdlets.Git.Item
 
         protected override IEnumerable Run()
         {
-            var client = GetClient<GitHttpClient>();
             var repo = GetItem<GitRepository>(new { Default = !Has_Repository });
 
             if(repo.Size == 0)
@@ -95,7 +94,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
 
                             var path = NodeUtil.NormalizeNodePath(s, includeLeadingSeparator: true, separator: '/');
 
-                            yield return new Models.GitItem(client.GetItemAsync(projectName, repo.Id, s,
+                            yield return new Models.GitItem(Client.GetItemAsync(projectName, repo.Id, s,
                                     recursionLevel: VersionControlRecursionType.None,
                                     includeContentMetadata: IncludeMetadata,
                                     includeContent: IncludeContent,
@@ -111,7 +110,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
 
                             Logger.Log($"Retrieving item(s) matching '{path}' under folder '{rootPath}' in repository '{repo.Name}'");
 
-                            var result = client.GetItemsAsync(projectName, repo.Id, rootPath,
+                            var result = Client.GetItemsAsync(projectName, repo.Id, rootPath,
                                     recursionLevel: shouldRecurse ? VersionControlRecursionType.Full : VersionControlRecursionType.OneLevel,
                                     includeContentMetadata: IncludeMetadata,
                                     includeLinks: true,
@@ -131,7 +130,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
                             {
                                 Logger.Log($"Retrieving item '{i.Path}' (including contents) in repository '{repo.Name}'");
 
-                                yield return new Models.GitItem(client.GetItemAsync(projectName, repo.Id, i.Path,
+                                yield return new Models.GitItem(Client.GetItemAsync(projectName, repo.Id, i.Path,
                                         recursionLevel: VersionControlRecursionType.None,
                                         includeContentMetadata: IncludeMetadata,
                                         includeContent: IncludeContent,

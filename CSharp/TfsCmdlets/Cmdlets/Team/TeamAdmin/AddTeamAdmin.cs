@@ -1,5 +1,5 @@
 using System.Management.Automation;
-using TfsCmdlets.HttpClient;
+using TfsCmdlets.HttpClients;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 {
@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
         public object Admin { get; set; }
     }
 
-    [CmdletController(typeof(Models.TeamAdmin))]
+    [CmdletController(typeof(Models.TeamAdmin), Client=typeof(ITeamAdminHttpClient))]
     partial class AddTeamAdminController
     {
         protected override IEnumerable Run()
@@ -39,8 +39,7 @@ namespace TfsCmdlets.Cmdlets.Team.TeamAdmin
 
             if (!PowerShell.ShouldProcess(team, $"Add team administrator(s) {string.Join(", ", uniqueNames)}")) yield break;
 
-            var client = Data.GetClient<TeamAdminHttpClient>();
-            var result = client.AddTeamAdmin(team.ProjectId, team.Id, ids);
+            var result = Client.AddTeamAdmin(team.ProjectId, team.Id, ids);
 
             foreach (var addedAdmin in result)
             {

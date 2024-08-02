@@ -9,6 +9,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         [Import]
         private INodeUtil NodeUtil { get; }
 
+        [Import]
+        private IWorkItemTrackingHttpClient Client { get; set; }
+
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
@@ -18,7 +21,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
             var nodeType = structureGroup.ToString().TrimEnd('s');
             var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, scope: nodeType, includeTeamProject: false);
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var parentPath = Path.GetDirectoryName(nodePath);
             var nodeName = Path.GetFileName(nodePath);
 
@@ -60,10 +62,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 };
             }
 
-            var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
+            var result = Client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
                 .GetResult($"Error creating node {nodePath}");
 
-            yield return new ClassificationNode(result, tp.Name, client);
+            yield return new ClassificationNode(result, tp.Name, Client);
         }
 
         [ImportingConstructor]

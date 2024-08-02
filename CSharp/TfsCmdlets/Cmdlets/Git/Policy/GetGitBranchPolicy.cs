@@ -32,7 +32,7 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         public object Repository { get; set; }
     }
 
-    [CmdletController(typeof(PolicyConfiguration))]
+    [CmdletController(typeof(PolicyConfiguration), Client=typeof(IGitHttpClient))]
     partial class GetGitBranchPolicyController 
     {
         protected override IEnumerable Run()
@@ -42,7 +42,6 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
             var repoId = url.Segments[url.Segments.Length - 3].TrimEnd('/');
             var projectId = url.Segments[url.Segments.Length - 7].TrimEnd('/');
             var repo = GetItem<GitRepository>(new{Repository = repoId, Project = projectId});
-            var client = GetClient<GitHttpClient>();
 
             var branch = $"refs/heads/{b.Name}";
 
@@ -80,8 +79,8 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
                 bool getById = (policyTypeId != Guid.Empty);
 
                 var policies = (getById ?
-                        client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, policyTypeId): 
-                        client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch))
+                        Client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch, policyTypeId): 
+                        Client.GetPolicyConfigurationsAsync(repo.ProjectReference.Name, repo.Id, branch))
                     .GetResult($"Error getting policy definitions from branch {branch} in repository {repo.Name}")
                     .PolicyConfigurations;
 

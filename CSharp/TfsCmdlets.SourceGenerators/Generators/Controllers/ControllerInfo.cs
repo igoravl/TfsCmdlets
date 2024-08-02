@@ -14,6 +14,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string GenericArg { get; }
         internal string Verb { get; }
         public INamedTypeSymbol DataType { get; }
+        public INamedTypeSymbol Client { get; }
+
         public INamedTypeSymbol BaseClass { get; }
         public string CmdletName { get; }
         public INamedTypeSymbol Cmdlet { get; }
@@ -44,7 +46,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             if (Cmdlet == null) throw new ArgumentException($"Unable to find cmdlet class '{CmdletName}'");
 
             BaseClass = customBaseClass ?? context.Compilation.GetTypeByMetadataName("TfsCmdlets.Controllers.ControllerBase"); ;
-            DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute"); ;
+            DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute");
+            Client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
             GenericArg = DataType == null ? string.Empty : $"<{DataType}>";
             Verb = Cmdlet.Name.Substring(0, Cmdlet.Name.FindIndex(char.IsUpper, 1));
             Noun = Cmdlet.Name.Substring(Verb.Length);

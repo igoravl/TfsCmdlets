@@ -25,13 +25,11 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         public object Repository { get; set; }
     }
 
-    [CmdletController(typeof(GitBranchStats))]
+    [CmdletController(typeof(GitBranchStats), Client=typeof(IGitHttpClient))]
     partial class RemoveGitBranchController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<GitHttpClient>();
-
             foreach (var branch in Items)
             {
                 var commitUrl = new Uri(branch.Commit.Url);
@@ -43,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
 
                 try
                 {
-                    client.UpdateRefsAsync(new[]{new GitRefUpdate()
+                    Client.UpdateRefsAsync(new[]{new GitRefUpdate()
                     {
                         Name = $"refs/heads/{branch.Name}",
                         OldObjectId = branch.Commit.CommitId,

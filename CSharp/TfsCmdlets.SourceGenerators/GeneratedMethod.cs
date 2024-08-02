@@ -12,13 +12,24 @@ namespace TfsCmdlets.SourceGenerators
         {
             var parms1 = new List<string>();
             var parms2 = new List<string>();
-            
-            Name = method.Name;
+
+            Name = method.Arity > 0 ? $"{method.Name}<{string.Join(", ", method.TypeArguments.Select(t => t.FullName()))}>" : method.Name;
             ReturnType = method.ReturnType;
 
             foreach (var p in method.Parameters)
             {
-                var defaultValue = p.HasExplicitDefaultValue ? $" = {p.ExplicitDefaultValue?? (p.Type.IsValueType? $"default({p.Type.ToDisplayString()})" : "null")}" : string.Empty;
+                var defaultValue = p.HasExplicitDefaultValue ?
+                    p.ExplicitDefaultValue switch
+                    {
+                        string s => $" = \"{s}\"",
+                        char c => $" = '{c}'",
+                        bool b => $" = {b.ToString().ToLower()}",
+                        decimal d => $" = {d}m",
+                        null => p.Type.IsValueType? $" = default({p.Type.ToDisplayString()})": " = null",
+                        _ => $" = {p.ExplicitDefaultValue}"
+                    }
+                    : string.Empty;
+
                 parms1.Add($"{p.Type.FullName()} {p.Name}{defaultValue}");
                 parms2.Add(p.Name);
             }
@@ -29,17 +40,17 @@ namespace TfsCmdlets.SourceGenerators
 
         public string SignatureNamesOnly { get; set; }
 
-        public string Name { get; } 
-        
-        public string Signature { get; } 
-        
+        public string Name { get; }
+
+        public string Signature { get; }
+
         public ITypeSymbol ReturnType { get; }
 
         public override string ToString()
         {
             return ToString(null);
         }
-        
+
         public string ToString(string body)
         {
             var sb = new StringBuilder();
@@ -48,13 +59,13 @@ namespace TfsCmdlets.SourceGenerators
             if (string.IsNullOrWhiteSpace(body)) return sb.ToString();
 
             var isMethodBody = body.TrimStart().StartsWith("=>");
-            
+
             sb.AppendLine();
-            
-            if(!isMethodBody) sb.AppendLine("{");
+
+            if (!isMethodBody) sb.AppendLine("{");
             sb.AppendLine(body);
             if (!isMethodBody) sb.AppendLine("}");
-            
+
             return sb.ToString();
         }
     };

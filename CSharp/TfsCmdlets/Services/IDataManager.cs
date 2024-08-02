@@ -42,8 +42,6 @@ namespace TfsCmdlets.Services
 
         bool TryGetTeam(out WebApiTeam returnTeam, bool includeSettings = false, bool includeMembers = false);
 
-        T GetClient<T>(object overridingParameters = null);
-
         T GetService<T>(object overridingParameters = null);
     }
 }

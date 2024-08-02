@@ -6,6 +6,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class RemoveClassificationNodeController: ControllerBase
     {
+        [Import]
+        private IWorkItemTrackingHttpClient Client { get; set; }
+        
         protected override IEnumerable Run()
         {
             var nodes = Data.GetItems<ClassificationNode>().OrderByDescending(n => n.Path).ToList();
@@ -24,7 +27,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             Logger.Log($"Remove nodes and move orphaned work items to node '{moveToNode.FullPath}'");
 
             var tp = Data.GetProject();
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
             foreach (var node in nodes)
             {
@@ -37,7 +39,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                     continue;
                 }
 
-                client.DeleteClassificationNodeAsync(node.TeamProject, structureGroup, node.RelativePath, moveToNode.Id)
+                Client.DeleteClassificationNodeAsync(node.TeamProject, structureGroup, node.RelativePath, moveToNode.Id)
                     .Wait($"Error removing node '{node.FullPath}'");
             }
 

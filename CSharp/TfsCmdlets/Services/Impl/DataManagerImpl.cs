@@ -149,14 +149,6 @@ namespace TfsCmdlets.Services.Impl
             return team != null;
         }
 
-        public T GetClient<T>(object overridingParameters = null)
-        {
-            var conn = ((ITfsServiceProvider)GetCollection(overridingParameters));
-
-            Logger.Log($"GetClient: Getting an instance of [{typeof(T).FullName}]");
-            return (T)conn.GetClient(typeof(T));
-        }
-
         public T GetService<T>(object overridingParameters = null)
         {
             var conn = ((ITfsServiceProvider)GetCollection(overridingParameters));

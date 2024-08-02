@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         public string Comment { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItemRelation))]
+    [CmdletController(typeof(WebApiWorkItemRelation), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class AddWorkItemLinkController
     {
         [Import]
@@ -75,8 +75,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                    }
                 };
 
-                var client = Data.GetClient<WorkItemTrackingHttpClient>();
-                var result = client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
+                var result = Client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
                         bypassRules: BypassRules, 
                         suppressNotifications: SuppressNotifications)
                     .GetResult("Error updating target work item");

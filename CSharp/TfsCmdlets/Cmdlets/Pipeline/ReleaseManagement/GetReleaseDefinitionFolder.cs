@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         public Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder QueryOrder { get; set; } 
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client = typeof(IReleaseHttpClient))]
     partial class GetReleaseDefinitionFolderController
     {
         [Import] 
@@ -47,10 +47,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
                         }
                     case string s when s.IsWildcard():
                         {
-                            var client = Data.GetClient<ReleaseHttpClient>();
                             var tp = Data.GetProject();
                             s = NodeUtil.NormalizeNodePath(s, tp.Name);
-                            var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
+                            var folders = Client.GetFoldersAsync(tp.Name, null, queryOrder)
                                 .GetResult($"Error getting folders matching {s}");
 
                             foreach (var i in folders
@@ -63,9 +62,8 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
                         }
                     case string s:
                         {
-                            var client = Data.GetClient<ReleaseHttpClient>();
                             var tp = Data.GetProject();
-                            var f = client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
+                            var f = Client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
                                 .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 
                             if (f != null) yield return f;

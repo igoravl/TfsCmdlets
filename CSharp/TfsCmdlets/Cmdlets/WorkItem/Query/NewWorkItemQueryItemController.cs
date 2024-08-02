@@ -4,7 +4,7 @@ using TfsCmdlets.Cmdlets.WorkItem.Query;
 
 namespace TfsCmdlets.Controllers.WorkItem.Query
 {
-    [CmdletController(typeof(QueryHierarchyItem))]
+    [CmdletController(typeof(QueryHierarchyItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class NewWorkItemQueryController
     {
         [Import]
@@ -16,7 +16,6 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             var isFolder = itemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
             var item = Parameters.Get<string>(itemType);
             var tp = Data.GetProject();
-            var client = GetClient<WorkItemTrackingHttpClient>();
 
             var root = GetItem<QueryHierarchyItem>(new { Folder = @"\" });
             var fullPath = NodeUtil.NormalizeNodePath(item, tp.Name, root.Name, includeScope: false, separator: '/');
@@ -56,7 +55,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
             Logger.Log($"Creating query '{queryName}' in folder '{parentPath}'");
 
-            var result = client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
+            var result = Client.CreateQueryAsync(newItem, tp.Name, parentFolder.Id.ToString())
                 .GetResult($"Error creating new work item {itemType} '{fullPath}'");
 
             yield return result;

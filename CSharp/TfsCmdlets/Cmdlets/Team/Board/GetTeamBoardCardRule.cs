@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
         public object Board { get; set; }
     }
 
-    [CmdletController(typeof(Models.CardRule))]
+    [CmdletController(typeof(Models.CardRule), Client=typeof(IWorkHttpClient))]
     partial class GetTeamBoardCardRuleController
     {
         protected override IEnumerable Run()
@@ -47,9 +47,8 @@ namespace TfsCmdlets.Cmdlets.Team.Board
             var ruleType = Parameters.Get<CardRuleType>(nameof(GetTeamBoardCardRule.RuleType));
 
             var ctx = new TeamContext(tp.Name, t.Name);
-            var client = Data.GetClient<WorkHttpClient>();
 
-            var rules = TaskExtensions.GetResult<BoardCardRuleSettings>(client.GetBoardCardRuleSettingsAsync(ctx, board.Name), "Error getting board card rules")
+            var rules = TaskExtensions.GetResult<BoardCardRuleSettings>(Client.GetBoardCardRuleSettingsAsync(ctx, board.Name), "Error getting board card rules")
                 .rules;
 
             // Card rules

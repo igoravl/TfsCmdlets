@@ -28,14 +28,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public int Results { get; set; } = 100;
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(ISearchHttpClient))]
     partial class SearchWorkItemController
     {
         protected override IEnumerable Run()
         {
             var text = Parameters.Get<string>(nameof(SearchWorkItem.Query));
             var results = Parameters.Get<int>(nameof(SearchWorkItem.Results));
-            var client = Data.GetClient<SearchHttpClient>();
 
             var req = new WorkItemSearchRequest()
             {
@@ -50,12 +49,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             {
                 var tp = Data.GetProject();
 
-                resp = client.FetchWorkItemSearchResultsAsync(req, tp.Name)
+                resp = Client.FetchWorkItemSearchResultsAsync(req, tp.Name)
                     .GetResult("Error getting search results");
             }
             else
             {
-                resp = client.FetchWorkItemSearchResultsAsync(req)
+                resp = Client.FetchWorkItemSearchResultsAsync(req)
                     .GetResult("Error getting search results");
             }
 

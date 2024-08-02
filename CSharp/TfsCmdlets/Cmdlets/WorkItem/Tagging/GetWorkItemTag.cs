@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public SwitchParameter IncludeInactive { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTagDefinition))]
+    [CmdletController(typeof(WebApiTagDefinition), Client=typeof(ITaggingHttpClient))]
     partial class GetWorkItemTagController
     {
         protected override IEnumerable Run()
@@ -35,7 +35,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
             var includeInactive = Parameters.Get<bool>(nameof(GetWorkItemTag.IncludeInactive));
 
             var tp = Data.GetProject();
-            var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
             switch (tag)
             {
@@ -45,13 +44,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
                     }
                 case string s:
                     {
-                        return client.GetTagsAsync(tp.Id, includeInactive)
+                        return Client.GetTagsAsync(tp.Id, includeInactive)
                             .GetResult($"Error getting work item tag(s) '{s}'")
                             .Where(t => t.Name.IsLike(s));
                     }
                 case IEnumerable<string> tags:
                     {
-                        return client.GetTagsAsync(tp.Id, includeInactive)
+                        return Client.GetTagsAsync(tp.Id, includeInactive)
                             .GetResult($"Error getting work item tag(s) '{string.Join(", ", tags)}'")
                             .Where(t => tags.Any(tag => t.Name.IsLike(tag)));
                     }

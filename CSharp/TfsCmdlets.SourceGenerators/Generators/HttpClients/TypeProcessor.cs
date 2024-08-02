@@ -61,6 +61,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
                         }
                         
                         [Export(typeof({{client.Name}}))]
+                        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
                         internal class {{client.Name}}Impl: {{client.Name}}
                         {
                             private {{client.OriginalType}} _client;

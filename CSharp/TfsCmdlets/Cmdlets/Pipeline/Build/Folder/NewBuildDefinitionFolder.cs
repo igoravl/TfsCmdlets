@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         public string Description { get; set; }
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client=typeof(IBuildHttpClient))]
     partial class NewBuildDefinitionFolderController
     {
         protected override IEnumerable Run()
@@ -49,14 +49,12 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                 yield break;
             }
 
-            var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
-
             var newFolder = new WebApiFolder()
             {
                 Description = description
             };
 
-            var result = client.CreateFolderAsync(newFolder, tp.Name, $@"\{folder}")
+            var result = Client.CreateFolderAsync(newFolder, tp.Name, $@"\{folder}")
                 .GetResult($"Error creating folder '{folder}'");
 
             yield return result;

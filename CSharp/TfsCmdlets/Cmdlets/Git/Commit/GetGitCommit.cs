@@ -125,12 +125,11 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
         public object Repository { get; set; }
    }
 
-    [CmdletController(typeof(GitCommitRef))]
+    [CmdletController(typeof(GitCommitRef), Client=typeof(IGitHttpClient))]
     partial class GetGitCommitController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<GitHttpClient>();
             var repository = GetItem<GitRepository>(new { Repository = Has_Repository? Repository: Project.Name });
             string commitSha;
 
@@ -159,7 +158,7 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
                             }
                     }
 
-                    yield return client.GetCommitAsync(repository.ProjectReference.Id.ToString(), commitSha, repository.Id.ToString())
+                    yield return Client.GetCommitAsync(repository.ProjectReference.Id.ToString(), commitSha, repository.Id.ToString())
                         .GetResult($"Error getting commit '{commitSha}' in repository '{repository.Name}'");
                 }
                 yield break;
@@ -220,7 +219,7 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
                 ToDate = Has_ToDate ? this.ToDate.ToString("yyyy-MM-ddTHH:mm:ssK") : null,
             };
 
-            var result = client.GetCommitsBatchAsync(criteria, repository.Id)
+            var result = Client.GetCommitsBatchAsync(criteria, repository.Id)
                 .GetResult("Error getting Git commits");
 
             foreach (var commit in result)

@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         public object Repository { get; set; }
     }
 
-    [CmdletController(typeof(GitBranchStats))]
+    [CmdletController(typeof(GitBranchStats), Client=typeof(IGitHttpClient))]
     partial class GetGitBranchController 
     {
         protected override IEnumerable Run()
@@ -46,7 +46,6 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 yield break;
             }
 
-            var client = GetClient<GitHttpClient>();
             string branchName = null;
 
             foreach(var branch in Branch)
@@ -85,7 +84,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
 
                 try
                 {
-                    result = client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
+                    result = Client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
                         .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
                         .Where(b => b.Name.IsLike(branchName));
                 }

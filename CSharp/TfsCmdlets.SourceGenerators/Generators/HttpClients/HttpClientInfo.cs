@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -12,22 +13,23 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             : base(symbol, logger)
         {
             OriginalType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("HttpClientAttribute");
+            Methods = OriginalType
+                .GetMembersRecursively(SymbolKind.Method, "Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase")
+                .Cast<IMethodSymbol>()
+                .Where(m =>
+                    m.MethodKind == MethodKind.Ordinary &&
+                    m.DeclaredAccessibility == Accessibility.Public &&
+                    !m.IsOverride &&
+                    !m.HasAttribute("ObsoleteAttribute"))
+                .ToList();
         }
 
         public INamedTypeSymbol OriginalType { get; }
+        public IEnumerable<IMethodSymbol> Methods { get; }
 
         internal IEnumerable<GeneratedMethod> GenerateMethods()
         {
-            var methods = OriginalType
-                .GetMembersRecursively(SymbolKind.Method, "Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase")
-                .Cast<IMethodSymbol>()
-                .Where(m => 
-                    m.MethodKind == MethodKind.Ordinary && 
-                    m.DeclaredAccessibility == Accessibility.Public && 
-                    !m.HasAttribute("ObsoleteAttribute"))
-                .ToList();
-
-            foreach (var method in methods)
+            foreach (var method in Methods)
             {
                 yield return new GeneratedMethod(method);
             }

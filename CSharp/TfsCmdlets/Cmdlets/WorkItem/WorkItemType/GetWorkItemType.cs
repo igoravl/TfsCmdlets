@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         public object WorkItem { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItemType))]
+    [CmdletController(typeof(WebApiWorkItemType), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemTypeController
     {
         protected override IEnumerable Run()
@@ -41,7 +41,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
                 type = workItem.Fields["System.WorkItemType"];
             }
 
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var tp = Data.GetProject();
 
             switch (type)
@@ -52,13 +51,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
                     }
                 case string t:
                     {
-                        return client.GetWorkItemTypesAsync(tp.Id)
+                        return Client.GetWorkItemTypesAsync(tp.Id)
                             .GetResult($"Error getting type(s) '{t}'")
                             .Where(t1 => t1.Name.IsLike(t));
                     }
                 case IEnumerable<string> types:
                     {
-                        return client.GetWorkItemTypesAsync(tp.Id)
+                        return Client.GetWorkItemTypesAsync(tp.Id)
                             .GetResult($"Error getting type(s) '{string.Join(", ", types)}'")
                             .Where(t1 => types.Any(t2 => t1.Name.IsLike(t2)));
                     }

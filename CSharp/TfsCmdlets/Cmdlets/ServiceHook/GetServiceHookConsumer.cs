@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         public string Consumer { get; set; } = "*";
     }
 
-    [CmdletController(typeof(WebApiConsumer))]
+    [CmdletController(typeof(WebApiConsumer), Client=typeof(ServiceHooksPublisherHttpClient))]
     partial class GetServiceHookConsumerController
     {
         protected override IEnumerable Run()
@@ -43,8 +43,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
                         }
                     case string s:
                         {
-                            var client = GetClient<ServiceHooksPublisherHttpClient>();
-                            var result = client.GetConsumersAsync()
+                            var result = Client.GetConsumersAsync()
                                 .GetResult("Error getting service hook consumers");
 
                             foreach (var shc in result.Where(c => c.Name.IsLike(s) || c.Id.IsLike(s)))

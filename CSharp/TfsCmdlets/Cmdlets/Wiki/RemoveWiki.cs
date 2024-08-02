@@ -25,13 +25,11 @@ namespace TfsCmdlets.Cmdlets.Wiki
         public SwitchParameter ProjectWiki { get; set; }
     }
 
-[CmdletController(typeof(WikiV2))]
+[CmdletController(typeof(WikiV2), Client=typeof(IWikiHttpClient))]
     partial class RemoveWikiController
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<WikiHttpClient>();
-
             var wikis = Data.GetItems<WikiV2>();
             var force = Parameters.Get<bool>("Force");
 
@@ -54,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
                 }
                 else
                 {
-                    client.DeleteWikiAsync(tp.Name, w.Id).Wait();
+                    Client.DeleteWikiAsync(tp.Name, w.Id).Wait();
                 }
             }
 

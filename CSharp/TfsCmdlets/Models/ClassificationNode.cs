@@ -9,11 +9,11 @@ namespace TfsCmdlets.Models
     /// </summary>
     public class ClassificationNode : ModelBase<WorkItemClassificationNode>
     {
-        private readonly WorkItemTrackingHttpClient _client;
+        private readonly IWorkItemTrackingHttpClient _client;
         private readonly string _rootPath;
         private readonly string _relativePath;
 
-        public ClassificationNode(WorkItemClassificationNode n, string projectName, WorkItemTrackingHttpClient client)
+        public ClassificationNode(WorkItemClassificationNode n, string projectName, IWorkItemTrackingHttpClient client)
             : base(n)
         {
             ProjectName = projectName;

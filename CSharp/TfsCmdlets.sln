@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets", "TfsCmdlets\Tf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators", "TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj", "{1045CB54-F17F-42EA-9497-5D60815BDC64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.Common", "TfsCmdlets.Common\TfsCmdlets.Common.csproj", "{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TfsCmdlets.SourceGenerators.UnitTests", "TfsCmdlets.SourceGenerators.UnitTests\TfsCmdlets.SourceGenerators.UnitTests.csproj", "{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}"
 EndProject
 Global
@@ -33,10 +31,6 @@ Global
 		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1045CB54-F17F-42EA-9497-5D60815BDC64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD6FA384-22B2-42E8-8D4B-69BBF66DC792}.Release|Any CPU.Build.0 = Release|Any CPU
 		{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76E5ACA3-72D5-41DD-8BF6-9C6DC246D0B7}.Release|Any CPU.ActiveCfg = Release|Any CPU

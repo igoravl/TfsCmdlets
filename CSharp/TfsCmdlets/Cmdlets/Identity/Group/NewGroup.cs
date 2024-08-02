@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public GroupScope Scope { get; set; } = GroupScope.Collection;
     }
 
-    [CmdletController(typeof(GraphGroup))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(GraphHttpClient))]
     partial class NewGroupController
     {
         [Import]
@@ -40,7 +40,6 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
             var group = Parameters.Get<string>(nameof(NewGroup.Group));
             var description = Parameters.Get<string>(nameof(NewGroup.Description));
             var scope = Parameters.Get<GroupScope>(nameof(NewGroup.Scope));
-            var client = Data.GetClient<GraphHttpClient>();
 
             switch (scope)
             {
@@ -57,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                     {
                         if(!PowerShell.ShouldProcess(Data.GetCollection(), $"Create group '{group}'")) yield break;
 
-                        yield return client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
+                        yield return Client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
                             DisplayName = group,
                             Description = description
                         }).GetResult($"Error creating group '{group}' in collection");
@@ -71,7 +70,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
                         if(!PowerShell.ShouldProcess(tp, $"Create group {group}")) yield break;
 
-                        yield return client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
+                        yield return Client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
                             DisplayName = group,
                             Description = description
                         }, scopeDescriptor: descriptor.Value).GetResult($"Error creating group '{group}' in project '{tp.Name}'");

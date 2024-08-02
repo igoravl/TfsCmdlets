@@ -243,7 +243,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter IncludeLinks { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemController
     {
         [Import]
@@ -256,7 +256,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         protected override IEnumerable Run()
         {
-            var client = GetClient<WorkItemTrackingHttpClient>();
             var expand = IncludeLinks ? WorkItemExpand.All : WorkItemExpand.Fields;
             IEnumerable<string> fields = null;
 
@@ -296,7 +295,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 {
                     case WebApiWorkItem wi when Deleted:
                         {
-                            yield return GetWorkItemById((int)wi.Id, WorkItemExpand.None, null, client);
+                            yield return GetWorkItemById((int)wi.Id, WorkItemExpand.None, null, Client);
                             break;
                         }
                     case WebApiWorkItem wi:
@@ -306,7 +305,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                         }
                     case int id when Deleted:
                         {
-                            yield return GetWorkItemById(id, WorkItemExpand.None, null, client);
+                            yield return GetWorkItemById(id, WorkItemExpand.None, null, Client);
                             break;
                         }
                     case int id:
@@ -316,7 +315,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                                 ids.Add(id);
                                 continue;
                             }
-                            yield return GetWorkItemById(id, expand, fields, client);
+                            yield return GetWorkItemById(id, expand, fields, Client);
                             break;
                         }
                     case Uri url:
@@ -332,7 +331,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                                 ids.Add(id);
                                 continue;
                             }
-                            yield return GetWorkItemById(id, expand, fields, client);
+                            yield return GetWorkItemById(id, expand, fields, Client);
                             break;
                         }
                     case null when !string.IsNullOrEmpty(Where):
@@ -340,13 +339,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                             var fieldList = expand == WorkItemExpand.None ? string.Join(",", fields) : "*";
                             var wiql = $"SELECT {fieldList} FROM WorkItems WHERE {Where}";
 
-                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, Client)) yield return wi;
 
                             break;
                         }
                     case null when !string.IsNullOrEmpty(Wiql):
                         {
-                            foreach (var wi in GetWorkItemsByWiql(Wiql, expand, client)) yield return wi;
+                            foreach (var wi in GetWorkItemsByWiql(Wiql, expand, Client)) yield return wi;
 
                             break;
                         }
@@ -354,13 +353,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                         {
                             var wiql = GetItem<QueryHierarchyItem>(new { Query = SavedQuery, ItemType = "Query" }).Wiql;
 
-                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, Client)) yield return wi;
 
                             break;
                         }
                     case null when Deleted:
                         {
-                            foreach (var wi in GetDeletedWorkItems(null, client))
+                            foreach (var wi in GetDeletedWorkItems(null, Client))
                             {
                                 yield return wi;
                             }
@@ -375,7 +374,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
                             var wiql = BuildSimpleQuery(fields);
 
-                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, client)) yield return wi;
+                            foreach (var wi in GetWorkItemsByWiql(wiql, expand, Client)) yield return wi;
 
                             break;
                         }
@@ -384,7 +383,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             if (ids.Count == 0) yield break;
 
-            foreach (var wi in GetWorkItemsById(ids, Has_AsOf ? AsOf : null, expand, expand != WorkItemExpand.None ? null : fields, client))
+            foreach (var wi in GetWorkItemsById(ids, Has_AsOf ? AsOf : null, expand, expand != WorkItemExpand.None ? null : fields, Client))
             {
                 if (ShowWindow)
                 {
@@ -397,7 +396,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         }
 
-        private WebApiWorkItem GetWorkItemById(int id, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
+        private WebApiWorkItem GetWorkItemById(int id, WorkItemExpand expand, IEnumerable<string> fields, IWorkItemTrackingHttpClient Client)
         {
             WebApiWorkItem wi = null;
 
@@ -405,21 +404,21 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             {
                 if (Deleted)
                 {
-                    return GetDeletedWorkItems(new[] { id }, client).FirstOrDefault();
+                    return GetDeletedWorkItems(new[] { id }, Client).FirstOrDefault();
                 }
                 else if (Has_Revision)
                 {
-                    wi = client.GetRevisionAsync(id, Revision, expand)
+                    wi = Client.GetRevisionAsync(id, Revision, expand)
                         .GetResult($"Error getting work item '{id}'");
                 }
                 else if (Has_AsOf)
                 {
-                    wi = client.GetWorkItemAsync(id, fields, AsOf, expand)
+                    wi = Client.GetWorkItemAsync(id, fields, AsOf, expand)
                         .GetResult($"Error getting work item '{id}'");
                 }
                 else
                 {
-                    wi = client.GetWorkItemAsync(id, fields, null, expand)
+                    wi = Client.GetWorkItemAsync(id, fields, null, expand)
                         .GetResult($"Error getting work item '{id}'");
                 }
 
@@ -437,7 +436,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             return wi;
         }
 
-        private IEnumerable<WebApiWorkItem> GetWorkItemsById(IEnumerable<int> ids, DateTime? asOf, WorkItemExpand expand, IEnumerable<string> fields, WorkItemTrackingHttpClient client)
+        private IEnumerable<WebApiWorkItem> GetWorkItemsById(IEnumerable<int> ids, DateTime? asOf, WorkItemExpand expand, IEnumerable<string> fields, IWorkItemTrackingHttpClient Client)
         {
             IList<int> idList;
 
@@ -448,7 +447,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             if (idList.Count <= MAX_WORKITEMS)
             {
-                var wis = client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail)
+                var wis = Client.GetWorkItemsAsync(idList, fields, asOf, expand, WorkItemErrorPolicy.Fail)
                     .GetResult("Error getting work items");
 
                 foreach (var wi in wis) yield return wi;
@@ -460,17 +459,17 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             foreach (var id in idList)
             {
-                yield return GetWorkItemById(id, expand, fields, client);
+                yield return GetWorkItemById(id, expand, fields, Client);
             }
         }
 
-        private IEnumerable<WebApiWorkItem> GetDeletedWorkItems(IEnumerable<int> ids, WorkItemTrackingHttpClient client)
+        private IEnumerable<WebApiWorkItem> GetDeletedWorkItems(IEnumerable<int> ids, IWorkItemTrackingHttpClient Client)
         {
             IEnumerable<WorkItemDeleteReference> result;
 
             if (ids != null)
             {
-                result = client.GetDeletedWorkItemsAsync(ids)
+                result = Client.GetDeletedWorkItemsAsync(ids)
                     .GetResult($"Error getting deleted work item {ids}");
             }
             else
@@ -478,12 +477,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem
                 IList<WorkItemDeleteShallowReference> refs;
                 var projectName = GetItem<WebApiTeamProject>(new { Deleted = false }).Name;
 
-                refs = client.GetDeletedWorkItemShallowReferencesAsync(projectName)
+                refs = Client.GetDeletedWorkItemShallowReferencesAsync(projectName)
                    .GetResult($"Error getting references for deleted work items");
 
                 if (refs.Count == 0) yield break;
 
-                result = client.GetDeletedWorkItemsAsync(refs.Select(r => (int)r.Id))
+                result = Client.GetDeletedWorkItemsAsync(refs.Select(r => (int)r.Id))
                     .GetResult($"Error getting deleted work items");
             }
 
@@ -509,7 +508,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             }
         }
 
-        private IEnumerable<WebApiWorkItem> GetWorkItemsByWiql(string query, WorkItemExpand expand, WorkItemTrackingHttpClient client)
+        private IEnumerable<WebApiWorkItem> GetWorkItemsByWiql(string query, WorkItemExpand expand, IWorkItemTrackingHttpClient Client)
         {
             TeamContext tc = null;
             ProjectReference pr = null;
@@ -523,21 +522,21 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
             if (tc != null)
             {
-                result = client.QueryByWiqlAsync(wiql, tc, TimePrecision)
+                result = Client.QueryByWiqlAsync(wiql, tc, TimePrecision)
                     .GetResult($"Error querying work items");
             }
             else if (pr != null)
             {
-                result = client.QueryByWiqlAsync(wiql, pr.Id, TimePrecision)
+                result = Client.QueryByWiqlAsync(wiql, pr.Id, TimePrecision)
                     .GetResult($"Error querying work items");
             }
             else
             {
-                result = client.QueryByWiqlAsync(wiql, TimePrecision)
+                result = Client.QueryByWiqlAsync(wiql, TimePrecision)
                     .GetResult($"Error querying work items");
             }
 
-            return GetWorkItemsById(result.WorkItems.Select(w => w.Id), result.AsOf, expand, expand != WorkItemExpand.None ? null : result.Columns.Select(f => f.ReferenceName).ToList(), client);
+            return GetWorkItemsById(result.WorkItems.Select(w => w.Id), result.AsOf, expand, expand != WorkItemExpand.None ? null : result.Columns.Select(f => f.ReferenceName).ToList(), Client);
         }
 
         private IEnumerable<string> FixWellKnownFields(IEnumerable<string> fields)

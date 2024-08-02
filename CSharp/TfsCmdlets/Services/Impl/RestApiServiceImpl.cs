@@ -11,9 +11,11 @@ namespace TfsCmdlets.Services.Impl
     [Export(typeof(IRestApiService))]
     public class RestApiServiceImpl : IRestApiService
     {
-        private GenericHttpClient _client;
+        private IGenericHttpClient Client {get; set;}
+        
         private ILogger Logger { get; set; }
-        public Uri Url => _client.Uri;
+        
+        public Uri Url => Client.GetUri();
 
         Task<HttpResponseMessage> IRestApiService.InvokeTemplateAsync(
             Models.Connection connection,
@@ -190,7 +192,7 @@ namespace TfsCmdlets.Services.Impl
                                                  queryParameters, apiVersion);
         }
 
-        private GenericHttpClient GetClient(Models.Connection connection, string serviceHostName)
+        private IGenericHttpClient GetClient(Models.Connection connection, string serviceHostName)
         {
             var conn = connection.InnerObject;
             var host = serviceHostName ?? conn.Uri.Host;
@@ -219,7 +221,7 @@ namespace TfsCmdlets.Services.Impl
                 vssConn.CallHiddenMethod("RegisterClientServiceInstance", typeof(GenericHttpClient), client);
             }
 
-            return _client = client;
+            return Client = client;
         }
 
         public Task<ContributionNodeResponse> QueryContributionNodeAsync(
@@ -249,9 +251,10 @@ namespace TfsCmdlets.Services.Impl
         }
 
         [ImportingConstructor]
-        public RestApiServiceImpl(IDataManager data, ILogger logger)
+        public RestApiServiceImpl(ILogger logger, IGenericHttpClient client)
         {
             Logger = logger;
+            Client = client;
         }
     }
 }

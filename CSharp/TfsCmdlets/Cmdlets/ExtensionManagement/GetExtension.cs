@@ -10,7 +10,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
     partial class GetExtension
     {
         /// <summary>
-        /// Specifies the ID or the name of the extensions. Wilcards are supported. 
+        /// Specifies the ID or the name of the extensions. Wildcards are supported. 
         /// When omitted, returns all extensions installed in the specified organization/collection.
         /// </summary>
         [Parameter(Position = 0)]
@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
         public object Extension { get; set; } = "*";
 
         /// <summary>
-        /// Specifies the ID or the name of the publisher. Wilcards are supported. 
+        /// Specifies the ID or the name of the publisher. Wildcards are supported. 
         /// When omitted, returns all extensions installed in the specified organization/collection.
         /// </summary>
         [Parameter(Position = 1)]
@@ -38,13 +38,11 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
         public SwitchParameter IncludeInstallationIssues { get; set; }
     }
 
-    [CmdletController(typeof(InstalledExtension))]
+    [CmdletController(typeof(InstalledExtension), Client=typeof(IExtensionManagementHttpClient))]
     partial class GetExtensionController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<ExtensionManagementHttpClient>();
-
             foreach (var input in Extension)
             {
                 object extension = input;
@@ -69,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
                         {
                             Logger.Log($"Getting extensions matching name '{s}' with publisher '{publisher}'");
 
-                            foreach (var result in client.GetInstalledExtensionsAsync(
+                            foreach (var result in Client.GetInstalledExtensionsAsync(
                                 includeDisabledExtensions: IncludeDisabledExtensions,
                                 includeErrors: IncludeErrors,
                                 includeInstallationIssues: IncludeInstallationIssues)
@@ -83,7 +81,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
                         }
                     case string s:
                         {
-                            yield return client.GetInstalledExtensionByNameAsync(publisher, s)
+                            yield return Client.GetInstalledExtensionByNameAsync(publisher, s)
                                 .GetResult("Error getting installed extension.");
                             break;
                         }

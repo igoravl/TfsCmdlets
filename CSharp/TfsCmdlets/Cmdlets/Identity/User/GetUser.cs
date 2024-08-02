@@ -28,13 +28,11 @@ namespace TfsCmdlets.Cmdlets.Identity.User
         public SwitchParameter Current { get; set; }
     }
 
-    [CmdletController(typeof(AccountEntitlement))]
+    [CmdletController(typeof(AccountEntitlement), Client=typeof(HttpClients.IAccountLicensingHttpClient))]
     partial class GetUserController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<AccountLicensingHttpClient>();
-
             if (Current)
             {
                 var user = Data.GetItem<Models.Identity>(new { Identity = User });
@@ -60,22 +58,22 @@ namespace TfsCmdlets.Cmdlets.Identity.User
                         }
                     case WebApiIdentity i:
                         {
-                            yield return client.GetAccountEntitlementAsync(i.Id).GetResult("Error getting account entitlement");
+                            yield return Client.GetAccountEntitlementAsync(i.Id).GetResult("Error getting account entitlement");
                             break;
                         }
                     case WebApiIdentityRef ir:
                         {
-                            yield return client.GetAccountEntitlementAsync(ir.Id).GetResult("Error getting account entitlement");
+                            yield return Client.GetAccountEntitlementAsync(ir.Id).GetResult("Error getting account entitlement");
                             break;
                         }
                     case Guid g:
                         {
-                            yield return client.GetAccountEntitlementAsync(g).GetResult("Error getting account entitlement");
+                            yield return Client.GetAccountEntitlementAsync(g).GetResult("Error getting account entitlement");
                             break;
                         }
                     case string s:
                         {
-                            foreach (var u in client.GetAccountEntitlementsAsync()
+                            foreach (var u in Client.GetAccountEntitlementsAsync()
                                 .GetResult("Error getting account entitlements")
                                 .Where(u => u.User.DisplayName.IsLike(s) || u.User.UniqueName.IsLike(s)))
                             {

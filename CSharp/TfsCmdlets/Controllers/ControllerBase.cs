@@ -12,8 +12,6 @@ namespace TfsCmdlets.Controllers
 
         public virtual Type DataType => GetType();
 
-        protected T GetClient<T>() => Data.GetClient<T>();
-
         protected T GetItem<T>(object overridingParameters = null) => Data.GetItem<T>(overridingParameters);
 
         protected bool TestItem<T>(object overridingParameters = null) => Data.TestItem<T>(overridingParameters);

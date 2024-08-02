@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../TfsCmdlets.Common/TfsCmdlets.Common.csproj" />
     <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
@@ -35,6 +34,8 @@
     <PackageReference Include="System.Composition" Version="6.0.0" />
     <PackageReference Include="System.Composition.Hosting" Version="6.0.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
+    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
