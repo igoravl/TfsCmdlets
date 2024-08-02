@@ -72,14 +72,23 @@ namespace TfsCmdlets.SourceGenerators
         }
 
         public static string GetImportingConstructorArguments(this INamedTypeSymbol type, INamedTypeSymbol baseClass)
-            => string.Join(", ", type.GetPropertiesWithAttribute("ImportAttribute")
+        {
+            var parms = type.GetPropertiesWithAttribute("ImportAttribute")
                 .Select(p => $"{p.Type.Name} {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)}")
                 .Concat(baseClass
                     .Constructors[0]
                     .Parameters
                     .Select(p => $"{p.Type.Name} {p.Name}")
                 )
-            );
+                .ToList();
+
+            var client = type.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+
+            if (client != null) parms.Add($"{client.FullName()} client");
+
+
+            return string.Join(", ", parms);
+        }
 
         public static string GetConstructorArguments(this INamedTypeSymbol type)
         {

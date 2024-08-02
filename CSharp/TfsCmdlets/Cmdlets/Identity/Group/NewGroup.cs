@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public GroupScope Scope { get; set; } = GroupScope.Collection;
     }
 
-    [CmdletController(typeof(GraphGroup), Client=typeof(GraphHttpClient))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
     partial class NewGroupController
     {
         [Import]

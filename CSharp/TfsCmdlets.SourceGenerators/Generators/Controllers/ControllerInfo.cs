@@ -84,8 +84,18 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         }
 
         private static string GetImportingConstructorBody(INamedTypeSymbol type)
-            => string.Join("\n", type.GetPropertiesWithAttribute("ImportAttribute")
-                .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};"));
+        {
+            var parms = type
+                .GetPropertiesWithAttribute("ImportAttribute")
+                .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};")
+                .ToList();
+            
+            var client = type.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+
+            if (client != null) parms.Add($"            Client = client;");
+            
+            return string.Join("\n", parms);
+        }
 
         private string GetUsingStatements(INamedTypeSymbol cmdlet)
             => cmdlet.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();

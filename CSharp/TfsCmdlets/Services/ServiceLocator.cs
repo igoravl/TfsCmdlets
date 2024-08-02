@@ -19,7 +19,6 @@ namespace TfsCmdlets.Services
             {
                 return _instance ??= new ContainerConfiguration()
                     .WithAssembly(Assembly.GetAssembly(_site.GetType()))
-                    .WithAssembly(Assembly.GetAssembly(typeof(ServiceLocator)))
                     .CreateContainer();
             }
         }

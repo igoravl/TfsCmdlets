@@ -6,7 +6,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class RemoveClassificationNodeController: ControllerBase
     {
-        [Import]
         private IWorkItemTrackingHttpClient Client { get; set; }
         
         protected override IEnumerable Run()
@@ -47,9 +46,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        protected RemoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected RemoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

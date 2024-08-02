@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         public string Consumer { get; set; } = "*";
     }
 
-    [CmdletController(typeof(WebApiConsumer), Client=typeof(ServiceHooksPublisherHttpClient))]
+    [CmdletController(typeof(WebApiConsumer), Client=typeof(IServiceHooksPublisherHttpClient))]
     partial class GetServiceHookConsumerController
     {
         protected override IEnumerable Run()

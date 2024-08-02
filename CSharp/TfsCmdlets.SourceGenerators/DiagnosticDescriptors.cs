@@ -27,5 +27,12 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ClientMustBeInterface { get; } = new DiagnosticDescriptor(
+            "TFS004",
+            "HttpClient attribute must refer to a valid interface", "'{0}' must be an interface, derived from TfsCmdlets.HttpClients.IVssHttpClient.",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
     }
 }

@@ -7,7 +7,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class MoveClassificationNodeController : ControllerBase
     {
-        [Import]
         private IWorkItemTrackingHttpClient Client { get; set; }
         
         protected override IEnumerable Run()
@@ -60,9 +59,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        protected MoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected MoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

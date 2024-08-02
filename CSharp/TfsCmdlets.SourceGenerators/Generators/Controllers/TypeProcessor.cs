@@ -30,7 +30,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
             if(controller.Client != null)
             {
-                clientProp = $"[Import] private {controller.Client.FullName()} Client {{ get; set; }}";
+                clientProp = $"private {controller.Client.FullName()} Client {{ get; }}";
             }
             
             foreach (var prop in controller.GeneratedProperties.Values)

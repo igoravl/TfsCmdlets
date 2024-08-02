@@ -8,10 +8,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
     public abstract class RenameClassificationNodeController: ControllerBase
     {
-        [Import]
         private INodeUtil NodeUtil { get; set;  }
 
-        [Import]
         private IWorkItemTrackingHttpClient Client { get; set; }
 
         protected override IEnumerable Run()
@@ -43,10 +41,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        protected RenameClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected RenameClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
             NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

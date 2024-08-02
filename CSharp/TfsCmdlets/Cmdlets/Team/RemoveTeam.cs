@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.Team
         public object Team { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team), Client=typeof(TeamHttpClient))]
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
     partial class RemoveTeamController
     {
         protected override IEnumerable Run()
