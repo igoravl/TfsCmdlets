@@ -37,6 +37,13 @@ jobs:
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Pester Test Results
+          path: 'out/TestResults-Pester*.xml'                     # Path to test results (inside artifact .zip)
+          reporter: dotnet-trx
       - name: Publish Nuget
         uses: actions/upload-artifact@v4
         with:
