@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2024-08-05" time="08:59:00">
+  <environment machine-name="IGOR-SLS" user="IgorAbadeVLeite" platform="Microsoft Windows 11 Enterprise|C:\Windows|\Device\Harddisk0\Partition3" nunit-version="2.5.8.0" user-domain="AzureAD" os-version="10.0.22631" cwd="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests" clr-version="Unknown" />
+  <culture-info current-culture="pt-BR" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="6.2438" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1" executed="True" result="Failure" success="False" time="5.6213" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsVersion" executed="True" result="Failure" success="False" time="1.0242" asserts="0" description="GetTfsVersion">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsVersion.Unit Tests" executed="True" result="Failure" success="False" time="0.9409" asserts="0" description="GetTfsVersion.Unit Tests">
+                <results>
+                  <test-case description="Should get version from hosted service" name="GetTfsVersion.Unit Tests.Should get version from hosted service" time="0.6919" asserts="0" success="False" result="Failure" executed="True">
+                    <failure>
+                      <message>ArgumentException: No team project collection (organization) information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection (or Connect-TfsOrganization) prior to invoking this cmdlet.</message>
+                      <stack-trace>at &lt;ScriptBlock&gt;, P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1:7</stack-trace>
+                    </failure>
+                  </test-case>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

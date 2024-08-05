@@ -1,4 +1,4 @@
-. $PSScriptRoot/_TestSetup.ps1
+& "$($PSScriptRoot.Split('_Tests')[0])/_Tests/_TestSetup.ps1"
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
