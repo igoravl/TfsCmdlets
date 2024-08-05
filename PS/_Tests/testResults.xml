@@ -1,21 +1,231 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2024-08-05" time="08:59:00">
-  <environment machine-name="IGOR-SLS" user="IgorAbadeVLeite" platform="Microsoft Windows 11 Enterprise|C:\Windows|\Device\Harddisk0\Partition3" nunit-version="2.5.8.0" user-domain="AzureAD" os-version="10.0.22631" cwd="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests" clr-version="Unknown" />
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="60" errors="0" failures="0" not-run="1" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2024-08-05" time="17:20:02">
+  <environment user="IgorAbadeVLeite" platform="Microsoft Windows 11 Enterprise|C:\Windows|\Device\Harddisk0\Partition3" os-version="10.0.22631" cwd="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests" machine-name="IGOR-SLS" user-domain="AzureAD" nunit-version="2.5.8.0" clr-version="Unknown" />
   <culture-info current-culture="pt-BR" current-uiculture="en-US" />
-  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="6.2438" asserts="0" description="Pester">
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="48.6583" asserts="0" description="Pester">
     <results>
-      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1" executed="True" result="Failure" success="False" time="5.6213" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1">
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1" executed="True" result="Success" success="True" time="2.2111" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1">
         <results>
-          <test-suite type="TestFixture" name="GetTfsVersion" executed="True" result="Failure" success="False" time="1.0242" asserts="0" description="GetTfsVersion">
+          <test-suite type="TestFixture" name="GetTfsVersion" executed="True" result="Success" success="True" time="0.7235" asserts="0" description="GetTfsVersion">
             <results>
-              <test-suite type="TestFixture" name="GetTfsVersion.Unit Tests" executed="True" result="Failure" success="False" time="0.9409" asserts="0" description="GetTfsVersion.Unit Tests">
+              <test-suite type="TestFixture" name="GetTfsVersion.Unit Tests" executed="True" result="Success" success="True" time="0.6923" asserts="0" description="GetTfsVersion.Unit Tests">
                 <results>
-                  <test-case description="Should get version from hosted service" name="GetTfsVersion.Unit Tests.Should get version from hosted service" time="0.6919" asserts="0" success="False" result="Failure" executed="True">
-                    <failure>
-                      <message>ArgumentException: No team project collection (organization) information available. Either supply a valid -Collection argument or use Connect-TfsTeamProjectCollection (or Connect-TfsOrganization) prior to invoking this cmdlet.</message>
-                      <stack-trace>at &lt;ScriptBlock&gt;, P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Admin\GetTfsVersion.Tests.ps1:7</stack-trace>
-                    </failure>
-                  </test-case>
+                  <test-case description="Should get version from hosted service" name="GetTfsVersion.Unit Tests.Should get version from hosted service" time="0.6459" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Artifact\GetTfsArtifactFeed.Tests.ps1" executed="True" result="Success" success="True" time="4.7796" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Artifact\GetTfsArtifactFeed.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsArtifactFeed" executed="True" result="Success" success="True" time="4.63" asserts="0" description="GetTfsArtifactFeed">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsArtifactFeed.Integration Tests" executed="True" result="Success" success="True" time="4.6136" asserts="0" description="GetTfsArtifactFeed.Integration Tests">
+                <results>
+                  <test-case description="Should Return only Org-level feeds" name="GetTfsArtifactFeed.Integration Tests.Should Return only Org-level feeds" time="1.5469" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should return feeds from all scopes" name="GetTfsArtifactFeed.Integration Tests.Should return feeds from all scopes" time="0.2178" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should filter feeds by name" name="GetTfsArtifactFeed.Integration Tests.Should filter feeds by name" time="0.3206" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should Return All Project-Level feeds" name="GetTfsArtifactFeed.Integration Tests.Should Return All Project-Level feeds" time="0.1603" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should Filter feeds by project" name="GetTfsArtifactFeed.Integration Tests.Should Filter feeds by project" time="2.3547" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\ExtensionManagement\GetTfsExtension.Tests.ps1" executed="True" result="Success" success="True" time="4.0555" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\ExtensionManagement\GetTfsExtension.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsExtension" executed="True" result="Success" success="True" time="4.0062" asserts="0" description="GetTfsExtension">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsExtension.Integration Tests" executed="True" result="Success" success="True" time="4.001" asserts="0" description="GetTfsExtension.Integration Tests">
+                <results>
+                  <test-case description="Should get by extension id" name="GetTfsExtension.Integration Tests.Should get by extension id" time="0.9931" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get by extension name" name="GetTfsExtension.Integration Tests.Should get by extension name" time="1.7616" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get by publisher name" name="GetTfsExtension.Integration Tests.Should get by publisher name" time="1.2419" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Pipeline\GetTfsBuildDefinitionFolder.Tests.ps1" executed="True" result="Success" success="True" time="0.4963" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Pipeline\GetTfsBuildDefinitionFolder.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsBuildDefinitionFolder" executed="True" result="Success" success="True" time="0.3945" asserts="0" description="GetTfsBuildDefinitionFolder">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsBuildDefinitionFolder.Integration Tests" executed="True" result="Success" success="True" time="0.3874" asserts="0" description="GetTfsBuildDefinitionFolder.Integration Tests">
+                <results>
+                  <test-case description="Should get all folders" name="GetTfsBuildDefinitionFolder.Integration Tests.Should get all folders" time="0.3813" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Pipeline\Build\GetTfsBuildDefinition.Tests.ps1" executed="True" result="Success" success="True" time="0.9576" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Pipeline\Build\GetTfsBuildDefinition.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsBuildDefinition" executed="True" result="Success" success="True" time="0.8168" asserts="0" description="GetTfsBuildDefinition">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsBuildDefinition.Integration Tests" executed="True" result="Success" success="True" time="0.8088" asserts="0" description="GetTfsBuildDefinition.Integration Tests">
+                <results>
+                  <test-case description="Should get pipelines" name="GetTfsBuildDefinition.Integration Tests.Should get pipelines" time="0.8011" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\RestApi\InvokeTfsRestApi.Tests.ps1" executed="True" result="Success" success="True" time="4.1637" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\RestApi\InvokeTfsRestApi.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="InvokeTfsRestApi" executed="True" result="Success" success="True" time="4.0762" asserts="0" description="InvokeTfsRestApi">
+            <results>
+              <test-suite type="TestFixture" name="InvokeTfsRestApi.Integration Tests" executed="True" result="Success" success="True" time="4.0694" asserts="0" description="InvokeTfsRestApi.Integration Tests">
+                <results>
+                  <test-case description="Should parse a Azure DevOps REST API-style string" name="InvokeTfsRestApi.Integration Tests.Should parse a Azure DevOps REST API-style string" time="0.2203" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should call an alternate host" name="InvokeTfsRestApi.Integration Tests.Should call an alternate host" time="1.5368" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should call multiple alternates hosts in sequence" name="InvokeTfsRestApi.Integration Tests.Should call multiple alternates hosts in sequence" time="1.8411" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support standard parameter-based call" name="InvokeTfsRestApi.Integration Tests.Should support standard parameter-based call" time="0.1438" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support NoAutoUnwrap" name="InvokeTfsRestApi.Integration Tests.Should support NoAutoUnwrap" time="0.1529" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support Raw" name="InvokeTfsRestApi.Integration Tests.Should support Raw" time="0.167" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Team\GetTfsTeam.Tests.ps1" executed="True" result="Success" success="True" time="4.6354" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Team\GetTfsTeam.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsTeam" executed="True" result="Success" success="True" time="4.5334" asserts="0" description="GetTfsTeam">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsTeam.Integration Tests" executed="True" result="Success" success="True" time="4.5266" asserts="0" description="GetTfsTeam.Integration Tests">
+                <results>
+                  <test-case description="Should throw on parameterless invocation" name="GetTfsTeam.Integration Tests.Should throw on parameterless invocation" time="0.0736" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get all teams" name="GetTfsTeam.Integration Tests.Should get all teams" time="0.3518" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get some teams" name="GetTfsTeam.Integration Tests.Should get some teams" time="0.3249" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get default team" name="GetTfsTeam.Integration Tests.Should get default team" time="0.7283" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get settings with -IncludeSettings" name="GetTfsTeam.Integration Tests.Should get settings with -IncludeSettings" time="1.7232" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get members with -QueryMembership" name="GetTfsTeam.Integration Tests.Should get members with -QueryMembership" time="1.3163" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\TeamProject\GetTfsTeamProject.Tests.ps1" executed="True" result="Success" success="True" time="1.1798" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\TeamProject\GetTfsTeamProject.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsTeamProject" executed="True" result="Success" success="True" time="1.0839" asserts="0" description="GetTfsTeamProject">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsTeamProject.Integration Tests" executed="True" result="Success" success="True" time="1.0767" asserts="0" description="GetTfsTeamProject.Integration Tests">
+                <results>
+                  <test-case description="Should not throw on parameterless invocation" name="GetTfsTeamProject.Integration Tests.Should not throw on parameterless invocation" time="0.1476" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get all projects" name="GetTfsTeamProject.Integration Tests.Should get all projects" time="0.1543" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should not get process info without IncludeDetails" name="GetTfsTeamProject.Integration Tests.Should not get process info without IncludeDetails" time="0.1518" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get process info with IncludeDetails" name="GetTfsTeamProject.Integration Tests.Should get process info with IncludeDetails" time="0.616" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Wiki\GetTfsWiki.Tests.ps1" executed="True" result="Success" success="True" time="0.7126" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\Wiki\GetTfsWiki.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsWiki" executed="True" result="Success" success="True" time="0.641" asserts="0" description="GetTfsWiki">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsWiki.Integration Tests" executed="True" result="Success" success="True" time="0.6336" asserts="0" description="GetTfsWiki.Integration Tests">
+                <results>
+                  <test-case description="Should throw on parameterless invocation" name="GetTfsWiki.Integration Tests.Should throw on parameterless invocation" time="0.0258" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get all wikis" name="GetTfsWiki.Integration Tests.Should get all wikis" time="0.3208" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get project wikis" name="GetTfsWiki.Integration Tests.Should get project wikis" time="0.2796" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\GetTfsWorkItem.Tests.ps1" executed="True" result="Success" success="True" time="6.9581" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\GetTfsWorkItem.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsWorkItem" executed="True" result="Success" success="True" time="6.8824" asserts="0" description="GetTfsWorkItem">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsWorkItem.Integration Tests" executed="True" result="Success" success="True" time="6.8787" asserts="0" description="GetTfsWorkItem.Integration Tests">
+                <results>
+                  <test-case description="Should get by ID and revision" name="GetTfsWorkItem.Integration Tests.Should get by ID and revision" time="0.5288" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get by Where" name="GetTfsWorkItem.Integration Tests.Should get by Where" time="0.6549" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support ASOF when getting by ID" name="GetTfsWorkItem.Integration Tests.Should support ASOF when getting by ID" time="0.3719" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should throw when getting deleted WIs without a project" name="GetTfsWorkItem.Integration Tests.Should throw when getting deleted WIs without a project" time="0.0248" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get deleted WIs" name="GetTfsWorkItem.Integration Tests.Should get deleted WIs" time="0.5937" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support EVER for simple queries" name="GetTfsWorkItem.Integration Tests.Should support EVER for simple queries" time="0.3158" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support ASOF for simple queries" name="GetTfsWorkItem.Integration Tests.Should support ASOF for simple queries" time="0.4019" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support WIQL queries" name="GetTfsWorkItem.Integration Tests.Should support WIQL queries" time="0.2911" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should support saved queries" name="GetTfsWorkItem.Integration Tests.Should support saved queries" time="1.3215" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should limit fields when getting by ID" name="GetTfsWorkItem.Integration Tests.Should limit fields when getting by ID" time="0.1587" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should limit fields when getting by filter" name="GetTfsWorkItem.Integration Tests.Should limit fields when getting by filter" time="0.2962" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should limit fields in WIQL queries" name="GetTfsWorkItem.Integration Tests.Should limit fields in WIQL queries" time="0.2843" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should limit fields in saved queries" name="GetTfsWorkItem.Integration Tests.Should limit fields in saved queries" time="1.2933" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should not get links and relations when not requested" name="GetTfsWorkItem.Integration Tests.Should not get links and relations when not requested" time="0.1589" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get links and relations when requested" name="GetTfsWorkItem.Integration Tests.Should get links and relations when requested" time="0.177" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\AreasIterations\GetTfsIteration.Tests.ps1" executed="True" result="Success" success="True" time="5.1558" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\AreasIterations\GetTfsIteration.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsIteration" executed="True" result="Success" success="True" time="5.023" asserts="0" description="GetTfsIteration">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsIteration.Integration Tests" executed="True" result="Success" success="True" time="5.0188" asserts="0" description="GetTfsIteration.Integration Tests">
+                <results>
+                  <test-case description="Should throw on parameterless invocation" name="GetTfsIteration.Integration Tests.Should throw on parameterless invocation" time="0.0109" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get all iterations" name="GetTfsIteration.Integration Tests.Should get all iterations" time="1.2645" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get child iterations" name="GetTfsIteration.Integration Tests.Should get child iterations" time="1.2712" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get by name pattern" name="GetTfsIteration.Integration Tests.Should get by name pattern" time="2.4652" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\History\GetTfsWorkItemHistory.Tests.ps1" executed="True" result="Success" success="True" time="0.4049" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\History\GetTfsWorkItemHistory.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsWorkItemHistory" executed="True" result="Success" success="True" time="0.3303" asserts="0" description="GetTfsWorkItemHistory">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsWorkItemHistory.Integration Tests" executed="True" result="Success" success="True" time="0.3254" asserts="0" description="GetTfsWorkItemHistory.Integration Tests">
+                <results>
+                  <test-case description="Should get all revisions" name="GetTfsWorkItemHistory.Integration Tests.Should get all revisions" time="0.3199" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\Query\GetTfsWorkItemQuery.Tests.ps1" executed="True" result="Success" success="True" time="6.3881" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\Query\GetTfsWorkItemQuery.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsWorkItemQuery" executed="True" result="Success" success="True" time="6.2701" asserts="0" description="GetTfsWorkItemQuery">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsWorkItemQuery.Integration Tests" executed="True" result="Success" success="True" time="6.2627" asserts="0" description="GetTfsWorkItemQuery.Integration Tests">
+                <results>
+                  <test-case description="Should get all queries" name="GetTfsWorkItemQuery.Integration Tests.Should get all queries" time="0.6149" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get queries by scope" name="GetTfsWorkItemQuery.Integration Tests.Should get queries by scope" time="0.9025" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get queries by name" name="GetTfsWorkItemQuery.Integration Tests.Should get queries by name" time="2.5254" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get queries by wildcard" name="GetTfsWorkItemQuery.Integration Tests.Should get queries by wildcard" time="2.0454" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\Query\GetTfsWorkItemQueryFolder.Tests.ps1" executed="True" result="Success" success="True" time="5.3657" asserts="0" description="P:\Repos\Gh\igoravl\TfsCmdlets\PS\_Tests\WorkItem\Query\GetTfsWorkItemQueryFolder.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="GetTfsWorkItemQueryFolder" executed="True" result="Success" success="True" time="5.2441" asserts="0" description="GetTfsWorkItemQueryFolder">
+            <results>
+              <test-suite type="TestFixture" name="GetTfsWorkItemQueryFolder.Integration Tests" executed="True" result="Success" success="True" time="5.2358" asserts="0" description="GetTfsWorkItemQueryFolder.Integration Tests">
+                <results>
+                  <test-case description="Should get all folders" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get all folders" time="0.5918" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get folders by scope" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get folders by scope" time="0.9195" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get root folders" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get root folders" time="0.1425" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get root folders by scope" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get root folders by scope" time="0.3198" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get folders by name" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get folders by name" time="0.6312" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="Should get folders by wildcard" name="GetTfsWorkItemQueryFolder.Integration Tests.Should get folders by wildcard" time="2.4628" asserts="0" success="True" result="Success" executed="True" />
                 </results>
               </test-suite>
             </results>

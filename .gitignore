@@ -219,3 +219,4 @@ CSharp/.idea/**
 
 CSharp/*/Generated/**
 Docs/AzDO-Security-Actions.csv
+**/testResults.xml
