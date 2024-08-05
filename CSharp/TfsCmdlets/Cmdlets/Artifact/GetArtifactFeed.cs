@@ -70,8 +70,11 @@ namespace TfsCmdlets.Cmdlets.Artifact
                             yield return Client.GetFeedsAsync(Role, false, false)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(f1 => f1.Name.IsLike(s) && (
-                                    (string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Collection) > 0)) ||
-                                    (!string.IsNullOrEmpty(f1.Project?.Name) && ((Scope & ProjectOrCollectionScope.Project) > 0))));
+                                    (string.IsNullOrEmpty(f1.Project?.Name) &&
+                                         ((Scope & ProjectOrCollectionScope.Collection) > 0)) ||
+                                    (!string.IsNullOrEmpty(f1.Project?.Name) && 
+                                        ((Scope & ProjectOrCollectionScope.Project) > 0) && 
+                                        (!Has_Project || f1.Project.Name.Equals(Project.Name, StringComparison.OrdinalIgnoreCase)))));
                             break;
                         }
                     default:
