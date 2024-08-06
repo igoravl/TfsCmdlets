@@ -38,12 +38,11 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
       - name: Publish Test Results
-        uses: dorny/test-reporter@v1
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
         if: always()
         with:
-          name: Pester Test Results
-          path: 'out/TestResults-Pester*.xml'                     # Path to test results (inside artifact .zip)
-          reporter: dotnet-trx
+          files: |
+            out\TestResults-Pester*.xml
       - name: Publish Nuget
         uses: actions/upload-artifact@v4
         with:
