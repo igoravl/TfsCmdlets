@@ -106,9 +106,9 @@ namespace TfsCmdlets.Cmdlets.Artifact
                                     protocolType: ProtocolType,
                                     getTopPackageVersions: getTopPackageVersions, 
                                     includeAllVersions: getTopPackageVersions || IncludeAllVersions,
-                                    includeDeleted: IncludeDeleted? null: true, 
+                                    includeDeleted: IncludeDeleted? true: null, 
                                     includeDescription: !getTopPackageVersions, 
-                                    isListed: IncludeDelisted? null: true, 
+                                    isListed: IncludeDelisted || IncludeDeleted? null: true, 
                                     isRelease: IncludePrerelease? null: true)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(p => p.Name.IsLike(s));

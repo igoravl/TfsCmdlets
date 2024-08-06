@@ -4,11 +4,17 @@
 
 This release adds some new process-related cmdlets.
 
-### New cmdlets
+## New cmdlets
 
 - `Get-TfsWorkItemField`: Gets information from one or more organization-wide work item fields
 - `New-TfsWorkItemField`: Creates a new organization-wide work item field
 - `Remove-TfsWorkItemField`: Removes an organization-wide work item field
+
+## Fixes and enhancements
+
+- Fixed an issue with `Get-TfsArtifact` where it wasn't listing deleted packages.
+- Fixed an issue with `Get-TfsArtifactFeed` where it would ignore the -Project argument and thus not filter feeds by project.
+- Now `Connect-TfsTeamProjectCollection` (and its counterpart `Connect-TfsOrganization`) throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
 
 -----------------------
 
