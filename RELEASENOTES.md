@@ -14,6 +14,7 @@ This release adds some new process-related cmdlets.
 
 - Fixed an issue with `Get-TfsArtifact` where it wasn't listing deleted packages.
 - Fixed an issue with `Get-TfsArtifactFeed` where it would ignore the -Project argument and thus not filter feeds by project.
+- Fixed an issue with `Get-TfsWorkItemType`where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
 - Now `Connect-TfsTeamProjectCollection` (and its counterpart `Connect-TfsOrganization`) throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
 
 -----------------------
