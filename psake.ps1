@@ -242,12 +242,12 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     try {
         Write-Output ' == PowerShell Core =='
-        Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Desktop', 'Server'" }
+        Exec { pwsh.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Desktop', 'Server'" }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Core.xml -Force
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Core.xml -Force
     
         Write-Output ' == PowerShell Desktop =='
-        Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Core', 'Server'" }
+        Exec { powershell.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Core', 'Server'" }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Desktop.xml -Force
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Desktop.xml -Force
     }
