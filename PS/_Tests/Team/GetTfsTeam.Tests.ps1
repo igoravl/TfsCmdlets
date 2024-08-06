@@ -1,4 +1,4 @@
-& "$($PSScriptRoot.Split('_Tests')[0])/_Tests/_TestSetup.ps1"
+& "$(($PSScriptRoot -split '_Tests')[0])/_Tests/_TestSetup.ps1"
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
@@ -9,7 +9,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should get all teams' {
-            Get-TfsTeam -Project $tfsProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('PUL', 'PUL-DB', 'TestProject Team')
+            Get-TfsTeam -Project $tfsProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('PUL', 'PUL-DB', "$tfsProject Team")
         }
 
         It 'Should get some teams' {
@@ -17,7 +17,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should get default team' {
-            Get-TfsTeam -Default -Project $tfsProject | Select-Object -ExpandProperty Name | Should -Be 'TestProject Team'
+            Get-TfsTeam -Default -Project $tfsProject | Select-Object -ExpandProperty Name | Should -Be "$tfsProject Team"
         }
 
         It 'Should get settings with -IncludeSettings' {

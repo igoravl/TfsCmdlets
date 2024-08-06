@@ -1,4 +1,4 @@
-﻿& "$($PSScriptRoot.Split('_Tests')[0])/_Tests/_TestSetup.ps1"
+﻿& "$(($PSScriptRoot -split '_Tests')[0])/_Tests/_TestSetup.ps1"
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
@@ -22,13 +22,13 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         It 'Should Return All Project-Level feeds' {
             $feeds = Get-TfsArtifactFeed -Scope Project
             $feeds.Count | Should -Be 3
-            $feeds.Project.Name | Sort-Object -Unique | Should -Be @('AgileGit', 'TestProject')
+            $feeds.Project.Name | Sort-Object -Unique | Should -Be @('AgileGit', $tfsProject)
         }
 
         It 'Should Filter feeds by project' {
             (Get-TfsArtifactFeed -Scope Project -Project 'AgileGit').Project.Name | Select-Object -Unique | Should -Be 'AgileGit'
             (Get-TfsArtifactFeed -Scope Project -Project 'A*').Project.Name | Select-Object -Unique | Should -Be 'AgileGit'
-            (Get-TfsArtifactFeed -Scope Project -Project 'TestProject').Project.Name | Select-Object -Unique | Should -Be 'TestProject'
+            (Get-TfsArtifactFeed -Scope Project -Project $tfsProject).Project.Name | Select-Object -Unique | Should -Be $tfsProject
         }
     } 
 }

@@ -1,4 +1,4 @@
-& "$($PSScriptRoot.Split('_Tests')[0])/_Tests/_TestSetup.ps1"
+& "$(($PSScriptRoot -split '_Tests')[0])/_Tests/_TestSetup.ps1"
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
@@ -8,7 +8,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Invoke-TfsRestApi 'GET https://dev.azure.com/{organization}/_apis/projects?api-version=6.1' `
             | ForEach-Object { $_.Name } `
             | Sort-Object `
-            | Should -Be @('AgileGit', 'TestProject', 'TfsCmdlets')
+            | Should -Be @('AgileGit', $tfsProject, 'TfsCmdlets')
         }
 
         It 'Should call an alternate host' {
@@ -34,7 +34,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Invoke-TfsRestApi 'GET https://dev.azure.com/{organization}/_apis/projects?api-version=6.1' `
             | ForEach-Object { $_.Name } `
             | Sort-Object `
-            | Should -Be @('AgileGit', 'TestProject', 'TfsCmdlets')
+            | Should -Be @('AgileGit', $tfsProject, 'TfsCmdlets')
         }
 
         
@@ -42,7 +42,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Invoke-TfsRestApi -Path '/_apis/projects?api-version=6.1' -Method 'GET' -ApiVersion '6.1' -RequestContentType 'application/json' -ResponseContentType 'application/json' `
             | ForEach-Object { $_.Name } `
             | Sort-Object `
-            | Should -Be @('AgileGit', 'TestProject', 'TfsCmdlets')
+            | Should -Be @('AgileGit', $tfsProject, 'TfsCmdlets')
         }
 
         It 'Should support NoAutoUnwrap' {

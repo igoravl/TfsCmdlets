@@ -1,4 +1,4 @@
-& "$($PSScriptRoot.Split('_Tests')[0])/_Tests/_TestSetup.ps1"
+& "$(($PSScriptRoot -split '_Tests')[0])/_Tests/_TestSetup.ps1"
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
@@ -9,7 +9,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should get all projects' {
-            Get-TfsTeamProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('AgileGit', 'TestProject', 'TfsCmdlets')
+            Get-TfsTeamProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('AgileGit', $tfsProject, 'TfsCmdlets')
         }
 
         It 'Should not get process info without IncludeDetails' {
