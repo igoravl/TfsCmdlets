@@ -26,39 +26,40 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public SwitchParameter IncludeInactive { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTagDefinition), Client=typeof(ITaggingHttpClient))]
+    [CmdletController(typeof(WebApiTagDefinition), Client = typeof(ITaggingHttpClient))]
     partial class GetWorkItemTagController
     {
         protected override IEnumerable Run()
         {
-            var tag = Parameters.Get<object>(nameof(GetWorkItemTag.Tag));
-            var includeInactive = Parameters.Get<bool>(nameof(GetWorkItemTag.IncludeInactive));
-
-            var tp = Data.GetProject();
-
-            switch (tag)
+            foreach (var input in Tag)
             {
-                case WebApiTagDefinition t:
-                    {
-                        return new[] { t };
-                    }
-                case string s:
-                    {
-                        return Client.GetTagsAsync(tp.Id, includeInactive)
-                            .GetResult($"Error getting work item tag(s) '{s}'")
-                            .Where(t => t.Name.IsLike(s));
-                    }
-                case IEnumerable<string> tags:
-                    {
-                        return Client.GetTagsAsync(tp.Id, includeInactive)
-                            .GetResult($"Error getting work item tag(s) '{string.Join(", ", tags)}'")
-                            .Where(t => tags.Any(tag => t.Name.IsLike(tag)));
-                    }
+                switch (input)
+                {
+                    case WebApiTagDefinition t:
+                        {
+                            yield return t;
+                            break;
+                        }
+                    case string s when s.IsWildcard():
+                        {
+                            yield return Client.GetTagsAsync(Project.Id, IncludeInactive)
+                                .GetResult($"Error getting work item tag(s) '{s}'")
+                                .Where(t => t.Name.IsLike(s));
+                            break;
+                        }
+                    case string s:
+                        {
+                            yield return Client.GetTagAsync(scopeId: Project.Id, name: s)
+                                .GetResult($"Error getting work item tag(s) '{s}'");
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent tag '{input}'"));
+                            break;
+                        }
+                }
             }
-
-            Logger.LogError(new ArgumentException($"Invalid or non-existent tag '{tag}'"));
-
-            return null;
         }
     }
 }
