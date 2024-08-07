@@ -2,7 +2,7 @@
 
 ## Version 2.9.0 (_03/Aug/2024_)
 
-This release adds some new process-related cmdlets.
+This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
 ## New cmdlets
 
@@ -10,12 +10,17 @@ This release adds some new process-related cmdlets.
 - `New-TfsWorkItemField`: Creates a new organization-wide work item field
 - `Remove-TfsWorkItemField`: Removes an organization-wide work item field
 
-## Fixes and enhancements
+## Fixes
 
 - Fixed an issue with `Get-TfsArtifact` where it wasn't listing deleted packages.
 - Fixed an issue with `Get-TfsArtifactFeed` where it would ignore the -Project argument and thus not filter feeds by project.
 - Fixed an issue with `Get-TfsWorkItemTag` where it would fail when given a list of tags as input.
 - Fixed an issue with `Get-TfsWorkItemType` where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
+
+## Changes and enhancements
+
+- **BREAKING**: In `Get-TfsGitBranch`, `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior will need to be updated.
+- **BREAKING**: In `Get-TfsGitBranchPolicy`, both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior will need to be updated.
 - Now `Connect-TfsTeamProjectCollection` (and its counterpart `Connect-TfsOrganization`) throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
 
 -----------------------
