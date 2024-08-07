@@ -19,9 +19,10 @@ This release adds new process-related cmdlets along with some fixes, enhancement
 
 ## Changes and enhancements
 
-- **BREAKING**: In `Get-TfsGitBranch`, `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior will need to be updated.
-- **BREAKING**: In `Get-TfsGitBranchPolicy`, both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior will need to be updated.
-- Now `Connect-TfsTeamProjectCollection` (and its counterpart `Connect-TfsOrganization`) throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
+- **`Get-TfsGitBranch`**: Added a new `-Compare` argument to  to get the "Compare" (base) branch of a given repository.
+- **`Get-TfsGitBranch` (_BREAKING_)**: `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior will need to be updated.
+- **`Get-TfsGitBranchPolicy` (_BREAKING_)**: Both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior will need to be updated.
+- **`Connect-TfsTeamProjectCollection`, `Connect-TfsOrganization`**: Now it throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
 
 -----------------------
 
