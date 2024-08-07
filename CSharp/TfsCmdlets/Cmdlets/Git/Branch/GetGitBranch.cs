@@ -21,16 +21,16 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         public object Branch { get; set; } = "*";
 
         /// <summary>
+        /// HELP_PARAM_GIT_REPOSITORY
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, Mandatory = true, Position = 1)]
+        public object Repository { get; set; }
+
+        /// <summary>
         /// Returns the default branch in the given repository.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get default")]
         public SwitchParameter Default { get; set; }
-
-        /// <summary>
-        /// HELP_PARAM_GIT_REPOSITORY
-        /// </summary>
-        [Parameter(ValueFromPipeline = true)]
-        public object Repository { get; set; }
     }
 
     [CmdletController(typeof(GitBranchStats), Client=typeof(IGitHttpClient))]
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     {
         protected override IEnumerable Run()
         {
-            var repo = GetItem<GitRepository>(new { Repository = Has_Repository? Repository: Project.Name });
+            var repo = GetItem<GitRepository>(new { Repository, Default = false });
 
             if (repo.Size == 0)
             {
