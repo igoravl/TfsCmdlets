@@ -13,7 +13,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         It 'Should return all team members' {
             $result = Get-TfsTeamMember -Project $tfsProject -Team "$tfsProject Team"
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Sort-Object | Should -Be @('Igor Abade (T-Shooter)')
+            $result.DisplayName | Sort-Object | Should -Be @('Brian Keller', 'Igor Abade (T-Shooter)')
         }
 
         It 'Should return a single team member by name' {

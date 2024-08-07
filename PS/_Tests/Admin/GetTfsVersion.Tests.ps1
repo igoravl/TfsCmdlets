@@ -2,7 +2,7 @@
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
-    Context 'Unit Tests' {
+    Context '__AllParameterSets' {
         It 'Should get version from hosted service' -Tag 'Hosted' {
             $version = Get-TfsVersion
 
