@@ -27,7 +27,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
         It 'Should get members with -QueryMembership' {
             (Get-TfsTeam -Default -Project $tfsProject).TeamMembers.Length | Should -Be 0
-            (Get-TfsTeam -Default -Project $tfsProject -QueryMembership).TeamMembers.Length | Should -Be 1
+            (Get-TfsTeam -Default -Project $tfsProject -QueryMembership).TeamMembers.Length | Should -Be 2
         }
 
     }
