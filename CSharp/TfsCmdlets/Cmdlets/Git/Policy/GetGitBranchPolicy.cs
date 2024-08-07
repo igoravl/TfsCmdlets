@@ -18,17 +18,16 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         public object PolicyType { get; set; } = "*";
 
         /// <summary>
-        /// Specifies the name of the branch to query for branch policies. When omitted, 
-        /// the default branch in the given repository is queried.
+        /// Specifies the name of the branch to query for branch policies.
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, Position = 1)]
         [Alias("RefName")]
         public object Branch { get; set; }
 
         /// <summary>
         /// HELP_PARAM_GIT_REPOSITORY
         /// </summary>
-        [Parameter]
+        [Parameter(Mandatory = true, Position = 2)]
         public object Repository { get; set; }
     }
 
