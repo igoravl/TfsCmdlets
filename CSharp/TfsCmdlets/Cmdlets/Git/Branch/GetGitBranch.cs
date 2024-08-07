@@ -6,7 +6,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
     /// <summary>
     /// Gets information from one or more branches in a remote Git repository.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, DefaultParameterSetName = "Get by name", 
+    [TfsCmdlet(CmdletScope.Project, NoAutoPipeline = true, DefaultParameterSetName = "Get by name",
      OutputType = typeof(GitBranchStats))]
     partial class GetGitBranch
     {
@@ -27,14 +27,20 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
         public object Repository { get; set; }
 
         /// <summary>
-        /// Returns the default branch in the given repository.
+        /// Returns the "Default" branch in the given repository.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Get default")]
         public SwitchParameter Default { get; set; }
+
+        /// <summary>
+        /// Returns the "Compare" branch in the given repository.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = "Get compare")]
+        public SwitchParameter Compare { get; set; }
     }
 
-    [CmdletController(typeof(GitBranchStats), Client=typeof(IGitHttpClient))]
-    partial class GetGitBranchController 
+    [CmdletController(typeof(GitBranchStats), Client = typeof(IGitHttpClient))]
+    partial class GetGitBranchController
     {
         protected override IEnumerable Run()
         {
@@ -48,36 +54,35 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
 
             string branchName = null;
 
-            foreach(var branch in Branch)
+            foreach (var branch in Branch)
             {
                 switch (branch)
                 {
                     case GitBranchStats gbs:
-                    {
-                        yield return gbs;
-                        continue;
-                    }
-                    case null:
-                    case string s when Default:
-                    {
-                        if (repo.DefaultBranch == null)
                         {
-                            throw new Exception($"Repository {repo.Name} does not have a default branch set.");
+                            yield return gbs;
+                            continue;
                         }
+                    case { } when Default:
+                        {
+                            if (repo.DefaultBranch == null)
+                            {
+                                throw new Exception($"Repository {repo.Name} does not have a default branch set.");
+                            }
 
-                        branchName = repo.DefaultBranch.Substring("refs/heads/".Length);
-                        break;
-                    }
+                            branchName = repo.DefaultBranch.Substring("refs/heads/".Length);
+                            break;
+                        }
                     case string s when !string.IsNullOrEmpty(s):
-                    {
-                        branchName = s;
-                        break;
-                    }
+                        {
+                            branchName = s;
+                            break;
+                        }
                     default:
-                    {
-                        Logger.LogError(new ArgumentException($"Invalid branch '{branch}'", "Branch"));
-                        break;
-                    }
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid branch '{branch}'", "Branch"));
+                            break;
+                        }
                 }
 
                 IEnumerable<GitBranchStats> result;
@@ -86,7 +91,7 @@ namespace TfsCmdlets.Cmdlets.Git.Branch
                 {
                     result = Client.GetBranchesAsync(repo.ProjectReference.Name, repo.Id)
                         .GetResult($"Error retrieving branch(es) '{branch}' from repository '{repo.Name}'")
-                        .Where(b => b.Name.IsLike(branchName));
+                        .Where(b => b.Name.IsLike(branchName) && (!Has_Compare || b.IsBaseVersion == Compare));
                 }
                 catch (Exception ex)
                 {
