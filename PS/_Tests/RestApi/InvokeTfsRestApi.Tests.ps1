@@ -29,7 +29,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1' -Project $tfsProject `
             | ForEach-Object { $_.name } `
             | Sort-Object `
-            | Should -Be @('PartsUnlimitedE2E')
+            | Should -Be @('PartsUnlimitedE2E', 'TestProject-CD')
 
             Invoke-TfsRestApi 'GET https://dev.azure.com/{organization}/_apis/projects?api-version=6.1' `
             | ForEach-Object { $_.Name } `
@@ -37,7 +37,6 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             | Should -Be @('AgileGit', $tfsProject, 'TfsCmdlets')
         }
 
-        
         It 'Should support standard parameter-based call' {
             Invoke-TfsRestApi -Path '/_apis/projects?api-version=6.1' -Method 'GET' -ApiVersion '6.1' -RequestContentType 'application/json' -ResponseContentType 'application/json' `
             | ForEach-Object { $_.Name } `
