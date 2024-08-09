@@ -220,5 +220,29 @@ namespace TfsCmdlets.SourceGenerators
                 type = type.BaseType;
             }
         }
+
+        public static bool HasXmlCommentTag(this PropertyDeclarationSyntax propertyDeclaration, string tagName)
+        {
+            // Obtém as trivia que precedem a declaração da propriedade
+            var leadingTrivia = propertyDeclaration.GetLeadingTrivia();
+
+            // Encontra a trivia que contém o comentário de documentação XML
+            var xmlCommentTrivia = leadingTrivia
+                .Select(trivia => trivia.GetStructure())
+                .OfType<DocumentationCommentTriviaSyntax>()
+                .FirstOrDefault();
+
+            if (xmlCommentTrivia == null)
+            {
+                return false; // Nenhum comentário XML encontrado
+            }
+
+            // Verifica se há um elemento <summary> no comentário XML
+            var hasSummaryTag = xmlCommentTrivia.Content
+                .OfType<XmlElementSyntax>()
+                .Any(element => element.StartTag.Name.LocalName.Text == tagName);
+
+            return hasSummaryTag;
+        }
     }
 }

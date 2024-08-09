@@ -34,5 +34,12 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ParameterMustHaveComments { get; } = new DiagnosticDescriptor(
+            "TFS005",
+            "Parameter must have XML comments", "Parameter '{0}' must have at least <summary> XML comments to enable command-line help",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
     }
 }
