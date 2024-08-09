@@ -118,7 +118,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         public string Passthru { get; set; } = "None";
     }
 
-    [CmdletController(typeof(TestPlan))]
+    [CmdletController(typeof(TestPlan), Client=typeof(ITestPlanHttpClient))]
     partial class CopyTestPlanController
     {
         protected override IEnumerable Run()
@@ -137,8 +137,6 @@ namespace TfsCmdlets.Cmdlets.TestManagement
             var copyAncestorHierarchy = Parameters.Get<bool>(nameof(CopyTestPlan.CopyAncestorHierarchy));
             var destinationWorkItemType = Parameters.Get<string>(nameof(CopyTestPlan.DestinationWorkItemType));
             var cloneRequirements = Parameters.Get<bool>(nameof(CopyTestPlan.CloneRequirements));
-
-            var client = Data.GetClient<TestPlanHttpClient>();
 
             var cloneParams = new CloneTestPlanParams()
             {
@@ -168,7 +166,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
                 }
             };
 
-            var result = client.CloneTestPlanAsync(cloneParams, tp.Name, deepClone)
+            var result = Client.CloneTestPlanAsync(cloneParams, tp.Name, deepClone)
                 .GetResult($"Error cloning test plan '{plan.Name}' to '{destTp.Name}'");
 
             var opInfo = result;
@@ -176,7 +174,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
             do
             {
                 Thread.Sleep(5000);
-                opInfo = client.GetCloneInformationAsync(tp.Name, opInfo.cloneOperationResponse.opId)
+                opInfo = Client.GetCloneInformationAsync(tp.Name, opInfo.cloneOperationResponse.opId)
                     .GetResult($"Error getting operation status");
             } while (opInfo.cloneOperationResponse.state.Equals("Queued") ||
                      opInfo.cloneOperationResponse.state.Equals("InProgress"));
@@ -191,7 +189,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         }
     }
 
-    [CmdletController(typeof(TestPlan))]
+    [CmdletController(typeof(TestPlan), Client=typeof(ITestPlanHttpClient))]
     partial class GetTestPlanController
     {
         protected override IEnumerable Run()
@@ -211,16 +209,14 @@ namespace TfsCmdlets.Cmdlets.TestManagement
                     case int i:
                         {
                             var tp = Data.GetProject();
-                            var client = Data.GetClient<TestPlanHttpClient>();
-                            yield return client.GetTestPlanByIdAsync(tp.Id, i)
+                            yield return Client.GetTestPlanByIdAsync(tp.Id, i)
                                 .GetResult($"Error getting test plan '{i}'");
                             yield break;
                         }
                     case string s:
                         {
                             var tp = Data.GetProject();
-                            var client = Data.GetClient<TestPlanHttpClient>();
-                            foreach (var plan in client.GetTestPlansAsync(tp.Id, owner, null, planDetails, active)
+                            foreach (var plan in Client.GetTestPlansAsync(tp.Id, owner, null, planDetails, active)
                                 .GetResult($"Error getting test plans '{testPlan}'")
                                 .Where(plan => plan.Name.IsLike(s)))
                             {

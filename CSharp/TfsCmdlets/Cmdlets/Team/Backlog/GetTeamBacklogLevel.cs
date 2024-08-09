@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Team.Backlog
         /// <summary>
         /// Specifies one or more backlog level configurations to be returned. Valid values 
         /// are the name (e.g. "Stories") or the ID (e.g. "Microsoft.RequirementCategory") of the 
-        /// backlog level to return. Wilcards are supported. When omitted, returns all backlogs 
+        /// backlog level to return. Wildcards are supported. When omitted, returns all backlogs 
         /// levels of the given team.
         /// </summary>
         [Parameter(Position = 0)]
@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.Team.Backlog
         public object Backlog { get; set; } = "*";
     }
 
-    [CmdletController(typeof(Models.BacklogLevelConfiguration))]
+    [CmdletController(typeof(Models.BacklogLevelConfiguration), Client=typeof(IWorkHttpClient))]
     partial class GetTeamBacklogLevelController
     {
         protected override IEnumerable Run()
@@ -41,10 +41,9 @@ namespace TfsCmdlets.Cmdlets.Team.Backlog
                     }
                 case string s:
                     {
-                        var client = Data.GetClient<WorkHttpClient>();
                         var ctx = new TeamContext(tp.Name, t.Name);
 
-                        var result = client.GetBacklogsAsync(ctx)
+                        var result = Client.GetBacklogsAsync(ctx)
                             .GetResult($"Error getting backlogs")
                             .Where(b => b.Name.IsLike(s) || b.Id.IsLike(s))
                             .OrderByDescending(b => b.Rank);

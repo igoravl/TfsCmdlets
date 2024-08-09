@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client=typeof(IBuildHttpClient))]
     partial class RemoveBuildDefinitionFolderController
     {
         protected override IEnumerable Run()
@@ -66,13 +66,12 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                 }
 
                 var tp = Data.GetProject();
-                var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
                 if (!force)
                 {
                     Logger.Log($"Force argument not set. Check if folder '{f.Path}' has build definitions");
 
-                    var result = client.GetDefinitionsAsync2(tp.Name, null, null, null, DefinitionQueryOrder.None, null, null, null, null, f.Path)
+                    var result = Client.GetDefinitionsAsync2(project: tp.Name, queryOrder: DefinitionQueryOrder.None, path: f.Path, yamlFilename: null)
                         .GetResult($"Error fetching build definitions in folder '{f.Path}'").ToList();
 
                     if (result.Count > 0)
@@ -81,7 +80,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                     }
                 }
 
-                client.DeleteFolderAsync(tp.Name, f.Path).Wait();
+                Client.DeleteFolderAsync(tp.Name, f.Path).Wait();
             }
 
             return null;

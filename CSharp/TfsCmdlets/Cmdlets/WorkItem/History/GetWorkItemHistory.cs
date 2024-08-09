@@ -10,13 +10,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
     [TfsCmdlet(CmdletScope.Collection, NoAutoPipeline = true, OutputType = typeof(Models.WorkItemHistoryEntry))]
     partial class GetWorkItemHistory
     {
+        /// <summary>
+        /// The work item to retrieve the history for.
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("id")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
     }
 
-    [CmdletController(typeof(Models.WorkItemHistoryEntry))]
+    [CmdletController(typeof(Models.WorkItemHistoryEntry), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemHistoryController
     {
         private static readonly string[] _IgnoredFields = new[] {
@@ -26,12 +29,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
 
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var workItems = GetItems<WebApiWorkItem>();
 
             foreach (var workItem in workItems)
             {
-                var revisions = client.GetRevisionsAsync((int)workItem.Id, (int)workItem.Rev, expand: WorkItemExpand.All)
+                var revisions = Client.GetRevisionsAsync((int)workItem.Id, (int)workItem.Rev, expand: WorkItemExpand.All)
                     .GetResult("Error retrieving work item revisions");
 
                 WebApiWorkItem previous = null;

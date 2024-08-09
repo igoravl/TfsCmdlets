@@ -41,13 +41,11 @@ namespace TfsCmdlets.Cmdlets.Artifact
         public Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole Role { get; set; } = Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole.Administrator;
     }
 
-    [CmdletController(typeof(FeedView))]
+    [CmdletController(typeof(FeedView), Client=typeof(IFeedHttpClient))]
     partial class GetArtifactFeedViewController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<FeedHttpClient>();
-
             foreach (var input in View)
             {
                 var view = input switch
@@ -66,14 +64,14 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case string s when !string.IsNullOrEmpty(s) && feed.Project == null:
                         {
-                            yield return client.GetFeedViewsAsync(feed.Id.ToString())
+                            yield return Client.GetFeedViewsAsync(feed.Id.ToString())
                                 .GetResult($"Error getting artifact feed view(s) '{s}'")
                                 .Where(fv => fv.Name.IsLike(s));
                             break;
                         }
                     case string s when !string.IsNullOrEmpty(s):
                         {
-                            yield return client.GetFeedViewsAsync(feed.Project.Id, feed.Id.ToString())
+                            yield return Client.GetFeedViewsAsync(feed.Project.Id, feed.Id.ToString())
                                 .GetResult($"Error getting artifact feed view(s) '{s}'")
                                 .Where(fv => fv.Name.IsLike(s));
                             break;

@@ -66,7 +66,7 @@ namespace TfsCmdlets.Cmdlets.Team
         public SwitchParameter Default { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team))]
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
     partial class GetTeamController
     {
         [Import]
@@ -75,10 +75,14 @@ namespace TfsCmdlets.Cmdlets.Team
         [Import]
         private IPaginator Paginator { get; }
 
+        [Import]
+        private IProjectHttpClient ProjectClient { get; set; }
+
+        [Import]
+        private IWorkHttpClient WorkClient { get; set; }
+
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<TeamHttpClient>();
-
             foreach (var input in Team)
             {
                 var team = input switch
@@ -92,8 +96,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 {
                     Logger.Log("Get default team");
 
-                    var projectClient = Data.GetClient<ProjectHttpClient>();
-                    var props = projectClient
+                    var props = ProjectClient
                         .GetProjectPropertiesAsync(Project.Id)
                         .GetResult("Error retrieving project's default team");
                     team = new Guid((string)props.Where(p => p.Name.Equals("System.Microsoft.TeamFoundation.Team.Default"))
@@ -126,14 +129,14 @@ namespace TfsCmdlets.Cmdlets.Team
                         }
                     case Guid g:
                         {
-                            var result = client.GetTeamAsync(Project.Name, g.ToString())
+                            var result = Client.GetTeamAsync(Project.Name, g.ToString())
                                 .GetResult($"Error getting team '{g}'");
                             yield return CreateTeamObject(result);
                             yield break;
                         }
                     case string s when !s.IsWildcard():
                         {
-                            var result = client.GetTeamAsync(Project.Name, s)
+                            var result = Client.GetTeamAsync(Project.Name, s)
                                 .GetResult($"Error getting team '{s}'");
                             yield return CreateTeamObject(result);
                             yield break;
@@ -142,7 +145,7 @@ namespace TfsCmdlets.Cmdlets.Team
                         {
 
                             foreach (var result in Paginator.Paginate(
-                                    (top, skip) => client.GetTeamsAsync(Project.Name, top: top, skip: skip).GetResult($"Error getting team(s) '{s}'"))
+                                    (top, skip) => Client.GetTeamsAsync(Project.Name, top: top, skip: skip).GetResult($"Error getting team(s) '{s}'"))
                                 .Where(t => t.Name.IsLike(s)))
                             {
                                 yield return CreateTeamObject(result);
@@ -164,28 +167,25 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (IncludeMembers)
             {
-                var client = GetClient<TeamHttpClient>();
-
                 Logger.Log($"Retrieving team membership information for team '{team.Name}'");
-                team.TeamMembers = client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
+                team.TeamMembers = Client.GetTeamMembersWithExtendedPropertiesAsync(team.ProjectName, team.Name)
                     .GetResult($"Error retrieving membership information for team {team.Name}");
             }
 
             if (IncludeSettings)
             {
-                var workClient = GetClient<WorkHttpClient>();
                 var ctx = new TeamContext(team.ProjectName, team.Name);
 
                 Logger.Log($"Retrieving team settings for team '{team.Name}'");
-                team.Settings = workClient.GetTeamSettingsAsync(ctx)
+                team.Settings = WorkClient.GetTeamSettingsAsync(ctx)
                     .GetResult($"Error retrieving settings for team {team.Name}");
 
                 Logger.Log($"Retrieving default team field (area path) for team '{team.Name}'");
-                team.TeamField = workClient.GetTeamFieldValuesAsync(ctx)
+                team.TeamField = WorkClient.GetTeamFieldValuesAsync(ctx)
                     .GetResult($"Error retrieving team field values for team {team.Name}");
 
                 Logger.Log($"Retrieving iterations for team '{team.Name}'");
-                team.IterationPaths = workClient.GetTeamIterationsAsync(ctx)
+                team.IterationPaths = WorkClient.GetTeamIterationsAsync(ctx)
                     .GetResult("Error getting team's current iterations");
             }
 

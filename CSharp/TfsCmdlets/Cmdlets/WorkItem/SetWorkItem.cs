@@ -144,7 +144,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter SuppressNotifications { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class SetWorkItemController
     {
         [Import]
@@ -152,11 +152,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
-
             foreach (var wi in Items)
             {
-                var result = client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules, SuppressNotifications)
+                var result = Client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules, SuppressNotifications)
                     .GetResult("Error updating work item");
 
                 yield return result;

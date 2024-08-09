@@ -43,7 +43,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiProcess))]
+    [CmdletController(typeof(WebApiProcess), Client=typeof(IWorkItemTrackingProcessHttpClient))]
     partial class NewProcessTemplateController
     {
         protected override IEnumerable Run()
@@ -55,11 +55,9 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
 
             if (exists && !(Force || PowerShell.ShouldContinue($"Are you sure you want to overwrite existing process '{ProcessTemplate}'?"))) yield break;
 
-            var client = Data.GetClient<WorkItemTrackingProcessHttpClient>();
-
             var tmpProcessName = exists ? $"{ProcessTemplate}_{new Random().Next():X}" : ProcessTemplate;
 
-            client.CreateNewProcessAsync(new CreateProcessModel() {
+            Client.CreateNewProcessAsync(new CreateProcessModel() {
                     Name = tmpProcessName,
                     Description = Description,
                     ParentProcessTypeId = parent.Id,

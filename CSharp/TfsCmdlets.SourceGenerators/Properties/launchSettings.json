@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "Profile 1": {
-      "commandName": "Executable",
-      "executablePath": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\Common7\\IDE\\devenv.exe"
+    "SourceGenerator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\TfsCmdlets\\TfsCmdlets.csproj"
     }
   }
 }

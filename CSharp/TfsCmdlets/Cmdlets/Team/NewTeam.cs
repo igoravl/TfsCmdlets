@@ -78,16 +78,14 @@ namespace TfsCmdlets.Cmdlets.Team
         public string Description { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team))]
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
     partial class NewTeamController
     {
         protected override IEnumerable Run()
         {
             if (!PowerShell.ShouldProcess(Project, $"Create team {Team}")) yield break;
 
-            var client = GetClient<TeamHttpClient>();
-
-            var t = client.CreateTeamAsync(new WebApiTeam()
+            var t = Client.CreateTeamAsync(new WebApiTeam()
                 {
                     Name = Team,
                     Description = Description,

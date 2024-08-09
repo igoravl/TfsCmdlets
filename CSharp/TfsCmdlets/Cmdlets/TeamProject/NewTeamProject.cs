@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public object ProcessTemplate { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTeamProject))]
+    [CmdletController(typeof(WebApiTeamProject), Client=typeof(IProjectHttpClient))]
     partial class NewTeamProjectController
     {
         [Import]
@@ -49,8 +49,6 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
         protected override IEnumerable Run()
         {
-            var client = GetClient<ProjectHttpClient>();
-
             foreach (var project in Project)
             {
                 if (!PowerShell.ShouldProcess(Collection, $"Create team project '{project}'")) continue;
@@ -82,7 +80,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 // Trigger the project creation
 
-                var result = AsyncAwaiter.Wait(client.QueueCreateProject(tpInfo), "Error queueing project creation");
+                var result = AsyncAwaiter.Wait(Client.QueueCreateProject(tpInfo), "Error queueing project creation");
 
                 if (result.Status != OperationStatus.Succeeded)
                 {

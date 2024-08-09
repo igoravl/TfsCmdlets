@@ -18,18 +18,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public object WorkItem { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class UndoWorkItemRemovalController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<WorkItemTrackingHttpClient>();
-
             foreach (var wi in GetItems<WebApiWorkItem>(new { Deleted = true }))
             {
                 if (!PowerShell.ShouldProcess($"[Organization: {Collection.DisplayName}]/[Work Item: {wi.Id}]", $"Restore work item")) continue;
 
-                client.RestoreWorkItemAsync(new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemDeleteUpdate()
+                Client.RestoreWorkItemAsync(new Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemDeleteUpdate()
                 {
                     IsDeleted = false
                 }, (int) wi.Id).GetResult($"Error restoring work item {wi.Id}");

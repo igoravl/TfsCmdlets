@@ -22,7 +22,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public object Group { get; set; }
     }
 
-    [CmdletController]
+    [CmdletController(Client=typeof(IIdentityHttpClient))]
     partial class RemoveGroupMemberController
     {
         protected override IEnumerable Run()
@@ -40,15 +40,13 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                 Identity = group
             });
 
-            var client = Data.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();
-
             Logger.Log($"Adding {m.IdentityType} '{m.DisplayName} ({m.UniqueName})' to group '{g.DisplayName}'");
 
             if (!PowerShell.ShouldProcess($"[Group: {g.DisplayName}]/[Member: '{m.DisplayName} ({m.UniqueName})']", "Remove member")) return null;
 
             Logger.Log($"Removing '{m.DisplayName} ({m.UniqueName})' from group '{g.DisplayName}'");
 
-            client.RemoveMemberFromGroupAsync(g.Descriptor, m.Descriptor)
+            Client.RemoveMemberFromGroupAsync(g.Descriptor, m.Descriptor)
                 .GetResult($"Error removing '{m.DisplayName} ({m.UniqueName}))' from group '{g.DisplayName}'");
 
             return null;

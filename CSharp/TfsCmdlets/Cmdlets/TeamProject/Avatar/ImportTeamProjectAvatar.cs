@@ -16,7 +16,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
         public string Path { get; set; }
     }
 
-    [CmdletController]
+    [CmdletController(Client=typeof(IProjectHttpClient))]
     partial class ImportTeamProjectAvatarController
     {
         protected override IEnumerable Run()
@@ -31,8 +31,6 @@ namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
 
             if (!File.Exists(path)){ throw new ArgumentException($"Invalid avatar image path '{path}'");}
 
-            var client = Data.GetClient<ProjectHttpClient>();
-
             var projectAvatar = new ProjectAvatar
             {
                 Image = File.ReadAllBytes(path)
@@ -40,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject.Avatar
 
             Logger.Log($"Importing '{path}' and using it as avatar image for team project '{tp.Name}'");
 
-            client.SetProjectAvatarAsync(projectAvatar, tp.Name)
+            Client.SetProjectAvatarAsync(projectAvatar, tp.Name)
                 .Wait("Error import team project avatar image");
 
             return null;

@@ -37,6 +37,12 @@ jobs:
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
+        with:
+          files: |
+            out\TestResults-Pester*.xml
       - name: Publish Nuget
         uses: actions/upload-artifact@v4
         with:
@@ -184,8 +190,8 @@ jobs:
           git checkout --track origin/gh-pages
           unzip -o ../../TfsCmdlets-Docs-*.zip
           popd
-          Write-Output build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
-          Write-Output >> _config.yml
+          echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
+          echo >> _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
           git add *

@@ -47,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         public object Owner { get; set; }
     }
 
-    [CmdletController(typeof(TestPlan))]
+    [CmdletController(typeof(TestPlan), Client=typeof(ITestPlanHttpClient))]
     partial class NewTestPlanController
     {
         [Import]
@@ -73,9 +73,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 
             var tp = Data.GetProject();
 
-            var client = Data.GetClient<TestPlanHttpClient>();
-
-            yield return client.CreateTestPlanAsync(new TestPlanCreateParams()
+            yield return Client.CreateTestPlanAsync(new TestPlanCreateParams()
             {
                 AreaPath = NodeUtil.NormalizeNodePath(areaPath, tp.Name, "Areas", includeTeamProject: true),
                 Iteration = NodeUtil.NormalizeNodePath(iterationPath, tp.Name, "Iterations", includeTeamProject: true),

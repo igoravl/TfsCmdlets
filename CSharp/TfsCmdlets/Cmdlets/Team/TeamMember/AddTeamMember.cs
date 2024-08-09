@@ -1,5 +1,5 @@
 using System.Management.Automation;
-using TfsCmdlets.HttpClient;
+using TfsCmdlets.HttpClients;
 
 namespace TfsCmdlets.Cmdlets.Team.TeamMember
 {

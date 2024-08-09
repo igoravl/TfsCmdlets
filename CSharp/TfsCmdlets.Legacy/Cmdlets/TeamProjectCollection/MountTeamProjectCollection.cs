@@ -1,7 +1,5 @@
 using System;
 using System.Management.Automation;
-#if NET471_OR_GREATER
-#endif
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {

@@ -1,6 +1,7 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Licensing;
 using Microsoft.VisualStudio.Services.Licensing.Client;
+using IAccountLicensingHttpClient = TfsCmdlets.HttpClients.IAccountLicensingHttpClient;
 
 namespace TfsCmdlets.Cmdlets.Identity.User
 {
@@ -24,20 +25,18 @@ namespace TfsCmdlets.Cmdlets.Identity.User
 
 namespace TfsCmdlets.Controllers.Identity.User
 {
-    [CmdletController(typeof(AccountEntitlement))]
+    [CmdletController(typeof(AccountEntitlement), Client=typeof(IAccountLicensingHttpClient))]
     partial class RemoveUserController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<AccountLicensingHttpClient>();
-
             foreach (var user in Items)
             {
                 if (!PowerShell.ShouldProcess(Collection, $"Delete user '{user.User.UniqueName}' ('{user.User.DisplayName}')")) continue;
 
                 try
                 {
-                    client.DeleteEntitlementAsync(Guid.Parse(user.User.Id)).GetAwaiter().GetResult();
+                    Client.DeleteEntitlementAsync(Guid.Parse(user.User.Id)).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {

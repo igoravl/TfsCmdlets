@@ -8,13 +8,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
     public abstract class RenameClassificationNodeController: ControllerBase
     {
-        [Import]
-        private INodeUtil NodeUtil { get; }
+        private INodeUtil NodeUtil { get; set;  }
+
+        private IWorkItemTrackingHttpClient Client { get; set; }
 
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var nodeToRename = Data.GetItem<ClassificationNode>();
             var structureGroup = Parameters.Get<TreeStructureGroup>("StructureGroup");
             var structureGroupName = structureGroup.ToString().TrimEnd('s');
@@ -36,15 +36,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 Attributes = nodeToRename.Attributes
             };
 
-            yield return new ClassificationNode(client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath)
-                .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, client);
+            yield return new ClassificationNode(Client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToRename.RelativePath)
+                .GetResult($"Error renaming node '{nodeToRename.RelativePath}'"), tp.Name, Client);
         }
 
         [ImportingConstructor]
-        protected RenameClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected RenameClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
             NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

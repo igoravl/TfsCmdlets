@@ -41,5 +41,5 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "Indigo",
-    "dotnet.preferCSharpExtension": true
+    "dotnet.preferCSharpExtension": false
 }

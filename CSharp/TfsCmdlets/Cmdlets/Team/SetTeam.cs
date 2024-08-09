@@ -110,7 +110,7 @@ namespace TfsCmdlets.Cmdlets.Team
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team))]
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
     partial class SetTeamController
     {
         [Import]
@@ -119,17 +119,15 @@ namespace TfsCmdlets.Cmdlets.Team
         [Import]
         private INodeUtil NodeUtil { get; set; }
 
+        [Import]
+        private IWorkHttpClient WorkClient { get; set; }
+
         protected override IEnumerable Run()
         {
             var t = Data.GetTeam(includeSettings: true);
 
             var backlogVisibilities = (BacklogVisibilities ?? new Hashtable()).ToDictionary<string, bool>();
             var workingDays = (WorkingDays ?? Enumerable.Empty<DayOfWeek>()).ToList();
-
-            var teamClient = GetClient<TeamHttpClient>();
-            var projectClient = GetClient<ProjectHttpClient>();
-            var workClient = GetClient<WorkHttpClient>();
-
             var ctx = new TeamContext(Project.Name, t.Name);
             var teamFieldPatch = new TeamFieldValuesPatch();
 
@@ -167,7 +165,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (Has_Description && !t.Description.Equals(Description) && PowerShell.ShouldProcess(t, $"Set team's description to '{Description}'"))
             {
-                t = teamClient.UpdateTeamAsync(new WebApiTeam()
+                t = Client.UpdateTeamAsync(new WebApiTeam()
                 {
                     Description = Description ?? string.Empty
                 }, Project.Id.ToString(), t.Id.ToString())
@@ -287,7 +285,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (isDirty)
             {
-                workClient.UpdateTeamFieldValuesAsync(teamFieldPatch, ctx)
+                WorkClient.UpdateTeamFieldValuesAsync(teamFieldPatch, ctx)
                     .GetResult("Error applying team field value and/or area path settings");
             }
 
@@ -347,7 +345,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (isDirty)
             {
-                workClient.UpdateTeamSettingsAsync(patch, ctx)
+                WorkClient.UpdateTeamSettingsAsync(patch, ctx)
                     .GetResult("Error applying iteration settings");
             }
 
@@ -355,7 +353,7 @@ namespace TfsCmdlets.Cmdlets.Team
 
             if (Parameters.HasParameter(nameof(SetTeam.IterationPaths)) && PowerShell.ShouldProcess(t, $"Set the team's iteration paths to '{IterationPaths.ToJsonString()}'"))
             {
-                var currentIterations = workClient.GetTeamIterationsAsync(ctx)
+                var currentIterations = WorkClient.GetTeamIterationsAsync(ctx)
                     .GetResult("Error getting team's current iterations");
 
                 var newIterations = IterationPaths
@@ -366,7 +364,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 foreach (var iteration in newIterations)
                 {
                     Logger.Log($"Adding iteration '{iteration.Name}'");
-                    workClient.PostTeamIterationAsync(iteration, ctx)
+                    WorkClient.PostTeamIterationAsync(iteration, ctx)
                         .GetResult($"Error setting iteration {iteration.Id} as a sprint iteration");
                 }
 
@@ -374,7 +372,7 @@ namespace TfsCmdlets.Cmdlets.Team
                 {
                     foreach (var iteration in currentIterations.Where(i => !newIterations.Any(ni => ni.Id == i.Id)))
                     {
-                        workClient.DeleteTeamIterationAsync(ctx, iteration.Id)
+                        WorkClient.DeleteTeamIterationAsync(ctx, iteration.Id)
                             .Wait($"Error removing iteration '{iteration.Id}' from the team's sprint iterations");
                     }
                 }

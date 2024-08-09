@@ -4,7 +4,7 @@ using TfsCmdlets.Cmdlets.WorkItem.Query;
 
 namespace TfsCmdlets.Controllers.WorkItem.Query
 {
-    [CmdletController(typeof(QueryHierarchyItem))]
+    [CmdletController(typeof(QueryHierarchyItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemQueryController
     {
         [Import]
@@ -14,9 +14,8 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
         {
             var isFolder = ItemType.Equals("Folder", System.StringComparison.OrdinalIgnoreCase);
             var item = Parameters.Get<object>(ItemType);
-            var client = GetClient<WorkItemTrackingHttpClient>();
 
-            var (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, client, 0, QueryExpand.Minimal);
+            var (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, Client, 0, QueryExpand.Minimal);
 
             switch (item)
             {
@@ -56,7 +55,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
                         var rootFolders = new List<QueryHierarchyItem>();
 
-                        (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, client, 2, QueryExpand.All);
+                        (myQueriesFolder, sharedQueriesFolder) = GetRootFolders(Project.Name, Scope, Client, 2, QueryExpand.All);
 
                         if ((Scope & QueryItemScope.Personal) == QueryItemScope.Personal)
                         {
@@ -70,7 +69,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
 
                         foreach (var rootFolder in rootFolders)
                         {
-                            foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, Deleted, client))
+                            foreach (var c in GetItemsRecursively(rootFolder, path, Project.Name, !isFolder, Deleted, Client))
                             {
                                 yield return c;
                             }
@@ -86,7 +85,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             }
         }
 
-        private (QueryHierarchyItem personal, QueryHierarchyItem shared) GetRootFolders(string projectName, QueryItemScope scope, WorkItemTrackingHttpClient client, int depth = 2, QueryExpand expand = QueryExpand.All)
+        private (QueryHierarchyItem personal, QueryHierarchyItem shared) GetRootFolders(string projectName, QueryItemScope scope, IWorkItemTrackingHttpClient client, int depth = 2, QueryExpand expand = QueryExpand.All)
         {
             var result = client.GetQueriesAsync(projectName, expand, depth, true)
                 .GetResult("Error getting work item query root folders")
@@ -95,7 +94,7 @@ namespace TfsCmdlets.Controllers.WorkItem.Query
             return (result.First(q => !(bool)q.IsPublic), result.First(q => (bool)q.IsPublic));
         }
 
-        private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, bool deletedOnly, WorkItemTrackingHttpClient client)
+        private IEnumerable<QueryHierarchyItem> GetItemsRecursively(QueryHierarchyItem item, string pattern, string projectName, bool queriesOnly, bool deletedOnly, IWorkItemTrackingHttpClient client)
         {
             if ((item.HasChildren ?? false) && (item.Children == null || item.Children.ToList().Count == 0) && !item.IsDeleted)
             {

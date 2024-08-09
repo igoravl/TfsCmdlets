@@ -17,14 +17,13 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
         public object Definition { get; set; }
     }
 
-    [CmdletController(typeof(BuildDefinitionReference))]
+    [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
     partial class ResumeBuildDefinitionController
     {
         protected override IEnumerable Run()
         {
 
             var def = Data.GetItem<BuildDefinition>();
-            var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
 
             if (def.QueueStatus == DefinitionQueueStatus.Enabled)
             {
@@ -51,7 +50,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
                 Name = def.Name,
             };
 
-            yield return client.UpdateDefinitionAsync(patch)
+            yield return Client.UpdateDefinitionAsync(patch)
                 .GetResult($"Error updating build definition {def.GetFullPath()}");
         }
     }

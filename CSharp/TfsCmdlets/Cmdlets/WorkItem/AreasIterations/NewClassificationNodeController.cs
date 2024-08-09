@@ -6,8 +6,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class NewClassificationNodeController: ControllerBase
     {
-        [Import]
         private INodeUtil NodeUtil { get; }
+
+        private IWorkItemTrackingHttpClient Client { get; set; }
 
         protected override IEnumerable Run()
         {
@@ -18,7 +19,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
             var nodeType = structureGroup.ToString().TrimEnd('s');
             var nodePath = NodeUtil.NormalizeNodePath(node, tp.Name, scope: nodeType, includeTeamProject: false);
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var parentPath = Path.GetDirectoryName(nodePath);
             var nodeName = Path.GetFileName(nodePath);
 
@@ -60,17 +60,18 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 };
             }
 
-            var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
+            var result = Client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, parentPath)
                 .GetResult($"Error creating node {nodePath}");
 
-            yield return new ClassificationNode(result, tp.Name, client);
+            yield return new ClassificationNode(result, tp.Name, Client);
         }
 
         [ImportingConstructor]
-        protected NewClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected NewClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
             NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

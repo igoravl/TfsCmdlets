@@ -131,7 +131,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter SuppressNotifications { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class NewWorkItemController
     {
         [Import]
@@ -147,9 +147,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             wi.Fields["System.TeamProject"] = Project.Name;
             wi.Fields["System.WorkItemType"] = type.Name;
 
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
-
-            var result = client.CreateWorkItemAsync(Builder.GetJson(wi), Project.Name, type.Name, false, BypassRules, SuppressNotifications)
+            var result = Client.CreateWorkItemAsync(Builder.GetJson(wi), Project.Name, type.Name, false, BypassRules, SuppressNotifications)
                 .GetResult("Error creating work item");
 
             yield return result;

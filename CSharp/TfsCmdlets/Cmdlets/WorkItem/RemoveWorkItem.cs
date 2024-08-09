@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItem))]
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class RemoveWorkItemController
     {
         protected override IEnumerable Run()
@@ -42,7 +42,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem
             var tpc = Data.GetCollection();
             var destroy = Parameters.Get<bool>(nameof(RemoveWorkItem.Destroy));
             var force = Parameters.Get<bool>(nameof(RemoveWorkItem.Force));
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
 
             foreach (var wi in wis)
             {
@@ -50,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem
 
                 if (destroy && !(force || PowerShell.ShouldContinue($"Are you sure you want to destroy work item {wi.Id}?"))) continue;
 
-                client.DeleteWorkItemAsync((int)wi.Id, destroy)
+                Client.DeleteWorkItemAsync((int)wi.Id, destroy)
                     .GetResult($"Error {(destroy ? "destroying" : "deleting")} work item {wi.Id}");
             }
             

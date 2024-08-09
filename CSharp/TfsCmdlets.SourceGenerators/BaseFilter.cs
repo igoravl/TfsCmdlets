@@ -7,7 +7,7 @@ namespace TfsCmdlets.SourceGenerators
 {
     public abstract class BaseFilter : IFilter
     {
-        public IDictionary<string, (INamedTypeSymbol, ClassDeclarationSyntax)> TypesToProcess { get; } = new Dictionary<string, (INamedTypeSymbol, ClassDeclarationSyntax)>();
+        public IDictionary<string, (INamedTypeSymbol, TypeDeclarationSyntax)> TypesToProcess { get; } = new Dictionary<string, (INamedTypeSymbol, TypeDeclarationSyntax)>();
 
         public abstract bool ShouldProcessType(INamedTypeSymbol type);
 
@@ -20,15 +20,15 @@ namespace TfsCmdlets.SourceGenerators
 
         public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
         {
-            if (!(context.Node is ClassDeclarationSyntax cds)) return;
+            if (!(context.Node is TypeDeclarationSyntax tds)) return;
 
             try
             {
-                var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(cds);
+                var type = (INamedTypeSymbol)context.SemanticModel.GetDeclaredSymbol(tds);
 
                 if (type == null)
                 {
-                    Logger.LogError(new Exception($"Unexpected error: Type {cds.Identifier} not found."));
+                    Logger.LogError(new Exception($"Unexpected error: Type {tds.Identifier} not found."));
                     return;
                 }
 
@@ -36,7 +36,7 @@ namespace TfsCmdlets.SourceGenerators
 
                 //Logger.Log($"Found '{type.FullName()}'");
 
-                TypesToProcess[type.FullName()] = (type, cds);
+                TypesToProcess[type.FullName()] = (type, tds);
             }
             catch (Exception ex)
             {

@@ -24,18 +24,16 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public GroupScope Scope { get; set; } = GroupScope.Collection;
     }
 
-    [CmdletController(typeof(GraphGroup))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
     partial class RemoveGroupController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<GraphHttpClient>();
-
             foreach (var group in Items)
             {
                 if (!PowerShell.ShouldProcess(group.PrincipalName, "Remove group")) continue;
 
-                client.DeleteGroupAsync(group.Descriptor)
+                Client.DeleteGroupAsync(group.Descriptor)
                     .Wait($"Error removing group '{group.PrincipalName}'");
             }
 

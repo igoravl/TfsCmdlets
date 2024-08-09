@@ -19,7 +19,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public string Tag { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTagDefinition))]
+    [CmdletController(typeof(WebApiTagDefinition), Client=typeof(ITaggingHttpClient))]
     partial class NewWorkItemTagController
     {
         protected override IEnumerable Run()
@@ -29,9 +29,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 
             if (!PowerShell.ShouldProcess(tp, $"Create work item tag '{tag}'")) yield break;
 
-            var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
-
-            yield return client.CreateTagAsync(tp.Id, tag)
+            yield return Client.CreateTagAsync(tp.Id, tag)
                 .GetResult($"Error creating work item tag '{tag}'");
         }
     }

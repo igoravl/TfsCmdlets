@@ -32,13 +32,11 @@ namespace TfsCmdlets.Cmdlets.Git
         public SwitchParameter IncludeParent { get; set; }
     }
 
-    [CmdletController(typeof(GitRepository))]
+    [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
     partial class GetGitRepositoryController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<GitHttpClient>();
-
             foreach (var input in Repository)
             {
                 var repository = input switch
@@ -58,14 +56,14 @@ namespace TfsCmdlets.Cmdlets.Git
                         }
                     case Guid guid:
                         {
-                            yield return client
+                            yield return Client
                                 .GetRepositoryAsync(Project.Name, guid, includeParent: IncludeParent)
                                 .GetResult($"Error getting repository with ID {guid}");
                             break;
                         }
                     case { } when Default:
                         {
-                            yield return client
+                            yield return Client
                                 .GetRepositoryAsync(Project.Name, Project.Name, includeParent: IncludeParent)
                                 .GetResult($"Error getting repository '{Project.Name}'");
                             break;
@@ -76,21 +74,21 @@ namespace TfsCmdlets.Cmdlets.Git
 
                             try
                             {
-                                result = client
+                                result = Client
                                     .GetRepositoryAsync(Project.Name, s, includeParent: IncludeParent)
                                     .GetResult($"Error getting repository '{s}'");
                             }
                             catch
                             {
                                 // Workaround to retrieve disabled repositories
-                                result = client
+                                result = Client
                                     .GetRepositoriesAsync(Project.Name, includeLinks: true, includeHidden: true)
                                     .GetResult($"Error getting repository(ies) '{s}'")
                                     .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
 
                                 if (IncludeParent)
                                 {
-                                    result = client
+                                    result = Client
                                         .GetRepositoryAsync(Project.Name, result.Id, includeParent: true)
                                         .GetResult($"Error getting repository(ies) '{s}'");
                                 }
@@ -100,14 +98,14 @@ namespace TfsCmdlets.Cmdlets.Git
                         }
                     case string s:
                         {
-                            foreach (var repo in client
+                            foreach (var repo in Client
                                 .GetRepositoriesAsync(Project.Name, includeLinks: true)
                                 .GetResult($"Error getting repository(ies) '{s}'")
                                 .Where(r => r.Name.IsLike(s)))
                             {
                                 if (IncludeParent)
                                 {
-                                    yield return client
+                                    yield return Client
                                         .GetRepositoryAsync(Project.Name, repo.Id, includeParent: true)
                                         .GetResult($"Error getting repository(ies) '{s}'");
                                 }

@@ -41,7 +41,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WorkItemRelation))]
+    [CmdletController(typeof(WorkItemRelation), Client = typeof(IWorkItemTrackingHttpClient))]
     partial class ExportWorkItemAttachmentController
     {
         protected override IEnumerable Run()
@@ -72,7 +72,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
             }
 
             // var tp = Data.GetProject();
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var outputDir = PowerShell.ResolvePath(destination);
 
             Logger.Log($"Downloading attachments to output directory '{outputDir}'");
@@ -102,7 +101,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                     var uri = new Uri(link.Url);
                     var id = Guid.Parse(uri.Segments[uri.Segments.Length - 1]);
 
-                    var stream = client.GetAttachmentContentAsync(id, name).SyncResult<Stream>();
+                    var stream = Client.GetAttachmentContentAsync(id, name).SyncResult<Stream>();
 
                     if (exists && !force && !PowerShell.ShouldContinue($"Are you sure you want to overwrite existing file '{outputPath}'?")) continue;
 

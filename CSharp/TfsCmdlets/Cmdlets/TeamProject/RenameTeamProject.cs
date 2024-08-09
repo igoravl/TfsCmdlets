@@ -24,7 +24,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTeamProject))]
+    [CmdletController(typeof(WebApiTeamProject), Client=typeof(IOperationsHttpClient))]
     partial class RenameTeamProjectController
     {
 
@@ -55,8 +55,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
             // Wait for the operation to complete
 
-            var opsClient = Data.GetClient<OperationsHttpClient>();
-            var opsToken = opsClient.GetOperation(token.Id)
+            var opsToken = Client.GetOperation(token.Id)
                 .GetResult("Error getting operation status");
 
             while (
@@ -65,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                 (opsToken.Status != OperationStatus.Cancelled))
             {
                 Thread.Sleep(2);
-                opsToken = opsClient.GetOperation(token.Id)
+                opsToken = Client.GetOperation(token.Id)
                     .GetResult("Error getting operation status");
             }
 

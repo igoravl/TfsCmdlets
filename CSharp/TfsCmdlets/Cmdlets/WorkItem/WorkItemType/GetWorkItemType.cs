@@ -25,47 +25,53 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
         public object WorkItem { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItemType))]
+    [CmdletController(typeof(WebApiWorkItemType), Client = typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemTypeController
     {
         protected override IEnumerable Run()
         {
-            var type = Parameters.Get<object>(nameof(GetWorkItemType.Type));
-
-            var shouldSkipWi = !Parameters.HasParameter(nameof(GetWorkItemType.WorkItem)) ||
-                (Parameters.Get<object>(nameof(GetWorkItemType.WorkItem)) is int i && i == 0);
-
-            if (Parameters.HasParameter(nameof(GetWorkItemType.WorkItem)) && !shouldSkipWi)
+            foreach (var input in Type)
             {
-                var workItem = Data.GetItem<WebApiWorkItem>(nameof(GetWorkItemType.WorkItem));
-                type = workItem.Fields["System.WorkItemType"];
+                switch (input)
+                {
+                    case object _ when Has_WorkItem:
+                        {
+                            var wi = Data.GetItem<WebApiWorkItem>(new { WorkItem });
+                            if (wi == null)
+                            {
+                                Logger.LogError(new ArgumentException($"Work item '{WorkItem}' not found"));
+                                break;
+                            }
+                            var type = wi.Fields["System.WorkItemType"].ToString();
+                            yield return Client.GetWorkItemTypeAsync(type: type, project: Project.Id)
+                                .GetResult($"Error getting type '{type}' from work item '{WorkItem}'");
+                            break;
+                        }
+                    case WebApiWorkItemType t:
+                        {
+                            yield return t;
+                            break;
+                        }
+                    case string s when s.IsWildcard():
+                        {
+                            yield return Client.GetWorkItemTypesAsync(Project.Id)
+                                .GetResult($"Error getting type(s) '{s}'")
+                                .Where(t1 => t1.Name.IsLike(s));
+                            break;
+                        }
+                    case string s:
+                        {
+                            yield return Client.GetWorkItemTypeAsync(type: s, project: Project.Id)
+                                .GetResult($"Error getting type '{s}'");
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent work item type '{Type}'"));
+                            break;
+                        }
+                }
             }
-
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
-            var tp = Data.GetProject();
-
-            switch (type)
-            {
-                case WebApiWorkItemType t:
-                    {
-                        return new[] { t };
-                    }
-                case string t:
-                    {
-                        return client.GetWorkItemTypesAsync(tp.Id)
-                            .GetResult($"Error getting type(s) '{t}'")
-                            .Where(t1 => t1.Name.IsLike(t));
-                    }
-                case IEnumerable<string> types:
-                    {
-                        return client.GetWorkItemTypesAsync(tp.Id)
-                            .GetResult($"Error getting type(s) '{string.Join(", ", types)}'")
-                            .Where(t1 => types.Any(t2 => t1.Name.IsLike(t2)));
-                    }
-            }
-
-            Logger.LogError(new ArgumentException($"Invalid or non-existent work item type '{type}'"));
-            return null;
         }
     }
 }

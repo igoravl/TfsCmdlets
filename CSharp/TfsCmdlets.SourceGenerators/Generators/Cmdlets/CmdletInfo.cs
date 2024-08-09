@@ -43,16 +43,26 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("CmdletAttribute", "DefaultParameterSetName");
             OutputType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "OutputType");
             DataType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "DataType") ?? OutputType;
-            SupportsShouldProcess = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess");
             DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "DefaultParameterSetName");
             CustomControllerName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "CustomControllerName");
             ReturnsValue = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "ReturnsValue");
             SkipGetProperty = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipGetProperty");
             AdditionalCredentialParameterSets = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "AdditionalCredentialParameterSets");
+            SupportsShouldProcess = SetSupportsShouldProcess(cmdlet);
             CmdletAttribute = GenerateCmdletAttribute(this);
             OutputTypeAttribute = GenerateOutputTypeAttribute(this);
 
             GenerateProperties();
+        }
+
+        private bool SetSupportsShouldProcess(INamedTypeSymbol cmdlet)
+        {
+            if(cmdlet.HasAttributeNamedValue("TfsCmdletAttribute", "SupportsShouldProcess"))
+            {
+                return cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess");
+            }
+
+            return (Verb != "Get") && (Verb != "Test") && (Verb != "Search") && (Verb != "Connect") && (Verb != "Disconnect");
         }
 
         private void GenerateProperties()

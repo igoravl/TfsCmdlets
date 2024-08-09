@@ -7,6 +7,8 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class MoveClassificationNodeController : ControllerBase
     {
+        private IWorkItemTrackingHttpClient Client { get; set; }
+        
         protected override IEnumerable Run()
         {
             var tp = Data.GetProject();
@@ -49,19 +51,18 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                     Id = sourceNode.Id
                 };
 
-                var client = Data.GetClient<WorkItemTrackingHttpClient>();
-
-                var result = client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, destinationNode.RelativePath)
+                var result = Client.CreateOrUpdateClassificationNodeAsync(patch, tp.Name, structureGroup, destinationNode.RelativePath)
                     .GetResult($"Error moving node '{sourceNode.RelativePath}' to '{destinationNode.RelativePath}'");
 
-                yield return new ClassificationNode(result, projectName, client);
+                yield return new ClassificationNode(result, projectName, Client);
             }
         }
 
         [ImportingConstructor]
-        protected MoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected MoveClassificationNodeController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

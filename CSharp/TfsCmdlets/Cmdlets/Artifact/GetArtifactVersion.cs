@@ -51,13 +51,11 @@ namespace TfsCmdlets.Cmdlets.Artifact
         public string ProtocolType { get; set; }
     }
 
-    [CmdletController(typeof(PackageVersion))]
+    [CmdletController(typeof(PackageVersion), Client=typeof(IFeedHttpClient))]
     partial class GetArtifactVersionController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<FeedHttpClient>();
-
             foreach (var input in Version)
             {
                 var version = input switch
@@ -93,7 +91,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case string s when s.IsWildcard():
                         {
-                            yield return client.GetPackageVersionsAsync(
+                            yield return Client.GetPackageVersionsAsync(
                                     project: projectId, 
                                     feedId: feedId, 
                                     packageId: package.Id.ToString(),

@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         public string Description { get; set; }
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client=typeof(IReleaseHttpClient))]
     partial class NewReleaseDefinitionFolderController
     {
         [Import]
@@ -39,14 +39,13 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
             if (!PowerShell.ShouldProcess(tp, $"Create release folder '{folder}'")) yield break;
 
-            var client = Data.GetClient<ReleaseHttpClient>();
             var newFolder = new WebApiFolder()
             {
                 Description = description,
                 Path = NodeUtil.NormalizeNodePath(folder, tp.Name)
             };
 
-            yield return client.CreateFolderAsync(newFolder, tp.Name)
+            yield return Client.CreateFolderAsync(newFolder, tp.Name)
                 .GetResult($"Error creating folder '{folder}'");
         }
     }

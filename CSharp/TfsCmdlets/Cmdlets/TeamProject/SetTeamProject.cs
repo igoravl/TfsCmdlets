@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public string AvatarImage { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTeamProject))]
+    [CmdletController(typeof(WebApiTeamProject), Client=typeof(IProjectHttpClient))]
     partial class SetTeamProjectController
     {
         [Import]
@@ -58,11 +58,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
             if (Has_Description)
             {
-                var client = GetClient<ProjectHttpClient>();
                 var tp = Data.GetProject();
                 var tpInfo = new WebApiTeamProject() { Description = Description };
 
-                var result = AsyncAwaiter.Wait(client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");
+                var result = AsyncAwaiter.Wait(Client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");
 
                 if (result.Status != OperationStatus.Succeeded)
                 {

@@ -1,4 +1,5 @@
 BeforeAll { 
+
     $scriptRoot = $PSScriptRoot
     $solutionDir = Join-Path $scriptRoot '../..' -Resolve
     $outDir = Join-Path $solutionDir 'out' -Resolve
@@ -8,6 +9,12 @@ BeforeAll {
 
     $tfsAccessToken = $env:TFSCMDLETS_ACCESS_TOKEN
     $tfsCollectionUrl = $env:TFSCMDLETS_COLLECTION_URL
+
+    if((-not $tfsAccessToken) -or (-not $tfsCollectionUrl))
+    {
+        throw 'Missing credentials. Please provide both TFSCMDLETS_ACCESS_TOKEN and TFSCMDLETS_COLLECTION_URL environment variables'
+    }
+
     $global:tfsProject = 'TestProject'
 
     if (-not $hasBuild) {

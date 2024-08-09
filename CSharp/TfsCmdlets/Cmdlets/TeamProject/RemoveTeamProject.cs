@@ -32,17 +32,18 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTeamProject))]
+    [CmdletController(typeof(WebApiTeamProject), Client=typeof(IProjectHttpClient))]
     partial class RemoveTeamProjectController
     {
+        [Import]
+        private IOperationsHttpClient OperationsClient { get; set; }
+        
         protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection();
             var tps = Data.GetItems<WebApiTeamProject>();
             var hard = Parameters.Get<bool>(nameof(RemoveTeamProject.Hard));
             var force = Parameters.Get<bool>(nameof(RemoveTeamProject.Force));
-
-            var client = Data.GetClient<ProjectHttpClient>();
 
             foreach (var tp in tps)
             {
@@ -58,12 +59,11 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 Logger.Log($"{method}-deleting team project {tp.Name}");
 
-                var token = client.QueueDeleteProject(tp.Id, hard).GetResult($"Error queueing team project deletion");
+                var token = Client.QueueDeleteProject(tp.Id, hard).GetResult($"Error queueing team project deletion");
 
                 // Wait for the operation to complete
 
-                var opsClient = Data.GetClient<OperationsHttpClient>();
-                var opsToken = opsClient.GetOperation(token.Id).GetResult("Error getting operation status");
+                var opsToken = OperationsClient.GetOperation(token.Id).GetResult("Error getting operation status");
 
                 while (
                     (opsToken.Status != OperationStatus.Succeeded) &&
@@ -71,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                     (opsToken.Status != OperationStatus.Cancelled))
                 {
                     Thread.Sleep(2);
-                    opsToken = opsClient.GetOperation(token.Id).GetResult("Error getting operation status");
+                    opsToken = OperationsClient.GetOperation(token.Id).GetResult("Error getting operation status");
                 }
 
                 if (opsToken.Status != OperationStatus.Succeeded)

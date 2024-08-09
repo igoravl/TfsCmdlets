@@ -17,18 +17,16 @@ namespace TfsCmdlets.Cmdlets.Team
         public object Team { get; set; }
     }
 
-    [CmdletController(typeof(Models.Team))]
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
     partial class RenameTeamController
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<TeamHttpClient>();
-
             var team = Data.GetItem<Models.Team>();
 
             if (!PowerShell.ShouldProcess(Project, $"Rename team '{team.Name}' to '{NewName}'")) yield break;
 
-            yield return client.UpdateTeamAsync(new WebApiTeam() { Name = NewName }, Project.Id.ToString(), team.Id.ToString())
+            yield return Client.UpdateTeamAsync(new WebApiTeam() { Name = NewName }, Project.Id.ToString(), team.Id.ToString())
                 .GetResult($"Error renaming team '{team.Name}' to '{NewName}'");
         }
     }

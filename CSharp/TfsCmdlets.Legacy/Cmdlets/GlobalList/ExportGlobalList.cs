@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.GlobalList
         /// <summary>
         /// Specifies the name of the global list to be exported. Wildcards are supported. 
         /// When omitted, it defaults to all global lists in the supplied team project collection. 
-        /// When using wilcards, a single XML document will be producer containing all matching 
+        /// When using Wildcards, a single XML document will be producer containing all matching 
         /// global lists.
         /// </summary>
         [Parameter(Position = 0)]

@@ -37,8 +37,8 @@ namespace TfsCmdlets.SourceGenerators
 
             try
             {
-                var typesToProcess = new List<(INamedTypeSymbol, ClassDeclarationSyntax)>(
-                    receiver.TypesToProcess?.Values ?? Enumerable.Empty<(INamedTypeSymbol, ClassDeclarationSyntax)>());
+                var typesToProcess = new List<(INamedTypeSymbol, TypeDeclarationSyntax)>(
+                    receiver.TypesToProcess?.Values ?? Enumerable.Empty<(INamedTypeSymbol, TypeDeclarationSyntax)>());
 
                 Logger.Log($"Preparing to generate code for {typesToProcess.Count} types");
 

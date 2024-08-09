@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ClientNotification;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.Models;
 
@@ -60,6 +61,12 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         {
             var tpc = Data.GetCollection(new { Collection = Collection ?? Parameters.Get<object>("Organization") });
             tpc.Connect();
+
+            if(tpc.CurrentUserUniqueName.Equals("Anonymous")) {
+                var connectionType = Collection == null? "organization": "team project collection";
+                throw new NotAuthorizedException($"You are not authorized to access {connectionType} [{tpc.Uri}]. Check your credentials and try again.");
+            }
+
             var srv = tpc.ConfigurationServer;
             CurrentConnections.Set(srv, tpc);
 

@@ -10,27 +10,25 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
     partial class EnableExtension
     {
         /// <summary>
-        /// Specifies the ID or the name of the extensions. Wilcards are supported. 
+        /// Specifies the ID or the name of the extensions. Wildcards are supported. 
         /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards]
         public object Extension { get; set; } 
 
         /// <summary>
-        /// Specifies the ID or the name of the publisher. Wilcards are supported. 
+        /// Specifies the ID or the name of the publisher. Wildcards are supported. 
         /// </summary>
         [Parameter(Position = 1)]
         [SupportsWildcards]
         public string Publisher { get; set; }
    }
 
-    [CmdletController(typeof(InstalledExtension))]
+    [CmdletController(typeof(InstalledExtension), Client=typeof(IExtensionManagementHttpClient))]
     partial class EnableExtensionController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<ExtensionManagementHttpClient>();
-
             foreach (var item in GetItems<InstalledExtension>(new { IncludeDisabledExtensions = true }))
             {
                 if ((item.InstallState.Flags & ExtensionStateFlags.Disabled) == ExtensionStateFlags.None)
@@ -48,7 +46,7 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
 
                 try
                 {
-                    result = client.UpdateInstalledExtensionAsync(item)
+                    result = Client.UpdateInstalledExtensionAsync(item)
                         .GetResult("Error updating extension.");
                 }
                 catch (Exception ex)

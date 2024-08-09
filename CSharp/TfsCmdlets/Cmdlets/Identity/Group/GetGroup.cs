@@ -31,7 +31,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public SwitchParameter Recurse { get; set; }
     }
 
-    [CmdletController(typeof(GraphGroup))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
     partial class GetGroupController
     {
         [Import]
@@ -42,7 +42,6 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
             var group = Parameters.Get<object>(nameof(GetGroup.Group));
             var scope = Parameters.Get<GroupScope>(nameof(GetGroup.Scope));
             var recurse = Parameters.Get<bool>(nameof(GetGroup.Recurse));
-            var client = Data.GetClient<GraphHttpClient>();
 
             PagedGraphGroups result = null;
             string groupName;
@@ -72,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                     {
                         do
                         {
-                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>("Error getting groups in collection");
 
                             foreach (var g in result.GraphGroups
@@ -92,7 +91,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
                         do
                         {
-                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>("Error getting groups in collection");
 
                             foreach (var g in result.GraphGroups
@@ -113,7 +112,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
                         do
                         {
-                            result = client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>($"Error getting groups in team project {tp.Name}");
 
                             foreach (var g in result.GraphGroups.Where(g => g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)))

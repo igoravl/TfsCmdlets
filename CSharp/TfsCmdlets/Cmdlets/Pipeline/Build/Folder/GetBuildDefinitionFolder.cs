@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
         public Microsoft.TeamFoundation.Build.WebApi.FolderQueryOrder QueryOrder {get;set;}
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client=typeof(IBuildHttpClient))]
     partial class GetBuildDefinitionFolderController
     {
         protected override IEnumerable Run()
@@ -43,9 +43,8 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                         }
                     case string s when s.IsWildcard():
                         {
-                            var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
                             var tp = Data.GetProject();
-                            var folders = client.GetFoldersAsync(tp.Name, null, queryOrder)
+                            var folders = Client.GetFoldersAsync(tp.Name, null, queryOrder)
                                 .GetResult($"Error getting folders matching {s}");
 
                             foreach (var i in folders.Where(f => f.Path.IsLike(s) || GetFolderName(f).IsLike(s))) yield return i;
@@ -54,9 +53,8 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
                         }
                     case string s:
                         {
-                            var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
                             var tp = Data.GetProject();
-                            var f = client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
+                            var f = Client.GetFoldersAsync(tp.Name, $@"\{s.Trim('\\')}", queryOrder)
                                 .GetResult($"Error getting folders matching {s}").FirstOrDefault();
 
                             if (f != null) yield return f;

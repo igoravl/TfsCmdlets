@@ -25,7 +25,7 @@ namespace TfsCmdlets.SourceGenerators
         [Conditional("DEBUG")]
         internal void LogError(Exception ex, string msg) => Log($"[ERROR] {msg} ({ex})");
 
-        internal void ReportDiagnostic_ClassMustBePartial(GeneratorExecutionContext context, ClassDeclarationSyntax cds)
+        internal void ReportDiagnostic_ClassMustBePartial(GeneratorExecutionContext context, TypeDeclarationSyntax cds)
             => context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.ClassMustBePartial,
                 cds.Identifier.GetLocation(),
                 cds.Identifier));

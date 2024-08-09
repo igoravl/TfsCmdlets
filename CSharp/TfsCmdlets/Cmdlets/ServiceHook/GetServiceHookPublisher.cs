@@ -26,13 +26,11 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         public object Publisher { get; set; } = "*";
     }
 
-    [CmdletController(typeof(WebApiPublisher))]
+    [CmdletController(typeof(WebApiPublisher), Client=typeof(IServiceHooksPublisherHttpClient))]
     partial class GetServiceHookPublisherController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<ServiceHooksPublisherHttpClient>();
-
             foreach (var publisher in Publisher)
             {
                 switch (publisher)
@@ -44,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
                         }
                     case string s:
                         {
-                            var result = client.GetPublishersAsync()
+                            var result = Client.GetPublishersAsync()
                                 .GetResult("Error getting service hook publishers")
                                 .Where(p => p.Name.IsLike(s) || p.Id.IsLike(s));
 
