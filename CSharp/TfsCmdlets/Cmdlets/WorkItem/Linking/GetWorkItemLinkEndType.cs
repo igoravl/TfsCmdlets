@@ -10,6 +10,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     [TfsCmdlet(CmdletScope.Collection)]
     partial class GetWorkItemLinkType
     {
+        /// <summary>
+        /// Specifies the name of the link type. Wildcards are supported.
+        /// When omitted, returns all link types.
+        /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards]
         [Alias("Name", "EndLinkType", "Type", "Link")]

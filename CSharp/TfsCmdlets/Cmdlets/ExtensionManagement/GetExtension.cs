@@ -31,9 +31,15 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
         [Parameter]
         public SwitchParameter IncludeDisabledExtensions { get; set; }
 
+        /// <summary>
+        /// Specifies whether to include errors in the result.
+        /// </summary>
         [Parameter]
         public SwitchParameter IncludeErrors { get; set; }
 
+        /// <summary>
+        /// Specifies whether to include installation issues in the result.
+        /// </summary>
         [Parameter]
         public SwitchParameter IncludeInstallationIssues { get; set; }
     }

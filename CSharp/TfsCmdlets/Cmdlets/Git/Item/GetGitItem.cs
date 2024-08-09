@@ -19,18 +19,33 @@ namespace TfsCmdlets.Cmdlets.Git.Item
         [SupportsWildcards]
         public object Item { get; set; } = "/*";
 
+        /// <summary>
+        /// Specifies the hash (SHA) representing the version of the item(s) to retrieve.
+        /// </summary>
         [Parameter(ParameterSetName = "Get by commit SHA")]
         public object Commit { get; set; }
 
+        /// <summary>
+        /// Specifies the tag representing the version of the item(s) to retrieve.
+        /// </summary>
         [Parameter(ParameterSetName = "Get by tag", Mandatory = true)]
         public string Tag { get; set; }
 
+        /// <summary>
+        /// Specifies the branch name representing the version of the item(s) to retrieve.
+        /// </summary>
         [Parameter(ParameterSetName = "Get by branch", Mandatory = true)]
         public string Branch { get; set; }
 
+        /// <summary>
+        /// Returns the content of the item(s) in addition to metadata.
+        /// </summary>
         [Parameter]
         public SwitchParameter IncludeContent { get; set; }
 
+        /// <summary>
+        /// Returns metadata about the item(s)
+        /// </summary>
         [Parameter]
         public SwitchParameter IncludeMetadata { get; set; }
 

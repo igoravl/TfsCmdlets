@@ -10,6 +10,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(ReleaseDefinition))]
     partial class GetReleaseDefinition
     {
+        /// <summary>
+        /// Specifies the release definition to get information from.
+        /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards()]
         [Alias("Name")]

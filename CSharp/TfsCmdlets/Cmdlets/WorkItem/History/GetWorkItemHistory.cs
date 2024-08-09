@@ -10,6 +10,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.History
     [TfsCmdlet(CmdletScope.Collection, NoAutoPipeline = true, OutputType = typeof(Models.WorkItemHistoryEntry))]
     partial class GetWorkItemHistory
     {
+        /// <summary>
+        /// The work item to retrieve the history for.
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("id")]
         [ValidateNotNull()]
