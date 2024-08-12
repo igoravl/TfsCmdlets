@@ -158,10 +158,10 @@ Import-Module TfsCmdlets
 
 ## How can I help?
 
-If you enjoy using TfsCmdlets, please don't forget to [![Star](Assets/star.png)](stargazers) it!
+If you enjoy using TfsCmdlets, please don't forget to [![Star](Assets/star.png)](https://github.com/igoravl/TfsCmdlets/stargazers) it!
 
-Should you encounter bugs or if you have feature requests, please feel free to [open an issue](issues) if one doesn't already exist.
+Should you encounter bugs or if you have feature requests, please feel free to [open an issue](https://github.com/igoravl/TfsCmdlets/issues) if one doesn't already exist.
 
-[Pull requests](pulls) are also very welcome, since I can't always get around to fixing all bugs myself. This is a personal passion project, so my time is limited.
+[Pull requests](https://github.com/igoravl/TfsCmdlets/pulls) are also very welcome, since I can't always get around to fixing all bugs myself. This is a personal passion project, so my time is limited.
 
 Another way to help out is to [sponsor me](https://github.com/sponsors/igoravl) on GitHub.
