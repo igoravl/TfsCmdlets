@@ -158,7 +158,7 @@ Import-Module TfsCmdlets
 
 ## How can I help?
 
-If you enjoy using TfsCmdlets, please don't forget to ![](Assets/star.png) it!
+If you enjoy using TfsCmdlets, please don't forget to [![Star](Assets/star.png)](stargazers) it!
 
 Should you encounter bugs or if you have feature requests, please feel free to [open an issue](issues) if one doesn't already exist.
 
