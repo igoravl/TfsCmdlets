@@ -155,3 +155,13 @@ Import-Module TfsCmdlets
 
 - [Online Documentation](https://tfscmdlets.dev/)
 - [Release Notes](https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md)
+
+## How can I help?
+
+If you enjoy using TfsCmdlets, please don't forget to ![](Assets/star.png) it!
+
+Should you encounter bugs or if you have feature requests, please feel free to [open an issue](issues) if one doesn't already exist.
+
+[Pull requests](pulls) are also very welcome, since I can't always get around to fixing all bugs myself. This is a personal passion project, so my time is limited.
+
+Another way to help out is to [sponsor me](https://github.com/sponsors/igoravl) on GitHub.
