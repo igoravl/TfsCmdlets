@@ -3,6 +3,6 @@
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
     Context 'Integration Tests' {
-        Write-Warning "${$}: Not implemented"
+        Write-Warning "$(Split-Path $PSCommandPath -Leaf): Test not implemented"
     } 
 }
