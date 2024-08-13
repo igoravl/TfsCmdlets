@@ -146,22 +146,17 @@ Import-Module TfsCmdlets
 - Close all PowerShell windows where you were using TfsCmdlets (to free files in use);
 - Delete the `TfsCmdlets` folder from the `[Documents]\[Windows]PowerShell\Modules` folder.
 
-## Contribution Guidelines
-
-- [Contributor Guide](CONTRIBUTING.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)
-
-## Additional Information
-
-- [Online Documentation](https://tfscmdlets.dev/)
-- [Release Notes](https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md)
-
 ## How can I help?
 
 If you enjoy using TfsCmdlets, please don't forget to [![Star](Assets/star.png)](https://github.com/igoravl/TfsCmdlets/stargazers) it!
 
 Should you encounter bugs or if you have feature requests, please feel free to [open an issue](https://github.com/igoravl/TfsCmdlets/issues/new) if one doesn't already [exist](https://github.com/igoravl/TfsCmdlets/issues).
 
-[Pull requests](https://github.com/igoravl/TfsCmdlets/pulls) are also very welcome, since I can't always get around to fixing all bugs myself. This is a personal passion project, so my time is limited.
+[Pull requests](https://github.com/igoravl/TfsCmdlets/pulls) are also very welcome, since I can't always get around to fixing all bugs myself. This is a personal passion project, so my time is limited. Learn more about how to contribute in our [Contributor Guide](CONTRIBUTING.md). Finally, to ensure a safe and pleasant experience for all contributors it's recommended that you get familiar with the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 Another way to help out is to [sponsor me](https://github.com/sponsors/igoravl) on GitHub.
+
+## Additional Information
+
+- [Online Documentation](https://tfscmdlets.dev/)
+- [Release Notes](https://github.com/igoravl/TfsCmdlets/blob/master/RELEASENOTES.md)
