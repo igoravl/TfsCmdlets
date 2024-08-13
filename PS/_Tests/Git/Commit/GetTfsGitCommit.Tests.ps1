@@ -1,9 +1,11 @@
 ﻿& "$(($PSScriptRoot -split '_Tests')[0])/_Tests/_TestSetup.ps1"
 
+$repoName = 'PartsUnlimited'
+$global:commitSha = 'd682d84dc3a35101d66455bfe1e33fd23cb4369c'
+$commitComment = 'Merged PR 35: code correction'
+
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
-
-    $commitSha = ''
-
+    
     Context 'Get by commit SHA' {
         # Get-TfsGitCommit
         # [-Commit] <Object>
@@ -15,27 +17,30 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         # [-Collection <Object>]
         # [-Server <Object>] [<CommonParameters>]
 
+        iT 'Should throw on missing required parameters' {
+            { Get-TfsGitCommit -Commit $commitSha -Project $tfsProject } | Should -Throw # Missing Repository
+            { Get-TfsGitCommit -Commit $commitSha -Repository $repoName } | Should -Throw # Missing Project
+        }
+
         It 'Should return a commit object' {
-            $commit = Get-TfsGitCommit -Commit $commitSha -Repository 'PartsUnlimited' -Project $tfsProject
+            $commit = Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject
             $commit | Should -BeOfType [Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef]
+            $commit.Comment | Should -Be $commitComment
         }
 
         It 'Should include links' {
-            $commit = Get-TfsGitCommit -Commit $commitSha -Repository 'PartsUnlimited' -Project $tfsProject -IncludeLinks
-            $commit | Should -BeOfType [Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef]
-            $commit.Links | Should -Not -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject).Links | Should -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject -IncludeLinks).Links | Should -Not -BeNullOrEmpty
         }
 
         It 'Should include push data' {
-            $commit = Get-TfsGitCommit -Commit $commitSha -Repository 'PartsUnlimited' -Project $tfsProject -IncludePushData
-            $commit | Should -BeOfType [Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef]
-            $commit.Push | Should -Not -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject).Push | Should -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject -IncludePushData).Push | Should -Not -BeNullOrEmpty
         }
 
         It 'Should include user image URL' {
-            $commit = Get-TfsGitCommit -Commit $commitSha -Repository 'PartsUnlimited' -Project $tfsProject -IncludeUserImageUrl
-            $commit | Should -BeOfType [Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef]
-            $commit.Author.ImageUrl | Should -Not -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject).Author.ImageUrl | Should -BeNullOrEmpty
+            (Get-TfsGitCommit -Commit $commitSha -Repository $repoName -Project $tfsProject -IncludeUserImageUrl).Author.ImageUrl | Should -Not -BeNullOrEmpty
         }
     }
     

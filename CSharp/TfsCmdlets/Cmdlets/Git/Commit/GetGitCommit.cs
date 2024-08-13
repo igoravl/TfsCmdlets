@@ -143,7 +143,7 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
         /// <summary>
         /// HELP_PARAM_GIT_REPOSITORY
         /// </summary>
-        [Parameter(ValueFromPipeline = true)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true)]
         public object Repository { get; set; }
     }
 
