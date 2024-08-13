@@ -5,7 +5,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
     Context 'Integration Tests' {
 
         It 'Should get all revisions' {
-            (Get-TfsWorkItemHistory 150).Count | Should -Be 6
+            (Get-TfsWorkItemHistory 150).Count | Should -Be 7
         }
         
     }
