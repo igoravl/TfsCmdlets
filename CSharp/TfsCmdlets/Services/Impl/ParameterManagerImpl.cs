@@ -1,5 +1,6 @@
 using System.Management.Automation;
 using System.Reflection;
+using TfsCmdlets.Models;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services.Impl
@@ -56,13 +57,14 @@ namespace TfsCmdlets.Services.Impl
 
             var val = _parameterValues[name] switch
             {
+                Parameter p when Parameter.IsMissing(p) => null,
                 PSObject obj => obj.BaseObject,
                 IEnumerable<PSObject> objs => objs.Select(o => o.BaseObject).ToList(),
                 SwitchParameter sw => sw.ToBool(),
                 _ => _parameterValues[name]
             };
 
-            return (val is T tVal)? tVal : defaultValue;
+            return (val is T tVal) ? tVal : defaultValue;
         }
 
         /// <summary>
@@ -175,7 +177,19 @@ namespace TfsCmdlets.Services.Impl
             => _parameterValues.Remove(name);
 
         public bool HasParameter(string parameter)
-            => _boundParameters.Contains(parameter, StringComparer.OrdinalIgnoreCase);
+        {
+            if (!_boundParameters.Contains(parameter, StringComparer.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+            
+            if(_parameterValues[parameter] is Parameter p)
+            {
+                return !Parameter.IsMissing(p);
+            }
+
+            return true;
+        }
 
         public IEnumerable<string> Keys => _parameterValues.Keys;
 
