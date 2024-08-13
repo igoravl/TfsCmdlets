@@ -1,4 +1,6 @@
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi;
+using Parameter = TfsCmdlets.Models.Parameter;
 
 namespace TfsCmdlets.Cmdlets.Git.Commit
 {
@@ -123,21 +125,33 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
         public SwitchParameter ExcludeDeletes { get; set; }
 
         /// <summary>
-        /// Includes links to related resources (such as work items) in the results.
+        /// Includes links to related resources in the results.
+        /// </summary>
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
+        [Parameter(ParameterSetName = "Search commits")]
+        public SwitchParameter IncludeLinks { get; set; }
+
+        /// <summary>
+        /// Includes links to related work items in the results.
         /// </summary>
         [Parameter()]
-        public SwitchParameter IncludeLinks { get; set; }
+        public SwitchParameter IncludeWorkItems { get; set; }
 
         /// <summary>
         /// Includes push data in the results.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
+        [Parameter(ParameterSetName = "Search commits")]
         public SwitchParameter IncludePushData { get; set; }
 
         /// <summary>
         /// Includes the user's image URL in the results.
         /// </summary>
-        [Parameter()]
+        [Parameter(ParameterSetName = "Get by tag")]
+        [Parameter(ParameterSetName = "Get by branch")]
+        [Parameter(ParameterSetName = "Search commits")]
         public SwitchParameter IncludeUserImageUrl { get; set; }
 
         /// <summary>
@@ -180,8 +194,20 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
                             }
                     }
 
-                    yield return Client.GetCommitAsync(repository.ProjectReference.Id.ToString(), commitSha, repository.Id.ToString())
+                    var partialCommit = Client.GetCommitAsync(repository.ProjectReference.Id.ToString(), commitSha, repository.Id.ToString())
                         .GetResult($"Error getting commit '{commitSha}' in repository '{repository.Name}'");
+
+                    if(IncludeWorkItems)
+                    {
+                        var commitWis = Data
+                            .GetItems<GitCommitRef>(new { Commit = Parameter.Missing, FromCommit = commitSha, ToCommit = commitSha, Repository, Project, IncludeWorkItems })
+                            .FirstOrDefault()?
+                            .WorkItems;
+                        
+                        partialCommit.WorkItems = commitWis;
+                    }
+
+                    yield return partialCommit;
                 }
                 yield break;
             }
@@ -234,6 +260,7 @@ namespace TfsCmdlets.Cmdlets.Git.Commit
                 IncludePushData = IncludePushData,
                 IncludeUserImageUrl = IncludeUserImageUrl,
                 ShowOldestCommitsFirst = ShowOldestCommitsFirst,
+                IncludeWorkItems = IncludeWorkItems,
                 ToCommitId = ToCommit,
                 Skip = Skip,
                 Top = Top == 0 ? null : Top,
