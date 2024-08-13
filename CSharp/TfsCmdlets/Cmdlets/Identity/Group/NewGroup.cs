@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
     partial class NewGroupController
     {
         [Import]
-        private IDescriptorService DescriptorService { get; set; }
+        private IGraphHttpClient GraphClient { get; set; }
 
         protected override IEnumerable Run()
         {
@@ -66,7 +66,8 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                 case GroupScope.Project:
                     {
                         var tp = Data.GetProject();
-                        var descriptor = DescriptorService.GetDescriptor(tp.Id);
+                        var descriptor = GraphClient.GetDescriptorAsync(tp.Id)
+                            .GetResult($"Error getting descriptor for project '{tp.Name}'");
 
                         if(!PowerShell.ShouldProcess(tp, $"Create group {group}")) yield break;
 
