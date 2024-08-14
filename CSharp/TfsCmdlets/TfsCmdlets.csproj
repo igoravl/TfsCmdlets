@@ -36,6 +36,7 @@
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
     <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
+    <PackageReference Include="DotNet.Glob" Version="3.1.*"/>
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">

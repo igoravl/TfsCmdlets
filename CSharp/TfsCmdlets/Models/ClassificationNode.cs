@@ -70,7 +70,7 @@ namespace TfsCmdlets.Models
 
             foreach (var c in node.Children.Select(n => new ClassificationNode(n, ProjectName, _client)))
             {
-                if(c.Path.IsLike(pattern)) yield return c;
+                if(c.Path.IsLikeGlob(pattern)) yield return c;
 
                 foreach (var n in GetNodesRecursively(c, pattern))
                 {
