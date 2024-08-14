@@ -2,7 +2,12 @@
 
 Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
-    Context 'Integration Tests' {
+    Context '__AllParameterSets' {
+        # Get-TfsIteration
+        # [[-Node] <Object>]
+        # [-Project <Object>] # Pipeline input
+        # [-Collection <Object>]
+        # [-Server <Object>] [<CommonParameters>]
 
         It 'Should throw on parameterless invocation' {
             { Get-TfsIteration } | Should -Throw
@@ -18,7 +23,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
         It 'Should get by name pattern' {
             Get-TfsIteration '*1' -Project $tfsProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('Sprint 1')
-            Get-TfsIteration '*ele*' -Project $tfsProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('Release 2', 'Sprint 7')
+            Get-TfsIteration '*ele*' -Project $tfsProject | Select-Object -ExpandProperty Name | Sort-Object | Should -Be @('Release 2')
         }
 
     }

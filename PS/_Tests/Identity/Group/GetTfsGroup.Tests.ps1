@@ -10,7 +10,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
 
     Context '__AllParameterSets' {
         # Get-TfsGroup
-        # [[-Group] <Object>]
+        # [[-Group] <Object>] # Pipeline input
         # [-Scope <GroupScope>]
         # [-Recurse]
         # [-Project <Object>]
