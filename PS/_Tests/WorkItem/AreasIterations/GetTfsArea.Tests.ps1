@@ -13,7 +13,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             $nodes = Get-TfsArea -Project $tfsProject
             $nodes | Should -BeOfType [Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode]
             $nodes | Select-Object -ExpandProperty RelativePath | Sort-Object `
-            | Should -Be @('PUL', 'PUL-DB', 'PUL-DB\Migrations', 'PUL\App', 'PUL\Web', 'PUL\Web\Backend', 'PUL\Web\Frontend')
+            | Should -Be (@('PUL', 'PUL-DB', 'PUL-DB\Migrations', 'PUL\App', 'PUL\Web', 'PUL\Web\Backend', 'PUL\Web\Frontend') | Sort-Object)
         }
 
         It 'Should return a single level' {
