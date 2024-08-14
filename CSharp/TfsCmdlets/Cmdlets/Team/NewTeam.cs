@@ -77,4 +77,32 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter]
         public string Description { get; set; }
     }
+
+    [CmdletController(typeof(Models.Team), Client=typeof(ITeamHttpClient))]
+    partial class NewTeamController
+    {
+        protected override IEnumerable Run()
+        {
+            if (!PowerShell.ShouldProcess(Project, $"Create team {Team}")) yield break;
+
+            var t = Client.CreateTeamAsync(new WebApiTeam()
+                {
+                    Name = Team,
+                    Description = Description,
+                }, Project.Name)
+                .GetResult($"Error creating team {Team}");
+
+            if (NoDefaultArea && NoBacklogIteration)
+            {
+                yield return t;
+                yield break;
+            }
+
+            yield return Data.SetItem<Models.Team>(new {
+                DefaultAreaPath = NoDefaultArea ? null: DefaultAreaPath ?? t.Name,
+                BacklogIteration = NoBacklogIteration ? null: BacklogIteration ?? t.Name,
+                Force = true
+            });
+        }
+    }
 }

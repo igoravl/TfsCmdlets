@@ -1,0 +1,4 @@
+branches:
+  pull-request:
+    mode: ContinuousDelivery
+    tag: ''

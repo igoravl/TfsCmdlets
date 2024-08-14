@@ -10,7 +10,7 @@ namespace TfsCmdlets.SourceGenerators
     {
         void Initialize(Logger logger);
 
-        IDictionary<string, (INamedTypeSymbol, ClassDeclarationSyntax)> TypesToProcess { get; }
+        IDictionary<string, (INamedTypeSymbol, TypeDeclarationSyntax)> TypesToProcess { get; }
 
         bool ShouldProcessType(INamedTypeSymbol type);
     }

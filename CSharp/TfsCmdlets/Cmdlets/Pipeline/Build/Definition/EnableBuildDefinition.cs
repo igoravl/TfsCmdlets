@@ -16,4 +16,41 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
         [Alias("Path")]
         public object Definition { get; set; }
     }
+
+    [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
+    partial class EnableBuildDefinitionController
+    {
+        protected override IEnumerable Run()
+        {
+            var def = Data.GetItem<BuildDefinition>();
+
+            if (def.QueueStatus == DefinitionQueueStatus.Enabled)
+            {
+                Logger.Log($"Build definition '{def.Name}' is already enabled.");
+                yield return def;
+            }
+
+            if (!PowerShell.ShouldProcess(def.Project.Name, $"Enable Build Definition '{def.GetFullPath()}'")) yield break;
+
+            if (def.QueueStatus == DefinitionQueueStatus.Paused)
+            {
+                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is paused, not disabled. To re-enable a paused pipeline, use Resume-TfsBuildDefinition instead."));
+                yield return def;
+            }
+
+            var patch = new BuildDefinition()
+            {
+                Id = def.Id,
+                Project = def.Project,
+                QueueStatus = DefinitionQueueStatus.Enabled,
+                Revision = def.Revision,
+                Repository = def.Repository,
+                Process = def.Process,
+                Name = def.Name,
+            };
+
+            yield return Client.UpdateDefinitionAsync(patch)
+                .GetResult($"Error updating build definition {def.GetFullPath()}");
+        }
+    }
 }

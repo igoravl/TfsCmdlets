@@ -29,4 +29,40 @@ namespace TfsCmdlets.Cmdlets.ExtensionManagement
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Version { get; set; }
    }
+
+    [CmdletController(typeof(InstalledExtension), Client=typeof(IExtensionManagementHttpClient))]
+    partial class InstallExtensionController
+    {
+        protected override IEnumerable Run()
+        {
+            switch (Extension)
+            {
+                case string s when !string.IsNullOrEmpty(s) && s.Contains("."):
+                    {
+                        var (publisher, extension, _) = Extension.Split('.');
+
+                        if(!PowerShell.ShouldProcess(Collection, $"Install extension '{extension}' by '{publisher}'"))
+                            yield break;
+
+                        yield return Client.InstallExtensionByNameAsync(publisher, extension, Version)
+                            .GetResult("Error installing extension.");
+                        break;
+                    }
+                case string s when !string.IsNullOrEmpty(s):
+                    {
+                        if(!PowerShell.ShouldProcess(Collection, $"Install extension '{Extension}' by '{Publisher}'"))
+                            yield break;
+
+                        yield return Client.InstallExtensionByNameAsync(Publisher, Extension, Version)
+                            .GetResult("Error installing extension.");
+                        break;
+                    }
+                default:
+                    {
+                        Logger.LogError(new ArgumentException($"Invalid or unknown extension '{Extension}', publisher '{Publisher}', version '{Version}'"));
+                        break;
+                    }
+            }
+        }
+    }
 }

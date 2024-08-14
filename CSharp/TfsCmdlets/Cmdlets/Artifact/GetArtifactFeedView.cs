@@ -40,4 +40,49 @@ namespace TfsCmdlets.Cmdlets.Artifact
         [ValidateSet("Administrator", "Contributor", "Reader")]
         public Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole Role { get; set; } = Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole.Administrator;
     }
+
+    [CmdletController(typeof(FeedView), Client=typeof(IFeedHttpClient))]
+    partial class GetArtifactFeedViewController
+    {
+        protected override IEnumerable Run()
+        {
+            foreach (var input in View)
+            {
+                var view = input switch
+                {
+                    _ => input
+                };
+
+                var feed = GetItem<Feed>();
+
+                switch (view)
+                {
+                    case FeedView fv:
+                        {
+                            yield return fv;
+                            break;
+                        }
+                    case string s when !string.IsNullOrEmpty(s) && feed.Project == null:
+                        {
+                            yield return Client.GetFeedViewsAsync(feed.Id.ToString())
+                                .GetResult($"Error getting artifact feed view(s) '{s}'")
+                                .Where(fv => fv.Name.IsLike(s));
+                            break;
+                        }
+                    case string s when !string.IsNullOrEmpty(s):
+                        {
+                            yield return Client.GetFeedViewsAsync(feed.Project.Id, feed.Id.ToString())
+                                .GetResult($"Error getting artifact feed view(s) '{s}'")
+                                .Where(fv => fv.Name.IsLike(s));
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent feed view '{view}'"));
+                            break;
+                        }
+                }
+            }
+        }
+    }
 }

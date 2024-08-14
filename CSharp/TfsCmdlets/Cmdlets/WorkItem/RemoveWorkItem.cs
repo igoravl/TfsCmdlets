@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -30,5 +31,29 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter]
         public SwitchParameter Force { get; set; }
+    }
+
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
+    partial class RemoveWorkItemController
+    {
+        protected override IEnumerable Run()
+        {
+            var wis = Data.GetItems<WebApiWorkItem>();
+            var tpc = Data.GetCollection();
+            var destroy = Parameters.Get<bool>(nameof(RemoveWorkItem.Destroy));
+            var force = Parameters.Get<bool>(nameof(RemoveWorkItem.Force));
+
+            foreach (var wi in wis)
+            {
+                if (!PowerShell.ShouldProcess($"[Organization: {tpc.DisplayName}]/[Work Item: {wi.Id}]", $"{(destroy ? "Destroy" : "Delete")} work item")) continue;
+
+                if (destroy && !(force || PowerShell.ShouldContinue($"Are you sure you want to destroy work item {wi.Id}?"))) continue;
+
+                Client.DeleteWorkItemAsync((int)wi.Id, destroy)
+                    .GetResult($"Error {(destroy ? "destroying" : "deleting")} work item {wi.Id}");
+            }
+            
+            return null;
+        }
     }
 }

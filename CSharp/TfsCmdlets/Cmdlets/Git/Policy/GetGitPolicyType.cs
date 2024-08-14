@@ -18,4 +18,50 @@ namespace TfsCmdlets.Cmdlets.Git.Policy
         [Alias("Name")]
         public object PolicyType { get; set; } = "*";
     }
+
+    [CmdletController(typeof(PolicyType), Client=typeof(IPolicyHttpClient))]
+    partial class GetGitPolicyTypeController
+    {
+        protected override IEnumerable Run()
+        {
+            foreach (var input in PolicyType)
+            {
+                var policyType = input switch
+                {
+                    string s when s.IsGuid() => new Guid(s),
+                    _ => input
+                };
+
+                switch (policyType)
+                {
+                    case PolicyType pt:
+                        {
+                            yield return pt;
+                            break;
+                        }
+                    case Guid g:
+                        {
+                            yield return Client.GetPolicyTypeAsync(Project.Name, g)
+                                .GetResult("Error retrieving policy types");
+                            break;
+                        }
+                    case string s:
+                        {
+                            foreach (var pt in Client.GetPolicyTypesAsync(Project.Name)
+                                .GetResult("Error retrieving policy types")
+                                .Where(p => p.DisplayName.IsLike(s)))
+                            {
+                                yield return pt;
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid policy type '{policyType}'", nameof(policyType)));
+                            break;
+                        }
+                }
+            }
+        }
+    }
 }

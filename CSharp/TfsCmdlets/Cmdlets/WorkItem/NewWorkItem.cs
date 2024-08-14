@@ -1,5 +1,8 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -120,5 +123,34 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter]
         public SwitchParameter BypassRules { get; set; }
+
+        /// <summary>
+        /// Do not fire any notifications for this change. Useful for bulk operations and automated processes.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SuppressNotifications { get; set; }
+    }
+
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
+    partial class NewWorkItemController
+    {
+        [Import]
+        private IWorkItemPatchBuilder Builder { get; }
+
+        protected override IEnumerable Run()
+        {
+            var type = Data.GetItem<WebApiWorkItemType>();
+
+            if (!PowerShell.ShouldProcess(Project, $"Create new '{type}' work item")) yield break;
+
+            var wi = new WebApiWorkItem();
+            wi.Fields["System.TeamProject"] = Project.Name;
+            wi.Fields["System.WorkItemType"] = type.Name;
+
+            var result = Client.CreateWorkItemAsync(Builder.GetJson(wi), Project.Name, type.Name, false, BypassRules, SuppressNotifications)
+                .GetResult("Error creating work item");
+
+            yield return result;
+        }
     }
 }

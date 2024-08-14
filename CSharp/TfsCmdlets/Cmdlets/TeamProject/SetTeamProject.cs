@@ -1,4 +1,6 @@
 using System.Management.Automation;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.VisualStudio.Services.Operations;
 
 namespace TfsCmdlets.Cmdlets.TeamProject
 {
@@ -27,5 +29,47 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter]
         public string AvatarImage { get; set; }
+    }
+
+    [CmdletController(typeof(WebApiTeamProject), Client=typeof(IProjectHttpClient))]
+    partial class SetTeamProjectController
+    {
+        [Import]
+        private IAsyncOperationAwaiter AsyncAwaiter { get; }
+
+        protected override IEnumerable Run()
+        {
+            if (Has_AvatarImage)
+            {
+                Logger.LogWarn($"The -AvatarImage parameter is deprecated and will be removed in a future version. Use the Import-TfsTeamProjectAvatar and Remove-TfsTeamProjectAvatar cmdlets instead.");
+
+                if (string.IsNullOrEmpty(AvatarImage))
+                {
+                    Data.Invoke(VerbsCommon.Remove, "TeamProjectAvatar");
+                }
+                else
+                {
+                    Data.Invoke(VerbsData.Import, "TeamProjectAvatar", new
+                    {
+                        Path = AvatarImage
+                    });
+                }
+            }
+
+            if (Has_Description)
+            {
+                var tp = Data.GetProject();
+                var tpInfo = new WebApiTeamProject() { Description = Description };
+
+                var result = AsyncAwaiter.Wait(Client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");
+
+                if (result.Status != OperationStatus.Succeeded)
+                {
+                    Logger.LogError(new Exception($"Error updating team project '{tp.Name}': {result.ResultMessage}"));
+                }
+            }
+
+            yield return GetItem<WebApiTeamProject>();
+        }
     }
 }

@@ -6,8 +6,10 @@ global using System.IO;
 global using System.Linq;
 global using System.Management.Automation;
 global using System.Text;
+global using TfsCmdlets.Controllers;
 global using TfsCmdlets.Extensions;
 global using TfsCmdlets.Services;
+global using TfsCmdlets.HttpClients;
 
 global using WebApiWorkItem = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItem;
 global using WebApiTeamProject = Microsoft.TeamFoundation.Core.WebApi.TeamProject;

@@ -1,5 +1,10 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+using Microsoft.TeamFoundation.Core.WebApi;
+using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
+using Microsoft.VisualStudio.Services.WebApi.Patch;
+using Microsoft.VisualStudio.Services.WebApi.Patch.Json;
+using TfsCmdlets.Extensions;
 
 namespace TfsCmdlets.Cmdlets.WorkItem
 {
@@ -131,5 +136,29 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         /// </summary>
         [Parameter]
         public SwitchParameter BypassRules { get; set; }
+
+        /// <summary>
+        /// Do not fire any notifications for this change. Useful for bulk operations and automated processes.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter SuppressNotifications { get; set; }
+    }
+
+    [CmdletController(typeof(WebApiWorkItem), Client=typeof(IWorkItemTrackingHttpClient))]
+    partial class SetWorkItemController
+    {
+        [Import]
+        private IWorkItemPatchBuilder Builder { get; }
+
+        protected override IEnumerable Run()
+        {
+            foreach (var wi in Items)
+            {
+                var result = Client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules, SuppressNotifications)
+                    .GetResult("Error updating work item");
+
+                yield return result;
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi;
+using Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Clients;
 using WebApiFolder = Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.Folder;
 
 namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
@@ -23,5 +25,63 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         /// </summary>
         [Parameter]
         public Microsoft.VisualStudio.Services.ReleaseManagement.WebApi.FolderPathQueryOrder QueryOrder { get; set; } 
+    }
+
+    [CmdletController(typeof(WebApiFolder), Client = typeof(IReleaseHttpClient))]
+    partial class GetReleaseDefinitionFolderController
+    {
+        [Import] 
+        private INodeUtil NodeUtil { get; set; }
+
+        protected override IEnumerable Run()
+        {
+            var folder = Parameters.Get<object>("Folder");
+            var queryOrder = Parameters.Get<FolderPathQueryOrder>("QueryOrder");
+
+            while (true) switch (folder)
+                {
+                    case WebApiFolder f:
+                        {
+                            yield return f;
+                            yield break;
+                        }
+                    case string s when s.IsWildcard():
+                        {
+                            var tp = Data.GetProject();
+                            s = NodeUtil.NormalizeNodePath(s, tp.Name);
+                            var folders = Client.GetFoldersAsync(tp.Name, null, queryOrder)
+                                .GetResult($"Error getting folders matching {s}");
+
+                            foreach (var i in folders
+                                .Where(f => f.Path.IsLike(s) || GetFolderName(f).IsLike(s)))
+                            {
+                                yield return i;
+                            }
+
+                            yield break;
+                        }
+                    case string s:
+                        {
+                            var tp = Data.GetProject();
+                            var f = Client.GetFoldersAsync(tp.Name, NodeUtil.NormalizeNodePath(s, tp.Name), queryOrder)
+                                .GetResult($"Error getting folders matching {s}").FirstOrDefault();
+
+                            if (f != null) yield return f;
+
+                            yield break;
+                        }
+                    default:
+                        {
+                            throw new ArgumentException($"Invalid or non-existent pipeline folder '{folder}'");
+                        }
+                }
+        }
+
+        private static string GetFolderName(WebApiFolder folder)
+        {
+            return folder.Path.Equals(@"\") ?
+                @"\" :
+                folder.Path.Substring(folder.Path.LastIndexOf(@"\") + 1);
+        }
     }
 }
