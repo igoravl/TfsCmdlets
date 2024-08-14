@@ -1,5 +1,6 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using TfsCmdlets.HttpClients;
 
 namespace TfsCmdlets.Cmdlets.Git
 {
@@ -21,5 +22,21 @@ namespace TfsCmdlets.Cmdlets.Git
         [SupportsWildcards()]
         [Alias("Name")]
         public object Repository { get; set; }
+    }
+
+    [CmdletController(typeof(GitRepository), Client=typeof(IGitExtendedHttpClient))]
+    partial class DisableGitRepositoryController
+    {
+        protected override IEnumerable Run()
+        {
+            foreach (var repo in Items)
+            {
+                if (!PowerShell.ShouldProcess(Project, $"Disable Git repository '{repo.Name}'")) continue;
+
+                Client.UpdateRepositoryEnabledStatus(Project.Name, repo.Id, false);
+
+                yield return GetItem<GitRepository>();
+            }
+        }
     }
 }

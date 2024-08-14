@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -31,5 +32,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         /// </summary>
         [Parameter()]
         public SwitchParameter Recurse { get; set; }
+    }
+
+    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RemoveClassificationNodeController))]
+    partial class RemoveAreaController { 
+        // See RemoveClassificationNodeController
     }
 }

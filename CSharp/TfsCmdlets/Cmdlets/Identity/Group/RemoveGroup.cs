@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.Services.Graph.Client;
+using TfsCmdlets.Cmdlets.Identity.Group;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
@@ -21,5 +22,22 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         [Parameter]
         public GroupScope Scope { get; set; } = GroupScope.Collection;
+    }
+
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
+    partial class RemoveGroupController
+    {
+        protected override IEnumerable Run()
+        {
+            foreach (var group in Items)
+            {
+                if (!PowerShell.ShouldProcess(group.PrincipalName, "Remove group")) continue;
+
+                Client.DeleteGroupAsync(group.Descriptor)
+                    .Wait($"Error removing group '{group.PrincipalName}'");
+            }
+
+            return null;
+        }
     }
 }

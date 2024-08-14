@@ -1,22 +1,56 @@
 # TfsCmdlets Release Notes
 
-## Version 2.6.1 (_15/May/2024_)
+## Version 2.9.0 (_03/Aug/2024_)
 
-Ouch! It's been a while since the last release! Sometimes life gets in the way, but I'm back!
+This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
-This release fixes bugs in `Get-TfsWorkItem`, `Get-TfsArea`, `Get-TfsIteration`, `Invoke-TfsRestApi`, `New-TfsTeam` and `Set-TfsTeam`.
+## New cmdlets
+
+- `Get-TfsWorkItemField`: Gets information from one or more organization-wide work item fields
+- `New-TfsWorkItemField`: Creates a new organization-wide work item field
+- `Remove-TfsWorkItemField`: Removes an organization-wide work item field
 
 ## Fixes
 
-* Fixes [#211](https://github.com/igoravl/TfsCmdlets/issues/211), where `Get-TfsWorkItem` would throw an error when the `-Fields` parameter was "*".
-* Fixes a bug in `Invoke-TfsRestApi` where Azure DevOps APIs whose responses were missing the `content-type` header would throw an error.
-* Fixes a bug in `Get-TfsArea` and `Get-TfsIteration` where team projects containing Regex-reserved characters (such as parentheses) would throw an error. This bug would indirectly affect `New-TfsTeam` and `Set-TfsTeam` due to their reliance on the same underlying class to handle area and iteration paths when creating/updating teams.
-* Fixes a bug in `Get-TfsWorkItem` where the `-AreaPath` and `-IterationPath` parameters would not work when the specified path either started with a backslash or did not contain the team project name.
-* Adds the installed module version to the _Azure DevOps Shell_ startup command to prevent loading an older version of the module when the PSModulePath variable contains an older version of the module listed earlier in the search path.
+- Fixed an issue with `Get-TfsArtifact` where it wasn't listing deleted packages.
+- Fixed an issue with `Get-TfsArtifactFeed` where it would ignore the -Project argument and thus not filter feeds by project.
+- Fixed an issue with `Get-TfsWorkItemTag` where it would fail when given a list of tags as input.
+- Fixed an issue with `Get-TfsWorkItemType` where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
+
+## Changes and enhancements
+
+- **`Get-TfsGitBranch`**: Added a new `-Compare` argument to  to get the "Compare" (base) branch of a given repository.
+- **`Get-TfsGitBranch` (_BREAKING_)**: `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior will need to be updated.
+- **`Get-TfsGitBranchPolicy` (_BREAKING_)**: Both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior will need to be updated.
+- **`Connect-TfsTeamProjectCollection`, `Connect-TfsOrganization`**: Now it throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
 
 -----------------------
 
 ## Previous Versions
+
+## Version 2.8.2 (_24/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.2.md).
+
+### Version 2.8.1 (_16/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.1.md).
+
+### Version 2.8.0 (_09/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.0.md).
+
+### Version 2.7.1 (_03/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.7.1.md).
+
+### Version 2.7.0 (_03/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.7.0.md).
+
+### Version 2.6.1 (_15/May/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.6.1.md).
 
 ### Version 2.6.0 (_30/Sep/2022_)
 
