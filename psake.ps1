@@ -59,10 +59,10 @@ Properties {
 Task Rebuild -Depends Clean, Build {
 }
 
-Task Package -Depends Build, AllTests, RemoveEmptyFolders, ValidateReleaseNotes, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
+Task Package -Depends Build, GenerateDocs, AllTests, RemoveEmptyFolders, ValidateReleaseNotes, PackageNuget, PackageChocolatey, PackageMSI, PackageWinget, PackageDocs, PackageModule {
 }
 
-Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest, GenerateDocs {
+Task Build -Depends CleanOutputDir, CreateOutputDir, BuildLibrary, UnitTests, GenerateHelp, CopyFiles, GenerateTypesXml, GenerateFormatXml, GenerateNestedModule, UpdateModuleManifest {
 }
 
 Task Test -Depends UnitTests, AllTests {
@@ -242,13 +242,16 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     try {
         Write-Output ' == PowerShell Core =='
-        Exec { pwsh.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru -ExcludeTagFilter 'Desktop' | Export-JUnitReport -Path ../../out/TestResults-Core.xml" }
+        Exec { pwsh.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Desktop', 'Server'" }
+        Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Core.xml -Force
+        Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Core.xml -Force
     
         Write-Output ' == PowerShell Desktop =='
-        Exec { powershell.exe -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -PassThru -ExcludeTagFilter 'Core' | Export-JUnitReport -Path ../../out/TestResults-Desktop.xml" }
+        Exec { powershell.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Core', 'Server'" }
+        Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Desktop.xml -Force
+        Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Desktop.xml -Force
     }
     finally {
-        Remove-Item '*.xml' -Force -ErrorAction SilentlyContinue
         Pop-Location
     }
 }
@@ -409,7 +412,7 @@ Task PackageWinget -Depends PackageMsi {
     }
 
     $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
-    $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$FourPartVersion")
+    $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$ThreePartVersion")
     $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
     $MsiProductCode = "$(GetMsiProperty -Path $MsiPath -Property 'ProductCode')".Replace(' ', '')
 

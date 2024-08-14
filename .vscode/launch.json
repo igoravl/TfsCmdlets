@@ -23,20 +23,6 @@
             "preLaunchTask": "Build"
         },
         {
-            "name": "(.NET) PowerShell 7 Preview",
-            "type": "coreclr",
-            "request": "launch",
-            "program": "C:\\Program Files\\PowerShell\\7-preview\\pwsh.exe",
-            "args": [
-                "-noexit",
-                "-command",
-                "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
-            ],
-            "cwd": "${workspaceFolder}",
-            "console": "externalTerminal",
-            "preLaunchTask": "Build"
-        },
-        {
             "name": "(.NET) PowerShell 7",
             "type": "coreclr",
             "request": "launch",
@@ -47,7 +33,8 @@
                 "Import-Module ${workspaceFolder}/out/module/TfsCmdlets.psd1; Enter-TfsShell"
             ],
             "cwd": "${workspaceFolder}",
-            "console": "externalTerminal"
+            "console": "externalTerminal",
+            "preLaunchTask": "Build"
         }
     ]
 }

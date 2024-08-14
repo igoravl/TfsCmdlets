@@ -9,7 +9,7 @@ namespace TfsCmdlets.SourceGenerators
     {
         public INamedTypeSymbol Type { get; set; }
 
-        public ClassDeclarationSyntax ClassDeclaration { get; set; }
+        public TypeDeclarationSyntax ClassDeclaration { get; set; }
 
         public GeneratorExecutionContext Context { get; set; }
 
@@ -27,7 +27,7 @@ namespace TfsCmdlets.SourceGenerators
 
         protected Logger Logger { get; private set; }
 
-        public void Initialize(Logger logger, INamedTypeSymbol type, ClassDeclarationSyntax cds, GeneratorExecutionContext context)
+        public void Initialize(Logger logger, INamedTypeSymbol type, TypeDeclarationSyntax cds, GeneratorExecutionContext context)
         {
             Type = type;
             ClassDeclaration = cds;

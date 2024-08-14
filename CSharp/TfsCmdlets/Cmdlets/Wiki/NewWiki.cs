@@ -1,5 +1,6 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Wiki.WebApi;
+using Microsoft.TeamFoundation.SourceControl.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Wiki
 {
@@ -39,5 +40,33 @@ namespace TfsCmdlets.Cmdlets.Wiki
         /// </summary>
         [Parameter(ParameterSetName = "Provision Project Wiki", Mandatory = true)]
         public SwitchParameter ProjectWiki { get; set; }
+    }
+
+    [CmdletController(typeof(WikiV2), Client=typeof(IWikiHttpClient))]
+    partial class NewWikiController
+    {
+        protected override IEnumerable Run()
+        {
+            var isProjectWiki = Parameters.Get<bool>(nameof(NewWiki.ProjectWiki));
+
+            var createParams = new WikiCreateParametersV2()
+            {
+                Name = Parameters.Get<string>(nameof(NewWiki.Wiki)),
+                Type = isProjectWiki ? WikiType.ProjectWiki : WikiType.CodeWiki,
+                ProjectId = Project.Id
+            };
+
+            if(createParams.Type == WikiType.CodeWiki)
+            {
+                var repo = Data.GetItem<GitRepository>(new {
+                    Repository = Parameters.Get<object>(nameof(NewWiki.Repository)),
+                    Project
+                });
+
+                createParams.RepositoryId = repo.Id;
+            }
+
+            yield return TaskExtensions.GetResult<WikiV2>(Client.CreateWikiAsync(createParams), "Error creating Wiki repository");
+        }
     }
 }

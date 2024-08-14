@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.Services.Graph.Client;
+using TfsCmdlets.Cmdlets.Identity.Group;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
@@ -28,5 +29,102 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         [Parameter]
         public SwitchParameter Recurse { get; set; }
+    }
+
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
+    partial class GetGroupController
+    {
+        [Import]
+        private IGraphHttpClient GraphClient { get; set; }
+
+        protected override IEnumerable Run()
+        {
+            var group = Parameters.Get<object>(nameof(GetGroup.Group));
+            var scope = Parameters.Get<GroupScope>(nameof(GetGroup.Scope));
+            var recurse = Parameters.Get<bool>(nameof(GetGroup.Recurse));
+
+            PagedGraphGroups result = null;
+            string groupName;
+
+            switch (group)
+            {
+                case string s:
+                    {
+                        groupName = s;
+                        break;
+                    }
+                case GraphGroup g:
+                    {
+                        yield return g;
+                        yield break;
+                    }
+                default:
+                    {
+                        Logger.LogError($"Invalid group type: {group.GetType().Name}");
+                        yield break;
+                    }
+            }
+
+            switch (scope)
+            {
+                case GroupScope.Server:
+                    {
+                        do
+                        {
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                                     .GetResult<PagedGraphGroups>("Error getting groups in collection");
+
+                            foreach (var g in result.GraphGroups
+                                .Where(g =>
+                                    (g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)) &&
+                                    (recurse || g.PrincipalName.StartsWith("[TEAM FOUNDATION]"))))
+                            {
+                                yield return g;
+                            }
+                        } while (result?.ContinuationToken != null);
+                        
+                        break;
+                    }
+                case GroupScope.Collection:
+                    {
+                        var tpc = Data.GetCollection();
+
+                        do
+                        {
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                                     .GetResult<PagedGraphGroups>("Error getting groups in collection");
+
+                            foreach (var g in result.GraphGroups
+                                .Where(g =>
+                                    (g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)) &&
+                                    (recurse || g.Domain.EndsWith(tpc.ServerId.ToString()))))
+                            {
+                                yield return g;
+                            }
+                        } while (result?.ContinuationToken != null);
+
+                        break;
+                    }
+                case GroupScope.Project:
+                    {
+                        var tp = Data.GetProject();
+                        var descriptor = GraphClient.GetDescriptorAsync(tp.Id)
+                            .GetResult($"Error getting descriptor for project '{tp.Name}'");
+
+                        do
+                        {
+                            result = Client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
+                                     .GetResult<PagedGraphGroups>($"Error getting groups in team project {tp.Name}");
+
+                            foreach (var g in result.GraphGroups.Where(g => g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)))
+                            {
+                                yield return g;
+                            }
+                        } while (result?.ContinuationToken != null);
+
+                        break;
+                    }
+            }
+        }
     }
 }

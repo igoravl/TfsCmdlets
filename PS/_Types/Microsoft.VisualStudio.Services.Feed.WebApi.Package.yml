@@ -24,3 +24,6 @@
 - ScriptProperty:
     Name: PublishDate
     GetScriptBlock: $this.Versions[0].PublishDate
+- ScriptProperty:
+    Name: IsPreRelease
+    GetScriptBlock: $this.Versions[0].NormalizedVersion -like '*-*'

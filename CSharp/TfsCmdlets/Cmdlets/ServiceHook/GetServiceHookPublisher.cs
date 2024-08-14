@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 using WebApiPublisher = Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher;
 
 namespace TfsCmdlets.Cmdlets.ServiceHook
@@ -23,5 +24,38 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [SupportsWildcards()]
         [Alias("Name", "Id")]
         public object Publisher { get; set; } = "*";
+    }
+
+    [CmdletController(typeof(WebApiPublisher), Client=typeof(IServiceHooksPublisherHttpClient))]
+    partial class GetServiceHookPublisherController
+    {
+        protected override IEnumerable Run()
+        {
+            foreach (var publisher in Publisher)
+            {
+                switch (publisher)
+                {
+                    case WebApiPublisher p:
+                        {
+                            yield return p;
+                            break;
+                        }
+                    case string s:
+                        {
+                            var result = Client.GetPublishersAsync()
+                                .GetResult("Error getting service hook publishers")
+                                .Where(p => p.Name.IsLike(s) || p.Id.IsLike(s));
+
+                            foreach (var r in result) yield return r;
+                            break;
+                        }
+                    default:
+                        {
+                            Logger.LogError(new ArgumentException($"Invalid or non-existent publisher '{publisher}'"));
+                            break;
+                        }
+                }
+            }
+        }
     }
 }

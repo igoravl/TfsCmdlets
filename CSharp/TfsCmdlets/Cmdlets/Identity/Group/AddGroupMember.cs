@@ -1,4 +1,7 @@
 using System.Management.Automation;
+using Microsoft.VisualStudio.Services.Identity;
+using Microsoft.VisualStudio.Services.Identity.Client;
+using TfsCmdlets.Cmdlets.Identity.Group;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {
@@ -19,5 +22,38 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         public object Group { get; set; }
+    }
+
+    [CmdletController(Client=typeof(IIdentityHttpClient))]
+    partial class AddGroupMemberController
+    {
+        protected override IEnumerable Run()
+        {
+            var member = Parameters.Get<object>(nameof(AddGroupMember.Member));
+            var group = Parameters.Get<object>(nameof(AddGroupMember.Group));
+
+            var identities = Data.GetItems<Models.Identity>(new
+            {
+                Identity = member
+            }).ToList();
+
+            var g = Data.GetItem<Models.Identity>(new
+            {
+                Identity = group
+            });
+
+            foreach (var m in identities)
+            {
+                if (!PowerShell.ShouldProcess($"Group '{g.DisplayName}'",
+                    $"Add member '{m.DisplayName} ({m.UniqueName})'")) continue;
+
+                Client.AddMemberToGroupAsync(
+                    (IdentityDescriptor)g.Descriptor,
+                    (IdentityDescriptor)m.Descriptor)
+                    .GetResult($"Error adding member '{m.DisplayName}' to group '{g.DisplayName}'");
+            }
+
+            return identities;
+        }
     }
 }

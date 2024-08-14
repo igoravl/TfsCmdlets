@@ -6,11 +6,12 @@ env:
   SkipReleaseNotes: ${{ true }}
   
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
 
@@ -22,7 +23,7 @@ jobs:
       TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Initialize CodeQL
@@ -36,6 +37,12 @@ jobs:
           ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
+        if: always()
+        with:
+          files: |
+            out\TestResults-Pester*.xml
       - name: Publish Nuget
         uses: actions/upload-artifact@v4
         with:
@@ -84,16 +91,18 @@ jobs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Extract release notes
         id: extract_release_notes
         shell: pwsh
         run: |
           $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
-          echo $fileName
-          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4) -join '%0A'
-          echo $releaseNotes
-          Write-Output "::set-output name=RELEASE_NOTES::$releaseNotes"
+          Write-Output $fileName
+          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
+          Write-Output $releaseNotes
+          Write-Output 'RELEASE_NOTES<<EOF' >> $env:GITHUB_OUTPUT
+          Write-Output $releaseNotes >> $env:GITHUB_OUTPUT
+          Write-Output 'EOF' >> $env:GITHUB_OUTPUT
       - name: Create Draft Release
         id: create_release
         shell: pwsh
@@ -132,15 +141,10 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     needs: [ Staging ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
     steps: 
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.10.0
-        with:
-          access_token: ${{ github.token }}
       - name: Promote release
         id: promote_release
         shell: pwsh
@@ -155,8 +159,8 @@ jobs:
           $rel = Get-GitHubRelease `
           | Where-Object { ($_.Draft -eq $true) -and ($_.Name -eq "Release $($env:BUILD_NAME)")  }
           Set-GitHubRelease -Release $rel.id -Draft:$false
-          Write-Output "::set-output name=RELEASE_URL::$($rel.html_url)"
-          Write-Output "::set-output name=RELEASE_TAG::$($env:BUILD_NAME.Replace('+', '%2B'))"
+          Write-Output "RELEASE_URL=$($rel.html_url)" >> $env:GITHUB_OUTPUT
+          Write-Output "RELEASE_TAG=$($env:BUILD_NAME.Replace('+', '%2B'))" >> $env:GITHUB_OUTPUT
     outputs:
       BUILD_NAME: ${{ needs.Staging.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Staging.outputs.RELEASE_NOTES }}
@@ -167,18 +171,17 @@ jobs:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           path: site
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: docs
       - name: Publish site
@@ -200,13 +203,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: psgallery
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: portable
       - name: Publish artifact
@@ -223,14 +225,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: nuget
-    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nuget
       - name: Install Nuget 5.x
-        uses: nuget/setup-nuget@v1
+        uses: nuget/setup-nuget@v2
         with:
           nuget-api-key: ${{ secrets.API_KEY }}
           nuget-version: '5.x'
@@ -243,12 +244,11 @@ jobs:
     runs-on: windows-latest
     needs: [ Release ]
     environment: chocolatey
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: chocolatey
       - name: Install Chocolatey
@@ -259,14 +259,13 @@ jobs:
           iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
       - name: Push package
         run: |
-          choco push $(ls TfsCmdlets*.nupkg) --api-key $env:CHOCO_KEY
+          choco push $(ls TfsCmdlets*.nupkg) --api-key $env:CHOCO_KEY --source='https://push.chocolatey.org/'
   
   WinGet:
 
     runs-on: ubuntu-latest
     needs: [ Release ]
     environment: winget
-    if: ${{ github.event_name != 'pull_request' }}
     env:
       GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
       BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
@@ -280,7 +279,7 @@ jobs:
           git fetch upstream
           git checkout -b "TfsCmdlets_$BUILD_NAME"
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: winget
           path: winget-pkgs
@@ -322,16 +321,19 @@ jobs:
     needs: [ Release, Nuget, PSGallery, Chocolatey, Site, WinGet ]
     environment: announcements
     steps:
-      - name: Tweet
-        id: tweet
-        uses: snow-actions/tweet@v1.3.0
-        env:
-          BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
-          CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
-          CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
-          ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
-          RELEASE_TAG: ${{ needs.Release.outputs.RELEASE_TAG }}
-        with:
-          status: |
-            TfsCmdlets version ${{ env.BUILD_NAME }} has just been released. Check it out! https://github.com/igoravl/TfsCmdlets/releases/tag/v${{ env.RELEASE_TAG }}
+      - name: No-op
+        shell: bash
+        run: Write-Output "no-op"
+      # - name: Tweet
+      #   id: tweet
+      #   uses: snow-actions/tweet@v1.3.0
+      #   env:
+      #     BUILD_NAME: ${{ needs.Release.outputs.BUILD_NAME }}
+      #     CONSUMER_API_KEY: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+      #     CONSUMER_API_SECRET_KEY: ${{ secrets.TWITTER_CONSUMER_API_SECRET_KEY }}
+      #     ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+      #     ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+      #     RELEASE_TAG: ${{ needs.Release.outputs.RELEASE_TAG }}
+      #   with:
+      #     status: |
+      #       TfsCmdlets version ${{ env.BUILD_NAME }} has just been released. Check it out! https://github.com/igoravl/TfsCmdlets/releases/tag/v${{ env.RELEASE_TAG }}

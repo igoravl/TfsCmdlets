@@ -1,5 +1,7 @@
 using System.Management.Automation;
 using WebApiCardRule = Microsoft.TeamFoundation.Work.WebApi.Rule;
+using Microsoft.TeamFoundation.Core.WebApi.Types;
+using Microsoft.TeamFoundation.Work.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Team.Board
 {
@@ -29,5 +31,45 @@ namespace TfsCmdlets.Cmdlets.Team.Board
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public object Board { get; set; }
+    }
+
+    [CmdletController(typeof(Models.CardRule), Client=typeof(IWorkHttpClient))]
+    partial class GetTeamBoardCardRuleController
+    {
+        protected override IEnumerable Run()
+        {
+            var board = Data.GetItem<Models.Board>();
+
+            var tp = Data.GetProject();
+            var t = Data.GetTeam();
+
+            var rule = Parameters.Get<string>(nameof(GetTeamBoardCardRule.Rule));
+            var ruleType = Parameters.Get<CardRuleType>(nameof(GetTeamBoardCardRule.RuleType));
+
+            var ctx = new TeamContext(tp.Name, t.Name);
+
+            var rules = TaskExtensions.GetResult<BoardCardRuleSettings>(Client.GetBoardCardRuleSettingsAsync(ctx, board.Name), "Error getting board card rules")
+                .rules;
+
+            // Card rules
+
+            foreach (var r in rules
+                .Where(r1 =>
+                    (((ruleType & CardRuleType.CardColor) == CardRuleType.CardColor) && r1.Key.Equals("fill")))
+                .SelectMany(r1 => r1.Value))
+            {
+                yield return new Models.CardRule(r, board.InnerObject);
+            }
+
+            // Tag rules
+
+            foreach (var r in rules
+                .Where(r1 =>
+                    (((ruleType & CardRuleType.TagColor) == CardRuleType.TagColor) && r1.Key.Equals("tagStyle")))
+                .SelectMany(r1 => r1.Value))
+            {
+                yield return new Models.CardRule(r, board.InnerObject);
+            }
+        }
     }
 }

@@ -27,5 +27,19 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ClientMustBeInterface { get; } = new DiagnosticDescriptor(
+            "TFS004",
+            "HttpClient attribute must refer to a valid interface", "'{0}' must be an interface, derived from TfsCmdlets.HttpClients.IVssHttpClient.",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
+
+        internal static DiagnosticDescriptor ParameterMustHaveComments { get; } = new DiagnosticDescriptor(
+            "TFS005",
+            "Parameter must have XML comments", "Parameter '{0}' must have at least <summary> XML comments to enable command-line help",
+            "CodeGen",
+            DiagnosticSeverity.Error,
+            true);
     }
 }
