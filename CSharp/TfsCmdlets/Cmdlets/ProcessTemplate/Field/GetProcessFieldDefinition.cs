@@ -2,22 +2,28 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.HttpClients;
 
-namespace TfsCmdlets.Cmdlets.WorkItem.Field
+namespace TfsCmdlets.Cmdlets.Process.Field
 {
     /// <summary>
     /// Gets information from one or more organization-wide work item fields.
     /// </summary>
     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WorkItemField))]
-    partial class GetWorkItemField
+    partial class GetProcessFieldDefinition
     {
         /// <summary>
-        /// Specifies the name or the reference name of the field(s) to be returned. Wildcards are supported. 
+        /// Specifies the name of the field(s) to be returned. Wildcards are supported. 
         /// When omitted, all fields in the given organization are returned.
         /// </summary>
         [Parameter(Position = 0)]
         [Alias("Name")]
         [SupportsWildcards()]
         public object Field { get; set; } = "*";
+
+        /// <summary>
+        /// Specifies the reference name of the field(s) to be returned. Wildcards are supported.
+        /// </summary>
+        [Parameter()]
+        public string ReferenceName { get; set; }
 
         /// <summary>
         /// Limits the search to the specified project.
@@ -41,16 +47,17 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Field
     // Controller
 
     [CmdletController]
-    partial class GetWorkItemFieldController
+    partial class GetProcessFieldDefinitionController
     {
         [Import]
         private IWorkItemTrackingHttpClient Client { get; set; }
-        
+
         protected override IEnumerable Run()
         {
             string tpName;
 
-            if(Has_Project) {
+            if (Has_Project)
+            {
                 var tp = Data.GetProject();
                 tpName = tp.Name;
             }
@@ -59,21 +66,37 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Field
             {
                 switch (f)
                 {
-                    case string s when s.IsWildcard():
+                    case WorkItemField wif:
+                        {
+                            yield return wif;
+                            yield break;
+                        }
+                    case string s when s.IsWildcard() && string.IsNullOrEmpty(ReferenceName):
                         {
                             var expand = GetFieldsExpand.None |
                                 (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
                                 (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
 
                             yield return Client.GetFieldsAsync(expand)
-                                .GetResult($"Error getting field '{s}'")
-                                .Where(field => field.Name.IsLike(s) || field.ReferenceName.IsLike(s));
+                                .GetResult($"Error getting fields '{s}'")
+                                .Where(field => field.Name.IsLike(s));
                             break;
                         }
-                    case string s when !string.IsNullOrEmpty(s):
+                    case string s when !string.IsNullOrEmpty(s) && string.IsNullOrEmpty(ReferenceName):
                         {
                             yield return Client.GetFieldAsync(fieldNameOrRefName: s)
                                 .GetResult($"Error getting field '{s}'");
+                            break;
+                        }
+                    case { } when !string.IsNullOrEmpty(ReferenceName):
+                        {
+                            var expand = GetFieldsExpand.None |
+                                (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
+                                (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
+
+                            yield return Client.GetFieldsAsync(expand)
+                                .GetResult($"Error getting field with reference name '{ReferenceName}'")
+                                .Where(field => field.ReferenceName.IsLike(ReferenceName));
                             break;
                         }
                     default:
