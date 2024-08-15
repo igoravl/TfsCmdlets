@@ -24,7 +24,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public object Group { get; set; }
     }
 
-    [CmdletController]
+    [CmdletController(Client=typeof(IIdentityHttpClient))]
     partial class AddGroupMemberController
     {
         protected override IEnumerable Run()
@@ -42,14 +42,12 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                 Identity = group
             });
 
-            var client = Data.GetClient<IdentityHttpClient>();
-
             foreach (var m in identities)
             {
                 if (!PowerShell.ShouldProcess($"Group '{g.DisplayName}'",
                     $"Add member '{m.DisplayName} ({m.UniqueName})'")) continue;
 
-                client.AddMemberToGroupAsync(
+                Client.AddMemberToGroupAsync(
                     (IdentityDescriptor)g.Descriptor,
                     (IdentityDescriptor)m.Descriptor)
                     .GetResult($"Error adding member '{m.DisplayName}' to group '{g.DisplayName}'");

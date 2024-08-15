@@ -60,7 +60,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         public SwitchParameter Current { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTeamProject))]
+    [CmdletController(typeof(WebApiTeamProject), Client = typeof(IProjectHttpClient))]
     partial class GetTeamProjectController
     {
         [Import]
@@ -71,14 +71,12 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
         protected override IEnumerable Run()
         {
-            var client = GetClient<ProjectHttpClient>();
-
             if (Parameters.Get<object>("Project") == null || Current)
             {
                 Logger.Log("Get currently connected team project");
 
                 yield return IncludeDetails ?
-                    FetchProject(CurrentConnections.Project.Name, client, true) : 
+                    FetchProject(CurrentConnections.Project.Name, Client, true) : 
                     CurrentConnections.Project;
 
                 yield break;
@@ -97,7 +95,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                         }
                     case Guid g:
                         {
-                            var p = FetchProject(g.ToString(), client, includeDetails);
+                            var p = FetchProject(g.ToString(), Client, includeDetails);
 
                             if(Has_Process && !Process.Any(process => p.Capabilities["processTemplate"]["templateName"].IsLike(process))) continue;
                             
@@ -107,7 +105,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                         }
                     case string s when !s.IsWildcard() && !Deleted:
                         {
-                            var p = FetchProject(s, client, includeDetails);
+                            var p = FetchProject(s, Client, includeDetails);
                             
                             if(Has_Process && !Process.Any(process => p.Capabilities["processTemplate"]["templateName"].IsLike(process))) continue;
                             
@@ -118,13 +116,13 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                     case string s:
                         {
                             var stateFilter = Deleted ? ProjectState.Deleted : ProjectState.All;
-                            var tpRefs = FetchProjects(stateFilter, client);
+                            var tpRefs = FetchProjects(stateFilter, Client);
 
                             foreach (var tpRef in tpRefs.Where(r => r.Name.IsLike(s)))
                             {
                                 var p = Deleted || !includeDetails?
                                     new WebApiTeamProject(tpRef) :
-                                    FetchProject(tpRef.Id.ToString(), client, true);
+                                    FetchProject(tpRef.Id.ToString(), Client, true);
 
                                 if (p == null) continue;
 
@@ -143,10 +141,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
             }
         }
 
-        private WebApiTeamProject FetchProject(string project, ProjectHttpClient client, bool includeDetails = true)
+        private WebApiTeamProject FetchProject(string project, IProjectHttpClient client, bool includeDetails = true)
             => client.GetProject(project, includeDetails).GetResult($"Error getting team project '{project}'");
 
-        private IEnumerable<TeamProjectReference> FetchProjects(ProjectState stateFilter, ProjectHttpClient client)
+        private IEnumerable<TeamProjectReference> FetchProjects(ProjectState stateFilter, IProjectHttpClient client)
             => Paginator.Paginate((top, skip) => client.GetProjects(stateFilter, top: top, skip: skip).GetResult($"Error getting team project(s)"));
     }
 }

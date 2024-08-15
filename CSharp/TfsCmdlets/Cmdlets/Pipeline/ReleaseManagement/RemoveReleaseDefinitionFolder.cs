@@ -32,7 +32,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiFolder))]
+    [CmdletController(typeof(WebApiFolder), Client=typeof(IReleaseHttpClient))]
     partial class RemoveReleaseDefinitionFolderController
     {
         protected override IEnumerable Run()
@@ -63,8 +63,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.ReleaseManagement
 
                 if (!force && !PowerShell.ShouldContinue($"Are you sure you want to delete folder '{f.Path}' and all of its contents?")) continue;
 
-                Data.GetClient<ReleaseHttpClient>()
-                    .DeleteFolderAsync(tp.Name, f.Path)
+                Client.DeleteFolderAsync(tp.Name, f.Path)
                     .Wait();
             }
 

@@ -11,16 +11,25 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     [TfsCmdlet(CmdletScope.Collection)]
     partial class AddWorkItemLink
     {
+        /// <summary>
+        /// Specifies the work item to link from.
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Id", "From")]
         [ValidateNotNull()]
         public object WorkItem { get; set; }
 
+        /// <summary>
+        /// Specifies the work item to link to.
+        /// </summary>
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = "Link to work item")]
         [Alias("To")]
         [ValidateNotNull()]
         public object TargetWorkItem { get; set; }
 
+        /// <summary>
+        /// Specifies the type of the link to create.
+        /// </summary>
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = "Link to work item")]
         [Alias("EndLinkType", "Type")]
         public WorkItemLinkType LinkType { get; set; }
@@ -32,17 +41,27 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
         [Parameter]
         public SwitchParameter Passthru { get; set; }
 
+        /// <summary>
+        /// Bypasses any rule validation when saving the work item. Use it with caution, as this 
+        /// may leave the work item in an invalid state.
+        /// </summary>
         [Parameter]
         public SwitchParameter BypassRules { get; set; }
 
+        /// <summary>
+        /// Do not fire any notifications for this change. Useful for bulk operations and automated processes.
+        /// </summary>
         [Parameter]
         public SwitchParameter SuppressNotifications { get; set; }
 
+        /// <summary>
+        /// Defines a comment to add to the link.
+        /// </summary>
         [Parameter]
         public string Comment { get; set; }
     }
 
-    [CmdletController(typeof(WebApiWorkItemRelation))]
+    [CmdletController(typeof(WebApiWorkItemRelation), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class AddWorkItemLinkController
     {
         [Import]
@@ -75,8 +94,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                    }
                 };
 
-                var client = Data.GetClient<WorkItemTrackingHttpClient>();
-                var result = client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
+                var result = Client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
                         bypassRules: BypassRules, 
                         suppressNotifications: SuppressNotifications)
                     .GetResult("Error updating target work item");

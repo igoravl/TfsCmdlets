@@ -29,18 +29,17 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public GroupScope Scope { get; set; } = GroupScope.Collection;
     }
 
-    [CmdletController(typeof(GraphGroup))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
     partial class NewGroupController
     {
         [Import]
-        private IDescriptorService DescriptorService { get; set; }
+        private IGraphHttpClient GraphClient { get; set; }
 
         protected override IEnumerable Run()
         {
             var group = Parameters.Get<string>(nameof(NewGroup.Group));
             var description = Parameters.Get<string>(nameof(NewGroup.Description));
             var scope = Parameters.Get<GroupScope>(nameof(NewGroup.Scope));
-            var client = Data.GetClient<GraphHttpClient>();
 
             switch (scope)
             {
@@ -57,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                     {
                         if(!PowerShell.ShouldProcess(Data.GetCollection(), $"Create group '{group}'")) yield break;
 
-                        yield return client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
+                        yield return Client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
                             DisplayName = group,
                             Description = description
                         }).GetResult($"Error creating group '{group}' in collection");
@@ -67,11 +66,12 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                 case GroupScope.Project:
                     {
                         var tp = Data.GetProject();
-                        var descriptor = DescriptorService.GetDescriptor(tp.Id);
+                        var descriptor = GraphClient.GetDescriptorAsync(tp.Id)
+                            .GetResult($"Error getting descriptor for project '{tp.Name}'");
 
                         if(!PowerShell.ShouldProcess(tp, $"Create group {group}")) yield break;
 
-                        yield return client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
+                        yield return Client.CreateGroupAsync(new GraphGroupVstsCreationContext() {
                             DisplayName = group,
                             Description = description
                         }, scopeDescriptor: descriptor.Value).GetResult($"Error creating group '{group}' in project '{tp.Name}'");

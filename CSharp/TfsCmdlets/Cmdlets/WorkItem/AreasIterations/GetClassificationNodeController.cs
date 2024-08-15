@@ -6,8 +6,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
     internal abstract class GetClassificationNodeController: ControllerBase
     {
-        [Import]
-        private INodeUtil NodeUtil { get; }
+        private INodeUtil NodeUtil { get; set;  }
+
+        private IWorkItemTrackingHttpClient Client { get; set; }
 
         protected override IEnumerable Run()
         {
@@ -54,7 +55,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                     }
             }
 
-            var client = Data.GetClient<WorkItemTrackingHttpClient>();
             var depth = 2;
 
             if (path.IsWildcard())
@@ -62,9 +62,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
                 depth = 4;
                 Logger.Log($"Preparing to recursively search for pattern '{path}'");
 
-                var root = new ClassificationNode(client.GetClassificationNodeAsync(tp.Name, structureGroup, "\\", depth)
+                var root = new ClassificationNode(Client.GetClassificationNodeAsync(tp.Name, structureGroup, "\\", depth)
                         .GetResult($"Error retrieving {structureGroup} from path '{path}'"),
-                    tp.Name, client);
+                    tp.Name, Client);
 
                 foreach (var n in root.GetChildren(path))
                 {
@@ -76,15 +76,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 
             Logger.Log($"Getting {structureGroup} under path '{path}'");
 
-            yield return new ClassificationNode(client.GetClassificationNodeAsync(tp.Name, structureGroup, path, depth)
+            yield return new ClassificationNode(Client.GetClassificationNodeAsync(tp.Name, structureGroup, path, depth)
                 .GetResult($"Error retrieving {structureGroup} from path '{path}'"), tp.Name, null);
         }
 
         [ImportingConstructor]
-        protected GetClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        protected GetClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
             NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

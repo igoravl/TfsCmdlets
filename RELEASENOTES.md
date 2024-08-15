@@ -1,22 +1,39 @@
 # TfsCmdlets Release Notes
 
-## Version 2.8.2 (_24/Jul/2024_)
+## Version 2.9.0 (15/Aug/2024_)
 
-This release brings some fixes and enhancements.
+This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
-### Enhancements
+## New cmdlets
 
-- `Add-TfsWorkItemLink`: Added support for specifying the arguments `-SuppressNotification` and `-BypassRules` to suppress notifications and bypass rules when adding a work item link.
-- Now when when a cmdlet fails, a full exception dump will be sent to the verbose output stream in addition to the short error message sent to the error stream. So, if your script is failing and you don't know why, you can enable the verbose output to get more information about the error.
+- **`Get-ProcessFieldDefinition`**: Gets information from one or more organization-wide work item fields
+- **`New-ProcessFieldDefinition`**: Creates a new organization-wide work item field
+- **`Remove-ProcessFieldDefinition`**: Removes an organization-wide work item field
 
-### Fixes
+## Fixes
 
-- Fixed an issue where the `Get-TfsTeam` cmdlet would not work when specifying the `-Default` parameter.
-- Fixed an issue where `Invoke-TfsRestApi` would ignore the parameters passed via the `-Parameters` argument [[#228](https://github.com/igoravl/TfsCmdlets/issues/)]
+- **`Get-TfsArtifact`**: Fixed an issue where it wouldn't list deleted packages.
+- **`Get-TfsArtifactFeed`**: Fixed an issue where it would ignore the -Project argument and thus not filter feeds by project.
+- **`Get-TfsWorkItemTag`**: Fixed an issue where it would fail when given a list of tags as input.
+- **`Get-TfsWorkItemType`**: Fixed an issue where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
+
+## Changes and enhancements
+
+- **`Get-TfsGitBranch`**: Added a new `-Compare` argument to  to get the "Compare" (base) branch of a given repository.
+- **`Connect-TfsTeamProjectCollection`, `Connect-TfsOrganization`**: Now it throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
+
+### Breaking changes
+
+- **`Get-TfsGitBranch`**: `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior may need to be updated.
+- **`Get-TfsGitBranchPolicy`**: Both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior may need to be updated.
 
 -----------------------
 
 ## Previous Versions
+
+## Version 2.8.2 (_24/Jul/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.8.2.md).
 
 ### Version 2.8.1 (_16/Jul/2024_)
 

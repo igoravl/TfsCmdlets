@@ -61,10 +61,11 @@ namespace TfsCmdlets.Cmdlets.Artifact
     [CmdletController(typeof(WebApiPackage))]
     partial class GetArtifactController
     {
+        [Import]
+        private IFeedHttpClient Client { get; set; }
+        
         protected override IEnumerable Run()
         {
-            var client = GetClient<FeedHttpClient>();
-
             foreach (var input in Artifact)
             {
                 var artifact = input switch
@@ -90,7 +91,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
                 {
                     case Guid g:
                         {
-                            yield return client.GetPackageAsync(
+                            yield return Client.GetPackageAsync(
                                     packageId: g.ToString(), 
                                     feedId: feedId, 
                                     project: projectId)
@@ -99,15 +100,15 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case string s when s.IsWildcard():
                         {
-                            yield return client.GetPackagesAsync(
+                            yield return Client.GetPackagesAsync(
                                     project: projectId, 
                                     feedId: feedId, 
                                     protocolType: ProtocolType,
                                     getTopPackageVersions: getTopPackageVersions, 
                                     includeAllVersions: getTopPackageVersions || IncludeAllVersions,
-                                    includeDeleted: IncludeDeleted? null: true, 
+                                    includeDeleted: IncludeDeleted? true: null, 
                                     includeDescription: !getTopPackageVersions, 
-                                    isListed: IncludeDelisted? null: true, 
+                                    isListed: IncludeDelisted || IncludeDeleted? null: true, 
                                     isRelease: IncludePrerelease? null: true)
                                 .GetResult($"Error getting artifact feed(s) '{s}'")
                                 .Where(p => p.Name.IsLike(s));
@@ -115,7 +116,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case string s:
                         {
-                            yield return client.GetPackagesAsync(
+                            yield return Client.GetPackagesAsync(
                                     project: projectId, 
                                     feedId: feedId, 
                                     protocolType: ProtocolType, 

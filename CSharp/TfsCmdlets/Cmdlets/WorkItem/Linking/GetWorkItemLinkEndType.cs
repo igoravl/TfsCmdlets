@@ -10,13 +10,17 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
     [TfsCmdlet(CmdletScope.Collection)]
     partial class GetWorkItemLinkType
     {
+        /// <summary>
+        /// Specifies the name of the link type. Wildcards are supported.
+        /// When omitted, returns all link types.
+        /// </summary>
         [Parameter(Position = 0)]
         [SupportsWildcards]
         [Alias("Name", "EndLinkType", "Type", "Link")]
         public object LinkType { get; set; } = "*";
     }
 
-    [CmdletController(typeof(WorkItemRelationType))]
+    [CmdletController(typeof(WorkItemRelationType), Client=typeof(IWorkItemTrackingHttpClient))]
     partial class GetWorkItemLinkTypeController
     {
         protected override IEnumerable Run()
@@ -31,9 +35,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                     }
                 case string s:
                     {
-                        var client = Data.GetClient<WorkItemTrackingHttpClient>();
-
-                        return client.GetRelationTypesAsync()
+                        return Client.GetRelationTypesAsync()
                             .GetResult("Error getting work item link types")
                             .Where(wirt => wirt.Name.IsLike(s) || wirt.ReferenceName.IsLike(s));
                     }

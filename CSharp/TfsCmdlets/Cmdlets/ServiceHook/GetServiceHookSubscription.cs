@@ -43,12 +43,11 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         public string EventType { get; set; }
     }
 
-    [CmdletController(typeof(WebApiSubscription))]
+    [CmdletController(typeof(WebApiSubscription), Client=typeof(IServiceHooksPublisherHttpClient))]
     partial class GetServiceHookSubscriptionController
     {
         protected override IEnumerable Run()
         {
-            var client = GetClient<ServiceHooksPublisherHttpClient>();
             var publisher = Has_Publisher ? GetItem<WebApiPublisher>() : null;
             var consumer = Has_Consumer ? GetItem<WebApiConsumer>() : null;
 
@@ -70,7 +69,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
                                 EventType = EventType
                             };
 
-                            var result = client.QuerySubscriptionsAsync(query)
+                            var result = Client.QuerySubscriptionsAsync(query)
                                 .GetResult("Error getting service hook subscriptions")
                                 .Results
                                 .Where(sub => sub.ActionDescription.IsLike(s));

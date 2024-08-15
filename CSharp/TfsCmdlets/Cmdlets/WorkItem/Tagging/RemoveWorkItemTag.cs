@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTagDefinition))]
+    [CmdletController(typeof(WebApiTagDefinition), Client=typeof(ITaggingHttpClient))]
     partial class RemoveWorkItemTagController
     {
         protected override IEnumerable Run()
@@ -34,7 +34,6 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
             var force = Parameters.Get<bool>(nameof(RemoveWorkItemTag.Force));
 
             var tp = Data.GetProject();
-            var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
             foreach (var t in tags)
             {
@@ -46,7 +45,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
                     continue;
                 }
 
-                client.DeleteTagAsync(tp.Id, t.Id)
+                Client.DeleteTagAsync(tp.Id, t.Id)
                     .Wait($"Error deleting tag '{t.Name}'");
             }
 

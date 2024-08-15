@@ -9,10 +9,16 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
     [TfsCmdlet(CmdletScope.Project, DesktopOnly = true)]
     partial class ImportWorkItemType
     {
+        /// <summary>
+        /// Specifies the XML definition of the work item type to import.
+        /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Import from XML")]
         [ValidateNotNull]
         public string Xml { get; set; }
 
+        /// <summary>
+        /// Specifies the path to the file containing the XML definition of the work item type to import.
+        /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "Import from file")]
         [ValidateNotNull]
         public string Path { get; set; }

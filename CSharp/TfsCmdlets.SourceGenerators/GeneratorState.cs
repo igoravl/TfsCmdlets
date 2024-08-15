@@ -9,25 +9,30 @@ namespace TfsCmdlets.SourceGenerators
     {
         private Dictionary<string, object> PropertyBag { get; } = new Dictionary<string, object>();
 
-        public GeneratorState(INamedTypeSymbol type, Logger logger)
+        public GeneratorState(INamedTypeSymbol targetType, Logger logger)
         {
-            Name = type.Name;
-            Namespace = type.FullNamespace();
-            FullName = FileName = type.FullName();
+            if (targetType == null) throw new ArgumentNullException(nameof(targetType));
+
+            Name = targetType.Name;
+            Namespace = targetType.FullNamespace();
+            FullName = FileName = targetType.FullName();
             Logger = logger;
+            TargetType = targetType;
         }
 
-        public string Name { get;  }
+        public INamedTypeSymbol TargetType { get; set; }
 
-        public string Namespace{ get; }
+        public string Name { get; }
+
+        public string Namespace { get; }
 
         public string FullName { get; }
 
         public string FileName { get; }
-
+        
         public IDictionary<string, GeneratedProperty> GeneratedProperties = new Dictionary<string, GeneratedProperty>();
 
-        protected Logger Logger { get;  }
+        protected Logger Logger { get; }
 
         public object this[string key]
         {

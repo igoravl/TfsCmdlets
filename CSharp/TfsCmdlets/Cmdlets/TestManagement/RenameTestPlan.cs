@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
         public object TestPlan { get; set; }
     }
 
-    [CmdletController(typeof(TestPlan))]
+    [CmdletController(typeof(TestPlan), Client=typeof(ITestPlanHttpClient))]
     partial class RenameTestPlanController
     {
         protected override IEnumerable Run()
@@ -29,9 +29,7 @@ namespace TfsCmdlets.Cmdlets.TestManagement
 
             if (!PowerShell.ShouldProcess(tp, $"Rename test plan '{plan.Name}' to '{newName}'")) yield break;
 
-            var client = Data.GetClient<TestPlanHttpClient>();
-
-            yield return client.UpdateTestPlanAsync(new TestPlanUpdateParams() { Name = newName }, tp.Name, plan.Id)
+            yield return Client.UpdateTestPlanAsync(new TestPlanUpdateParams() { Name = newName }, tp.Name, plan.Id)
                 .GetResult($"Error renaming test plan '{plan.Name}'");
         }
     }

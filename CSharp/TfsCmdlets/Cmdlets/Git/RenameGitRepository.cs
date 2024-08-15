@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.Git
         public object Repository { get; set; }
     }
 
-    [CmdletController(typeof(GitRepository))]
+    [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
     partial class RenameGitRepositoryController 
     {
         protected override IEnumerable Run()
@@ -34,9 +34,7 @@ namespace TfsCmdlets.Cmdlets.Git
             if (!PowerShell.ShouldProcess(Project, $"Rename repository '{repoToRename.Name}' to '{NewName}'"))
                 yield break;
 
-            var client = GetClient<GitHttpClient>();
-
-            yield return client.RenameRepositoryAsync(repoToRename, NewName)
+            yield return Client.RenameRepositoryAsync(repoToRename, NewName)
                 .GetResult("Error renaming repository");
         }
    }

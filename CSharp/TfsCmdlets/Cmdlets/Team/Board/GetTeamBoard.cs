@@ -20,7 +20,7 @@ namespace TfsCmdlets.Cmdlets.Team.Board
         public object Board { get; set; } = "*";
     }
 
-    [CmdletController(typeof(Models.Board))]
+    [CmdletController(typeof(Models.Board), Client=typeof(IWorkHttpClient))]
     partial class GetTeamBoardController
     {
         protected override IEnumerable Run()
@@ -42,12 +42,11 @@ namespace TfsCmdlets.Cmdlets.Team.Board
                 case string s when !s.IsGuid():
                     {
                         var ctx = new TeamContext(tp.Name, t.Name);
-                        var client = Data.GetClient<WorkHttpClient>();
 
-                        foreach (var b in TaskExtensions.GetResult<List<BoardReference>>(client.GetBoardsAsync(ctx), "Error getting team boards")
+                        foreach (var b in TaskExtensions.GetResult<List<BoardReference>>(Client.GetBoardsAsync(ctx), "Error getting team boards")
                             .Where(b => b.Name.IsLike(s)))
                         {
-                            yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(client.GetBoardAsync(ctx, b.Id.ToString()), $"Error getting board '{b.Name}'"), tp.Name, t.Name);
+                            yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(Client.GetBoardAsync(ctx, b.Id.ToString()), $"Error getting board '{b.Name}'"), tp.Name, t.Name);
                         }
 
                         yield break;
@@ -55,9 +54,8 @@ namespace TfsCmdlets.Cmdlets.Team.Board
                 case string s:
                     {
                         var ctx = new TeamContext(tp.Name, t.Name);
-                        var client = Data.GetClient<WorkHttpClient>();
 
-                        yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(client.GetBoardAsync(ctx, s), $"Error getting board 's'"), tp.Name, t.Name);
+                        yield return new Models.Board(TaskExtensions.GetResult<Microsoft.TeamFoundation.Work.WebApi.Board>(Client.GetBoardAsync(ctx, s), $"Error getting board 's'"), tp.Name, t.Name);
 
                         yield break;
                     }

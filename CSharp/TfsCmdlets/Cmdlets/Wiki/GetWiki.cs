@@ -26,13 +26,11 @@ namespace TfsCmdlets.Cmdlets.Wiki
         public SwitchParameter ProjectWiki { get; set; }
     }
 
-    [CmdletController(typeof(WikiV2))]
+    [CmdletController(typeof(WikiV2), Client=typeof(IWikiHttpClient))]
     partial class GetWikiController
     {
        protected override IEnumerable Run()
        {
-           var client = GetClient<WikiHttpClient>();
-
            foreach(var input in Wiki)
            {
                var wiki = input switch {
@@ -50,7 +48,7 @@ namespace TfsCmdlets.Cmdlets.Wiki
                    case null when ProjectWiki:
                    case {} when ProjectWiki:
                        {
-                           foreach (var w in client.GetAllWikisAsync(Project.Name)
+                           foreach (var w in Client.GetAllWikisAsync(Project.Name)
                                                 .GetResult($"Error getting project wiki")
                                                 .Where(r => r.Type == WikiType.ProjectWiki))
                            {
@@ -60,19 +58,19 @@ namespace TfsCmdlets.Cmdlets.Wiki
                        }
                    case Guid guid:
                        {
-                           yield return client.GetWikiAsync(Project.Name, guid)
+                           yield return Client.GetWikiAsync(Project.Name, guid)
                                             .GetResult($"Error getting Wiki with ID {guid}");
                            break;
                        }
                    case string s when !s.IsWildcard():
                        {
-                           yield return client.GetWikiAsync(Project.Name, s)
+                           yield return Client.GetWikiAsync(Project.Name, s)
                                             .GetResult($"Error getting Wiki '{s}'");
                            break;
                        }
                    case string s:
                        {
-                           foreach (var w in client.GetAllWikisAsync(Project.Name)
+                           foreach (var w in Client.GetAllWikisAsync(Project.Name)
                                                 .GetResult($"Error getting wiki(s) '{s}'")
                                                 .Where(r => r.Name.IsLike(s)))
                            {

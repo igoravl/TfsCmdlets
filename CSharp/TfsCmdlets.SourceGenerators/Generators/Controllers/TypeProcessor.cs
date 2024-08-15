@@ -26,7 +26,13 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             var props = new StringBuilder();
             var cacheProps = new StringBuilder();
             var controller = _controller;
+            var clientProp = string.Empty;
 
+            if(controller.Client != null)
+            {
+                clientProp = $"private {controller.Client.FullName()} Client {{ get; }}";
+            }
+            
             foreach (var prop in controller.GeneratedProperties.Values)
             {
                 props.Append(prop.ToString());
@@ -45,10 +51,14 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 cacheProps.Append($"            {prop.Name} = Parameters.Get<{type}>(\"{prop.Name}\"{initializer});\n\n");
             }
 
-            return $@"namespace {controller.Namespace}
+            return $@"{controller.Usings}
+
+namespace {controller.Namespace}
 {{
     internal partial class {controller.Name}: {controller.BaseClassName}
     {{
+        {clientProp}
+
 {props}
 
         protected override void CacheParameters()

@@ -18,7 +18,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
         public object Tag { get; set; }
     }
 
-    [CmdletController(typeof(WebApiTagDefinition))]
+    [CmdletController(typeof(WebApiTagDefinition), Client=typeof(ITaggingHttpClient))]
     partial class RenameWorkItemTagController
     {
         protected override IEnumerable Run()
@@ -27,11 +27,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
             var newName = Parameters.Get<string>(nameof(RenameWorkItemTag.NewName));
 
             var tp = Data.GetProject();
-            var client = Data.GetClient<Microsoft.TeamFoundation.Core.WebApi.TaggingHttpClient>();
 
             if (!PowerShell.ShouldProcess(tp, $"Rename work item tag '{tag.Name}' to '{newName}'")) yield break;
 
-            yield return client.UpdateTagAsync(tp.Id, tag.Id, newName, tag.Active)
+            yield return Client.UpdateTagAsync(tp.Id, tag.Id, newName, tag.Active)
                  .GetResult($"Error renaming work item tag '{tag.Name}'");
         }
     }

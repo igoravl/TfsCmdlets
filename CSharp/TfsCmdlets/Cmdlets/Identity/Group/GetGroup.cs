@@ -31,18 +31,17 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
         public SwitchParameter Recurse { get; set; }
     }
 
-    [CmdletController(typeof(GraphGroup))]
+    [CmdletController(typeof(GraphGroup), Client=typeof(IGraphHttpClient))]
     partial class GetGroupController
     {
         [Import]
-        private IDescriptorService DescriptorService { get; set; }
+        private IGraphHttpClient GraphClient { get; set; }
 
         protected override IEnumerable Run()
         {
             var group = Parameters.Get<object>(nameof(GetGroup.Group));
             var scope = Parameters.Get<GroupScope>(nameof(GetGroup.Scope));
             var recurse = Parameters.Get<bool>(nameof(GetGroup.Recurse));
-            var client = Data.GetClient<GraphHttpClient>();
 
             PagedGraphGroups result = null;
             string groupName;
@@ -72,7 +71,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                     {
                         do
                         {
-                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>("Error getting groups in collection");
 
                             foreach (var g in result.GraphGroups
@@ -92,7 +91,7 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
 
                         do
                         {
-                            result = client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>("Error getting groups in collection");
 
                             foreach (var g in result.GraphGroups
@@ -109,11 +108,12 @@ namespace TfsCmdlets.Cmdlets.Identity.Group
                 case GroupScope.Project:
                     {
                         var tp = Data.GetProject();
-                        var descriptor = DescriptorService.GetDescriptor(tp.Id);
+                        var descriptor = GraphClient.GetDescriptorAsync(tp.Id)
+                            .GetResult($"Error getting descriptor for project '{tp.Name}'");
 
                         do
                         {
-                            result = client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
+                            result = Client.ListGroupsAsync(scopeDescriptor: descriptor.Value, continuationToken: result?.ContinuationToken.FirstOrDefault())
                                      .GetResult<PagedGraphGroups>($"Error getting groups in team project {tp.Name}");
 
                             foreach (var g in result.GraphGroups.Where(g => g.PrincipalName.IsLike(groupName) || g.DisplayName.IsLike(groupName)))

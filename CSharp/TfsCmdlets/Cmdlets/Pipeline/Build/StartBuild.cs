@@ -16,16 +16,14 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
         public object Definition { get; set; }
     }
 
-    [CmdletController(typeof(WebApiBuild))]
+    [CmdletController(typeof(WebApiBuild), Client = typeof(IBuildHttpClient))]
     partial class StartBuildController
     {
         protected override IEnumerable Run()
         {
             var definition = GetItem<BuildDefinitionReference>();
 
-            var client = GetClient<BuildHttpClient>();
-
-            yield return client.QueueBuildAsync(project: Project.Name, build: new WebApiBuild
+            yield return Client.QueueBuildAsync(project: Project.Name, definitionId: null, build: new WebApiBuild
             {
                 Definition = definition
             }).GetResult($"Error queuing build '{definition}'");

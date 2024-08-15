@@ -25,7 +25,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
         public DefinitionQueryOrder QueryOrder { get; set; }
     }
 
-    [CmdletController(typeof(BuildDefinitionReference))]
+    [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
     partial class GetBuildDefinitionController
     {
         [Import]
@@ -33,7 +33,6 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
 
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<Microsoft.TeamFoundation.Build.WebApi.BuildHttpClient>();
             var ids = new List<int>();
 
             foreach (var input in Definition)
@@ -58,7 +57,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
                     case string s:
                         {
                             var path = NodeUtil.NormalizeNodePath(s, includeLeadingSeparator: true);
-                            var defs = client.GetDefinitionsAsync(project: Project.Name)
+                            var defs = Client.GetDefinitionsAsync(project: (string) Project.Name, yamlFilename: null)
                                 .GetResult($"Error getting pipeline definitions matching '{s}'");
                             ids.AddRange(defs.Where(bd => bd.GetFullPath().IsLike(path) || bd.Name.IsLike(s)).Select(bd => bd.Id));
                             break;
@@ -73,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
 
             if(ids.Count == 0) yield break;
 
-            foreach (var def in client.GetFullDefinitionsAsync(project: Project.Name, definitionIds: ids, queryOrder: QueryOrder)
+            foreach (var def in Client.GetFullDefinitionsAsync(project: Project.Name, definitionIds: ids, queryOrder: QueryOrder, yamlFilename: null)
                 .GetResult($"Error getting pipeline definitions"))
             {
                 yield return def;

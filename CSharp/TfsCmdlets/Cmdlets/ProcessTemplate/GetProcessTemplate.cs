@@ -25,13 +25,11 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
         public SwitchParameter Default { get; set; }
     }
 
-    [CmdletController(typeof(WebApiProcess))]
+    [CmdletController(typeof(WebApiProcess), Client=typeof(IProcessHttpClient))]
     partial class GetProcessTemplateController
     {
         protected override IEnumerable Run()
         {
-            var client = Data.GetClient<ProcessHttpClient>();
-
             foreach (var pt in ProcessTemplate)
             {
                 var process = pt switch
@@ -49,14 +47,14 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
                         }
                     case Guid g:
                         {
-                            yield return TaskExtensions.GetResult<Process>(client.GetProcessByIdAsync(g), $"Error getting process template '{process}'");
+                            yield return TaskExtensions.GetResult<WebApiProcess>(Client.GetProcessByIdAsync(g), $"Error getting process template '{process}'");
 
                             yield break;
                         }
                     case null when Default:
                     case { } when Default:
                         {
-                            foreach (var proc in TaskExtensions.GetResult<List<Process>>(client.GetProcessesAsync(), $"Error getting process templates")
+                            foreach (var proc in TaskExtensions.GetResult<List<WebApiProcess>>(Client.GetProcessesAsync(), $"Error getting process templates")
                                 .Where(p => p.IsDefault))
                             {
                                 yield return proc;
@@ -66,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
                         }
                     case string s:
                         {
-                            foreach (var proc in TaskExtensions.GetResult<List<Process>>(client.GetProcessesAsync(), $"Error getting process template '{process}'")
+                            foreach (var proc in TaskExtensions.GetResult<List<WebApiProcess>>(Client.GetProcessesAsync(), $"Error getting process template '{process}'")
                                 .Where(p => p.Name.IsLike(s)))
                             {
                                 yield return proc;
