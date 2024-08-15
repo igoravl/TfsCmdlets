@@ -1,14 +1,14 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.0 (14/Aug/2024_)
+## Version 2.9.0 (15/Aug/2024_)
 
 This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
 ## New cmdlets
 
-- **`Get-TfsWorkItemField`**: Gets information from one or more organization-wide work item fields
-- **`New-TfsWorkItemField`**: Creates a new organization-wide work item field
-- **`Remove-TfsWorkItemField`**: Removes an organization-wide work item field
+- **`Get-ProcessFieldDefinition`**: Gets information from one or more organization-wide work item fields
+- **`New-ProcessFieldDefinition`**: Creates a new organization-wide work item field
+- **`Remove-ProcessFieldDefinition`**: Removes an organization-wide work item field
 
 ## Fixes
 
