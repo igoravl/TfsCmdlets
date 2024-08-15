@@ -1,6 +1,4 @@
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using TfsCmdlets.HttpClients;
 
 namespace TfsCmdlets.Cmdlets.Process.Field
 {
@@ -46,7 +44,7 @@ namespace TfsCmdlets.Cmdlets.Process.Field
 
     // Controller
 
-    [CmdletController(Client = typeof(IWorkItemTrackingHttpClient))]
+    [CmdletController(typeof(WorkItemField), Client = typeof(IWorkItemTrackingHttpClient))]
     partial class GetProcessFieldDefinitionController
     {
         protected override IEnumerable Run()
