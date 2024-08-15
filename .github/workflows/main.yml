@@ -323,7 +323,7 @@ jobs:
     steps:
       - name: No-op
         shell: bash
-        run: Write-Output "no-op"
+        run: echo "Announcements are temporarily disabled."
       # - name: Tweet
       #   id: tweet
       #   uses: snow-actions/tweet@v1.3.0
