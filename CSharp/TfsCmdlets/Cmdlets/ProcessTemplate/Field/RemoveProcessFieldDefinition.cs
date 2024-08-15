@@ -1,11 +1,11 @@
 using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
-namespace TfsCmdlets.Cmdlets.Git
+namespace TfsCmdlets.Cmdlets.Process.Field
 {
     /// <summary>
-    /// Deletes one or more Git fldsitories from a team project.
+    /// Deletes one or more work item field definitions from a collection.
     /// </summary>
-    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true)]
+    [TfsCmdlet(CmdletScope.Collection, SupportsShouldProcess = true, OutputType = typeof(WorkItemField))]
     partial class RemoveProcessFieldDefinition
     {
         /// <summary>
@@ -36,6 +36,10 @@ namespace TfsCmdlets.Cmdlets.Git
             foreach (var fld in Items)
             {
                 if (!PowerShell.ShouldProcess(Collection, $"Remove field {fld.ReferenceName} ('{fld.Name}')")) continue;
+
+                if (!Force && !PowerShell.ShouldContinue($"Are you sure you want to delete field {fld.ReferenceName} ('{fld.Name}')? " +
+                    "You will lose all data stored in this field from all work items that are using it. " +
+                    "Other undesired consequences may include breaking queries and/or dashboard widgets that reference it.")) continue;
 
                 Client.DeleteFieldAsync(fld.ReferenceName).Wait();
             }
