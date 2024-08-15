@@ -20,14 +20,14 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "Backlog" 
-    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wilcards are supported. When omitted, returns all backlogs levels of the given team. " 
+    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wildcards are supported. When omitted, returns all backlogs levels of the given team. " 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name ] 
     defaultValue: "*" 
   - name: "Name" 
-    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wilcards are supported. When omitted, returns all backlogs levels of the given team. This is an alias of the Backlog parameter." 
+    description: "Specifies one or more backlog level configurations to be returned. Valid values are the name (e.g. \"Stories\") or the ID (e.g. \"Microsoft.RequirementCategory\") of the backlog level to return. Wildcards are supported. When omitted, returns all backlogs levels of the given team. This is an alias of the Backlog parameter." 
     globbing: false 
     position: 0 
     type: "object" 

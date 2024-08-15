@@ -5,20 +5,26 @@ parent: "Git.Branch"
 description: "Gets information from one or more branches in a remote Git repository. "
 remarks: 
 parameterSets: 
-  "_All_": [ Branch, Collection, Default, Project, Repository, Server ] 
+  "_All_": [ Branch, Collection, Compare, Default, Project, Repository, Server ] 
   "Get by name":  
     Branch: 
       type: "object"  
       position: "0"  
+    Repository: 
+      type: "object"  
+      position: "1"  
+      required: true  
     Collection: 
       type: "object"  
     Project: 
       type: "object"  
-    Repository: 
-      type: "object"  
     Server: 
       type: "object"  
   "Get default":  
+    Repository: 
+      type: "object"  
+      position: "1"  
+      required: true  
     Default: 
       type: "SwitchParameter"  
       required: true  
@@ -26,7 +32,19 @@ parameterSets:
       type: "object"  
     Project: 
       type: "object"  
+    Server: 
+      type: "object"  
+  "Get compare":  
     Repository: 
+      type: "object"  
+      position: "1"  
+      required: true  
+    Compare: 
+      type: "SwitchParameter"  
+      required: true  
+    Collection: 
+      type: "object"  
+    Project: 
       type: "object"  
     Server: 
       type: "object" 
@@ -45,17 +63,25 @@ parameters:
     type: "object" 
     aliases: [ RefName ] 
     defaultValue: "*" 
+  - name: "Repository" 
+    description: "Specifies the target Git repository. Valid values are the name of the repository, its ID (a GUID), or a Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository object obtained by e.g. a call to Get-TfsGitRepository. When omitted, defaults to the team project name (i.e. the default repository). " 
+    required: true 
+    globbing: false 
+    pipelineInput: "true (ByValue)" 
+    position: 1 
+    type: "object" 
   - name: "Default" 
-    description: "Returns the default branch in the given repository. " 
+    description: "Returns the \"Default\" branch in the given repository. " 
     required: true 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
-  - name: "Repository" 
-    description: "Specifies the target Git repository. Valid values are the name of the repository, its ID (a GUID), or a Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository object obtained by e.g. a call to Get-TfsGitRepository. When omitted, defaults to the team project name (i.e. the default repository). " 
+  - name: "Compare" 
+    description: "Returns the \"Compare\" branch in the given repository. " 
+    required: true 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
-    type: "object" 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
     globbing: false 

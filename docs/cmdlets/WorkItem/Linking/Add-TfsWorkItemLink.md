@@ -33,7 +33,7 @@ parameterSets:
       type: "SwitchParameter" 
 parameters: 
   - name: "WorkItem" 
-    description:  
+    description: "Specifies the work item to link from. " 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
@@ -41,7 +41,7 @@ parameters:
     type: "object" 
     aliases: [ Id,From ] 
   - name: "Id" 
-    description: "This is an alias of the WorkItem parameter." 
+    description: "Specifies the work item to link from. This is an alias of the WorkItem parameter." 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
@@ -49,7 +49,7 @@ parameters:
     type: "object" 
     aliases: [ Id,From ] 
   - name: "From" 
-    description: "This is an alias of the WorkItem parameter." 
+    description: "Specifies the work item to link from. This is an alias of the WorkItem parameter." 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
@@ -57,21 +57,21 @@ parameters:
     type: "object" 
     aliases: [ Id,From ] 
   - name: "TargetWorkItem" 
-    description:  
+    description: "Specifies the work item to link to. " 
     required: true 
     globbing: false 
     position: 1 
     type: "object" 
     aliases: [ To ] 
   - name: "To" 
-    description: "This is an alias of the TargetWorkItem parameter." 
+    description: "Specifies the work item to link to. This is an alias of the TargetWorkItem parameter." 
     required: true 
     globbing: false 
     position: 1 
     type: "object" 
     aliases: [ To ] 
   - name: "LinkType" 
-    description: "Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLink" 
+    description: "Specifies the type of the link to create. Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLink" 
     required: true 
     globbing: false 
     position: 2 
@@ -79,7 +79,7 @@ parameters:
     aliases: [ EndLinkType,Type ] 
     defaultValue: "All" 
   - name: "EndLinkType" 
-    description: "Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLinkThis is an alias of the LinkType parameter." 
+    description: "Specifies the type of the link to create. Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLinkThis is an alias of the LinkType parameter." 
     required: true 
     globbing: false 
     position: 2 
@@ -87,7 +87,7 @@ parameters:
     aliases: [ EndLinkType,Type ] 
     defaultValue: "All" 
   - name: "Type" 
-    description: "Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLinkThis is an alias of the LinkType parameter." 
+    description: "Specifies the type of the link to create. Possible values: All, Parent, Child, Related, Predecessor, Successor, Duplicate, DuplicateOf, Tests, TestedBy, TestCase, SharedSteps, References, ReferencedBy, ProducesFor, ConsumesFrom, RemoteRelated, AttachedFile, Hyperlink, ArtifactLinkThis is an alias of the LinkType parameter." 
     required: true 
     globbing: false 
     position: 2 
@@ -100,17 +100,17 @@ parameters:
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "BypassRules" 
-    description:  
+    description: "Bypasses any rule validation when saving the work item. Use it with caution, as this may leave the work item in an invalid state. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "SuppressNotifications" 
-    description:  
+    description: "Do not fire any notifications for this change. Useful for bulk operations and automated processes. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "Comment" 
-    description:  
+    description: "Defines a comment to add to the link. " 
     globbing: false 
     type: "string" 
   - name: "Collection" 
@@ -129,7 +129,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: 
+    description: "Specifies the work item to link from. "
 outputs: 
 notes: 
 relatedLinks: 

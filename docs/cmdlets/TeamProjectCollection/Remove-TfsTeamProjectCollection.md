@@ -16,13 +16,13 @@ parameterSets:
       type: "TimeSpan" 
 parameters: 
   - name: "Collection" 
-    description:  
+    description: "Specifies the collection to be removed. Wildcards are supported. " 
     globbing: false 
     pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
   - name: "Timeout" 
-    description:  
+    description: "Sets the timeout for the operation to complete. When omitted, will wait indefinitely until the operation completes. " 
     globbing: false 
     type: "TimeSpan" 
     defaultValue: "10675199.02:48:05.4775807" 
@@ -32,7 +32,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: 
+    description: "Specifies the collection to be removed. Wildcards are supported. "
 outputs: 
 notes: 
 relatedLinks: 

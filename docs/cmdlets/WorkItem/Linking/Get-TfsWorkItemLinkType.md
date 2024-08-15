@@ -16,35 +16,35 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "LinkType" 
-    description:  
+    description: "Specifies the name of the link type. Wildcards are supported. When omitted, returns all link types. " 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name,EndLinkType,Type,Link ] 
     defaultValue: "*" 
   - name: "Name" 
-    description: "This is an alias of the LinkType parameter." 
+    description: "Specifies the name of the link type. Wildcards are supported. When omitted, returns all link types. This is an alias of the LinkType parameter." 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name,EndLinkType,Type,Link ] 
     defaultValue: "*" 
   - name: "EndLinkType" 
-    description: "This is an alias of the LinkType parameter." 
+    description: "Specifies the name of the link type. Wildcards are supported. When omitted, returns all link types. This is an alias of the LinkType parameter." 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name,EndLinkType,Type,Link ] 
     defaultValue: "*" 
   - name: "Type" 
-    description: "This is an alias of the LinkType parameter." 
+    description: "Specifies the name of the link type. Wildcards are supported. When omitted, returns all link types. This is an alias of the LinkType parameter." 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name,EndLinkType,Type,Link ] 
     defaultValue: "*" 
   - name: "Link" 
-    description: "This is an alias of the LinkType parameter." 
+    description: "Specifies the name of the link type. Wildcards are supported. When omitted, returns all link types. This is an alias of the LinkType parameter." 
     globbing: false 
     position: 0 
     type: "object" 

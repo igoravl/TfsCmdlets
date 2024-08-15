@@ -12,11 +12,15 @@ parameterSets:
       position: "0"  
     Branch: 
       type: "object"  
+      position: "1"  
+      required: true  
+    Repository: 
+      type: "object"  
+      position: "2"  
+      required: true  
     Collection: 
       type: "object"  
     Project: 
-      type: "object"  
-    Repository: 
       type: "object"  
     Server: 
       type: "object" 
@@ -28,20 +32,26 @@ parameters:
     type: "object" 
     defaultValue: "*" 
   - name: "Branch" 
-    description: "Specifies the name of the branch to query for branch policies. When omitted, the default branch in the given repository is queried. " 
+    description: "Specifies the name of the branch to query for branch policies. " 
+    required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
+    position: 1 
     type: "object" 
     aliases: [ RefName ] 
   - name: "RefName" 
-    description: "Specifies the name of the branch to query for branch policies. When omitted, the default branch in the given repository is queried. This is an alias of the Branch parameter." 
+    description: "Specifies the name of the branch to query for branch policies. This is an alias of the Branch parameter." 
+    required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
+    position: 1 
     type: "object" 
     aliases: [ RefName ] 
   - name: "Repository" 
     description: "Specifies the target Git repository. Valid values are the name of the repository, its ID (a GUID), or a Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository object obtained by e.g. a call to Get-TfsGitRepository. When omitted, defaults to the team project name (i.e. the default repository). " 
+    required: true 
     globbing: false 
+    position: 2 
     type: "object" 
   - name: "Project" 
     description: "Specifies the name of the Team Project, its ID (a GUID), or a Microsoft.TeamFoundation.Core.WebApi.TeamProject object to connect to. When omitted, it defaults to the connection set by Connect-TfsTeamProject (if any). For more details, see the Get-TfsTeamProject cmdlet. " 
@@ -63,7 +73,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the name of the branch to query for branch policies. When omitted, the default branch in the given repository is queried. "
+    description: "Specifies the name of the branch to query for branch policies. "
 outputs: 
   - type: "Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration" 
     description: 

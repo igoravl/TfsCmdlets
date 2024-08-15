@@ -1,37 +1,56 @@
 ﻿---
-title: Get-TfsWorkItemHistory
-breadcrumbs: [ "WorkItem", "History" ]
-parent: "WorkItem.History"
-description: "Gets the history of changes of a work item. "
+title: Remove-TfsProcessFieldDefinition
+breadcrumbs: [ "Process", "Field" ]
+parent: "Process.Field"
+description: "Deletes one or more work item field definitions from a collection. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Server, WorkItem ] 
-  "__AllParameterSets":  
-    WorkItem: 
+  "_All_": [ Collection, Field, Force, ReferenceName, Server ] 
+  "By Name":  
+    Field: 
       type: "object"  
       position: "0"  
+    Collection: 
+      type: "object"  
+    Force: 
+      type: "SwitchParameter"  
+    Server: 
+      type: "object"  
+  "By Reference Name":  
+    ReferenceName: 
+      type: "string[]"  
       required: true  
     Collection: 
       type: "object"  
+    Force: 
+      type: "SwitchParameter"  
     Server: 
       type: "object" 
 parameters: 
-  - name: "WorkItem" 
-    description: "The work item to retrieve the history for. " 
-    required: true 
+  - name: "Field" 
+    description: "Specifies the name of the field(s) to be removed. Wildcards are supported. " 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
-    aliases: [ id ] 
-  - name: "id" 
-    description: "The work item to retrieve the history for. This is an alias of the WorkItem parameter." 
-    required: true 
+    aliases: [ Name ] 
+    defaultValue: "*" 
+  - name: "Name" 
+    description: "Specifies the name of the field(s) to be removed. Wildcards are supported. This is an alias of the Field parameter." 
     globbing: false 
-    pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
-    aliases: [ id ] 
+    aliases: [ Name ] 
+    defaultValue: "*" 
+  - name: "ReferenceName" 
+    description: "Specifies the reference name of the field(s) to be removed. Wildcards are supported. " 
+    required: true 
+    globbing: false 
+    type: "string[]" 
+  - name: "Force" 
+    description: "Forces the exclusion of the item. When omitted, the command prompts for confirmation prior to deleting the item. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
   - name: "Collection" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). " 
     globbing: false 
@@ -47,15 +66,13 @@ parameters:
     globbing: false 
     type: "object"
 inputs: 
-  - type: "System.Object" 
-    description: "The work item to retrieve the history for. "
 outputs: 
-  - type: "TfsCmdlets.Models.WorkItemHistoryEntry" 
+  - type: "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemField" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/docs/cmdlets/WorkItem/History/Get-TfsWorkItemHistory"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/Process/Field/Remove-TfsProcessFieldDefinition"
 aliases: 
 examples: 
 ---

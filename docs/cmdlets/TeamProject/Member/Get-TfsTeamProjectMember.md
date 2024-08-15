@@ -7,11 +7,12 @@ remarks:
 parameterSets: 
   "_All_": [ AsIdentity, Collection, Member, Project, Server ] 
   "__AllParameterSets":  
+    Member: 
+      type: "object"  
+      position: "0"  
     AsIdentity: 
       type: "SwitchParameter"  
     Collection: 
-      type: "object"  
-    Member: 
       type: "object"  
     Project: 
       type: "object"  
@@ -21,6 +22,7 @@ parameters:
   - name: "Member" 
     description: "Specifies the name of a team project member. Wildcards are supported. When omitted, all team project members are returned. " 
     globbing: false 
+    position: 0 
     type: "object" 
     defaultValue: "*" 
   - name: "AsIdentity" 

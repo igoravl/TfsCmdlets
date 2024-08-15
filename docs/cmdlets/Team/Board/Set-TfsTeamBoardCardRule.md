@@ -56,31 +56,31 @@ parameters:
     position: 0 
     type: "object" 
   - name: "Rules" 
-    description:  
+    description: "Specifies the card rule settings as a single object. This way, all rules can be set at once. " 
     globbing: false 
     type: "BoardCardRuleSettings" 
   - name: "CardStyleRuleName" 
-    description:  
+    description: "Specifies the name of the card style rule. " 
     globbing: false 
     type: "string" 
   - name: "CardStyleRuleFilter" 
-    description:  
+    description: "Specifies the filter for the card style rule. " 
     globbing: false 
     type: "string" 
   - name: "CardStyleRuleSettings" 
-    description:  
+    description: "Specifies the settings for the card style rule. " 
     globbing: false 
     type: "Hashtable" 
   - name: "TagStyleRuleName" 
-    description:  
+    description: "Specifies the name of the tag style rule. " 
     globbing: false 
     type: "string" 
   - name: "TagStyleRuleFilter" 
-    description:  
+    description: "Specifies the filter for the tag style rule. " 
     globbing: false 
     type: "string" 
   - name: "TagStyleRuleSettings" 
-    description:  
+    description: "Specifies the settings for the tag style rule. " 
     globbing: false 
     type: "Hashtable" 
   - name: "Passthru" 

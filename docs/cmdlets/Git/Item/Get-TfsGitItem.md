@@ -78,26 +78,26 @@ parameters:
     aliases: [ Path ] 
     defaultValue: "/*" 
   - name: "Commit" 
-    description:  
+    description: "Specifies the hash (SHA) representing the version of the item(s) to retrieve. " 
     globbing: false 
     type: "object" 
   - name: "Tag" 
-    description:  
+    description: "Specifies the tag representing the version of the item(s) to retrieve. " 
     required: true 
     globbing: false 
     type: "string" 
   - name: "Branch" 
-    description:  
+    description: "Specifies the branch name representing the version of the item(s) to retrieve. " 
     required: true 
     globbing: false 
     type: "string" 
   - name: "IncludeContent" 
-    description:  
+    description: "Returns the content of the item(s) in addition to metadata. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "IncludeMetadata" 
-    description:  
+    description: "Returns metadata about the item(s) " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 

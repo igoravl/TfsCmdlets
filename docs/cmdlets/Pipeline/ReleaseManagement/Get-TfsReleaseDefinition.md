@@ -18,14 +18,14 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "Definition" 
-    description:  
+    description: "Specifies the release definition to get information from. " 
     globbing: false 
     position: 0 
     type: "object" 
     aliases: [ Name ] 
     defaultValue: "*" 
   - name: "Name" 
-    description: "This is an alias of the Definition parameter." 
+    description: "Specifies the release definition to get information from. This is an alias of the Definition parameter." 
     globbing: false 
     position: 0 
     type: "object" 

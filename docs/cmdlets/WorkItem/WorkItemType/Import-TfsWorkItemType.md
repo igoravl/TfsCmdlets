@@ -30,14 +30,14 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "Xml" 
-    description:  
+    description: "Specifies the XML definition of the work item type to import. " 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
     position: 0 
     type: "string" 
   - name: "Path" 
-    description:  
+    description: "Specifies the path to the file containing the XML definition of the work item type to import. " 
     required: true 
     globbing: false 
     position: 0 
@@ -62,7 +62,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.String" 
-    description: 
+    description: "Specifies the XML definition of the work item type to import. "
 outputs: 
 notes: 
 relatedLinks: 

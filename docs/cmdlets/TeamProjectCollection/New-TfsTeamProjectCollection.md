@@ -58,7 +58,7 @@ parameterSets:
       type: "SwitchParameter" 
 parameters: 
   - name: "Collection" 
-    description:  
+    description: "Specifies the name of the team project collection to create. " 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
@@ -66,7 +66,7 @@ parameters:
     type: "object" 
     aliases: [ Name ] 
   - name: "Name" 
-    description: "This is an alias of the Collection parameter." 
+    description: "Specifies the name of the team project collection to create. This is an alias of the Collection parameter." 
     required: true 
     globbing: false 
     pipelineInput: "true (ByValue)" 
@@ -74,45 +74,45 @@ parameters:
     type: "object" 
     aliases: [ Name ] 
   - name: "Description" 
-    description:  
+    description: "Specifies the description of the team project collection. " 
     globbing: false 
     type: "string" 
   - name: "DatabaseServer" 
-    description:  
+    description: "Specifies the name of the SQL Server for hosting the team project collection database. " 
     required: true 
     globbing: false 
     type: "string" 
   - name: "DatabaseName" 
-    description:  
+    description: "Specifies the name of the team project collection database. " 
     globbing: false 
     type: "string" 
   - name: "ConnectionString" 
-    description:  
+    description: "Specifies the connection string for the team project collection. " 
     required: true 
     globbing: false 
     type: "string" 
   - name: "Default" 
-    description:  
+    description: "Specifies whether new the team project collection should become the default collection. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "UseExistingDatabase" 
-    description:  
+    description: "Specifies whether to use an existing database for the team project collection. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
   - name: "InitialState" 
-    description:  
+    description: "Specifies the initial state of the team project collection. This allows you to create a collection in a stopped state when needed. " 
     globbing: false 
     type: "string" 
     defaultValue: "Started" 
   - name: "PollingInterval" 
-    description:  
+    description: "Specifies the frequency (in seconds) at which the command will check whether the creation is completed. " 
     globbing: false 
     type: "int" 
     defaultValue: "5" 
   - name: "Timeout" 
-    description:  
+    description: "Specifies the timeout to wait for the operation to complete. When omitted, will wait indefinitely until the operation completes. " 
     globbing: false 
     type: "TimeSpan" 
     defaultValue: "10675199.02:48:05.4775807" 
@@ -127,7 +127,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: 
+    description: "Specifies the name of the team project collection to create. "
 outputs: 
   - type: "TfsCmdlets.Models.Connection" 
     description: 

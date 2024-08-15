@@ -1,53 +1,70 @@
 ﻿---
-title: Get-TfsExtension
-breadcrumbs: [ "ExtensionManagement" ]
-parent: "ExtensionManagement"
-description: "Gets one or more installed extensions in the specified collection. "
+title: Get-TfsProcessFieldDefinition
+breadcrumbs: [ "Process", "Field" ]
+parent: "Process.Field"
+description: "Gets information from one or more organization-wide work item fields. "
 remarks: 
 parameterSets: 
-  "_All_": [ Collection, Extension, IncludeDisabledExtensions, IncludeErrors, IncludeInstallationIssues, Publisher, Server ] 
-  "__AllParameterSets":  
-    Extension: 
+  "_All_": [ Collection, Field, IncludeDeleted, IncludeExtensionFields, Project, ReferenceName, Server ] 
+  "By Name":  
+    Field: 
       type: "object"  
       position: "0"  
-    Publisher: 
-      type: "string"  
-      position: "1"  
     Collection: 
       type: "object"  
-    IncludeDisabledExtensions: 
+    IncludeDeleted: 
       type: "SwitchParameter"  
-    IncludeErrors: 
+    IncludeExtensionFields: 
       type: "SwitchParameter"  
-    IncludeInstallationIssues: 
+    Project: 
+      type: "object"  
+    Server: 
+      type: "object"  
+  "By Reference Name":  
+    ReferenceName: 
+      type: "string[]"  
+      required: true  
+    Collection: 
+      type: "object"  
+    IncludeDeleted: 
       type: "SwitchParameter"  
+    IncludeExtensionFields: 
+      type: "SwitchParameter"  
+    Project: 
+      type: "object"  
     Server: 
       type: "object" 
 parameters: 
-  - name: "Extension" 
-    description: "Specifies the ID or the name of the extensions. Wildcards are supported. When omitted, returns all extensions installed in the specified organization/collection. " 
+  - name: "Field" 
+    description: "Specifies the name of the field(s) to be returned. Wildcards are supported. When omitted, all fields in the given organization are returned. " 
     globbing: false 
     position: 0 
     type: "object" 
+    aliases: [ Name ] 
     defaultValue: "*" 
-  - name: "Publisher" 
-    description: "Specifies the ID or the name of the publisher. Wildcards are supported. When omitted, returns all extensions installed in the specified organization/collection. " 
+  - name: "Name" 
+    description: "Specifies the name of the field(s) to be returned. Wildcards are supported. When omitted, all fields in the given organization are returned. This is an alias of the Field parameter." 
     globbing: false 
-    position: 1 
-    type: "string" 
+    position: 0 
+    type: "object" 
+    aliases: [ Name ] 
     defaultValue: "*" 
-  - name: "IncludeDisabledExtensions" 
-    description: "Includes disabled extensions in the result. When omitted, disabled extensions are not included in the result. " 
+  - name: "ReferenceName" 
+    description: "Specifies the reference name of the field(s) to be returned. Wildcards are supported. " 
+    required: true 
+    globbing: false 
+    type: "string[]" 
+  - name: "Project" 
+    description: "Limits the search to the specified project. " 
+    globbing: false 
+    type: "object" 
+  - name: "IncludeExtensionFields" 
+    description: "Specifies whether to include extension fields in the result. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
-  - name: "IncludeErrors" 
-    description: "Specifies whether to include errors in the result. " 
-    globbing: false 
-    type: "SwitchParameter" 
-    defaultValue: "False" 
-  - name: "IncludeInstallationIssues" 
-    description: "Specifies whether to include installation issues in the result. " 
+  - name: "IncludeDeleted" 
+    description: "Specifies whether to include deleted fields in the result. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False" 
@@ -71,12 +88,12 @@ inputs:
   - type: "System.Object" 
     description: "Specifies the URL to the Team Project Collection or Azure DevOps Organization to connect to, a TfsTeamProjectCollection object (Windows PowerShell only), or a VssConnection object. You can also connect to an Azure DevOps Services organizations by simply providing its name instead of the full URL. For more details, see the Get-TfsTeamProjectCollection cmdlet. When omitted, it defaults to the connection set by Connect-TfsTeamProjectCollection (if any). "
 outputs: 
-  - type: "Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension" 
+  - type: "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemField" 
     description: 
 notes: 
 relatedLinks: 
   - text: "Online Version:" 
-    uri: "https://tfscmdlets.dev/docs/cmdlets/ExtensionManagement/Get-TfsExtension"
+    uri: "https://tfscmdlets.dev/docs/cmdlets/Process/Field/Get-TfsProcessFieldDefinition"
 aliases: 
 examples: 
 ---

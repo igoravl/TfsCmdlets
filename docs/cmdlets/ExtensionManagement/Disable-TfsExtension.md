@@ -21,13 +21,13 @@ parameterSets:
       type: "object" 
 parameters: 
   - name: "Extension" 
-    description: "Specifies the ID or the name of the extensions. Wilcards are supported. " 
+    description: "Specifies the ID or the name of the extensions. Wildcards are supported. " 
     globbing: false 
     pipelineInput: "true (ByValue)" 
     position: 0 
     type: "object" 
   - name: "Publisher" 
-    description: "Specifies the ID or the name of the publisher. Wilcards are supported. " 
+    description: "Specifies the ID or the name of the publisher. Wildcards are supported. " 
     globbing: false 
     position: 1 
     type: "string" 
@@ -52,7 +52,7 @@ parameters:
     type: "object"
 inputs: 
   - type: "System.Object" 
-    description: "Specifies the ID or the name of the extensions. Wilcards are supported. "
+    description: "Specifies the ID or the name of the extensions. Wildcards are supported. "
 outputs: 
   - type: "Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension" 
     description: 
