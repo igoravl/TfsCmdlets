@@ -47,14 +47,14 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
                         }
                     case Guid g:
                         {
-                            yield return TaskExtensions.GetResult<Process>(Client.GetProcessByIdAsync(g), $"Error getting process template '{process}'");
+                            yield return TaskExtensions.GetResult<WebApiProcess>(Client.GetProcessByIdAsync(g), $"Error getting process template '{process}'");
 
                             yield break;
                         }
                     case null when Default:
                     case { } when Default:
                         {
-                            foreach (var proc in TaskExtensions.GetResult<List<Process>>(Client.GetProcessesAsync(), $"Error getting process templates")
+                            foreach (var proc in TaskExtensions.GetResult<List<WebApiProcess>>(Client.GetProcessesAsync(), $"Error getting process templates")
                                 .Where(p => p.IsDefault))
                             {
                                 yield return proc;
@@ -64,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
                         }
                     case string s:
                         {
-                            foreach (var proc in TaskExtensions.GetResult<List<Process>>(Client.GetProcessesAsync(), $"Error getting process template '{process}'")
+                            foreach (var proc in TaskExtensions.GetResult<List<WebApiProcess>>(Client.GetProcessesAsync(), $"Error getting process template '{process}'")
                                 .Where(p => p.Name.IsLike(s)))
                             {
                                 yield return proc;

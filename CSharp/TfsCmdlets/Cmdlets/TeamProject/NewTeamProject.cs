@@ -55,9 +55,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
 
                 var template = ProcessTemplate switch
                 {
-                    Process p => p,
-                    string s => Data.GetItem<Process>(new { Process = s }),
-                    null => GetItem<Process>(new { Default = true }),
+                    WebApiProcess p => p,
+                    string s => Data.GetItem<WebApiProcess>(new { Process = s }),
+                    null => GetItem<WebApiProcess>(new { Default = true }),
                     _ => throw new ArgumentException($"Invalid or non-existent process template '{ProcessTemplate}'")
                 };
 
