@@ -14,7 +14,7 @@ namespace TfsCmdlets.Cmdlets.Process.Field
         /// Specifies the name of the field(s) to be returned. Wildcards are supported. 
         /// When omitted, all fields in the given organization are returned.
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ParameterSetName = "By Name")]
         [Alias("Name")]
         [SupportsWildcards()]
         public object Field { get; set; } = "*";
@@ -22,8 +22,8 @@ namespace TfsCmdlets.Cmdlets.Process.Field
         /// <summary>
         /// Specifies the reference name of the field(s) to be returned. Wildcards are supported.
         /// </summary>
-        [Parameter()]
-        public string ReferenceName { get; set; }
+        [Parameter(ParameterSetName = "By Reference Name", Mandatory = true)]
+        public string[] ReferenceName { get; set; }
 
         /// <summary>
         /// Limits the search to the specified project.
@@ -46,12 +46,9 @@ namespace TfsCmdlets.Cmdlets.Process.Field
 
     // Controller
 
-    [CmdletController]
+    [CmdletController(Client = typeof(IWorkItemTrackingHttpClient))]
     partial class GetProcessFieldDefinitionController
     {
-        [Import]
-        private IWorkItemTrackingHttpClient Client { get; set; }
-
         protected override IEnumerable Run()
         {
             string tpName;
@@ -62,48 +59,58 @@ namespace TfsCmdlets.Cmdlets.Process.Field
                 tpName = tp.Name;
             }
 
-            foreach (var f in Field)
+            var expand = GetFieldsExpand.None |
+                (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
+                (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
+
+            switch (ParameterSetName)
             {
-                switch (f)
-                {
-                    case WorkItemField wif:
+                case "By Name":
+                    {
+                        foreach (var f in Field)
                         {
-                            yield return wif;
-                            yield break;
+                            switch (f)
+                            {
+                                case WorkItemField wif:
+                                    {
+                                        yield return wif;
+                                        yield break;
+                                    }
+                                case string s when s.IsWildcard():
+                                    {
+                                        yield return Client.GetFieldsAsync(expand)
+                                            .GetResult($"Error getting fields '{s}'")
+                                            .Where(field => field.Name.IsLike(s));
+                                        break;
+                                    }
+                                case string s when !string.IsNullOrEmpty(s):
+                                    {
+                                        yield return Client.GetFieldAsync(fieldNameOrRefName: s)
+                                            .GetResult($"Error getting field '{s}'");
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        throw new ArgumentException($"Invalid or non-existent field '{f}'");
+                                    }
+                            }
                         }
-                    case string s when s.IsWildcard() && string.IsNullOrEmpty(ReferenceName):
+                        break;
+                    }
+                case "By Reference Name":
+                    {
+                        foreach (var refName in ReferenceName)
                         {
-                            var expand = GetFieldsExpand.None |
-                                (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
-                                (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
-
-                            yield return Client.GetFieldsAsync(expand)
-                                .GetResult($"Error getting fields '{s}'")
-                                .Where(field => field.Name.IsLike(s));
-                            break;
-                        }
-                    case string s when !string.IsNullOrEmpty(s) && string.IsNullOrEmpty(ReferenceName):
-                        {
-                            yield return Client.GetFieldAsync(fieldNameOrRefName: s)
-                                .GetResult($"Error getting field '{s}'");
-                            break;
-                        }
-                    case { } when !string.IsNullOrEmpty(ReferenceName):
-                        {
-                            var expand = GetFieldsExpand.None |
-                                (IncludeExtensionFields ? GetFieldsExpand.ExtensionFields : GetFieldsExpand.None) |
-                                (IncludeDeleted ? GetFieldsExpand.IncludeDeleted : GetFieldsExpand.None);
-
                             yield return Client.GetFieldsAsync(expand)
                                 .GetResult($"Error getting field with reference name '{ReferenceName}'")
-                                .Where(field => field.ReferenceName.IsLike(ReferenceName));
-                            break;
+                                .Where(field => field.ReferenceName.IsLike(refName));
                         }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent field '{f}'");
-                        }
-                }
+                        break;
+                    }
+                default:
+                    {
+                        throw new ArgumentException($"Unknown parameter set '{ParameterSetName}'");
+                    }
             }
         }
     }
