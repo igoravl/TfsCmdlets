@@ -13,9 +13,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Run
         /// Specifies the pipeline to start. This can be a pipeline object or an ID.
         /// When omitted, all queued and running pipelines are returned in descending order of queue time.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "By Pipeline", Mandatory = true)]
+        [Parameter(Position = 0, ValueFromPipeline = true, ParameterSetName = "By Run", Mandatory = true)]
         [Alias("Id")]
-        public object Pipeline { get; set; }
+        public object PipelineRun { get; set; }
 
         /// <summary>
         /// Returns only runs with the given reason.
@@ -99,11 +99,11 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Run
     {
         protected override IEnumerable Run()
         {
-            foreach (var input in Pipeline)
+            foreach (var input in PipelineRun)
             {
                 switch (ParameterSetName)
                 {
-                    case "By Pipeline":
+                    case "By Run":
                         {
                             switch (input)
                             {
