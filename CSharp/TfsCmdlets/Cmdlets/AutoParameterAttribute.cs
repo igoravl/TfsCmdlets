@@ -6,6 +6,7 @@ namespace TfsCmdlets.Cmdlets
     /// <remarks>
     /// This attribute is used to mark a parameter that should be automatically populated by the underlying 
     /// infrastructure, typically by fetching an associated resource.
+    /// </remarks>
     public class AutoParameterAttribute: Attribute
     {
         /// <summary>
