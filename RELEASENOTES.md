@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.0 (15/Aug/2024_)
+## Version 2.10.0 (15/Aug/2024_)
 
 This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
