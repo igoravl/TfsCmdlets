@@ -132,12 +132,10 @@ namespace TfsCmdlets.Cmdlets.Credential
 
             if (netCred == null) yield break;
 
-            yield return IsHosted(Url) ?
-                new VssClientCredentials(
-                    new WindowsCredential(netCred),
-                    new VssBasicCredential(netCred)) :
-                new VssClientCredentials(
-                    new WindowsCredential(netCred));
+            yield return new VssClientCredentials(
+                new WindowsCredential(netCred),
+                new VssBasicCredential(netCred),
+                CredentialPromptType.DoNotPrompt);
         }
 
         private bool IsHosted(Uri url) => (
