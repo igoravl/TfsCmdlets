@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.10.0 (_20/Aug/2024_)
+## Version 2.10.0 (_20/Sep/2024_)
 
 This release adds new pipeline-related cmdlets.
 
@@ -13,6 +13,10 @@ This release adds new pipeline-related cmdlets.
 ## Changes and enhancements
 
 - **`Start-TfsBuild`**: Renamed to `Start-TfsPipelineRun` to better align with the new Azure Pipelines terminology. A new alias `Start-TfsBuild` was added to keep compatibility with existing scripts.
+
+## Bug fixes
+
+- **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Resolved an issue where connections, including failed ones, were being cached and reused in subsequent calls. This caused problems when attempting to reconnect after a failure due to invalid credentials, as the cached connection (with the invalid credentials) would be reused.
 
 -----------------------
 
