@@ -137,7 +137,7 @@ namespace TfsCmdlets.Models
             return result;
         }
 
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
         private Microsoft.VisualStudio.Services.Common.SubjectDescriptor GetSubjectDescriptor(Microsoft.TeamFoundation.Framework.Client.TeamFoundationIdentity identity, AdoConnection connection)
         {
             var client = connection.GetClient<Microsoft.VisualStudio.Services.Identity.Client.IdentityHttpClient>();

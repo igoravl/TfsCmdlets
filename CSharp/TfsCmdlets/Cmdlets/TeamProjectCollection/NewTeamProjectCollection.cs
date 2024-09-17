@@ -7,7 +7,7 @@ using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
 {
 
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
     using Microsoft.TeamFoundation.Framework.Client;
 #endif
 
@@ -86,7 +86,7 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
     {
         protected override IEnumerable Run()
         {
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
             var tpc = Data.GetCollection();
 
             if (!PowerShell.ShouldProcess(tpc, "Create team project collection")) yield break;

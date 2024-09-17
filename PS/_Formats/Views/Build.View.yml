@@ -1,0 +1,20 @@
+ViewSelectedBy:
+  - Microsoft.TeamFoundation.Build.WebApi.Build
+GroupBy: 
+  ScriptBlock: $_.ProjectName + '/' + $_.DefinitionName
+  CustomControlName: TeamProjects-Definitions
+TableControl:
+  Id:
+  BuildNumber:
+  Reason:
+  RequestedFor:
+    ScriptBlock: $_.RequestedFor.DisplayName
+  SourceBranch:
+    ScriptBlock: $(if($_.SourceBranch.StartsWith('refs/heads/')) { $_.SourceBranch.Substring(11) } elseif($_.SourceBranch.StartsWith('refs/pull/')) { 'PR ' + $_.SourceBranch.Substring(10).TrimEnd('/merge') } else { $_.SourceBranch })
+  Status:
+  Result:
+  QueueTime:
+    FormatString: g
+  Duration:
+    ScriptBlock: $(if ($_.Duration -gt [TimeSpan]::Zero) { [TfsCmdlets.Extensions.DateTimeExtensions]::ToShortString($_.Duration) } else {''})
+  TriggerType:
