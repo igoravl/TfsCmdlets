@@ -7,22 +7,27 @@ This release adds new pipeline-related cmdlets.
 ## New cmdlets
 
 - **`Get-TfsPipelineRun`**: Gets one or more pipeline (build) runs in a team project.
+- **`Remove-TfsPipelineRun`**: Removes a pipeline run entry from the pipeline execution history.
 - **`Start-TfsPipelineRun`**: Queues (starts) a new pipeline run.
 - **`Stop-TfsPipelineRun`**: Cancels (stops) a running pipeline.
+
+## Fixes
+
+- **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Resolved an issue where connections, including failed ones, were being cached and reused in subsequent calls. This caused problems when attempting to reconnect after a failure due to invalid credentials, as the cached connection (with the invalid credentials) would be reused.
 
 ## Changes and enhancements
 
 - **`Start-TfsBuild`**: Renamed to `Start-TfsPipelineRun` to better align with the new Azure Pipelines terminology. A new alias `Start-TfsBuild` was added to keep compatibility with existing scripts.
 
-## Bug fixes
-
-- **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Resolved an issue where connections, including failed ones, were being cached and reused in subsequent calls. This caused problems when attempting to reconnect after a failure due to invalid credentials, as the cached connection (with the invalid credentials) would be reused.
-
 -----------------------
 
 ## Previous Versions
 
-## Version 2.8.2 (_24/Jul/2024_)
+### Version 2.9.0 (_15/Aug/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.9.0.md).
+
+### Version 2.8.2 (_24/Jul/2024_)
 
 See release notes [here](Docs/ReleaseNotes/2.8.2.md).
 
