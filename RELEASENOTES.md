@@ -1,6 +1,6 @@
 # TfsCmdlets Release Notes
 
-## Version 2.10.0 (_20/Sep/2024_)
+## Version 2.10.0 (_13/Oct/2024_)
 
 This release adds new pipeline-related cmdlets.
 
