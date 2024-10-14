@@ -1,5 +1,5 @@
 # This script is a psake script file and should not be called directly. Use Build.ps1 instead.
-Framework '4.7.1'
+Framework '4.6.1'
 
 Properties {
 

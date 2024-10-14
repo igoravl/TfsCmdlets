@@ -1,12 +1,12 @@
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build
+namespace TfsCmdlets.Cmdlets.Pipeline.Run
 {
     /// <summary>
-    /// Gets one or more build/pipeline definitions in a team project.
+    /// Queues (starts) a new pipeline run.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(BuildDefinitionReference))]
-    partial class StartBuild
+    partial class StartPipelineRun
     {
         /// <summary>
         /// Specifies the pipeline to start.
@@ -17,7 +17,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
     }
 
     [CmdletController(typeof(WebApiBuild), Client = typeof(IBuildHttpClient))]
-    partial class StartBuildController
+    partial class StartPipelineRunController
     {
         protected override IEnumerable Run()
         {

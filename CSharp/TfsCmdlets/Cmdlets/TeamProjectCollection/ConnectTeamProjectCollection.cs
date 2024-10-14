@@ -1,6 +1,7 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ClientNotification;
 using Microsoft.VisualStudio.Services.WebApi;
+using Microsoft.TeamFoundation;
 using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.TeamProjectCollection
@@ -60,10 +61,27 @@ namespace TfsCmdlets.Cmdlets.TeamProjectCollection
         protected override IEnumerable Run()
         {
             var tpc = Data.GetCollection(new { Collection = Collection ?? Parameters.Get<object>("Organization") });
-            tpc.Connect();
 
-            if(tpc.CurrentUserUniqueName.Equals("Anonymous")) {
-                var connectionType = Collection == null? "organization": "team project collection";
+            try
+            {
+                tpc.Connect();
+            }
+            catch (TeamFoundationServerUnauthorizedException ex)
+            {
+                if (Has_PersonalAccessToken)
+                {
+                    throw new TeamFoundationServerUnauthorizedException(
+                        $"You are not authorized to access {tpc.Uri}. Your personal access token may have expired.", ex);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            if (tpc.CurrentUserUniqueName.Equals("Anonymous"))
+            {
+                var connectionType = Collection == null ? "organization" : "team project collection";
                 throw new NotAuthorizedException($"You are not authorized to access {connectionType} [{tpc.Uri}]. Check your credentials and try again.");
             }
 

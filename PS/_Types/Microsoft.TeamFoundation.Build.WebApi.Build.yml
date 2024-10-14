@@ -1,0 +1,12 @@
+- ScriptProperty:
+    Name: Duration
+    GetScriptBlock: $(if ($this.FinishTime) { $this.FinishTime - $this.StartTime } else {[TimeSpan]::Zero})
+- ScriptProperty:
+    Name: TriggerType
+    GetScriptBlock: $this.TriggerInfo['artifactType']
+- ScriptProperty:
+    Name: ProjectName
+    GetScriptBlock: $this.Definition.TeamProject
+- ScriptProperty:
+    Name: DefinitionName
+    GetScriptBlock: $this.Definition.Name

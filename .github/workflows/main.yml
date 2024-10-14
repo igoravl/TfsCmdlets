@@ -8,6 +8,8 @@ env:
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,6 +20,7 @@ jobs:
   Build:
 
     runs-on: windows-latest
+    if: github.event_name == 'pull_request'
     env:
       TFSCMDLETS_ACCESS_TOKEN: ${{ secrets.TFSCMDLETS_TOKEN }}
       TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
@@ -96,7 +99,7 @@ jobs:
         id: extract_release_notes
         shell: pwsh
         run: |
-          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
+          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Select @{L='Version';E={[Version]$_.BaseName}}, FullName | Sort-Object Version | Select -ExpandProperty FullName -Last 1)
           Write-Output $fileName
           $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
           Write-Output $releaseNotes
@@ -337,3 +340,23 @@ jobs:
       #   with:
       #     status: |
       #       TfsCmdlets version ${{ env.BUILD_NAME }} has just been released. Check it out! https://github.com/igoravl/TfsCmdlets/releases/tag/v${{ env.RELEASE_TAG }}
+
+  PostRelease:
+
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Update tag
+        run: |
+          COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MESSAGE" =~ \(\#[0-9]+\)$ ]]; then
+            LATEST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+            git tag -d $LATEST_TAG
+            git tag $LATEST_TAG $GITHUB_SHA
+            git push origin :refs/tags/$LATEST_TAG
+            git push origin $LATEST_TAG
+          fi

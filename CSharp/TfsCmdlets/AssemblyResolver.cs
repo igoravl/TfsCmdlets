@@ -22,7 +22,7 @@ namespace TfsCmdlets
         public void Register()
         {
 
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
             AppDomain.CurrentDomain.AssemblyResolve += (sender, e) =>
             {
                 var assemblyName = e.Name.Split(',')[0];
