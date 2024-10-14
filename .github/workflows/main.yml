@@ -99,7 +99,7 @@ jobs:
         id: extract_release_notes
         shell: pwsh
         run: |
-          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
+          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Select @{L='Version';E={[Version]$_.BaseName}}, FullName | Sort-Object Version | Select -ExpandProperty FullName -Last 1)
           Write-Output $fileName
           $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
           Write-Output $releaseNotes
