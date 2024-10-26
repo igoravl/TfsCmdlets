@@ -1,37 +1,43 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.0 (15/Aug/2024_)
+## Version 2.10.0 (_13/Oct/2024_)
 
-This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
+This release adds new pipeline-related cmdlets.
 
 ## New cmdlets
 
-- **`Get-ProcessFieldDefinition`**: Gets information from one or more organization-wide work item fields
-- **`New-ProcessFieldDefinition`**: Creates a new organization-wide work item field
-- **`Remove-ProcessFieldDefinition`**: Removes an organization-wide work item field
+- **`Get-TfsPipelineRun`**: Gets one or more pipeline (build) runs in a team project.
+- **`Remove-TfsPipelineRun`**: Removes a pipeline run entry from the pipeline execution history.
+- **`Start-TfsPipelineRun`**: Queues (starts) a new pipeline run.
+- **`Stop-TfsPipelineRun`**: Cancels (stops) a running pipeline.
 
 ## Fixes
 
-- **`Get-TfsArtifact`**: Fixed an issue where it wouldn't list deleted packages.
-- **`Get-TfsArtifactFeed`**: Fixed an issue where it would ignore the -Project argument and thus not filter feeds by project.
-- **`Get-TfsWorkItemTag`**: Fixed an issue where it would fail when given a list of tags as input.
-- **`Get-TfsWorkItemType`**: Fixed an issue where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
+- **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Resolved an issue where connections, including failed ones, were being cached and reused in subsequent calls. This caused problems when attempting to reconnect after a failure due to invalid credentials, as the cached connection (with the invalid credentials) would be reused.
 
 ## Changes and enhancements
 
-- **`Get-TfsGitBranch`**: Added a new `-Compare` argument to  to get the "Compare" (base) branch of a given repository.
-- **`Connect-TfsTeamProjectCollection`, `Connect-TfsOrganization`**: Now it throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
-
-### Breaking changes
-
-- **`Get-TfsGitBranch`**: `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior may need to be updated.
-- **`Get-TfsGitBranchPolicy`**: Both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior may need to be updated.
+- **Renamed build-related cmdlets**: All build-related cmdlets have been renamed to better align with the new Azure Pipelines terminology. Instead of `Build`, they now use `Pipeline` in their names. Aliases have been added to the old cmdlets to maintain backward compatibility. For new scripts, prefer the new names. Old scripts won't break, but they should be updated to use the new names. The renamed cmdlets are:
+  - Disable-TfsBuildDefinition -> **Disable-TfsPipeline**
+  - Enable-TfsBuildDefinition -> **Enable-TfsPipeline**
+  - Get-TfsBuildDefinition -> **Get-TfsPipeline**
+  - Get-TfsBuildDefinitionFolder -> **Get-TfsPipelineFolder**
+  - New-TfsBuildDefinitionFolder -> **New-TfsPipelineFolder**
+  - Remove-TfsBuildDefinitionFolder -> **Remove-TfsPipelineFolder**
+  - Resume-TfsBuildDefinition -> **Resume-TfsPipeline**
+  - Start-TfsBuild -> **Start-TfsPipelineRun**
+  - Suspend-TfsBuildDefinition -> **Suspend-TfsPipeline**
+- **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Improved error handling when connecting with invalid/expired personal access tokens - now it throws an error with a more descriptive message.
 
 -----------------------
 
 ## Previous Versions
 
-## Version 2.8.2 (_24/Jul/2024_)
+### Version 2.9.0 (_15/Aug/2024_)
+
+See release notes [here](Docs/ReleaseNotes/2.9.0.md).
+
+### Version 2.8.2 (_24/Jul/2024_)
 
 See release notes [here](Docs/ReleaseNotes/2.8.2.md).
 

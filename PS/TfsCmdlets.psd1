@@ -8,7 +8,7 @@
     ModuleVersion = '1.0.0.0'
     NestedModules = @()
     PowerShellVersion = '5.1'
-    DotNetFrameworkVersion = '4.7.1'
+    DotNetFrameworkVersion = '4.6.1'
     TypesToProcess = "TfsCmdlets.Types.ps1xml"
     FormatsToProcess = "TfsCmdlets.Format.ps1xml"
     AliasesToExport = '*'

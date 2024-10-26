@@ -3,7 +3,7 @@ using System.Management.Automation;
 namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
 
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
     using TfsCmdlets.Cmdlets.ProcessTemplate;
     using Microsoft.TeamFoundation.Server;
     using System.Xml;
@@ -38,7 +38,7 @@ namespace TfsCmdlets.Cmdlets.ProcessTemplate
     {
         protected override IEnumerable Run()
         {
-#if NET471_OR_GREATER
+#if NET461_OR_GREATER
             var path = Parameters.Get<string>(nameof(ImportProcessTemplate.Path));
             var state = Parameters.Get<string>(nameof(ImportProcessTemplate.State));
 

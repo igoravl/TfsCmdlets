@@ -1,7 +1,7 @@
 using System.Management.Automation;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.Folder
 {
     /// <summary>
     /// Creates a new build/pipeline definition folder
@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     /// child folders.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(WebApiFolder))]
-    partial class NewBuildDefinitionFolder
+    partial class NewPipelineFolder
     {
         /// <summary>
         /// Specifies the path of the new pipeline/build folder, including its name, 
@@ -30,12 +30,12 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     }
 
     [CmdletController(typeof(WebApiFolder), Client=typeof(IBuildHttpClient))]
-    partial class NewBuildDefinitionFolderController
+    partial class NewPipelineFolderController
     {
         protected override IEnumerable Run()
         {
-            var folder = Parameters.Get<string>(nameof(NewBuildDefinitionFolder.Folder))?.Trim('\\');
-            var description = Parameters.Get<string>(nameof(NewBuildDefinitionFolder.Description));
+            var folder = Parameters.Get<string>(nameof(NewPipelineFolder.Folder))?.Trim('\\');
+            var description = Parameters.Get<string>(nameof(NewPipelineFolder.Description));
 
             if (string.IsNullOrEmpty(folder))
             {

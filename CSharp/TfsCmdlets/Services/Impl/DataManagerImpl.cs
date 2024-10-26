@@ -236,15 +236,15 @@ namespace TfsCmdlets.Services.Impl
                     case Uri uri when scope == ClientScope.Server:
                         {
                             Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                            result = TfsConfigurationServerFactory.GetConfigurationServer(
-                                uri, GetItem<VssCredentials>(new { Url = uri }));
+                            result = new TfsConfigurationServer(uri, 
+                                GetItem<VssCredentials>(new { Url = uri }));
                             break;
                         }
                     case Uri uri when scope == ClientScope.Collection:
                         {
                             Logger.Log($"Get {scope} referenced by URL '{uri}'");
-                            result = TfsTeamProjectCollectionFactory.GetTeamProjectCollection(
-                                uri, GetItem<VssCredentials>(new { Url = uri }));
+                            result = new TfsTeamProjectCollection(uri, 
+                                GetItem<VssCredentials>(new { Url = uri }));
                             break;
                         }
 #endif

@@ -1,13 +1,13 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
+namespace TfsCmdlets.Cmdlets.Pipeline
 {
     /// <summary>
-    /// Enables a previously disabled build/pipeline definition.
+    /// Suspends (pauses) a pipeline.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
-    partial class EnableBuildDefinition
+    partial class SuspendPipeline
     {
         /// <summary>
         /// Specifies the pipeline name/path.
@@ -18,23 +18,23 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
     }
 
     [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
-    partial class EnableBuildDefinitionController
+    partial class SuspendPipelineController
     {
         protected override IEnumerable Run()
         {
             var def = Data.GetItem<BuildDefinition>();
 
-            if (def.QueueStatus == DefinitionQueueStatus.Enabled)
+            if (def.QueueStatus == DefinitionQueueStatus.Paused)
             {
-                Logger.Log($"Build definition '{def.Name}' is already enabled.");
+                Logger.Log($"Build definition '{def.Name}' is already paused.");
                 yield return def;
             }
 
-            if (!PowerShell.ShouldProcess(def.Project.Name, $"Enable Build Definition '{def.GetFullPath()}'")) yield break;
+            if (!PowerShell.ShouldProcess(def.Project.Name, $"Pause Build Definition '{def.GetFullPath()}'")) yield break;
 
-            if (def.QueueStatus == DefinitionQueueStatus.Paused)
+            if (def.QueueStatus == DefinitionQueueStatus.Disabled)
             {
-                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is paused, not disabled. To re-enable a paused pipeline, use Resume-TfsBuildDefinition instead."));
+                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is disabled. Disabled builds cannot be paused."));
                 yield return def;
             }
 
@@ -42,7 +42,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
             {
                 Id = def.Id,
                 Project = def.Project,
-                QueueStatus = DefinitionQueueStatus.Enabled,
+                QueueStatus = DefinitionQueueStatus.Paused,
                 Revision = def.Revision,
                 Repository = def.Repository,
                 Process = def.Process,

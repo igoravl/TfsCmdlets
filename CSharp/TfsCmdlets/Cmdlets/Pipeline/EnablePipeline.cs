@@ -1,13 +1,13 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
+namespace TfsCmdlets.Cmdlets.Pipeline
 {
     /// <summary>
-    /// Resumes (unpauses) a previously suspended build/pipeline definition.
+    /// Enables a previously disabled pipeline.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
-    partial class ResumeBuildDefinition
+    partial class EnablePipeline
     {
         /// <summary>
         /// Specifies the pipeline name/path.
@@ -18,11 +18,10 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
     }
 
     [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
-    partial class ResumeBuildDefinitionController
+    partial class EnablePipelineController
     {
         protected override IEnumerable Run()
         {
-
             var def = Data.GetItem<BuildDefinition>();
 
             if (def.QueueStatus == DefinitionQueueStatus.Enabled)
@@ -31,11 +30,11 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
                 yield return def;
             }
 
-            if (!PowerShell.ShouldProcess(def.Project.Name, $"Resume Build Definition '{def.GetFullPath()}'")) yield break;
+            if (!PowerShell.ShouldProcess(def.Project.Name, $"Enable Build Definition '{def.GetFullPath()}'")) yield break;
 
-            if (def.QueueStatus == DefinitionQueueStatus.Disabled)
+            if (def.QueueStatus == DefinitionQueueStatus.Paused)
             {
-                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is disabled. Disabled builds cannot be resumed. Use Enable-TfsBuildDefinition instead."));
+                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is paused, not disabled. To re-enable a paused pipeline, use Resume-TfsBuildDefinition instead."));
                 yield return def;
             }
 
