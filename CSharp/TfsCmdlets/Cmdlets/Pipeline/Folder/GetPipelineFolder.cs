@@ -2,13 +2,13 @@ using System.Management.Automation;
 using WebApiFolder = Microsoft.TeamFoundation.Build.WebApi.Folder;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
+namespace TfsCmdlets.Cmdlets.Pipeline.Folder
 {
     /// <summary>
     /// Gets one or more build/pipeline definition folders in a team project.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(WebApiFolder))]
-    partial class GetBuildDefinitionFolder
+    partial class GetPipelineFolder
     {
         /// <summary>
         /// Specifies the folder path. Wildcards are supported. 
@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Folder
     }
 
     [CmdletController(typeof(WebApiFolder), Client=typeof(IBuildHttpClient))]
-    partial class GetBuildDefinitionFolderController
+    partial class GetPipelineFolderController
     {
         protected override IEnumerable Run()
         {

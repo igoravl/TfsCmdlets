@@ -1,13 +1,13 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
+namespace TfsCmdlets.Cmdlets.Pipeline
 {
     /// <summary>
-    /// Suspends (pauses) a build/pipeline definition.
+    /// Disables a pipeline.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, SupportsShouldProcess = true, OutputType = typeof(BuildDefinitionReference))]
-    partial class SuspendBuildDefinition
+    partial class DisablePipeline
     {
         /// <summary>
         /// Specifies the pipeline name/path.
@@ -18,31 +18,25 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
     }
 
     [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
-    partial class SuspendBuildDefinitionController
+    partial class DisablePipelineController
     {
         protected override IEnumerable Run()
         {
             var def = Data.GetItem<BuildDefinition>();
 
-            if (def.QueueStatus == DefinitionQueueStatus.Paused)
-            {
-                Logger.Log($"Build definition '{def.Name}' is already paused.");
-                yield return def;
-            }
-
-            if (!PowerShell.ShouldProcess(def.Project.Name, $"Pause Build Definition '{def.GetFullPath()}'")) yield break;
-
             if (def.QueueStatus == DefinitionQueueStatus.Disabled)
             {
-                Logger.LogError(new InvalidOperationException($"Build definition '{def.Name}' is disabled. Disabled builds cannot be paused."));
+                Logger.Log($"Build definition '{def.Name}' is already disabled.");
                 yield return def;
             }
+
+            if (!PowerShell.ShouldProcess(def.Project.Name, $"Disable Build Definition '{def.GetFullPath()}'")) yield break;
 
             var patch = new BuildDefinition()
             {
                 Id = def.Id,
                 Project = def.Project,
-                QueueStatus = DefinitionQueueStatus.Paused,
+                QueueStatus = DefinitionQueueStatus.Disabled,
                 Revision = def.Revision,
                 Repository = def.Repository,
                 Process = def.Process,

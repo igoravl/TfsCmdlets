@@ -17,7 +17,16 @@ This release adds new pipeline-related cmdlets.
 
 ## Changes and enhancements
 
-- **`Start-TfsBuild`**: Renamed to `Start-TfsPipelineRun` to better align with the new Azure Pipelines terminology. A new alias `Start-TfsBuild` was added to keep compatibility with existing scripts.
+- **Renamed build-related cmdlets**: All build-related cmdlets have been renamed to better align with the new Azure Pipelines terminology. Instead of `Build`, they now use `Pipeline` in their names. Aliases have been added to the old cmdlets to maintain backward compatibility. For new scripts, prefer the new names. Old scripts won't break, but they should be updated to use the new names. The renamed cmdlets are:
+  - Disable-TfsBuildDefinition -> **Disable-TfsPipeline**
+  - Enable-TfsBuildDefinition -> **Enable-TfsPipeline**
+  - Get-TfsBuildDefinition -> **Get-TfsPipeline**
+  - Get-TfsBuildDefinitionFolder -> **Get-TfsPipelineFolder**
+  - New-TfsBuildDefinitionFolder -> **New-TfsPipelineFolder**
+  - Remove-TfsBuildDefinitionFolder -> **Remove-TfsPipelineFolder**
+  - Resume-TfsBuildDefinition -> **Resume-TfsPipeline**
+  - Start-TfsBuild -> **Start-TfsPipelineRun**
+  - Suspend-TfsBuildDefinition -> **Suspend-TfsPipeline**
 - **`Connect-TfsOrganization`** (and **`Connect-TfsTeamProjectCollection`**): Improved error handling when connecting with invalid/expired personal access tokens - now it throws an error with a more descriptive message.
 
 -----------------------

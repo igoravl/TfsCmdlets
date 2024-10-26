@@ -1,13 +1,13 @@
 using System.Management.Automation;
 using Microsoft.TeamFoundation.Build.WebApi;
 
-namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
+namespace TfsCmdlets.Cmdlets.Pipeline
 {
     /// <summary>
-    /// Gets one or more build/pipeline definitions in a team project.
+    /// Gets one or more pipelines in a team project.
     /// </summary>
     [TfsCmdlet(CmdletScope.Project, OutputType = typeof(BuildDefinitionReference))]
-    partial class GetBuildDefinition
+    partial class GetPipeline
     {
         /// <summary>
         /// Specifies the pipeline path. Wildcards are supported. 
@@ -26,7 +26,7 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build.Definition
     }
 
     [CmdletController(typeof(BuildDefinitionReference), Client=typeof(IBuildHttpClient))]
-    partial class GetBuildDefinitionController
+    partial class GetPipelineController
     {
         [Import]
         private INodeUtil NodeUtil { get; set; }
