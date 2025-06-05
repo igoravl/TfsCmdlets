@@ -1,17 +1,14 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.1 (_04/Jun/2025_)
+## Version 2.9.1 (_05/Jun/2025_)
 
-This release includes fixes for REST API calls, adds Azure DevOps API version 20 support, and fixes a critical bug in Set-TfsWorkItem.
+This release fixes a critical bug in Set-TfsWorkItem, among other improvements.
 
 ## Fixes
 
-- **`Invoke-TfsRestApi`**: Fixed an issue with handling of installed extensions queries across multiple hosts
+- **`Get-TfsVersion`**: Adds support for Azure DevOps Services version "20" (currently mapped to 2022)
+- **`Remove-TfsTeamProject`**: Removes a double-confirmation prompt when using the `-Hard` switch, simplifying the deletion process
 - **`Set-TfsWorkItem`**: Fixed an issue where the actual work item ID wasn't being used when retrieving work item type information, causing some field updates to fail
-
-## Changes and enhancements
-
-- **`TfsVersionTable`**: Added support for Azure DevOps API version "20" (mapped to 2022)
 
 -----------------------
 
@@ -19,34 +16,7 @@ This release includes fixes for REST API calls, adds Azure DevOps API version 20
 
 ## Version 2.9.0 (_15/Aug/2024_)
 
-This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
-
-## New cmdlets
-
-- **`Get-ProcessFieldDefinition`**: Gets information from one or more organization-wide work item fields
-- **`New-ProcessFieldDefinition`**: Creates a new organization-wide work item field
-- **`Remove-ProcessFieldDefinition`**: Removes an organization-wide work item field
-
-## Fixes
-
-- **`Get-TfsArtifact`**: Fixed an issue where it wouldn't list deleted packages.
-- **`Get-TfsArtifactFeed`**: Fixed an issue where it would ignore the -Project argument and thus not filter feeds by project.
-- **`Get-TfsWorkItemTag`**: Fixed an issue where it would fail when given a list of tags as input.
-- **`Get-TfsWorkItemType`**: Fixed an issue where it would throw a "Parameter count mismatch" error when trying to get the work item type of a given work item.
-
-## Changes and enhancements
-
-- **`Get-TfsGitBranch`**: Added a new `-Compare` argument to  to get the "Compare" (base) branch of a given repository.
-- **`Connect-TfsTeamProjectCollection`, `Connect-TfsOrganization`**: Now it throws an error when trying to connect with invalid credentials instead of silently going into "anonymous mode". That help preventing subtle script errors where the lack of authorization would only be noticed later in the script, when trying to actually perform some command that required valid credentials. Now you get the warning that something is wrong as early in the script as possible.
-
-### Breaking changes
-
-- **`Get-TfsGitBranch`**: `-Repository` parameter is now mandatory. This is to reduce the ambiguity of the command when omitting that argument. Scripts that rely on the old behavior may need to be updated.
-- **`Get-TfsGitBranchPolicy`**: Both `-Branch` and `-Repository` parameters are now mandatory. This is to reduce the ambiguity of the command when omitting those arguments. Scripts that rely on the old behavior may need to be updated.
-
------------------------
-
-## Previous Versions
+See release notes [here](Docs/ReleaseNotes/2.9.0.md).
 
 ## Version 2.8.2 (_24/Jul/2024_)
 
