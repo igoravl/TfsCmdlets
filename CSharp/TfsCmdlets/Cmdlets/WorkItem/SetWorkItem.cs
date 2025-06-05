@@ -154,6 +154,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem
         {
             foreach (var wi in Items)
             {
+                if(!PowerShell.ShouldProcess(
+                    $"Work item {wi.Id} (\"{wi.Fields["System.Title"] ?? "No title"}\")",
+                    "Update work item"))
+                {
+                    continue;
+                }
+
                 var result = Client.UpdateWorkItemAsync(Builder.GetJson(wi), (int)wi.Id, false, BypassRules, SuppressNotifications)
                     .GetResult("Error updating work item");
 
