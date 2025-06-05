@@ -13,19 +13,19 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         It 'Should return all members' {
             $result = Get-TfsTeamProjectMember -Project $tfsProject
             $result | Should -BeOfType 'TfsCmdlets.Models.TeamProjectMember'
-            $result.Name | Sort-Object | Should -Be @('Brian Keller', 'Igor Abade (T-Shooter)')
+            $result.Name | Sort-Object | Should -Be @('Brian Keller', 'Igor Abade')
         }
 
         It 'Should return a single member by name' {
-            $result = Get-TfsTeamProjectMember -Member 'Igor Abade (T-Shooter)' -Project $tfsProject
+            $result = Get-TfsTeamProjectMember -Member 'Igor Abade' -Project $tfsProject
             $result | Should -BeOfType 'TfsCmdlets.Models.TeamProjectMember'
-            $result.Name | Should -Be 'Igor Abade (T-Shooter)'
+            $result.Name | Should -Be 'Igor Abade'
         }
 
         It 'Should return a single member by email' {
             $result = Get-TfsTeamProjectMember -Member 'igor@tshooter.com.br' -Project $tfsProject
             $result | Should -BeOfType 'TfsCmdlets.Models.TeamProjectMember'
-            $result.Name | Should -Be 'Igor Abade (T-Shooter)'
+            $result.Name | Should -Be 'Igor Abade'
         }
 
         It 'Should support wildcards' {
@@ -38,9 +38,9 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         }
 
         It 'Should return as identity' {
-            $result = Get-TfsTeamProjectMember 'Igor Abade (T-Shooter)' -Project $tfsProject -AsIdentity
+            $result = Get-TfsTeamProjectMember 'Igor Abade' -Project $tfsProject -AsIdentity
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Should -Be 'Igor Abade (T-Shooter)'
+            $result.DisplayName | Should -Be 'Igor Abade'
         }
     } 
 }
