@@ -205,6 +205,7 @@ namespace TfsCmdlets.Services.Impl
             [17] = 2019,
             [18] = 2020,
             [19] = 2022,
+            [20] = 2022,
         };
     }
 }
