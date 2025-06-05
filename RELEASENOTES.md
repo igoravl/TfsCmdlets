@@ -1,6 +1,23 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.0 (15/Aug/2024_)
+## Version 2.9.1 (_04/Jun/2025_)
+
+This release includes fixes for REST API calls, adds Azure DevOps API version 20 support, and fixes a critical bug in Set-TfsWorkItem.
+
+## Fixes
+
+- **`Invoke-TfsRestApi`**: Fixed an issue with handling of installed extensions queries across multiple hosts
+- **`Set-TfsWorkItem`**: Fixed an issue where the actual work item ID wasn't being used when retrieving work item type information, causing some field updates to fail
+
+## Changes and enhancements
+
+- **`TfsVersionTable`**: Added support for Azure DevOps API version "20" (mapped to 2022)
+
+-----------------------
+
+## Previous Versions
+
+## Version 2.9.0 (_15/Aug/2024_)
 
 This release adds new process-related cmdlets along with some fixes, enhancements and a couple minor but potentially breaking changes.
 
