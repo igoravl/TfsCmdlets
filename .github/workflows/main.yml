@@ -230,14 +230,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nuget
-      - name: Install Nuget 5.x
-        uses: nuget/setup-nuget@v2
-        with:
-          nuget-api-key: ${{ secrets.API_KEY }}
-          nuget-version: '5.x'
       - name: Push package
         run: |
-          nuget push $(ls TfsCmdlets*.nupkg) -Source https://api.nuget.org/v3/index.json
+          dotnet nuget push $(ls TfsCmdlets*.nupkg) -s https://api.nuget.org/v3/index.json -k ${{ secrets.API_KEY }} --skip-duplicate
 
   Chocolatey:
 
