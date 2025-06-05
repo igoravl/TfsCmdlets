@@ -13,28 +13,28 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         It 'Should return all team members' {
             $result = Get-TfsTeamMember -Project $tfsProject -Team "$tfsProject Team"
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Sort-Object | Should -Be @('Brian Keller', 'Igor Abade (T-Shooter)')
+            $result.DisplayName | Sort-Object | Should -Be @('Brian Keller', 'Igor Abade')
         }
 
         It 'Should return a single team member by name' {
-            $result = Get-TfsTeamMember -Member 'Igor Abade (T-Shooter)' -Project $tfsProject -Team "$tfsProject Team"
+            $result = Get-TfsTeamMember -Member 'Igor Abade' -Project $tfsProject -Team "$tfsProject Team"
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Should -Be 'Igor Abade (T-Shooter)'
+            $result.DisplayName | Should -Be 'Igor Abade'
         }
 
         It 'Should return a single team member by email' {
             $result = Get-TfsTeamMember -Member 'igor@tshooter.com.br' -Project $tfsProject -Team "$tfsProject Team"
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Should -Be 'Igor Abade (T-Shooter)'
+            $result.DisplayName | Should -Be 'Igor Abade'
         }
 
         It 'Should support wildcards' {
             $result = Get-TfsTeamMember -Project $tfsProject -Team "$tfsProject Team" -Member 'Igor A*'
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Should -Be 'Igor Abade (T-Shooter)'
+            $result.DisplayName | Should -Be 'Igor Abade'
             $result = Get-TfsTeamMember -Project $tfsProject -Team "$tfsProject Team" -Member 'igor@*'
             $result | Should -BeOfType 'Microsoft.VisualStudio.Services.Identity.Identity'
-            $result.DisplayName | Should -Be 'Igor Abade (T-Shooter)'
+            $result.DisplayName | Should -Be 'Igor Abade'
         }
     } 
 }

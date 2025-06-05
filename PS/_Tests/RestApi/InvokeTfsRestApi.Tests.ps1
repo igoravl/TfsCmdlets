@@ -16,7 +16,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             | ForEach-Object { $_.ExtensionName } `
             | Sort-Object `
             | Select-Object -First 3 `
-            | Should -Be @('AdvancedSecurity', 'Aex Code Mapper', 'Aex platform')
+            | Should -Be @('AdvancedSecurity', 'AdvancedSecurity Alerts', 'Aex Code Mapper')
         }
 
         It 'Should call multiple alternates hosts in sequence' {
@@ -24,7 +24,7 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             | ForEach-Object { $_.ExtensionName } `
             | Sort-Object `
             | Select-Object -First 3 `
-            | Should -Be @('AdvancedSecurity', 'Aex Code Mapper', 'Aex platform')
+            | Should -Be @('AdvancedSecurity', 'AdvancedSecurity Alerts', 'Aex Code Mapper')
 
             Invoke-TfsRestApi 'GET https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=6.1' -Project $tfsProject `
             | ForEach-Object { $_.name } `

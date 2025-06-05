@@ -49,11 +49,11 @@ namespace TfsCmdlets.Cmdlets.TeamProject
             {
                 if (!PowerShell.ShouldProcess($"[Organization: {tpc.DisplayName}]/[Project: {tp.Name}]", "Delete team project")) continue;
 
-                if (!force && !PowerShell.ShouldContinue($"Are you sure you want to delete team project '{tp.Name}'?")) continue;
+                if (!(force || PowerShell.ShouldContinue($"Are you sure you want to delete team project '{tp.Name}'?"))) continue;
 
-                if (hard && !PowerShell.ShouldContinue(
+                if (hard && !(force || PowerShell.ShouldContinue(
                     "You are using the -Hard switch. The team project deletion is IRREVERSIBLE " +
-                    $"and may cause DATA LOSS. Are you sure you want to proceed with deleting team project '{tp.Name}'")) continue;
+                    $"and may cause DATA LOSS. Are you sure you want to proceed with deleting team project '{tp.Name}'"))) continue;
 
                 var method = hard ? "Hard" : "Soft";
 
