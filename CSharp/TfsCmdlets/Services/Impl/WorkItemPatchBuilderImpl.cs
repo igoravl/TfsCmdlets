@@ -36,7 +36,7 @@ namespace TfsCmdlets.Services.Impl
 
             if (fields != null && fields.Count > 0)
             {
-                var wit = Data.GetItem<WebApiWorkItemType>(new { Type = wi.Fields["System.WorkItemType"], WorkItem = 0, Project = projectName });
+                var wit = Data.GetItem<WebApiWorkItemType>(new { Type = wi.Fields["System.WorkItemType"], WorkItem = wi.Id, Project = projectName });
                 patch.AddRange(ParseFields(fields, wit, projectName, workItemType));
             }
 
