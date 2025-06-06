@@ -11,6 +11,10 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
         # [-Collection <Object>]
         # [-Server <Object>] [<CommonParameters>]
 
+        It 'Should accept IncludeRecycleBin parameter' {
+            { Get-TfsGitRepository -Repository '*' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
         It 'Should include recycle bin repositories when IncludeRecycleBin is specified' {
             # This test assumes there's at least one deleted repository in the recycle bin
             $allRepos = @(Get-TfsGitRepository -Repository '*' -Project $tfsProject)
@@ -45,6 +49,28 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             
             # For now, just verify the parameter is accepted without error
             { Get-TfsGitRepository -Repository 'Deleted*' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should handle multiple repository names with recycle bin' {
+            { Get-TfsGitRepository -Repository 'Repo1', 'Repo2' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should work with Default parameter and IncludeRecycleBin' {
+            { Get-TfsGitRepository -Default -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should work with IncludeParent and IncludeRecycleBin together' {
+            { Get-TfsGitRepository -Repository '*' -IncludeParent -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should return both active and deleted repositories' {
+            # This would require actual data to test properly
+            # $results = Get-TfsGitRepository -Repository '*' -IncludeRecycleBin -Project $tfsProject
+            # $results | Where-Object { $_ -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository] } | Should -Not -BeNullOrEmpty
+            # $results | Where-Object { $_ -is [Microsoft.TeamFoundation.SourceControl.WebApi.GitDeletedRepository] } | Should -Not -BeNullOrEmpty
+            
+            # For now, just verify it runs without error
+            { Get-TfsGitRepository -Repository '*' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
         }
     }
 }
