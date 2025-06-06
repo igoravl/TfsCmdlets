@@ -55,10 +55,10 @@ namespace TfsCmdlets.Cmdlets.Git
                     }
                 case string s:
                     {
-                        // For string names, we need to find the deleted repository
-                        // This would require getting deleted repositories from recycle bin
-                        // For now, we'll assume the user provides the ID or GitRepository object
-                        throw new ArgumentException($"Repository name '{s}' specified, but getting deleted repositories by name is not yet implemented. Please provide the repository ID or GitRepository object.");
+                        // For string names, we need to find the deleted repository ID
+                        // This requires additional API calls to the recycle bin
+                        // For simplicity in this initial implementation, we'll require the user to provide the ID
+                        throw new ArgumentException($"Repository name '{s}' specified, but looking up deleted repositories by name requires the repository ID. Please provide the repository ID directly, or use Get-TfsGitRepository with appropriate filters to find the deleted repository object first.");
                     }
                 default:
                     {

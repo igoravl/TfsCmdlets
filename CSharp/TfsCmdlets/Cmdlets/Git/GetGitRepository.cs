@@ -30,12 +30,6 @@ namespace TfsCmdlets.Cmdlets.Git
         /// </summary>
         [Parameter()]
         public SwitchParameter IncludeParent { get; set; }
-
-        /// <summary>
-        /// Returns deleted repositories from the Recycle Bin.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter Deleted { get; set; }
     }
 
     [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
