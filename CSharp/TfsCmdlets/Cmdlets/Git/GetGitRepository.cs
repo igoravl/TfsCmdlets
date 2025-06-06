@@ -1,5 +1,8 @@
+using System;
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace TfsCmdlets.Cmdlets.Git
 {
@@ -30,6 +33,12 @@ namespace TfsCmdlets.Cmdlets.Git
         /// </summary>
         [Parameter()]
         public SwitchParameter IncludeParent { get; set; }
+
+        /// <summary>
+        /// Includes repositories in the recycle bin in the search results.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter IncludeRecycleBin { get; set; }
     }
 
     [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
@@ -37,6 +46,15 @@ namespace TfsCmdlets.Cmdlets.Git
     {
         protected override IEnumerable Run()
         {
+            // Get recycle bin repositories once if needed
+            IList<GitDeletedRepository> recycleBinRepos = null;
+            if (IncludeRecycleBin)
+            {
+                recycleBinRepos = Client
+                    .GetRecycleBinRepositoriesAsync(Project.Name)
+                    .GetResult("Error getting recycle bin repositories");
+            }
+
             foreach (var input in Repository)
             {
                 var repository = input switch
@@ -59,6 +77,16 @@ namespace TfsCmdlets.Cmdlets.Git
                             yield return Client
                                 .GetRepositoryAsync(Project.Name, guid, includeParent: IncludeParent)
                                 .GetResult($"Error getting repository with ID {guid}");
+
+                            // Also check recycle bin for this ID
+                            if (IncludeRecycleBin)
+                            {
+                                var deletedRepo = recycleBinRepos?.FirstOrDefault(r => r.Id == guid);
+                                if (deletedRepo != null)
+                                {
+                                    yield return deletedRepo;
+                                }
+                            }
                             break;
                         }
                     case { } when Default:
@@ -70,30 +98,48 @@ namespace TfsCmdlets.Cmdlets.Git
                         }
                     case string s when !s.IsWildcard():
                         {
-                            GitRepository result;
+                            GitRepository result = null;
 
                             try
                             {
                                 result = Client
                                     .GetRepositoryAsync(Project.Name, s, includeParent: IncludeParent)
                                     .GetResult($"Error getting repository '{s}'");
+                                yield return result;
                             }
                             catch
                             {
                                 // Workaround to retrieve disabled repositories
-                                result = Client
+                                var activeRepo = Client
                                     .GetRepositoriesAsync(Project.Name, includeLinks: true, includeHidden: true)
                                     .GetResult($"Error getting repository(ies) '{s}'")
-                                    .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+                                    .FirstOrDefault(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
 
-                                if (IncludeParent)
+                                if (activeRepo != null)
                                 {
-                                    result = Client
-                                        .GetRepositoryAsync(Project.Name, result.Id, includeParent: true)
-                                        .GetResult($"Error getting repository(ies) '{s}'");
+                                    if (IncludeParent)
+                                    {
+                                        result = Client
+                                            .GetRepositoryAsync(Project.Name, activeRepo.Id, includeParent: true)
+                                            .GetResult($"Error getting repository(ies) '{s}'");
+                                        yield return result;
+                                    }
+                                    else
+                                    {
+                                        yield return activeRepo;
+                                    }
                                 }
                             }
-                            yield return result;
+
+                            // Also check recycle bin for this name
+                            if (IncludeRecycleBin)
+                            {
+                                var deletedRepo = recycleBinRepos?.FirstOrDefault(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+                                if (deletedRepo != null)
+                                {
+                                    yield return deletedRepo;
+                                }
+                            }
                             break;
                         }
                     case string s:
@@ -112,6 +158,15 @@ namespace TfsCmdlets.Cmdlets.Git
                                 else
                                 {
                                     yield return repo;
+                                }
+                            }
+
+                            // Also check recycle bin for wildcard patterns
+                            if (IncludeRecycleBin)
+                            {
+                                foreach (var deletedRepo in recycleBinRepos?.Where(r => r.Name.IsLike(s)) ?? Enumerable.Empty<GitDeletedRepository>())
+                                {
+                                    yield return deletedRepo;
                                 }
                             }
                             break;
