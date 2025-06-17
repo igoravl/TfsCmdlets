@@ -16,8 +16,13 @@ namespace TfsCmdlets.Services.Impl
         private const string CLIENT_ID = "9f44d9a2-86ef-4794-b2b2-f9038a2628e0";
         private const string SCOPE_ID = "499b84ac-1321-427f-aa17-267ca6975798/user_impersonation";
 
-        [Import]
         private IRuntimeUtil RuntimeUtil { get; }
+
+        [ImportingConstructor]
+        public InteractiveAuthenticationImpl(IRuntimeUtil runtimeUtil)
+        {
+            RuntimeUtil = runtimeUtil;
+        }
 
         /// <summary>
         /// Determines if we're running in PowerShell Core (vs Windows PowerShell)
