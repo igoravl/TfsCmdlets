@@ -3,10 +3,10 @@ using Microsoft.Identity.Client.Desktop;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Management.Automation;
 using System;
 using System.Linq;
 using System.Composition;
+using TfsCmdlets.Services;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -16,33 +16,17 @@ namespace TfsCmdlets.Services.Impl
         private const string CLIENT_ID = "9f44d9a2-86ef-4794-b2b2-f9038a2628e0";
         private const string SCOPE_ID = "499b84ac-1321-427f-aa17-267ca6975798/user_impersonation";
 
+        [Import]
+        private IRuntimeUtil RuntimeUtil { get; }
+
         /// <summary>
         /// Determines if we're running in PowerShell Core (vs Windows PowerShell)
         /// </summary>
         /// <returns>True if running in PowerShell Core, false otherwise</returns>
-        private static bool IsPowerShellCore()
+        private bool IsPowerShellCore()
         {
-            try
-            {
-                // Try to access PowerShell version information
-                using (var ps = PowerShell.Create())
-                {
-                    ps.AddScript("$PSVersionTable.PSEdition");
-                    var results = ps.Invoke();
-                    
-                    if (results.Count > 0 && results[0] != null)
-                    {
-                        return string.Equals(results[0].ToString(), "Core", StringComparison.OrdinalIgnoreCase);
-                    }
-                }
-            }
-            catch
-            {
-                // If we can't determine, assume we're in a context that might need browser fallback
-                return true;
-            }
-            
-            return false;
+            // Use the same detection logic as the rest of the codebase
+            return RuntimeUtil.Platform.Equals("Core", StringComparison.OrdinalIgnoreCase);
         }
 
         public string GetToken(Uri uri)
@@ -58,7 +42,7 @@ namespace TfsCmdlets.Services.Impl
         /// </summary>
         /// <param name="scopes"></param>
         /// <returns>AuthenticationResult</returns>
-        private static async Task<AuthenticationResult> SignInUserAndGetTokenUsingMSAL(string[] scopes)
+        private async Task<AuthenticationResult> SignInUserAndGetTokenUsingMSAL(string[] scopes)
         {
             var application = PublicClientApplicationBuilder
                 .CreateWithApplicationOptions(new PublicClientApplicationOptions
