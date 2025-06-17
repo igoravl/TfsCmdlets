@@ -1,0 +1,32 @@
+name: Copilot Setup
+runs:
+  using: composite
+  steps:
+    # Install PowerShell modules needed for build
+    - name: Install PowerShell modules
+      shell: pwsh
+      run: |
+        Set-PSRepository PSGallery -InstallationPolicy Trusted
+        Install-Module -Name psake -Scope CurrentUser -Force
+        Install-Module -Name GitVersion.CommandLine -Scope CurrentUser -Force
+        Install-Module -Name BuildHelpers -Scope CurrentUser -Force
+        Install-Module -Name Pester -MinimumVersion 5.0.0 -Scope CurrentUser -Force
+    
+    # Install .NET SDK
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+    
+    # Restore NuGet packages
+    - name: Restore NuGet packages
+      shell: pwsh
+      run: |
+        dotnet restore "CSharp/TfsCmdlets.sln"
+    
+    # Pre-build the solution to validate
+    - name: Test build environment
+      shell: pwsh
+      run: |
+        Write-Host "Testing build environment..."
+        ./Build.ps1 -Targets Clean -Verbose
