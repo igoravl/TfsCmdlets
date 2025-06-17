@@ -16,12 +16,12 @@ namespace TfsCmdlets.Services.Impl
         private const string CLIENT_ID = "9f44d9a2-86ef-4794-b2b2-f9038a2628e0";
         private const string SCOPE_ID = "499b84ac-1321-427f-aa17-267ca6975798/user_impersonation";
 
-        private IRuntimeUtil RuntimeUtil { get; }
+        private IPowerShellService PowerShell { get; }
 
         [ImportingConstructor]
-        public InteractiveAuthenticationImpl(IRuntimeUtil runtimeUtil)
+        public InteractiveAuthenticationImpl(IPowerShellService powerShell)
         {
-            RuntimeUtil = runtimeUtil;
+            PowerShell = powerShell;
         }
 
         /// <summary>
@@ -30,8 +30,8 @@ namespace TfsCmdlets.Services.Impl
         /// <returns>True if running in PowerShell Core, false otherwise</returns>
         private bool IsPowerShellCore()
         {
-            // Use the same detection logic as the rest of the codebase
-            return RuntimeUtil.Platform.Equals("Core", StringComparison.OrdinalIgnoreCase);
+            // Use the same detection logic as NewCredential class
+            return !PowerShell.Edition.Equals("Desktop", StringComparison.OrdinalIgnoreCase);
         }
 
         public string GetToken(Uri uri)
