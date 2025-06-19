@@ -1,9 +1,10 @@
-using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.TeamFoundation.Core.WebApi;
 using TfsCmdlets.Cmdlets;
 using TfsCmdlets.Models;
+using OsProcess = System.Diagnostics.Process;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -200,6 +201,18 @@ namespace TfsCmdlets.Services.Impl
             !Environment.GetCommandLineArgs().Any(x => x.Equals("-NonInteractive", StringComparison.OrdinalIgnoreCase));
 
         public string Edition => RuntimeUtil.Platform;
+
+        
+        public IntPtr WindowHandle {
+            get
+            {
+                if(!IsInteractive || !RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return IntPtr.Zero;
+
+                var process = OsProcess.GetCurrentProcess();
+
+                return process.WindowHandleRecursive();
+            }
+        }
 
         [ImportingConstructor]
         public PowerShellServiceImpl(IRuntimeUtil runtimeUtil)

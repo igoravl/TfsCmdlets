@@ -57,7 +57,7 @@ namespace TfsCmdlets.Services.Impl
                     ClientName = "TfsCmdlets.InteractiveAuth",
                     ClientVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 })
-                .WithDesktopFeatures()
+                .WithWindowsDesktopFeatures(new BrokerOptions(enabledOn: BrokerOptions.OperatingSystems.Windows))
                 .WithDefaultRedirectUri()
                 .Build();
 
@@ -77,6 +77,7 @@ namespace TfsCmdlets.Services.Impl
                 var tokenBuilder = application
                     .AcquireTokenInteractive(scopes)
                     .WithPrompt(Prompt.SelectAccount)
+                    .WithParentActivityOrWindow(PowerShell.WindowHandle)
                     .WithClaims(ex.Claims);
 
                 // For PowerShell Core, use system browser instead of embedded web view
