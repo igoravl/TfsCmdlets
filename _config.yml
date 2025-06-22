@@ -2,6 +2,9 @@ url: "https://tfscmdlets.dev"
 permalink: pretty
 exclude: ["vendor", "node_modules/", "*.gemspec", "*.gem", "Gemfile", "Gemfile.lock", "package.json", "package-lock.json",  "script/", "LICENSE.txt", "lib/", "bin/", "README.md", "Rakefile"]
 
+# Explicitly include files from the .well-known directory
+include: [".well-known"]
+
 # Set a path/url to a logo that will be displayed instead of the title
 logo: "/assets/images/logo.png"
 
@@ -22,7 +25,7 @@ aux_links:
     - "https://github.com/igoravl/tfscmdlets/releases/"
 
 # Footer content appears at the bottom of every page's main content
-footer_content: "Copyright &copy; 2014-2021 Igor Abade V. Leite. Distributed by an <a href=\"https://github.com/igoravl/tfscmdlets/tree/master/LICENSE.md\">MIT license.</a>"
+footer_content: "Copyright &copy; 2014-2025 Igor Abade V. Leite. Distributed by an <a href=\"https://github.com/igoravl/tfscmdlets/tree/master/LICENSE.md\">MIT license.</a>"
 
 # Color scheme currently only supports "dark" or nil (default)
 color_scheme: nil
@@ -48,40 +51,4 @@ defaults:
       layout: "cmdlet"
       nav_exclude: true
 
-build_info: TfsCmdlets v2.1.4+2594.1, released 2021-11-30
-build_info: TfsCmdlets v2.2.0+2661.12, released 2022-02-05
-
-build_info: TfsCmdlets v2.2.1+2667.1, released 2022-02-11
-
-build_info: TfsCmdlets v2.3.0+2718.3, released 2022-04-03
-
-build_info: TfsCmdlets v2.3.1+2724.1, released 2022-04-09
-
-build_info: TfsCmdlets v2.3.2+2763.1, released 2022-05-18
-
-build_info: TfsCmdlets v2.4.0+2768.3, released 2022-05-23
-
-build_info: TfsCmdlets v2.4.1+2827.1, released 2022-07-21
-
-build_info: TfsCmdlets v2.5.0+2840.2, released 2022-08-03
-
-build_info: TfsCmdlets v2.5.1+2859.4, released 2022-08-22
-
-build_info: TfsCmdlets v2.6.0+2898.5, released 2022-10-01
-
-build_info: TfsCmdlets v2.6.1+3491.1, released 2024-05-15
-
-build_info: TfsCmdlets v2.7.0+3540.2, released 2024-07-03
-
-build_info: TfsCmdlets v2.7.1+3540.1, released 2024-07-03
-
-build_info: TfsCmdlets v2.8.0+3546.2, released 2024-07-09
-
-build_info: TfsCmdlets v2.8.1+3553.1, released 2024-07-16
-
-build_info: TfsCmdlets v2.8.2+3561.26, released 2024-07-24
-
-build_info: TfsCmdlets v2.9.0+3583.93, released 2024-08-15
-
 build_info: TfsCmdlets v2.9.1+3877.9, released 2025-06-05
-
