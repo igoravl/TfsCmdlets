@@ -41,5 +41,10 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "Indigo",
-    "dotnet.preferCSharpExtension": false
+    "dotnet.preferCSharpExtension": false,
+    "github.copilot.chat.commitMessageGeneration.instructions": [
+        {
+            "text": "Generate messages in en-US, unless instructed otherwise. Add a first line of comments that summarizes the changes in 50 characters or less. If necessary, add a body that provides more details about the changes. Finish with any relevant issue references. Format the body as a bulleted list, grouping by file when there are multiple files in the same commit. If a commit message has been already drafted by the commiter in the commit message input, use it as a starting point for the generated one.",
+        }
+    ]
 }

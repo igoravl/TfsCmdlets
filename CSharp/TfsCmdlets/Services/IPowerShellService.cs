@@ -32,6 +32,8 @@ namespace TfsCmdlets.Services
 
         string WindowTitle { get; set; }
 
+        IntPtr WindowHandle { get; }
+
         PSModuleInfo Module { get; }
 
         string CurrentCommand {get;}
