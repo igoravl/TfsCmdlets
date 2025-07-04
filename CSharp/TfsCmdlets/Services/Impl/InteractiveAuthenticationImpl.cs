@@ -15,6 +15,7 @@ namespace TfsCmdlets.Services.Impl
     {
         private const string CLIENT_ID = "9f44d9a2-86ef-4794-b2b2-f9038a2628e0";
         private const string SCOPE_ID = "499b84ac-1321-427f-aa17-267ca6975798/user_impersonation";
+        private const string CLIENT_NAME = "TfsCmdlets.InteractiveAuth";
 
         private IPowerShellService PowerShell { get; }
 
@@ -22,16 +23,6 @@ namespace TfsCmdlets.Services.Impl
         public InteractiveAuthenticationImpl(IPowerShellService powerShell)
         {
             PowerShell = powerShell;
-        }
-
-        /// <summary>
-        /// Determines if we're running in PowerShell Core (vs Windows PowerShell)
-        /// </summary>
-        /// <returns>True if running in PowerShell Core, false otherwise</returns>
-        private bool IsPowerShellCore()
-        {
-            // Use the same detection logic as NewCredential class
-            return !PowerShell.Edition.Equals("Desktop", StringComparison.OrdinalIgnoreCase);
         }
 
         public string GetToken(Uri uri)
@@ -53,8 +44,8 @@ namespace TfsCmdlets.Services.Impl
                 .CreateWithApplicationOptions(new PublicClientApplicationOptions
                 {
                     AadAuthorityAudience = AadAuthorityAudience.AzureAdAndPersonalMicrosoftAccount,
-                    ClientId = CLIENT_ID,
-                    ClientName = "TfsCmdlets.InteractiveAuth",
+                    // ClientId = CLIENT_ID,
+                    // ClientName = CLIENT_NAME,
                     ClientVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 })
                 .WithWindowsDesktopFeatures(new BrokerOptions(enabledOn: BrokerOptions.OperatingSystems.None))
@@ -78,14 +69,23 @@ namespace TfsCmdlets.Services.Impl
                     .AcquireTokenInteractive(scopes)
                     .WithPrompt(Prompt.SelectAccount)
                     .WithParentActivityOrWindow(PowerShell.WindowHandle)
-                    .WithClaims(ex.Claims);
-
-                // For PowerShell Core, use system browser instead of embedded web view
-                // to avoid window handle issues
-                if (IsPowerShellCore())
-                {
-                    tokenBuilder = tokenBuilder.WithUseEmbeddedWebView(false);
-                }
+                    .WithClaims(ex.Claims)
+                    .WithUseEmbeddedWebView(false)
+                    .WithSystemWebViewOptions(new SystemWebViewOptions
+                    {
+                        OpenBrowserAsync = (url) =>
+                        {
+                            var encodedUrl = url.AbsoluteUri.Replace(" ", "%20");
+                            var msg = $"Opening browser for authentication. If your browser does not open automatically, please navigate to the following URL:\n\n{encodedUrl}";
+                            PowerShell.CurrentCmdlet.Host.UI.WriteLine(msg);
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                            {
+                                FileName = encodedUrl,
+                                UseShellExecute = true
+                            });
+                            return Task.CompletedTask;
+                        }
+                    });
 
                 return await tokenBuilder.ExecuteAsync(cts.Token);
             }
