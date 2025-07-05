@@ -150,6 +150,9 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 ("Alias", "\"Pat\"")}, "HELP_PARAM_PERSONAL_ACCESS_TOKEN");
 
             yield return GenerateParameter("Interactive", "SwitchParameter", "ParameterSetName = \"Prompt for credential\"", "HELP_PARAM_INTERACTIVE");
+
+            yield return GenerateParameter("Mode", "TfsCmdlets.InteractiveAuthenticationMode", "ParameterSetName = \"Prompt for credential\"", "HELP_PARAM_INTERACTIVE_MODE");
+
         }
 
         private static IEnumerable<GeneratedProperty> GenerateCustomControllerProperty(CmdletInfo settings)

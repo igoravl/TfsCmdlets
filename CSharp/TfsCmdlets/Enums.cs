@@ -278,4 +278,30 @@
         /// </summary>
         Stakeholder
     }
+
+    /// <summary>
+    /// Represents the mode of interactive authentication.
+    /// </summary>
+    public enum InteractiveAuthenticationMode
+    {
+        /// <summary>
+        /// Use the default authentication method based on the environment.
+        /// </summary>
+        Auto,
+
+        /// <summary>
+        /// Use MSAL (Microsoft Authentication Library) Web Authentication Manager (WAM).
+        /// </summary>
+        UseWam,
+
+        /// <summary>
+        /// Use the system web browser for authentication.
+        /// </summary>
+        UseWebBrowser,
+
+        /// <summary>
+        /// Use device code flow authentication.
+        /// </summary>
+        UseDeviceCode
+    }
 }
