@@ -23,7 +23,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
         /// Specifies the hash (SHA) representing the version of the item(s) to retrieve.
         /// </summary>
         [Parameter(ParameterSetName = "Get by commit SHA")]
-        public object Commit { get; set; }
+        public string Commit { get; set; }
 
         /// <summary>
         /// Specifies the tag representing the version of the item(s) to retrieve.
