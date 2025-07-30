@@ -1,18 +1,20 @@
 # TfsCmdlets Release Notes
 
-## Version 2.9.1 (_05/Jun/2025_)
+## Version 2.9.2 (_30/Jul/2025_)
 
-This release fixes a critical bug in Set-TfsWorkItem, among other improvements.
+This release fixes a bug in Get-TfsGitItem cmdlet.
 
 ## Fixes
 
-- **`Get-TfsVersion`**: Adds support for Azure DevOps Services version "20" (currently mapped to 2022)
-- **`Remove-TfsTeamProject`**: Removes a double-confirmation prompt when using the `-Hard` switch, simplifying the deletion process
-- **`Set-TfsWorkItem`**: Fixed an issue where the actual work item ID wasn't being used when retrieving work item type information, causing some field updates to fail
+- **`Get-TfsGitItem`**: Fixed an issue where the cmdlet would fail when specifying a commit SHA.
 
 -----------------------
 
 ## Previous Versions
+
+## Version 2.9.1 (_05/Jun/2025_)
+
+See release notes [here](Docs/ReleaseNotes/2.9.1.md).
 
 ## Version 2.9.0 (_15/Aug/2024_)
 
