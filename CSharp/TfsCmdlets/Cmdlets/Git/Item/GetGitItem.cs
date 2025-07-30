@@ -81,7 +81,7 @@ namespace TfsCmdlets.Cmdlets.Git.Item
                     "Get by commit SHA" => new GitVersionDescriptor()
                     {
                         VersionType = GitVersionType.Commit,
-                        Version = item.ToString()
+                        Version = Commit
                     },
                     "Get by tag" => new GitVersionDescriptor()
                     {
