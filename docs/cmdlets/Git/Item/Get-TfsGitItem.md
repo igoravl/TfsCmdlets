@@ -13,7 +13,7 @@ parameterSets:
     Collection: 
       type: "object"  
     Commit: 
-      type: "object"  
+      type: "string"  
     IncludeContent: 
       type: "SwitchParameter"  
     IncludeMetadata: 
@@ -80,7 +80,7 @@ parameters:
   - name: "Commit" 
     description: "Specifies the hash (SHA) representing the version of the item(s) to retrieve. " 
     globbing: false 
-    type: "object" 
+    type: "string" 
   - name: "Tag" 
     description: "Specifies the tag representing the version of the item(s) to retrieve. " 
     required: true 
