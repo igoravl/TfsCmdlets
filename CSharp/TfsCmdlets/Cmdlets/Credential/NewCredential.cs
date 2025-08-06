@@ -1,4 +1,4 @@
-﻿using System.Management.Automation;
+using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Common;
 using System.Net;
 using Microsoft.VisualStudio.Services.Client;
@@ -19,6 +19,18 @@ namespace TfsCmdlets.Cmdlets.Credential
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         public Uri Url { get; set; }
+
+        /// <summary>
+        /// Specifies that the credentials should be obtained from the currently logged in Azure CLI user.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter AzCli { get; set; }
+
+        /// <summary>
+        /// Specifies that the credentials should be obtained from the Azure Managed Identity present in the current script context.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter UseMSI { get; set; }
     }
 
     [CmdletController(typeof(VssCredentials), CustomCmdletName = "NewCredential")]
@@ -26,6 +38,9 @@ namespace TfsCmdlets.Cmdlets.Credential
     {
         [Import]
         private IInteractiveAuthentication InteractiveAuthentication { get; }
+
+        [Import]
+        private IAzCliAuthentication AzCliAuthentication { get; }
 
         protected override IEnumerable Run()
         {
@@ -39,6 +54,10 @@ namespace TfsCmdlets.Cmdlets.Credential
                 connectionMode = ConnectionMode.AccessToken;
             else if (Interactive)
                 connectionMode = ConnectionMode.Interactive;
+            else if (AzCli)
+                connectionMode = ConnectionMode.AzCli;
+            else if (UseMSI)
+                connectionMode = ConnectionMode.UseMSI;
 
             NetworkCredential netCred = null;
 
@@ -124,6 +143,24 @@ namespace TfsCmdlets.Cmdlets.Credential
                         throw new Exception("Interactive authentication is not supported for TFS / Azure DevOps Server in PowerShell Core. Please use either a username/password credential or a Personal Access Token.");
                     }
 
+                case ConnectionMode.AzCli:
+                    {
+                        Logger.Log("Using Azure CLI credential");
+
+                        yield return new VssCredentials(
+                            new VssOAuthAccessTokenCredential(AzCliAuthentication.GetToken(Url)));
+                        break;
+                    }
+
+                case ConnectionMode.UseMSI:
+                    {
+                        Logger.Log("Using Managed Identity credential");
+
+                        yield return new VssCredentials(
+                            new VssOAuthAccessTokenCredential(AzCliAuthentication.GetToken(Url, useMsi: true)));
+                        break;
+                    }
+
                 default:
                     {
                         throw new Exception($"Invalid parameter set '{connectionMode}'");
@@ -150,7 +187,9 @@ namespace TfsCmdlets.Cmdlets.Credential
             CredentialObject,
             UserNamePassword,
             AccessToken,
-            Interactive
+            Interactive,
+            AzCli,
+            UseMSI
         }
     }
 }

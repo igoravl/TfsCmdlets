@@ -47,5 +47,17 @@ namespace TfsCmdlets.Cmdlets.Organization
         [Alias("Collection")]
         [ValidateNotNull]
         public object Organization { get; set; }
+
+        /// <summary>
+        /// Specifies that the credentials should be obtained from the currently logged in Azure CLI user.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter AzCli { get; set; }
+
+        /// <summary>
+        /// Specifies that the credentials should be obtained from the Azure Managed Identity present in the current script context.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter UseMSI { get; set; }
     }
 }
