@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.Shell
                 }
             }
             
-            WriteObject("Azure DevOps Shell uninstallation completed successfully.");
+            PowerShell.WriteObject("Azure DevOps Shell uninstallation completed successfully.");
             return null;
         }
         

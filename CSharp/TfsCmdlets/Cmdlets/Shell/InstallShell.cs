@@ -52,7 +52,7 @@ namespace TfsCmdlets.Cmdlets.Shell
                 CreatePowerShellShortcuts(targets);
             }
             
-            WriteObject("Azure DevOps Shell installation completed successfully.");
+            PowerShell.WriteObject("Azure DevOps Shell installation completed successfully.");
             return null;
         }
         
