@@ -1,0 +1,6 @@
+{
+  "name": "Azure DevOps Shell (PowerShell Core)",
+  "commandline": "pwsh.exe -NoExit -Command \"Import-Module TfsCmdlets; Enter-TfsShell\"",
+  "icon": "ms-appx:///ProfileIcons/PowerShellCore.png",
+  "startingDirectory": "%USERPROFILE%"
+}
