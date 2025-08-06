@@ -61,4 +61,33 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             $repository | Should -BeOfType 'Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository'
         }
     }
+
+    Context 'Get repositories including recycle bin' {
+        # Get-TfsGitRepository
+        # [[-Repository] <Object>]
+        # [-IncludeRecycleBin]
+        # [-IncludeParent]
+        # [-Project <Object>]
+        # [-Collection <Object>]
+        # [-Server <Object>] [<CommonParameters>]
+
+        It 'Should accept IncludeRecycleBin parameter' {
+            { Get-TfsGitRepository -Repository '*' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should include recycle bin repositories when IncludeRecycleBin is specified' {
+            $allRepos = @(Get-TfsGitRepository -Repository '*' -Project $tfsProject)
+            $allReposWithRecycleBin = @(Get-TfsGitRepository -Repository '*' -IncludeRecycleBin -Project $tfsProject)
+            
+            $allReposWithRecycleBin.Count | Should -BeGreaterOrEqual $allRepos.Count
+        }
+
+        It 'Should support wildcards with recycle bin repositories' {
+            { Get-TfsGitRepository -Repository 'Test*' -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+
+        It 'Should work with IncludeParent and IncludeRecycleBin together' {
+            { Get-TfsGitRepository -Repository '*' -IncludeParent -IncludeRecycleBin -Project $tfsProject } | Should -Not -Throw
+        }
+    }
 }
