@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -7,231 +8,165 @@ using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
-    public class ControllerInfo : GeneratorState
+    public record ControllerInfo : GeneratorState
     {
+        public CmdletInfo CmdletInfo { get; private set; }
+        public string CmdletClass {get;}
         public string Noun { get; }
-        public CmdletInfo CmdletInfo { get; }
         public string GenericArg { get; }
-        internal string Verb { get; }
-        public INamedTypeSymbol DataType { get; }
-        public INamedTypeSymbol Client { get; }
-
-        public INamedTypeSymbol BaseClass { get; }
+        public string Verb { get; }
+        public string DataType { get; }
+        public string Client { get; }
+        public string BaseClass { get; }
         public string CmdletName { get; }
-        public INamedTypeSymbol Cmdlet { get; }
-        public string CtorArgs { get; }
-        public string BaseCtorArgs { get; }
-        public string ImportingConstructorBody { get; }
-        public object Usings { get; }
-        public IDictionary<string, GeneratedProperty> DeclaredProperties { get; }
-        public IDictionary<string, GeneratedProperty> ImplicitProperties { get; }
-        public string BaseClassName => BaseClass.Name;
-        public bool SkipGetProperty => CmdletInfo.SkipGetProperty;
+        public string Cmdlet { get; }
+        public string Usings { get; }
+        public EquatableArray<GeneratedProperty> DeclaredProperties { get; }
+        public EquatableArray<GeneratedProperty> ImplicitProperties { get; }
 
-        internal ControllerInfo(INamedTypeSymbol controller, GeneratorExecutionContext context, Logger logger)
-            : base(controller, logger)
+        private bool SkipGetProperty { get; }
+        private string ImportingConstructorBody { get; }
+        private string CtorArgs { get; }
+        private string BaseCtorArgs { get; }
+        private string BaseClassName => BaseClass.Contains('.') ? BaseClass.Split('.').Last() : BaseClass;
+
+        internal ControllerInfo(INamedTypeSymbol controller)
+            : base(controller)
         {
             if (controller == null) throw new ArgumentNullException(nameof(controller));
 
-            var customBaseClass = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "CustomBaseClass");
-            var cmdletName = controller.FullName().Replace(".Controllers.", ".Cmdlets.");
-
+            var cmdletClassName = controller.FullName().Replace(".Controllers.", ".Cmdlets.");
+            cmdletClassName = cmdletClassName.Substring(0, cmdletClassName.Length - "Controller".Length);
             var customCmdletClass = controller.GetAttributeNamedValue<string>("CmdletControllerAttribute", "CustomCmdletName");
+            if (!string.IsNullOrEmpty(customCmdletClass)) cmdletClassName = cmdletClassName.Replace(controller.Name, $"{customCmdletClass}Controller");
+            CmdletClass = cmdletClassName;
+            CmdletName = cmdletClassName.Substring(cmdletClassName.LastIndexOf('.') + 1);
 
-            if (!string.IsNullOrEmpty(customCmdletClass)) cmdletName = cmdletName.Replace(controller.Name, $"{customCmdletClass}Controller");
+            var customBaseClass = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "CustomBaseClass");
+            BaseClass = customBaseClass?.FullName() ?? "TfsCmdlets.Controllers.ControllerBase";
 
-            CmdletName = cmdletName.Substring(0, cmdletName.Length - "Controller".Length);
-            Cmdlet = context.Compilation.GetTypeByMetadataName(CmdletName);
-
-            if (Cmdlet == null) throw new ArgumentException($"Unable to find cmdlet class '{CmdletName}'");
-
-            BaseClass = customBaseClass ?? context.Compilation.GetTypeByMetadataName("TfsCmdlets.Controllers.ControllerBase"); ;
-            DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute");
-            Client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+            DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute").FullName();
+            Client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client").FullName();
             GenericArg = DataType == null ? string.Empty : $"<{DataType}>";
-            Verb = Cmdlet.Name.Substring(0, Cmdlet.Name.FindIndex(char.IsUpper, 1));
-            Noun = Cmdlet.Name.Substring(Verb.Length);
-            CtorArgs = controller.GetImportingConstructorArguments(BaseClass);
-            BaseCtorArgs = BaseClass.GetConstructorArguments();
-            ImportingConstructorBody = GetImportingConstructorBody(controller);
-            Usings = GetUsingStatements(Cmdlet);
-            CmdletInfo = new CmdletInfo(Cmdlet, Logger);
+            Verb = cmdletClassName.Substring(0, cmdletClassName.FindIndex(char.IsUpper, 1));
+            Noun = cmdletClassName.Substring(Verb.Length);
 
-            DeclaredProperties = Cmdlet.GetPropertiesWithAttribute("ParameterAttribute").Select(p => new GeneratedProperty(p, string.Empty)).ToDictionary(p => p.Name);
-            ImplicitProperties = CmdletInfo.GeneratedProperties;
-
-            GenerateProperties();
+            // GenerateProperties();
         }
 
-        private void GenerateProperties()
+        public string GenerateCode(CmdletInfo cmdlet)
         {
-            //Logger.Log($" - GenerateProperties");
-
-            foreach (var (condition, generator, generatorName) in _generators)
-            {
-                if (!condition(this))
-                {
-                    //Logger.Log($"   - {generatorName} [-]");
-                    continue;
-                };
-
-                foreach (var prop in generator(this))
-                {
-                    //Logger.Log($"   - {generatorName} [{prop.Name}]");
-                    GeneratedProperties.Add(prop.Name, prop);
-                }
-            }
+            CmdletInfo = cmdlet;
+            return GenerateCode();
         }
 
-        private static string GetImportingConstructorBody(INamedTypeSymbol type)
+        public override string GenerateCode()
         {
-            var parms = type
-                .GetPropertiesWithAttribute("ImportAttribute")
-                .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};")
-                .ToList();
-            
-            var client = type.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+            return $@"{HEADER}
 
-            if (client != null) parms.Add($"            Client = client;");
-            
-            return string.Join("\n", parms);
-        }
+{GenerateUsings()}
 
-        private string GetUsingStatements(INamedTypeSymbol cmdlet)
-            => cmdlet.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
-        
-        private static IEnumerable<GeneratedProperty> GenerateParameterSetProperty(ControllerInfo controller)
-        {
-            yield return new GeneratedProperty("ParameterSetName", "string", $@"        // ParameterSetName
-        protected bool Has_ParameterSetName {{get;set;}}
-        protected string ParameterSetName {{get;set;}}
-");
-        }
+namespace {Namespace}
+{{
+    //
+    internal partial class {Name}: {BaseClassName}
+    {{
+        // Client property
+        {GenerateClientProperty()}
 
-        private static IEnumerable<GeneratedProperty> GenerateDataType(ControllerInfo controller)
-        {
-            yield return new GeneratedProperty("DataType", controller.DataType.ToString(), true, $@"        // DataType
-        public override Type DataType => typeof({controller.DataType});
+        // Input property
+        {GenerateGetInputProperty()}
 
-");
-        }
+        // Cmdlet explicit (declared) parameters
+        {GenerateDeclaredProperties()}
 
-        private static IEnumerable<GeneratedProperty> GenerateItemsProperty(ControllerInfo controller)
-        {
-            yield return new GeneratedProperty("Items", "object", controller.DataType == null ?
-                $@"
-        // Items
-        protected IEnumerable Items => Data.Invoke(""Get"", ""{controller.Noun}"");
+        // Cmdlet implicit (source-gen'ed) parameters
+        {GenerateImplicitProperties()}
 
-" :
-                $@"
-        // Items
-        protected IEnumerable{controller.GenericArg} Items => {controller.DeclaredProperties.Values.First().Name} switch {{
-            {controller.DataType} item => new[] {{ item }},
-            IEnumerable{controller.GenericArg} items => items,
-            _ => Data.GetItems{controller.GenericArg}()
-        }};
+        // Scope properties
+        {GenerateScopeProperties()}
 
-");
-        }
+        // ParameterSetName
+        {GenerateParameterSetProperty()}
 
-        private static IEnumerable<GeneratedProperty> GenerateGetInputProperty(ControllerInfo controller)
-        {
-            var prop = controller.DeclaredProperties.Values.First();
+        // 'Items' property
+        {GenerateItemsProperty()}
 
-            var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
+        // DataType
+        {GenerateDataTypeProperty()}
 
-            yield return new GeneratedProperty(prop.Name, "IEnumerable", $@"        // {prop.Name}
-        protected bool Has_{prop.Name} => Parameters.HasParameter(nameof({prop.Name}));
-        protected IEnumerable {prop.Name}
+        protected override void CacheParameters()
         {{
-            get
-            {{
-                var paramValue = Parameters.Get<object>(nameof({prop.Name}){initializer});
-                if(paramValue is ICollection col) return col;
-                return new[] {{ paramValue }};
-            }}
+            {GenerateCacheProperties()}
         }}
 
-");
+        [ImportingConstructor]
+        public {Name}({CtorArgs})
+            : base({BaseCtorArgs})
+        {{
+{ImportingConstructorBody}
+        }}
+    }}
+}}
+";
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateDeclaredParameters(ControllerInfo controller)
+        private string GenerateUsings()
         {
-            foreach (var prop in controller.DeclaredProperties.Values.Skip(controller.Verb.Equals("Get") && !controller.SkipGetProperty ? 1 : 0))
-            {
-                var type = prop.Type.EndsWith("SwitchParameter") ? "bool" : prop.Type;
-
-                yield return new GeneratedProperty(prop.Name, prop.Type.ToString(), $@"        // {prop.Name}
-        protected bool Has_{prop.Name} {{ get; set; }}
-        protected {type} {prop.Name} {{ get; set; }}
-
-") { DefaultValue = prop.DefaultValue };
-            }
+            return $@"
+// {CmdletInfo?.Name}
+{CmdletInfo?.Usings}
+";
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateImplicitParameters(ControllerInfo controller)
+        private string GenerateClientProperty()
         {
-            foreach (var prop in controller.CmdletInfo.GeneratedProperties.Values)
-            {
-                var type = prop.Type.ToString().EndsWith("SwitchParameter") ? "bool" : prop.Type.ToString();
-
-                if (_scopeProperties.Any(s => prop.Name.Equals(s))) continue;
-
-                if (prop.IsHidden) continue;
-
-                yield return new GeneratedProperty(prop.Name, type, $@"        // {prop.Name}
-        protected bool Has_{prop.Name} {{get;set;}} // => Parameters.HasParameter(nameof({prop.Name}));
-        protected {type} {prop.Name} {{get;set;}} // => _{prop.Name}; // Parameters.Get<{type}>(nameof({prop.Name}));
-
-");
-            }
+            return Client == null ? string.Empty : $"private {Client} Client {{ get; }}";
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateScopeProperty(CmdletScope scope, string scopeType)
+        private string GenerateGetInputProperty()
         {
-            yield return new GeneratedProperty(scope.ToString(), "object", $@"        // {scope}
-        protected bool Has_{scope} => Parameters.HasParameter(""{scope}"");
-        protected {scopeType} {scope} => Data.Get{scope}();
-
-") { IsScope = true };
+            return string.Empty;
         }
 
-        private static readonly ICollection<string> _scopeProperties = new[] { "Server", "Collection", "Project", "Team" };
+        private string GenerateDeclaredProperties()
+        {
+            return string.Empty;
+        }
 
-        private static readonly List<(Predicate<ControllerInfo>, Func<ControllerInfo, IEnumerable<GeneratedProperty>>, string)> _generators =
-            new List<(Predicate<ControllerInfo>, Func<ControllerInfo, IEnumerable<GeneratedProperty>>, string)>()
-            {
-                // Get "input" property
+        private string GenerateImplicitProperties()
+        {
+            return string.Empty;
+        }
 
-                ((controller) => controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 && !controller.SkipGetProperty, GenerateGetInputProperty, "Get->Input"),
+        private string GenerateScopeProperties()
+        {
+            return string.Empty;
+        }
 
-                // Cmdlet declared parameters
+        private string GenerateParameterSetProperty()
+        {
+            return string.Empty;
+        }
 
-                ((controller) => controller.DeclaredProperties.Count > 0, GenerateDeclaredParameters, "Declared Parameters"),
+        private string GenerateItemsProperty()
+        {
+            return string.Empty;
+        }
 
-                // Cmdlet implicit (source-gen'ed) parameters
+        private string GenerateDataTypeProperty()
+        {
+            return string.Empty;
+        }
 
-                ((controller) => controller.ImplicitProperties.Count > 0, GenerateImplicitParameters, "Implicit Parameters"),
+        private string GenerateCacheProperties()
+        {
+            return string.Empty;
+        }
 
-                // Scope properties
-
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Team, ci => GenerateScopeProperty(CmdletScope.Team, "WebApiTeam"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Project, ci => GenerateScopeProperty(CmdletScope.Project, "WebApiTeamProject"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Collection, ci => GenerateScopeProperty(CmdletScope.Collection, "Models.Connection"), "Scope properties"),
-                ((controller) => (int)controller.CmdletInfo.Scope >= (int)CmdletScope.Server, ci => GenerateScopeProperty(CmdletScope.Server, "Models.Connection"), "Scope properties"), 
-
-                // ParameterSetName
-
-                ((controller) => true, GenerateParameterSetProperty, "ParameterSetName"),
-
-                // 'Items' property
-
-                ((controller) => !controller.Verb.Equals("Get") && controller.DeclaredProperties.Count > 0 &&
-                    controller.DeclaredProperties.Values.First().Type.Equals("object"), GenerateItemsProperty, "Items"),
-
-                // DataType
-                ((controller) => !string.IsNullOrEmpty(controller.GenericArg), GenerateDataType, "DataType"),
-            };
+        internal static ControllerInfo Create(GeneratorAttributeSyntaxContext ctx) => 
+            ctx.TargetSymbol is not INamedTypeSymbol controllerSymbol ? 
+                null : 
+                new ControllerInfo(controllerSymbol);
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace TfsCmdlets.SourceGenerators
 {
-    public class GeneratedProperty
+    public record GeneratedProperty
     {
         public string Name { get; }
         public string Type { get; }

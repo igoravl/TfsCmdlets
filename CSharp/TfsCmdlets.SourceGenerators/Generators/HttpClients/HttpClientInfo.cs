@@ -7,10 +7,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
 {
-    public class HttpClientInfo : GeneratorState
+    public record HttpClientInfo : GeneratorState
     {
-        internal HttpClientInfo(INamedTypeSymbol symbol, GeneratorExecutionContext context, Logger logger)
-            : base(symbol, logger)
+        internal HttpClientInfo(INamedTypeSymbol symbol, GeneratorExecutionContext context)
+            : base(symbol)
         {
             OriginalType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("HttpClientAttribute");
             Methods = OriginalType
@@ -33,6 +33,75 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             {
                 yield return new GeneratedMethod(method);
             }
+        }
+
+        private string GetInterfaceBody()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var method in GenerateMethods())
+            {
+                sb.Append($"\t\t{method}");
+                sb.AppendLine(";");
+            }
+
+            return sb.ToString();
+        }
+
+        private string GetClassBody()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var method in GenerateMethods())
+            {
+                sb.Append($"\t\t{method.ToString($"\t\t\t=> Client.{method.Name}{method.SignatureNamesOnly};")}");
+            }
+
+            return sb.ToString();
+        }
+
+        public override string GenerateCode()
+        {
+            return $$"""
+                    using System.Composition;
+                    
+                    namespace {{Namespace}}
+                    {
+                        public partial interface {{Name}}: IVssHttpClient
+                        {
+                    {{GetInterfaceBody()}}
+                        }
+                        
+                        [Export(typeof({{Name}}))]
+                        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+                        internal class {{Name}}Impl: {{Name}}
+                        {
+                            private {{OriginalType}} _client;
+                            
+                            protected IDataManager Data { get; }
+                            
+                            [ImportingConstructor]
+                            public {{Name}}Impl(IDataManager data)
+                            {
+                                Data = data;
+                            }
+                            
+                            private {{OriginalType}} Client
+                            {
+                                get
+                                {
+                                    if(_client == null)
+                                    {
+                                        _client = (Data.GetCollection() as TfsCmdlets.Services.ITfsServiceProvider)?.GetClient(typeof({{OriginalType}})) as {{OriginalType}};
+                                    }
+                                    return _client;
+                                }
+                            }
+                            
+                    {{GetClassBody()}}
+                        }
+                    }
+                    """;
         }
     }
 }
