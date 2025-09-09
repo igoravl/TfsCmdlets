@@ -7,7 +7,7 @@ using System.Collections.Immutable;
 namespace TfsCmdlets.SourceGenerators.UnitTests
 {
     public static class CSharpSourceGeneratorVerifier<TSourceGenerator>
-        where TSourceGenerator : ISourceGenerator, new()
+        where TSourceGenerator : IIncrementalGenerator, new()
     {
         public class Test : CSharpSourceGeneratorTest<TSourceGenerator, DefaultVerifier>
         {

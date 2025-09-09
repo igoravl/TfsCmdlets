@@ -8,7 +8,7 @@ using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
-    public record ControllerInfo : GeneratorState
+    public record ControllerInfo : ClassInfoBase
     {
         public CmdletInfo CmdletInfo { get; private set; }
         public string CmdletClass {get;}
@@ -21,9 +21,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string CmdletName { get; }
         public string Cmdlet { get; }
         public string Usings { get; }
-        public EquatableArray<GeneratedProperty> DeclaredProperties { get; }
-        public EquatableArray<GeneratedProperty> ImplicitProperties { get; }
-
         private bool SkipGetProperty { get; }
         private string ImportingConstructorBody { get; }
         private string CtorArgs { get; }
@@ -113,10 +110,7 @@ namespace {Namespace}
 
         private string GenerateUsings()
         {
-            return $@"
-// {CmdletInfo?.Name}
-{CmdletInfo?.Usings}
-";
+            return CmdletInfo?.Usings ?? "using System;";
         }
 
         private string GenerateClientProperty()
@@ -126,8 +120,21 @@ namespace {Namespace}
 
         private string GenerateGetInputProperty()
         {
-            return string.Empty;
-        }
+            var prop = CmdletInfo.DeclaredProperties.First();
+            var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
+
+            return $@"        // {prop.Name}
+        protected bool Has_{prop.Name} => Parameters.HasParameter(nameof({prop.Name}));
+        protected IEnumerable {prop.Name}
+        {{
+            get
+            {{
+                var paramValue = Parameters.Get<object>(nameof({prop.Name}){initializer});
+                if(paramValue is ICollection col) return col;
+                return new[] {{ paramValue }};
+            }}
+        }}";
+}
 
         private string GenerateDeclaredProperties()
         {

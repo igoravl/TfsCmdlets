@@ -1,6 +1,6 @@
 namespace TfsCmdlets.HttpClients
 {
-    internal class HttpClientAttribute : Attribute
+    public class HttpClientAttribute : Attribute
     {
         public HttpClientAttribute(Type type)
         {

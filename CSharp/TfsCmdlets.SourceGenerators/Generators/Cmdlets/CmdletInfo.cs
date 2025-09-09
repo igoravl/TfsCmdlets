@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 {
-    public record CmdletInfo : GeneratorState
+    public record CmdletInfo : ClassInfoBase
     {
         public string Noun { get; private set; }
         public string Verb { get; private set; }
@@ -28,6 +28,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public string OutputTypeAttribute { get; private set; }
         public string AdditionalCredentialParameterSets { get; private set; }
         public string Usings { get; private set; } 
+        public EquatableArray<PropertyInfo> DeclaredProperties { get; set; }
 
         public CmdletInfo(INamedTypeSymbol cmdlet)
             : base(cmdlet)
@@ -54,9 +55,22 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             CmdletAttribute = GenerateCmdletAttribute(this);
             OutputTypeAttribute = GenerateOutputTypeAttribute(this);
             Usings = cmdlet.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
-
+            DeclaredProperties = GetDeclaredProperties(cmdlet);
+                
             GenerateProperties();
         }
+
+        private static EquatableArray<PropertyInfo> GetDeclaredProperties(INamedTypeSymbol cmdlet)
+        {
+            var props = cmdlet
+                .GetPropertiesWithAttribute("ParameterAttribute")
+                .Select(p => new PropertyInfo(p, string.Empty)).ToList();
+        
+            return new EquatableArray<PropertyInfo>(props.Count > 0 ?
+                props.ToArray():
+                Array.Empty<PropertyInfo>());
+        }
+
 
         private bool SetSupportsShouldProcess(INamedTypeSymbol cmdlet)
         {
@@ -70,7 +84,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
         private void GenerateProperties()
         {
-            var props = new List<GeneratedProperty>();
+            var props = new List<PropertyInfo>();
             
             foreach (var (condition, generator, _) in _generators)
             {
@@ -78,7 +92,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 props.AddRange(generator(this));
             }
 
-            GeneratedProperties = new EquatableArray<GeneratedProperty>(props.ToArray());
+            GeneratedProperties = new EquatableArray<PropertyInfo>(props.ToArray());
         }
 
         private static string GenerateCmdletAttribute(CmdletInfo cmdlet)
@@ -100,7 +114,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 $"\n    [OutputType(typeof({cmdlet.DataType}))]";
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
+        private static IEnumerable<PropertyInfo> GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
         {
             var scopeName = currentScope.ToString();
             var isGetScopedCmdlet = IsGetScopeCmdlet(settings);
@@ -131,7 +145,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             yield return parm;
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateCredentialProperties(CmdletInfo settings)
+        private static IEnumerable<PropertyInfo> GenerateCredentialProperties(CmdletInfo settings)
         {
             yield return GenerateParameter("Cached", "SwitchParameter", "ParameterSetName = \"Cached credentials\", Mandatory = true", "HELP_PARAM_CACHED_CREDENTIAL");
 
@@ -150,42 +164,42 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             yield return GenerateParameter("Interactive", "SwitchParameter", "ParameterSetName = \"Prompt for credential\"", "HELP_PARAM_INTERACTIVE");
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateCustomControllerProperty(CmdletInfo settings)
+        private static IEnumerable<PropertyInfo> GenerateCustomControllerProperty(CmdletInfo settings)
         {
-            yield return new GeneratedProperty("CommandName", "string", true, $@"
+            yield return new PropertyInfo("CommandName", "string", true, $@"
         protected override string CommandName => ""{settings.CustomControllerName}"";
 ");
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateReturnsValueProperty(CmdletInfo settings)
+        private static IEnumerable<PropertyInfo> GenerateReturnsValueProperty(CmdletInfo settings)
         {
-            yield return new GeneratedProperty("ReturnsValue", "bool", true, $@"
+            yield return new PropertyInfo("ReturnsValue", "bool", true, $@"
         protected override bool ReturnsValue => {settings.ReturnsValue.ToString().ToLower()};
 ");
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateStructureGroupProperty(CmdletInfo settings)
+        private static IEnumerable<PropertyInfo> GenerateStructureGroupProperty(CmdletInfo settings)
         {
-            yield return new GeneratedProperty("StructureGroup", "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup", $@"
+            yield return new PropertyInfo("StructureGroup", "Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup", $@"
         [Parameter]
         internal Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup StructureGroup => 
             Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup.{(settings.Name.EndsWith("Area") ? "Areas" : "Iterations")};
 ");
         }
 
-        private static IEnumerable<GeneratedProperty> GenerateParameterAsList(string name, string type, string parameterAttributeValues, string helpText)
+        private static IEnumerable<PropertyInfo> GenerateParameterAsList(string name, string type, string parameterAttributeValues, string helpText)
             => GenerateParameterAsList(name, type, new List<(string, string)>() { ("Parameter", parameterAttributeValues) }, helpText);
 
-        private static IEnumerable<GeneratedProperty> GenerateParameterAsList(string name, string type, IList<(string, string)> attributes, string helpText)
+        private static IEnumerable<PropertyInfo> GenerateParameterAsList(string name, string type, IList<(string, string)> attributes, string helpText)
         {
             yield return GenerateParameter(name, type, attributes, helpText);
         }
 
-        private static GeneratedProperty GenerateParameter(string name, string type, string parameterAttributeValues, string helpText)
+        private static PropertyInfo GenerateParameter(string name, string type, string parameterAttributeValues, string helpText)
             => GenerateParameter(name, type, new List<(string, string)>() { ("Parameter", parameterAttributeValues) }, helpText);
 
-        private static GeneratedProperty GenerateParameter(string name, string type, IList<(string, string)> attributes, string helpText)
-            => new GeneratedProperty(name, type, $@"
+        private static PropertyInfo GenerateParameter(string name, string type, IList<(string, string)> attributes, string helpText)
+            => new PropertyInfo(name, type, $@"
         /// <summary>
         /// {helpText}
         /// </summary>
@@ -209,8 +223,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential" };
 
 
-        private static readonly List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<GeneratedProperty>>, string)> _generators =
-            new List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<GeneratedProperty>>, string)>()
+        private static readonly List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<PropertyInfo>>, string)> _generators =
+            new List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<PropertyInfo>>, string)>()
             {
                 // Basic properties
 
