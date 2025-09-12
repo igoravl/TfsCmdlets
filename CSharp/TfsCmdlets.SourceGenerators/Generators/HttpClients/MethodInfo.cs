@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,6 +7,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
 {
     public record MethodInfo
     {
+        public MethodInfo(IMethodSymbol methodInfo)
+        {
+            Name = methodInfo.Name;
+            ReturnType = methodInfo.ReturnType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        }
+
         public string Name { get; private set; }
         public string ReturnType { get; private set; }
         //public List<ParameterInfo> Parameters { get; private set; } = new();

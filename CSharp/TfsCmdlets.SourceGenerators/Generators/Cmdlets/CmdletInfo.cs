@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 {
-    public record CmdletInfo : ClassInfoBase
+    public record CmdletInfo : ClassInfo
     {
         public string Noun { get; private set; }
         public string Verb { get; private set; }
@@ -92,7 +92,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 props.AddRange(generator(this));
             }
 
-            GeneratedProperties = new EquatableArray<PropertyInfo>(props.ToArray());
+            //GeneratedProperties = new EquatableArray<PropertyInfo>(props.ToArray());
         }
 
         private static string GenerateCmdletAttribute(CmdletInfo cmdlet)
@@ -267,7 +267,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public override string GenerateCode()
         {
             var props = new StringBuilder();
-            foreach (var prop in GeneratedProperties) props.Append(prop);
+            //foreach (var prop in GeneratedProperties) props.Append(prop);
 
             return $@"
 namespace {Namespace}

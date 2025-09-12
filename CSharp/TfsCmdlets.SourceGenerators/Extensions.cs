@@ -38,7 +38,7 @@ namespace TfsCmdlets.SourceGenerators
         }
 
         public static string GetUsingStatements(this INamedTypeSymbol symbol)
-            => symbol.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
+            => symbol.GetDeclaringSyntax<TypeDeclarationSyntax>()?.FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
 
         // public static bool GetAttributeNamedValue(INamedTypeSymbol symbol, string attributeName, string argumentName, bool defaultValue = false)
         // {

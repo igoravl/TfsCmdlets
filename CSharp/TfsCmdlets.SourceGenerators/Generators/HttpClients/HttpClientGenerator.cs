@@ -10,9 +10,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
+            context.RegisterPostInitializationOutput(c => 
+                c.AddSource("HttpClientAttribute.cs", HttpClientAttribute.CODE));
+
             var clientsToGenerate = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
-                    "TfsCmdlets.HttpClients.HttpClientAttribute",
+                    "TfsCmdlets.HttpClientAttribute",
                     predicate: (_, _) => true,
                     transform: static (ctx, _) => HttpClientInfo.Create(ctx))
                 .Where(static m => m is not null)

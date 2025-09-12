@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Models
 {
-    public record ModelInfo: ClassInfoBase
+    public record ModelInfo: ClassInfo
     {
         public ModelInfo(INamedTypeSymbol namedTypeSymbol) : base(namedTypeSymbol) { }
 

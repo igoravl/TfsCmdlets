@@ -8,7 +8,7 @@ using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
-    public record ControllerInfo : ClassInfoBase
+    public record ControllerInfo : ClassInfo
     {
         public CmdletInfo CmdletInfo { get; private set; }
         public string CmdletClass {get;}
