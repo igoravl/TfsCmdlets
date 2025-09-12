@@ -215,6 +215,11 @@ TfsCmdlets.PSDesktop.xml
 
 CSharp/.idea/**
 
+# Verify files
+
+*.received.*
+*.received/
+
 # Miscellaneous files
 
 CSharp/*/Generated/**
