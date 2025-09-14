@@ -68,7 +68,7 @@ namespace {Namespace}
     //
     internal partial class {Name}: {BaseClassName}
     {{
-        // Client property
+        // Client property!
         {GenerateClientProperty()}
 
         // Input property
@@ -120,7 +120,7 @@ namespace {Namespace}
 
         private string GenerateGetInputProperty()
         {
-            var prop = CmdletInfo.DeclaredProperties.First();
+            var prop = CmdletInfo.ParameterProperties.First();
             var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
 
             return $@"        // {prop.Name}

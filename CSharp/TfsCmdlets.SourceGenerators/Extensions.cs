@@ -11,11 +11,18 @@ namespace TfsCmdlets.SourceGenerators
 {
     internal static class Extensions
     {
+        public static AttributeData GetAttribute(this ISymbol symbol, string attributeName)
+        {
+            return symbol
+                .GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.Name == attributeName);
+        }
+
         public static T GetAttributeConstructorValue<T>(this INamedTypeSymbol symbol, string attributeName, int argumentPosition = 0)
         {
             var attr = symbol
                 .GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
+                .FirstOrDefault(a => a.AttributeClass?.Name == attributeName);
 
             if (attr == null || attr.ConstructorArguments == null || attr.ConstructorArguments.Length <= argumentPosition) return default;
 
@@ -28,8 +35,26 @@ namespace TfsCmdlets.SourceGenerators
         {
             var attr = symbol
                 .GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
+                .FirstOrDefault(a => a.AttributeClass?.Name == attributeName);
 
+            if (attr == null) return default;
+
+            var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
+
+            return (T)(arg.Value.Value ?? default(T));
+        }
+
+        public static T GetAttributeConstructorValue<T>(this AttributeData attr, int argumentPosition = 0)
+        {
+            if (attr == null || attr.ConstructorArguments == null || attr.ConstructorArguments.Length <= argumentPosition) return default;
+
+            var arg = attr.ConstructorArguments[argumentPosition];
+
+            return (T)arg.Value;
+        }
+
+        public static T GetAttributeNamedValue<T>(this AttributeData attr, string argumentName)
+        {
             if (attr == null) return default;
 
             var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
@@ -39,19 +64,6 @@ namespace TfsCmdlets.SourceGenerators
 
         public static string GetUsingStatements(this INamedTypeSymbol symbol)
             => symbol.GetDeclaringSyntax<TypeDeclarationSyntax>()?.FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
-
-        // public static bool GetAttributeNamedValue(INamedTypeSymbol symbol, string attributeName, string argumentName, bool defaultValue = false)
-        // {
-        //     var attr = symbol
-        //         .GetAttributes()
-        //         .FirstOrDefault(a => a.AttributeClass.Name.Equals(attributeName));
-
-        //     if (attr == null) return defaultValue;
-
-        //     var arg = attr.NamedArguments.FirstOrDefault(a => a.Key.Equals(argumentName));
-
-        //     return (arg.Value.Value?.ToString() ?? string.Empty).Equals("True", StringComparison.OrdinalIgnoreCase);
-        // }
 
         public static bool HasAttributeNamedValue(this INamedTypeSymbol symbol, string attributeName, string argumentName)
             => symbol.GetAttributes()

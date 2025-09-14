@@ -12,18 +12,23 @@ namespace TfsCmdlets.SourceGenerators
 
         public string DefaultValue { get; set; }
 
-        public bool IsHidden { get; }
+        public bool IsHidden { get; set;  }
 
         public bool IsScope { get; set; }
 
         public string GeneratedCode { get; set; }
 
+        public PropertyInfo(IPropertySymbol prop)
+            : this(prop, string.Empty)
+        {
+        }
+
         public PropertyInfo(IPropertySymbol prop, string generatedCode)
             : this(prop.Name, prop.Type.ToString(), generatedCode)
         {
             var node = (PropertyDeclarationSyntax) prop.DeclaringSyntaxReferences.First().GetSyntax();
+
             var initializer = node.Initializer;
-            
             DefaultValue = initializer?.Value.ToString();
         }
 

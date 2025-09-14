@@ -9,7 +9,7 @@ namespace TfsCmdlets.SourceGenerators
     public record ClassInfo
     {
         public ClassInfo(INamedTypeSymbol targetType, 
-            bool includeProperties = false, 
+            bool includeProperties = true, 
             bool includeMethods = false, 
             bool includeUsings = true,
             bool recurseMethods = false,
@@ -55,7 +55,14 @@ namespace TfsCmdlets.SourceGenerators
 
         protected IEnumerable<PropertyInfo> GetProperties(INamedTypeSymbol targetType)
         {
-            throw new NotImplementedException();
+            var props = targetType
+                .GetMembers()
+                .Where(m =>
+                    m.Kind == SymbolKind.Property &&
+                    m.DeclaredAccessibility == Accessibility.Public)
+                .Cast<IPropertySymbol>();
+
+            return props.Select(p => new PropertyInfo(p));
         }
 
         public string Name { get; }

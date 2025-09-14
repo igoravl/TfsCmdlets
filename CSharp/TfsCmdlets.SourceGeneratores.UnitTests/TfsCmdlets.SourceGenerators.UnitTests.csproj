@@ -48,7 +48,6 @@
 		<Folder Include="_Verify\HttpClientGenerator\" />
 		<None Include="_Verify\**" />
 		<Folder Include="Cmdlets\" />
-		<Folder Include="Controllers\" />
 	</ItemGroup>
 
 </Project>

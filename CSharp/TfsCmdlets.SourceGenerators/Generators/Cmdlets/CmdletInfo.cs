@@ -1,34 +1,34 @@
-﻿using System;
-using System.Text;
+﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Management.Automation;
+using System.Text;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 {
     public record CmdletInfo : ClassInfo
     {
-        public string Noun { get; private set; }
-        public string Verb { get; private set; }
-        public CmdletScope Scope { get; private set; }
-        public bool SkipAutoProperties { get; private set; }
-        public bool DesktopOnly { get; private set; }
-        public bool HostedOnly { get; private set; }
-        public int RequiresVersion { get; private set; }
-        public bool NoAutoPipeline { get; private set; }
-        public string DefaultParameterSetName { get; private set; }
-        public string CustomControllerName { get; private set; }
-        public string DataType { get; private set; }
-        public string OutputType { get; private set; }
-        public bool SupportsShouldProcess { get; private set; }
-        public bool ReturnsValue { get; private set; }
-        public bool SkipGetProperty { get; private set; }
-        public string CmdletAttribute { get; private set; }
-        public string OutputTypeAttribute { get; private set; }
-        public string AdditionalCredentialParameterSets { get; private set; }
-        public string Usings { get; private set; } 
-        public EquatableArray<PropertyInfo> DeclaredProperties { get; set; }
+        public string Noun { get; init; }
+        public string Verb { get; init; }
+        public CmdletScope Scope { get; init; }
+        public bool SkipAutoProperties { get; init; }
+        public bool DesktopOnly { get; init; }
+        public bool HostedOnly { get; init; }
+        public int RequiresVersion { get; init; }
+        public bool NoAutoPipeline { get; init; }
+        public string DefaultParameterSetName { get; init; }
+        public string CustomControllerName { get; init; }
+        public string DataType { get; init; }
+        public string OutputType { get; init; }
+        public bool SupportsShouldProcess { get; init; }
+        public bool ReturnsValue { get; init; }
+        public bool SkipGetProperty { get; init; }
+        public string AdditionalCredentialParameterSets { get; init; }
+        public bool WindowsOnly { get; init; }
+        public string Usings { get; init; } 
+        public EquatableArray<ParameterInfo> ParameterProperties { get; set; }
 
         public CmdletInfo(INamedTypeSymbol cmdlet)
             : base(cmdlet)
@@ -37,49 +37,82 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
             Verb = cmdlet.Name.Substring(0, cmdlet.Name.FindIndex(char.IsUpper, 1));
             Noun = cmdlet.Name.Substring(Verb.Length);
-            Scope = cmdlet.GetAttributeConstructorValue<CmdletScope>("TfsCmdletAttribute");
-            SkipAutoProperties = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipAutoProperties");
-            DesktopOnly = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "DesktopOnly");
-            HostedOnly = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "HostedOnly");
-            RequiresVersion = cmdlet.GetAttributeNamedValue<int>("TfsCmdletAttribute", "RequiresVersion");
-            NoAutoPipeline = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "NoAutoPipeline");
-            DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("CmdletAttribute", "DefaultParameterSetName");
-            OutputType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "OutputType")?.FullName();
-            DataType = cmdlet.GetAttributeNamedValue<INamedTypeSymbol>("TfsCmdletAttribute", "DataType")?.FullName() ?? OutputType;
-            DefaultParameterSetName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "DefaultParameterSetName");
-            CustomControllerName = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "CustomControllerName");
-            ReturnsValue = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "ReturnsValue");
-            SkipGetProperty = cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SkipGetProperty");
-            AdditionalCredentialParameterSets = cmdlet.GetAttributeNamedValue<string>("TfsCmdletAttribute", "AdditionalCredentialParameterSets");
-            SupportsShouldProcess = SetSupportsShouldProcess(cmdlet);
-            CmdletAttribute = GenerateCmdletAttribute(this);
-            OutputTypeAttribute = GenerateOutputTypeAttribute(this);
+
+            var attr = cmdlet.GetAttribute("TfsCmdletAttribute");
+            if (attr == null) throw new ArgumentException($"Class {cmdlet.Name} is not a TfsCmdlet");
+
+            Scope = attr.GetAttributeConstructorValue<CmdletScope>();
+            SkipAutoProperties = attr.GetAttributeNamedValue<bool>("SkipAutoProperties");
+            DesktopOnly = attr.GetAttributeNamedValue<bool>("DesktopOnly");
+            WindowsOnly = attr.GetAttributeNamedValue<bool>("WindowsOnly");
+            HostedOnly = attr.GetAttributeNamedValue<bool>("HostedOnly");
+            RequiresVersion = attr.GetAttributeNamedValue<int>("RequiresVersion");
+            NoAutoPipeline = attr.GetAttributeNamedValue<bool>("NoAutoPipeline");
+            DefaultParameterSetName = attr.GetAttributeNamedValue<string>("DefaultParameterSetName");
+            OutputType = attr.GetAttributeNamedValue<INamedTypeSymbol>("OutputType")?.FullName();
+            DataType = attr.GetAttributeNamedValue<INamedTypeSymbol>("DataType")?.FullName() ?? OutputType;
+            DefaultParameterSetName = attr.GetAttributeNamedValue<string>("DefaultParameterSetName");
+            CustomControllerName = attr.GetAttributeNamedValue<string>("CustomControllerName");
+            ReturnsValue = attr.GetAttributeNamedValue<bool>("ReturnsValue");
+            SkipGetProperty = attr.GetAttributeNamedValue<bool>("SkipGetProperty");
+            AdditionalCredentialParameterSets = attr.GetAttributeNamedValue<string>("AdditionalCredentialParameterSets");
+            SupportsShouldProcess = GetSupportsShouldProcess(cmdlet);
             Usings = cmdlet.GetDeclaringSyntax<TypeDeclarationSyntax>().FindParentOfType<CompilationUnitSyntax>()?.Usings.ToString();
-            DeclaredProperties = GetDeclaredProperties(cmdlet);
-                
-            GenerateProperties();
+
+            ParameterProperties = GetParameterProperties(cmdlet);
         }
 
-        private static EquatableArray<PropertyInfo> GetDeclaredProperties(INamedTypeSymbol cmdlet)
+        public string CmdletAttribute
+        {
+            get
+            {
+                var sb = new StringBuilder($"[Cmdlet(\"{Verb}\", \"Tfs{Noun}\"");
+
+                if (SupportsShouldProcess)
+                {
+                    sb.Append(", SupportsShouldProcess=true");
+                }
+
+                if (!string.IsNullOrEmpty(DefaultParameterSetName))
+                {
+                    sb.Append($", DefaultParameterSetName=\"{DefaultParameterSetName}\"");
+                }
+
+                sb.Append(")]");
+
+                return sb.ToString();
+            }
+        }
+
+        public string OutputTypeAttribute
+        {
+            get
+            {
+                if (OutputType == null && DataType == null) return string.Empty;
+
+                return OutputType != null
+                    ? $"\n    [OutputType(typeof({OutputType}))]"
+                    : $"\n    [OutputType(typeof({DataType}))]";
+            }
+        }
+
+        private static EquatableArray<ParameterInfo> GetParameterProperties(INamedTypeSymbol cmdlet)
         {
             var props = cmdlet
                 .GetPropertiesWithAttribute("ParameterAttribute")
-                .Select(p => new PropertyInfo(p, string.Empty)).ToList();
+                .Select(p => new ParameterInfo(p)).ToList();
         
-            return new EquatableArray<PropertyInfo>(props.Count > 0 ?
+            return new EquatableArray<ParameterInfo>(props.Count > 0 ?
                 props.ToArray():
-                Array.Empty<PropertyInfo>());
+                Array.Empty<ParameterInfo>());
         }
 
 
-        private bool SetSupportsShouldProcess(INamedTypeSymbol cmdlet)
+        private bool GetSupportsShouldProcess(INamedTypeSymbol cmdlet)
         {
-            if(cmdlet.HasAttributeNamedValue("TfsCmdletAttribute", "SupportsShouldProcess"))
-            {
-                return cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess");
-            }
-
-            return (Verb != "Get") && (Verb != "Test") && (Verb != "Search") && (Verb != "Connect") && (Verb != "Disconnect");
+            return cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess")
+                ? cmdlet.HasAttributeNamedValue("TfsCmdletAttribute", "SupportsShouldProcess")
+                : (Verb != "Get") && (Verb != "Test") && (Verb != "Search") && (Verb != "Connect") && (Verb != "Disconnect");
         }
 
         private void GenerateProperties()
@@ -93,25 +126,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             }
 
             //GeneratedProperties = new EquatableArray<PropertyInfo>(props.ToArray());
-        }
-
-        private static string GenerateCmdletAttribute(CmdletInfo cmdlet)
-        {
-            var props = new List<string>();
-
-            if (cmdlet.SupportsShouldProcess) props.Add($"SupportsShouldProcess = true");
-            if (!string.IsNullOrEmpty(cmdlet.DefaultParameterSetName)) props.Add($"DefaultParameterSetName = \"{cmdlet.DefaultParameterSetName}\"");
-
-            return $"[Cmdlet(\"{cmdlet.Verb}\", \"Tfs{cmdlet.Noun}\"{(props.Any() ? $", {string.Join(", ", props)}" : string.Empty)})]";
-        }
-
-        private static string GenerateOutputTypeAttribute(CmdletInfo cmdlet)
-        {
-            if (cmdlet.OutputType == null && cmdlet.DataType == null) return string.Empty;
-
-            return cmdlet.OutputType != null ?
-                $"\n    [OutputType(typeof({cmdlet.OutputType}))]" :
-                $"\n    [OutputType(typeof({cmdlet.DataType}))]";
         }
 
         private static IEnumerable<PropertyInfo> GenerateScopeProperty(CmdletScope currentScope, CmdletInfo settings)
@@ -267,17 +281,19 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public override string GenerateCode()
         {
             var props = new StringBuilder();
-            //foreach (var prop in GeneratedProperties) props.Append(prop);
+            foreach (var prop in ParameterProperties) props.Append(prop);
 
-            return $@"
-namespace {Namespace}
-{{
-    {CmdletAttribute}{OutputTypeAttribute}
-    public partial class {Name}: CmdletBase
-    {{{props}
-    }}
-}}
-";
+            return $$"""
+                     {{Usings}}
+
+                     namespace {{Namespace}}
+                     {
+                         {{CmdletAttribute}}{{OutputTypeAttribute}}
+                         public partial class {{Name}}: CmdletBase
+                         {{{props}}
+                         }
+                     }
+                     """;
         }
 
         internal static CmdletInfo Create(GeneratorAttributeSyntaxContext ctx)
