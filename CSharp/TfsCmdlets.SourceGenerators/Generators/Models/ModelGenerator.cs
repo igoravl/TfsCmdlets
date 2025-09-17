@@ -21,10 +21,30 @@ namespace TfsCmdlets.SourceGenerators.Generators.Models
             context.RegisterSourceOutput(cmdletsToGenerate,
                 static (spc, source) =>
                 {
-                    var result = source.GenerateCode();
+                    var result = GenerateCode(source);
                     var filename = source.FileName;
                     spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                 });
         }
+
+        private static string GenerateCode(ModelInfo model)
+        {
+            return $$"""
+                     namespace {{model.Namespace}}
+                     {
+                     /*
+                     InnerType: {{model.DataType.GetType()}}
+                     */
+                         public partial class {{model.Name}}: ModelBase<{{model.DataType}}>
+                         {
+                             public {{model.Name}}({{model.DataType}} obj): base(obj) { }
+                             public static implicit operator {{model.ModelType}}({{model.DataType}} obj) => new {{model.ModelType}}(obj);
+                             public static implicit operator {{model.DataType}}({{model.ModelType}} obj) => obj.InnerObject;
+                         }
+                     }
+
+                     """;
+        }
+
     }
 }

@@ -29,6 +29,8 @@ namespace TfsCmdlets.SourceGenerators
             _array = array;
         }
 
+        public T this[int index] => _array![index];
+
         /// <sinheritdoc/>
         public bool Equals(EquatableArray<T> array)
         {

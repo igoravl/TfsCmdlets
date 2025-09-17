@@ -10,9 +10,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            context.RegisterPostInitializationOutput(c => 
-                c.AddSource("HttpClientAttribute.cs", HttpClientAttribute.CODE));
-
             var clientsToGenerate = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     "TfsCmdlets.HttpClientAttribute",
@@ -24,10 +21,56 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             context.RegisterSourceOutput(clientsToGenerate,
                 static (spc, source) =>
                 {
-                    var result = source.GenerateCode();
+                    var result = GenerateCode(source);
                     var filename = source.FileName;
                     spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                 });
         }
+
+        private static string GenerateCode(HttpClientInfo model)
+        {
+            return $$"""
+                     using System.Composition;
+                     {{model.UsingsStatements}}
+
+                     namespace {{model.Namespace}}
+                     {
+                         public partial interface {{model.Name}}: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+                         {
+                     {{model.GetInterfaceBody()}}
+                         }
+                         
+                         [Export(typeof({{model.Name}}))]
+                         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+                         internal class {{model.Name}}Impl: {{model.Name}}
+                         {
+                             private {{model.OriginalType}} _client;
+                             
+                             protected IDataManager Data { get; }
+                             
+                             [ImportingConstructor]
+                             public {{model.Name}}Impl(IDataManager data)
+                             {
+                                 Data = data;
+                             }
+                             
+                             private {{model.OriginalType}} Client
+                             {
+                                 get
+                                 {
+                                     if(_client == null)
+                                     {
+                                         _client = (Data.GetCollection() as TfsCmdlets.Services.ITfsServiceProvider)?.GetClient(typeof({{model.OriginalType}})) as {{model.OriginalType}};
+                                     }
+                                     return _client;
+                                 }
+                             }
+                             
+                     {{model.GetClassBody()}}
+                         }
+                     }
+                     """;
+        }
+
     }
 }

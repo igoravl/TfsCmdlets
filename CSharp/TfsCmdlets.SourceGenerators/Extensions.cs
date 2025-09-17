@@ -67,8 +67,11 @@ namespace TfsCmdlets.SourceGenerators
 
         public static bool HasAttributeNamedValue(this INamedTypeSymbol symbol, string attributeName, string argumentName)
             => symbol.GetAttributes()
-            .First(a => a.AttributeClass.Name.Equals(attributeName))?
-            .NamedArguments.Any(a => a.Key.Equals(argumentName)) ?? false;
+                .First(a => a.AttributeClass.Name.Equals(attributeName))?
+                .NamedArguments.Any(a => a.Key.Equals(argumentName)) ?? false;
+
+        public static bool HasAttributeNamedValue(this AttributeData attr, string argumentName)
+            => attr.NamedArguments.Any(a => a.Key.Equals(argumentName));
 
         public static bool HasAttribute(this ISymbol symbol, string attributeName)
             => symbol.GetAttributes().Any(a => a.AttributeClass.Name.Equals(attributeName));
@@ -148,6 +151,26 @@ namespace TfsCmdlets.SourceGenerators
                 return symbol.Name + suffix;
         }
 
+        public static string FullName(this ClassDeclarationSyntax cds)
+        {
+            if (cds == null)
+                return null;
+
+            var prefix = FullNamespace(cds);
+            var suffix = "";
+            var name = cds.Identifier.ValueText;
+
+            if (cds.Arity > 0)
+            {
+                suffix = "<" + string.Join(", ", cds.TypeParameterList.Parameters.Select(targ => targ)) + ">";
+            }
+
+            if (prefix != "")
+                return prefix + "." + cds.Identifier.ValueText + suffix;
+            else
+                return cds.Identifier.ValueText + suffix;
+        }
+
         public static string FullNamespace(this ISymbol symbol)
         {
             var parts = new Stack<string>();
@@ -157,6 +180,19 @@ namespace TfsCmdlets.SourceGenerators
                 if (!string.IsNullOrEmpty(iterator.Name))
                     parts.Push(iterator.Name);
                 iterator = iterator.ContainingNamespace;
+            }
+            return string.Join(".", parts);
+        }
+
+        public static string FullNamespace(this SyntaxNode node)
+        {
+            var parts = new Stack<string>();
+            var iterator = (node as NamespaceDeclarationSyntax) ?? ((node as ClassDeclarationSyntax)?.Parent as NamespaceDeclarationSyntax);
+            
+            while (iterator != null)
+            {
+                parts.Push(iterator.Name.ToFullString()); ;
+                iterator = iterator.Parent as NamespaceDeclarationSyntax;
             }
             return string.Join(".", parts);
         }

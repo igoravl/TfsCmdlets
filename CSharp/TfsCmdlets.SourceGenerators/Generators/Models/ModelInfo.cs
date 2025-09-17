@@ -22,22 +22,5 @@ namespace TfsCmdlets.SourceGenerators.Generators.Models
                 DataType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("ModelAttribute").FullName()
             };
         }
-
-        public override string GenerateCode()
-        {
-            return $@"namespace {Namespace}
-{{
-/*
-InnerType: {DataType.GetType()}
-*/
-    public partial class {Name}: ModelBase<{DataType}>
-    {{
-        public {Name}({DataType} obj): base(obj) {{ }}
-        public static implicit operator {ModelType}({DataType} obj) => new {ModelType}(obj);
-        public static implicit operator {DataType}({ModelType} obj) => obj.InnerObject;
-    }}
-}}
-";
-        }
     }
 }

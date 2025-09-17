@@ -24,7 +24,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
                 new HttpClientInfo(namedTypeSymbol);
         }
 
-        private string GetInterfaceBody()
+        public string GetInterfaceBody()
         {
             var sb = new StringBuilder();
 
@@ -37,7 +37,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             return sb.ToString();
         }
 
-        private string GetClassBody()
+        public string GetClassBody()
         {
             var sb = new StringBuilder();
 
@@ -47,52 +47,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             }
 
             return sb.ToString();
-        }
-
-
-        public override string GenerateCode()
-        {
-            return $$"""
-                     using System.Composition;
-                     {{UsingsStatements}}
-
-                     namespace {{Namespace}}
-                     {
-                         public partial interface {{Name}}: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
-                         {
-                     {{GetInterfaceBody()}}
-                         }
-                         
-                         [Export(typeof({{Name}}))]
-                         [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-                         internal class {{Name}}Impl: {{Name}}
-                         {
-                             private {{OriginalType}} _client;
-                             
-                             protected IDataManager Data { get; }
-                             
-                             [ImportingConstructor]
-                             public {{Name}}Impl(IDataManager data)
-                             {
-                                 Data = data;
-                             }
-                             
-                             private {{OriginalType}} Client
-                             {
-                                 get
-                                 {
-                                     if(_client == null)
-                                     {
-                                         _client = (Data.GetCollection() as TfsCmdlets.Services.ITfsServiceProvider)?.GetClient(typeof({{OriginalType}})) as {{OriginalType}};
-                                     }
-                                     return _client;
-                                 }
-                             }
-                             
-                     {{GetClassBody()}}
-                         }
-                     }
-                     """;
         }
     }
 } 

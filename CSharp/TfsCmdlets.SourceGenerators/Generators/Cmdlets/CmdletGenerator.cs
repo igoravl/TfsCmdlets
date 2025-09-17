@@ -11,7 +11,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         {
             var cmdletsToGenerate = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
-                    "TfsCmdlets.Cmdlets.TfsCmdletAttribute",
+                    "TfsCmdlets.TfsCmdletAttribute",
                     predicate: (_, _) => true,
                     transform: static (ctx, _) => CmdletInfo.Create(ctx))
                 .Where(static m => m is not null)
@@ -20,10 +20,23 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             context.RegisterSourceOutput(cmdletsToGenerate,
                 static (spc, source) =>
                 {
-                    var result = source.GenerateCode();
+                    var result = GenerateCode(source);
                     var filename = source.FileName;
                     spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                 });
         }
+
+        private static string GenerateCode(CmdletInfo model) =>
+            $$"""
+
+              namespace {{model.Namespace}}
+              {
+                  {{model.CmdletAttribute}}{{model.OutputTypeAttribute}}
+                  public partial class {{model.Name}}: CmdletBase
+                  {{{model.GenerateProperties()}}
+                  }
+              }
+
+              """;
     }
 }

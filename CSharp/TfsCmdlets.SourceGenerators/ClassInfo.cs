@@ -19,7 +19,8 @@ namespace TfsCmdlets.SourceGenerators
 
             Name = targetType.Name;
             Namespace = targetType.FullNamespace();
-            FullName = FileName = targetType.FullName();
+            FullName = targetType.FullName();
+            FileName = $"{FullName}.g.cs";
 
             Methods = new EquatableArray<MethodInfo>(includeMethods
                 ? GetMethods(targetType, recurseMethods, recurseMethodsStopAt).ToArray()
@@ -78,8 +79,6 @@ namespace TfsCmdlets.SourceGenerators
         public EquatableArray<PropertyInfo> Properties { get; }
         
         public string UsingsStatements { get; }
-
-        public virtual string GenerateCode() => string.Empty;
 
         public override string ToString() => FullName;
 
