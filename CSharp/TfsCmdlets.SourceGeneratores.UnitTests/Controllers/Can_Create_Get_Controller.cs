@@ -3,7 +3,7 @@
 public partial class ControllerGeneratorTests
 {
     [Fact]
-    public async Task Can_Create_Controller()
+    public async Task Can_Create_Get_Controller()
     {
         var source = """
                    using System.Management.Automation;
@@ -35,9 +35,16 @@ public partial class ControllerGeneratorTests
                             }
                        }
                     }
+                    
+                   namespace TfsCmdlets.Controllers
+                   {
+                       public abstract class ControllerBase
+                       {
+                       }
+                   }
                    """;
 
-        await TestHelper.Verify<Generators.Controllers.ControllerGenerator>(nameof(Can_Create_Controller), source);
+        await TestHelper.Verify<Generators.Controllers.ControllerGenerator>(nameof(Can_Create_Get_Controller), source);
     }
 
 }
