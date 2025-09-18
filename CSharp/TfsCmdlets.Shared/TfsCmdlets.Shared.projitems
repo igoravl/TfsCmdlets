@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>1ef8b954-3db2-4d8c-a95b-fe5ea047b40f</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>TfsCmdlets.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CmdletControllerAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\CmdletBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controllers\ControllerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\HashtableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ListExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ObjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PipelineExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PSObjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TaskExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TeamProjectExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WorkItemExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\XmlExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GlobalUsings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClientAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IAccountLicensingHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IBuildHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IExtensionManagementHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IFeedHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IGenericHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IGitExtendedHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IGitHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IGraphHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IIdentityHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\Impl\GenericHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\Impl\GitExtendedHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\Impl\TeamAdminHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IOperationsHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IPolicyHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IProcessHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IProjectHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IReleaseHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IReleaseHttpClient2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ISearchHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IServiceHooksPublisherHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITaggingHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITeamAdminHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITeamHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITestPlanHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IVssHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWikiHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWorkHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWorkItemTrackingHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWorkItemTrackingProcessHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ModelAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\BacklogLevelConfiguration.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Board.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CardRule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ClassificationNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Connection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ContributionNodeQuery.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GitItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\GlobalList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Identity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\IdentityRefWrapper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ModelBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Parameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\QueryItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ServerVersion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\Team.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TeamAdmin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TeamMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TeamProjectMember.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\TfsInstallationPath.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\WorkItemHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IAsyncOperationAwaiter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ICurrentConnections.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IDataManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IInteractiveAuthentication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IKnownWorkItemLinkTypes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ILegacyWorkItemService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\INodeUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IPaginator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IParameterManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IPowerShellService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IProcessUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IRegistryService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IRestApiService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IRuntimeUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ITfsServiceProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ITfsVersionTable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IWorkItemPatchBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\ServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TfsCmdletAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\ErrorUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\LazyProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\Mru.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\PSJsonConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorkItemFieldAttribute.cs" />
+  </ItemGroup>
+</Project>

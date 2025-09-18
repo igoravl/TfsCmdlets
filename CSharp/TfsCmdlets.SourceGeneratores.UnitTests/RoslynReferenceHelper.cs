@@ -12,7 +12,8 @@ namespace TfsCmdlets.SourceGenerators.UnitTests
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var loaded = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
-                .Select(a => a.Location);
+                .Select(a => a.Location)
+                .ToList();
 
             foreach (var loc in loaded)
                 set.Add(loc);

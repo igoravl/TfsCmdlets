@@ -18,17 +18,16 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 .Select((m, _) => m!);
 
             context.RegisterSourceOutput(cmdletsToGenerate,
-                static (spc, source) =>
+                static (spc, cmdlet) =>
                 {
-                    var result = GenerateCode(source);
-                    var filename = source.FileName;
+                    var result = GenerateCode(cmdlet);
+                    var filename = cmdlet.FileName;
                     spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                 });
         }
 
         private static string GenerateCode(CmdletInfo model) =>
             $$"""
-
               namespace {{model.Namespace}}
               {
                   {{model.CmdletAttribute}}{{model.OutputTypeAttribute}}

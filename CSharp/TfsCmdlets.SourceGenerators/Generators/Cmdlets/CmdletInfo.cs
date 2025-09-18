@@ -229,7 +229,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         private static EquatableArray<ParameterInfo> GetParameterProperties(INamedTypeSymbol cmdlet)
         {
             var props = cmdlet
-                .GetPropertiesWithAttribute("Parameter") // TODO
+                .GetPropertiesWithAttribute("ParameterAttribute") // TODO
                 .Select(p => new ParameterInfo(p)).ToList();
 
             return new EquatableArray<ParameterInfo>(props.Count > 0 ?

@@ -13,7 +13,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         public ParameterInfo(IPropertySymbol prop)
             : base(prop)
         {
-            var attr = prop.GetAttribute("Parameter"); // TODO
+            var attr = prop.GetAttribute("ParameterAttribute"); // TODO
             if (attr == null) throw new ArgumentException($"Property {prop.Name} is not a Cmdlet parameter");
 
             DontShow = attr.GetAttributeNamedValue<bool>("DontShow");

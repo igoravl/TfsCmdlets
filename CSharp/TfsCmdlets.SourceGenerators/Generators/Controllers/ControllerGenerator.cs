@@ -21,14 +21,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 .Select((m, _) => m!)
                 .Collect();
 
-            var controllerBaseClass = context.SyntaxProvider
-                .CreateSyntaxProvider(
-                    predicate: (n, _) => n is ClassDeclarationSyntax { Identifier.ValueText: "ControllerBase" },
-                    transform: (ctx, _) => ctx.Node)
-                .Where(n => n is not null)
-                .Select((n, _) => n!)
-                .Collect();
-
             var controllersToGenerate = context.SyntaxProvider
                 .ForAttributeWithMetadataName(
                     "TfsCmdlets.CmdletControllerAttribute",
@@ -36,16 +28,13 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                     transform: static (ctx, _) => ControllerInfo.Create(ctx))
                 .Where(static m => m is not null)
                 .Select((m, _) => m!)
-                .Combine(cmdletsToGenerate)
-                .Combine(controllerBaseClass);
+                .Combine(cmdletsToGenerate);
 
             context.RegisterSourceOutput(controllersToGenerate,
                 static (spc, source) =>
                 {
-                    var controller = source.Left.Left;
-                    var controllerBase = (ClassDeclarationSyntax) source.Right[0];
-                    var fullName = controllerBase.FullName();
-                    var allCmdlets = source.Left.Right.OfType<CmdletInfo>().ToList();
+                    var controller = source.Left;
+                    var allCmdlets = source.Right.OfType<CmdletInfo>().ToList();
                     var cmdlet = allCmdlets.FirstOrDefault(c => c.Name.Equals(controller.CmdletName));
                     var result = GenerateCode(controller, cmdlet);
                     var filename = controller.FileName;
@@ -64,25 +53,22 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                      {
                          internal partial class {{model.Name}}: {{model.BaseClassName}}
                          {
-                     {{model.GenerateClientProperty()}}
-                     {{model.GenerateGetInputProperty()}}
-                     {{model.GenerateDeclaredProperties()}}{{model.GenerateScopeProperties()}}
-
+                     {{model.GenerateClientProperty()}}{{model.GenerateGetInputProperty()}}{{model.GenerateDeclaredProperties()}}{{model.GenerateAutomaticProperties()}}{{model.GenerateScopeProperties()}}
                              // ParameterSetName
-                             protected bool Has_ParameterSetName {get;set;}
-                             protected string ParameterSetName {get;set;}
+                             protected bool Has_ParameterSetName { get; set; }
+                             protected string ParameterSetName { get; set; }
                      {{model.GenerateItemsProperty()}}
                              // DataType
                              public override Type DataType => typeof({{model.DataType}});
 
                              protected override void CacheParameters()
                              {
-                                 {{model.GenerateCacheProperties()}}
+                     {{model.GenerateCacheProperties()}}
                              }
 
                              [ImportingConstructor]
-                             public {{model.Name}}({{model.CtorArgs}})
-                                 : base({{model.BaseCtorArgs}})
+                             public {{model.Name}}({{model.ImportingConstructorArgs}})
+                                 : base({{model.ImportingBaseArgs}})
                              {
                      {{model.ImportingConstructorBody}}
                              }

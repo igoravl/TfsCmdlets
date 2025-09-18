@@ -59,4 +59,6 @@
       <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+
+  <Import Project="..\TfsCmdlets.Shared\TfsCmdlets.Shared.projitems" Label="Shared" />
 </Project>

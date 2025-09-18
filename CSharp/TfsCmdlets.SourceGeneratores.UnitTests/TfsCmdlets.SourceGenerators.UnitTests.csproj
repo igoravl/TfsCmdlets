@@ -6,33 +6,42 @@
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<IsTestProject>true</IsTestProject>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);UNIT_TEST_PROJECT</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <DefineConstants>$(DefineConstants);UNIT_TEST_PROJECT</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="DiffEngine" Version="16.4.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
+		<PackageReference Include="DotNet.Glob" Version="3.1.3" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="4.14.0" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.SourceGenerators.Testing" Version="1.1.2" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.14.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="4.14.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
-		<PackageReference Include="Verify" Version="30.11.0" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="19.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="19.*-*" />
+		<PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" PrivateAssets="all" />
+		<PackageReference Include="System.Composition.Hosting" Version="9.*-*" />
+		<PackageReference Include="System.Composition" Version="9.*-*" />
 		<PackageReference Include="Verify.SourceGenerators" Version="2.5.0" />
 		<PackageReference Include="Verify.Xunit" Version="30.11.0" />
+		<PackageReference Include="Verify" Version="30.11.0" />
 		<PackageReference Include="xunit" Version="2.9.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference TreatAsUsed="true" Include="Microsoft.TeamFoundationServer.Client" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.Release.Client" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.Search.Client" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="19.*-*" />
-		<PackageReference TreatAsUsed="true" Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="19.*-*" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,7 +56,8 @@
 		<Compile Remove="_Verify\**" />
 		<Folder Include="_Verify\HttpClientGenerator\" />
 		<None Include="_Verify\**" />
-		<Folder Include="Cmdlets\" />
 	</ItemGroup>
+
+	<Import Project="..\TfsCmdlets.Shared\TfsCmdlets.Shared.projitems" Label="Shared" />
 
 </Project>

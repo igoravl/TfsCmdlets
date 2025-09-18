@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using TfsCmdlets.Services;
 using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 {
     public record ControllerInfo : ClassInfo
     {
+        private const string BASE_CLASS_CTOR_ARGS = "IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger";
+        private const string BASE_CLASS_BASE_ARGS = "powerShell, data, parameters, logger";
+
         public CmdletInfo CmdletInfo { get; set; }
         public string CmdletClass { get; }
         public string GenericArg { get; }
@@ -21,13 +23,13 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string Cmdlet { get; }
         public string Usings { get; }
         private bool SkipGetProperty { get; }
+        public string ImportingConstructorArgs { get; }
         public string ImportingConstructorBody { get; }
         public string CtorArgs { get; }
-        public string BaseCtorArgs { get; }
-
         public string BaseClassName => BaseClass.Contains('.') ? BaseClass.Split('.').Last() : BaseClass;
         public string Verb => CmdletInfo.Verb;
         public string Noun => CmdletInfo.Noun;
+        public string ImportingBaseArgs => BASE_CLASS_BASE_ARGS;
 
         internal ControllerInfo(INamedTypeSymbol controller)
             : base(controller)
@@ -42,17 +44,49 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             CmdletName = cmdletClassName.Substring(cmdletClassName.LastIndexOf('.') + 1);
 
             var customBaseClass = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "CustomBaseClass");
-            //var baseClass = customBaseClass ??
-            //                context.Compilation.GetTypeByMetadataName("TfsCmdlets.Controllers.ControllerBase");
             BaseClass = customBaseClass?.FullName() ?? "TfsCmdlets.Controllers.ControllerBase";
 
             DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute").FullName();
-            Client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client").FullName();
+            var clientName = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client").FullName();
+            //if (clientName.IndexOf('.') < 0)
+            //{
+            //    clientName = $"TfsCmdlets.HttpClients.{clientName}";
+            //}
+
+            Client = clientName;
             GenericArg = DataType == null ? string.Empty : $"<{DataType}>";
-
-            //CtorArgs = controller.GetImportingConstructorArguments();
-
+            ImportingConstructorArgs = GetImportingConstructorArguments(controller);
+            CtorArgs = string.Join(", ", GetCtorArgs(controller).ToArray());
+            ImportingConstructorBody = GetImportingConstructorBody(controller);
             // GenerateProperties();
+        }
+
+        private string GetImportingConstructorBody(INamedTypeSymbol controller)
+        {
+            var parms = controller
+                .GetPropertiesWithAttribute("ImportAttribute")
+                .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};")
+                .ToList();
+
+            var client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+
+            if (client != null) parms.Add($"            Client = client;");
+
+            return string.Join("\n", parms);
+        }
+
+        private string GetImportingConstructorArguments(INamedTypeSymbol controller)
+        {
+            var ctorArgs = controller.GetImportingConstructorArguments();
+
+            return BASE_CLASS_CTOR_ARGS + (string.IsNullOrEmpty(ctorArgs)
+                ? string.Empty
+                : ", " + ctorArgs);
+        }
+
+        public void SetBaseClass(INamedTypeSymbol baseClass)
+        {
+
         }
 
         public string GenerateUsings()
@@ -76,6 +110,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             var initializer = string.IsNullOrEmpty(prop.DefaultValue) ? string.Empty : $", {prop.DefaultValue}";
 
             return $$"""
+                     
                              // {{prop.Name}}
                              protected bool Has_{{prop.Name}} => Parameters.HasParameter(nameof({{prop.Name}}));
                              protected IEnumerable {{prop.Name}}
@@ -87,6 +122,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                                      return new[] { paramValue };
                                  }
                              }
+                     
                      """;
         }
         public string GenerateDeclaredProperties()
@@ -105,6 +141,27 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             }
 
             return sb.ToString();
+        }
+
+        public bool IsPassthru =>
+            Verb switch
+            {
+                "New" when Noun != "Credential" => true,
+                "Set" or "Connect" or "Enable" or "Disable" => true,
+                _ => false
+            };
+
+        public string GenerateAutomaticProperties()
+        {
+            return !IsPassthru
+                ? string.Empty
+                : $$"""
+
+                              // Passthru
+                              protected bool Has_Passthru { get; set; }
+                              protected bool Passthru { get; set; }
+
+                      """;
         }
 
         public string GenerateScopeProperties()
@@ -137,8 +194,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         {
             return $$"""
                              // ParameterSetName
-                             protected bool Has_ParameterSetName {get;set;}
-                             protected string ParameterSetName {get;set;}
+                             protected bool Has_ParameterSetName { get; set; }
+                             protected string ParameterSetName { get; set; }
                      
                      """;
         }
@@ -192,20 +249,29 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             foreach (var prop in CmdletInfo.ParameterProperties.Skip(Verb == "Get" ? 1 : 0))
             {
                 sb.Append($$"""
-
                                             // {{prop.Name}}
                                             Has_{{prop.Name}} = Parameters.HasParameter("{{prop.Name}}");
                                             {{prop.Name}} = Parameters.Get<{{(prop.Type == "SwitchParameter" ? "bool" : prop.Type)}}>("{{prop.Name}}");
-
+                                
                                 """);
+                sb.AppendLine();
+            }
+
+            if (IsPassthru)
+            {
+                sb.Append($$"""
+                                        // Passthru
+                                        Has_Passthru = Parameters.HasParameter("Passthru");
+                                        Passthru = Parameters.Get<bool>("Passthru");
+                            
+                            """);
+                sb.AppendLine();
             }
 
             sb.Append($$"""
-                        
                                     // ParameterSetName
                                     Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
                                     ParameterSetName = Parameters.Get<string>("ParameterSetName");
-                        
                         """);
 
             return sb.ToString();

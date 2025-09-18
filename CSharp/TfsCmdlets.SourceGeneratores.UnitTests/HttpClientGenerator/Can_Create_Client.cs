@@ -3,21 +3,14 @@
 public partial class HttpClientGeneratorTests
 {
     [Fact]
-    public async Task Can_Create_Client()
+    public async Task Can_Create_HttpClient()
     {
-        var source = """
-                   using Microsoft.VisualStudio.Services.Licensing.Client;
-
-                   namespace TfsCmdlets.HttpClients
-                   {
-                       [HttpClient(typeof(AccountLicensingHttpClient))]
-                       partial interface IAccountLicensingHttpClient
-                       {
-                       }
-                   }
-                   """;
-
-        await TestHelper.Verify<Generators.HttpClients.HttpClientGenerator>(nameof(Can_Create_Client), source);
+        await TestHelper.VerifyFiles<Generators.HttpClients.HttpClientGenerator>(
+            nameof(Can_Create_HttpClient),
+            new[]
+            {
+                "TfsCmdlets.Shared\\HttpClients\\IAccountLicensingHttpClient.cs"
+            });
     }
 
 }

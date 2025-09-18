@@ -35,7 +35,9 @@ namespace TfsCmdlets.SourceGenerators
         public PropertyInfo(string name, string typeName, string generatedCode)
         {
             Name = name;
-            Type = typeName;
+            Type = typeName.EndsWith("SwitchParameter")
+                ? "bool"
+                : typeName;
             GeneratedCode = generatedCode;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml.Xsl;
 using Microsoft.CodeAnalysis;
@@ -33,6 +34,17 @@ namespace TfsCmdlets.SourceGenerators
             UsingsStatements = includeUsings
                 ? targetType.GetUsingStatements()
                 : string.Empty;
+
+            CtorArgs = new EquatableArray<string>(GetCtorArgs(targetType).ToArray());
+        }
+
+        public ClassInfo(string name, string ns, string fullName, string fileName, IEnumerable<string> ctorArgs = null)
+        {
+            Name = name;
+            Namespace = ns;
+            FullName = fullName;
+            FileName = fileName;
+            CtorArgs = new EquatableArray<string>(ctorArgs?.ToArray() ?? Array.Empty<string>());
         }
 
         protected IEnumerable<MethodInfo> GetMethods(INamedTypeSymbol targetType, bool recursive = false, string? stopAt = null)
@@ -66,7 +78,16 @@ namespace TfsCmdlets.SourceGenerators
             return props.Select(p => new PropertyInfo(p));
         }
 
-        public string Name { get; }
+        protected virtual IEnumerable<string> GetCtorArgs(INamedTypeSymbol symbol)
+        {
+            if (symbol.Constructors.Length == 0) return Array.Empty<string>();
+
+            return symbol.Constructors[0]
+                .Parameters
+                .Select(p => $"{p.Type.Name} {p.Name}");
+        }
+
+        public string Name { get; set; }
 
         public string Namespace { get; }
 
@@ -74,11 +95,13 @@ namespace TfsCmdlets.SourceGenerators
 
         public string FileName { get; }
 
-        public EquatableArray<MethodInfo> Methods { get; }
+        public EquatableArray<MethodInfo> Methods { get; set;  }
 
-        public EquatableArray<PropertyInfo> Properties { get; }
+        public EquatableArray<PropertyInfo> Properties { get; set;  }
         
-        public string UsingsStatements { get; }
+        public string UsingsStatements { get; set;  }
+
+        public EquatableArray<string> CtorArgs { get; set;  }
 
         public override string ToString() => FullName;
 
