@@ -156,6 +156,7 @@ namespace TfsCmdlets.SourceGenerators.UnitTests
             //settings.UseSplitModeForUniqueDirectory();
             settings.UseDirectory($"_Verify/{generator.GetType().Name}");
             settings.UseFileName(testName);
+            settings.ScrubEmptyLines();
 
             // Use verify to snapshot test the source generator output!
             return Verifier.Verify(driver, settings);

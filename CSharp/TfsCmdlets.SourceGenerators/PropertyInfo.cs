@@ -12,6 +12,16 @@ namespace TfsCmdlets.SourceGenerators
 
         public string DefaultValue { get; set; }
 
+        public string Visibility { get; set; }
+
+        public bool HasGetAccessor { get; set; }
+
+        public string GetAccessorVisibility { get; set; }
+
+        public bool HasSetAccessor { get; set; }
+
+        public string SetAccessorVisibility { get; set; }
+
         public bool IsHidden { get; set;  }
 
         public bool IsScope { get; set; }
@@ -26,7 +36,13 @@ namespace TfsCmdlets.SourceGenerators
         public PropertyInfo(IPropertySymbol prop, string generatedCode)
             : this(prop.Name, prop.Type.ToString(), generatedCode)
         {
-            var node = (PropertyDeclarationSyntax) prop.DeclaringSyntaxReferences.First().GetSyntax();
+            Visibility = prop.DeclaredAccessibility.ToString().ToLowerInvariant();
+            HasGetAccessor = !prop.IsWriteOnly;
+            HasSetAccessor = !prop.IsReadOnly;
+            GetAccessorVisibility = string.Empty;
+            SetAccessorVisibility = string.Empty;
+
+            if (prop.DeclaringSyntaxReferences.FirstOrDefault()?.GetSyntax() is not PropertyDeclarationSyntax node) return;
 
             var initializer = node.Initializer;
             DefaultValue = initializer?.Value.ToString();
@@ -49,7 +65,11 @@ namespace TfsCmdlets.SourceGenerators
 
         public override string ToString()
         {
-            return GeneratedCode;
+            return string.IsNullOrEmpty(GeneratedCode)
+                ? $$"""
+                    {{Visibility}} {{Type}} {{Name}} { {{(HasGetAccessor ? "get; " : string.Empty)}}{{(HasSetAccessor ? "set; " : string.Empty)}}}
+                    """
+                : GeneratedCode;
         }
     }
 }

@@ -11,6 +11,13 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CmdletControllerAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\CmdletBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\CopyClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\GetClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\MoveClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\NewClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\RemoveClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\RenameClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\TestClassificationNodeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controllers\ControllerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\HashtableExtensions.cs" />

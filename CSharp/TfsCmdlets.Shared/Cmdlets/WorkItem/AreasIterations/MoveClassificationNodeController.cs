@@ -5,7 +5,7 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal abstract class MoveClassificationNodeController : ControllerBase
+    public abstract class MoveClassificationNodeController : ControllerBase
     {
         private IWorkItemTrackingHttpClient Client { get; set; }
         

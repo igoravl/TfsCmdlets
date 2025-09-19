@@ -13,7 +13,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
             : base(symbol)
         {
             var originalType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("HttpClientAttribute");
-            OriginalType = new ClassInfo(originalType, false, true, true, true,
+            OriginalType = new ClassInfo(originalType, true, true, true, true,
                 "Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase");
         }
 
@@ -28,6 +28,12 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
         {
             var sb = new StringBuilder();
 
+            foreach (var prop in OriginalType.Properties)
+            {
+                sb.Append($"\t\t{prop}");
+                sb.AppendLine();
+            }
+
             foreach (var method in OriginalType.Methods)
             {
                 sb.Append($"\t\t{method}");
@@ -40,6 +46,16 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
         public string GetClassBody()
         {
             var sb = new StringBuilder();
+
+            foreach (var prop in OriginalType.Properties)
+            {
+                sb.Append($$"""
+                                    public {{prop.Type}} {{prop.Name}} {
+                                        get => Client.{{prop.Name}};{{(prop.HasSetAccessor ?
+                            $"\n            set => Client.{prop.Name} = value;" : string.Empty)}} }
+                            """);
+                sb.AppendLine();
+            }
 
             foreach (var method in OriginalType.Methods)
             {

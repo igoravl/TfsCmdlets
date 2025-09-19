@@ -2,7 +2,7 @@ using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
-    internal abstract class ToggleWorkItemTagController: ControllerBase
+    public abstract class ToggleWorkItemTagController: ControllerBase
     {
         [Import]
         private ITaggingHttpClient Client { get; set; }

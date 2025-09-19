@@ -1,6 +1,6 @@
 ﻿namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal abstract class TestClassificationNodeController: ControllerBase
+    public abstract class TestClassificationNodeController: ControllerBase
     {
         protected override IEnumerable Run()
         {

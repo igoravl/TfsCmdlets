@@ -4,7 +4,7 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal abstract class RemoveClassificationNodeController: ControllerBase
+    public abstract class RemoveClassificationNodeController: ControllerBase
     {
         private IWorkItemTrackingHttpClient Client { get; set; }
         

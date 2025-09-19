@@ -4,7 +4,7 @@ using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal abstract class NewClassificationNodeController: ControllerBase
+    public abstract class NewClassificationNodeController: ControllerBase
     {
         private INodeUtil NodeUtil { get; }
 

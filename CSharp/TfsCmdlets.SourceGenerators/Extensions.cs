@@ -89,19 +89,29 @@ namespace TfsCmdlets.SourceGenerators
         public static string GetImportingConstructorArguments(this INamedTypeSymbol type,
             INamedTypeSymbol baseClass = null)
         {
-            var parms = type.GetPropertiesWithAttribute("ImportAttribute")
-                .Select(p => $"{p.Type.Name} {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)}").ToList();
+            var importCtor = type.GetImportingConstructor();
+            List<string> parms;
 
-            if (baseClass is not null) {
-                parms.AddRange(baseClass
-                    .Constructors[0]
-                    .Parameters
-                    .Select(p => $"{p.Type.Name} {p.Name}"));
+            if (importCtor is not null)
+            {
+                parms = importCtor.Parameters
+                    .Select(p => $"{p.Type.Name} {p.Name}")
+                .ToList();
             }
-
-            var client = type.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
-
-            if (client != null) parms.Add($"{client.FullName()} client");
+            else
+            {
+                parms = type.GetPropertiesWithAttribute("ImportAttribute")
+                    .Select(p => $"{p.Type.Name} {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)}").ToList();
+                if (baseClass is not null)
+                {
+                    parms.AddRange(baseClass
+                        .Constructors[0]
+                        .Parameters
+                        .Select(p => $"{p.Type.Name} {p.Name}"));
+                }
+                var client = type.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+                if (client != null) parms.Add($"{client.FullName()} client");
+            }
 
             return string.Join(", ", parms);
         }
@@ -202,6 +212,17 @@ namespace TfsCmdlets.SourceGenerators
         public static bool HasDefaultConstructor(this INamedTypeSymbol symbol)
         {
             return symbol.Constructors.Any(c => c.Parameters.Count() == 0);
+        }
+
+        public static IMethodSymbol GetImportingConstructor(this INamedTypeSymbol symbol)
+        {
+            var ctors = symbol.GetMembers().OfType<IMethodSymbol>()
+                .Where(m => m.MethodKind == MethodKind.Constructor)
+                .ToList();
+            
+            return ctors.FirstOrDefault(m => m.MethodKind == MethodKind.Constructor &&
+                                m.GetAttributes().Any(
+                                    a => a.AttributeClass.Name == "ImportingConstructorAttribute"));
         }
 
         public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this INamedTypeSymbol symbol)

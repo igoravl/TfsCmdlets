@@ -4,7 +4,7 @@ using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal abstract class CopyClassificationNodeController: ControllerBase
+    public abstract class CopyClassificationNodeController: ControllerBase
     {
         protected override IEnumerable Run()
         {

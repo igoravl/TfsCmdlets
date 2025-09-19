@@ -6,6 +6,7 @@ using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
 {
+    [Generator]
     public class HttpClientGenerator : IIncrementalGenerator
     {
         public void Initialize(IncrementalGeneratorInitializationContext context)

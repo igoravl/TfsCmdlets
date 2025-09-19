@@ -1,29 +1,20 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Git.NewGitRepositoryController.g.cs
+﻿//HintName: TfsCmdlets.Cmdlets.Git.RemoveGitRepositoryController.g.cs
 using System.Management.Automation;
 using Microsoft.TeamFoundation.SourceControl.WebApi;
-using Microsoft.TeamFoundation.Core.WebApi;
 
 namespace TfsCmdlets.Cmdlets.Git
 {
-    internal partial class NewGitRepositoryController: ControllerBase
+    internal partial class RemoveGitRepositoryController: ControllerBase
     {
         private TfsCmdlets.HttpClients.IGitHttpClient Client { get; }
 
         // Repository
         protected bool Has_Repository { get; set; }
-        protected string Repository { get; set; }
+        protected object Repository { get; set; }
 
-        // ForkFrom
-        protected bool Has_ForkFrom { get; set; }
-        protected object ForkFrom { get; set; }
-
-        // SourceBranch
-        protected bool Has_SourceBranch { get; set; }
-        protected string SourceBranch { get; set; }
-
-        // Passthru
-        protected bool Has_Passthru { get; set; }
-        protected bool Passthru { get; set; }
+        // Force
+        protected bool Has_Force { get; set; }
+        protected bool Force { get; set; }
 
         // Project
         protected bool Has_Project => Parameters.HasParameter("Project");
@@ -41,6 +32,13 @@ namespace TfsCmdlets.Cmdlets.Git
         protected bool Has_ParameterSetName { get; set; }
         protected string ParameterSetName { get; set; }
 
+        // Items
+        protected IEnumerable<Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository> Items => Repository switch {
+            Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository item => new[] { item },
+            IEnumerable<Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository> items => items,
+            _ => Data.GetItems<Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository>()
+        };
+
         // DataType
         public override Type DataType => typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository);
 
@@ -48,19 +46,11 @@ namespace TfsCmdlets.Cmdlets.Git
         {
             // Repository
             Has_Repository = Parameters.HasParameter("Repository");
-            Repository = Parameters.Get<string>("Repository");
+            Repository = Parameters.Get<object>("Repository");
 
-            // ForkFrom
-            Has_ForkFrom = Parameters.HasParameter("ForkFrom");
-            ForkFrom = Parameters.Get<object>("ForkFrom");
-
-            // SourceBranch
-            Has_SourceBranch = Parameters.HasParameter("SourceBranch");
-            SourceBranch = Parameters.Get<string>("SourceBranch");
-
-            // Passthru
-            Has_Passthru = Parameters.HasParameter("Passthru");
-            Passthru = Parameters.Get<bool>("Passthru");
+            // Force
+            Has_Force = Parameters.HasParameter("Force");
+            Force = Parameters.Get<bool>("Force");
 
             // ParameterSetName
             Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
@@ -68,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Git
         }
 
         [ImportingConstructor]
-        public NewGitRepositoryController(TfsCmdlets.HttpClients.IGitHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, TfsCmdlets.HttpClients.IGitHttpClient client)
+        public RemoveGitRepositoryController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, TfsCmdlets.HttpClients.IGitHttpClient client)
             : base(powerShell, data, parameters, logger)
         {
             Client = client;

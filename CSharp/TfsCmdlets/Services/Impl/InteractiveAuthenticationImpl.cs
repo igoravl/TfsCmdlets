@@ -35,7 +35,6 @@ namespace TfsCmdlets.Services.Impl
                     ClientName = "TfsCmdlets.InteractiveAuth",
                     ClientVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 })
-                .WithDesktopFeatures()
                 .WithDefaultRedirectUri()
                 .Build();
 

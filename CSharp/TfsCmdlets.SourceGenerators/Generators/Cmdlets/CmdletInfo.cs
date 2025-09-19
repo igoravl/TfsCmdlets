@@ -214,7 +214,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
                  """;
 
-        private bool IsGetScopeCmdlet
+        public bool IsGetScopeCmdlet
             => ScopeNames.Contains(Noun) && Verb.Equals("Get");
 
         private bool IsPipelineProperty(CmdletScope currentScope)

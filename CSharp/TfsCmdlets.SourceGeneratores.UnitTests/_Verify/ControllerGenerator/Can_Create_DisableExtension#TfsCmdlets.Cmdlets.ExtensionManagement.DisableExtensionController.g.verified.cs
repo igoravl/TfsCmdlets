@@ -1,0 +1,70 @@
+﻿//HintName: TfsCmdlets.Cmdlets.ExtensionManagement.DisableExtensionController.g.cs
+using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
+
+namespace TfsCmdlets.Cmdlets.ExtensionManagement
+{
+    internal partial class DisableExtensionController: ControllerBase
+    {
+        private TfsCmdlets.HttpClients.IExtensionManagementHttpClient Client { get; }
+
+        // Extension
+        protected bool Has_Extension { get; set; }
+        protected object Extension { get; set; }
+
+        // Publisher
+        protected bool Has_Publisher { get; set; }
+        protected string Publisher { get; set; }
+
+        // Passthru
+        protected bool Has_Passthru { get; set; }
+        protected bool Passthru { get; set; }
+
+        // Collection
+        protected bool Has_Collection => Parameters.HasParameter("Collection");
+        protected Models.Connection Collection => Data.GetCollection();
+
+        // Server
+        protected bool Has_Server => Parameters.HasParameter("Server");
+        protected Models.Connection Server => Data.GetServer();
+
+        // ParameterSetName
+        protected bool Has_ParameterSetName { get; set; }
+        protected string ParameterSetName { get; set; }
+
+        // Items
+        protected IEnumerable<Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension> Items => Extension switch {
+            Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension item => new[] { item },
+            IEnumerable<Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension> items => items,
+            _ => Data.GetItems<Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension>()
+        };
+
+        // DataType
+        public override Type DataType => typeof(Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension);
+
+        protected override void CacheParameters()
+        {
+            // Extension
+            Has_Extension = Parameters.HasParameter("Extension");
+            Extension = Parameters.Get<object>("Extension");
+
+            // Publisher
+            Has_Publisher = Parameters.HasParameter("Publisher");
+            Publisher = Parameters.Get<string>("Publisher");
+
+            // Passthru
+            Has_Passthru = Parameters.HasParameter("Passthru");
+            Passthru = Parameters.Get<bool>("Passthru");
+
+            // ParameterSetName
+            Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
+            ParameterSetName = Parameters.Get<string>("ParameterSetName");
+        }
+
+        [ImportingConstructor]
+        public DisableExtensionController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, TfsCmdlets.HttpClients.IExtensionManagementHttpClient client)
+            : base(powerShell, data, parameters, logger)
+        {
+            Client = client;
+        }
+    }
+}

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Xsl;
 using Microsoft.CodeAnalysis;
 
@@ -9,9 +10,9 @@ namespace TfsCmdlets.SourceGenerators
 {
     public record ClassInfo
     {
-        public ClassInfo(INamedTypeSymbol targetType, 
-            bool includeProperties = true, 
-            bool includeMethods = false, 
+        public ClassInfo(INamedTypeSymbol targetType,
+            bool includeProperties = true,
+            bool includeMethods = false,
             bool includeUsings = true,
             bool recurseMethods = false,
             string recurseMethodsStopAt = null)
@@ -28,7 +29,7 @@ namespace TfsCmdlets.SourceGenerators
                 : Array.Empty<MethodInfo>());
 
             Properties = new EquatableArray<PropertyInfo>(includeProperties
-                ? GetProperties(targetType).ToArray()
+                ? GetProperties(targetType, recurseMethods, recurseMethodsStopAt).ToArray()
                 : Array.Empty<PropertyInfo>());
 
             UsingsStatements = includeUsings
@@ -36,6 +37,9 @@ namespace TfsCmdlets.SourceGenerators
                 : string.Empty;
 
             CtorArgs = new EquatableArray<string>(GetCtorArgs(targetType).ToArray());
+            ImportingConstructorArgs = GetImportingConstructorArguments(targetType);
+            ImportingConstructorBody = GetImportingConstructorBody(targetType);
+
         }
 
         public ClassInfo(string name, string ns, string fullName, string fileName, IEnumerable<string> ctorArgs = null)
@@ -60,22 +64,29 @@ namespace TfsCmdlets.SourceGenerators
                 .Where(m =>
                     m.MethodKind == MethodKind.Ordinary &&
                     m.DeclaredAccessibility == Accessibility.Public &&
+                    !m.IsStatic &&
                     !m.IsOverride &&
                     !m.HasAttribute("ObsoleteAttribute"));
 
             return methods.Select(m => new MethodInfo(m));
         }
 
-        protected IEnumerable<PropertyInfo> GetProperties(INamedTypeSymbol targetType)
+        protected IEnumerable<PropertyInfo> GetProperties(INamedTypeSymbol targetType, bool recursive = false, string? stopAt = null)
         {
-            var props = targetType
-                .GetMembers()
-                .Where(m =>
-                    m.Kind == SymbolKind.Property &&
-                    m.DeclaredAccessibility == Accessibility.Public)
-                .Cast<IPropertySymbol>();
+            if (!recursive || (string.IsNullOrEmpty(stopAt)))
+            {
+                stopAt = targetType.FullName();
+            }
 
-            return props.Select(p => new PropertyInfo(p));
+            var properties = targetType
+                .GetMembersRecursively(SymbolKind.Property, stopAt)
+                .Cast<IPropertySymbol>()
+                .Where(p =>
+                    !p.IsStatic &&
+                    p.DeclaredAccessibility == Accessibility.Public)
+                .ToList();
+
+            return properties.Select(m => new PropertyInfo(m));
         }
 
         protected virtual IEnumerable<string> GetCtorArgs(INamedTypeSymbol symbol)
@@ -95,13 +106,19 @@ namespace TfsCmdlets.SourceGenerators
 
         public string FileName { get; }
 
-        public EquatableArray<MethodInfo> Methods { get; set;  }
+        public EquatableArray<MethodInfo> Methods { get; set; }
 
-        public EquatableArray<PropertyInfo> Properties { get; set;  }
-        
-        public string UsingsStatements { get; set;  }
+        public EquatableArray<PropertyInfo> Properties { get; set; }
 
-        public EquatableArray<string> CtorArgs { get; set;  }
+        public string UsingsStatements { get; set; }
+
+        public EquatableArray<string> CtorArgs { get; set; }
+        public string ImportingConstructorArgs { get; set;  }
+        public string ImportingConstructorBody { get; }
+        public string BaseClassName => Enumerable.Contains(BaseClassFullName, '.') ? Enumerable.Last<string>(BaseClassFullName.Split('.')) : BaseClassFullName;
+        public string BaseClassFullName { get; set; }
+        public string BaseClassImportingCtorArgs { get; set; }
+        public string BaseClassImportingBaseArgs { get; set; }
 
         public override string ToString() => FullName;
 
@@ -118,5 +135,54 @@ namespace TfsCmdlets.SourceGenerators
 
             #nullable enable
             """;
+
+        private const string BASE_CLASS_CTOR_ARGS = "IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger";
+        private const string BASE_CLASS_BASE_ARGS = "powerShell, data, parameters, logger";
+
+        public static ClassInfo CreateFromAttributeValue(GeneratorAttributeSyntaxContext ctx, string attributeName, string propertyName)
+        {
+            var node = ctx.TargetNode;
+            var typeSymbol = ctx.SemanticModel.GetDeclaredSymbol(node) as INamedTypeSymbol;
+            var targetType = typeSymbol?.GetAttributeNamedValue<INamedTypeSymbol>(attributeName, propertyName);
+
+            return targetType is null 
+                ? null 
+                : new ClassInfo(targetType);
+        }
+
+        protected string GetImportingBaseArgs()
+        {
+            return BaseClassImportingBaseArgs ?? BASE_CLASS_BASE_ARGS;
+        }
+
+        protected string GetImportingConstructorBody(INamedTypeSymbol controller)
+        {
+            var parms = controller
+                .GetPropertiesWithAttribute("ImportAttribute")
+                .Select(p => $"            {p.Name} = {p.Name[0].ToString().ToLower()}{p.Name.Substring(1)};")
+                .ToList();
+
+            var client = controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "Client");
+
+            if (client != null) parms.Add($"            Client = client;");
+
+            return string.Join("\n", parms);
+        }
+
+        protected string GetImportingConstructorArguments(INamedTypeSymbol controller)
+        {
+            var sb = new StringBuilder();
+            var ctorArgs = controller.GetImportingConstructorArguments();
+
+            if (!string.IsNullOrEmpty(ctorArgs)) return ctorArgs;
+
+            return sb
+                .Append(BASE_CLASS_CTOR_ARGS)
+                .Append(string.IsNullOrEmpty(ctorArgs)
+                    ? string.Empty
+                    : $", {ctorArgs}")
+                
+                .ToString();
+        }
     }
 }
