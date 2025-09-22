@@ -174,14 +174,18 @@ namespace TfsCmdlets.SourceGenerators
             var sb = new StringBuilder();
             var ctorArgs = controller.GetImportingConstructorArguments();
 
-            if (!string.IsNullOrEmpty(ctorArgs)) return ctorArgs;
+            if ((ctorArgs?.IndexOf(BASE_CLASS_CTOR_ARGS, StringComparison.Ordinal) ?? -1) >= 0)
+            {
+                return ctorArgs;
+            }
+
+            if (!string.IsNullOrEmpty(ctorArgs)) sb.Append($"{ctorArgs}, ");
 
             return sb
                 .Append(BASE_CLASS_CTOR_ARGS)
-                .Append(string.IsNullOrEmpty(ctorArgs)
-                    ? string.Empty
-                    : $", {ctorArgs}")
-                
+                //.Append(string.IsNullOrEmpty(ctorArgs)
+                //    ? string.Empty
+                //    : $", {ctorArgs}")
                 .ToString();
         }
     }

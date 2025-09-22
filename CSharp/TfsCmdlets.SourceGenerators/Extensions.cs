@@ -277,16 +277,16 @@ namespace TfsCmdlets.SourceGenerators
         {
             while (type != null)
             {
+                if ((type.FullName().Equals(stopAt)) || (type.FullName().Equals("System.Object")))
+                {
+                    yield break;
+                }
+
                 foreach (var member in type.GetMembers().Where(m => m.Kind == kind))
                 {
                     yield return member;
                 }
 
-                if ((type.FullName().Equals(stopAt)) || (type.FullName().Equals("System.Object")))
-                {
-                    yield break;
-                }
-                
                 type = type.BaseType;
             }
         }

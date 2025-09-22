@@ -68,7 +68,33 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
                              }
                              
                      {{model.GetClassBody()}}
-                         }
+                             public Uri BaseAddress
+                                => Client.BaseAddress;
+                             
+                             public bool ExcludeUrlsHeader
+                             {
+                                get => Client.ExcludeUrlsHeader;
+                                set => Client.ExcludeUrlsHeader = value;
+                             }
+                             
+                             public Microsoft.VisualStudio.Services.WebApi.VssResponseContext LastResponseContext
+                                => Client.LastResponseContext;
+                                
+                             public bool LightweightHeader
+                             {
+                                get => Client.LightweightHeader;
+                                set => Client.LightweightHeader = value;
+                             }
+                             
+                             public bool IsDisposed()
+                                => Client.IsDisposed();
+                             
+                             public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
+                                => Client.SetResourceLocations(resourceLocations);
+
+                             public void Dispose()
+                     	        => Client.Dispose();
+                        }
                      }
                      """;
         }

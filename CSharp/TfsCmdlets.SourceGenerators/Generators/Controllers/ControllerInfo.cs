@@ -1,10 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis;
 using TfsCmdlets.SourceGenerators.Generators.Cmdlets;
 
 namespace TfsCmdlets.SourceGenerators.Generators.Controllers
@@ -26,7 +24,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string Verb => CmdletInfo.Verb;
         public string Noun => CmdletInfo.Noun;
         public string ImportingBaseArgs { get; set; }
-
         internal ControllerInfo(INamedTypeSymbol controller)
             : base(controller)
         {
@@ -54,7 +51,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 //}
 
                 Client = clientName;
-                GenericArg = DataType == null ? string.Empty : $"<{DataType}>";
+                GenericArg = (DataType == null ? string.Empty : $"<{DataType}>");
                 ImportingBaseArgs = GetImportingBaseArgs();
                 CtorArgs = string.Join(", ", GetCtorArgs(controller).ToArray());
                 // GenerateProperties();
@@ -156,55 +153,66 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
             if(IsPassthru)
             {
-                sb.Append($$"""
+                sb.Append("""
 
-                                    // Passthru
-                                    protected bool Has_Passthru { get; set; }
-                                    protected bool Passthru { get; set; }
+                                  // Passthru
+                                  protected bool Has_Passthru { get; set; }
+                                  protected bool Passthru { get; set; }
 
-                            """);
+                          """);
             }
 
             if (CmdletInfo.Name.EndsWith("Area") || CmdletInfo.Name.EndsWith("Iteration"))
             {
-                sb.Append($$"""
+                sb.Append("""
 
-                                    // StructureGroup
-                                    protected bool Has_StructureGroup { get; set; }
-                                    protected Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup StructureGroup { get; set; }
+                                  // StructureGroup
+                                  protected bool Has_StructureGroup { get; set; }
+                                  protected Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup StructureGroup { get; set; }
 
-                            """);
+                          """);
+            }
+
+            if (CmdletInfo.Verb == "Rename")
+            {
+                sb.Append("""
+
+                                  // NewName
+                                  protected bool Has_NewName { get; set; }
+                                  protected string NewName { get; set; }
+
+                          """);
             }
 
             if (HasCredentialProperties)
             {
-                sb.Append($$"""
-                            
-                                    // Cached
-                                    protected bool Has_Cached { get; set; }
-                                    protected bool Cached { get; set; }
+                sb.Append("""
 
-                                    // UserName
-                                    protected bool Has_UserName { get; set; }
-                                    protected string UserName { get; set; }
+                                  // Cached
+                                  protected bool Has_Cached { get; set; }
+                                  protected bool Cached { get; set; }
 
-                                    // Password
-                                    protected bool Has_Password { get; set; }
-                                    protected System.Security.SecureString Password { get; set; }
+                                  // UserName
+                                  protected bool Has_UserName { get; set; }
+                                  protected string UserName { get; set; }
 
-                                    // Credential
-                                    protected bool Has_Credential { get; set; }
-                                    protected object Credential { get; set; }
+                                  // Password
+                                  protected bool Has_Password { get; set; }
+                                  protected System.Security.SecureString Password { get; set; }
 
-                                    // PersonalAccessToken
-                                    protected bool Has_PersonalAccessToken { get; set; }
-                                    protected string PersonalAccessToken { get; set; }
+                                  // Credential
+                                  protected bool Has_Credential { get; set; }
+                                  protected object Credential { get; set; }
 
-                                    // Interactive
-                                    protected bool Has_Interactive { get; set; }
-                                    protected bool Interactive { get; set; }
+                                  // PersonalAccessToken
+                                  protected bool Has_PersonalAccessToken { get; set; }
+                                  protected string PersonalAccessToken { get; set; }
 
-                            """);
+                                  // Interactive
+                                  protected bool Has_Interactive { get; set; }
+                                  protected bool Interactive { get; set; }
+
+                          """);
             }
 
             return sb.ToString();
@@ -217,32 +225,32 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
         private void GenerateCredentialProperties(StringBuilder sb)
         {
-            sb.Append($$"""
+            sb.Append("""
 
-                        protected bool Has_Cached { get; set; } // => Parameters.HasParameter(nameof(Cached));
-                        protected bool Cached { get; set; } // => _Cached; // Parameters.Get<bool>(nameof(Cached));
+                      protected bool Has_Cached { get; set; } // => Parameters.HasParameter(nameof(Cached));
+                      protected bool Cached { get; set; } // => _Cached; // Parameters.Get<bool>(nameof(Cached));
 
-                        // UserName
-                        protected bool Has_UserName { get; set; } // => Parameters.HasParameter(nameof(UserName));
-                        protected string UserName { get; set; } // => _UserName; // Parameters.Get<string>(nameof(UserName));
+                      // UserName
+                      protected bool Has_UserName { get; set; } // => Parameters.HasParameter(nameof(UserName));
+                      protected string UserName { get; set; } // => _UserName; // Parameters.Get<string>(nameof(UserName));
 
-                        // Password
-                        protected bool Has_Password { get; set; } // => Parameters.HasParameter(nameof(Password));
-                        protected System.Security.SecureString Password { get; set; } // => _Password; // Parameters.Get<System.Security.SecureString>(nameof(Password));
+                      // Password
+                      protected bool Has_Password { get; set; } // => Parameters.HasParameter(nameof(Password));
+                      protected System.Security.SecureString Password { get; set; } // => _Password; // Parameters.Get<System.Security.SecureString>(nameof(Password));
 
-                        // Credential
-                        protected bool Has_Credential { get; set; } // => Parameters.HasParameter(nameof(Credential));
-                        protected object Credential { get; set; } // => _Credential; // Parameters.Get<object>(nameof(Credential));
+                      // Credential
+                      protected bool Has_Credential { get; set; } // => Parameters.HasParameter(nameof(Credential));
+                      protected object Credential { get; set; } // => _Credential; // Parameters.Get<object>(nameof(Credential));
 
-                        // PersonalAccessToken
-                        protected bool Has_PersonalAccessToken { get; set; } // => Parameters.HasParameter(nameof(PersonalAccessToken));
-                        protected string PersonalAccessToken { get; set; } // => _PersonalAccessToken; // Parameters.Get<string>(nameof(PersonalAccessToken));
+                      // PersonalAccessToken
+                      protected bool Has_PersonalAccessToken { get; set; } // => Parameters.HasParameter(nameof(PersonalAccessToken));
+                      protected string PersonalAccessToken { get; set; } // => _PersonalAccessToken; // Parameters.Get<string>(nameof(PersonalAccessToken));
 
-                        // Interactive
-                        protected bool Has_Interactive { get; set; } // => Parameters.HasParameter(nameof(Interactive));
-                        protected bool Interactive { get; set; } // => _Interactive; // Parameters.Get<bool>(nameof(Interactive));
+                      // Interactive
+                      protected bool Has_Interactive { get; set; } // => Parameters.HasParameter(nameof(Interactive));
+                      protected bool Interactive { get; set; } // => _Interactive; // Parameters.Get<bool>(nameof(Interactive));
 
-                        """);
+                      """);
         }
 
         public string GenerateScopeProperties()
@@ -262,23 +270,23 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         {
             var scopeName = scope.ToString();
 
-            sb.Append($$"""
+            sb.Append($"""
                          
-                                 // {{scopeName}}
-                                 protected bool Has_{{scopeName}} => Parameters.HasParameter("{{scopeName}}");
-                                 protected {{scopeType}} {{scopeName}} => Data.Get{{scopeName}}();
+                                 // {scopeName}
+                                 protected bool Has_{scopeName} => Parameters.HasParameter("{scopeName}");
+                                 protected {scopeType} {scopeName} => Data.Get{scopeName}();
                          
                          """);
         }
 
         public string GenerateParameterSetProperty()
         {
-            return $$"""
-                             // ParameterSetName
-                             protected bool Has_ParameterSetName { get; set; }
-                             protected string ParameterSetName { get; set; }
-                     
-                     """;
+            return """
+                           // ParameterSetName
+                           protected bool Has_ParameterSetName { get; set; }
+                           protected string ParameterSetName { get; set; }
+
+                   """;
         }
 
         public string GenerateItemsProperty()
@@ -317,13 +325,13 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
         public string GenerateDataTypeProperty()
         {
-            var dataType = DataType ?? CmdletInfo.DataType;
-            if (dataType is null) return string.Empty;
+            //var dataType = DataType ?? CmdletInfo.DataType;
+            if (DataType is null) return string.Empty;
 
             return $"""
                     
                             // DataType
-                            public override Type DataType => typeof({dataType});
+                            public override Type DataType => typeof({DataType});
 
                     """;
         }
@@ -338,10 +346,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                     ? string.Empty 
                     : $", {prop.DefaultValue}";
 
-                sb.Append($$"""
-                                            // {{prop.Name}}
-                                            Has_{{prop.Name}} = Parameters.HasParameter("{{prop.Name}}");
-                                            {{prop.Name}} = Parameters.Get<{{(prop.Type == "SwitchParameter" ? "bool" : prop.Type)}}>("{{prop.Name}}"{{initValue}});
+                sb.Append($"""
+                                            // {prop.Name}
+                                            Has_{prop.Name} = Parameters.HasParameter("{prop.Name}");
+                                            {prop.Name} = Parameters.Get<{(prop.Type == "SwitchParameter" ? "bool" : prop.Type)}>("{prop.Name}"{initValue});
                                 
                                 """);
                 sb.AppendLine();
@@ -349,24 +357,35 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
 
             if (IsPassthru)
             {
-                sb.Append($$"""
-                                        // Passthru
-                                        Has_Passthru = Parameters.HasParameter("Passthru");
-                                        Passthru = Parameters.Get<bool>("Passthru");
-                            
-                            """);
+                sb.Append("""
+                                      // Passthru
+                                      Has_Passthru = Parameters.HasParameter("Passthru");
+                                      Passthru = Parameters.Get<bool>("Passthru");
+
+                          """);
+                sb.AppendLine();
+            }
+
+            if (CmdletInfo.Verb == "Rename")
+            {
+                sb.Append("""
+                                      // NewName
+                                      Has_NewName = Parameters.HasParameter("NewName");
+                                      NewName = Parameters.Get<string>("NewName");
+
+                          """);
                 sb.AppendLine();
             }
 
             if (CmdletInfo.Name.EndsWith("Area") || CmdletInfo.Name.EndsWith("Iteration"))
             {
-                sb.Append($$"""
-                                        // StructureGroup
-                                        Has_StructureGroup = Parameters.HasParameter("StructureGroup");
-                                        StructureGroup = Parameters.Get<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup>("StructureGroup");
-                            
-                            
-                            """);
+                sb.Append("""
+                                      // StructureGroup
+                                      Has_StructureGroup = Parameters.HasParameter("StructureGroup");
+                                      StructureGroup = Parameters.Get<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.TreeStructureGroup>("StructureGroup");
+
+
+                          """);
             }
 
             if (HasCredentialProperties)
@@ -400,11 +419,11 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 sb.AppendLine();
             }
 
-            sb.Append($$"""
-                                    // ParameterSetName
-                                    Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
-                                    ParameterSetName = Parameters.Get<string>("ParameterSetName");
-                        """);
+            sb.Append("""
+                                  // ParameterSetName
+                                  Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
+                                  ParameterSetName = Parameters.Get<string>("ParameterSetName");
+                      """);
 
             return sb.ToString();
         }

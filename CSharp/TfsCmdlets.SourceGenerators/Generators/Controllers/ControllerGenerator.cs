@@ -29,7 +29,9 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 var baseClasses = context.SyntaxProvider
                     .ForAttributeWithMetadataName(
                         "TfsCmdlets.CmdletControllerAttribute",
-                        predicate: (_, _) => true,
+                        predicate: (n, _) => (n as ClassDeclarationSyntax)?
+                            .AttributeLists.SelectMany(attrList => attrList.Attributes)
+                            .Any(attr => (attr.Name as IdentifierNameSyntax)?.Identifier.Text == "CmdletController") ?? false,
                         transform: static (ctx, _) => ClassInfo.CreateFromAttributeValue(ctx, "CmdletControllerAttribute", "CustomBaseClass"))
                     .Where(static m => m is not null)
                     .Select((m, _) => m!)
@@ -52,9 +54,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                         {
                             var controller = source.Left.Left;
                             var baseClasses = source.Right.ToList();
+                            var baseClass = baseClasses.FirstOrDefault(ci => ci.FullName == controller.BaseClassFullName);
                             var allCmdlets = source.Left.Right.ToList();
                             var cmdlet = allCmdlets.FirstOrDefault(c => c.Name.Equals(controller.CmdletName));
-                            var result = GenerateCode(controller, cmdlet, allCmdlets, baseClasses?.FirstOrDefault());
+                            var result = GenerateCode(controller, cmdlet, allCmdlets, baseClass);
                             var filename = controller.FileName;
                             spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                         }
