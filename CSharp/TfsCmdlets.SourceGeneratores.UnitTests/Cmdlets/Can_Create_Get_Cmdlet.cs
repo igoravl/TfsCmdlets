@@ -3,10 +3,10 @@
 public partial class CmdletGeneratorTests
 {
     [Fact]
-    public async Task Can_Create_Get_Cmdlet()
+    public async Task CanGenerate_Get_Cmdlet()
     {
         await TestHelper.VerifyFiles<Generators.Cmdlets.CmdletGenerator>(
-            nameof(Can_Create_Get_Cmdlet),
+            nameof(CanGenerate_Get_Cmdlet),
             new[]
             {
                 "TfsCmdlets\\Cmdlets\\Git\\GetGitRepository.cs"
