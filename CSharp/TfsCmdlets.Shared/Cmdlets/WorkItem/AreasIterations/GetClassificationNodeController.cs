@@ -81,7 +81,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         }
 
         [ImportingConstructor]
-        protected GetClassificationNodeController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
+        protected GetClassificationNodeController(INodeUtil nodeUtil, IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
             : base(powerShell, data, parameters, logger)
         {
             NodeUtil = nodeUtil;
