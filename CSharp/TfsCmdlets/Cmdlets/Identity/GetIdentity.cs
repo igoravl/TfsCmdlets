@@ -1,8 +1,6 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
-using Microsoft.VisualStudio.Services.Identity.Client;
 using Microsoft.VisualStudio.Services.Licensing;
-using IIdentityHttpClient = Microsoft.VisualStudio.Services.Identity.Client.IIdentityHttpClient;
 
 namespace TfsCmdlets.Cmdlets.Identity
 {
