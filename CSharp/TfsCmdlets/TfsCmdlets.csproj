@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net8.0-windows;net472</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
 		<RootNamespace>TfsCmdlets</RootNamespace>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<LangVersion>11.0</LangVersion>
 		<DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
 		<NoWarn>1591</NoWarn>
 		<LangVersion>preview</LangVersion>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -22,7 +24,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="19.*-*" />
-		<!--<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.*-*" />-->
+		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="19.*-*" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="19.*-*" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="19.*-*" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="19.*-*" />

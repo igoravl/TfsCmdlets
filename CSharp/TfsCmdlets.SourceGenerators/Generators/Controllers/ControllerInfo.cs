@@ -20,7 +20,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string Usings { get; }
         private bool SkipGetProperty { get; }
         public string CustomCmdletName { get; }
-        public string CtorArgs { get; }
+        public string CtorArgsSignature { get; }
         public string Verb => CmdletInfo.Verb;
         public string Noun => CmdletInfo.Noun;
         public string ImportingBaseArgs { get; set; }
@@ -53,7 +53,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 Client = clientName;
                 GenericArg = (DataType == null ? string.Empty : $"<{DataType}>");
                 ImportingBaseArgs = GetImportingBaseArgs();
-                CtorArgs = string.Join(", ", GetCtorArgs(controller).ToArray());
+                CtorArgsSignature = string.Join(", ", GetCtorArgs(controller).ToArray());
                 // GenerateProperties();
         }
 

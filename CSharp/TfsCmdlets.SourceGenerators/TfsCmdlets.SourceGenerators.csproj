@@ -36,6 +36,14 @@
     <Reference Include="System.Management.Automation">
       <HintPath>C:\Users\h313059\.nuget\packages\powershellstandard.library\7.0.0-preview.1\lib\netstandard2.0\System.Management.Automation.dll</HintPath>
     </Reference>
+    <Remove Include="Old/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Old\**" />
+    <EmbeddedResource Remove="Old\**" />
+    <None Remove="Old\**" />
+    <Remove Remove="Old\**" />
   </ItemGroup>
 
 </Project>

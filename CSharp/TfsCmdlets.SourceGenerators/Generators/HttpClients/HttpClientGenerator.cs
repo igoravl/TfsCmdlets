@@ -31,6 +31,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
         private static string GenerateCode(HttpClientInfo model)
         {
             return $$"""
+                     #pragma warning disable CS8669
                      using System.Composition;
                      {{model.UsingsStatements}}
 
