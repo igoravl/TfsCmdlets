@@ -1,5 +1,5 @@
 using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.Desktop;
+// using Microsoft.Identity.Client.Desktop;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
