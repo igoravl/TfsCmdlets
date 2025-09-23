@@ -226,3 +226,4 @@ CSharp/*/Generated/**
 Docs/AzDO-Security-Actions.csv
 **/testResults.xml
 PS/_Tests/coverage.xml
+CSharp/**/Old/**

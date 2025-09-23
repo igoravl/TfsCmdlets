@@ -42,7 +42,7 @@ BeforeAll {
     $conn = Get-TfsTeamProjectCollection -Current
 
     if(-not $conn -or ($conn.Uri -ne ([uri]$tfsCollectionUrl))) {
-        Write-Host "Connecting to $tfsCollectionUrl"
+        # Write-Host "Connecting to $tfsCollectionUrl"
         Connect-TfsTeamProjectCollection -Collection $tfsCollectionUrl -PersonalAccessToken $tfsAccessToken
     }
 

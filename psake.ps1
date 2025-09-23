@@ -23,7 +23,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1' }
+    $TargetFrameworks = @{Desktop = 'net472'; Core = 'netcoreapp3.1' }
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -239,15 +239,16 @@ Task AllTests -PreCondition { -not $SkipTests } {
     Push-Location $PSTestsDir
 
     $outputLevel =if($isCi) { "Detailed" } else { "Minimal" }
-
+    $pesterCmd = "Import-Module Pester -MinimumVersion 5.0.0; Get-Module Pester; Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter {0}, 'Server'"
+    
     try {
         Write-Output ' == PowerShell Core =='
-        Exec { pwsh.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Desktop', 'Server'" }
+        Exec { pwsh.exe -NonInteractive -NoLogo -Command ($pesterCmd -f 'Desktop') }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Core.xml -Force
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Core.xml -Force
     
         Write-Output ' == PowerShell Desktop =='
-        Exec { powershell.exe -NonInteractive -NoLogo -Command "Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter 'Core', 'Server'" }
+        Exec { powershell.exe -NonInteractive -NoLogo -Command ($pesterCmd -f 'Core') }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Desktop.xml -Force
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Desktop.xml -Force
     }
