@@ -61,9 +61,7 @@ namespace TfsCmdlets.Models
         {
             if (node.ChildCount == 0 && _client != null)
             {
-                var client = (WorkItemTrackingHttpClient) _client;
-
-                node = new ClassificationNode(client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, 2)
+                node = new ClassificationNode(_client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, 2)
                         .GetResult($"Error retrieving {StructureGroup} from path '{node.RelativePath}'"),
                     ProjectName, _client);
             }
