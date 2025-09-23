@@ -21,22 +21,13 @@
     <PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="19.*-*" />
     <PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="19.*-*" />
     <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="19.*-*" />
+		<PackageReference Include="PowerShellStandard.Library" Version="5.*" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
     </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>C:\Users\h313059\.nuget\packages\system.composition.attributedmodel\9.0.8\lib\netstandard2.0\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Management.Automation">
-      <HintPath>C:\Users\h313059\.nuget\packages\powershellstandard.library\7.0.0-preview.1\lib\netstandard2.0\System.Management.Automation.dll</HintPath>
-    </Reference>
-    <Remove Include="Old/**" />
   </ItemGroup>
 
   <ItemGroup>

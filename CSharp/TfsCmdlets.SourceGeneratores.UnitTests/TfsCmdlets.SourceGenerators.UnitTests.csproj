@@ -35,7 +35,7 @@
 		<PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="19.*-*" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="19.*-*" />
 		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="19.*-*" />
-		<PackageReference Include="PowerShellStandard.Library" Version="7.*-*" PrivateAssets="all" />
+		<PackageReference Include="PowerShellStandard.Library" Version="5.*" PrivateAssets="all" />
 		<PackageReference Include="System.Composition.Hosting" Version="9.*" />
 		<PackageReference Include="System.Composition" Version="9.*" />
 		<PackageReference Include="Verify.SourceGenerators" Version="2.5.0" />
