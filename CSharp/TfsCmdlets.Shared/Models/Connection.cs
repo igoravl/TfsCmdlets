@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.Services.WebApi;
 #if NETCOREAPP3_1_OR_GREATER
 using AdoConnection = Microsoft.VisualStudio.Services.WebApi.VssConnection;
 using Microsoft.VisualStudio.Services.WebApi.Location;
-#else
+#elif NET471_OR_GREATER
 using Microsoft.TeamFoundation.Client;
 using AdoConnection = Microsoft.TeamFoundation.Client.TfsConnection;
 #endif
@@ -14,10 +14,10 @@ namespace TfsCmdlets.Models
     public sealed class Connection : ModelBase<AdoConnection>, ITfsServiceProvider
     {
         /// <summary>Converts Connection to AdoConnection</summary>
-        public static implicit operator AdoConnection(Connection c) => c?.InnerObject;
+        public static implicit operator AdoConnection(Connection c) => c.InnerObject;
 
         /// <summary>Converts AdoConnection to Connection</summary>
-        public static implicit operator Connection(AdoConnection c) => c == null? null: new Connection(c);
+        public static implicit operator Connection(AdoConnection c) => new Connection(c);
 
         public Connection(AdoConnection obj) : base(obj) { }
 
