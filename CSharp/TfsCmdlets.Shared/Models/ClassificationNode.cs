@@ -59,13 +59,14 @@ namespace TfsCmdlets.Models
 
         private IEnumerable<ClassificationNode> GetNodesRecursively(ClassificationNode node, string pattern)
         {
+#if !UNIT_TEST_PROJECT
             if (node.ChildCount == 0 && _client != null)
             {
                 node = new ClassificationNode(_client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, 2)
                         .GetResult($"Error retrieving {StructureGroup} from path '{node.RelativePath}'"),
                     ProjectName, _client);
             }
-
+#endif
             if (node.ChildCount == 0) yield break;
 
             foreach (var c in node.Children.Select(n => new ClassificationNode(n, ProjectName, _client)))
