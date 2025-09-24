@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.ServiceHook.GetServiceHookSubscription.g.cs
+namespace TfsCmdlets.Cmdlets.ServiceHook
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsServiceHookSubscription")]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Subscription))]
+    public partial class GetServiceHookSubscription: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

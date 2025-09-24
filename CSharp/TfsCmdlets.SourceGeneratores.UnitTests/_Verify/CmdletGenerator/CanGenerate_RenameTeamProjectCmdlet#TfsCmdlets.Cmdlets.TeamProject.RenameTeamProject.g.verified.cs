@@ -1,15 +1,14 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.TeamProject.RenameTeamProject.g.cs
+namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Rename", "TfsTeamProject", SupportsShouldProcess = true)]
+    public partial class RenameTeamProject: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_NEWNAME
         /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        [Parameter(Position = 1, Mandatory = true)]
+        public string NewName { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

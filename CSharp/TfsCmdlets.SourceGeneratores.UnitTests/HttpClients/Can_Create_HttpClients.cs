@@ -1,4 +1,4 @@
-﻿namespace TfsCmdlets.SourceGenerators.UnitTests.HttpClientGenerator;
+﻿namespace TfsCmdlets.SourceGenerators.UnitTests.HttpClients;
 
 public partial class HttpClientGeneratorTests
 {

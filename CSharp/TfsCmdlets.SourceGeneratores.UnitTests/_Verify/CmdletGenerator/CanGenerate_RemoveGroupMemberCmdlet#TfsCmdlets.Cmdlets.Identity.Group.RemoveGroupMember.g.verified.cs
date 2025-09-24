@@ -1,15 +1,14 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.Identity.Group.RemoveGroupMember.g.cs
+namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Remove", "TfsGroupMember", SupportsShouldProcess = true)]
+    public partial class RemoveGroupMember: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Alias("Organization")]
-        [Parameter(ValueFromPipeline=true)]
+        [Parameter()]
         public object Collection { get; set; }
         /// <summary>
         /// HELP_PARAM_SERVER

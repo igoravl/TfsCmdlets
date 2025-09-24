@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.ProcessTemplate.GetProcessTemplate.g.cs
+namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsProcessTemplate")]
+    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.Process))]
+    public partial class GetProcessTemplate: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

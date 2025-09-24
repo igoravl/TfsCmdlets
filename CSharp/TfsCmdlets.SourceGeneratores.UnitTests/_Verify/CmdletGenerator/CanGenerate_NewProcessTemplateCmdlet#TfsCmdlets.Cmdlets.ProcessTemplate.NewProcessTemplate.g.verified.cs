@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.ProcessTemplate.NewProcessTemplate.g.cs
+namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsProcessTemplate", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.Process))]
+    public partial class NewProcessTemplate: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

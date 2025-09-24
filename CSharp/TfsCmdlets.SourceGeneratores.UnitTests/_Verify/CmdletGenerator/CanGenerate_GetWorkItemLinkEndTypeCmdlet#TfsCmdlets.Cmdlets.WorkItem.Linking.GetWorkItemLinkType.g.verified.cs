@@ -1,9 +1,8 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.WorkItem.Linking.GetWorkItemLinkType.g.cs
+namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsWorkItemLinkType")]
+    public partial class GetWorkItemLinkType: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

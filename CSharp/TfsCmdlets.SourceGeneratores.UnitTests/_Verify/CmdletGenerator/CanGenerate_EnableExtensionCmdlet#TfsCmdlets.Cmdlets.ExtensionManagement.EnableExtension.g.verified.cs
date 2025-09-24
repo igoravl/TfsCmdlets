@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.ExtensionManagement.EnableExtension.g.cs
+namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Enable", "TfsExtension", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension))]
+    public partial class EnableExtension: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

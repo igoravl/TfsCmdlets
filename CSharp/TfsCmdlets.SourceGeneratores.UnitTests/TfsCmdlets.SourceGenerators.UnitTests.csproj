@@ -54,9 +54,7 @@
 
 	<ItemGroup>
 		<Compile Remove="_Verify\**" />
-		<Folder Include="Controllers\Build\" />
 		<Folder Include="Controllers\Package\" />
-		<Folder Include="Controllers\TestPlan\" />
 		<Folder Include="_Verify\HttpClientGenerator\" />
 		<None Include="_Verify\**" />
 	</ItemGroup>

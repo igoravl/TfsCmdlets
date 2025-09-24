@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.TeamProject.NewTeamProject.g.cs
+namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsTeamProject", SupportsShouldProcess = true, DefaultParameterSetName = "Get by project")]
+    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
+    public partial class NewTeamProject: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

@@ -1,15 +1,15 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Artifact.GetArtifact.g.cs
+namespace TfsCmdlets.Cmdlets.Artifact
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Get", "TfsArtifact")]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.Feed.WebApi.Package))]
+    public partial class GetArtifact: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
-        [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        [Parameter(ValueFromPipeline=true)]
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

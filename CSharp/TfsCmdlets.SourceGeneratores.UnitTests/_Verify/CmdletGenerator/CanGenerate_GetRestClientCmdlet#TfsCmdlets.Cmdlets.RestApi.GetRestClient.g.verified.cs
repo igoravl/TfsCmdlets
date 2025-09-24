@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.RestApi.GetRestClient.g.cs
+namespace TfsCmdlets.Cmdlets.RestApi
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsRestClient", DefaultParameterSetName = "Get by collection")]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase))]
+    public partial class GetRestClient: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

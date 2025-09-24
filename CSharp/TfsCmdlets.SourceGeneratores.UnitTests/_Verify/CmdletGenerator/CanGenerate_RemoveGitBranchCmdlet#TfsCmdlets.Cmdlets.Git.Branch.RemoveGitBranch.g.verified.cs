@@ -1,15 +1,15 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Git.Branch.RemoveGitBranch.g.cs
+namespace TfsCmdlets.Cmdlets.Git.Branch
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Remove", "TfsGitBranch", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitBranchStats))]
+    public partial class RemoveGitBranch: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

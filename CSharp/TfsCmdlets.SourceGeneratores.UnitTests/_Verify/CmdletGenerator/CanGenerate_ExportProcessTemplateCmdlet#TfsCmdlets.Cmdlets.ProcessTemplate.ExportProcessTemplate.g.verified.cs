@@ -1,9 +1,8 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.ProcessTemplate.ExportProcessTemplate.g.cs
+namespace TfsCmdlets.Cmdlets.ProcessTemplate
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Export", "TfsProcessTemplate", SupportsShouldProcess = true)]
+    public partial class ExportProcessTemplate: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

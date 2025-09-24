@@ -1,15 +1,14 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.TestManagement.RemoveTestPlan.g.cs
+namespace TfsCmdlets.Cmdlets.TestManagement
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Remove", "TfsTestPlan", SupportsShouldProcess = true)]
+    public partial class RemoveTestPlan: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

@@ -1,15 +1,14 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Wiki.RemoveWiki.g.cs
+namespace TfsCmdlets.Cmdlets.Wiki
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Remove", "TfsWiki", SupportsShouldProcess = true, DefaultParameterSetName = "Remove code wiki")]
+    public partial class RemoveWiki: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

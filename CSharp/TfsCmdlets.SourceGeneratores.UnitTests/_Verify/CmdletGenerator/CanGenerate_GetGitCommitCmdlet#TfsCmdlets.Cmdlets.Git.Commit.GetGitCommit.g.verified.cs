@@ -1,15 +1,15 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Git.Commit.GetGitCommit.g.cs
+namespace TfsCmdlets.Cmdlets.Git.Commit
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Get", "TfsGitCommit", DefaultParameterSetName = "Search commits")]
+    [OutputType(typeof(Microsoft.TeamFoundation.SourceControl.WebApi.GitCommitRef))]
+    public partial class GetGitCommit: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

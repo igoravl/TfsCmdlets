@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.ExtensionManagement.GetExtension.g.cs
+namespace TfsCmdlets.Cmdlets.ExtensionManagement
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsExtension")]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.ExtensionManagement.WebApi.InstalledExtension))]
+    public partial class GetExtension: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

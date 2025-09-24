@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.TeamProject.SetTeamProject.g.cs
+namespace TfsCmdlets.Cmdlets.TeamProject
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Set", "TfsTeamProject", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.TeamFoundation.Core.WebApi.TeamProject))]
+    public partial class SetTeamProject: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

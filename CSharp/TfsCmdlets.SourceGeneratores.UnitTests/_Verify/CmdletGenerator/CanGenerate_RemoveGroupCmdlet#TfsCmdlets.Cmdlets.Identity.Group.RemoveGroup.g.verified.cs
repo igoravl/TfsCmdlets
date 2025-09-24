@@ -1,15 +1,15 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Identity.Group.RemoveGroup.g.cs
+namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("Remove", "TfsGroup", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.Graph.Client.GraphGroup))]
+    public partial class RemoveGroup: CmdletBase
     {
         /// <summary>
-        /// HELP_PARAM_PASSTHRU
+        /// HELP_PARAM_PROJECT
         /// </summary>
         [Parameter()]
-        public SwitchParameter Passthru { get; set; }
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

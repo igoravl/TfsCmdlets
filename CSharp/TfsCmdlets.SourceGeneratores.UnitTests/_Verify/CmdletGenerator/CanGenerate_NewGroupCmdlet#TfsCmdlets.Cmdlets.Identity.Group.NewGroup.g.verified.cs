@@ -1,15 +1,20 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Identity.Group.NewGroup.g.cs
+namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsGroup", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.Graph.Client.GraphGroup))]
+    public partial class NewGroup: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
         [Parameter()]
         public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

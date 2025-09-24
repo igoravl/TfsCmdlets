@@ -1,15 +1,20 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.TestManagement.NewTestPlan.g.cs
+namespace TfsCmdlets.Cmdlets.TestManagement
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsTestPlan", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.TestManagement.TestPlanning.WebApi.TestPlan))]
+    public partial class NewTestPlan: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
         [Parameter()]
         public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

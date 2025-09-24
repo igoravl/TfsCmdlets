@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.Identity.Group.GetGroupMember.g.cs
+namespace TfsCmdlets.Cmdlets.Identity.Group
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Get", "TfsGroupMember")]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.Identity.Identity))]
+    public partial class GetGroupMember: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION

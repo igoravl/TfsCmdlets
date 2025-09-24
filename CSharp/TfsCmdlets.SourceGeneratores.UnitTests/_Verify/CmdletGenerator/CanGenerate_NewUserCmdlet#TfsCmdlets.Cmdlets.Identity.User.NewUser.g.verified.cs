@@ -1,9 +1,9 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Identity.User.NewUser.g.cs
+namespace TfsCmdlets.Cmdlets.Identity.User
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsUser", SupportsShouldProcess = true)]
+    [OutputType(typeof(Microsoft.VisualStudio.Services.Licensing.AccountEntitlement))]
+    public partial class NewUser: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU

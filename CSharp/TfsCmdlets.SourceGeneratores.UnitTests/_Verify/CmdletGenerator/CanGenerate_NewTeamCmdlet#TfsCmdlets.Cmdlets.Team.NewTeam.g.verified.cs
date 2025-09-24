@@ -1,15 +1,20 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.Registry.SetRegistryValue.g.cs
-namespace TfsCmdlets.Cmdlets.Admin.Registry
+﻿//HintName: TfsCmdlets.Cmdlets.Team.NewTeam.g.cs
+namespace TfsCmdlets.Cmdlets.Team
 {
-    [Cmdlet("Set", "TfsRegistryValue", SupportsShouldProcess = true)]
-    [OutputType(typeof(object))]
-    public partial class SetRegistryValue: CmdletBase
+    [Cmdlet("New", "TfsTeam", SupportsShouldProcess = true)]
+    [OutputType(typeof(TfsCmdlets.Models.Team))]
+    public partial class NewTeam: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_PASSTHRU
         /// </summary>
         [Parameter()]
         public SwitchParameter Passthru { get; set; }
+        /// <summary>
+        /// HELP_PARAM_PROJECT
+        /// </summary>
+        [Parameter()]
+        public object Project { get; set; }
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>

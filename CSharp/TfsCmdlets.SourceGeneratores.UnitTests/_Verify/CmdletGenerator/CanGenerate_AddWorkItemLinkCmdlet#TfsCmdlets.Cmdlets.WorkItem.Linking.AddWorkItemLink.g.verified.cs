@@ -1,15 +1,14 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.WorkItem.Linking.AddWorkItemLink.g.cs
+namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Add", "TfsWorkItemLink", SupportsShouldProcess = true)]
+    public partial class AddWorkItemLink: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
         /// </summary>
         [Alias("Organization")]
-        [Parameter(ValueFromPipeline=true)]
+        [Parameter()]
         public object Collection { get; set; }
         /// <summary>
         /// HELP_PARAM_SERVER

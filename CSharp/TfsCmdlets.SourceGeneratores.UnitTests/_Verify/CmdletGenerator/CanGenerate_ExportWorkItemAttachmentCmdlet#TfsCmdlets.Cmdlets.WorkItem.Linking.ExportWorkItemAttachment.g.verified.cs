@@ -1,9 +1,8 @@
-﻿//HintName: TfsCmdlets.Cmdlets.Admin.GetVersion.g.cs
-namespace TfsCmdlets.Cmdlets.Admin
+﻿//HintName: TfsCmdlets.Cmdlets.WorkItem.Linking.ExportWorkItemAttachment.g.cs
+namespace TfsCmdlets.Cmdlets.WorkItem.Linking
 {
-    [Cmdlet("Get", "TfsVersion")]
-    [OutputType(typeof(TfsCmdlets.Models.ServerVersion))]
-    public partial class GetVersion: CmdletBase
+    [Cmdlet("Export", "TfsWorkItemAttachment", SupportsShouldProcess = true)]
+    public partial class ExportWorkItemAttachment: CmdletBase
     {
         /// <summary>
         /// HELP_PARAM_COLLECTION
