@@ -231,6 +231,7 @@ Task UpdateModuleManifest {
 Task UnitTests -PreCondition { -not $SkipTests } {
 
     Remove-Item $OutDir/TfsCmdlets.Tests.UnitTests.log -Force -ErrorAction SilentlyContinue
+    Exec { dotnet test $SolutionDir/TfsCmdlets.SourceGenerators.UnitTests/TfsCmdlets.SourceGenerators.UnitTests.csproj --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.SourceGenerators.UnitTests.trx" }
     #Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
 }
 
