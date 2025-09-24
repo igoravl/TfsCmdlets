@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\RemoveClassificationNodeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\RenameClassificationNodeController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\AreasIterations\TestClassificationNodeController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Cmdlets\WorkItem\Tagging\ToggleWorkItemTagController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Controllers\ControllerBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Enums.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\HashtableExtensions.cs" />

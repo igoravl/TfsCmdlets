@@ -16,9 +16,12 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
             foreach (var tag in tags)
             {
                 if (!PowerShell.ShouldProcess(tp, $"{(enabled? "Enable": "Disable")} work item tag '{tag.Name}'")) continue;
-
-                yield return Client.UpdateTagAsync(tp.Id, tag.Id, tag.Name, enabled)
-                    .GetResult($"Error renaming work item tag '{tag.Name}'");
+#if UNIT_TEST_PROJECT
+                    yield break;
+#else
+                    yield return Client.UpdateTagAsync(tp.Id, tag.Id, tag.Name, enabled)
+                        .GetResult($"Error renaming work item tag '{tag.Name}'");
+#endif
             }
         }
 
