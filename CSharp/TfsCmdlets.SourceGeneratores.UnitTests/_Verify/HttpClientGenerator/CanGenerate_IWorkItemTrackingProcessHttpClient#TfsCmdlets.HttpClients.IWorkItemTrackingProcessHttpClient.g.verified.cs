@@ -1,8 +1,10 @@
 ﻿//HintName: TfsCmdlets.HttpClients.IWorkItemTrackingProcessHttpClient.g.cs
+#pragma warning disable CS8669
 using System.Composition;
+using Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IWorkItemTrackingProcessHttpClient: IVssHttpClient
+    public partial interface IWorkItemTrackingProcessHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.ProcessBehavior> CreateProcessBehaviorAsync(Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.ProcessBehaviorCreateRequest behavior, System.Guid processId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task DeleteProcessBehaviorAsync(System.Guid processId, string behaviorRefName, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -73,8 +75,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.FieldModel>> GetFieldsAsync(System.Guid processId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.FieldModel>> GetWorkItemTypeFieldsAsync(System.Guid processId, string witRefName, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.ProcessWorkItemTypeField> GetWorkItemTypeFieldAsync(System.Guid processId, string witRefName, string fieldRefName, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations);
-		public void Dispose();
     }
     [Export(typeof(IWorkItemTrackingProcessHttpClient))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -236,9 +236,25 @@ namespace TfsCmdlets.HttpClients
 			=> Client.GetWorkItemTypeFieldsAsync(processId, witRefName, userState, cancellationToken);
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.WorkItemTracking.Process.WebApi.Models.ProcessWorkItemTypeField> GetWorkItemTypeFieldAsync(System.Guid processId, string witRefName, string fieldRefName, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetWorkItemTypeFieldAsync(processId, witRefName, fieldRefName, userState, cancellationToken);
-		public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
-			=> Client.SetResourceLocations(resourceLocations);
-		public void Dispose()
-			=> Client.Dispose();
-    }
+        public Uri BaseAddress
+           => Client.BaseAddress;
+        public bool ExcludeUrlsHeader
+        {
+           get => Client.ExcludeUrlsHeader;
+           set => Client.ExcludeUrlsHeader = value;
+        }
+        public Microsoft.VisualStudio.Services.WebApi.VssResponseContext LastResponseContext
+           => Client.LastResponseContext;
+        public bool LightweightHeader
+        {
+           get => Client.LightweightHeader;
+           set => Client.LightweightHeader = value;
+        }
+        public bool IsDisposed()
+           => Client.IsDisposed();
+        public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
+           => Client.SetResourceLocations(resourceLocations);
+        public void Dispose()
+	        => Client.Dispose();
+   }
 }

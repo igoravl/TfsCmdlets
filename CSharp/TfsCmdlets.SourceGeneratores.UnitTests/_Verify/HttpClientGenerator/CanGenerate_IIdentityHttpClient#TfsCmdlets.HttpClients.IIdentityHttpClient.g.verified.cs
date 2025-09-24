@@ -1,4 +1,5 @@
 ﻿//HintName: TfsCmdlets.HttpClients.IIdentityHttpClient.g.cs
+#pragma warning disable CS8669
 using System.Composition;
 using Microsoft.VisualStudio.Services.Identity.Client;
 namespace TfsCmdlets.HttpClients

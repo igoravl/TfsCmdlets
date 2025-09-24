@@ -234,17 +234,6 @@ public partial class HttpClientGeneratorTests
     }
 
     [Fact]
-    public async Task CanGenerate_IVssHttpClient()
-    {
-        await TestHelper.VerifyFiles<Generators.HttpClients.HttpClientGenerator>(
-            nameof(CanGenerate_IVssHttpClient),
-            new[]
-            {
-                "TfsCmdlets.Shared\\HttpClients\\IVssHttpClient.cs"
-            });
-    }
-
-    [Fact]
     public async Task CanGenerate_IWikiHttpClient()
     {
         await TestHelper.VerifyFiles<Generators.HttpClients.HttpClientGenerator>(

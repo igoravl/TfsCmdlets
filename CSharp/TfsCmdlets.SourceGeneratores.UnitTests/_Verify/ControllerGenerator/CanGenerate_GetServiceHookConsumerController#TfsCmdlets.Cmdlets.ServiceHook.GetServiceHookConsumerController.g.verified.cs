@@ -8,8 +8,16 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
     {
         private TfsCmdlets.HttpClients.IServiceHooksPublisherHttpClient Client { get; }
         // Consumer
-        protected bool Has_Consumer { get; set; }
-        protected string Consumer { get; set; }
+        protected bool Has_Consumer => Parameters.HasParameter(nameof(Consumer));
+        protected IEnumerable Consumer
+        {
+            get
+            {
+                var paramValue = Parameters.Get<object>(nameof(Consumer), "*");
+                if(paramValue is ICollection col) return col;
+                return new[] { paramValue };
+            }
+        }
         // Collection
         protected bool Has_Collection => Parameters.HasParameter("Collection");
         protected Models.Connection Collection => Data.GetCollection();
@@ -23,9 +31,6 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         public override Type DataType => typeof(Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Consumer);
         protected override void CacheParameters()
         {
-            // Consumer
-            Has_Consumer = Parameters.HasParameter("Consumer");
-            Consumer = Parameters.Get<string>("Consumer", "*");
             // ParameterSetName
             Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
