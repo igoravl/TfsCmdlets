@@ -181,14 +181,16 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
         private void GenerateCustomControllerProperty(StringBuilder sb)
         {
-            sb.Append($"""
+            sb.AppendLine($"""
                                protected override string CommandName => "{CustomControllerName}";
                        """);
         }
 
         private void GenerateReturnsValueProperty(StringBuilder sb)
         {
-            sb.Append($"        protected override bool ReturnsValue => {ReturnsValue.ToString().ToLower()};");
+            sb.AppendLine($"""
+                               protected override bool ReturnsValue => {ReturnsValue.ToString().ToLower()};
+                       """);
         }
 
         private void GenerateStructureGroupProperty(StringBuilder sb)

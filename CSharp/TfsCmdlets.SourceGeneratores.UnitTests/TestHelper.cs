@@ -111,7 +111,7 @@ namespace TfsCmdlets.SourceGenerators.UnitTests
             return Verify<T>(testName, File.ReadAllText(mainFile), additionalFiles);
         }
 
-        internal static Task Verify<T>(string testName, string source, IEnumerable<string>? additionalFiles = null)
+        internal static Task Verify<T>(string testName, string source, IEnumerable<string> additionalFiles = null)
             where T : IIncrementalGenerator, new()
         {
             // Parse the provided string into a C# syntax tree
