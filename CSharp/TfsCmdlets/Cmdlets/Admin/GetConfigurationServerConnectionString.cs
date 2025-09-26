@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     /// <related uri="https://tfscmdlets.dev/admin/get-tfsconfigurationConnectionstring/">Online version:</related>
     /// <related>Get-TfsInstallationPath</related>
     [TfsCmdlet(CmdletScope.None, WindowsOnly = true, OutputType = typeof(string), SkipGetProperty = true)]
-    partial class GetConfigurationConnectionString
+    partial class GetConfigurationServerConnectionString
     {
         /// <summary>
         /// Specifies the name of a Team Foundation Server application tier from which to 
@@ -49,7 +49,7 @@ namespace TfsCmdlets.Cmdlets.Admin
     }
 
     [CmdletController]
-    partial class GetConfigurationConnectionStringController
+    partial class GetConfigurationServerConnectionStringController
     {
         protected override IEnumerable Run()
         {

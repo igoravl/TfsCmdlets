@@ -2,6 +2,7 @@ using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
 using Microsoft.VisualStudio.Services.Identity.Client;
 using TfsCmdlets.Cmdlets.Identity.Group;
+using IIdentityHttpClient = TfsCmdlets.HttpClients.IIdentityHttpClient;
 
 namespace TfsCmdlets.Cmdlets.Identity.Group
 {

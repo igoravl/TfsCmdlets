@@ -1,5 +1,5 @@
 using Microsoft.Identity.Client;
-using Microsoft.Identity.Client.Desktop;
+// using Microsoft.Identity.Client.Desktop;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,7 +35,6 @@ namespace TfsCmdlets.Services.Impl
                     ClientName = "TfsCmdlets.InteractiveAuth",
                     ClientVersion = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
                 })
-                .WithDesktopFeatures()
                 .WithDefaultRedirectUri()
                 .Build();
 

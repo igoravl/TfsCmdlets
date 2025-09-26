@@ -13,7 +13,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Query
     /// this cmdlet to generate WIQ files compatible with the format supported by Team Explorer.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Project, DefaultParameterSetName = "Export to output stream", SupportsShouldProcess = true,
-     OutputType = typeof(string))]
+     OutputType = typeof(string), DataType = typeof(QueryHierarchyItem))]
     partial class ExportWorkItemQuery
     {
         /// <summary>
