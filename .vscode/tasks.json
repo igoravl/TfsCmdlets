@@ -1,10 +1,9 @@
 {
     "version": "2.0.0",
-    "command": "powershell",
     "tasks": [
         {
             "label": "Build",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -22,7 +21,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Debug",
                 "-Targets",
@@ -35,7 +34,7 @@
         },
         {
             "label": "Rebuild",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -49,7 +48,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Debug",
                 "-Targets",
@@ -62,7 +61,7 @@
         },
         {
             "label": "Clean",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -76,7 +75,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Debug",
                 "-Targets",
@@ -86,7 +85,7 @@
         },
         {
             "label": "Package",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "group": "none",
             "presentation": {
                 "echo": true,
@@ -101,7 +100,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Release",
                 "-SkipTests",
@@ -114,7 +113,7 @@
         },
         {
             "label": "Test",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "group": "test",
             "presentation": {
                 "echo": true,
@@ -129,7 +128,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Debug",
                 "-Targets",
@@ -138,7 +137,7 @@
         },
         {
             "label": "Docs",
-            "command": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
+            "command": "pwsh",
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -152,7 +151,7 @@
                 "Unrestricted",
                 "-NoProfile",
                 "-File",
-                "${workspaceRoot}/build.ps1",
+                "${workspaceFolder}/Build.ps1",
                 "-Configuration",
                 "Debug",
                 "-Targets",

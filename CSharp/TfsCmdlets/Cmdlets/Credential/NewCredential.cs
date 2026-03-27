@@ -27,6 +27,9 @@ namespace TfsCmdlets.Cmdlets.Credential
         [Import]
         private IInteractiveAuthentication InteractiveAuthentication { get; }
 
+        [Import]
+        private ICurrentConnections CurrentConnections { get; }
+
         protected override IEnumerable Run()
         {
             var connectionMode = ConnectionMode.CachedCredentials;
@@ -39,6 +42,8 @@ namespace TfsCmdlets.Cmdlets.Credential
                 connectionMode = ConnectionMode.AccessToken;
             else if (Interactive)
                 connectionMode = ConnectionMode.Interactive;
+            else if (Has_AzureLogin && AzureLogin)
+                connectionMode = ConnectionMode.AzureLogin;
 
             NetworkCredential netCred = null;
 
@@ -124,6 +129,17 @@ namespace TfsCmdlets.Cmdlets.Credential
                         throw new Exception("Interactive authentication is not supported for TFS / Azure DevOps Server in PowerShell Core. Please use either a username/password credential or a Personal Access Token.");
                     }
 
+                case ConnectionMode.AzureLogin:
+                    {
+                        Logger.Log("Using Azure Login credentials (DefaultAzureCredential)");
+
+                        var azureCredential = new AzureCredential();
+                        CurrentConnections.AzureCredential = azureCredential;
+
+                        yield return azureCredential.CreateVssCredentials();
+                        yield break;
+                    }
+
                 default:
                     {
                         throw new Exception($"Invalid parameter set '{connectionMode}'");
@@ -150,7 +166,8 @@ namespace TfsCmdlets.Cmdlets.Credential
             CredentialObject,
             UserNamePassword,
             AccessToken,
-            Interactive
+            Interactive,
+            AzureLogin
         }
     }
 }

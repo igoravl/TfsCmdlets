@@ -18,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.10" />
     <ProjectReference Include="..\TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj" />
     <ProjectReference Include="..\TfsCmdlets\TfsCmdlets.csproj" />
   </ItemGroup>

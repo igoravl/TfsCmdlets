@@ -12,6 +12,12 @@ namespace TfsCmdlets.Services
 
         Models.Team Team { get; set; }
 
+        /// <summary>
+        /// Stores the AzureCredential used for Azure Login authentication,
+        /// enabling automatic token renewal for long-lived sessions.
+        /// </summary>
+        AzureCredential AzureCredential { get; set; }
+
         T Get<T>(string name);
 
         object Get(string name);

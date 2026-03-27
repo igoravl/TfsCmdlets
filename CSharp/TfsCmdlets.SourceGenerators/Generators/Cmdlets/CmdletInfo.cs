@@ -150,6 +150,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 ("Alias", "\"Pat\"")}, "HELP_PARAM_PERSONAL_ACCESS_TOKEN");
 
             yield return GenerateParameter("Interactive", "SwitchParameter", "ParameterSetName = \"Prompt for credential\"", "HELP_PARAM_INTERACTIVE");
+
+            yield return GenerateParameter("AzureLogin", "SwitchParameter", "ParameterSetName = \"Azure Login\"", "HELP_PARAM_AZURE_LOGIN");
         }
 
         private static IEnumerable<GeneratedProperty> GenerateCustomControllerProperty(CmdletInfo settings)
@@ -208,7 +210,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
         private static readonly string[] _scopeNames = new[]{
             "ConfigurationServer", "Organization", "TeamProjectCollection", "TeamProject", "Team" };
         private static readonly string[] _credentialParameterSetNames = new[]{
-            "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential" };
+            "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential", "Azure Login" };
 
 
         private static readonly List<(Predicate<CmdletInfo>, Func<CmdletInfo, IEnumerable<GeneratedProperty>>, string)> _generators =
