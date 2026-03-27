@@ -14,6 +14,8 @@ namespace TfsCmdlets.Services.Impl
 
         public Models.Team Team {get;set;}
 
+        public AzureCredential AzureCredential {get;set;}
+
         public T Get<T>(string name)
         {
             return (T) Get(name);
@@ -37,6 +39,7 @@ namespace TfsCmdlets.Services.Impl
             Collection = null;
             Project = null;
             Team = null;
+            AzureCredential = null;
         }
 
         public void Set(Connection server)
