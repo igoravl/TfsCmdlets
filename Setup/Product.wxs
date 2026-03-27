@@ -30,6 +30,13 @@
                 Type="raw" />
         </Property>
 
+        <!--Windows Terminal detection-->
+        <Property Id="WTPATH" Secure="yes">
+            <RegistrySearch Id="WindowsTerminalSearch" Root="HKLM"
+                Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\wt.exe" Name=""
+                Type="raw" />
+        </Property>
+
         <!--Directories and Components-->
 
         <StandardDirectory Id="LocalAppDataFolder">
@@ -47,16 +54,31 @@
         
         <StandardDirectory Id="ProgramMenuFolder">
             <Directory Id="ShortcutsFolder" Name="$(var.PRODUCTNAME)">
-                <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}">
-                    <Shortcut Id="ShellIconShortcut" Name="Azure DevOps Shell"
+                <!-- Windows Terminal shortcut - only if Windows Terminal is detected -->
+                <Component Id="ShellShortcutWT" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}" Condition="WTPATH">
+                    <Shortcut Id="ShellIconShortcutWT" Name="Azure DevOps Shell"
+                        Target="[WTPATH]"
+                        Directory="ShortcutsFolder"
+                        Arguments="-p &quot;Azure DevOps Shell (Windows PowerShell)&quot;"
+                        Icon="ProductIcon" />
+                    <RemoveFolder Id="RemoveProgramMenuDirWT" On="uninstall"
+                        Directory="ShortcutsFolder" />
+                    <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
+                        Name="Installed"
+                        Type="integer" Value="1" KeyPath="yes" />
+                </Component>
+                
+                <!-- PowerShell shortcut - only if Windows Terminal is NOT detected -->
+                <Component Id="ShellShortcutPS" Guid="{8AB31DDC-700C-42A8-AF73-07FFFDF1BA16}" Condition="NOT WTPATH">
+                    <Shortcut Id="ShellIconShortcutPS" Name="Azure DevOps Shell"
                         Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe"
                         Directory="ShortcutsFolder"
                         Arguments="-noexit -command &quot;Import-Module TfsCmdlets -Version '$(var.PRODUCTVERSION)'; Enter-TfsShell&quot;"
                         Icon="ProductIcon" />
-                    <RemoveFolder Id="RemoveProgramMenuDir" On="uninstall"
+                    <RemoveFolder Id="RemoveProgramMenuDirPS" On="uninstall"
                         Directory="ShortcutsFolder" />
                     <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
-                        Name="Installed"
+                        Name="InstalledPS"
                         Type="integer" Value="1" KeyPath="yes" />
                 </Component>
             </Directory>
