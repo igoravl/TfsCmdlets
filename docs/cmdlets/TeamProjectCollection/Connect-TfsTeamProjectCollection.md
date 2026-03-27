@@ -5,7 +5,7 @@ parent: "TeamProjectCollection"
 description: "Connects to a TFS team project collection or Azure DevOps organization. "
 remarks: "The Connect-TfsTeamProjectCollection cmdlet connects to a TFS Team Project Collection or Azure DevOps organization. That connection can be later reused by other TfsCmdlets commands until it's closed by a call to Disconnect-TfsTeamProjectCollection. "
 parameterSets: 
-  "_All_": [ Cached, Collection, Credential, Interactive, Passthru, Password, PersonalAccessToken, Server, UserName ] 
+  "_All_": [ AzureLogin, Cached, Collection, Credential, Interactive, Passthru, Password, PersonalAccessToken, Server, UserName ] 
   "Cached credentials":  
     Collection: 
       type: "object"  
@@ -63,6 +63,17 @@ parameterSets:
       position: "0"  
       required: true  
     Interactive: 
+      type: "SwitchParameter"  
+    Passthru: 
+      type: "SwitchParameter"  
+    Server: 
+      type: "object"  
+  "Azure Login":  
+    Collection: 
+      type: "object"  
+      position: "0"  
+      required: true  
+    AzureLogin: 
       type: "SwitchParameter"  
     Passthru: 
       type: "SwitchParameter"  
@@ -130,6 +141,11 @@ parameters:
     aliases: [ Pat ] 
   - name: "Interactive" 
     description: "Prompts for user credentials. Can be used for any Team Foundation Server or Azure DevOps account - the proper login dialog is automatically selected. Should only be used in an interactive PowerShell session (i.e., a PowerShell terminal window), never in an unattended script (such as those executed during an automated build). Currently it is only supported in Windows PowerShell. " 
+    globbing: false 
+    type: "SwitchParameter" 
+    defaultValue: "False" 
+  - name: "AzureLogin" 
+    description: "Uses Azure Login credentials (DefaultAzureCredential) to authenticate to Azure DevOps. This inherits the current Azure authentication context (e.g. Azure CLI, Managed Identity, Visual Studio, Environment Variables) and obtains an Azure DevOps access token automatically. Tokens are short-lived and are automatically renewed when they expire. Ideal for CI/CD pipelines, managed identities, and scenarios where the user is already authenticated to Azure. " 
     globbing: false 
     type: "SwitchParameter" 
     defaultValue: "False"
