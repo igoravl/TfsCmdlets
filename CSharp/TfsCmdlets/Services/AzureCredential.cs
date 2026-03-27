@@ -32,7 +32,12 @@ namespace TfsCmdlets.Services
         /// Initializes a new instance using the default Azure credential chain.
         /// </summary>
         public AzureCredential()
-            : this(new DefaultAzureCredential())
+            : this(new DefaultAzureCredential(
+                new DefaultAzureCredentialOptions
+                {
+                    // Disable interactive browser auth to avoid hangs in unattended (CI/CD) scenarios.
+                    ExcludeInteractiveBrowserCredential = true
+                }))
         {
         }
 
