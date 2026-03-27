@@ -77,7 +77,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: releasenotes
-          path: "docs/ReleaseNotes/**"
+          path: "RELEASENOTES.md"
     outputs:
       BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
 
@@ -96,9 +96,23 @@ jobs:
         id: extract_release_notes
         shell: pwsh
         run: |
-          $fileName = (Get-ChildItem [0-9]*.md -Recurse | Sort-Object Name | Select -ExpandProperty FullName -Last 1)
-          Write-Output $fileName
-          $releaseNotes = (Get-Content $fileName -Encoding UTF8 | Select-Object -Skip 4)
+          $lines = Get-Content releasenotes/RELEASENOTES.md -Encoding UTF8
+          $version = $env:BUILD_NAME -replace '\+.*$'  # strip build metadata
+          $collecting = $false
+          $notes = @()
+          foreach ($line in $lines) {
+            if ($line -match "^## \[?$([regex]::Escape($version))\]?") {
+              $collecting = $true
+              continue
+            }
+            if ($collecting -and $line -match '^## ') {
+              break
+            }
+            if ($collecting) {
+              $notes += $line
+            }
+          }
+          $releaseNotes = ($notes -join "`n").Trim()
           Write-Output $releaseNotes
           Write-Output 'RELEASE_NOTES<<EOF' >> $env:GITHUB_OUTPUT
           Write-Output $releaseNotes >> $env:GITHUB_OUTPUT
