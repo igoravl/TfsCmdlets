@@ -283,24 +283,11 @@ Task Clean {
 
 Task ValidateReleaseNotes -PreCondition { -not $SkipReleaseNotes }  {
 
-    $path = Join-Path $RootProjectDir "Docs/ReleaseNotes/${ThreePartVersion}.md"
-
-    if(-not (Test-Path $path -PathType Leaf)) {
-        throw "Release notes file '$path' not found"
-    }
-    
-    $releaseNotes = Get-Content $path -Encoding utf8
-    $topVersionLine = $releaseNotes[2]
-
-    if($topVersionLine -notlike "*$ThreePartVersion*") {
-        throw "File '$path' does not contain the release notes for version $threePartVersion."
-    }
-
     $releaseNotes = (Get-Content (Join-Path $RootProjectDir 'RELEASENOTES.md') -Encoding utf8)
-    $topVersionLine = $releaseNotes[2]
+    $versionLine = $releaseNotes | Where-Object { $_ -match "^## \[?$ThreePartVersion\]?" } | Select-Object -First 1
 
-    if($topVersionLine -notmatch "$ThreePartVersion") {
-        throw "File 'RELEASENOTES.md' does not contain the release notes for version $threePartVersion"
+    if(-not $versionLine) {
+        throw "File 'RELEASENOTES.md' does not contain the release notes for version $ThreePartVersion"
     }
 }
 
