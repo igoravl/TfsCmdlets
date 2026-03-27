@@ -101,7 +101,7 @@ jobs:
           $collecting = $false
           $notes = @()
           foreach ($line in $lines) {
-            if ($line -match "^## \[?$([regex]::Escape($version))\]?") {
+            if ($line -match "^## \[$([regex]::Escape($version))\]( - \d{4}-\d{2}-\d{2})?$") {
               $collecting = $true
               continue
             }
@@ -113,6 +113,10 @@ jobs:
             }
           }
           $releaseNotes = ($notes -join "`n").Trim()
+          if (-not $releaseNotes) {
+            Write-Error "No release notes found for version '$version' in RELEASENOTES.md"
+            exit 1
+          }
           Write-Output $releaseNotes
           Write-Output 'RELEASE_NOTES<<EOF' >> $env:GITHUB_OUTPUT
           Write-Output $releaseNotes >> $env:GITHUB_OUTPUT
