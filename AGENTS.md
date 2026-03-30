@@ -57,7 +57,8 @@ See [Docs/ShouldProcess.md](Docs/ShouldProcess.md) for the full pattern, behavio
 
 ### Controllers
 
-- Location: `CSharp/TfsCmdlets/Controllers/{Domain}/` (and `TfsCmdlets.Legacy/Controllers/`)
+- Location: `CSharp/TfsCmdlets/Cmdlets/{Domain}/` â€” controllers are **partial classes** in the **same file** as their corresponding cmdlet class, named `{Verb}{Noun}Controller`.
+- Legacy controllers for older features live in `CSharp/TfsCmdlets.Legacy/Controllers/{Domain}/`.
 - Controllers implement business logic. Class name: `{Verb}{Noun}Controller`, inherits `ControllerBase`.
 - Decorated with `[CmdletControllerAttribute(typeof(DataType))]`.
 - Key methods: `CacheParameters()` and `Run()`.
@@ -119,15 +120,15 @@ Do **not** call `Parameters.Get<T>()` or `Parameters.HasParameter()` directly â€
 ```
 CSharp/
   TfsCmdlets/             # Main library (net471 + netcoreapp3.1)
-    Cmdlets/               # Cmdlet classes by domain
-    Controllers/           # Not used (controllers in Legacy project)
+    Cmdlets/               # Cmdlet classes (and their inline controllers) by domain
     Services/              # Service interfaces and implementations
     Models/                # Data models
     Extensions/            # Extension methods
     HttpClients/           # HTTP client abstractions
     Util/                  # Utilities
   TfsCmdlets.Legacy/       # Legacy .NET Framework code (net471 only)
-    Controllers/           # Controller implementations
+    Cmdlets/               # Legacy cmdlet classes
+    Controllers/           # Legacy controller implementations
   TfsCmdlets.SourceGenerators/  # Roslyn source generators (netstandard2.0)
   TfsCmdlets.Tests.UnitTests/   # xUnit unit tests
 PS/
@@ -145,7 +146,7 @@ out/                       # Build output (generated, not committed)
 ## Adding a new cmdlet
 
 1. Create a partial class in `CSharp/TfsCmdlets/Cmdlets/{Domain}/` with the `[TfsCmdlet]` attribute.
-2. Create a matching controller in `CSharp/TfsCmdlets.Legacy/Controllers/{Domain}/` inheriting `ControllerBase`.
+2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]` and inheriting `ControllerBase`.
 3. The source generator will produce parameter sets and wiring automatically.
 4. Add Pester tests in `PS/_Tests/{Domain}/`.
 

@@ -119,6 +119,66 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             Assert.Contains(token3, results);
             Assert.DoesNotContain(token2, results);
         }
+
+        [Fact]
+        public void Get_For_User_Projects_SessionTokens_To_PatTokens()
+        {
+            // Arrange
+            var authId1 = Guid.NewGuid();
+            var authId2 = Guid.NewGuid();
+            var validFrom = DateTime.UtcNow.AddDays(-10);
+            var validTo = DateTime.UtcNow.AddDays(20);
+
+            var sessionTokens = new List<Microsoft.VisualStudio.Services.DelegatedAuthorization.SessionToken>
+            {
+                new Microsoft.VisualStudio.Services.DelegatedAuthorization.SessionToken
+                {
+                    AuthorizationId = authId1,
+                    DisplayName = "Admin-Token",
+                    Scope = "vso.work",
+                    ValidFrom = validFrom,
+                    ValidTo = validTo
+                },
+                new Microsoft.VisualStudio.Services.DelegatedAuthorization.SessionToken
+                {
+                    AuthorizationId = authId2,
+                    DisplayName = "Other-Token",
+                    Scope = "vso.code"
+                }
+            };
+
+            _parms.HasParameter("ParameterSetName").Returns(true);
+            _parms.Get<string>("ParameterSetName", Arg.Any<string>()).Returns("Get for user");
+            _parms.HasParameter("PersonalAccessToken").Returns(true);
+            _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns("Admin-*");
+            _parms.HasParameter("User").Returns(true);
+            _parms.Get<object>("User", Arg.Any<object>()).Returns("aad.descriptor");
+
+            _adminClient.ListPersonalAccessTokensAsync(
+                    Arg.Any<Microsoft.VisualStudio.Services.Common.SubjectDescriptor>(),
+                    Arg.Any<string>())
+                .Returns(Task.FromResult(new TokenAdminPagedSessionTokens
+                {
+                    SessionTokens = sessionTokens,
+                    ContinuationToken = null
+                }));
+
+            var controller = new GetPersonalAccessTokenController(
+                _adminClient, _powerShell, _data, _parms, _logger, _client);
+
+            // Act
+            var results = controller.InvokeCommand().Cast<PatToken>().ToList();
+
+            // Assert — wildcard "Admin-*" should match only the first token, projected to PatToken
+            Assert.Single(results);
+            var result = results[0];
+            Assert.IsType<PatToken>(result);
+            Assert.Equal(authId1, result.AuthorizationId);
+            Assert.Equal("Admin-Token", result.DisplayName);
+            Assert.Equal("vso.work", result.Scope);
+            Assert.Equal(validFrom, result.ValidFrom);
+            Assert.Equal(validTo, result.ValidTo);
+        }
     }
 
     public class NewPersonalAccessToken_Tests

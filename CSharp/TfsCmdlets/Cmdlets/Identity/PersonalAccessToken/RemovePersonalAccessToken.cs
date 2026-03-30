@@ -13,7 +13,6 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         DefaultParameterSetName = "Remove own token")]
     partial class RemovePersonalAccessToken
     {
-    {
         /// <summary>
         /// Specifies the personal access token to revoke. Accepts a Guid (authorizationId)
         /// or a PatToken object.

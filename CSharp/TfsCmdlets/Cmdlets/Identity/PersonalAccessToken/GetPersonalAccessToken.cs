@@ -180,7 +180,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
             } while (!string.IsNullOrEmpty(result?.ContinuationToken));
         }
 
-        private IEnumerable<object> GetTokensForUser()
+        private IEnumerable<PatToken> GetTokensForUser()
         {
             var subjectDescriptor = User switch
             {
@@ -206,7 +206,16 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                 {
                     if (wildcard.IsMatch(token.DisplayName))
                     {
-                        yield return token;
+                        yield return new PatToken
+                        {
+                            AuthorizationId = token.AuthorizationId,
+                            DisplayName = token.DisplayName,
+                            Scope = token.Scope,
+                            ValidFrom = token.ValidFrom,
+                            ValidTo = token.ValidTo,
+                            Token = token.Token,
+                            TargetAccounts = token.TargetAccounts
+                        };
                     }
                 }
             } while (result?.ContinuationToken != null);
