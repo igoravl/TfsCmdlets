@@ -40,6 +40,8 @@ namespace TfsCmdlets.Services.Impl
             Project = null;
             Team = null;
             AzureCredential = null;
+
+            SyncEnvironmentVariables();
         }
 
         public void Set(Connection server)
@@ -48,6 +50,8 @@ namespace TfsCmdlets.Services.Impl
 
             Server = server;
             // TODO: Mru.Server.Set(Server.Uri.ToString());
+
+            SyncEnvironmentVariables();
         }
 
         public void Set(Connection server, Models.Connection collection)
@@ -56,18 +60,72 @@ namespace TfsCmdlets.Services.Impl
 
             Collection = collection;
             // TODO: Mru.Collection.Set(Collection.Uri.ToString());
+
+            SyncEnvironmentVariables();
         }
 
         public void Set(Connection server, Models.Connection collection, WebApiTeamProject project)
         {
             Set(server, collection);
             Project = project;
+
+            SyncEnvironmentVariables();
         }
 
         public void Set(Connection server, Models.Connection collection, WebApiTeamProject project, WebApiTeam team)
         {
             Set(server, collection, project);
             Team = team;
+
+            SyncEnvironmentVariables();
+        }
+
+        /// <summary>
+        /// Synchronizes the current connection state to environment variables (TFSCMDLETS_*),
+        /// enabling integration with Oh-My-Posh, Starship, and other prompt customization tools.
+        /// </summary>
+        private void SyncEnvironmentVariables()
+        {
+            static void SetVar(string name, string value)
+                => Environment.SetEnvironmentVariable(name, value, EnvironmentVariableTarget.Process);
+
+            if (Collection is { } col)
+            {
+                SetVar("TFSCMDLETS_CONNECTED", "true");
+                SetVar("TFSCMDLETS_ORG", col.DisplayName?.TrimEnd('/'));
+                SetVar("TFSCMDLETS_ORG_URL", col.Uri?.ToString());
+                SetVar("TFSCMDLETS_USER", col.CurrentUserUniqueName);
+                SetVar("TFSCMDLETS_USER_DISPLAY", col.CurrentUserDisplayName);
+                SetVar("TFSCMDLETS_IS_HOSTED", col.IsHosted ? "true" : "false");
+            }
+            else
+            {
+                SetVar("TFSCMDLETS_CONNECTED", null);
+                SetVar("TFSCMDLETS_ORG", null);
+                SetVar("TFSCMDLETS_ORG_URL", null);
+                SetVar("TFSCMDLETS_USER", null);
+                SetVar("TFSCMDLETS_USER_DISPLAY", null);
+                SetVar("TFSCMDLETS_IS_HOSTED", null);
+            }
+
+            SetVar("TFSCMDLETS_PROJECT", Project?.Name);
+            SetVar("TFSCMDLETS_TEAM", Team?.Name);
+        }
+
+        /// <summary>
+        /// Clears all TFSCMDLETS_* environment variables. Called during module cleanup.
+        /// </summary>
+        internal static void ClearEnvironmentVariables()
+        {
+            foreach (var name in new[]
+            {
+                "TFSCMDLETS_CONNECTED", "TFSCMDLETS_ORG", "TFSCMDLETS_ORG_URL",
+                "TFSCMDLETS_USER", "TFSCMDLETS_USER_DISPLAY", "TFSCMDLETS_IS_HOSTED",
+                "TFSCMDLETS_PROJECT", "TFSCMDLETS_TEAM"
+            })
+            {
+                Environment.SetEnvironmentVariable(name, null, EnvironmentVariableTarget.Process);
+            }
         }
     }
 }
