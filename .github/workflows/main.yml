@@ -91,7 +91,7 @@ jobs:
       BUILD_NAME: ${{ needs.Build.outputs.BUILD_NAME }}
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
       - name: Extract release notes
         id: extract_release_notes
         shell: pwsh
@@ -199,7 +199,7 @@ jobs:
           fetch-depth: 0
           path: site
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: docs
       - name: Publish site
@@ -226,7 +226,7 @@ jobs:
       PSGALLERY_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: portable
       - name: Publish artifact
@@ -245,7 +245,7 @@ jobs:
     environment: nuget
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: nuget
       - name: Push package
@@ -261,7 +261,7 @@ jobs:
       CHOCO_KEY: ${{ secrets.API_KEY }}
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: chocolatey
       - name: Install Chocolatey
@@ -292,7 +292,7 @@ jobs:
           git fetch upstream
           git checkout -b "TfsCmdlets_$BUILD_NAME"
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: winget
           path: winget-pkgs
