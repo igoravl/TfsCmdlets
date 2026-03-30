@@ -23,7 +23,7 @@ jobs:
       TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Initialize CodeQL
@@ -194,7 +194,7 @@ jobs:
       RELEASE_NOTES: ${{ needs.Release.outputs.RELEASE_NOTES }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           path: site
