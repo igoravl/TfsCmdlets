@@ -104,7 +104,7 @@ out/
 **Unit Testing:**
 - **Framework**: xUnit v2.4.1
 - **Test Project**: [CSharp/TfsCmdlets.Tests.UnitTests](CSharp/TfsCmdlets.Tests.UnitTests)
-- **Target Framework**: netcoreapp3.1 only
+- **Target Framework**: net8.0-windows
 - **Dependencies**:
   - NSubstitute v4.2.2 (mocking)
   - Microsoft.CodeAnalysis.CSharp (Roslyn)
