@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-03-30
+
+### Added
+
+- `Get-TfsPersonalAccessToken` — Lists or gets Personal Access Tokens (PATs) for the current user (by name, ID, or wildcard). Supports an `-AsAdmin` mode to list tokens for other users via the Token Admin API.
+- `New-TfsPersonalAccessToken` — Creates a new PAT with the specified display name, scope, and validity period. Supports `-AllOrganizations` for organization-agnostic tokens.
+- `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
+- `Update-TfsPersonalAccessToken` — Regenerates (rotates) a PAT by revoking and recreating it, preserving its scope and settings.
+- `Remove-TfsPersonalAccessToken` — Revokes a PAT. Supports an `-AsAdmin` mode to revoke other users' tokens. Implements `-Force` for destructive confirmation bypass.
+- `Enter-TfsShell`: Added `-NoOhMyPosh` switch to disable Oh-My-Posh prompt integration even when it is installed, and `-OhMyPoshTheme` to specify a custom theme file path. When Oh-My-Posh is detected and neither switch is set, the module automatically initializes the bundled Azure DevOps theme.
+- Bundled Oh-My-Posh theme (`_Themes/azuredevops.omp.json`) for the Azure DevOps Shell, displaying the connected organization, project, team, and user in the prompt.
+- Connection state is now automatically synchronized to `TFSCMDLETS_*` process-level environment variables (`TFSCMDLETS_CONNECTED`, `TFSCMDLETS_ORG`, `TFSCMDLETS_ORG_URL`, `TFSCMDLETS_USER`, `TFSCMDLETS_USER_DISPLAY`, `TFSCMDLETS_IS_HOSTED`, `TFSCMDLETS_PROJECT`, `TFSCMDLETS_TEAM`) on every connect/disconnect, enabling integration with external prompt customization tools such as Oh-My-Posh and Starship.
+
+### Changed
+
+- `Remove-Module TfsCmdlets` now clears all `TFSCMDLETS_*` environment variables via `IModuleAssemblyCleanup`.
+
 ## [2.10.0] - 2026-03-27
 
 ### Added
