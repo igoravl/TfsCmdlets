@@ -87,7 +87,7 @@ namespace TfsCmdlets.Services.Impl
             => ShouldProcess($"Team '{t.Name}'", action);
 
         public bool ShouldContinue(string query, string caption = null)
-            => CurrentCmdlet.ShouldContinue(query, caption);
+            => IsInteractive && CurrentCmdlet.ShouldContinue(query, caption);
 
         /// <summary>
         /// Executes a PowerShell script in the current session context
