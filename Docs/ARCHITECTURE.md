@@ -1,53 +1,52 @@
-Now I have comprehensive understanding of the codebase. Let me create a detailed summary:
+# TfsCmdlets Architecture
 
-## **TfsCmdlets Codebase Exploration - Complete Summary**
-
-### **1. PROJECT PURPOSE AND WHAT IT DOES**
-
-**TfsCmdlets** is a PowerShell module that provides cmdlets (commands) to simplify automated interaction with:
-- **Team Foundation Server (TFS)** versions 2010-2018
-- **Azure DevOps** Server (2019+) and Services (Cloud)
-
-The module enables Azure DevOps administrators and power users to automate tasks like:
-- Retrieving and managing work items
-- Creating team projects and project collections
-- Managing iterations, teams, identities
-- Managing pipelines, artifacts, releases
-- Managing service hooks, extensions, wikis
-- Creating scripts for organizational DevOps processes
-
-It includes **Azure DevOps Shell**, a pre-configured PowerShell window for command-line interaction.
-
-Available through multiple distribution channels: PowerShell Gallery, NuGet, Chocolatey, Windows Package Manager (winget), MSI installer, and portable ZIP.
+This document describes the architecture of the TfsCmdlets PowerShell module, with emphasis on
+authentication (including Personal Access Tokens and environment variables) and shell integration
+(including Oh‑My‑Posh support).
 
 ---
 
-### **2. LANGUAGES AND FRAMEWORKS USED**
+## 1. Overview
 
-**Primary Languages:**
-- **C#** - Core library with multi-targeting support
-- **PowerShell** - Module shell and scripting
-- **XML/YAML** - Configuration and build definitions
+TfsCmdlets is a PowerShell module that provides cmdlets to automate interaction with:
 
-**Frameworks & Libraries:**
-- **.NET Multi-targeting**: 
-  - `net471` (Desktop, full .NET Framework)
-  - `netcoreapp3.1` (Core, cross-platform)
-  - `netstandard2.0` (Source Generators)
-- **PowerShellStandard.Library** v7.0.0-preview.1
-- **Microsoft.PowerShell.SDK** v7.0.10
-- **Azure DevOps Client Libraries** (v16.x):
-  - `Microsoft.TeamFoundationServer.Client`
-  - `Microsoft.VisualStudio.Services.*` (Release, Search, ServiceHooks, ExtensionManagement, Packaging)
-  - `Microsoft.TeamFoundationServer.ExtendedClient` (Desktop only)
-- **Azure Identity** (v1.x) - for Azure authentication
-- **Microsoft.Identity.Client** (v4.x) - MSAL authentication
-- **Roslyn** (v4.2.0) - For source code analysis/generation
-- **Testing**: xUnit v2.4.1, NSubstitute v4.2.2, coverlet for code coverage
-- **Build Tools**: dotnet CLI, psake, GitVersion, NuGet, Chocolatey, WiX Toolset
+- Team Foundation Server (TFS) 2010–2018
+- Azure DevOps Server (2019+) and Azure DevOps Services
+
+The module targets administrators and power users who need to script and automate operations such as:
+
+- Managing organizations, collections, and projects
+- Managing work items, teams, iterations, and identities
+- Managing pipelines, releases, artifacts, service hooks, extensions, and wikis
+
+A companion **Azure DevOps Shell** experience is provided, offering a pre‑configured PowerShell
+environment tailored to TfsCmdlets. Distribution is via PowerShell Gallery, NuGet, Chocolatey,
+Windows Package Manager (winget), MSI installer, and portable ZIP packages.
 
 ---
 
+## 2. High‑Level Architecture
+
+At a high level, the module is composed of the following layers:
+
+- **Core .NET library (C#)**  
+  Implements the integration with Azure DevOps/TFS REST and client APIs, connection management,
+  domain models, and shared utilities.
+
+- **PowerShell module surface**  
+  Exposes the core functionality through cmdlets, parameter binding, pipeline support, and
+  user‑facing error handling.
+
+- **Authentication and configuration layer**  
+  Handles connection context, credentials (including PATs), environment‑variable configuration,
+  and profile‑level defaults.
+
+- **Shell integration**  
+  Provides the Azure DevOps‑focused shell experience and integrates with prompt/customization
+  tools such as Oh‑My‑Posh.
+
+- **Build and packaging tooling**  
+  Produces multi‑targeted binaries and packages for the supported distribution channels.
 ### **3. BUILD SYSTEM AND HOW TO BUILD**
 
 **Primary Build Entry Point**: [Build.ps1](Build.ps1)
