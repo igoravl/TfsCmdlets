@@ -16,82 +16,119 @@ Param
     [switch] $Incremental
 )
 
+# Dependency versions (lockfile)
+$script:DependencyVersions = @{
+    DotNetTools = @{
+        'GitVersion.Tool' = '6.7.0'
+    }
+    NugetPackages = @{
+    }
+    PsModules = @{
+        'psake'            = $null
+        'PsScriptAnalyzer' = $null
+        'VSSetup'          = $null
+        'powershell-yaml'  = $null
+        'ps1xmlgen'        = $null
+        'PlatyPS'          = $null
+    }
+}
+
+Function Assert-DotNetSdk {
+    $dotnet = Get-Command dotnet -ErrorAction SilentlyContinue
+    if (-not $dotnet) {
+        throw "dotnet SDK not found. Please install .NET SDK 8 or later from https://dotnet.microsoft.com/download"
+    }
+
+    $sdkVersion = dotnet --version 2>$null
+    if (-not $sdkVersion) {
+        throw "Unable to determine dotnet SDK version. Please install .NET SDK 8 or later from https://dotnet.microsoft.com/download"
+    }
+
+    $major = [int] ($sdkVersion -split '\.')[0]
+    if ($major -lt 8) {
+        throw ".NET SDK 8+ is required, but found $sdkVersion. Please upgrade from https://dotnet.microsoft.com/download"
+    }
+
+    Write-Verbose "dotnet SDK $sdkVersion found"
+}
+
 Function Install-Dependencies {
-    $NugetPackages = @('GitVersion.CommandLine')
-    $PsModules = @('psake', 'PsScriptAnalyzer', 'VSSetup', 'powershell-yaml', 'ps1xmlgen', 'PlatyPS')
+    Write-Verbose "Restoring missing dependencies"
 
-    $script:PackagesDir = Join-Path $RootProjectDir 'packages'
-
-    Write-Verbose "Restoring missing dependencies. Packages directory: $PackagesDir"
-
-    Install-Nuget
-
-    Write-Verbose "Restoring NuGet package(s) ($($NugetPackages -join ', '))"
-
-    foreach ($pkg in $NugetPackages) {
-        Install-NugetPackage $pkg
+    $dotNetTools = $script:DependencyVersions.DotNetTools
+    Write-Verbose "Restoring dotnet tool(s) ($($dotNetTools.Keys -join ', '))"
+    foreach ($tool in $dotNetTools.GetEnumerator()) {
+        Install-DotNetTool $tool.Key $tool.Value
     }
 
-    Write-Verbose "Restoring PowerShell module(s) ($($PsModules -join ', '))"
+    $nugetPackages = $script:DependencyVersions.NugetPackages
+    if ($nugetPackages.Count -gt 0) {
+        Write-Verbose "Restoring NuGet package(s) ($($nugetPackages.Keys -join ', '))"
+        foreach ($pkg in $nugetPackages.GetEnumerator()) {
+            Install-NugetPackage $pkg.Key $pkg.Value
+        }
+    }
 
-    foreach ($mod in $PsModules) {
-        Install-PsModule $mod
+    $psModules = $script:DependencyVersions.PsModules
+    Write-Verbose "Restoring PowerShell module(s) ($($psModules.Keys -join ', '))"
+    foreach ($mod in $psModules.GetEnumerator()) {
+        Install-PsModule $mod.Key $mod.Value
     }
 }
 
-Function Install-Nuget {
-    Write-Verbose "Restoring Nuget client"
+Function Install-DotNetTool($Tool, $Version) {
+    Write-Verbose "Restoring dotnet local tool $Tool $Version"
 
-    $BuildToolsDir = Join-Path $RootProjectDir 'BuildTools'
-    $script:NugetExePath = Join-Path $BuildToolsDir 'nuget.exe'
-
-    if (-not (Test-Path $PackagesDir -PathType Container)) {
-        mkdir $PackagesDir -Force | Write-Verbose
+    # Ensure a tool manifest exists
+    if (-not (Test-Path (Join-Path $RootProjectDir '.config/dotnet-tools.json'))) {
+        Write-Verbose "Tool manifest not found. Creating with 'dotnet new tool-manifest'"
+        dotnet new tool-manifest *>&1 | Write-Verbose
     }
 
-    if (-not (Test-Path $BuildToolsDir -PathType Container)) {
-        mkdir $BuildToolsDir -Force | Write-Verbose
+    # Check whether the correct version is already installed
+    $installed = (dotnet tool list --local 2>$null | Select-String $Tool)
+    if ($installed -and ($installed -match $Version)) {
+        Write-Verbose "$Tool $Version already installed; Skipping..."
+        return
     }
 
-    if (-not (Test-Path $NugetExePath -PathType Leaf)) {
-        Write-Verbose "Nuget.exe not found. Downloading from https://dist.nuget.org"
-        Invoke-WebRequest -Uri https://dist.nuget.org/win-x86-commandline/latest/nuget.exe -OutFile $NugetExePath | Write-Verbose
-    }
-    else {
-        Write-Verbose "NuGet client found; Skipping..."    
-    }
-
-    Write-Verbose "NugetExePath: $NugetExePath"
+    Write-Verbose "Installing $Tool $Version"
+    dotnet tool install --local $Tool --version $Version *>&1 | Write-Verbose
 }
 
-Function Install-NugetPackage($Package) {
+Function Install-NugetPackage($Package, $Version, $OutputDirectory = 'packages') {
     Write-Verbose "Restoring NuGet package $Package"
 
-    $modulePath = Join-Path $RootProjectDir "packages/$Package"
+    $pkgDir = Join-Path $RootProjectDir "$OutputDirectory/$Package"
 
-    if (-not (Test-Path "$modulePath/*" -PathType Leaf)) {
-        Write-Verbose "Package not found. Downloading from Nuget.org"
-        & $NugetExePath Install $Package -ExcludeVersion -OutputDirectory packages *>&1 | Write-Verbose
+    if (Test-Path "$pkgDir/*" -PathType Leaf) {
+        Write-Verbose "NuGet package $Package found; Skipping..."
+        return
     }
-    else {
-        Write-Verbose "NuGet package $Package found; Skipping..."    
-    }
+
+    Write-Verbose "Package not found. Downloading from NuGet.org"
+    $addArgs = @('add', 'package', $Package, '--package-directory', (Join-Path $RootProjectDir $OutputDirectory), '--no-restore')
+    if ($Version) { $addArgs += '--version', $Version }
+    dotnet nuget @addArgs *>&1 | Write-Verbose
 }
 
-Function Install-PsModule($Module) {
+Function Install-PsModule($Module, $Version) {
     Write-Verbose "Restoring module $Module"
 
-    if (-not (Get-Module $Module -ListAvailable)) {
-        if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue)) {
-            Write-Verbose "Installing required Nuget package provider in order to install modules from PowerShell Gallery"
-            Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
-        }
+    $existing = Get-Module $Module -ListAvailable | Select-Object -First 1
+    if ($existing -and (-not $Version -or $existing.Version -eq $Version)) {
+        Write-Verbose "PowerShell module $Module found; Skipping..."
+        return
+    }
 
-        Install-Module $Module -Scope CurrentUser -Force | Write-Verbose
+    if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue)) {
+        Write-Verbose "Installing required Nuget package provider in order to install modules from PowerShell Gallery"
+        Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
     }
-    else {
-        Write-Verbose "PowerShell module $Module found; Skipping..."    
-    }
+
+    $installArgs = @{ Name = $Module; Scope = 'CurrentUser'; Force = $true }
+    if ($Version) { $installArgs['RequiredVersion'] = $Version }
+    Install-Module @installArgs | Write-Verbose
 }
 
 try {
@@ -109,14 +146,14 @@ try {
 
     Write-Verbose "=== RESTORE DEPENDENCIES ==="
 
+    Assert-DotNetSdk
     Install-Dependencies
 
     # Set build name
 
     Write-Verbose "=== SET BUILD NAME ==="
 
-    $GitVersionPath = Join-Path $RootProjectDir 'packages\gitversion.commandline\tools\GitVersion.exe'
-    $VersionMetadata = (& $GitVersionPath | ConvertFrom-Json)
+    $VersionMetadata = (dotnet gitversion | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
     $BuildName = $VersionMetadata.FullSemVer.Replace('+', "+$ProjectBuildNumber.")
 
