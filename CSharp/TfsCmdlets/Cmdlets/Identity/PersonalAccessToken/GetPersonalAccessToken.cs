@@ -164,13 +164,13 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
             do
             {
                 result = Client.ListPatsAsync(
-                        displayFilterOption: DisplayFilter,
-                        sortByOption: SortBy,
-                        isSortAscending: IsSortAscending,
+                        displayFilterOption: Has_DisplayFilter ? DisplayFilter : (DisplayFilterOptions?)null,
+                        sortByOption: Has_SortBy ? SortBy : (SortByOptions?)null,
+                        isSortAscending: Has_IsSortAscending ? IsSortAscending : (bool?)null,
                         continuationToken: result?.ContinuationToken)
                     .GetResult("Error listing personal access tokens");
 
-                foreach (var token in result.PatTokens)
+                foreach (var token in result.PatTokens ?? Enumerable.Empty<PatToken>())
                 {
                     if (wildcard.IsMatch(token.DisplayName))
                     {

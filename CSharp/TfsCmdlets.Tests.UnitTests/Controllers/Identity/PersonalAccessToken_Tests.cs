@@ -97,9 +97,9 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _parms.HasParameter("User").Returns(false);
 
             _client.ListPatsAsync(
-                    Arg.Any<DisplayFilterOptions>(),
-                    Arg.Any<SortByOptions>(),
-                    Arg.Any<bool>(),
+                    Arg.Any<DisplayFilterOptions?>(),
+                    Arg.Any<SortByOptions?>(),
+                    Arg.Any<bool?>(),
                     Arg.Any<string>())
                 .Returns(Task.FromResult(new PagedPatTokens
                 {

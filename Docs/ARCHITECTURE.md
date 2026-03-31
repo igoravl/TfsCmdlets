@@ -203,7 +203,7 @@ dotnet test (runs via psake task)
 TfsCmdlets/
 ├── CSharp/                          # C# source code
 │   ├── TfsCmdlets/                 # Main library
-│   │   ├── Cmdlets/                # Cmdlet classes by domain
+│   │   ├── Cmdlets/                # Cmdlet partial classes and inline controllers by domain
 │   │   │   ├── WorkItem/           # Work item operations
 │   │   │   ├── Team/               # Team operations
 │   │   │   ├── TeamProject/        # Team project operations
@@ -211,8 +211,8 @@ TfsCmdlets/
 │   │   │   ├── Pipeline/           # Build pipeline operations
 │   │   │   ├── Git/                # Git repository operations
 │   │   │   ├── Admin/              # Admin operations
+│   │   │   ├── ControllerBase.cs   # Base class for all controllers
 │   │   │   └── ... (other domains)
-│   │   ├── Controllers/            # Business logic controllers
 │   │   ├── Services/               # Service interfaces and implementations
 │   │   │   └── Impl/               # Service implementations
 │   │   ├── Models/                 # Data models and POCOs
@@ -221,14 +221,14 @@ TfsCmdlets/
 │   │   ├── Util/                   # Utility functions
 │   │   ├── Properties/             # Assembly properties
 │   │   ├── CmdletBase.cs           # Base class for all cmdlets
-│   │   ├── ControllerBase.cs       # Base class for all controllers
 │   │   ├── Attributes.cs           # Custom attributes
 │   │   ├── GlobalUsings.cs         # Global using directives
 │   │   ├── ModuleInitializer.cs    # Module initialization
 │   │   ├── TfsCmdlets.csproj       # Main project file
 │   │   └── bin/, obj/              # Build outputs
 │   ├── TfsCmdlets.Legacy/          # Legacy .NET Framework code (net471 only)
-│   │   └── Similar structure as main, but v8.0 C#
+│   │   ├── Cmdlets/                # Legacy cmdlet classes
+│   │   └── Controllers/            # Legacy controller implementations
 │   ├── TfsCmdlets.SourceGenerators/  # Roslyn source generators
 │   │   ├── Generators/
 │   │   │   ├── Cmdlets/            # Cmdlet code generation
