@@ -101,10 +101,15 @@ Do **not** call `Parameters.Get<T>()` or `Parameters.HasParameter()` directly â€
 - Use MEF composition: `[Export(typeof(IServiceName))]` on implementations, `[Import]` for consumers.
 - Interface naming: `I{ServiceName}` â†’ implementation: `{ServiceName}Impl`.
 
+### Extension methods
+
+- Prefer existing extension methods from `CSharp/TfsCmdlets/Extensions/` over duplicating logic inline.
+- Before introducing utility logic (string matching, object copy, JSON conversion, pipeline helpers), check `Extensions/` and reuse the corresponding method when available.
+
 ### Azure DevOps backend interaction
 
 - Always prefer the **Azure DevOps .NET client libraries** (`Microsoft.TeamFoundationServer.Client`, `Microsoft.VisualStudio.Services.*`) over raw REST calls. Several NuGet packages for these libraries are already referenced in the project.
-- Documentation: https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops
+- Documentation: <https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops>
 - HTTP clients are injected into controllers via source generators and MEF composition â€” do not instantiate them manually.
 - Custom HTTP client abstractions live in `CSharp/TfsCmdlets/HttpClients/`.
 
@@ -117,7 +122,7 @@ Do **not** call `Parameters.Get<T>()` or `Parameters.HasParameter()` directly â€
 
 ## Project structure
 
-```
+```plain
 CSharp/
   TfsCmdlets/             # Main library (net471 + netcoreapp3.1)
     Cmdlets/               # Cmdlet classes (and their inline controllers) by domain
@@ -148,7 +153,8 @@ out/                       # Build output (generated, not committed)
 1. Create a partial class in `CSharp/TfsCmdlets/Cmdlets/{Domain}/` with the `[TfsCmdlet]` attribute.
 2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]` and inheriting `ControllerBase`.
 3. The source generator will produce parameter sets and wiring automatically.
-4. Add Pester tests in `PS/_Tests/{Domain}/`.
+4. For query-style cmdlets (`Get`, `Find`, `Search`, `List`, or similar), evaluate whether output needs a dedicated table/list display and, when applicable, add a format view in `PS/_Formats/Views/` (for example `{OutputType}.View.yml`) with only the most relevant columns.
+5. Add Pester tests in `PS/_Tests/{Domain}/`.
 
 ## CI/CD
 
