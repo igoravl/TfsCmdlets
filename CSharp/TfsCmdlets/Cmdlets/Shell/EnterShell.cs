@@ -4,35 +4,73 @@ using System.Management.Automation.Runspaces;
 namespace TfsCmdlets.Cmdlets.Shell
 {
     /// <summary>
-    /// Activates the Azure DevOps Shell
+    /// Activates the Azure DevOps Shell.
     /// </summary>
+    /// <remarks>
+    ///   <para>
+    ///     Enter-TfsShell sets up an interactive Azure DevOps Shell session. It customizes the
+    ///     PowerShell prompt, optionally integrates with Oh-My-Posh for an enhanced prompt
+    ///     experience, clears the host screen, displays a version banner, and loads an optional
+    ///     user profile script.
+    ///   </para>
+    ///   <para>
+    ///     If Oh-My-Posh is installed and not disabled, it is automatically initialized using
+    ///     the bundled Azure DevOps theme (<c>azuredevops.omp.json</c>). A custom theme path can
+    ///     be provided via the <c>TFSCMDLETS_OMP_THEME</c> environment variable. To fall back to
+    ///     the classic TfsCmdlets prompt regardless of Oh-My-Posh availability, set the
+    ///     <c>TFSCMDLETS_OMP_DISABLE</c> environment variable to <c>1</c> or <c>true</c>.
+    ///   </para>
+    ///   <para>
+    ///     When not running in debug mode, the user profile script is loaded from
+    ///     <c>TfsCmdlets_Profile.ps1</c> (in the same directory as the PowerShell profile).
+    ///     In debug mode, the script name is <c>TfsCmdlets_Debug_Profile.ps1</c>.
+    ///   </para>
+    ///   <para>Environment variables:</para>
+    ///   <para>
+    ///     * <c>TFSCMDLETS_OMP_THEME</c> — Full path to a custom Oh-My-Posh theme file
+    ///       (<c>.omp.json</c>). When set, this theme is used instead of the bundled
+    ///       <c>azuredevops.omp.json</c> theme.
+    ///   </para>
+    ///   <para>
+    ///     * <c>TFSCMDLETS_OMP_DISABLE</c> — Set to <c>1</c> or <c>true</c> (case-insensitive)
+    ///       to disable Oh-My-Posh integration entirely. When disabled, the classic TfsCmdlets
+    ///       prompt is used regardless of whether Oh-My-Posh is installed.
+    ///   </para>
+    ///   <para>
+    ///     To end the shell session and restore the previous prompt and window title, call
+    ///     Exit-TfsShell.
+    ///   </para>
+    /// </remarks>
     [TfsCmdlet(CmdletScope.None)]
     partial class EnterShell
     {
         /// <summary>
-        /// Specifies the shell window title. If omitted, defaults to "Azure DevOps Shell".
+        /// Specifies the shell window title. Defaults to "Azure DevOps Shell".
         /// </summary>
         [Parameter]
         public string WindowTitle { get; set; } = "Azure DevOps Shell";
 
         /// <summary>
-        /// Do not clear the host screen when activating the Azure DevOps Shell. When set, the
-        /// prompt is enabled without clearing the screen.
+        /// Does not clear the host screen when activating the Azure DevOps Shell. When set, the
+        /// prompt is updated without clearing the screen.
         /// </summary>
         [Parameter]
         public SwitchParameter DoNotClearHost { get; set; }
 
         /// <summary>
-        /// Do not show the version banner when activating the Azure DevOps Shell.
+        /// Does not display the version banner (module description, version, and client library
+        /// version) when activating the Azure DevOps Shell.
         /// </summary>
         [Parameter]
         public SwitchParameter NoLogo { get; set; }
 
         /// <summary>
-        /// Do not load the user profile TfsCmdlets.Profile.ps1 (if present) when activating the Azure DevOps Shell.
+        /// Does not load the user profile script (<c>TfsCmdlets_Profile.ps1</c>, located in the
+        /// same directory as the PowerShell profile) when activating the Azure DevOps Shell.
         /// </summary>
         [Parameter]
         public SwitchParameter NoProfile { get; set; }
+
     }
 
     [CmdletController]
@@ -42,10 +80,10 @@ namespace TfsCmdlets.Cmdlets.Shell
         {
             if (IsInShell) return null;
 
-            var doNotClearHost = Parameters.Get<bool>("DoNotClearHost");
-            var noLogo = Parameters.Get<bool>("NoLogo");
-            var noProfile = Parameters.Get<bool>("NoProfile");
-            var windowTitle = Parameters.Get<string>("WindowTitle");
+            var ohMyPoshTheme = Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_THEME");
+            var noOhMyPosh =
+                string.Equals(Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_DISABLE"), "1") ||
+                string.Equals(Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_DISABLE"), "true", StringComparison.OrdinalIgnoreCase);
 
             PrevShellTitle ??= PowerShell.WindowTitle;
 
@@ -54,15 +92,62 @@ namespace TfsCmdlets.Cmdlets.Shell
                 PrevPrompt = PowerShell.InvokeScript<ScriptBlock>("Get-Content function:prompt");
             }
 
-            PowerShell.WindowTitle = windowTitle;
+            PowerShell.WindowTitle = WindowTitle;
 
-            const string promptCode = @"
+            var useOhMyPosh = false;
+
+            if (!noOhMyPosh)
+            {
+                useOhMyPosh = PowerShell.InvokeScript<bool>(
+                    "$null -ne (Get-Command oh-my-posh -ErrorAction SilentlyContinue)");
+            }
+
+            if (useOhMyPosh)
+            {
+                var themePath = ohMyPoshTheme;
+
+                if (string.IsNullOrEmpty(themePath))
+                {
+                    // Use the bundled Azure DevOps theme
+                    var modulePath = PowerShell.Module.ModuleBase;
+                    themePath = Path.Combine(modulePath, "azuredevops.omp.json");
+                }
+
+                if (!File.Exists(themePath))
+                {
+                    PowerShell.WriteWarning($"Oh-My-Posh theme not found at '{themePath}'. Falling back to classic prompt.");
+                    useOhMyPosh = false;
+                }
+                else
+                {
+                    var escapedPath = themePath.Replace("'", "''");
+                    try
+                    {
+                        PowerShell.InvokeScript(
+                            $"oh-my-posh init pwsh --config '{escapedPath}' | Invoke-Expression",
+                            false, PipelineResultTypes.None, null);
+
+                        UsedOhMyPosh = true;
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        PowerShell.WriteWarning($"Failed to initialize Oh-My-Posh: {ex.Message}. Falling back to classic prompt.");
+                        useOhMyPosh = false;
+                        UsedOhMyPosh = false;
+                    }
+                }
+            }
+
+            if (!useOhMyPosh)
+            {
+                const string promptCode = @"
 Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
     ""$($ExecutionContext.SessionState.Path.CurrentLocation)$('>' * ($NestedPromptLevel + 1)) ""}";
 
-            PowerShell.InvokeScript(promptCode, false, PipelineResultTypes.None, null);
+                PowerShell.InvokeScript(promptCode, false, PipelineResultTypes.None, null);
+            }
 
-            if (!doNotClearHost)
+            if (!DoNotClearHost)
             {
                 PowerShell.InvokeScript("Clear-Host");
             }
@@ -70,7 +155,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
             var manifest = PowerShell.Module;
             var privateData = (Hashtable)manifest.PrivateData;
 
-            if (!noLogo)
+            if (!NoLogo)
             {
                 PowerShell.WriteObject($"TfsCmdlets: {manifest.Description}");
                 PowerShell.WriteObject($"Version {privateData?["Build"] ?? "N/A"}");
@@ -82,7 +167,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
             var profileDir = Path.GetDirectoryName((string)((PSObject)PowerShell.GetVariableValue("PROFILE")).BaseObject);
             var profilePath = Path.Combine(profileDir, $"TfsCmdlets_{(System.Diagnostics.Debugger.IsAttached ? "Debug_" : "")}Profile.ps1");
 
-            if ((!noProfile) && File.Exists(profilePath))
+            if ((!NoProfile) && File.Exists(profilePath))
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 
@@ -99,7 +184,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
 
                 sw.Stop();
 
-                if (!noLogo)
+                if (!NoLogo)
                 {
                     PowerShell.WriteObject($"Loading TfsCmdlets {(System.Diagnostics.Debugger.IsAttached ? "debug " : "")}profile took {sw.ElapsedMilliseconds}ms.");
                 }
@@ -115,6 +200,8 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
         }
 
         internal static bool IsInShell { get; set; }
+
+        internal static bool UsedOhMyPosh { get; set; }
 
         internal static string PrevShellTitle { get; set; }
 
