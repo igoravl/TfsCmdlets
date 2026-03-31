@@ -29,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// Specifies the new scope for the token.
         /// </summary>
         [Parameter]
-        public string Scope { get; set; }
+        public string[] Scope { get; set; }
 
         /// <summary>
         /// Specifies the new expiration date for the token.
@@ -65,7 +65,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                 };
 
                 if (Has_Scope)
-                    request.Scope = Scope;
+                    request.Scope = string.Join(" ", Scope);
 
                 if (Has_ValidTo)
                     request.ValidTo = ValidTo;

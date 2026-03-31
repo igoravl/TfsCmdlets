@@ -12,7 +12,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
     /// The old token will stop working immediately after this command completes.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Collection, HostedOnly = true,
-        SupportsShouldProcess = true,
+        SupportsShouldProcess = true, ReturnsValue = true,
         OutputType = typeof(PatToken))]
     partial class UpdatePersonalAccessToken
     {
@@ -25,24 +25,10 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         public object PersonalAccessToken { get; set; }
 
         /// <summary>
-        /// Specifies a new scope for the regenerated token. When omitted, 
-        /// the scope of the original token is preserved.
+        /// When specified, the token is regenerated without asking for confirmation.
         /// </summary>
         [Parameter]
-        public string[] Scope { get; set; }
-
-        /// <summary>
-        /// Specifies a new expiration date for the regenerated token. When omitted, 
-        /// the original expiration date is preserved.
-        /// </summary>
-        [Parameter]
-        public DateTime ValidTo { get; set; }
-
-        /// <summary>
-        /// When set, the regenerated token will be valid for all of the user's accessible organizations.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter AllOrganizations { get; set; }
+        public SwitchParameter Force { get; set; }
     }
 
     [CmdletController(typeof(PatToken), Client = typeof(ITokensHttpClient))]
@@ -61,6 +47,13 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                     yield break;
                 }
 
+                if (!Force && !PowerShell.ShouldContinue(
+                    $"Are you sure you want to regenerate token '{item.DisplayName}'? " +
+                    "The current token will be permanently revoked and a new one will be issued."))
+                {
+                    yield break;
+                }
+
                 // Revoke old token
                 Client.RevokeAsync(authorizationId)
                     .Wait("Error revoking personal access token");
@@ -69,9 +62,9 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                 var request = new PatTokenCreateRequest
                 {
                     DisplayName = item.DisplayName,
-                    Scope = Has_Scope ? string.Join(" ", Scope) : item.Scope,
-                    ValidTo = Has_ValidTo ? ValidTo : item.ValidTo,
-                    AllOrgs = Has_AllOrganizations ? AllOrganizations : item.TargetAccounts == null
+                    Scope = item.Scope,
+                    ValidTo = item.ValidTo,
+                    AllOrgs = (item.TargetAccounts == null)
                 };
 
                 var result = Client.CreatePatAsync(request)
