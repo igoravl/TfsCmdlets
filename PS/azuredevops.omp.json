@@ -18,7 +18,7 @@
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"true\" }}#0078D4{{ end }}",
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"false\" }}#68217A{{ end }}"
           ],
-          "template": "{{ if .Env.TFSCMDLETS_CONNECTED }} \uEBC8 {{ .Env.TFSCMDLETS_ORG }} {{ end }}",
+          "template": "{{ if .Env.TFSCMDLETS_CONNECTED }} \uebe8 {{ .Env.TFSCMDLETS_ORG }} {{ end }}",
           "options": {}
         },
         {
@@ -31,7 +31,7 @@
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"true\" }}#005A9E{{ end }}",
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"false\" }}#4B0E6E{{ end }}"
           ],
-          "template": "{{ if .Env.TFSCMDLETS_PROJECT }} \uF292 {{ .Env.TFSCMDLETS_PROJECT }} {{ end }}"
+          "template": "{{ if .Env.TFSCMDLETS_PROJECT }} \uf07b {{ .Env.TFSCMDLETS_PROJECT }} {{ end }}"
         },
         {
           "type": "text",
@@ -43,7 +43,7 @@
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"true\" }}#004578{{ end }}",
             "{{ if eq .Env.TFSCMDLETS_IS_HOSTED \"false\" }}#3B0A5E{{ end }}"
           ],
-          "template": "{{ if .Env.TFSCMDLETS_TEAM }} \uF0C0 {{ .Env.TFSCMDLETS_TEAM }} {{ end }}"
+          "template": "{{ if .Env.TFSCMDLETS_TEAM }} \uedca {{ .Env.TFSCMDLETS_TEAM }} {{ end }}"
         },
         {
           "type": "text",
@@ -59,7 +59,7 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#888888",
           "background": "#333333",
-          "template": "{{ if not .Env.TFSCMDLETS_CONNECTED }} \uEBD8 Not connected {{ end }}"
+          "template": "{{ if not .Env.TFSCMDLETS_CONNECTED }} \uebe8 Not connected {{ end }}"
         }
       ]
     },
@@ -85,13 +85,13 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#000000",
           "background": "#95ffa4",
-          "template": " {{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} "
+          "template": " {{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}"
         },
         {
           "type": "text",
           "style": "plain",
           "foreground": "#E06C75",
-          "template": " \u276f "
+          "template": " \u276f"
         }
       ]
     }

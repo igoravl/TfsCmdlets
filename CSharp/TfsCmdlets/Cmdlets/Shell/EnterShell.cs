@@ -34,19 +34,6 @@ namespace TfsCmdlets.Cmdlets.Shell
         [Parameter]
         public SwitchParameter NoProfile { get; set; }
 
-        /// <summary>
-        /// Do not use Oh-My-Posh for prompt rendering, even if it is installed.
-        /// When set, the classic ANSI prompt is used instead.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter NoOhMyPosh { get; set; }
-
-        /// <summary>
-        /// Specifies a custom Oh-My-Posh theme file path. If omitted, the bundled
-        /// Azure DevOps theme is used. Ignored when -NoOhMyPosh is set.
-        /// </summary>
-        [Parameter]
-        public string OhMyPoshTheme { get; set; }
     }
 
     [CmdletController]
@@ -56,12 +43,10 @@ namespace TfsCmdlets.Cmdlets.Shell
         {
             if (IsInShell) return null;
 
-            var doNotClearHost = Parameters.Get<bool>("DoNotClearHost");
-            var noLogo = Parameters.Get<bool>("NoLogo");
-            var noProfile = Parameters.Get<bool>("NoProfile");
-            var noOhMyPosh = Parameters.Get<bool>("NoOhMyPosh");
-            var ohMyPoshTheme = Parameters.Get<string>("OhMyPoshTheme");
-            var windowTitle = Parameters.Get<string>("WindowTitle");
+            var ohMyPoshTheme = Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_THEME");
+            var noOhMyPosh =
+                string.Equals(Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_DISABLE"), "1") ||
+                string.Equals(Environment.GetEnvironmentVariable("TFSCMDLETS_OMP_DISABLE"), "true", StringComparison.OrdinalIgnoreCase);
 
             PrevShellTitle ??= PowerShell.WindowTitle;
 
@@ -70,7 +55,7 @@ namespace TfsCmdlets.Cmdlets.Shell
                 PrevPrompt = PowerShell.InvokeScript<ScriptBlock>("Get-Content function:prompt");
             }
 
-            PowerShell.WindowTitle = windowTitle;
+            PowerShell.WindowTitle = WindowTitle;
 
             var useOhMyPosh = false;
 
@@ -87,8 +72,8 @@ namespace TfsCmdlets.Cmdlets.Shell
                 if (string.IsNullOrEmpty(themePath))
                 {
                     // Use the bundled Azure DevOps theme
-                    var modulePath = Path.GetDirectoryName(PowerShell.Module.Path);
-                    themePath = Path.Combine(modulePath, "_Themes", "azuredevops.omp.json");
+                    var modulePath = PowerShell.Module.ModuleBase;
+                    themePath = Path.Combine(modulePath, "azuredevops.omp.json");
                 }
 
                 if (!File.Exists(themePath))
@@ -125,7 +110,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
                 PowerShell.InvokeScript(promptCode, false, PipelineResultTypes.None, null);
             }
 
-            if (!doNotClearHost)
+            if (!DoNotClearHost)
             {
                 PowerShell.InvokeScript("Clear-Host");
             }
@@ -133,7 +118,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
             var manifest = PowerShell.Module;
             var privateData = (Hashtable)manifest.PrivateData;
 
-            if (!noLogo)
+            if (!NoLogo)
             {
                 PowerShell.WriteObject($"TfsCmdlets: {manifest.Description}");
                 PowerShell.WriteObject($"Version {privateData?["Build"] ?? "N/A"}");
@@ -145,7 +130,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
             var profileDir = Path.GetDirectoryName((string)((PSObject)PowerShell.GetVariableValue("PROFILE")).BaseObject);
             var profilePath = Path.Combine(profileDir, $"TfsCmdlets_{(System.Diagnostics.Debugger.IsAttached ? "Debug_" : "")}Profile.ps1");
 
-            if ((!noProfile) && File.Exists(profilePath))
+            if ((!NoProfile) && File.Exists(profilePath))
             {
                 var sw = System.Diagnostics.Stopwatch.StartNew();
 
@@ -162,7 +147,7 @@ Function prompt { return ([TfsCmdlets.ShellHelper]::GetPrompt()) + `
 
                 sw.Stop();
 
-                if (!noLogo)
+                if (!NoLogo)
                 {
                     PowerShell.WriteObject($"Loading TfsCmdlets {(System.Diagnostics.Debugger.IsAttached ? "debug " : "")}profile took {sw.ElapsedMilliseconds}ms.");
                 }
