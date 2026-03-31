@@ -49,11 +49,11 @@ At a high level, the module is composed of the following layers:
   Produces multi‑targeted binaries and packages for the supported distribution channels.
 ### **3. BUILD SYSTEM AND HOW TO BUILD**
 
-**Primary Build Entry Point**: [Build.ps1](Build.ps1)
+**Primary Build Entry Point**: [Build.ps1](../Build.ps1)
 
 **Build System Architecture:**
-- Uses **PowerShell scripting** as the entry point ([Build.ps1](Build.ps1))
-- Delegates to **psake** task runner ([psake.ps1](psake.ps1)) for actual build tasks
+- Uses **PowerShell scripting** as the entry point ([Build.ps1](../Build.ps1))
+- Delegates to **psake** task runner ([psake.ps1](../psake.ps1)) for actual build tasks
 - Uses **.NET CLI** (dotnet) for compilation
 
 **Build Targets (from psake.ps1):**
