@@ -5,17 +5,17 @@ using Microsoft.VisualStudio.Services.WebApi.Contracts.DelegatedAuthorization;
 namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 {
     /// <summary>
-    /// Edits the properties of an existing personal access token (PAT).
+    /// Renames a personal access token (PAT).
     /// </summary>
     /// <remarks>
-    /// This command updates the metadata of a token (display name, scope, expiration date)
-    /// without regenerating its value. To regenerate a token, use Update-TfsPersonalAccessToken.
+    /// This command updates the display name of a token without changing its scope or expiration date.
+    /// To regenerate a token, use Update-TfsPersonalAccessToken.
     /// The token must be valid (not revoked) to be updated.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Collection, HostedOnly = true,
         SupportsShouldProcess = true,
         OutputType = typeof(PatToken))]
-    partial class SetPersonalAccessToken
+    partial class RenamePersonalAccessToken
     {
         /// <summary>
         /// Specifies the personal access token to update. Accepts a Guid (authorizationId)
@@ -24,28 +24,10 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [Alias("Name", "DisplayName", "Pat")]
         public object PersonalAccessToken { get; set; }
-
-        /// <summary>
-        /// Specifies the new scope for the token.
-        /// </summary>
-        [Parameter]
-        public string Scope { get; set; }
-
-        /// <summary>
-        /// Specifies the new expiration date for the token.
-        /// </summary>
-        [Parameter]
-        public DateTime ValidTo { get; set; }
-
-        /// <summary>
-        /// When set, the token will be valid for all of the user's accessible organizations.
-        /// </summary>
-        [Parameter]
-        public SwitchParameter AllOrganizations { get; set; }
     }
 
     [CmdletController(typeof(PatToken), Client = typeof(ITokensHttpClient))]
-    partial class SetPersonalAccessTokenController
+    partial class RenamePersonalAccessTokenController
     {
         protected override IEnumerable Run()
         {
@@ -61,17 +43,9 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 
                 var request = new PatTokenUpdateRequest
                 {
-                    AuthorizationId = authorizationId
+                    AuthorizationId = authorizationId,
+                    DisplayName = NewName
                 };
-
-                if (Has_Scope)
-                    request.Scope = Scope;
-
-                if (Has_ValidTo)
-                    request.ValidTo = ValidTo;
-
-                if (Has_AllOrganizations)
-                    request.AllOrgs = AllOrganizations;
 
                 var result = Client.UpdatePatAsync(request)
                     .GetResult("Error updating personal access token");

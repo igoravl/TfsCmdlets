@@ -21,6 +21,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// or a PatToken object.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
+        [Alias("Name", "DisplayName", "Pat")]
         public object PersonalAccessToken { get; set; }
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// the scope of the original token is preserved.
         /// </summary>
         [Parameter]
-        public string Scope { get; set; }
+        public string[] Scope { get; set; }
 
         /// <summary>
         /// Specifies a new expiration date for the regenerated token. When omitted, 
@@ -49,57 +50,43 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
     {
         protected override IEnumerable Run()
         {
-            var authorizationId = PersonalAccessToken switch
+            foreach (var item in Items)
             {
-                Guid guid => guid,
-                PatToken token => token.AuthorizationId,
-                string s when Guid.TryParse(s, out var guid) => guid,
-                _ => throw new ArgumentException($"Invalid personal access token type: {PersonalAccessToken?.GetType().Name ?? "null"}. Expected Guid or PatToken.")
-            };
+                var authorizationId = item.AuthorizationId;
 
-            // Get current token to preserve properties
-            var currentResult = Client.GetPatAsync(authorizationId)
-                .GetResult("Error getting personal access token");
+                if (!PowerShell.ShouldProcess(
+                    $"[Token: {item.DisplayName}] ({item.AuthorizationId})",
+                    "Regenerate personal access token"))
+                {
+                    yield break;
+                }
 
-            if (currentResult.PatTokenError != SessionTokenError.None)
-            {
-                throw new Exception($"Error getting personal access token: {currentResult.PatTokenError}");
+                // Revoke old token
+                Client.RevokeAsync(authorizationId)
+                    .Wait("Error revoking personal access token");
+
+                // Create new token with same or overridden properties
+                var request = new PatTokenCreateRequest
+                {
+                    DisplayName = item.DisplayName,
+                    Scope = Has_Scope ? string.Join(" ", Scope) : item.Scope,
+                    ValidTo = Has_ValidTo ? ValidTo : item.ValidTo,
+                    AllOrgs = Has_AllOrganizations ? AllOrganizations : item.TargetAccounts == null
+                };
+
+                var result = Client.CreatePatAsync(request)
+                    .GetResult("Error creating new personal access token");
+
+                if (result.PatTokenError != SessionTokenError.None)
+                {
+                    throw new Exception($"Error regenerating personal access token '{item.DisplayName}': {result.PatTokenError}. " +
+                        "Warning: The original token has been revoked.");
+                }
+
+                Logger.LogWarn("Save the new token value now. It cannot be retrieved later.");
+
+                yield return result.PatToken;
             }
-
-            var currentToken = currentResult.PatToken;
-
-            if (!PowerShell.ShouldProcess(
-                $"[Token: {currentToken.DisplayName}] ({currentToken.AuthorizationId})",
-                "Regenerate personal access token"))
-            {
-                yield break;
-            }
-
-            // Revoke old token
-            Client.RevokeAsync(authorizationId)
-                .Wait("Error revoking personal access token");
-
-            // Create new token with same or overridden properties
-            var request = new PatTokenCreateRequest
-            {
-                DisplayName = currentToken.DisplayName,
-                Scope = Has_Scope ? Scope : currentToken.Scope,
-                ValidTo = Has_ValidTo ? ValidTo : currentToken.ValidTo,
-                AllOrgs = Has_AllOrganizations ? AllOrganizations : currentToken.TargetAccounts == null
-            };
-
-            var result = Client.CreatePatAsync(request)
-                .GetResult("Error creating new personal access token");
-
-            if (result.PatTokenError != SessionTokenError.None)
-            {
-                throw new Exception($"Error regenerating personal access token '{currentToken.DisplayName}': {result.PatTokenError}. " +
-                    "Warning: The original token has been revoked.");
-            }
-
-            Logger.LogWarn("Save the new token value now. It cannot be retrieved later.");
-
-            yield return result.PatToken;
         }
     }
 }

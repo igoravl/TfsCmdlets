@@ -19,6 +19,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Remove own token")]
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ParameterSetName = "Remove for user")]
+        [Alias("Name", "DisplayName", "Pat")]
         public object PersonalAccessToken { get; set; }
 
         /// <summary>
@@ -43,61 +44,55 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 
         protected override IEnumerable Run()
         {
-            var authorizationId = PersonalAccessToken switch
+            foreach (var item in Items)
             {
-                Guid guid => guid,
-                PatToken token => token.AuthorizationId,
-                string s when Guid.TryParse(s, out var guid) => guid,
-                _ => throw new ArgumentException($"Invalid personal access token type: {PersonalAccessToken?.GetType().Name ?? "null"}. Expected Guid or PatToken.")
-            };
+                var authorizationId = item.AuthorizationId;
+                var tokenDescription = $"[Token: {item.DisplayName}] ({item.AuthorizationId})";
 
-            var tokenDescription = PersonalAccessToken is PatToken t 
-                ? $"[Token: {t.DisplayName}] ({t.AuthorizationId})" 
-                : $"[Token: {authorizationId}]";
-
-            if (Has_User)
-            {
-                // Admin revocation
-                if (!PowerShell.ShouldProcess(
-                    $"{tokenDescription} for user '{User}'",
-                    "Revoke personal access token (admin)"))
+                if (Has_User)
                 {
-                    yield break;
+                    // Admin revocation
+                    if (!PowerShell.ShouldProcess(
+                        $"{tokenDescription} for user '{User}'",
+                        "Revoke personal access token (admin)"))
+                    {
+                        yield break;
+                    }
+
+                    if (!Force && !PowerShell.ShouldContinue(
+                        $"Are you sure you want to revoke token {tokenDescription} for user '{User}'? This operation is irreversible."))
+                    {
+                        yield break;
+                    }
+
+                    var revocation = new TokenAdminRevocation
+                    {
+                        AuthorizationId = authorizationId
+                    };
+
+                    TokenAdminClient.RevokeAuthorizationsAsync(
+                        new[] { revocation })
+                        .Wait("Error revoking personal access token for user");
                 }
-
-                if (!Force && !PowerShell.ShouldContinue(
-                    $"Are you sure you want to revoke token {tokenDescription} for user '{User}'? This operation is irreversible."))
+                else
                 {
-                    yield break;
+                    // Self revocation
+                    if (!PowerShell.ShouldProcess(
+                        tokenDescription,
+                        "Revoke personal access token"))
+                    {
+                        yield break;
+                    }
+
+                    if (!Force && !PowerShell.ShouldContinue(
+                        $"Are you sure you want to revoke token {tokenDescription}? This operation is irreversible."))
+                    {
+                        yield break;
+                    }
+
+                    Client.RevokeAsync(authorizationId)
+                        .Wait("Error revoking personal access token");
                 }
-
-                var revocation = new TokenAdminRevocation
-                {
-                    AuthorizationId = authorizationId
-                };
-
-                TokenAdminClient.RevokeAuthorizationsAsync(
-                    new[] { revocation })
-                    .Wait("Error revoking personal access token for user");
-            }
-            else
-            {
-                // Self revocation
-                if (!PowerShell.ShouldProcess(
-                    tokenDescription,
-                    "Revoke personal access token"))
-                {
-                    yield break;
-                }
-
-                if (!Force && !PowerShell.ShouldContinue(
-                    $"Are you sure you want to revoke token {tokenDescription}? This operation is irreversible."))
-                {
-                    yield break;
-                }
-
-                Client.RevokeAsync(authorizationId)
-                    .Wait("Error revoking personal access token");
             }
         }
     }

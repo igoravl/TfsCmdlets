@@ -27,7 +27,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "Get by name")]
         [Parameter(Position = 0, ParameterSetName = "Get for user")]
-        [Alias("Name", "DisplayName")]
+        [Alias("Name", "DisplayName", "Pat")]
         [SupportsWildcards]
         public object PersonalAccessToken { get; set; } = "*";
 

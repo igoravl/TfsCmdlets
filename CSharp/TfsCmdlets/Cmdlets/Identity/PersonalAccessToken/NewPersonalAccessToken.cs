@@ -19,8 +19,8 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         /// Specifies the display name of the new personal access token.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
-        [Alias("Name")]
-        public string DisplayName { get; set; }
+        [Alias("DisplayName", "Pat")]
+        public string Name { get; set; }
 
         /// <summary>
         /// Specifies the scope(s) of the new personal access token. 
@@ -49,14 +49,14 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         protected override IEnumerable Run()
         {
             if (!PowerShell.ShouldProcess($"[Organization: {Data.GetCollection().DisplayName}]",
-                $"Create personal access token '{DisplayName}'"))
+                $"Create personal access token '{Name}'"))
             {
                 yield break;
             }
 
             var request = new PatTokenCreateRequest
             {
-                DisplayName = DisplayName,
+                DisplayName = Name,
                 Scope = Has_Scope ? string.Join(" ", Scope) : "app_token",
                 ValidTo = Has_ValidTo ? ValidTo : DateTime.UtcNow.AddDays(30),
                 AllOrgs = AllOrganizations
@@ -67,7 +67,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 
             if (result.PatTokenError != SessionTokenError.None)
             {
-                throw new Exception($"Error creating personal access token '{DisplayName}': {result.PatTokenError}");
+                throw new Exception($"Error creating personal access token '{Name}': {result.PatTokenError}");
             }
 
             Logger.LogWarn("Save the token value now. It cannot be retrieved later.");
