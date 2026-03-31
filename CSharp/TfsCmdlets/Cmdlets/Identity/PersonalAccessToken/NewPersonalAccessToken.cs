@@ -11,7 +11,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
     /// Make sure to save the token value returned by this command.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Collection, HostedOnly = true,
-        SupportsShouldProcess = true,
+        SupportsShouldProcess = true, ReturnsValue = true,
         OutputType = typeof(PatToken))]
     partial class NewPersonalAccessToken
     {
@@ -23,17 +23,17 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         public string DisplayName { get; set; }
 
         /// <summary>
-        /// Specifies the scope of the new personal access token. 
-        /// Use space-separated scope values (e.g. "vso.work_full vso.code_write").
-        /// Use "app_token" for full access.
+        /// Specifies the scope(s) of the new personal access token. 
+        /// When omitted, defaults to full access ("app_token").
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true)]
-        public string Scope { get; set; }
+        [Parameter(Position = 1)]
+        public string[] Scope { get; set; }
 
         /// <summary>
         /// Specifies the expiration date of the new personal access token.
+        /// When omitted, defaults to 30 days from now.
         /// </summary>
-        [Parameter(Position = 2, Mandatory = true)]
+        [Parameter(Position = 2)]
         public DateTime ValidTo { get; set; }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
             var request = new PatTokenCreateRequest
             {
                 DisplayName = DisplayName,
-                Scope = Scope,
-                ValidTo = ValidTo,
+                Scope = Has_Scope ? string.Join(" ", Scope) : "app_token",
+                ValidTo = Has_ValidTo ? ValidTo : DateTime.UtcNow.AddDays(30),
                 AllOrgs = AllOrganizations
             };
 
