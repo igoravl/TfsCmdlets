@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-03-31
+
+### Added
+
+- `Get-TfsPersonalAccessToken` — Lists or gets Personal Access Tokens (PATs) for the current user (by name, ID, or wildcard). Administrators can list tokens of another user by specifying the `-User` parameter, which uses the Token Admin API.
+- `New-TfsPersonalAccessToken` — Creates a new PAT with the specified display name, scope, and validity period. Supports `-AllOrganizations` for organization-agnostic tokens.
+- `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
+- `Update-TfsPersonalAccessToken` — Regenerates (rotates) a PAT by revoking and recreating it, preserving its scope and settings.
+- `Remove-TfsPersonalAccessToken` — Revokes a PAT. Administrators can revoke another user's tokens by specifying the `-User` parameter.
+- `Enter-TfsShell`: Added Oh-My-Posh integration.
+  - Bundled Oh-My-Posh theme (`azuredevops.omp.json`) for the Azure DevOps Shell, displaying the connected organization, project, team, and user in the prompt.
+  - Integration can be controlled via environment variables: set `TFSCMDLETS_OMP_DISABLE` to `1` or `true` to suppress Oh-My-Posh, or set `TFSCMDLETS_OMP_THEME` to a custom theme file path. When Oh-My-Posh is detected and neither variable is set, the module automatically initializes the bundled Azure DevOps theme.
+- Connection state is now automatically synchronized to `TFSCMDLETS_*` process-level environment variables (`TFSCMDLETS_CONNECTED`, `TFSCMDLETS_ORG`, `TFSCMDLETS_ORG_URL`, `TFSCMDLETS_USER`, `TFSCMDLETS_USER_DISPLAY`, `TFSCMDLETS_IS_HOSTED`, `TFSCMDLETS_PROJECT`, `TFSCMDLETS_TEAM`) on every connect/disconnect, enabling integration with external prompt customization tools such as Oh-My-Posh and Starship.
+
+### Changed
+
+- `Remove-Module TfsCmdlets` now clears all `TFSCMDLETS_*` environment variables via `IModuleAssemblyCleanup`.
+
 ## [2.10.0] - 2026-03-27
 
 ### Added
