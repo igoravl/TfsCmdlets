@@ -38,26 +38,27 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
         public Guid AuthorizationId { get; set; }
 
         /// <summary>
-        /// Filters tokens by status. Valid values are Active, Revoked, Expired, and All.
+        /// Filters tokens by state. Valid values are Active, Revoked, Expired, and All.
         /// Defaults to Active.
         /// </summary>
         [Parameter(ParameterSetName = "Get by name")]
         [Parameter(ParameterSetName = "Get for user")]
-        public DisplayFilterOptions DisplayFilter { get; set; } = DisplayFilterOptions.Active;
+        [Alias("DisplayFilter")]
+        public DisplayFilterOptions State { get; set; } = DisplayFilterOptions.Active;
 
         /// <summary>
         /// Specifies the field to sort results by. Valid values are DisplayName, DisplayDate, and Status.
         /// </summary>
         [Parameter(ParameterSetName = "Get by name")]
         [Parameter(ParameterSetName = "Get for user")]
-        public SortByOptions SortBy { get; set; }
+        public SortByOptions SortBy { get; set; } = SortByOptions.DisplayName;
 
         /// <summary>
-        /// When set, sorts results in ascending order.
+        /// When set, sorts results in descending order.
         /// </summary>
         [Parameter(ParameterSetName = "Get by name")]
         [Parameter(ParameterSetName = "Get for user")]
-        public SwitchParameter IsSortAscending { get; set; }
+        public SwitchParameter Descending { get; set; }
 
         /// <summary>
         /// Specifies a user whose tokens should be listed. Requires administrator privileges.
@@ -158,21 +159,20 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 
         private IEnumerable<PatToken> ListPats(string pattern)
         {
-            var wildcard = new WildcardPattern(pattern, WildcardOptions.IgnoreCase);
             PagedPatTokens result = null;
 
             do
             {
                 result = Client.ListPatsAsync(
-                        displayFilterOption: Has_DisplayFilter ? DisplayFilter : (DisplayFilterOptions?)null,
-                        sortByOption: Has_SortBy ? SortBy : (SortByOptions?)null,
-                        isSortAscending: Has_IsSortAscending ? IsSortAscending : (bool?)null,
+                        displayFilterOption: Has_State ? State : null,
+                        sortByOption: Has_SortBy ? SortBy : null,
+                        isSortAscending: Has_Descending ? (bool?)!Descending : null,
                         continuationToken: result?.ContinuationToken)
                     .GetResult("Error listing personal access tokens");
 
                 foreach (var token in result.PatTokens ?? Enumerable.Empty<PatToken>())
                 {
-                    if (wildcard.IsMatch(token.DisplayName))
+                    if (token.DisplayName.IsLike(pattern))
                     {
                         yield return token;
                     }
@@ -186,12 +186,11 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
             {
                 SubjectDescriptor sd => sd,
                 Models.Identity id => id.SubjectDescriptor,
-                string s when s.Contains('.') => new SubjectDescriptor(s.Substring(0, s.IndexOf('.')), s.Substring(s.IndexOf('.') + 1)),
+                string s => GetSubjectDescriptorFromString(s),
                 _ => throw new ArgumentException($"Invalid user type: {User?.GetType().Name ?? "null"}. Expected Identity, SubjectDescriptor, or a descriptor string (e.g. 'aad.xxx').")
             };
 
             var pattern = PersonalAccessToken is IEnumerable e && e.Cast<object>().FirstOrDefault() is string s2 ? s2 : "*";
-            var wildcard = new WildcardPattern(pattern, WildcardOptions.IgnoreCase);
 
             TokenAdminPagedSessionTokens result = null;
 
@@ -204,7 +203,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
 
                 foreach (var token in result.SessionTokens)
                 {
-                    if (wildcard.IsMatch(token.DisplayName))
+                    if (token.DisplayName.IsLike(pattern))
                     {
                         yield return new PatToken
                         {
@@ -219,6 +218,16 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                     }
                 }
             } while (result?.ContinuationToken != null);
+        }
+
+        private SubjectDescriptor GetSubjectDescriptorFromString(string s)
+        {
+            var identity = Data.GetItem<Models.Identity>(new
+            {
+                Identity = s
+            });
+
+            return identity?.SubjectDescriptor ?? throw new ArgumentException($"User '{s}' not found.");
         }
     }
 }
