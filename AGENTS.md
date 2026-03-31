@@ -93,7 +93,7 @@ if (Has_ForkFrom)
 yield return Client.CreateRepositoryAsync(repoToCreate, Project.Name);
 ```
 
-Do **not** call `Parameters.Get<T>()` or `Parameters.HasParameter()` directly — always use the generated properties.
+For new or updated controllers, prefer the generated `{ParamName}` / `Has_{ParamName}` properties over direct calls to `Parameters.Get<T>()` or `Parameters.HasParameter()`. Existing controllers that still use these methods are acceptable but should be migrated to the generated-property pattern (as in the example above) when you touch them.
 
 #### The `Items` pattern — implicit Get cmdlet invocation
 
