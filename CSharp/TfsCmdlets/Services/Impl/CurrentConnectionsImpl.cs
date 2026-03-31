@@ -46,9 +46,11 @@ namespace TfsCmdlets.Services.Impl
 
         public void Set(Connection server)
         {
-            Reset();
-
             Server = server;
+            Collection = null;
+            Project = null;
+            Team = null;
+            AzureCredential = null;
             // TODO: Mru.Server.Set(Server.Uri.ToString());
 
             SyncEnvironmentVariables();
@@ -56,9 +58,11 @@ namespace TfsCmdlets.Services.Impl
 
         public void Set(Connection server, Models.Connection collection)
         {
-            Set(server);
-
+            Server = server;
             Collection = collection;
+            Project = null;
+            Team = null;
+            AzureCredential = null;
             // TODO: Mru.Collection.Set(Collection.Uri.ToString());
 
             SyncEnvironmentVariables();
@@ -66,16 +70,22 @@ namespace TfsCmdlets.Services.Impl
 
         public void Set(Connection server, Models.Connection collection, WebApiTeamProject project)
         {
-            Set(server, collection);
+            Server = server;
+            Collection = collection;
             Project = project;
+            Team = null;
+            AzureCredential = null;
 
             SyncEnvironmentVariables();
         }
 
         public void Set(Connection server, Models.Connection collection, WebApiTeamProject project, WebApiTeam team)
         {
-            Set(server, collection, project);
+            Server = server;
+            Collection = collection;
+            Project = project;
             Team = team;
+            AzureCredential = null;
 
             SyncEnvironmentVariables();
         }
