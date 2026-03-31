@@ -99,11 +99,20 @@ namespace TfsCmdlets.Cmdlets.Shell
                 else
                 {
                     var escapedPath = themePath.Replace("'", "''");
-                    PowerShell.InvokeScript(
-                        $"oh-my-posh init pwsh --config '{escapedPath}' | Invoke-Expression",
-                        false, PipelineResultTypes.None, null);
+                    try
+                    {
+                        PowerShell.InvokeScript(
+                            $"oh-my-posh init pwsh --config '{escapedPath}' | Invoke-Expression",
+                            false, PipelineResultTypes.None, null);
 
-                    UsedOhMyPosh = true;
+                        UsedOhMyPosh = true;
+                    }
+                    catch (RuntimeException ex)
+                    {
+                        PowerShell.WriteWarning($"Failed to initialize Oh-My-Posh: {ex.Message}. Falling back to classic prompt.");
+                        useOhMyPosh = false;
+                        UsedOhMyPosh = false;
+                    }
                 }
             }
 
