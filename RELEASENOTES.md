@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
 - `Update-TfsPersonalAccessToken` — Regenerates (rotates) a PAT by revoking and recreating it, preserving its scope and settings.
 - `Remove-TfsPersonalAccessToken` — Revokes a PAT. Administrators can revoke another user's tokens by specifying the `-User` parameter.
+- `Rename-TfsPersonalAccessToken` — Updates the display name of an existing PAT without changing its scope or expiration date.
 - `Enter-TfsShell`: Added Oh-My-Posh integration.
   - Bundled Oh-My-Posh theme (`azuredevops.omp.json`) for the Azure DevOps Shell, displaying the connected organization, project, team, and user in the prompt.
   - Integration can be controlled via environment variables: set `TFSCMDLETS_OMP_DISABLE` to `1` or `true` to suppress Oh-My-Posh, or set `TFSCMDLETS_OMP_THEME` to a custom theme file path. When Oh-My-Posh is detected and neither variable is set, the module automatically initializes the bundled Azure DevOps theme.
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - `Remove-Module TfsCmdlets` now clears all `TFSCMDLETS_*` environment variables via `IModuleAssemblyCleanup`.
+- Bumped `System.Composition` and `System.Composition.Hosting` from 6.0.0 to 10.0.5.
 
 ## [2.10.0] - 2026-03-27
 
