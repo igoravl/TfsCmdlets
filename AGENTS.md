@@ -95,6 +95,12 @@ yield return Client.CreateRepositoryAsync(repoToCreate, Project.Name);
 
 Do **not** call `Parameters.Get<T>()` or `Parameters.HasParameter()` directly — always use the generated properties.
 
+#### The `Items` pattern — implicit Get cmdlet invocation
+
+For **non-Get** controllers (e.g., `Set`, `Remove`, `Rename`, `Update`, `Disable`), the source generator produces an `Items` property when the first declared parameter is typed as `object`. This property **automatically invokes the corresponding `Get-*` cmdlet** to resolve the input into strongly-typed objects. Mutation controllers iterate `Items` to process each resolved object. Use `Items` instead of manually resolving the first parameter or calling `Data.GetItems<T>()`.
+
+See [Docs/ItemsPattern.md](Docs/ItemsPattern.md) for the full pattern, invocation chain, and examples when implementing mutation cmdlets.
+
 ### Services
 
 - Location: `CSharp/TfsCmdlets/Services/` (interfaces) and `Services/Impl/` (implementations).
