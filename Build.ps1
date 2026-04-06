@@ -80,10 +80,15 @@ Function Install-DotNetTool($Tool, $Version) {
     Write-Verbose "Restoring dotnet local tool $Tool $Version"
 
     # Ensure a tool manifest exists
-    if (-not (Test-Path (Join-Path $RootProjectDir '.config/dotnet-tools.json'))) {
+    if (-not (Test-Path (Join-Path $RootProjectDir '.config/dotnet-tools.json')) -and
+        -not (Test-Path (Join-Path $RootProjectDir 'dotnet-tools.json'))) {
         Write-Verbose "Tool manifest not found. Creating with 'dotnet new tool-manifest'"
         dotnet new tool-manifest *>&1 | Write-Verbose
     }
+
+    # Restore tools already listed in the manifest (idempotent)
+    Write-Verbose "Running 'dotnet tool restore'"
+    dotnet tool restore *>&1 | Write-Verbose
 
     # Check whether the correct version is already installed
     $installed = (dotnet tool list --local 2>$null | Select-String $Tool)
