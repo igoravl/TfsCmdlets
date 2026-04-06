@@ -18,12 +18,12 @@ Param
 
 # Dependency versions (lockfile)
 $script:DependencyVersions = @{
-    DotNetTools = @{
+    DotNetTools = [Ordered]@{
         'GitVersion.Tool' = '6.7.0'
     }
-    NugetPackages = @{
+    NugetPackages = [Ordered]@{
     }
-    PsModules = @{
+    PsModules = [Ordered]@{
         'psake'            = $null
         'PsScriptAnalyzer' = $null
         'VSSetup'          = $null
