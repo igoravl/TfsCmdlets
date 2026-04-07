@@ -80,78 +80,83 @@ jobs:
           name: releasenotes
           path: "RELEASENOTES.md"
       - name: Package additional release assets
-        shell: bash
+        shell: pwsh
         run: |
           # Zip WinGet manifests
-          cd out/winget && zip -r "TfsCmdlets-WinGet-${BUILD_NAME}.zip" manifests/ && cd ../..
+          Push-Location out/winget
+          Compress-Archive -Path manifests -DestinationPath "TfsCmdlets-WinGet-$env:BUILD_NAME.zip" -Force
+          Pop-Location
           # Rename Chocolatey package to avoid collision with NuGet package (same filename)
-          for f in out/Chocolatey/TfsCmdlets.*.nupkg; do
-            mv "$f" "${f/TfsCmdlets./TfsCmdlets-Chocolatey.}"
-          done
+          Get-ChildItem 'out/Chocolatey/TfsCmdlets.*.nupkg' | ForEach-Object {
+            Rename-Item $_ $_.Name.Replace('TfsCmdlets.', 'TfsCmdlets-Chocolatey.')
+          }
         env:
           BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
       - name: Extract release notes
         id: extract_release_notes
-        shell: bash
+        shell: pwsh
         run: |
           # Strip build metadata to get version
-          VERSION="${BUILD_NAME%%+*}"
-          # Escape special regex chars in version
-          ESC_VERSION=$(printf '%s' "$VERSION" | sed 's/[].[\*^${}()+?|]/\\&/g')
+          $version = $env:BUILD_NAME -replace '\+.*$', ''
+
+          # Read release notes file
+          $content = Get-Content RELEASENOTES.md -Raw
 
           # Extract section between matching ## [version] header and next ## header
-          NOTES=$(sed -n "/^## \\[$ESC_VERSION\\]/,/^## /{/^## /d;p}" RELEASENOTES.md)
-          # Trim leading/trailing blank lines
-          NOTES=$(echo "$NOTES" | sed '/./,$!d' | sed -e :a -e '/^\n*$/{$d;N;ba}')
+          $escaped = [regex]::Escape($version)
+          $pattern = "(?m)^## \[$escaped\][^\n]*\n(.*?)(?=^## \[|\z)"
+          $match = [regex]::Match($content, $pattern, [System.Text.RegularExpressions.RegexOptions]::Singleline)
 
-          if [[ -z "$NOTES" ]]; then
-            echo "::error::No release notes found for version '$VERSION' in RELEASENOTES.md"
+          if (-not $match.Success) {
+            Write-Host "::error::No release notes found for version '$version' in RELEASENOTES.md"
             exit 1
-          fi
+          }
 
-          echo "$NOTES"
-          {
-            echo 'RELEASE_NOTES<<EOF'
-            echo "$NOTES"
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
+          $notes = $match.Groups[1].Value.Trim()
+          Write-Host $notes
+
+          # Write multi-line output
+          "RELEASE_NOTES<<EOF" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          $notes | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "EOF" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
         env:
           BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
       - name: Create Draft Release
         id: create_release
-        shell: bash
+        shell: pwsh
         run: |
           # Remove stale draft releases
-          gh release list --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName' | while read -r tag; do
-            [ -n "$tag" ] && gh release delete "$tag" --yes --cleanup-tag
-          done
+          $drafts = gh release list --json tagName,isDraft | ConvertFrom-Json | Where-Object { $_.isDraft }
+          foreach ($draft in $drafts) {
+            gh release delete $draft.tagName --yes --cleanup-tag
+          }
 
           # Create release notes file (avoids shell escaping issues)
-          echo "$RELEASE_NOTES" > release_notes.md
+          $env:RELEASE_NOTES | Set-Content release_notes.md -Encoding utf8
 
           # Build args
-          ARGS=(release create "v${BUILD_NAME}"
-            --title "Release ${BUILD_NAME}"
-            --notes-file release_notes.md
-            --draft
-            --target "$COMMIT_SHA")
-
-          # Pre-release if version contains a hyphen (e.g. 1.0.0-rc.1)
-          if [[ "$BUILD_NAME" == *-* ]]; then
-            ARGS+=(--prerelease)
-          fi
-
-          # Attach assets
-          ARGS+=(
-            out/msi/TfsCmdlets*.msi
-            out/Nuget/TfsCmdlets*.nupkg
-            out/Chocolatey/TfsCmdlets-Chocolatey*.nupkg
-            out/Portable/TfsCmdlets*.zip
-            out/docs/TfsCmdlets*.zip
-            out/winget/TfsCmdlets-WinGet-*.zip
+          $ghArgs = @(
+            'release', 'create', "v$env:BUILD_NAME",
+            '--title', "Release $env:BUILD_NAME",
+            '--notes-file', 'release_notes.md',
+            '--draft',
+            '--target', $env:COMMIT_SHA
           )
 
-          gh "${ARGS[@]}"
+          # Pre-release if version contains a hyphen (e.g. 1.0.0-rc.1)
+          if ($env:BUILD_NAME -match '-') {
+            $ghArgs += '--prerelease'
+          }
+
+          # Attach assets
+          $ghArgs += (Get-ChildItem out/msi/TfsCmdlets*.msi,
+            out/Nuget/TfsCmdlets*.nupkg,
+            out/Chocolatey/TfsCmdlets-Chocolatey*.nupkg,
+            out/Portable/TfsCmdlets*.zip,
+            out/docs/TfsCmdlets*.zip,
+            out/winget/TfsCmdlets-WinGet-*.zip).FullName
+
+          gh @ghArgs
         env:
           BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
           RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
