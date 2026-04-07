@@ -26,9 +26,11 @@ jobs:
       - name: Find draft release
         id: find_release
         shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
         run: |
-          if [[ -n "${{ inputs.tag }}" ]]; then
-            TAG="${{ inputs.tag }}"
+          if [[ -n "$INPUT_TAG" ]]; then
+            TAG="$INPUT_TAG"
           else
             # Find the single draft release
             DRAFTS=$(gh release list --repo "$GITHUB_REPOSITORY" --json tagName,isDraft --jq '[.[] | select(.isDraft)] | length')
