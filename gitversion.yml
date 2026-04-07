@@ -2,4 +2,4 @@ workflow: GitHubFlow/v1
 branches:
   pull-request:
     mode: ContinuousDelivery
-    tag: ''
+    label: ''
