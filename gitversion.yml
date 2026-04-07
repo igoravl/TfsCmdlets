@@ -1,5 +1,5 @@
 workflow: GitHubFlow/v1
 branches:
   pull-request:
-    mode: ContinuousDelivery
+    mode: ContinuousDeployment
     label: ''
