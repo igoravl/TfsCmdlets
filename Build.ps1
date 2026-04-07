@@ -160,7 +160,10 @@ try {
 
     $VersionMetadata = (dotnet gitversion | ConvertFrom-Json)
     $ProjectBuildNumber = ((Get-Date) - $RepoCreationDate).Days
-    $BuildName = $VersionMetadata.FullSemVer.Replace('+', "+$ProjectBuildNumber.")
+    $preTag     = $VersionMetadata.PreReleaseTagWithDash           # e.g. "-feat-pat-support.1" or ""
+    $commits    = [int] $VersionMetadata.CommitsSinceVersionSource
+    $buildMeta  = if ($commits -gt 0) { "+${ProjectBuildNumber}.${commits}" } else { '' }
+    $BuildName  = "$($VersionMetadata.MajorMinorPatch)${preTag}${buildMeta}"
 
     $VersionMetadata | Write-Verbose
 
