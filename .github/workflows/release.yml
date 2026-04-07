@@ -155,7 +155,9 @@ jobs:
           gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets.[0-9]*.nupkg" --dir .
       - name: Push package
         run: |
-          dotnet nuget push $(ls TfsCmdlets*.nupkg) -s https://api.nuget.org/v3/index.json -k ${{ secrets.API_KEY }} --skip-duplicate
+          dotnet nuget push $(ls TfsCmdlets*.nupkg) -s https://api.nuget.org/v3/index.json -k $NUGET_KEY --skip-duplicate
+        env:
+          NUGET_KEY: ${{ secrets.API_KEY }}
 
   Chocolatey:
 
