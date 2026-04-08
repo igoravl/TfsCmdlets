@@ -156,6 +156,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _adminClient.ListPersonalAccessTokensAsync(
                     Arg.Any<Microsoft.VisualStudio.Services.Common.SubjectDescriptor>(),
+                    Arg.Any<int?>(),
                     Arg.Any<string>())
                 .Returns(Task.FromResult(new TokenAdminPagedSessionTokens
                 {

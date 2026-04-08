@@ -278,4 +278,31 @@
         /// </summary>
         Stakeholder
     }
+
+    /// <summary>
+    /// Target locations for Install-TfsShell / Uninstall-TfsShell.
+    /// </summary>
+    [Flags]
+    public enum ShellTarget
+    {
+        /// <summary>
+        /// Start Menu shortcut.
+        /// </summary>
+        StartMenu = 1,
+
+        /// <summary>
+        /// Desktop shortcut.
+        /// </summary>
+        Desktop = 2,
+
+        /// <summary>
+        /// Windows Terminal profile fragments.
+        /// </summary>
+        WindowsTerminal = 4,
+
+        /// <summary>
+        /// All targets.
+        /// </summary>
+        All = StartMenu | Desktop | WindowsTerminal
+    }
 }

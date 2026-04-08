@@ -30,6 +30,14 @@
                 Type="raw" />
         </Property>
 
+        <!--Windows Terminal detection-->
+
+        <Property Id="WINDOWSTERMINAL" Secure="yes">
+            <RegistrySearch Id="WindowsTerminalSearch" Root="HKCU"
+                Key="Software\Microsoft\Windows\CurrentVersion\App Paths\wt.exe"
+                Type="raw" />
+        </Property>
+
         <!--Directories and Components-->
 
         <StandardDirectory Id="LocalAppDataFolder">
@@ -47,7 +55,23 @@
         
         <StandardDirectory Id="ProgramMenuFolder">
             <Directory Id="ShortcutsFolder" Name="$(var.PRODUCTNAME)">
-                <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}">
+                <!-- Windows Terminal shortcut (when WT is detected) -->
+                <Component Id="ShellShortcutWT" Guid="{A1B2C3D4-5E6F-7890-ABCD-EF1234567890}"
+                    Condition="WINDOWSTERMINAL">
+                    <Shortcut Id="ShellIconShortcutWT" Name="Azure DevOps Shell"
+                        Target="[WINDOWSTERMINAL]"
+                        Directory="ShortcutsFolder"
+                        Arguments="new-tab --title &quot;Azure DevOps Shell&quot; -- powershell.exe -noexit -command &quot;Import-Module TfsCmdlets -Version '$(var.PRODUCTVERSION)'; Enter-TfsShell&quot;"
+                        Icon="ProductIcon" />
+                    <RemoveFolder Id="RemoveProgramMenuDirWT" On="uninstall"
+                        Directory="ShortcutsFolder" />
+                    <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
+                        Name="InstalledWT"
+                        Type="integer" Value="1" KeyPath="yes" />
+                </Component>
+                <!-- Legacy PowerShell shortcut (when WT is not detected) -->
+                <Component Id="ShellShortcut" Guid="{9AB31DDC-700C-42A8-AF73-07FFFDF1BA15}"
+                    Condition="NOT WINDOWSTERMINAL">
                     <Shortcut Id="ShellIconShortcut" Name="Azure DevOps Shell"
                         Target="[System64Folder]\WindowsPowerShell\v1.0\powershell.exe"
                         Directory="ShortcutsFolder"

@@ -7,16 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
-
-- `Install-TfsShell` — Installs Azure DevOps Shell shortcuts (Start Menu, Desktop) and Windows Terminal profile fragments. Automatically detects Windows Terminal and deploys WT profile fragments.
-- `Uninstall-TfsShell` — Removes Azure DevOps Shell shortcuts and Windows Terminal profile fragments. Supports selective removal via the `-Target` parameter.
-- WiX installer: Conditional Windows Terminal integration — creates a WT-aware shortcut when Windows Terminal is detected, falls back to standard PowerShell shortcut otherwise.
-
 ## [2.11.0] - 2026-04-07
 
 ### Added
 
+- `Install-TfsShell` — Installs Azure DevOps Shell shortcuts (Start Menu, Desktop) and Windows Terminal profile fragments. Automatically detects Windows Terminal and deploys WT profile fragments.
+- `Uninstall-TfsShell` — Removes Azure DevOps Shell shortcuts and Windows Terminal profile fragments. Supports selective removal via the `-Target` parameter.
 - `Get-TfsPersonalAccessToken` — Lists or gets Personal Access Tokens (PATs) for the current user (by name, ID, or wildcard). Administrators can list tokens of another user by specifying the `-User` parameter, which uses the Token Admin API.
 - `New-TfsPersonalAccessToken` — Creates a new PAT with the specified display name, scope, and validity period. Supports `-AllOrganizations` for organization-agnostic tokens.
 - `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
@@ -32,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 - `Remove-Module TfsCmdlets` now clears all `TFSCMDLETS_*` environment variables via `IModuleAssemblyCleanup`.
 - Bumped `System.Composition` and `System.Composition.Hosting` from 6.0.0 to 10.0.5.
+- WiX installer: Conditional Windows Terminal integration — creates a WT-aware shortcut when Windows Terminal is detected, falls back to standard PowerShell shortcut otherwise.
 
 ### Fixed
 

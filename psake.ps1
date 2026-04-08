@@ -134,6 +134,7 @@ Task CopyStaticFiles {
 
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
+    Copy-Item -Path $PSDir\_Fragments -Destination $ModuleDir\_Fragments -Recurse -Force
 }
 
 Task GenerateTypesXml {
