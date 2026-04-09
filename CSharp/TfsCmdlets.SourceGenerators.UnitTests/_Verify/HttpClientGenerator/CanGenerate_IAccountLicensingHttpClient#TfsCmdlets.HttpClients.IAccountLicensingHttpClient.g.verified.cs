@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.Licensing.Client;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IAccountLicensingHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IAccountLicensingHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<System.Collections.Generic.IDictionary<string, bool>> ComputeExtensionRightsAsync(System.Collections.Generic.IEnumerable<string> extensionIds, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.ExtensionRightsResult> GetExtensionRightsAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -12,7 +12,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> GetAccountEntitlementsAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> GetAccountEntitlementsAsync(int top, int skip = 0, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.PagedAccountEntitlements> SearchAccountEntitlementsAsync(string continuation = null, string filter = null, string orderBy = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.PagedAccountEntitlements> SearchMemberAccountEntitlementsAsync(string continuation = null, string filter = null, string orderBy = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> GetAccountEntitlementsAsync(System.Collections.Generic.IList<System.Guid> userIds, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.IList<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> ObtainAvailableAccountEntitlementsAsync(System.Collections.Generic.IList<System.Guid> userIds, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement> GetAccountEntitlementAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -58,8 +57,6 @@ namespace TfsCmdlets.HttpClients
 			=> Client.GetAccountEntitlementsAsync(top, skip, userState, cancellationToken);
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.PagedAccountEntitlements> SearchAccountEntitlementsAsync(string continuation = null, string filter = null, string orderBy = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.SearchAccountEntitlementsAsync(continuation, filter, orderBy, userState, cancellationToken);
-		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Licensing.PagedAccountEntitlements> SearchMemberAccountEntitlementsAsync(string continuation = null, string filter = null, string orderBy = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.SearchMemberAccountEntitlementsAsync(continuation, filter, orderBy, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> GetAccountEntitlementsAsync(System.Collections.Generic.IList<System.Guid> userIds, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetAccountEntitlementsAsync(userIds, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.IList<Microsoft.VisualStudio.Services.Licensing.AccountEntitlement>> ObtainAvailableAccountEntitlementsAsync(System.Collections.Generic.IList<System.Guid> userIds, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -94,11 +91,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

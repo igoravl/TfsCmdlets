@@ -26,6 +26,9 @@ namespace TfsCmdlets.Cmdlets.Credential
         // PersonalAccessToken
         protected bool Has_PersonalAccessToken { get; set; }
         protected string PersonalAccessToken { get; set; }
+        // AzureLogin
+        protected bool Has_AzureLogin { get; set; }
+        protected bool AzureLogin { get; set; }
         // Interactive
         protected bool Has_Interactive { get; set; }
         protected bool Interactive { get; set; }
@@ -62,10 +65,11 @@ namespace TfsCmdlets.Cmdlets.Credential
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public GetCredentialController(IInteractiveAuthentication interactiveAuthentication, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        public GetCredentialController(IInteractiveAuthentication interactiveAuthentication, ICurrentConnections currentConnections, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
             : base(powerShell, data, parameters, logger)
         {
             InteractiveAuthentication = interactiveAuthentication;
+            CurrentConnections = currentConnections;
         }
     }
 }

@@ -4,9 +4,8 @@ using System.Composition;
 using Microsoft.TeamFoundation.Work.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IWorkHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IWorkHttpClient: IVssHttpClient
     {
-		public System.Threading.Tasks.Task UpdateAutomationRuleAsync(Microsoft.TeamFoundation.Work.WebApi.Contracts.AutomationRules.TeamAutomationRulesSettingsRequestModel ruleRequestModel, Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Work.WebApi.BacklogConfiguration> GetBacklogConfigurationsAsync(Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Work.WebApi.BacklogLevelWorkItems> GetBacklogLevelWorkItemsAsync(Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, string backlogId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Work.WebApi.BacklogLevelConfiguration> GetBacklogAsync(Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, string id, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -110,8 +109,6 @@ namespace TfsCmdlets.HttpClients
                 return _client;
             }
         }
-		public System.Threading.Tasks.Task UpdateAutomationRuleAsync(Microsoft.TeamFoundation.Work.WebApi.Contracts.AutomationRules.TeamAutomationRulesSettingsRequestModel ruleRequestModel, Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.UpdateAutomationRuleAsync(ruleRequestModel, teamContext, userState, cancellationToken);
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Work.WebApi.BacklogConfiguration> GetBacklogConfigurationsAsync(Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetBacklogConfigurationsAsync(teamContext, userState, cancellationToken);
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Work.WebApi.BacklogLevelWorkItems> GetBacklogLevelWorkItemsAsync(Microsoft.TeamFoundation.Core.WebApi.Types.TeamContext teamContext, string backlogId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -286,11 +283,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

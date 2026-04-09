@@ -14,6 +14,7 @@ namespace TfsCmdlets.Cmdlets.Organization
         [Parameter(ParameterSetName="Credential object", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Personal Access Token", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Prompt for credential", ValueFromPipeline=true)]
+        [Parameter(ParameterSetName="Azure Login", ValueFromPipeline=true)]
         public object Server { get; set; }
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIAL
@@ -47,6 +48,11 @@ namespace TfsCmdlets.Cmdlets.Organization
         /// </summary>
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
+        /// <summary>
+        /// HELP_PARAM_AZURE_LOGIN
+        /// </summary>
+        [Parameter(ParameterSetName = "Azure Login")]
+        public SwitchParameter AzureLogin { get; set; }
         protected override string CommandName => "GetTeamProjectCollection";
     }
 }

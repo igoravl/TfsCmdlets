@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.TeamFoundation.Wiki.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IWikiHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IWikiHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Wiki.WebApi.WikiAttachmentResponse> CreateAttachmentAsync(System.IO.Stream uploadStream, string project, string wikiIdentifier, string name, Microsoft.TeamFoundation.SourceControl.WebApi.GitVersionDescriptor versionDescriptor = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Wiki.WebApi.WikiAttachmentResponse> CreateAttachmentAsync(System.IO.Stream uploadStream, string project, System.Guid wikiIdentifier, string name, Microsoft.TeamFoundation.SourceControl.WebApi.GitVersionDescriptor versionDescriptor = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -433,11 +433,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

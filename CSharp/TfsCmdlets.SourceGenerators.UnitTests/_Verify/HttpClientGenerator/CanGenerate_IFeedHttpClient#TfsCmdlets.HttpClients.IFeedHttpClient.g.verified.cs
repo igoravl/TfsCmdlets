@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.Feed.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IFeedHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IFeedHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.Feed> GetFeedAsync(string feedId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsAsync(Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole? feedRole = default(Microsoft.VisualStudio.Services.Feed.WebApi.FeedRole?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -16,7 +16,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.Package> GetPackageAsync(string project, string feedId, string protocolType, string normalizedPackageName, bool includeAllVersions = false, bool includeUrls = true, bool? isListed = default(bool?), bool? isRelease = default(bool?), bool includeDeleted = false, bool includeDescription = false, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.PackageVersion> GetPackageVersionAsync(string project, string feedId, string protocolType, string normalizedPackageName, string packageVersionId, bool includeUrls = true, bool? isListed = default(bool?), bool? isDeleted = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.PackageVersion>> GetPackageVersionsAsync(string project, string feedId, string protocolType, string normalizedPackageName, bool includeUrls = true, bool? isListed = default(bool?), bool? isDeleted = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.Feed> CreateFeedAsync(Microsoft.VisualStudio.Services.Feed.WebApi.Feed feed, string? project, System.Collections.Generic.IEnumerable<System.Net.Http.Headers.AuthenticationHeaderValue> auxiliaryAuthHeaderValues, object? userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.IO.Stream> GetBadgeAsync(string feedId, System.Guid packageId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.IO.Stream> GetBadgeAsync(string project, string feedId, System.Guid packageId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.IO.Stream> GetBadgeAsync(System.Guid project, string feedId, System.Guid packageId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -35,9 +34,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.FeedChangesResponse> GetFeedChangesAsync(string project, bool? includeDeleted = default(bool?), long? continuationToken = default(long?), int? batchSize = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.FeedChangesResponse> GetFeedChangesAsync(System.Guid project, bool? includeDeleted = default(bool?), long? continuationToken = default(long?), int? batchSize = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.FeedChangesResponse> GetFeedChangesAsync(bool? includeDeleted = default(bool?), long? continuationToken = default(long?), int? batchSize = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsFromRecycleBinAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsFromRecycleBinAsync(string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsFromRecycleBinAsync(System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -189,8 +185,6 @@ namespace TfsCmdlets.HttpClients
 			=> Client.GetPackageVersionAsync(project, feedId, protocolType, normalizedPackageName, packageVersionId, includeUrls, isListed, isDeleted, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.PackageVersion>> GetPackageVersionsAsync(string project, string feedId, string protocolType, string normalizedPackageName, bool includeUrls = true, bool? isListed = default(bool?), bool? isDeleted = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetPackageVersionsAsync(project, feedId, protocolType, normalizedPackageName, includeUrls, isListed, isDeleted, userState, cancellationToken);
-		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.Feed> CreateFeedAsync(Microsoft.VisualStudio.Services.Feed.WebApi.Feed feed, string? project, System.Collections.Generic.IEnumerable<System.Net.Http.Headers.AuthenticationHeaderValue> auxiliaryAuthHeaderValues, object? userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.CreateFeedAsync(feed, project, auxiliaryAuthHeaderValues, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.IO.Stream> GetBadgeAsync(string feedId, System.Guid packageId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetBadgeAsync(feedId, packageId, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.IO.Stream> GetBadgeAsync(string project, string feedId, System.Guid packageId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -227,12 +221,6 @@ namespace TfsCmdlets.HttpClients
 			=> Client.GetFeedChangesAsync(project, includeDeleted, continuationToken, batchSize, userState, cancellationToken);
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Feed.WebApi.FeedChangesResponse> GetFeedChangesAsync(bool? includeDeleted = default(bool?), long? continuationToken = default(long?), int? batchSize = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetFeedChangesAsync(includeDeleted, continuationToken, batchSize, userState, cancellationToken);
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.GetFeedIdsAsync(userState, cancellationToken);
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.GetFeedIdsAsync(project, userState, cancellationToken);
-		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.FeedIdsResult>> GetFeedIdsAsync(System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.GetFeedIdsAsync(project, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsFromRecycleBinAsync(object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetFeedsFromRecycleBinAsync(userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.Feed.WebApi.Feed>> GetFeedsFromRecycleBinAsync(string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -463,11 +451,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

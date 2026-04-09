@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.Search.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface ISearchHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface ISearchHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Search.WebApi.Contracts.Code.CodeSearchResponse> FetchAdvancedCodeSearchResultsAsync(Microsoft.VisualStudio.Services.Search.WebApi.Contracts.Code.CodeSearchRequest request, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Search.WebApi.Contracts.Code.CodeSearchResponse> FetchAdvancedCodeSearchResultsAsync(Microsoft.VisualStudio.Services.Search.WebApi.Contracts.Code.CodeSearchRequest request, string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -115,11 +115,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

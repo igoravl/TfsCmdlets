@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IGitExtendedHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IGitExtendedHttpClient: IVssHttpClient
     {
     }
     [Export(typeof(IGitExtendedHttpClient))]
@@ -43,11 +43,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

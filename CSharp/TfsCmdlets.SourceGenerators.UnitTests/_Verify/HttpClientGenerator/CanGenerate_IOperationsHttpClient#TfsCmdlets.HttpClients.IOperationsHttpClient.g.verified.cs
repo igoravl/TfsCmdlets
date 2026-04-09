@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.Operations;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IOperationsHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IOperationsHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Operations.Operation> GetOperation(System.Guid id, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Operations.Operation> GetOperationAsync(Microsoft.VisualStudio.Services.Operations.OperationReference operationReference, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -52,11 +52,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

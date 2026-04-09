@@ -4,7 +4,7 @@ using System.Composition;
 using System.Runtime.Serialization;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface ITeamAdminHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface ITeamAdminHttpClient: IVssHttpClient
     {
 		public System.Collections.Generic.IEnumerable<TfsCmdlets.HttpClients.TeamAdmin> AddTeamAdmin(System.Guid projectId, System.Guid teamId, System.Collections.Generic.IEnumerable<System.Guid> userIds);
 		public System.Collections.Generic.IEnumerable<TfsCmdlets.HttpClients.TeamAdmin> AddTeamAdmin(string project, System.Guid teamId, System.Collections.Generic.IEnumerable<System.Guid> userIds);
@@ -79,11 +79,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

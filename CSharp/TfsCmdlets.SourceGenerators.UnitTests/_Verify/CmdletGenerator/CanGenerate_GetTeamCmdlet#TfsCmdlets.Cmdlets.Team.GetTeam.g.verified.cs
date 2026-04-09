@@ -14,6 +14,7 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter(ParameterSetName="Credential object", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Personal Access Token", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Prompt for credential", ValueFromPipeline=true)]
+        [Parameter(ParameterSetName="Azure Login", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Get default team", ValueFromPipeline=true)]
         public object Project { get; set; }
         /// <summary>
@@ -26,6 +27,7 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter(ParameterSetName="Credential object")]
         [Parameter(ParameterSetName="Personal Access Token")]
         [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Azure Login")]
         [Parameter(ParameterSetName="Get default team")]
         public object Collection { get; set; }
         /// <summary>
@@ -37,6 +39,7 @@ namespace TfsCmdlets.Cmdlets.Team
         [Parameter(ParameterSetName="Credential object")]
         [Parameter(ParameterSetName="Personal Access Token")]
         [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Azure Login")]
         [Parameter(ParameterSetName="Get default team")]
         public object Server { get; set; }
         /// <summary>
@@ -71,5 +74,10 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
+        /// <summary>
+        /// HELP_PARAM_AZURE_LOGIN
+        /// </summary>
+        [Parameter(ParameterSetName = "Azure Login")]
+        public SwitchParameter AzureLogin { get; set; }
     }
 }

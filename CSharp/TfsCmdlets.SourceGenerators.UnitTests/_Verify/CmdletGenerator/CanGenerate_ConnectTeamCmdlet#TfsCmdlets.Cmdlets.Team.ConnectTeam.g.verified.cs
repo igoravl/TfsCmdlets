@@ -58,5 +58,10 @@ namespace TfsCmdlets.Cmdlets.Team
         /// </summary>
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
+        /// <summary>
+        /// HELP_PARAM_AZURE_LOGIN
+        /// </summary>
+        [Parameter(ParameterSetName = "Azure Login")]
+        public SwitchParameter AzureLogin { get; set; }
     }
 }

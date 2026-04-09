@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.TeamFoundation.Build.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IBuildHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IBuildHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Build.WebApi.BuildDefinition> CreateDefinitionAsync(Microsoft.TeamFoundation.Build.WebApi.BuildDefinition definition, int? definitionToCloneId = default(int?), int? definitionToCloneRevision = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Build.WebApi.BuildDefinition> UpdateDefinitionAsync(Microsoft.TeamFoundation.Build.WebApi.BuildDefinition definition, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -739,11 +739,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

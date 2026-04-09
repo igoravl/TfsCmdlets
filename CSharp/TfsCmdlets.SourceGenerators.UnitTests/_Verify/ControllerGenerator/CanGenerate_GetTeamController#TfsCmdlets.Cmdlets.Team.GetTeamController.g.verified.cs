@@ -46,6 +46,9 @@ namespace TfsCmdlets.Cmdlets.Team
         // PersonalAccessToken
         protected bool Has_PersonalAccessToken { get; set; }
         protected string PersonalAccessToken { get; set; }
+        // AzureLogin
+        protected bool Has_AzureLogin { get; set; }
+        protected bool AzureLogin { get; set; }
         // Interactive
         protected bool Has_Interactive { get; set; }
         protected bool Interactive { get; set; }

@@ -15,6 +15,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         [Parameter(ParameterSetName="Credential object", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Personal Access Token", ValueFromPipeline=true)]
         [Parameter(ParameterSetName="Prompt for credential", ValueFromPipeline=true)]
+        [Parameter(ParameterSetName="Azure Login", ValueFromPipeline=true)]
         public object Collection { get; set; }
         /// <summary>
         /// HELP_PARAM_SERVER
@@ -25,6 +26,7 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         [Parameter(ParameterSetName="Credential object")]
         [Parameter(ParameterSetName="Personal Access Token")]
         [Parameter(ParameterSetName="Prompt for credential")]
+        [Parameter(ParameterSetName="Azure Login")]
         public object Server { get; set; }
         /// <summary>
         /// HELP_PARAM_CACHED_CREDENTIAL
@@ -58,5 +60,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
         /// </summary>
         [Parameter(ParameterSetName = "Prompt for credential")]
         public SwitchParameter Interactive { get; set; }
+        /// <summary>
+        /// HELP_PARAM_AZURE_LOGIN
+        /// </summary>
+        [Parameter(ParameterSetName = "Azure Login")]
+        public SwitchParameter AzureLogin { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.Identity.Client;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IIdentityHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IIdentityHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Identity.IdentitiesCollection> ReadIdentitiesAsync(Microsoft.VisualStudio.Services.Identity.QueryMembership queryMembership = 0, System.Collections.Generic.IEnumerable<string> propertyNameFilters = null, bool includeRestrictedVisibility = false, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.Identity.IdentitiesCollection> ReadIdentitiesAsync(System.Collections.Generic.IList<Microsoft.VisualStudio.Services.Identity.IdentityDescriptor> descriptors, Microsoft.VisualStudio.Services.Identity.QueryMembership queryMembership = 0, System.Collections.Generic.IEnumerable<string> propertyNameFilters = null, bool includeRestrictedVisibility = false, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -184,11 +184,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

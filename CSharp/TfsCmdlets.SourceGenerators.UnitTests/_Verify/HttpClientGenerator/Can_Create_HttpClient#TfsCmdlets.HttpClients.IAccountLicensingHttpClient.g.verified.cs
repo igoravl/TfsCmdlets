@@ -24,8 +24,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task DeleteEntitlementAsync(System.Guid userId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task TransferIdentityRightsAsync(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<System.Guid, System.Guid>> userIdTransferMap, bool? validateOnly = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations);
-		public bool IsDisposed();
-		public void Dispose();
 
     }
     
@@ -91,10 +89,10 @@ namespace TfsCmdlets.HttpClients
 			=> Client.TransferIdentityRightsAsync(userIdTransferMap, validateOnly, userState, cancellationToken);
 		public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
 			=> Client.SetResourceLocations(resourceLocations);
-		public bool IsDisposed()
-			=> Client.IsDisposed();
-		public void Dispose()
-			=> Client.Dispose();
+		// public bool IsDisposed()
+		// 	=> Client.IsDisposed();
+		// public void Dispose()
+		// 	=> Client.Dispose();
 
     }
 }

@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.TeamFoundation.Core.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IProjectHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IProjectHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Core.WebApi.TeamProject> GetProject(string id, bool? includeCapabilities = default(bool?), bool includeHistory = false, object userState = null);
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.WebApi.IPagedList<Microsoft.TeamFoundation.Core.WebApi.TeamProjectReference>> GetProjects(Microsoft.TeamFoundation.Core.WebApi.ProjectState? stateFilter, int? top, int? skip, object userState, string continuationToken);
@@ -85,11 +85,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

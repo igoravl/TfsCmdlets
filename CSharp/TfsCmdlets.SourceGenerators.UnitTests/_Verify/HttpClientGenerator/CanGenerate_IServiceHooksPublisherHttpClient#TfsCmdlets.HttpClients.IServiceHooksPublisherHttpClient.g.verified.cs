@@ -4,7 +4,7 @@ using System.Composition;
 using Microsoft.VisualStudio.Services.ServiceHooks.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IServiceHooksPublisherHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IServiceHooksPublisherHttpClient: IVssHttpClient
     {
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher> GetPublisherAsync(string publisherId, object userState = null);
 		public System.Threading.Tasks.Task<System.Collections.Generic.IList<Microsoft.VisualStudio.Services.ServiceHooks.WebApi.Publisher>> GetPublishersAsync(object userState = null);
@@ -97,11 +97,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

@@ -4,10 +4,10 @@ using System.Composition;
 using Microsoft.TeamFoundation.Policy.WebApi;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IPolicyHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IPolicyHttpClient: IVssHttpClient
     {
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task DeletePolicyConfigurationAsync(string project, int configurationId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task DeletePolicyConfigurationAsync(System.Guid project, int configurationId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> GetPolicyConfigurationAsync(string project, int configurationId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -34,8 +34,6 @@ namespace TfsCmdlets.HttpClients
 		public System.Threading.Tasks.Task<Microsoft.VisualStudio.Services.WebApi.IPagedList<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration>> GetPolicyConfigurationsAsync(System.Guid project, string scope = null, int? top = default(int?), string continuationToken = null, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration>> GetPolicyConfigurationsAsync(string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration>> GetPolicyConfigurationsAsync(System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
     }
     [Export(typeof(IPolicyHttpClient))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
@@ -59,10 +57,10 @@ namespace TfsCmdlets.HttpClients
                 return _client;
             }
         }
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.CreatePolicyConfigurationAsync(configuration, project, userState, cancellationToken);
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.CreatePolicyConfigurationAsync(configuration, project, userState, cancellationToken);
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+			=> Client.CreatePolicyConfigurationAsync(configuration, project, configurationId, userState, cancellationToken);
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+			=> Client.CreatePolicyConfigurationAsync(configuration, project, configurationId, userState, cancellationToken);
 		public System.Threading.Tasks.Task DeletePolicyConfigurationAsync(string project, int configurationId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.DeletePolicyConfigurationAsync(project, configurationId, userState, cancellationToken);
 		public System.Threading.Tasks.Task DeletePolicyConfigurationAsync(System.Guid project, int configurationId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
@@ -115,10 +113,6 @@ namespace TfsCmdlets.HttpClients
 			=> Client.GetPolicyConfigurationsAsync(project, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration>> GetPolicyConfigurationsAsync(System.Guid project, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetPolicyConfigurationsAsync(project, userState, cancellationToken);
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, string project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.CreatePolicyConfigurationAsync(configuration, project, configurationId, userState, cancellationToken);
-		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration> CreatePolicyConfigurationAsync(Microsoft.TeamFoundation.Policy.WebApi.PolicyConfiguration configuration, System.Guid project, int? configurationId = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
-			=> Client.CreatePolicyConfigurationAsync(configuration, project, configurationId, userState, cancellationToken);
         public Uri BaseAddress
            => Client.BaseAddress;
         public bool ExcludeUrlsHeader
@@ -133,11 +127,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }

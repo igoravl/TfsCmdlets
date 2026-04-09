@@ -3,7 +3,7 @@
 using System.Composition;
 namespace TfsCmdlets.HttpClients
 {
-    public partial interface IGenericHttpClient: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+    public partial interface IGenericHttpClient: IVssHttpClient
     {
 		public System.Uri GetUri();
 		public T Get<T>(string apiPath, string apiVersion = "1.0", System.Collections.Generic.IDictionary<string, string> additionalHeaders = null, System.Collections.Generic.IDictionary<string, string> queryParameters = null, string mediaType = "application/json", object userState = null);
@@ -66,11 +66,11 @@ namespace TfsCmdlets.HttpClients
            get => Client.LightweightHeader;
            set => Client.LightweightHeader = value;
         }
-        public bool IsDisposed()
-           => Client.IsDisposed();
+       //  public bool IsDisposed()
+       //     => Client.IsDisposed();
         public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
            => Client.SetResourceLocations(resourceLocations);
-        public void Dispose()
-	        => Client.Dispose();
+       //  public void Dispose()
+	    //     => Client.Dispose();
    }
 }
