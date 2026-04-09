@@ -1,0 +1,163 @@
+name: Build
+
+env:
+  Config: Release
+  Debug: ${{ false }}
+  SkipReleaseNotes: ${{ true }}
+
+on:
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  Build:
+
+    runs-on: windows-latest
+    env:
+      TFSCMDLETS_ACCESS_TOKEN: ${{ secrets.TFSCMDLETS_TOKEN }}
+      TFSCMDLETS_COLLECTION_URL: 'https://dev.azure.com/tfscmdlets'
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+      - name: Build module
+        id: build_module
+        shell: pwsh
+        run: |
+          ./Build.ps1 -Targets Package -Config ${{ env.Config }} -Verbose:$${{ env.Debug }} -SkipReleaseNotes:$${{ env.SkipReleaseNotes }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action/windows@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
+        if: always()
+        with:
+          files: |
+            out\TestResults-Pester*.xml
+      - name: Publish Nuget
+        uses: actions/upload-artifact@v7
+        with:
+          name: nuget
+          path: "out/Nuget/*.nupkg"
+      - name: Publish Chocolatey
+        uses: actions/upload-artifact@v7
+        with:
+          name: chocolatey
+          path: "out/Chocolatey/*.nupkg"
+      - name: Publish Portable
+        uses: actions/upload-artifact@v7
+        with:
+          name: portable
+          path: "out/Portable/*.zip"
+      - name: Publish MSI
+        uses: actions/upload-artifact@v7
+        with:
+          name: msi
+          path: "out/msi/*"
+      - name: Publish WinGet
+        uses: actions/upload-artifact@v7
+        with:
+          name: winget
+          path: "out/winget/**"
+      - name: Publish Docs
+        uses: actions/upload-artifact@v7
+        with:
+          name: docs
+          path: "out/docs/*.zip"
+      - name: Publish Release Notes
+        uses: actions/upload-artifact@v7
+        with:
+          name: releasenotes
+          path: "RELEASENOTES.md"
+      - name: Package additional release assets
+        shell: pwsh
+        run: |
+          # Zip WinGet manifests
+          Push-Location out/winget
+          Compress-Archive -Path manifests -DestinationPath "TfsCmdlets-WinGet-$env:BUILD_NAME.zip" -Force
+          Pop-Location
+          # Rename Chocolatey package to avoid collision with NuGet package (same filename)
+          Get-ChildItem 'out/Chocolatey/TfsCmdlets.*.nupkg' | ForEach-Object {
+            Rename-Item $_ $_.Name.Replace('TfsCmdlets.', 'TfsCmdlets-Chocolatey.')
+          }
+        env:
+          BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
+      - name: Extract release notes
+        id: extract_release_notes
+        shell: pwsh
+        run: |
+          # Strip build metadata to get version
+          $version = $env:BUILD_NAME -replace '\+.*$', ''
+
+          # Read release notes file
+          $content = Get-Content RELEASENOTES.md -Raw
+
+          # Extract section between matching ## [version] header and next ## header
+          $escaped = [regex]::Escape($version)
+          $pattern = "(?m)^## \[$escaped\][^\n]*\n(.*?)(?=^## \[|\z)"
+          $match = [regex]::Match($content, $pattern, [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+          if (-not $match.Success) {
+            Write-Host "::error::No release notes found for version '$version' in RELEASENOTES.md"
+            exit 1
+          }
+
+          $notes = $match.Groups[1].Value.Trim()
+          Write-Host $notes
+
+          # Write multi-line output
+          "RELEASE_NOTES<<EOF" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          $notes | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "EOF" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+        env:
+          BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
+      - name: Create Draft Release
+        id: create_release
+        shell: pwsh
+        run: |
+          # Remove stale draft releases
+          $drafts = gh release list --json tagName,isDraft | ConvertFrom-Json | Where-Object { $_.isDraft }
+          foreach ($draft in $drafts) {
+            gh release delete $draft.tagName --yes --cleanup-tag
+          }
+
+          # Create release notes file (avoids shell escaping issues)
+          $env:RELEASE_NOTES | Set-Content release_notes.md -Encoding utf8
+
+          # Build args
+          $ghArgs = @(
+            'release', 'create', "v$env:BUILD_NAME",
+            '--title', "Release $env:BUILD_NAME",
+            '--notes-file', 'release_notes.md',
+            '--draft',
+            '--target', $env:COMMIT_SHA
+          )
+
+          # Pre-release if version contains a hyphen (e.g. 1.0.0-rc.1)
+          if ($env:BUILD_NAME -match '-') {
+            $ghArgs += '--prerelease'
+          }
+
+          # Attach assets
+          $ghArgs += (Get-ChildItem out/msi/TfsCmdlets*.msi,
+            out/Nuget/TfsCmdlets*.nupkg,
+            out/Chocolatey/TfsCmdlets-Chocolatey*.nupkg,
+            out/Portable/TfsCmdlets*.zip,
+            out/docs/TfsCmdlets*.zip,
+            out/winget/TfsCmdlets-WinGet-*.zip).FullName
+
+          gh @ghArgs
+        env:
+          BUILD_NAME: ${{ steps.build_module.outputs.BUILD_NAME }}
+          RELEASE_NOTES: ${{ steps.extract_release_notes.outputs.RELEASE_NOTES }}
+          COMMIT_SHA: ${{ github.sha }}

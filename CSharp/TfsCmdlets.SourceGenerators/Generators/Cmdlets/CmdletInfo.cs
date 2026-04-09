@@ -147,7 +147,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             var isPipeline = IsPipelineProperty(currentScope);
             var valueFromPipeline = isPipeline ? "ValueFromPipeline=true" : string.Empty;
             var additionalParameterSets = AdditionalCredentialParameterSets?.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries) ?? Array.Empty<string>();
-            var parameterSetNames = IsGetScopeCmdlet ? CredentialParameterSetNames.Union(additionalParameterSets).Select(s => $"ParameterSetName=\"{s}\"") : new[] { string.Empty };
+            var parameterSetNames = IsGetScopeCmdlet ? _credentialParameterSetNames.Union(additionalParameterSets).Select(s => $"ParameterSetName=\"{s}\"") : new[] { string.Empty };
             var attributes = new List<(string, string)>();
 
             if (scopeName.Equals("Collection"))
@@ -177,6 +177,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
                 ("Parameter", "ParameterSetName = \"Personal Access Token\", Mandatory = true"),
                 ("Alias", "\"Pat\"")}, "HELP_PARAM_PERSONAL_ACCESS_TOKEN"));
             sb.Append(GenerateParameter("Interactive", "SwitchParameter", "ParameterSetName = \"Prompt for credential\"", "HELP_PARAM_INTERACTIVE"));
+            sb.Append(GenerateParameter("AzureLogin", "SwitchParameter", "ParameterSetName = \"Azure Login\"", "HELP_PARAM_AZURE_LOGIN"));
         }
 
         private void GenerateCustomControllerProperty(StringBuilder sb)
@@ -224,9 +225,8 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
 
         private static readonly string[] ScopeNames = new[]{
             "ConfigurationServer", "Organization", "TeamProjectCollection", "TeamProject", "Team" };
-
-        private static readonly string[] CredentialParameterSetNames = new[]{
-            "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential" };
+        private static readonly string[] _credentialParameterSetNames = new[]{
+            "Cached credentials", "User name and password", "Credential object", "Personal Access Token", "Prompt for credential", "Azure Login" };
 
         private static EquatableArray<ParameterInfo> GetParameterProperties(INamedTypeSymbol cmdlet)
         {

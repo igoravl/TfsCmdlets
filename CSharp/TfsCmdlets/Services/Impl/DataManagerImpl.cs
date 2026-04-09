@@ -251,7 +251,40 @@ namespace TfsCmdlets.Services.Impl
                     case null:
                         {
                             Logger.Log($"Get currently connected {scope}");
-                            result = ((Connection)CurrentConnections.Get(scope.ToString()))?.InnerObject;
+
+                            var cachedConnection = (Connection)CurrentConnections.Get(scope.ToString());
+
+                            // If using Azure Login and the token is expired, rebuild the connection
+                            // with a fresh token from DefaultAzureCredential
+                            if (cachedConnection != null && CurrentConnections.AzureCredential is { } azCred && azCred.IsTokenExpired)
+                            {
+                                Logger.Log("Azure Login token expired, refreshing...");
+
+                                var freshCreds = azCred.CreateVssCredentials();
+#if NETCOREAPP3_1_OR_GREATER
+                                var refreshedConn = new Microsoft.VisualStudio.Services.WebApi.VssConnection(
+                                    cachedConnection.Uri, freshCreds);
+#else
+                                AdoConnection refreshedConn = scope == ClientScope.Collection
+                                    ? (AdoConnection)TfsTeamProjectCollectionFactory.GetTeamProjectCollection(cachedConnection.Uri, freshCreds)
+                                    : (AdoConnection)new TfsConfigurationServer(cachedConnection.Uri, freshCreds);
+#endif
+                                var newConnection = new Connection(refreshedConn);
+                                newConnection.Connect();
+
+                                // Update the cached connection
+                                if (scope == ClientScope.Collection)
+                                    CurrentConnections.Collection = newConnection;
+                                else
+                                    CurrentConnections.Server = newConnection;
+
+                                Logger.Log("Azure Login token refreshed successfully.");
+                                result = newConnection.InnerObject;
+                            }
+                            else
+                            {
+                                result = cachedConnection?.InnerObject;
+                            }
 
                             break;
                         }

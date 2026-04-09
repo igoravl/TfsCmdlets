@@ -1,9 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <SuppressTfmSupportBuildErrors>true</SuppressTfmSupportBuildErrors>
-    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <TargetFramework>net8.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +21,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.5.2" />
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.0.10" />
     <ProjectReference Include="..\TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj" />
     <ProjectReference Include="..\TfsCmdlets\TfsCmdlets.csproj" />
   </ItemGroup>
