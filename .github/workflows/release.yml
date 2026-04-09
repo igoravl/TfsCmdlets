@@ -113,7 +113,7 @@ jobs:
           echo >> _config.yml
           git config --local user.name "Igor Abade"
           git config --local user.email igoravl@gmail.com
-          git add *
+          git add -A
           git commit -m "Publish version $BUILD_NAME"
           git push
 
