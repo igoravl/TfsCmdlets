@@ -30,6 +30,7 @@ $script:DependencyVersions = @{
         'powershell-yaml'  = $null
         'ps1xmlgen'        = $null
         'PlatyPS'          = $null
+        'Pester'           = @{ MinimumVersion = '5.0' }
     }
 }
 
@@ -120,10 +121,17 @@ Function Install-NugetPackage($Package, $Version, $OutputDirectory = 'packages')
 Function Install-PsModule($Module, $Version) {
     Write-Verbose "Restoring module $Module"
 
-    $existing = Get-Module $Module -ListAvailable | Select-Object -First 1
-    if ($existing -and (-not $Version -or $existing.Version -eq $Version)) {
-        Write-Verbose "PowerShell module $Module found; Skipping..."
-        return
+    $minVersion = if ($Version -is [hashtable]) { $Version['MinimumVersion'] } else { $null }
+    $exactVersion = if ($Version -is [hashtable]) { $null } else { $Version }
+
+    $existing = Get-Module $Module -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
+    if ($existing) {
+        if ($exactVersion -and $existing.Version -ne [version]$exactVersion) { <# fall through to install #> }
+        elseif ($minVersion -and $existing.Version -lt [version]$minVersion) { <# fall through to install #> }
+        else {
+            Write-Verbose "PowerShell module $Module found; Skipping..."
+            return
+        }
     }
 
     if (-not (Get-PackageProvider -Name Nuget -ListAvailable -ErrorAction SilentlyContinue)) {
@@ -131,8 +139,9 @@ Function Install-PsModule($Module, $Version) {
         Install-PackageProvider Nuget -Force -Scope CurrentUser | Write-Verbose
     }
 
-    $installArgs = @{ Name = $Module; Scope = 'CurrentUser'; Force = $true }
-    if ($Version) { $installArgs['RequiredVersion'] = $Version }
+    $installArgs = @{ Name = $Module; Scope = 'CurrentUser'; Force = $true; AllowClobber = $true }
+    if ($exactVersion)  { $installArgs['RequiredVersion'] = $exactVersion }
+    if ($minVersion)    { $installArgs['MinimumVersion']  = $minVersion }
     Install-Module @installArgs | Write-Verbose
 }
 
@@ -189,6 +198,9 @@ try {
     Write-Verbose "=== BEGIN PSAKE ==="
     Write-Verbose "Invoking Psake script $psakeScript"
 
+    $pesterSpec = $script:DependencyVersions.PsModules['Pester']
+    $pesterMinVersion = if ($pesterSpec -is [hashtable]) { $pesterSpec['MinimumVersion'] } else { $null }
+
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose -ErrorAction SilentlyContinue `
         -Parameters @{
         RootProjectDir    = $RootProjectDir
@@ -203,6 +215,7 @@ try {
         SkipReleaseNotes  = $SkipReleaseNotes.IsPresent
         Incremental       = $Incremental.IsPresent
         IsCI              = $isCI
+        PesterMinVersion  = $pesterMinVersion
     }
 
     Write-Verbose "=== END PSAKE ==="

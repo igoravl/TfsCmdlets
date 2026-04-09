@@ -54,6 +54,9 @@ Properties {
 
     # Documentation generation
     $RootUrl = 'https://tfscmdlets.dev/docs/cmdlets'
+
+    # Test dependencies
+    $PesterMinVersion = $null
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -243,14 +246,20 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     try {
         Write-Output ' == PowerShell Core =='
+        if ($PesterMinVersion) {
+            Exec { pwsh.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$_.Version -ge [version]'$PesterMinVersion' })) { Install-Module Pester -MinimumVersion $PesterMinVersion -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
+        }
         Exec { pwsh.exe -NonInteractive -NoLogo -Command "`$cfg = New-PesterConfiguration; `$cfg.Run.Exit = `$true; `$cfg.TestResult.Enabled = `$true; `$cfg.Output.Verbosity = '$outputLevel'; `$cfg.Filter.ExcludeTag = @('Desktop', 'Server'); Invoke-Pester -Configuration `$cfg" }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Core.xml -Force
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Core.xml -Force
     
         Write-Output ' == PowerShell Desktop =='
+        if ($PesterMinVersion) {
+            Exec { powershell.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$_.Version -ge [version]'$PesterMinVersion' })) { Install-Module Pester -MinimumVersion $PesterMinVersion -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
+        }
         Exec { powershell.exe -NonInteractive -NoLogo -Command "`$cfg = New-PesterConfiguration; `$cfg.Run.Exit = `$true; `$cfg.TestResult.Enabled = `$true; `$cfg.Output.Verbosity = '$outputLevel'; `$cfg.Filter.ExcludeTag = @('Core', 'Server'); Invoke-Pester -Configuration `$cfg" }
         Move-Item 'testResults.xml' -Destination $OutDir/TestResults-Pester-Desktop.xml -Force
-        Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Desktop.xml -Force
+        if (Test-Path 'coverage.xml') { Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Desktop.xml -Force }
     }
     finally {
         Pop-Location

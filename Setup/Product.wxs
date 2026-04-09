@@ -44,8 +44,13 @@
             <Directory Id="INSTALLFOLDER" Name="$(var.PRODUCTNAME)">
                 <Component Id="SetModulePath" Guid="{CC97272C-1234-46A5-AB61-5A4588C8D924}"
                     KeyPath="yes">
+                    <!-- Explicitly include the CurrentUser modules path to prevent Windows PowerShell
+                         from dropping it. When PSModulePath exists in the registry, WinPS does NOT
+                         prepend the default CurrentUser path (~\Documents\WindowsPowerShell\Modules),
+                         so we must preserve it here. Duplicates in PSModulePath are harmless. -->
                     <Environment Id="Env_ModulePath" Action="set" Name="PSModulePath" Part="last"
-                        Separator=";" System="no" Permanent="no" Value="[INSTALLFOLDER]" />
+                        Separator=";" System="no" Permanent="no"
+                        Value="[PersonalFolder]WindowsPowerShell\Modules;[INSTALLFOLDER]" />
                 </Component>
                 <Directory Id="ModuleFolder" Name="TfsCmdlets">
                     <Files Include="$(SourceDir)/**" />
@@ -88,7 +93,7 @@
                 <Component Id="ShellShortcutWT" Guid="{A1B2C3D4-5E6F-7890-ABCD-EF1234567890}"
                     Condition="WINDOWSTERMINAL">
                     <Shortcut Id="ShellIconShortcutWT" Name="Azure DevOps Shell"
-                        Target="[WINDOWSTERMINAL]"
+                        Target="[LocalAppDataFolder]Microsoft\WindowsApps\wt.exe"
                         Directory="ShortcutsFolder"
                         Arguments="-p &quot;Azure DevOps Shell&quot;"
                         Icon="ProductIcon" />
@@ -102,7 +107,7 @@
                 <Component Id="ShellShortcutWTCore" Guid="{B2C3D4E5-6F70-8901-BCDE-F12345678901}"
                     Condition="WINDOWSTERMINAL">
                     <Shortcut Id="ShellIconShortcutWTCore" Name="Azure DevOps Shell (Core)"
-                        Target="[WINDOWSTERMINAL]"
+                        Target="[LocalAppDataFolder]Microsoft\WindowsApps\wt.exe"
                         Directory="ShortcutsFolder"
                         Arguments="-p &quot;Azure DevOps Shell (Core)&quot;"
                         Icon="ProductIcon" />
