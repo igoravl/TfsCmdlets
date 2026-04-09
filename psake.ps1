@@ -138,6 +138,7 @@ Task CopyStaticFiles {
     Copy-Item -Path $PSDir\* -Destination $ModuleDir -Recurse -Force -Exclude _*
     Copy-Item -Path $RootProjectDir\*.md -Destination $ModuleDir -Force
     Copy-Item -Path $PSDir\_Fragments -Destination $ModuleDir\_Fragments -Recurse -Force
+    Copy-Item -Path $RootProjectDir\Assets\TfsCmdlets.ico -Destination (Join-Path $ModuleDir 'TfsCmdletsShell.ico') -Force
 }
 
 Task GenerateTypesXml {
@@ -353,7 +354,7 @@ Task PackageMsi { #-Depends Build {
     $WixProjectName = 'TfsCmdlets.Setup'
     $WixProjectFileName = Join-Path $WixProjectDir "$WixProjectName.wixproj"
 
-    Copy-Item -Path $RootProjectDir\License.rtf -Destination $ModuleDir -Force
+    Copy-Item -Path $WixProjectDir\License.rtf -Destination $ModuleDir -Force
     Copy-Item -Path $RootProjectDir\Assets\*.bmp -Destination $ModuleDir -Force
 
     exec { 
