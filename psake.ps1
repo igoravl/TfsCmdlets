@@ -296,14 +296,14 @@ Task PackageModule -Depends Build {
 
     if (-not (Test-Path $PortableDir -PathType Container)) { New-Item $PortableDir -ItemType Directory -Force | Out-Null }
 
-    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$($VersionMetadata.NugetVersion).zip") -Force | Write-Verbose
+    Compress-Archive -Path (Join-Path $OutDir 'Module\*') -DestinationPath (Join-Path $PortableDir "TfsCmdlets-Portable-$ThreePartVersion.zip") -Force | Write-Verbose
 }
 
 Task PackageNuget -Depends Build, GenerateNuspec {
 
     Copy-Item $ModuleDir $NugetToolsDir\TfsCmdlets -Recurse -Exclude *.ps1 -Force
 
-    $cmdLine = "$NugetExePath Pack $NugetSpecPath -OutputDirectory $NugetDir -Verbosity Detailed -NonInteractive -Version $($VersionMetadata.NugetVersion)"
+    $cmdLine = "$NugetExePath Pack $NugetSpecPath -OutputDirectory $NugetDir -Verbosity Detailed -NonInteractive -Version $ThreePartVersion"
 
     Write-Verbose "Command line: [$cmdLine]"
 
@@ -332,7 +332,7 @@ Task PackageChocolatey -Depends PackageNuget, GenerateLicenseFile, GenerateVerif
     
     Set-Content $NugetSpecPath -Encoding utf8 -Value ($nuspec.Replace('<!-- choco-extras -->', $chocoExtras))
 
-    $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $($VersionMetadata.NugetVersion)"
+    $cmdLine = "$ChocolateyPath Pack $ChocolateySpecPath -OutputDirectory $ChocolateyDir --Version $ThreePartVersion"
 
     Write-Verbose "Command line: [$cmdLine]"
 
@@ -351,21 +351,21 @@ Task PackageMsi { #-Depends Build {
         dotnet build $WixProjectFileName -o $WixOutputPath -v d `
             -p WixSourceDir=$ModuleDir\ `
             -p WixProductVersion=$ThreePartVersion `
-            -p WixFileVersion=$($VersionMetadata.NugetVersion) `
+            -p WixFileVersion=$ThreePartVersion `
             -p SolutionDir=$RootProjectDir\ `
             -p Configuration=$Configuration `
-            -p OutDir=$WixBinDir `
+            -p OutDir=$WixOutputPath `
             -p Platform=x86 `
             -p ProjectDir=$WixProjectDir\ `
             -p ProjectExt=.wixproj `
             -p ProjectFileName=$WixProjectFileName `
-            -p ProjectName=$WixProjectNam `
+            -p ProjectName=$WixProjectName `
             -p ProjectPath=$WixProjectDir\$WixProjectFileName `
-            -p TargetDir=$WixBinDir\ `
-            -p TargetExt=.ms `
-            -p TargetFileName=$ModuleName-$($VersionMetadata.NugetVersion).msi `
-            -p TargetName=$ModuleName-$($VersionMetadata.NugetVersion) `
-            -p TargetPath=$WixBinDir\$ModuleName-$($VersionMetadata.NugetVersion).msi `
+            -p TargetDir=$WixOutputPath\ `
+            -p TargetExt=.msi `
+            -p TargetFileName=$ModuleName-$ThreePartVersion.msi `
+            -p TargetName=$ModuleName-$ThreePartVersion `
+            -p TargetPath=$WixOutputPath\$ModuleName-$ThreePartVersion.msi `
         *>&1 | Write-Verbose
     }
     
@@ -399,12 +399,15 @@ Task PackageWinget -Depends PackageMsi {
         }
     }
 
-    $MsiPath = (Join-Path $MSIDir "$ModuleName-$($VersionMetadata.NugetVersion).msi")
+    $MsiPath = (Join-Path $MSIDir "$ModuleName-$ThreePartVersion.msi")
     $WinGetOutDir = (Join-Path $OutDir "winget/manifests/i/Igoravl/TfsCmdlets/$ThreePartVersion")
     $MsiHash = (Get-FileHash -Algorithm SHA256 -Path $MsiPath).Hash
     $MsiProductCode = "$(GetMsiProperty -Path $MsiPath -Property 'ProductCode')".Replace(' ', '')
 
     New-Item -Path $WinGetOutDir -ItemType Directory -Force | Write-Verbose
+
+    Write-Output "Generated MSI hash: $MsiHash" | Write-Verbose
+    Write-Output "Generated MSI product code: $MsiProductCode" | Write-Verbose
 
     foreach ($f in (Get-ChildItem $WinGetProjectDir -File)) {
         $outputPath = (Join-Path $WinGetOutDir $f.Name)
@@ -414,7 +417,7 @@ Task PackageWinget -Depends PackageMsi {
 
 Task PackageDocs -Depends GenerateDocs {
 
-    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$($VersionMetadata.NugetVersion).zip") -Path $DocsDir/* -Force | Write-Verbose
+    Compress-Archive -DestinationPath (Join-Path $DocsDir "TfsCmdlets-Docs-$ThreePartVersion.zip") -Path $DocsDir/* -Force | Write-Verbose
 }
 
 Task GenerateDocs {
