@@ -58,6 +58,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITeamAdminHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITeamHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITestPlanHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITokenAdminHttpClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)HttpClients\ITokensHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IVssHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWikiHttpClient.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HttpClients\IWorkHttpClient.cs" />
@@ -84,6 +86,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\TeamProjectMember.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\TfsInstallationPath.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\WorkItemHistory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\AzureCredential.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IAsyncOperationAwaiter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\IController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\ICurrentConnections.cs" />

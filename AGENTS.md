@@ -23,7 +23,7 @@ TfsCmdlets is a PowerShell module providing cmdlets for automating Azure DevOps 
 ./Build.ps1 -Incremental
 ```
 
-The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.ps1`. It compiles the C# solution with `dotnet publish` for two target frameworks (`net471` and `netcoreapp3.1`), assembles the PowerShell module under `out/module/`, and produces NuGet, Chocolatey, MSI, winget, and ZIP packages.
+The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.ps1`. It compiles the C# solution with `dotnet publish` for two target frameworks (`net472` and `netcoreapp3.1`), assembles the PowerShell module under `out/module/`, and produces NuGet, Chocolatey, MSI, winget, and ZIP packages.
 
 ## Testing instructions
 
@@ -34,7 +34,7 @@ The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.
 ## Code style
 
 - C# language version: **11.0 (preview)** for the main project, **8.0** for `TfsCmdlets.Legacy`.
-- Target frameworks: `net471` (Desktop / .NET Framework) and `netcoreapp3.1` (Core / cross-platform). Source generators target `netstandard2.0`.
+- Target frameworks: `net472` (Desktop / .NET Framework) and `netcoreapp3.1` (Core / cross-platform). Source generators target `netstandard2.0`.
 - `.editorconfig` is present — respect its rules.
 - Global usings are declared in `CSharp/TfsCmdlets/GlobalUsings.cs`. Use type aliases defined there (e.g., `WebApiWorkItem`, `WebApiTeamProject`) instead of fully-qualified names.
 - PowerShell minimum version: **5.1**.
@@ -130,14 +130,14 @@ See [Docs/ItemsPattern.md](Docs/ItemsPattern.md) for the full pattern, invocatio
 
 ```plain
 CSharp/
-  TfsCmdlets/             # Main library (net471 + netcoreapp3.1)
+  TfsCmdlets/             # Main library (net472 + netcoreapp3.1)
     Cmdlets/               # Cmdlet classes (and their inline controllers) by domain
     Services/              # Service interfaces and implementations
     Models/                # Data models
     Extensions/            # Extension methods
     HttpClients/           # HTTP client abstractions
     Util/                  # Utilities
-  TfsCmdlets.Legacy/       # Legacy .NET Framework code (net471 only)
+  TfsCmdlets.Legacy/       # Legacy .NET Framework code (net472 only)
     Cmdlets/               # Legacy cmdlet classes
     Controllers/           # Legacy controller implementations
   TfsCmdlets.SourceGenerators/  # Roslyn source generators (netstandard2.0)

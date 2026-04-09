@@ -37,7 +37,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
 
                      namespace {{model.Namespace}}
                      {
-                         public partial interface {{model.Name}}: Microsoft.VisualStudio.Services.WebApi.IVssHttpClient
+                         public partial interface {{model.Name}}: IVssHttpClient
                          {
                      {{model.GetInterfaceBody()}}
                          }
@@ -87,14 +87,14 @@ namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
                                 set => Client.LightweightHeader = value;
                              }
                              
-                             public bool IsDisposed()
-                                => Client.IsDisposed();
+                            //  public bool IsDisposed()
+                            //     => Client.IsDisposed();
                              
                              public void SetResourceLocations(Microsoft.VisualStudio.Services.WebApi.ApiResourceLocationCollection resourceLocations)
                                 => Client.SetResourceLocations(resourceLocations);
 
-                             public void Dispose()
-                     	        => Client.Dispose();
+                            //  public void Dispose()
+                     	    //     => Client.Dispose();
                         }
                      }
                      """;
