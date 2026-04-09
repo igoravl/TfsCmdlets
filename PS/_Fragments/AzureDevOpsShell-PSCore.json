@@ -1,10 +1,11 @@
 {
   "profiles": [
     {
-      "name": "Azure DevOps Shell (PowerShell Core)",
-      "commandline": "pwsh.exe -noexit -command \"Import-Module TfsCmdlets; Enter-TfsShell\"",
+      "name": "Azure DevOps Shell (Core)",
+      "commandline": "pwsh.exe -noexit -command \"Import-Module TfsCmdlets; Enter-TfsShell -WindowTitle 'Azure DevOps Shell (Core)'\"",
       "icon": "%LOCALAPPDATA%\\TfsCmdlets\\TfsCmdlets\\TfsCmdletsShell.ico",
-      "startingDirectory": "%USERPROFILE%"
+      "startingDirectory": "%USERPROFILE%",
+      "colorScheme": "Azure DevOps Shell"
     }
   ]
 }

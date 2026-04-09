@@ -53,20 +53,61 @@
             </Directory>
         </StandardDirectory>
         
+        <!-- Windows Terminal profile fragments (deployed to WT's expected location) -->
+        <StandardDirectory Id="LocalAppDataFolder">
+            <Directory Id="MicrosoftDir" Name="Microsoft">
+                <Directory Id="WindowsTerminalDir" Name="Windows Terminal">
+                    <Directory Id="FragmentsDir" Name="Fragments">
+                        <Directory Id="TfsCmdletsFragmentsDir" Name="TfsCmdlets">
+                            <Component Id="WTFragmentWinPS" Guid="{D3E4F5A6-7B8C-9D0E-F1A2-B3C4D5E6F7A8}"
+                                Condition="WINDOWSTERMINAL">
+                                <File Id="WTFragmentWinPSFile"
+                                    Source="$(var.SourceDir)_Fragments\AzureDevOpsShell-WinPS.json" />
+                                <RemoveFolder Id="RemoveTfsCmdletsFragmentsDir" On="uninstall"
+                                    Directory="TfsCmdletsFragmentsDir" />
+                            </Component>
+                            <Component Id="WTFragmentPSCore" Guid="{E4F5A6B7-8C9D-0E1F-A2B3-C4D5E6F7A8B9}"
+                                Condition="WINDOWSTERMINAL">
+                                <File Id="WTFragmentPSCoreFile"
+                                    Source="$(var.SourceDir)_Fragments\AzureDevOpsShell-PSCore.json" />
+                            </Component>
+                            <Component Id="WTFragmentColorScheme" Guid="{F5A6B7C8-9D0E-1F2A-B3C4-D5E6F7A8B9C0}"
+                                Condition="WINDOWSTERMINAL">
+                                <File Id="WTFragmentColorSchemeFile"
+                                    Source="$(var.SourceDir)_Fragments\AzureDevOpsShell-ColorScheme.json" />
+                            </Component>
+                        </Directory>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </StandardDirectory>
+
         <StandardDirectory Id="ProgramMenuFolder">
             <Directory Id="ShortcutsFolder" Name="$(var.PRODUCTNAME)">
-                <!-- Windows Terminal shortcut (when WT is detected) -->
+                <!-- Windows Terminal shortcut — Windows PowerShell profile -->
                 <Component Id="ShellShortcutWT" Guid="{A1B2C3D4-5E6F-7890-ABCD-EF1234567890}"
                     Condition="WINDOWSTERMINAL">
                     <Shortcut Id="ShellIconShortcutWT" Name="Azure DevOps Shell"
                         Target="[WINDOWSTERMINAL]"
                         Directory="ShortcutsFolder"
-                        Arguments="new-tab --title &quot;Azure DevOps Shell&quot; -- powershell.exe -noexit -command &quot;Import-Module TfsCmdlets -Version '$(var.PRODUCTVERSION)'; Enter-TfsShell&quot;"
+                        Arguments="-p &quot;Azure DevOps Shell&quot;"
                         Icon="ProductIcon" />
                     <RemoveFolder Id="RemoveProgramMenuDirWT" On="uninstall"
                         Directory="ShortcutsFolder" />
                     <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
                         Name="InstalledWT"
+                        Type="integer" Value="1" KeyPath="yes" />
+                </Component>
+                <!-- Windows Terminal shortcut — PowerShell Core profile -->
+                <Component Id="ShellShortcutWTCore" Guid="{B2C3D4E5-6F70-8901-BCDE-F12345678901}"
+                    Condition="WINDOWSTERMINAL">
+                    <Shortcut Id="ShellIconShortcutWTCore" Name="Azure DevOps Shell (Core)"
+                        Target="[WINDOWSTERMINAL]"
+                        Directory="ShortcutsFolder"
+                        Arguments="-p &quot;Azure DevOps Shell (Core)&quot;"
+                        Icon="ProductIcon" />
+                    <RegistryValue Root="HKCU" Key="Software\$(var.AUTHOR)\TfsCmdlets"
+                        Name="InstalledWTCore"
                         Type="integer" Value="1" KeyPath="yes" />
                 </Component>
                 <!-- Legacy PowerShell shortcut (when WT is not detected) -->

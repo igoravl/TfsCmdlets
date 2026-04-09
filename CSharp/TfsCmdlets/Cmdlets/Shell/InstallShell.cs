@@ -41,7 +41,8 @@ namespace TfsCmdlets.Cmdlets.Shell
     [CmdletController]
     partial class InstallShellController
     {
-        private const string ShortcutName = "Azure DevOps Shell.lnk";
+        private const string ShortcutNameWinPS = "Azure DevOps Shell.lnk";
+        private const string ShortcutNameCore  = "Azure DevOps Shell (Core).lnk";
         private const string ShellCommand = "-noexit -command \"Import-Module TfsCmdlets; Enter-TfsShell\"";
 
         protected override IEnumerable Run()
@@ -62,13 +63,13 @@ namespace TfsCmdlets.Cmdlets.Shell
                     Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
                     "Programs", "TfsCmdlets");
 
-                InstallShortcut(startMenuPath, hasWindowsTerminal, iconPath, "Start Menu");
+                InstallShortcuts(startMenuPath, hasWindowsTerminal, iconPath, "Start Menu");
             }
 
             if (Target.HasFlag(ShellTarget.Desktop))
             {
                 var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                InstallShortcut(desktopPath, hasWindowsTerminal, iconPath, "Desktop");
+                InstallShortcuts(desktopPath, hasWindowsTerminal, iconPath, "Desktop");
             }
 
             if (Target.HasFlag(ShellTarget.WindowsTerminal))
@@ -79,9 +80,38 @@ namespace TfsCmdlets.Cmdlets.Shell
             yield break;
         }
 
-        private void InstallShortcut(string folder, bool useWindowsTerminal, string iconPath, string locationName)
+        private void InstallShortcuts(string folder, bool useWindowsTerminal, string iconPath, string locationName)
         {
-            var shortcutPath = Path.Combine(folder, ShortcutName);
+            if (useWindowsTerminal)
+            {
+                var wtExe = FindWtExePath() ?? "wt.exe";
+
+                // Windows PowerShell profile
+                InstallShortcut(folder, ShortcutNameWinPS,
+                    wtExe, "-p \"Azure DevOps Shell\"",
+                    iconPath, $"{locationName}");
+
+                // PowerShell Core profile
+                InstallShortcut(folder, ShortcutNameCore,
+                    wtExe, "-p \"Azure DevOps Shell (Core)\"",
+                    iconPath, $"{locationName} (Core)");
+            }
+            else
+            {
+                var psExe = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.System),
+                    @"WindowsPowerShell\v1.0\powershell.exe");
+
+                InstallShortcut(folder, ShortcutNameWinPS,
+                    psExe, ShellCommand,
+                    iconPath, locationName);
+            }
+        }
+
+        private void InstallShortcut(string folder, string shortcutFile, string targetExe,
+            string arguments, string iconPath, string locationName)
+        {
+            var shortcutPath = Path.Combine(folder, shortcutFile);
 
             if (!PowerShell.ShouldProcess(shortcutPath, $"Create {locationName} shortcut"))
                 return;
@@ -90,21 +120,6 @@ namespace TfsCmdlets.Cmdlets.Shell
             {
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
-
-                string targetExe, arguments;
-
-                if (useWindowsTerminal)
-                {
-                    targetExe = FindWtExePath() ?? "wt.exe";
-                    arguments = $"new-tab --title \"Azure DevOps Shell\" -- powershell.exe {ShellCommand}";
-                }
-                else
-                {
-                    targetExe = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.System),
-                        @"WindowsPowerShell\v1.0\powershell.exe");
-                    arguments = ShellCommand;
-                }
 
                 CreateShortcutFile(shortcutPath, targetExe, arguments, iconPath);
                 Logger.Log($"Created {locationName} shortcut: {shortcutPath}");
@@ -128,7 +143,7 @@ namespace TfsCmdlets.Cmdlets.Shell
             var fragmentDir = Path.Combine(fragmentsBase, "TfsCmdlets");
             var sourceDir = Path.Combine(modulePath, "_Fragments");
 
-            foreach (var fragmentName in new[] { "AzureDevOpsShell-WinPS.json", "AzureDevOpsShell-PSCore.json" })
+            foreach (var fragmentName in new[] { "AzureDevOpsShell-WinPS.json", "AzureDevOpsShell-PSCore.json", "AzureDevOpsShell-ColorScheme.json" })
             {
                 var sourcePath = Path.Combine(sourceDir, fragmentName);
                 var destPath = Path.Combine(fragmentDir, fragmentName);
@@ -197,18 +212,25 @@ namespace TfsCmdlets.Cmdlets.Shell
 
         private static string FindWtExePath()
         {
-            try
-            {
-                using var key = Registry.CurrentUser.OpenSubKey(
-                    @"Software\Microsoft\Windows\CurrentVersion\App Paths\wt.exe");
-                var val = key?.GetValue(null) as string;
-                if (!string.IsNullOrEmpty(val) && File.Exists(val)) return val;
-            }
-            catch { /* ignore */ }
-
+            // Prefer the execution alias in %LOCALAPPDATA%\Microsoft\WindowsApps — this is the
+            // proper AppX stub that can be invoked from shortcuts and the command line.
+            // The registry App Paths entry points to the real package binary inside
+            // %ProgramFiles%\WindowsApps, which cannot be launched directly via a shortcut.
             var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var storePath = Path.Combine(localAppData, "Microsoft", "WindowsApps", "wt.exe");
-            if (File.Exists(storePath)) return storePath;
+            var execAlias = Path.Combine(localAppData, "Microsoft", "WindowsApps", "wt.exe");
+            if (File.Exists(execAlias)) return execAlias;
+
+            // Fall back to PATH
+            var pathDirs = Environment.GetEnvironmentVariable("PATH")?.Split(';') ?? Array.Empty<string>();
+            foreach (var dir in pathDirs)
+            {
+                try
+                {
+                    var candidate = Path.Combine(dir.Trim(), "wt.exe");
+                    if (File.Exists(candidate)) return candidate;
+                }
+                catch { /* ignore invalid PATH entries */ }
+            }
 
             return null;
         }

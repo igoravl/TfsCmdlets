@@ -27,7 +27,10 @@ namespace TfsCmdlets.Cmdlets.Shell
     [CmdletController]
     partial class UninstallShellController
     {
-        private const string ShortcutName = "Azure DevOps Shell.lnk";
+        private static readonly string[] ShortcutNames = {
+            "Azure DevOps Shell.lnk",
+            "Azure DevOps Shell (Core).lnk"
+        };
 
         protected override IEnumerable Run()
         {
@@ -62,32 +65,37 @@ namespace TfsCmdlets.Cmdlets.Shell
 
         private void RemoveShortcut(string folder, string locationName)
         {
-            var shortcutPath = Path.Combine(folder, ShortcutName);
-
-            if (!File.Exists(shortcutPath))
+            foreach (var shortcutFile in ShortcutNames)
             {
-                Logger.Log($"No {locationName} shortcut found at {shortcutPath}. Skipping.");
-                return;
-            }
+                var shortcutPath = Path.Combine(folder, shortcutFile);
 
-            if (!PowerShell.ShouldProcess(shortcutPath, $"Remove {locationName} shortcut"))
-                return;
-
-            try
-            {
-                File.Delete(shortcutPath);
-                Logger.Log($"Removed {locationName} shortcut: {shortcutPath}");
-
-                // Clean up the folder if empty (Start Menu subfolder)
-                if (Directory.Exists(folder) && Directory.GetFileSystemEntries(folder).Length == 0)
+                if (!File.Exists(shortcutPath))
                 {
-                    Directory.Delete(folder);
+                    Logger.Log($"No {locationName} shortcut found at {shortcutPath}. Skipping.");
+                    continue;
+                }
+
+                if (!PowerShell.ShouldProcess(shortcutPath, $"Remove {locationName} shortcut"))
+                    continue;
+
+                try
+                {
+                    File.Delete(shortcutPath);
+                    Logger.Log($"Removed {locationName} shortcut: {shortcutPath}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarn($"Failed to remove {locationName} shortcut: {ex.Message}");
                 }
             }
-            catch (Exception ex)
+
+            // Clean up the folder if now empty (e.g. Start Menu subfolder)
+            try
             {
-                Logger.LogWarn($"Failed to remove {locationName} shortcut: {ex.Message}");
+                if (Directory.Exists(folder) && Directory.GetFileSystemEntries(folder).Length == 0)
+                    Directory.Delete(folder);
             }
+            catch { /* ignore cleanup failures */ }
         }
 
         private void RemoveTerminalFragments()
