@@ -68,7 +68,9 @@ namespace TfsCmdlets.Cmdlets.Credential
                     {
                         Logger.Log("Using credential from supplied Personal Access Token");
                         netCred = new NetworkCredential(string.Empty, PersonalAccessToken);
-                        break;
+
+                        yield return new VssCredentials(new VssBasicCredential(netCred));
+                        yield break;
                     }
 
                 case ConnectionMode.CredentialObject:

@@ -1,0 +1,11 @@
+{
+  "profiles": [
+    {
+      "name": "Azure DevOps Shell",
+      "commandline": "powershell.exe -noexit -command \"Import-Module TfsCmdlets; Enter-TfsShell\"",
+      "icon": "%LOCALAPPDATA%\\TfsCmdlets\\TfsCmdlets\\TfsCmdletsShell.ico",
+      "startingDirectory": "%USERPROFILE%",
+      "colorScheme": "Azure DevOps Shell"
+    }
+  ]
+}

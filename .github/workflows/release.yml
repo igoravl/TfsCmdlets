@@ -1,0 +1,287 @@
+name: Release
+
+on:
+  pull_request:
+    types: [ closed ]
+    branches: [ main ]
+
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to publish (e.g. v1.0.0+4751.abc). Leave empty to auto-detect the single draft release.'
+        required: false
+        type: string
+      commit_sha:
+        description: 'Commit SHA to pin the release tag to. Leave empty to use the latest commit on main.'
+        required: false
+        type: string
+
+jobs:
+
+  Prepare:
+
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.merged == true
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Find draft release
+        id: find_release
+        shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          if [[ -n "$INPUT_TAG" ]]; then
+            TAG="$INPUT_TAG"
+          else
+            # Find the single draft release
+            DRAFTS=$(gh release list --repo "$GITHUB_REPOSITORY" --json tagName,isDraft --jq '[.[] | select(.isDraft)] | length')
+            if [[ "$DRAFTS" -eq 0 ]]; then
+              echo "::error::No draft releases found."
+              exit 1
+            elif [[ "$DRAFTS" -gt 1 ]]; then
+              echo "::error::Multiple draft releases found ($DRAFTS). Specify a tag via workflow_dispatch."
+              exit 1
+            fi
+            TAG=$(gh release list --repo "$GITHUB_REPOSITORY" --json tagName,isDraft --jq '.[] | select(.isDraft) | .tagName')
+          fi
+
+          # Extract BUILD_NAME from tag (strip leading 'v')
+          BUILD_NAME="${TAG#v}"
+
+          # Get release body for downstream use
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body --jq '.body' > release_notes.md
+
+          echo "TAG_NAME=$TAG" >> "$GITHUB_OUTPUT"
+          echo "BUILD_NAME=$BUILD_NAME" >> "$GITHUB_OUTPUT"
+          echo "RELEASE_TAG=${BUILD_NAME//+/%2B}" >> "$GITHUB_OUTPUT"
+
+          # Multi-line release notes
+          {
+            echo 'RELEASE_NOTES<<EOF'
+            cat release_notes.md
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Point draft release to target commit
+        shell: bash
+        env:
+          INPUT_COMMIT_SHA: ${{ inputs.commit_sha }}
+          PR_MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+        run: |
+          TAG_NAME="${{ steps.find_release.outputs.TAG_NAME }}"
+
+          # Resolve target SHA: explicit input > PR merge commit > latest commit on main
+          if [[ -n "$INPUT_COMMIT_SHA" ]]; then
+            TARGET_SHA="$INPUT_COMMIT_SHA"
+          elif [[ -n "$PR_MERGE_SHA" ]]; then
+            TARGET_SHA="$PR_MERGE_SHA"
+          else
+            TARGET_SHA=$(gh api /repos/$GITHUB_REPOSITORY/commits/main --jq '.sha')
+          fi
+
+          echo "Updating draft release $TAG_NAME to target commit $TARGET_SHA"
+
+          # Draft releases don't create the git tag until published, so update
+          # the release's target_commitish instead of patching a non-existent ref.
+          gh release edit "$TAG_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$TARGET_SHA"
+
+    outputs:
+      TAG_NAME: ${{ steps.find_release.outputs.TAG_NAME }}
+      BUILD_NAME: ${{ steps.find_release.outputs.BUILD_NAME }}
+      RELEASE_TAG: ${{ steps.find_release.outputs.RELEASE_TAG }}
+      RELEASE_NOTES: ${{ steps.find_release.outputs.RELEASE_NOTES }}
+
+  Site:
+
+    runs-on: ubuntu-latest
+    needs: [ Prepare ]
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      BUILD_NAME: ${{ needs.Prepare.outputs.BUILD_NAME }}
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          path: site
+      - name: Download docs from release
+        shell: bash
+        run: |
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets-Docs-*.zip" --dir .
+      - name: Publish site
+        run: |
+          cd site && mkdir docs && pushd docs
+          git checkout --track origin/gh-pages
+          unzip -o ../../TfsCmdlets-Docs-*.zip
+          popd
+          echo build_info: TfsCmdlets v${BUILD_NAME}, released $(date +%F) >> _config.yml
+          echo >> _config.yml
+          git config --local user.name "Igor Abade"
+          git config --local user.email igoravl@gmail.com
+          git add -A
+          git commit -m "Publish version $BUILD_NAME"
+          git push
+
+  PSGallery:
+
+    runs-on: ubuntu-latest
+    needs: [ Prepare ]
+    environment: psgallery
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+      RELEASE_NOTES: ${{ needs.Prepare.outputs.RELEASE_NOTES }}
+      PSGALLERY_KEY: ${{ secrets.API_KEY }}
+    steps:
+      - name: Download and extract portable module
+        shell: bash
+        run: |
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets-Portable-*.zip" --dir .
+          mkdir -p Module/TfsCmdlets
+          unzip TfsCmdlets-Portable*.zip -d Module/TfsCmdlets
+      - name: Publish to PSGallery
+        shell: pwsh
+        run: |
+          Install-Module PackageManagement -Scope CurrentUser -Force
+          Install-Module PowerShellGet -Scope CurrentUser -Force
+          Publish-Module -Name Module/TfsCmdlets -NuGetApiKey $env:PSGALLERY_KEY -AllowPreRelease -ReleaseNotes $env:RELEASE_NOTES
+
+  Nuget:
+
+    runs-on: ubuntu-latest
+    needs: [ Prepare ]
+    environment: nuget
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+    steps:
+      - name: Download nuget from release
+        shell: bash
+        run: |
+          # Download only the NuGet package (exclude renamed Chocolatey package)
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets.[0-9]*.nupkg" --dir .
+      - name: Push package
+        run: |
+          dotnet nuget push $(ls TfsCmdlets*.nupkg) -s https://api.nuget.org/v3/index.json -k $NUGET_KEY --skip-duplicate
+        env:
+          NUGET_KEY: ${{ secrets.API_KEY }}
+
+  Chocolatey:
+
+    runs-on: windows-latest
+    needs: [ Prepare ]
+    environment: chocolatey
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+      CHOCO_KEY: ${{ secrets.API_KEY }}
+    steps:
+      - name: Download chocolatey from release
+        shell: bash
+        run: |
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets-Chocolatey*.nupkg" --dir .
+          # Restore original filename for choco push
+          for f in TfsCmdlets-Chocolatey*.nupkg; do
+            mv "$f" "${f/-Chocolatey/}"
+          done
+      - name: Push package
+        shell: bash
+        run: |
+          choco push TfsCmdlets*.nupkg --api-key "$CHOCO_KEY" --source='https://push.chocolatey.org/'
+
+  WinGet:
+
+    runs-on: ubuntu-latest
+    needs: [ Prepare ]
+    environment: winget
+    env:
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+      BUILD_NAME: ${{ needs.Prepare.outputs.BUILD_NAME }}
+    steps:
+      - name: Download winget manifests from release
+        shell: bash
+        run: |
+          gh release download "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --pattern "TfsCmdlets-WinGet-*.zip" --dir .
+          mkdir -p winget-manifests
+          unzip TfsCmdlets-WinGet-*.zip -d winget-manifests
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone winget-pkgs repository
+        shell: bash
+        run: |
+          git clone --single-branch --branch "master" "https://igoravl:$WINGET_GITHUB_TOKEN@github.com/igoravl/winget-pkgs.git"
+          cd winget-pkgs
+          git remote add upstream https://github.com/microsoft/winget-pkgs.git
+          git fetch upstream
+          git checkout -b "TfsCmdlets_$BUILD_NAME"
+        env:
+          WINGET_GITHUB_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+      - name: Copy manifests
+        shell: bash
+        run: |
+          cp -r winget-manifests/manifests winget-pkgs/
+      - name: Push to winget-pkgs repository
+        shell: bash
+        run: |
+          cd winget-pkgs
+          git config --local user.email "igoravl@gmail.com"
+          git config --local user.name "Igor Abade"
+          git add manifests/i/Igoravl/TfsCmdlets/*
+          git commit -m "Release $BUILD_NAME"
+          git push -u origin "TfsCmdlets_$BUILD_NAME"
+      - name: Create pull request to microsoft/winget-pkgs
+        shell: bash
+        run: |
+          gh pr create \
+            --repo Microsoft/winget-pkgs \
+            --title "TfsCmdlets_${BUILD_NAME}" \
+            --head "igoravl:TfsCmdlets_${BUILD_NAME}" \
+            --base master \
+            --body '- [x] Have you signed the [Contributor License Agreement](https://cla.opensource.microsoft.com/microsoft/winget-pkgs)?
+          - [x] Have you checked that there are not other open [pull requests](https://github.com/microsoft/winget-pkgs/pulls) for the same manifest update/change?
+          - [x] Have you validated your manifest locally with `winget validate --manifest <path>`?
+          - [x] Have you tested your manifest locally with `winget install --manifest <path>`?
+          - [x] Does your manifest conform to the [1.0 schema](https://github.com/microsoft/winget-cli/blob/master/doc/ManifestSpecv1.0.md)?
+
+          Note: `<path>` is the name of the directory containing the manifest you are submitting.
+
+          -----'
+        env:
+          GH_TOKEN: ${{ secrets.API_GITHUB_TOKEN }}
+
+  Promote:
+
+    runs-on: ubuntu-latest
+    needs: [ Prepare, Site, PSGallery, Nuget, Chocolatey, WinGet ]
+    environment: production
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TAG_NAME: ${{ needs.Prepare.outputs.TAG_NAME }}
+      BUILD_NAME: ${{ needs.Prepare.outputs.BUILD_NAME }}
+    steps:
+      - name: Promote release
+        id: promote_release
+        shell: bash
+        run: |
+          gh release edit "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --draft=false
+
+          RELEASE_URL=$(gh release view "$TAG_NAME" --repo "$GITHUB_REPOSITORY" --json url --jq '.url')
+          echo "RELEASE_URL=$RELEASE_URL" >> "$GITHUB_OUTPUT"
+    outputs:
+      RELEASE_URL: ${{ steps.promote_release.outputs.RELEASE_URL }}
+
+  Announcements:
+
+    runs-on: ubuntu-latest
+    needs: [ Promote ]
+    environment: announcements
+    steps:
+      - name: No-op
+        shell: bash
+        run: echo "Announcements are temporarily disabled."

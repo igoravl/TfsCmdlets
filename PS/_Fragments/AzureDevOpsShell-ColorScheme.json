@@ -1,0 +1,27 @@
+{
+  "schemes": [
+    {
+      "name": "Azure DevOps Shell",
+      "background": "#150525",
+      "black": "#000000",
+      "blue": "#3465A4",
+      "brightBlack": "#555753",
+      "brightBlue": "#729FCF",
+      "brightCyan": "#34E2E2",
+      "brightGreen": "#8AE234",
+      "brightPurple": "#AD7FA8",
+      "brightRed": "#EF2929",
+      "brightWhite": "#EEEEEC",
+      "brightYellow": "#FCE94F",
+      "cursorColor": "#FFFFFF",
+      "cyan": "#06989A",
+      "foreground": "#D3D7CF",
+      "green": "#4E9A06",
+      "purple": "#75507B",
+      "red": "#CC0000",
+      "selectionBackground": "#FFFFFF",
+      "white": "#D3D7CF",
+      "yellow": "#C4A000"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "profiles": [
+    {
+      "name": "Azure DevOps Shell (Core)",
+      "commandline": "pwsh.exe -noexit -command \"Import-Module TfsCmdlets; Enter-TfsShell -WindowTitle 'Azure DevOps Shell (Core)'\"",
+      "icon": "%LOCALAPPDATA%\\TfsCmdlets\\TfsCmdlets\\TfsCmdletsShell.ico",
+      "startingDirectory": "%USERPROFILE%",
+      "colorScheme": "Azure DevOps Shell"
+    }
+  ]
+}

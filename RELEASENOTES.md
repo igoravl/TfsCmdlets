@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-04-09
+
+### Added
+
+- `Install-TfsShell` — Installs Azure DevOps Shell shortcuts (Start Menu, Desktop) and Windows Terminal profile fragments. Automatically detects Windows Terminal and deploys WT profile fragments.
+- `Uninstall-TfsShell` — Removes Azure DevOps Shell shortcuts and Windows Terminal profile fragments. Supports selective removal via the `-Target` parameter.
+- `Get-TfsPersonalAccessToken` — Lists or gets Personal Access Tokens (PATs) for the current user (by name, ID, or wildcard). Administrators can list tokens of another user by specifying the `-User` parameter, which uses the Token Admin API.
+- `New-TfsPersonalAccessToken` — Creates a new PAT with the specified display name, scope, and validity period. Supports `-AllOrganizations` for organization-agnostic tokens.
+- `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
+- `Update-TfsPersonalAccessToken` — Regenerates (rotates) a PAT by revoking and recreating it, preserving its scope and settings.
+- `Remove-TfsPersonalAccessToken` — Revokes a PAT. Administrators can revoke another user's tokens by specifying the `-User` parameter.
+- `Rename-TfsPersonalAccessToken` — Updates the display name of an existing PAT without changing its scope or expiration date.
+
+### Changed
+
+- `Enter-TfsShell`: Added Oh-My-Posh integration.
+  - Bundled Oh-My-Posh theme (`azuredevops.omp.json`) for the Azure DevOps Shell, displaying the connected organization, project, team, and user in the prompt.
+  - Integration can be controlled via environment variables: set `TFSCMDLETS_OMP_DISABLE` to `1` or `true` to suppress Oh-My-Posh, or set `TFSCMDLETS_OMP_THEME` to a custom theme file path. When Oh-My-Posh is detected and neither variable is set, the module automatically initializes the bundled Azure DevOps theme.
+- Connection state is now automatically synchronized to `TFSCMDLETS_*` process-level environment variables (`TFSCMDLETS_CONNECTED`, `TFSCMDLETS_ORG`, `TFSCMDLETS_ORG_URL`, `TFSCMDLETS_USER`, `TFSCMDLETS_USER_DISPLAY`, `TFSCMDLETS_IS_HOSTED`, `TFSCMDLETS_PROJECT`, `TFSCMDLETS_TEAM`) on every connect/disconnect, enabling integration with external prompt customization tools such as Oh-My-Posh and Starship.
+- `Remove-Module TfsCmdlets` now clears all `TFSCMDLETS_*` environment variables via `IModuleAssemblyCleanup`.
+- Bumped `System.Composition` and `System.Composition.Hosting` from 6.0.0 to 10.0.5.
+- WiX installer: Conditional Windows Terminal integration — creates a WT-aware shortcut when Windows Terminal is detected, falls back to standard PowerShell shortcut otherwise.
+
+### Fixed
+
+- Fixed authentication errors when using Personal Access Token authentication with on-premises Servers.
+
 ## [2.10.0] - 2026-03-27
 
 ### Added
