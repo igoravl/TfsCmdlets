@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.12.0] - TBD
+
+### Changed
+
+- Bumped minimum .NET Framework target from **4.7.1** to **4.7.2**. Environments running .NET Framework 4.7.1 may need to upgrade to 4.7.2 or later before upgrading TfsCmdlets. This only affects Windows PowerShell.
+- Major internal refactoring: shared source code (models, services, extensions, HTTP clients, controllers) has been extracted into a new `TfsCmdlets.Shared` shared project, reducing duplication between the main and legacy assemblies.
+- Roslyn source generators completely rewritten with a significantly expanded unit-test suite, improving reliability and maintainability of generated cmdlet/controller boilerplate.
+- Interactive authentication (`-Interactive`): removed the `Microsoft.Identity.Client.Desktop` dependency (`WithDesktopFeatures()`). Windows-integrated-auth flows that relied on this extension are no longer available; device-code and browser-based flows remain unaffected.
+
+### Removed (Temporarily)
+
+- `Get-TfsProcessFieldDefinition` and `New-TfsProcessFieldDefinition` are temporarily unavailable while the source generator refactoring is completed. `Remove-TfsProcessFieldDefinition` remains functional. Both cmdlets will be restored in a future release.
+
 ## [2.11.0] - 2026-04-09
 
 ### Added
