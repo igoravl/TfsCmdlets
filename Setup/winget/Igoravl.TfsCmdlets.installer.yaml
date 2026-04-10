@@ -13,7 +13,7 @@ Installers:
   Architecture: x64
   InstallerType: wix
   Scope: user
-  InstallerUrl: https://github.com/igoravl/TfsCmdlets/releases/download/v$($BuildName.Replace('+', '%2B'))/$ModuleName-$($VersionMetadata.NugetVersion).msi
+  InstallerUrl: https://github.com/igoravl/TfsCmdlets/releases/download/v$($BuildName.Replace('+', '%2B'))/${ModuleName}-${ThreePartVersion}.msi
   InstallerSha256: $MsiHash
   ProductCode: "$MsiProductCode"
   UpgradeBehavior: install
