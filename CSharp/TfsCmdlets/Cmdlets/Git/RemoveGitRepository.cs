@@ -20,6 +20,14 @@ namespace TfsCmdlets.Cmdlets.Git
         public object Repository { get; set; }
 
         /// <summary>
+        /// Permanently deletes the repository instead of moving it to the recycle bin.
+        /// When omitted, the repository is moved to a recycle bin and can be recovered.
+        /// When specified, the deletion is irreversible.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Hard { get; set; }
+
+        /// <summary>
         /// HELP_PARAM_FORCE_REMOVE
         /// </summary>
         [Parameter]
@@ -37,7 +45,16 @@ namespace TfsCmdlets.Cmdlets.Git
 
                 if (!(repo.DefaultBranch == null || Force) && !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{repo.Name}'?")) continue;
 
+                if (Has_Hard && !(Force || PowerShell.ShouldContinue(
+                    "You are using the -Hard switch. The repository deletion is IRREVERSIBLE " +
+                    $"and may cause DATA LOSS. Are you sure you want to permanently delete Git repository '{repo.Name}'?"))) continue;
+
                 Client.DeleteRepositoryAsync(repo.Id).Wait();
+
+                if (Has_Hard)
+                {
+                    Client.DeleteRepositoryFromRecycleBinAsync(repo.ProjectReference.Id.ToString(), repo.Id).Wait();
+                }
             }
 
             return null;
