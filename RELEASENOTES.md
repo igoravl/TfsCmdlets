@@ -5,15 +5,13 @@ All notable changes to TfsCmdlets will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
-
-## [2.12.0] - TBD
+## [2.12.0] - 2026/04/11
 
 ### Added
 
 - `Get-TfsGitRepository`: Added `-Deleted` switch parameter to list Git repositories in the recycle bin. Supports wildcard matching on deleted repository names ([#241](https://github.com/igoravl/TfsCmdlets/issues/241)).
-- `Undo-TfsGitRepositoryRemoval`: Restores one or more deleted Git repositories from the recycle bin. Accepts repository name (with wildcard support), ID, or piped `GitRepository` objects from `Get-TfsGitRepository -Deleted` ([#242](https://github.com/igoravl/TfsCmdlets/issues/242)).
 - `Remove-TfsGitRepository`: Added `-Hard` switch to permanently delete a repository from the recycle bin, bypassing the recycle bin entirely ([#240](https://github.com/igoravl/TfsCmdlets/issues/240)).
+- `Undo-TfsGitRepositoryRemoval`: Restores one or more deleted Git repositories from the recycle bin. Accepts repository name (with wildcard support), ID, or piped `GitRepository` objects from `Get-TfsGitRepository -Deleted` ([#242](https://github.com/igoravl/TfsCmdlets/issues/242)).
 
 ### Changed
 
@@ -21,10 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Major internal refactoring: shared source code (models, services, extensions, HTTP clients, controllers) has been extracted into a new `TfsCmdlets.Shared` shared project, reducing duplication between the main and legacy assemblies.
 - Roslyn source generators completely rewritten with a significantly expanded unit-test suite, improving reliability and maintainability of generated cmdlet/controller boilerplate.
 - Interactive authentication (`-Interactive`): removed the `Microsoft.Identity.Client.Desktop` dependency (`WithDesktopFeatures()`). Windows-integrated-auth flows that relied on this extension are no longer available; device-code and browser-based flows remain unaffected.
-
-### Removed (Temporarily)
-
-- `Get-TfsProcessFieldDefinition` and `New-TfsProcessFieldDefinition` are temporarily unavailable while the source generator refactoring is completed. `Remove-TfsProcessFieldDefinition` remains functional. Both cmdlets will be restored in a future release.
 
 ## [2.11.0] - 2026-04-09
 
