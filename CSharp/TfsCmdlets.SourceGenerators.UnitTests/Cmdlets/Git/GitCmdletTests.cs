@@ -67,4 +67,15 @@ public partial class GitCmdletTests
                 "TfsCmdlets\\Cmdlets\\Git\\DisableGitRepository.cs"
             });
     }
+
+    [Fact]
+    public async Task CanGenerate_UndoGitRepositoryRemovalCmdlet()
+    {
+        await TestHelper.VerifyFiles<Generators.Cmdlets.CmdletGenerator>(
+            nameof(CanGenerate_UndoGitRepositoryRemovalCmdlet),
+            new[]
+            {
+                "TfsCmdlets\\Cmdlets\\Git\\UndoGitRepositoryRemoval.cs"
+            });
+    }
 }

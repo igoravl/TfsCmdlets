@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - `Get-TfsGitRepository`: Added `-Deleted` switch parameter to list Git repositories in the recycle bin. Supports wildcard matching on deleted repository names.
+- `Undo-TfsGitRepositoryRemoval`: Restores one or more deleted Git repositories from the recycle bin. Accepts repository name (with wildcard support), ID, or piped `GitRepository` objects from `Get-TfsGitRepository -Deleted`.
 
 ### Changed
 

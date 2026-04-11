@@ -117,7 +117,7 @@ namespace TfsCmdlets.Services.Impl
         }
 
         public WebApiTeamProject GetProject()
-            => GetItems<WebApiTeamProject>().FirstOrDefault() ??
+            => GetItems<WebApiTeamProject>(new{Deleted=false,IncludeDetails=false}).FirstOrDefault() ??
                 throw new ArgumentException("No team project information available. Either supply a valid -Project argument or use Connect-TfsTeamProject prior to invoking this cmdlet.");
 
         public bool TryGetProject(out WebApiTeamProject project, object overridingParameters = null)
