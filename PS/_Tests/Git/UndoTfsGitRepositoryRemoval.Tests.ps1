@@ -81,11 +81,12 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
     Context 'WhatIf support' {
 
         It 'Should not restore when using -WhatIf' {
-            Undo-TfsGitRepositoryRemoval -Repository $repoWhatIf -Project $tfsProject -WhatIf *>$null
+            $output = & { [CmdletBinding()]param() Undo-TfsGitRepositoryRemoval -Repository $repoWhatIf -Project $tfsProject -WhatIf } 4>&1
+            $output | Should -Match 'What if: Performing the operation "Restore deleted Git repository"'
+            
             $deleted = Get-TfsGitRepository -Repository $repoWhatIf -Deleted -Project $tfsProject
             $deleted | Should -Not -BeNullOrEmpty
             $deleted.Name | Should -Be $repoWhatIf
         }
     }
 }
-

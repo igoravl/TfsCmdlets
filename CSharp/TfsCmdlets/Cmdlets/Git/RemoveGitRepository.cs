@@ -34,29 +34,44 @@ namespace TfsCmdlets.Cmdlets.Git
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(GitRepository), Client=typeof(IGitHttpClient))]
-    partial class RemoveGitRepositoryController 
+    [CmdletController(typeof(GitRepository), Client = typeof(IGitHttpClient))]
+    partial class RemoveGitRepositoryController
     {
         protected override IEnumerable Run()
         {
-            foreach (var repo in Items)
+            var items = Items.ToList();
+            var isDeleted = false;
+
+            if (items.Count == 0)
             {
-                if (!PowerShell.ShouldProcess($"[Project: {repo.ProjectReference.Name}]/[Repository: {repo.Name}]", $"Delete repository")) continue;
+                // When no active repos were found and -Hard is specified, try the recycle bin;
+                // otherwise, log a clear error
 
-                if (!(repo.DefaultBranch == null || Force) && !PowerShell.ShouldContinue($"Are you sure you want to delete Git repository '{repo.Name}'?")) continue;
-
-                if (Has_Hard && !(Force || PowerShell.ShouldContinue(
-                    "You are using the -Hard switch. The repository deletion is IRREVERSIBLE " +
-                    $"and may cause DATA LOSS. Are you sure you want to permanently delete Git repository '{repo.Name}'?"))) continue;
-
-                Client.DeleteRepositoryAsync(repo.Id).Wait();
-
-                if (Has_Hard)
+                if (Hard)
                 {
-                    Client.DeleteRepositoryFromRecycleBinAsync(repo.ProjectReference.Id.ToString(), repo.Id).Wait();
+                    items = Data.GetItems<GitRepository>(new { Repository, Deleted = true }).ToList();
+                }
+                else {
+                    Logger.LogError($"Invalid or non-existent Git repository '{Repository}'");
+                    return null;
                 }
             }
 
+            foreach (var repo in items)
+            {
+                if (!PowerShell.ShouldProcess($"{repo.ProjectReference.Name}/{repo.Name}", "Permanently delete repository from recycle bin")) continue;
+
+                if (Hard && !(Force || PowerShell.ShouldContinue(
+                    "You are using the -Hard switch. The repository deletion is IRREVERSIBLE " +
+                    $"and may cause DATA LOSS. Are you sure you want to permanently delete Git repository " +
+                    $"'{repo.Name}' in project '{repo.ProjectReference.Name}'?"))) continue;
+
+                var isDeleted = string.IsNullOrEmpty(repo.RemoteUrl);
+
+                if (!isDeleted) Client.DeleteRepositoryAsync(repo.ProjectReference.Id.ToString(), repo.Id).Wait();
+                if (Hard) Client.DeleteRepositoryFromRecycleBinAsync(repo.ProjectReference.Id.ToString(), repo.Id).Wait();
+            }
+            
             return null;
         }
     }

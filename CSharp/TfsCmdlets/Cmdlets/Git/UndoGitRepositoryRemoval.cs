@@ -23,33 +23,7 @@ namespace TfsCmdlets.Cmdlets.Git
     {
         protected override IEnumerable Run()
         {
-            var repos = new List<GitDeletedRepository>();
-
-            switch (Repository)
-            {
-                case GitDeletedRepository deletedRepo:
-                {
-                    repos.Add(deletedRepo);
-                    break;
-                }
-                case GitRepository repo:
-                {
-                    repos.Add(new GitDeletedRepository { Id = repo.Id, Name = repo.Name, ProjectReference = repo.ProjectReference });
-                    break;
-                }
-                case string s:
-                {
-                    repos.AddRange(Client
-                        .GetRecycleBinRepositoriesAsync(Project.Name)
-                        .GetResult("Error getting deleted Git repository(ies)")
-                        .Where(r => r.Name.IsLike(s)));
-                    break;
-                }
-                default:
-                {
-                    throw new ArgumentException($"Invalid or non-existent Git repository '{Repository}'", nameof(Repository));
-                }
-            }
+            var repos = Data.GetItems<GitRepository>(new { Deleted = true }).ToList();
 
             foreach (var repo in repos)
             {

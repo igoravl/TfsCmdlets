@@ -62,7 +62,12 @@ namespace TfsCmdlets.Cmdlets.Git
                         .GetResult($"Error getting deleted repository(ies)")
                         .Where(r => r.Name.IsLike(pattern)))
                     {
-                        yield return deletedRepo;
+                        yield return new GitRepository
+                        {
+                            Id = deletedRepo.Id,
+                            Name = deletedRepo.Name,
+                            ProjectReference = deletedRepo.ProjectReference
+                        };
                     }
                     continue;
                 }
@@ -104,7 +109,9 @@ namespace TfsCmdlets.Cmdlets.Git
                                 result = Client
                                     .GetRepositoriesAsync(Project.Name, includeLinks: true, includeHidden: true)
                                     .GetResult($"Error getting repository(ies) '{s}'")
-                                    .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+                                    .FirstOrDefault(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+
+                                if (result == null) break;
 
                                 if (IncludeParent)
                                 {
