@@ -93,6 +93,9 @@ namespace TfsCmdlets.Cmdlets.TeamProject
             // Interactive
             Has_Interactive = Parameters.HasParameter("Interactive");
             Interactive = Parameters.Get<bool>("Interactive");
+            // AzureLogin
+            Has_AzureLogin = Parameters.HasParameter("AzureLogin");
+            AzureLogin = Parameters.Get<bool>("AzureLogin");
             // ParameterSetName
             Has_ParameterSetName = Parameters.HasParameter("ParameterSetName");
             ParameterSetName = Parameters.Get<string>("ParameterSetName");

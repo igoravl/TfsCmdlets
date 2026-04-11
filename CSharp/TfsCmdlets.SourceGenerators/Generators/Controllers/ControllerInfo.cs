@@ -231,6 +231,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                       protected bool Has_Interactive { get; set; } // => Parameters.HasParameter(nameof(Interactive));
                       protected bool Interactive { get; set; } // => _Interactive; // Parameters.Get<bool>(nameof(Interactive));
 
+                      // AzureLogin
+                      protected bool Has_AzureLogin { get; set; } // => Parameters.HasParameter(nameof(AzureLogin));
+                      protected bool AzureLogin { get; set; } // => _AzureLogin; // Parameters.Get<bool>(nameof(AzureLogin));
+
                       """);
         }
 
@@ -395,6 +399,10 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                                       // Interactive
                                       Has_Interactive = Parameters.HasParameter("Interactive");
                                       Interactive = Parameters.Get<bool>("Interactive");
+                          
+                                      // AzureLogin
+                                      Has_AzureLogin = Parameters.HasParameter("AzureLogin");
+                                      AzureLogin = Parameters.Get<bool>("AzureLogin");
                           
                           """);
                 sb.AppendLine();

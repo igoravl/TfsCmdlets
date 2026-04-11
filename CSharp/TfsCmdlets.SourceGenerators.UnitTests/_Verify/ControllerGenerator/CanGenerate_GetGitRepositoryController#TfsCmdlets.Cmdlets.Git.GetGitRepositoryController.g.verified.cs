@@ -20,6 +20,9 @@ namespace TfsCmdlets.Cmdlets.Git
         // Default
         protected bool Has_Default { get; set; }
         protected bool Default { get; set; }
+        // Deleted
+        protected bool Has_Deleted { get; set; }
+        protected bool Deleted { get; set; }
         // IncludeParent
         protected bool Has_IncludeParent { get; set; }
         protected bool IncludeParent { get; set; }
@@ -42,6 +45,9 @@ namespace TfsCmdlets.Cmdlets.Git
             // Default
             Has_Default = Parameters.HasParameter("Default");
             Default = Parameters.Get<bool>("Default");
+            // Deleted
+            Has_Deleted = Parameters.HasParameter("Deleted");
+            Deleted = Parameters.Get<bool>("Deleted");
             // IncludeParent
             Has_IncludeParent = Parameters.HasParameter("IncludeParent");
             IncludeParent = Parameters.Get<bool>("IncludeParent");
