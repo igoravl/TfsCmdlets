@@ -40,7 +40,6 @@ namespace TfsCmdlets.Cmdlets.Git
         protected override IEnumerable Run()
         {
             var items = Items.ToList();
-            var isDeleted = false;
 
             if (items.Count == 0)
             {
