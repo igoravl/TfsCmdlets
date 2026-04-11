@@ -157,10 +157,16 @@ out/                       # Build output (generated, not committed)
 ## Adding a new cmdlet
 
 1. Create a partial class in `CSharp/TfsCmdlets/Cmdlets/{Domain}/` with the `[TfsCmdlet]` attribute.
-2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]` and inheriting `ControllerBase`.
+2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]`.
 3. The source generator will produce parameter sets and wiring automatically.
-4. For query-style cmdlets (`Get`, `Find`, `Search`, `List`, or similar), evaluate whether output needs a dedicated table/list display and, when applicable, add a format view in `PS/_Formats/Views/` (for example `{OutputType}.View.yml`) with only the most relevant columns.
-5. Add Pester tests in `PS/_Tests/{Domain}/`.
+4. **Add source generator unit tests** (Verify snapshot tests) in `CSharp/TfsCmdlets.SourceGenerators.UnitTests/`:
+   - **Cmdlet test**: `Cmdlets/{Domain}/{Noun}CmdletTests.cs` — one `[Fact]` per cmdlet using `TestHelper.VerifyFiles<CmdletGenerator>(...)`.
+   - **Controller test**: `Controllers/{Domain}/{Noun}ControllerTests.cs` — one `[Fact]` per controller using `TestHelper.VerifyFiles<ControllerGenerator>(...)`.
+   - Both test files are `partial` classes. Each `[Fact]` method calls `VerifyFiles` with the relative path to the cmdlet source file (e.g. `"TfsCmdlets\\Cmdlets\\Identity\\PersonalAccessToken\\GetPersonalAccessToken.cs"`).
+   - On the first run the tests will fail because the Verify snapshots don't exist yet. Run `dotnet test --filter "FullyQualifiedName~{Noun}"` and accept the generated `.verified.txt` files.
+   - See `Cmdlets/Identity/Group/GroupCmdletTests.cs` and `Controllers/Identity/Group/GroupControllerTests.cs` for reference.
+5. For query-style cmdlets (`Get`, `Find`, `Search`, `List`, or similar), evaluate whether output needs a dedicated table/list display and, when applicable, add a format view in `PS/_Formats/Views/` (for example `{OutputType}.View.yml`) with only the most relevant columns.
+6. Add Pester tests in `PS/_Tests/{Domain}/`.
 
 ## CI/CD
 
