@@ -6,6 +6,7 @@ namespace TfsCmdlets.HttpClients
 {
     public partial interface ITeamHttpClient: IVssHttpClient
     {
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Core.WebApi.CategorizedWebApiTeams> GetProjectTeamsByCategoryAsync(string projectId, bool? expandIdentity = default(bool?), int? top = default(int?), int? skip = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.WebApi.TeamMember>> GetTeamMembersWithExtendedPropertiesAsync(string projectId, string teamId, int? top = default(int?), int? skip = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.Core.WebApi.WebApiTeam>> GetAllTeamsAsync(bool? mine = default(bool?), int? top = default(int?), int? skip = default(int?), bool? expandIdentity = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
 		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Core.WebApi.WebApiTeam> CreateTeamAsync(Microsoft.TeamFoundation.Core.WebApi.WebApiTeam team, string projectId, object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken));
@@ -36,6 +37,8 @@ namespace TfsCmdlets.HttpClients
                 return _client;
             }
         }
+		public System.Threading.Tasks.Task<Microsoft.TeamFoundation.Core.WebApi.CategorizedWebApiTeams> GetProjectTeamsByCategoryAsync(string projectId, bool? expandIdentity = default(bool?), int? top = default(int?), int? skip = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
+			=> Client.GetProjectTeamsByCategoryAsync(projectId, expandIdentity, top, skip, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.VisualStudio.Services.WebApi.TeamMember>> GetTeamMembersWithExtendedPropertiesAsync(string projectId, string teamId, int? top = default(int?), int? skip = default(int?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))
 			=> Client.GetTeamMembersWithExtendedPropertiesAsync(projectId, teamId, top, skip, userState, cancellationToken);
 		public System.Threading.Tasks.Task<System.Collections.Generic.List<Microsoft.TeamFoundation.Core.WebApi.WebApiTeam>> GetAllTeamsAsync(bool? mine = default(bool?), int? top = default(int?), int? skip = default(int?), bool? expandIdentity = default(bool?), object userState = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken))

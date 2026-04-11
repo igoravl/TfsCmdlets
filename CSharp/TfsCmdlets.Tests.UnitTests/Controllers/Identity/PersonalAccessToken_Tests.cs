@@ -40,7 +40,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = expectedToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new GetPersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -66,7 +66,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatTokenError = SessionTokenError.InvalidAuthorizationId }));
 
             var controller = new GetPersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -108,7 +108,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 }));
 
             var controller = new GetPersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -165,7 +165,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 }));
 
             var controller = new GetPersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<PatToken>().ToList();
@@ -221,7 +221,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = expectedToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new NewPersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -252,7 +252,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                     new Microsoft.VisualStudio.Services.Common.VssCredentials())));
 
             var controller = new NewPersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -285,7 +285,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatTokenError = SessionTokenError.InvalidScope }));
 
             var controller = new NewPersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act & Assert
             Assert.Throws<Exception>(() => controller.InvokeCommand().Cast<object>().ToList());
@@ -335,7 +335,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = updatedToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new SetPersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -368,7 +368,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = currentToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new SetPersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -423,7 +423,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = newToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new UpdatePersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -466,7 +466,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = newToken, PatTokenError = SessionTokenError.None }));
 
             var controller = new UpdatePersonalAccessTokenController(
-                _powerShell, _data, _parms, _logger, _client);
+                _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -503,7 +503,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _client.RevokeAsync(tokenId).Returns(Task.CompletedTask);
 
             var controller = new RemovePersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -529,7 +529,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _powerShell.ShouldContinue(Arg.Any<string>()).Returns(false); // User says no
 
             var controller = new RemovePersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -554,7 +554,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
             var controller = new RemovePersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();
@@ -585,7 +585,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 .Returns(Task.CompletedTask);
 
             var controller = new RemovePersonalAccessTokenController(
-                _adminClient, _powerShell, _data, _parms, _logger, _client);
+                _adminClient, _client, _powerShell, _data, _parms, _logger);
 
             // Act
             var results = controller.InvokeCommand().Cast<object>().ToList();

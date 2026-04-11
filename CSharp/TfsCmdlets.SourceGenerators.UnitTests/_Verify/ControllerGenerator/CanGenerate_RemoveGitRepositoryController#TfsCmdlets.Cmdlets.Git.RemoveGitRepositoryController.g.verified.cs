@@ -9,6 +9,9 @@ namespace TfsCmdlets.Cmdlets.Git
         // Repository
         protected bool Has_Repository { get; set; }
         protected object Repository { get; set; }
+        // Hard
+        protected bool Has_Hard { get; set; }
+        protected bool Hard { get; set; }
         // Force
         protected bool Has_Force { get; set; }
         protected bool Force { get; set; }
@@ -37,6 +40,9 @@ namespace TfsCmdlets.Cmdlets.Git
             // Repository
             Has_Repository = Parameters.HasParameter("Repository");
             Repository = Parameters.Get<object>("Repository");
+            // Hard
+            Has_Hard = Parameters.HasParameter("Hard");
+            Hard = Parameters.Get<bool>("Hard");
             // Force
             Has_Force = Parameters.HasParameter("Force");
             Force = Parameters.Get<bool>("Force");
