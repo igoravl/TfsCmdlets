@@ -26,6 +26,12 @@ namespace TfsCmdlets.Cmdlets.Git
         public SwitchParameter Default { get; set; }
 
         /// <summary>
+        /// Lists deleted Git repositories present in the recycle bin.
+        /// </summary>
+        [Parameter(ParameterSetName = "Get by ID or Name")]
+        public SwitchParameter Deleted { get; set; }
+
+        /// <summary>
         /// Returns details about the repository's parent (forked) repository, if it has one.
         /// </summary>
         [Parameter()]
@@ -46,6 +52,20 @@ namespace TfsCmdlets.Cmdlets.Git
                     null => Project.Name,
                     _ => input
                 };
+
+                if (Deleted)
+                {
+                    var pattern = repository as string ?? "*";
+
+                    foreach (var deletedRepo in Client
+                        .GetRecycleBinRepositoriesAsync(Project.Name)
+                        .GetResult($"Error getting deleted repository(ies)")
+                        .Where(r => r.Name.IsLike(pattern)))
+                    {
+                        yield return deletedRepo;
+                    }
+                    continue;
+                }
 
                 switch (repository)
                 {

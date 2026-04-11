@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [2.12.0] - TBD
 
+### Added
+
+- `Get-TfsGitRepository`: Added `-Deleted` switch parameter to list Git repositories in the recycle bin. Supports wildcard matching on deleted repository names.
+
 ### Changed
 
 - Bumped minimum .NET Framework target from **4.7.1** to **4.7.2**. Environments running .NET Framework 4.7.1 may need to upgrade to 4.7.2 or later before upgrading TfsCmdlets. This only affects Windows PowerShell.
