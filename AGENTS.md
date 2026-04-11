@@ -118,6 +118,7 @@ See [Docs/ItemsPattern.md](Docs/ItemsPattern.md) for the full pattern, invocatio
 - Documentation: <https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops>
 - HTTP clients are injected into controllers via source generators and MEF composition — do not instantiate them manually.
 - Custom HTTP client abstractions live in `CSharp/TfsCmdlets/HttpClients/`.
+- **Discovering available API methods**: The HttpClient source generator exposes **all public methods** from the underlying Azure DevOps client types (e.g., `GitHttpClient`, `ProjectHttpClient`). To check whether a specific operation is supported and what its signature looks like, inspect the verified snapshots in `CSharp/TfsCmdlets.SourceGenerators.UnitTests/_Verify/HttpClientGenerator/`.
 
 ### Source generators
 
