@@ -3,8 +3,9 @@ using System.Management.Automation;
 using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal partial class MoveIterationController: MoveClassificationNodeController
+    internal partial class MoveIterationController: ControllerBase
     {
+        private TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient Client { get; }
         // Node
         protected bool Has_Node { get; set; }
         protected object Node { get; set; }
@@ -30,13 +31,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         protected bool Has_ParameterSetName { get; set; }
         protected string ParameterSetName { get; set; }
         // Items
-        protected IEnumerable<TfsCmdlets.Models.ClassificationNode> Items => Node switch {
-            TfsCmdlets.Models.ClassificationNode item => new[] { item },
-            IEnumerable<TfsCmdlets.Models.ClassificationNode> items => items,
-            _ => Data.GetItems<TfsCmdlets.Models.ClassificationNode>()
+        protected IEnumerable<ClassificationNode> Items => Node switch {
+            ClassificationNode item => new[] { item },
+            IEnumerable<ClassificationNode> items => items,
+            _ => Data.GetItems<ClassificationNode>()
         };
         // DataType
-        public override Type DataType => typeof(TfsCmdlets.Models.ClassificationNode);
+        public override Type DataType => typeof(ClassificationNode);
         protected override void CacheParameters()
         {
             // Node
@@ -56,9 +57,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public MoveIterationController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
-            : base(powerShell, data, parameters, logger, client)
+        public MoveIterationController(TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

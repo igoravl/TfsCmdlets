@@ -32,8 +32,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(MoveClassificationNodeController))]
-    partial class MoveAreaController { 
-        // See MoveClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class MoveAreaController
+    {
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.MoveNodes(
+                Items,
+                Destination, Force, StructureGroup, Project,
+                Client, PowerShell, Data, Logger);
     }
 }

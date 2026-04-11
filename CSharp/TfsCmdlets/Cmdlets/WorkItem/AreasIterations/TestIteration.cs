@@ -18,8 +18,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public string Node { get; set; }
     }
 
-    [CmdletController(CustomBaseClass = typeof(TestClassificationNodeController))]
-    partial class TestIterationController { 
-        // See TestClassificationNodeController
+    [CmdletController]
+    partial class TestIterationController
+    {
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.TestNode(Data);
     }
 }

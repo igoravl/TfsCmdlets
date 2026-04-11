@@ -1,9 +1,11 @@
 ﻿//HintName: TfsCmdlets.Cmdlets.WorkItem.AreasIterations.CopyIterationController.g.cs
 using System.Management.Automation;
+using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal partial class CopyIterationController: CopyClassificationNodeController
+    internal partial class CopyIterationController: ControllerBase
     {
+        private TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient Client { get; }
         // Node
         protected bool Has_Node { get; set; }
         protected object Node { get; set; }
@@ -67,9 +69,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public CopyIterationController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        public CopyIterationController(TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
             : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

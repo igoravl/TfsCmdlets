@@ -3,7 +3,7 @@ using System.Management.Automation;
 using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal partial class TestAreaController: TestClassificationNodeController
+    internal partial class TestAreaController: ControllerBase
     {
         // Node
         protected bool Has_Node { get; set; }

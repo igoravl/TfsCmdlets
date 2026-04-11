@@ -40,13 +40,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         protected bool Has_ParameterSetName { get; set; }
         protected string ParameterSetName { get; set; }
         // Items
-        protected IEnumerable<TfsCmdlets.Models.ClassificationNode> Items => Node switch {
-            TfsCmdlets.Models.ClassificationNode item => new[] { item },
-            IEnumerable<TfsCmdlets.Models.ClassificationNode> items => items,
-            _ => Data.GetItems<TfsCmdlets.Models.ClassificationNode>()
+        protected IEnumerable<ClassificationNode> Items => Node switch {
+            ClassificationNode item => new[] { item },
+            IEnumerable<ClassificationNode> items => items,
+            _ => Data.GetItems<ClassificationNode>()
         };
         // DataType
-        public override Type DataType => typeof(TfsCmdlets.Models.ClassificationNode);
+        public override Type DataType => typeof(ClassificationNode);
         protected override void CacheParameters()
         {
             // Node

@@ -3,8 +3,9 @@ using System.Management.Automation;
 using Microsoft.TeamFoundation.Core.WebApi;
 namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
 {
-    internal partial class DisableWorkItemTagController: ToggleWorkItemTagController
+    internal partial class DisableWorkItemTagController: ControllerBase
     {
+        private TfsCmdlets.HttpClients.ITaggingHttpClient Client { get; }
         // Tag
         protected bool Has_Tag { get; set; }
         protected object Tag { get; set; }
@@ -50,9 +51,10 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Tagging
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public DisableWorkItemTagController(IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+        public DisableWorkItemTagController(TfsCmdlets.HttpClients.ITaggingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
             : base(powerShell, data, parameters, logger)
         {
+            Client = client;
         }
     }
 }

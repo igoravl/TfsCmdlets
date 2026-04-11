@@ -34,8 +34,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public SwitchParameter Recurse { get; set; }
     }
 
-    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RemoveClassificationNodeController))]
-    partial class RemoveAreaController { 
-        // See RemoveClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class RemoveAreaController
+    {
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.RemoveNodes(
+                Items.OrderByDescending(n => n.Path),
+                MoveTo, Recurse, StructureGroup, Project,
+                Client, PowerShell, Data, Logger);
     }
 }

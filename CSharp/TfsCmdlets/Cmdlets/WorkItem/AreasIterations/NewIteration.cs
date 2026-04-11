@@ -37,8 +37,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public SwitchParameter Force { get; set; }
     }
 
-    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(NewClassificationNodeController))]
-    partial class NewIterationController { 
-        // See NewClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class NewIterationController
+    {
+        [Import]
+        private INodeUtil NodeUtil { get; set; }
+
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.NewNode(Node, StructureGroup, Project, Force,
+                StartDate, FinishDate, Has_StartDate, Has_FinishDate,
+                NodeUtil, Client, PowerShell, Data, Logger);
     }
 }

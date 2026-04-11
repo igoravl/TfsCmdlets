@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using TfsCmdlets.Models;
 
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
@@ -44,8 +45,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public SwitchParameter Recurse { get; set; }
     }
 
-    [CmdletController(typeof(Models.ClassificationNode), CustomBaseClass = typeof(CopyClassificationNodeController))]
-    partial class CopyAreaController { 
-        // See CopyClassificationNodeController
+    [CmdletController(typeof(Models.ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class CopyAreaController
+    {
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.CopyNodes(
+                Items,
+                Destination, DestinationProject, Force, Recurse, StructureGroup,
+                Project, Client, PowerShell, Data, Logger);
     }
 }

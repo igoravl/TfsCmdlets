@@ -1,6 +1,4 @@
-﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-using WebApiNode = Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.WorkItemClassificationNode;
+﻿using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 
 namespace TfsCmdlets.Models
 {
@@ -9,18 +7,16 @@ namespace TfsCmdlets.Models
     /// </summary>
     public class ClassificationNode : ModelBase<WorkItemClassificationNode>
     {
-        private readonly IWorkItemTrackingHttpClient _client;
         private readonly string _rootPath;
         private readonly string _relativePath;
 
-        public ClassificationNode(WorkItemClassificationNode n, string projectName, IWorkItemTrackingHttpClient client)
+        public ClassificationNode(WorkItemClassificationNode n, string projectName)
             : base(n)
         {
             ProjectName = projectName;
             _rootPath = $"\\{ProjectName}\\{InnerObject.StructureType}";
             _relativePath = (_rootPath.Length == InnerObject.Path.Length) ?
                 string.Empty : InnerObject.Path.Substring(_rootPath.Length + 1);
-            _client = client;
             FixNodePath();
         }
 
@@ -53,32 +49,6 @@ namespace TfsCmdlets.Models
         public DateTime? FinishDate => InnerObject.Attributes?["finishDate"] as DateTime?;
 
         public IEnumerable<WorkItemClassificationNode> Children => InnerObject.Children;
-
-        public IEnumerable<ClassificationNode> GetChildren(string pattern = "**") =>
-            GetNodesRecursively(this, pattern);
-
-        private IEnumerable<ClassificationNode> GetNodesRecursively(ClassificationNode node, string pattern)
-        {
-#if !UNIT_TEST_PROJECT
-            if (node.ChildCount == 0 && _client != null)
-            {
-                node = new ClassificationNode(_client.GetClassificationNodeAsync(ProjectName, StructureGroup, node.RelativePath, 2)
-                        .GetResult($"Error retrieving {StructureGroup} from path '{node.RelativePath}'"),
-                    ProjectName, _client);
-            }
-#endif
-            if (node.ChildCount == 0) yield break;
-
-            foreach (var c in node.Children.Select(n => new ClassificationNode(n, ProjectName, _client)))
-            {
-                if(c.Path.IsLikeGlob(pattern)) yield return c;
-
-                foreach (var n in GetNodesRecursively(c, pattern))
-                {
-                    yield return n;
-                }
-            }
-        }
 
         /// <summary>
         /// Fill a missing node path. Older versions of the REST API don't populate the Path property.

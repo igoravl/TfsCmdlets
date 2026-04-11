@@ -11,8 +11,6 @@
 
         public string[] CustomNouns { get; set; }
 
-        public Type CustomBaseClass { get; set; }
-
         public Type Client { get; set; }
 
 

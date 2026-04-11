@@ -3,8 +3,9 @@ using System.Management.Automation;
 using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal partial class NewIterationController: NewClassificationNodeController
+    internal partial class NewIterationController: ControllerBase
     {
+        private TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient Client { get; }
         // Node
         protected bool Has_Node { get; set; }
         protected string Node { get; set; }
@@ -36,7 +37,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         protected bool Has_ParameterSetName { get; set; }
         protected string ParameterSetName { get; set; }
         // DataType
-        public override Type DataType => typeof(TfsCmdlets.Models.ClassificationNode);
+        public override Type DataType => typeof(ClassificationNode);
         protected override void CacheParameters()
         {
             // Node
@@ -62,9 +63,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public NewIterationController(INodeUtil nodeUtil, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger, IWorkItemTrackingHttpClient client)
-            : base(nodeUtil, powerShell, data, parameters, logger, client)
+        public NewIterationController(INodeUtil nodeUtil, TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
         {
+            NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

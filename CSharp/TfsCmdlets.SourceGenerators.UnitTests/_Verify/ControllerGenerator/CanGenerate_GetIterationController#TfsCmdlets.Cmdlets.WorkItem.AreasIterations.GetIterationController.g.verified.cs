@@ -5,8 +5,9 @@ using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
 using TfsCmdlets.Models;
 namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
 {
-    internal partial class GetIterationController: GetClassificationNodeController
+    internal partial class GetIterationController: ControllerBase
     {
+        private TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient Client { get; }
         // Node
         protected bool Has_Node => Parameters.HasParameter(nameof(Node));
         protected IEnumerable Node
@@ -34,7 +35,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         protected bool Has_ParameterSetName { get; set; }
         protected string ParameterSetName { get; set; }
         // DataType
-        public override Type DataType => typeof(TfsCmdlets.Models.ClassificationNode);
+        public override Type DataType => typeof(ClassificationNode);
         protected override void CacheParameters()
         {
             // StructureGroup
@@ -45,9 +46,11 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             ParameterSetName = Parameters.Get<string>("ParameterSetName");
         }
         [ImportingConstructor]
-        public GetIterationController(INodeUtil nodeUtil, IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
-            : base(nodeUtil, client, powerShell, data, parameters, logger)
+        public GetIterationController(INodeUtil nodeUtil, TfsCmdlets.HttpClients.IWorkItemTrackingHttpClient client, IPowerShellService powerShell, IDataManager data, IParameterManager parameters, ILogger logger)
+            : base(powerShell, data, parameters, logger)
         {
+            NodeUtil = nodeUtil;
+            Client = client;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
         public string GenericArg { get; }
         public string DataType { get; }
         public string Client { get; }
-        public ClassInfo CustomBaseClass { get; set; }
         public string CmdletName { get; }
         public string Cmdlet { get; }
         public string Usings { get; }
@@ -37,9 +36,7 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 CmdletClass = cmdletClassName;
                 CmdletName = cmdletClassName.Substring(cmdletClassName.LastIndexOf('.') + 1);
 
-                var customBaseClass =
-                    controller.GetAttributeNamedValue<INamedTypeSymbol>("CmdletControllerAttribute", "CustomBaseClass");
-                BaseClassFullName = customBaseClass?.FullName() ?? "TfsCmdlets.Controllers.ControllerBase";
+                BaseClassFullName = "TfsCmdlets.Controllers.ControllerBase";
 
                 DataType = controller.GetAttributeConstructorValue<INamedTypeSymbol>("CmdletControllerAttribute")?
                     .FullName();
@@ -56,26 +53,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                 CtorArgsSignature = string.Join(", ", GetCtorArgs(controller).ToArray());
                 // GenerateProperties();
         }
-
-        public void SetBaseClass(ClassInfo baseClass)
-        {
-            if (baseClass == null) return;
-
-            CustomBaseClass = baseClass;
-            BaseClassFullName = baseClass.FullName;
-            BaseClassImportingCtorArgs = baseClass.ImportingConstructorArgs;
-            BaseClassImportingBaseArgs = ConvertToArgValues(BaseClassImportingCtorArgs);
-            ImportingConstructorArgs = BaseClassImportingCtorArgs;
-            ImportingBaseArgs = GetImportingBaseArgs();
-        }
-
-        private string ConvertToArgValues(string methodArgs)
-        {
-            var tokens = Regex.Split(methodArgs, " ?, ?");
-
-            return string.Join(", ", tokens.Select(t => t.Split(' ')[1]).ToArray());
-        }
-
 
         public string GenerateUsings()
         {

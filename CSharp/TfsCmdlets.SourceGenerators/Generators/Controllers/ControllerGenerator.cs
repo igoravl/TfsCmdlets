@@ -26,17 +26,6 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                     .Select((m, _) => m!)
                     .Collect();
 
-                var baseClasses = context.SyntaxProvider
-                    .ForAttributeWithMetadataName(
-                        "TfsCmdlets.CmdletControllerAttribute",
-                        predicate: (n, _) => (n as ClassDeclarationSyntax)?
-                            .AttributeLists.SelectMany(attrList => attrList.Attributes)
-                            .Any(attr => (attr.Name as IdentifierNameSyntax)?.Identifier.Text == "CmdletController") ?? false,
-                        transform: static (ctx, _) => ClassInfo.CreateFromAttributeValue(ctx, "CmdletControllerAttribute", "CustomBaseClass"))
-                    .Where(static m => m is not null)
-                    .Select((m, _) => m!)
-                    .Collect();
-
                 var controllersToGenerate = context.SyntaxProvider
                     .ForAttributeWithMetadataName(
                         "TfsCmdlets.CmdletControllerAttribute",
@@ -44,26 +33,23 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
                         transform: static (ctx, _) => ControllerInfo.Create(ctx))
                     .Where(static m => m is not null)
                     .Select((m, _) => m!)
-                    .Combine(cmdletsToGenerate)
-                    .Combine(baseClasses);
+                    .Combine(cmdletsToGenerate);
 
                 context.RegisterSourceOutput(controllersToGenerate,
                     static (spc, source) =>
                     {
                         try
                         {
-                            var controller = source.Left.Left;
-                            var baseClasses = source.Right.ToList();
-                            var baseClass = baseClasses.FirstOrDefault(ci => ci.FullName == controller.BaseClassFullName);
-                            var allCmdlets = source.Left.Right.ToList();
+                            var controller = source.Left;
+                            var allCmdlets = source.Right.ToList();
                             var cmdlet = allCmdlets.FirstOrDefault(c => c.Name.Equals(controller.CmdletName));
-                            var result = GenerateCode(controller, cmdlet, allCmdlets, baseClass);
+                            var result = GenerateCode(controller, cmdlet, allCmdlets);
                             var filename = controller.FileName;
                             spc.AddSource(filename, SourceText.From(result, Encoding.UTF8));
                         }
                         catch (Exception ex)
                         {
-                            throw new Exception($"Error generating {source.Left.Left.Name}: {ex}", ex);
+                            throw new Exception($"Error generating {source.Left.Name}: {ex}", ex);
                         }
                     });
             }
@@ -73,12 +59,11 @@ namespace TfsCmdlets.SourceGenerators.Generators.Controllers
             }
         }
 
-        private static string GenerateCode(ControllerInfo model, CmdletInfo cmdlet, IList<CmdletInfo> allCmdlets, ClassInfo baseClass)
+        private static string GenerateCode(ControllerInfo model, CmdletInfo cmdlet, IList<CmdletInfo> allCmdlets)
         {
             model.CmdletInfo = string.IsNullOrEmpty(model.CustomCmdletName)
                 ? cmdlet
                 : allCmdlets.First(c => c.Name == model.CustomCmdletName);
-            model.SetBaseClass(baseClass);
 
             return $$"""
                      {{model.GenerateUsings()}}
