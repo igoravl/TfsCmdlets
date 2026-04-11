@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- `Get-TfsGitRepository`: Added `-Deleted` switch parameter to list Git repositories in the recycle bin. Supports wildcard matching on deleted repository names.
-- `Undo-TfsGitRepositoryRemoval`: Restores one or more deleted Git repositories from the recycle bin. Accepts repository name (with wildcard support), ID, or piped `GitRepository` objects from `Get-TfsGitRepository -Deleted`.
+- `Get-TfsGitRepository`: Added `-Deleted` switch parameter to list Git repositories in the recycle bin. Supports wildcard matching on deleted repository names ([#241](https://github.com/igoravl/TfsCmdlets/issues/241)).
+- `Undo-TfsGitRepositoryRemoval`: Restores one or more deleted Git repositories from the recycle bin. Accepts repository name (with wildcard support), ID, or piped `GitRepository` objects from `Get-TfsGitRepository -Deleted` ([#242](https://github.com/igoravl/TfsCmdlets/issues/242)).
+- `Remove-TfsGitRepository`: Added `-Hard` switch to permanently delete a repository from the recycle bin, bypassing the recycle bin entirely ([#240](https://github.com/igoravl/TfsCmdlets/issues/240)).
 
 ### Changed
 
