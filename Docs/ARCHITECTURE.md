@@ -276,7 +276,7 @@ TfsCmdlets/
 ├── psake.ps1                       # Task runner configuration
 ├── gitversion.yml                  # GitVersion configuration
 ├── .editorconfig                   # Editor formatting rules
-├── .github/workflows/main.yml      # CI/CD pipeline
+├── .github/workflows/build.yml      # CI/CD pipeline
 ├── TfsCmdlets.code-workspace       # VS Code workspace config
 ├── README.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, etc.
 └── out/                            # Build outputs (generated)
@@ -293,7 +293,7 @@ TfsCmdlets/
 | [TfsCmdlets.psm1](PS/TfsCmdlets.psm1) | PowerShell module script | Currently empty (# Private functions) |
 | [gitversion.yml](gitversion.yml) | GitVersion config | Pull request mode: ContinuousDelivery, tag override for CI |
 | [.editorconfig](.editorconfig) | Code style rules | Disables IDE0056 and IDE0057 rules for .cs files |
-| [.github/workflows/main.yml](.github/workflows/main.yml) | GitHub Actions CI/CD | Build on windows-latest, CodeQL analysis, runs Build.ps1, publishes packages/docs |
+| [.github/workflows/build.yml](.github/workflows/build.yml) | GitHub Actions CI/CD | Build on windows-latest, CodeQL analysis, runs Build.ps1, publishes packages/docs |
 | [psake.ps1](psake.ps1) | Build task definitions | Defines all build tasks, output directories, versioning, multi-target framework logic |
 | [Build.ps1](Build.ps1) | Build entry point | Installs dependencies, delegats to psake, validates environment |
 | [TfsCmdlets.code-workspace](TfsCmdlets.code-workspace) | VS Code workspace | Workspace configuration for development |
@@ -420,7 +420,7 @@ PS/
 
 **CI/CD Platform**: GitHub Actions
 
-**Config File**: [.github/workflows/main.yml](.github/workflows/main.yml)
+**Config File**: [.github/workflows/build.yml](.github/workflows/build.yml)
 
 **Workflow: "Build"**
 
@@ -481,7 +481,7 @@ PS/
 | **Minimum PowerShell** | 5.1 |
 | **Test Framework** | xUnit 2.4.1 + Pester |
 | **Build Tool** | PowerShell + psake + dotnet CLI |
-| **CI/CD** | GitHub Actions (main.yml) |
+| **CI/CD** | GitHub Actions (build.yml) |
 | **Package Distribution** | PowerShell Gallery, NuGet, Chocolatey, winget, MSI, ZIP |
 | **Source Generators** | Roslyn 4.2.0 for cmdlet/controller code generation |
 | **MEF Composition** | Yes (System.Composition) for services |

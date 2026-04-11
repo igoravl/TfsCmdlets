@@ -164,7 +164,7 @@ out/                       # Build output (generated, not committed)
 
 ## CI/CD
 
-- **Platform**: GitHub Actions (`.github/workflows/main.yml`)
+- **Platform**: GitHub Actions (`.github/workflows/build.yml`)
 - **Triggers**: Pull requests targeting `main`
 - **Steps**: Checkout → CodeQL Init → Build (`./Build.ps1 -Targets Package`) → CodeQL Analyze → Publish test results → Upload artifacts
 - **Versioning**: GitVersion with `ContinuousDelivery` strategy
