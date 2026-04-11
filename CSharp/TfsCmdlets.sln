@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets", "TfsCmdlets\Tf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators", "TfsCmdlets.SourceGenerators\TfsCmdlets.SourceGenerators.csproj", "{1045CB54-F17F-42EA-9497-5D60815BDC64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators.UnitTests", "TfsCmdlets.SourceGeneratores.UnitTests\TfsCmdlets.SourceGenerators.UnitTests.csproj", "{3C1104F8-09E2-4E36-960B-BC4340FA2B3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TfsCmdlets.SourceGenerators.UnitTests", "TfsCmdlets.SourceGenerators.UnitTests\TfsCmdlets.SourceGenerators.UnitTests.csproj", "{3C1104F8-09E2-4E36-960B-BC4340FA2B3F}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "TfsCmdlets.Shared", "TfsCmdlets.Shared\TfsCmdlets.Shared.shproj", "{1EF8B954-3DB2-4D8C-A95B-FE5EA047B40F}"
 EndProject
