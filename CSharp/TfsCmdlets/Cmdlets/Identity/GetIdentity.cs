@@ -1,6 +1,5 @@
 using System.Management.Automation;
 using Microsoft.VisualStudio.Services.Identity;
-using Microsoft.VisualStudio.Services.Identity.Client;
 using Microsoft.VisualStudio.Services.Licensing;
 
 namespace TfsCmdlets.Cmdlets.Identity

@@ -19,8 +19,15 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public object Node { get; set; }
     }
 
-    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(RenameClassificationNodeController))]
-    partial class RenameAreaController { 
-        // See RenameClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class RenameAreaController
+    {
+        [Import]
+        private INodeUtil NodeUtil { get; set; }
+
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.RenameNode(
+                Items, NewName, StructureGroup,
+                Project, NodeUtil, Client, PowerShell);
     }
 }

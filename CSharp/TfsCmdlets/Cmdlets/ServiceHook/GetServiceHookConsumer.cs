@@ -24,7 +24,7 @@ namespace TfsCmdlets.Cmdlets.ServiceHook
         [Parameter(Position = 0)]
         [SupportsWildcards()]
         [Alias("Name", "Id")]
-        public string Consumer { get; set; } = "*";
+        public object Consumer { get; set; } = "*";
     }
 
     [CmdletController(typeof(WebApiConsumer), Client=typeof(IServiceHooksPublisherHttpClient))]

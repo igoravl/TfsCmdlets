@@ -1,38 +1,68 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace TfsCmdlets.SourceGenerators.Generators.HttpClients
 {
-    public class HttpClientInfo : GeneratorState
+    public record HttpClientInfo : ClassInfo
     {
-        internal HttpClientInfo(INamedTypeSymbol symbol, GeneratorExecutionContext context, Logger logger)
-            : base(symbol, logger)
+        public ClassInfo OriginalType { get; private set; }
+
+        public HttpClientInfo(INamedTypeSymbol symbol)
+            : base(symbol)
         {
-            OriginalType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("HttpClientAttribute");
-            Methods = OriginalType
-                .GetMembersRecursively(SymbolKind.Method, "Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase")
-                .Cast<IMethodSymbol>()
-                .Where(m =>
-                    m.MethodKind == MethodKind.Ordinary &&
-                    m.DeclaredAccessibility == Accessibility.Public &&
-                    !m.IsOverride &&
-                    !m.HasAttribute("ObsoleteAttribute"))
-                .ToList();
+            var originalType = symbol.GetAttributeConstructorValue<INamedTypeSymbol>("HttpClientAttribute");
+            OriginalType = new ClassInfo(originalType, true, true, true, true,
+                "Microsoft.VisualStudio.Services.WebApi.VssHttpClientBase");
         }
 
-        public INamedTypeSymbol OriginalType { get; }
-        public IEnumerable<IMethodSymbol> Methods { get; }
-
-        internal IEnumerable<GeneratedMethod> GenerateMethods()
+        public static HttpClientInfo Create(GeneratorAttributeSyntaxContext ctx)
         {
-            foreach (var method in Methods)
+            return ctx.TargetSymbol is not INamedTypeSymbol namedTypeSymbol ? 
+                null : 
+                new HttpClientInfo(namedTypeSymbol);
+        }
+
+        public string GetInterfaceBody()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var prop in OriginalType.Properties)
             {
-                yield return new GeneratedMethod(method);
+                sb.Append($"\t\t{prop}");
+                sb.AppendLine();
             }
+
+            foreach (var method in OriginalType.Methods)
+            {
+                sb.Append($"\t\t{method}");
+                sb.AppendLine(";");
+            }
+
+            return sb.ToString();
+        }
+
+        public string GetClassBody()
+        {
+            var sb = new StringBuilder();
+
+            foreach (var prop in OriginalType.Properties)
+            {
+                sb.Append($$"""
+                                    public {{prop.Type}} {{prop.Name}} {
+                                        get => Client.{{prop.Name}};{{(prop.HasSetAccessor ?
+                            $"\n            set => Client.{prop.Name} = value;" : string.Empty)}} }
+                            """);
+                sb.AppendLine();
+            }
+
+            foreach (var method in OriginalType.Methods)
+            {
+                sb.Append($"\t\t{method.ToString($"\t\t\t=> Client.{method.Name}{method.SignatureNamesOnly};")}");
+            }
+
+            return sb.ToString();
         }
     }
-}
+} 

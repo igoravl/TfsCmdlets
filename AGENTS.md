@@ -23,7 +23,7 @@ TfsCmdlets is a PowerShell module providing cmdlets for automating Azure DevOps 
 ./Build.ps1 -Incremental
 ```
 
-The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.ps1`. It compiles the C# solution with `dotnet publish` for two target frameworks (`net471` and `netcoreapp3.1`), assembles the PowerShell module under `out/module/`, and produces NuGet, Chocolatey, MSI, winget, and ZIP packages.
+The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.ps1`. It compiles the C# solution with `dotnet publish` for two target frameworks (`net472` and `netcoreapp3.1`), assembles the PowerShell module under `out/module/`, and produces NuGet, Chocolatey, MSI, winget, and ZIP packages.
 
 ## Testing instructions
 
@@ -34,7 +34,7 @@ The build system uses **psake** (defined in `psake.ps1`) orchestrated by `Build.
 ## Code style
 
 - C# language version: **11.0 (preview)** for the main project, **8.0** for `TfsCmdlets.Legacy`.
-- Target frameworks: `net471` (Desktop / .NET Framework) and `netcoreapp3.1` (Core / cross-platform). Source generators target `netstandard2.0`.
+- Target frameworks: `net472` (Desktop / .NET Framework) and `netcoreapp3.1` (Core / cross-platform). Source generators target `netstandard2.0`.
 - `.editorconfig` is present — respect its rules.
 - Global usings are declared in `CSharp/TfsCmdlets/GlobalUsings.cs`. Use type aliases defined there (e.g., `WebApiWorkItem`, `WebApiTeamProject`) instead of fully-qualified names.
 - PowerShell minimum version: **5.1**.
@@ -118,6 +118,7 @@ See [Docs/ItemsPattern.md](Docs/ItemsPattern.md) for the full pattern, invocatio
 - Documentation: <https://learn.microsoft.com/en-us/azure/devops/integrate/concepts/dotnet-client-libraries?view=azure-devops>
 - HTTP clients are injected into controllers via source generators and MEF composition — do not instantiate them manually.
 - Custom HTTP client abstractions live in `CSharp/TfsCmdlets/HttpClients/`.
+- **Discovering available API methods**: The HttpClient source generator exposes **all public methods** from the underlying Azure DevOps client types (e.g., `GitHttpClient`, `ProjectHttpClient`). To check whether a specific operation is supported and what its signature looks like, inspect the verified snapshots in `CSharp/TfsCmdlets.SourceGenerators.UnitTests/_Verify/HttpClientGenerator/`.
 
 ### Source generators
 
@@ -130,14 +131,14 @@ See [Docs/ItemsPattern.md](Docs/ItemsPattern.md) for the full pattern, invocatio
 
 ```plain
 CSharp/
-  TfsCmdlets/             # Main library (net471 + netcoreapp3.1)
+  TfsCmdlets/             # Main library (net472 + netcoreapp3.1)
     Cmdlets/               # Cmdlet classes (and their inline controllers) by domain
     Services/              # Service interfaces and implementations
     Models/                # Data models
     Extensions/            # Extension methods
     HttpClients/           # HTTP client abstractions
     Util/                  # Utilities
-  TfsCmdlets.Legacy/       # Legacy .NET Framework code (net471 only)
+  TfsCmdlets.Legacy/       # Legacy .NET Framework code (net472 only)
     Cmdlets/               # Legacy cmdlet classes
     Controllers/           # Legacy controller implementations
   TfsCmdlets.SourceGenerators/  # Roslyn source generators (netstandard2.0)
@@ -157,14 +158,20 @@ out/                       # Build output (generated, not committed)
 ## Adding a new cmdlet
 
 1. Create a partial class in `CSharp/TfsCmdlets/Cmdlets/{Domain}/` with the `[TfsCmdlet]` attribute.
-2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]` and inheriting `ControllerBase`.
+2. In the **same file**, add a matching controller partial class (`{Verb}{Noun}Controller`) decorated with `[CmdletController]`.
 3. The source generator will produce parameter sets and wiring automatically.
-4. For query-style cmdlets (`Get`, `Find`, `Search`, `List`, or similar), evaluate whether output needs a dedicated table/list display and, when applicable, add a format view in `PS/_Formats/Views/` (for example `{OutputType}.View.yml`) with only the most relevant columns.
-5. Add Pester tests in `PS/_Tests/{Domain}/`.
+4. **Add source generator unit tests** (Verify snapshot tests) in `CSharp/TfsCmdlets.SourceGenerators.UnitTests/`:
+   - **Cmdlet test**: `Cmdlets/{Domain}/{Noun}CmdletTests.cs` — one `[Fact]` per cmdlet using `TestHelper.VerifyFiles<CmdletGenerator>(...)`.
+   - **Controller test**: `Controllers/{Domain}/{Noun}ControllerTests.cs` — one `[Fact]` per controller using `TestHelper.VerifyFiles<ControllerGenerator>(...)`.
+   - Both test files are `partial` classes. Each `[Fact]` method calls `VerifyFiles` with the relative path to the cmdlet source file (e.g. `"TfsCmdlets\\Cmdlets\\Identity\\PersonalAccessToken\\GetPersonalAccessToken.cs"`).
+   - On the first run the tests will fail because the Verify snapshots don't exist yet. Run `dotnet test --filter "FullyQualifiedName~{Noun}"` and accept the generated `.verified.txt` files.
+   - See `Cmdlets/Identity/Group/GroupCmdletTests.cs` and `Controllers/Identity/Group/GroupControllerTests.cs` for reference.
+5. For query-style cmdlets (`Get`, `Find`, `Search`, `List`, or similar), evaluate whether output needs a dedicated table/list display and, when applicable, add a format view in `PS/_Formats/Views/` (for example `{OutputType}.View.yml`) with only the most relevant columns.
+6. Add Pester tests in `PS/_Tests/{Domain}/`.
 
 ## CI/CD
 
-- **Platform**: GitHub Actions (`.github/workflows/main.yml`)
+- **Platform**: GitHub Actions (`.github/workflows/build.yml`)
 - **Triggers**: Pull requests targeting `main`
 - **Steps**: Checkout → CodeQL Init → Build (`./Build.ps1 -Targets Package`) → CodeQL Analyze → Publish test results → Upload artifacts
 - **Versioning**: GitVersion with `ContinuousDelivery` strategy
@@ -175,6 +182,31 @@ out/                       # Build output (generated, not committed)
 - Never commit secrets or access tokens. The CI uses `TFSCMDLETS_ACCESS_TOKEN` from GitHub Secrets.
 - Credential parameters are handled via `PSCredential` objects — never log or expose credential values.
 - Azure Identity and MSAL libraries handle authentication flows; do not implement custom token handling.
+
+## Changelog guidelines
+
+Follow [Keep a Changelog 1.1.0](https://keepachangelog.com/en/1.1.0/) when updating `RELEASENOTES.md`.
+
+### How to make a good changelog
+
+- Changelogs are for humans, not machines.
+- There should be an entry for every single version.
+- The same types of changes should be grouped.
+- Versions and sections should be linkable.
+- The latest version comes first.
+- The release date of each version is displayed.
+- Mention explicitly that the project follows Semantic Versioning.
+
+### Types of changes
+
+- `Added` for new features.
+- `Changed` for changes in existing functionality.
+- `Deprecated` for soon-to-be removed features.
+- `Removed` for now removed features.
+- `Fixed` for any bug fixes.
+- `Security` in case of vulnerabilities.
+
+Use these headings consistently inside each release section.
 
 ## PR guidelines
 

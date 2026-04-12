@@ -26,6 +26,12 @@ namespace TfsCmdlets.Cmdlets.Git
         public SwitchParameter Default { get; set; }
 
         /// <summary>
+        /// Lists deleted Git repositories present in the recycle bin.
+        /// </summary>
+        [Parameter(ParameterSetName = "Get by ID or Name")]
+        public SwitchParameter Deleted { get; set; }
+
+        /// <summary>
         /// Returns details about the repository's parent (forked) repository, if it has one.
         /// </summary>
         [Parameter()]
@@ -46,6 +52,25 @@ namespace TfsCmdlets.Cmdlets.Git
                     null => Project.Name,
                     _ => input
                 };
+
+                if (Deleted)
+                {
+                    var pattern = repository as string ?? "*";
+
+                    foreach (var deletedRepo in Client
+                        .GetRecycleBinRepositoriesAsync(Project.Name)
+                        .GetResult($"Error getting deleted repository(ies)")
+                        .Where(r => r.Name.IsLike(pattern)))
+                    {
+                        yield return new GitRepository
+                        {
+                            Id = deletedRepo.Id,
+                            Name = deletedRepo.Name,
+                            ProjectReference = deletedRepo.ProjectReference
+                        };
+                    }
+                    continue;
+                }
 
                 switch (repository)
                 {
@@ -84,7 +109,9 @@ namespace TfsCmdlets.Cmdlets.Git
                                 result = Client
                                     .GetRepositoriesAsync(Project.Name, includeLinks: true, includeHidden: true)
                                     .GetResult($"Error getting repository(ies) '{s}'")
-                                    .First(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+                                    .FirstOrDefault(r => r.Name.Equals(s, StringComparison.OrdinalIgnoreCase));
+
+                                if (result == null) break;
 
                                 if (IncludeParent)
                                 {

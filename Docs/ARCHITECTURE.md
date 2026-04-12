@@ -70,7 +70,7 @@ Test → UnitTests, AllTests
 
 **Key Build Steps:**
 1. **Install Dependencies** - NuGet packages, PowerShell modules (GitVersion, psake, PsScriptAnalyzer, VSSetup, powershell-yaml, ps1xmlgen, PlatyPS)
-2. **BuildLibrary** - Publishes C# projects for both `net471` and `netcoreapp3.1` targets to `out/module/Lib/{Desktop,Core}`
+2. **BuildLibrary** - Publishes C# projects for both `net472` and `netcoreapp3.1` targets to `out/module/Lib/{Desktop,Core}`
 3. **UnitTests** - Runs xUnit tests
 4. **GenerateHelp** - Generates PowerShell help using PlatyPS
 5. **Copy Files** - Assembles module structure
@@ -226,7 +226,7 @@ TfsCmdlets/
 │   │   ├── ModuleInitializer.cs    # Module initialization
 │   │   ├── TfsCmdlets.csproj       # Main project file
 │   │   └── bin/, obj/              # Build outputs
-│   ├── TfsCmdlets.Legacy/          # Legacy .NET Framework code (net471 only)
+│   ├── TfsCmdlets.Legacy/          # Legacy .NET Framework code (net472 only)
 │   │   ├── Cmdlets/                # Legacy cmdlet classes
 │   │   └── Controllers/            # Legacy controller implementations
 │   ├── TfsCmdlets.SourceGenerators/  # Roslyn source generators
@@ -276,7 +276,7 @@ TfsCmdlets/
 ├── psake.ps1                       # Task runner configuration
 ├── gitversion.yml                  # GitVersion configuration
 ├── .editorconfig                   # Editor formatting rules
-├── .github/workflows/main.yml      # CI/CD pipeline
+├── .github/workflows/build.yml      # CI/CD pipeline
 ├── TfsCmdlets.code-workspace       # VS Code workspace config
 ├── README.md, CONTRIBUTING.md, CODE_OF_CONDUCT.md, etc.
 └── out/                            # Build outputs (generated)
@@ -288,12 +288,12 @@ TfsCmdlets/
 
 | File | Purpose | Key Content |
 |------|---------|---|
-| [TfsCmdlets.csproj](CSharp/TfsCmdlets/TfsCmdlets.csproj) | Main .NET project | Multi-target (net471, netcoreapp3.1), source generators, Azure DevOps client NuGet packages, LangVersion 11 preview |
+| [TfsCmdlets.csproj](CSharp/TfsCmdlets/TfsCmdlets.csproj) | Main .NET project | Multi-target (net472, netcoreapp3.1), source generators, Azure DevOps client NuGet packages, LangVersion 11 preview |
 | [TfsCmdlets.psd1](PS/TfsCmdlets.psd1) | PowerShell module manifest | RootModule = Lib/Desktop/TfsCmdlets.dll, version placeholders, metadata tags, PS version requirements |
 | [TfsCmdlets.psm1](PS/TfsCmdlets.psm1) | PowerShell module script | Currently empty (# Private functions) |
 | [gitversion.yml](gitversion.yml) | GitVersion config | Pull request mode: ContinuousDelivery, tag override for CI |
 | [.editorconfig](.editorconfig) | Code style rules | Disables IDE0056 and IDE0057 rules for .cs files |
-| [.github/workflows/main.yml](.github/workflows/main.yml) | GitHub Actions CI/CD | Build on windows-latest, CodeQL analysis, runs Build.ps1, publishes packages/docs |
+| [.github/workflows/build.yml](.github/workflows/build.yml) | GitHub Actions CI/CD | Build on windows-latest, CodeQL analysis, runs Build.ps1, publishes packages/docs |
 | [psake.ps1](psake.ps1) | Build task definitions | Defines all build tasks, output directories, versioning, multi-target framework logic |
 | [Build.ps1](Build.ps1) | Build entry point | Installs dependencies, delegats to psake, validates environment |
 | [TfsCmdlets.code-workspace](TfsCmdlets.code-workspace) | VS Code workspace | Workspace configuration for development |
@@ -395,7 +395,7 @@ PS/
 ├── _Themes/                 # Theming for Azure DevOps Shell
 │   └── azuredevops.omp.json # OhMyPosh theme
 └── Lib/                     # Compiled assemblies (generated)
-    ├── Desktop/             # CLR-based (net471)
+    ├── Desktop/             # CLR-based (net472)
     │   └── TfsCmdlets.dll
     └── Core/                # CoreCLR-based (netcoreapp3.1)
         └── TfsCmdlets.dll
@@ -420,7 +420,7 @@ PS/
 
 **CI/CD Platform**: GitHub Actions
 
-**Config File**: [.github/workflows/main.yml](.github/workflows/main.yml)
+**Config File**: [.github/workflows/build.yml](.github/workflows/build.yml)
 
 **Workflow: "Build"**
 
@@ -477,11 +477,11 @@ PS/
 | Aspect | Details |
 |--------|---------|
 | **Language** | C# (main), PowerShell (module wrapper), YAML/XML (config) |
-| **Target Frameworks** | net471 (Desktop), netcoreapp3.1 (Core), netstandard2.0 (Generators) |
+| **Target Frameworks** | net472 (Desktop), netcoreapp3.1 (Core), netstandard2.0 (Generators) |
 | **Minimum PowerShell** | 5.1 |
 | **Test Framework** | xUnit 2.4.1 + Pester |
 | **Build Tool** | PowerShell + psake + dotnet CLI |
-| **CI/CD** | GitHub Actions (main.yml) |
+| **CI/CD** | GitHub Actions (build.yml) |
 | **Package Distribution** | PowerShell Gallery, NuGet, Chocolatey, winget, MSI, ZIP |
 | **Source Generators** | Roslyn 4.2.0 for cmdlet/controller code generation |
 | **MEF Composition** | Yes (System.Composition) for services |

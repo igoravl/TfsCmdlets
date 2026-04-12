@@ -15,7 +15,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string Version { get; set; } = "*";
+        public object Version { get; set; } = "*";
 
         /// <summary>
         /// Specifies the package (artifact) name. 
@@ -33,7 +33,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
         public object Feed { get; set; }
 
         /// <summary>
-        /// Includes deletes packages in the result. 
+        /// Includes deleted packages in the result. 
         /// </summary>
         [Parameter()]
         public SwitchParameter IncludeDeleted { get; set; }

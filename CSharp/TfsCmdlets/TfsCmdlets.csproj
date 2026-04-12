@@ -1,63 +1,68 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net471</TargetFrameworks>
-    <RootNamespace>TfsCmdlets</RootNamespace>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <LangVersion>11.0</LangVersion>
-    <DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
-    <NoWarn>1591</NoWarn>
-    <LangVersion>preview</LangVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net472</TargetFrameworks>
+		<RootNamespace>TfsCmdlets</RootNamespace>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<LangVersion>11.0</LangVersion>
+		<DocumentationFile>$(TargetPath)\TfsCmdlets.xml</DocumentationFile>
+		<NoWarn>1591</NoWarn>
+		<LangVersion>preview</LangVersion>
+		<SuppressTfmSupportBuildWarnings>true</SuppressTfmSupportBuildWarnings>
+		<Nullable>disable</Nullable>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>obj/Generated</CompilerGeneratedFilesOutputPath>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)'=='Debug'">
+		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<CompilerGeneratedFilesOutputPath>obj/Generated</CompilerGeneratedFilesOutputPath>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <!-- Source Generators -->
-    <ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup>
+	<ItemGroup>
+		<!-- Source Generators -->
+		<ProjectReference Include="../TfsCmdlets.SourceGenerators/TfsCmdlets.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="16.*-*" />
-    <PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="16.*-*" />
-    <PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" PrivateAssets="all" />
-    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-    <PackageReference Include="System.Composition" Version="10.0.5" />
-    <PackageReference Include="System.Composition.Hosting" Version="10.0.5" />
-    <PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
-    <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
-    <PackageReference Include="Azure.Identity" Version="1.*" />
-    <PackageReference Include="DotNet.Glob" Version="3.1.*"/>
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.TeamFoundationServer.Client" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.InteractiveClient" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Release.Client" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Search.Client" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceEndpoints.WebApi" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ServiceHooks.WebApi" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.ExtensionManagement.WebApi" Version="20.*-*" />
+		<PackageReference Include="Microsoft.VisualStudio.Services.Packaging.Client" Version="20.*-*" />
+		<PackageReference Include="PowerShellStandard.Library" Version="7.0.0-preview.1" PrivateAssets="all" />
+		<PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+		<PackageReference Include="System.Composition" Version="10.0.5" />
+		<PackageReference Include="System.Composition.Hosting" Version="10.0.5" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.*-*" />
+		<PackageReference Include="Microsoft.Identity.Client" Version="4.*" />
+		<PackageReference Include="Azure.Identity" Version="1.*" />
+		<PackageReference Include="DotNet.Glob" Version="3.1.*" />
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-    <Compile Remove="**/*-desktop.cs" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<Compile Remove="**/*-desktop.cs" />
+		<!-- <PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" /> -->
+	</ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net471'">
-    <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.*-*" />
-    <Compile Remove="**/*-core.cs" />
-  </ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+		<PackageReference Include="Microsoft.Identity.Client.Desktop" Version="4.*" />
+		<PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="20.*-*" />
+		<Compile Remove="**/*-core.cs" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Generated\**" />
-    <EmbeddedResource Remove="Generated\**" />
-    <None Remove="Generated\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="Generated\**" />
+		<EmbeddedResource Remove="Generated\**" />
+		<None Remove="Generated\**" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>TfsCmdlets.Tests.UnitTests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<Import Project="..\TfsCmdlets.Shared\TfsCmdlets.Shared.projitems" Label="Shared" />
 </Project>

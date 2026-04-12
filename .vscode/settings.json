@@ -41,5 +41,6 @@
         "titleBar.inactiveForeground": "#e7e7e799"
     },
     "peacock.color": "Indigo",
-    "dotnet.preferCSharpExtension": false
+    "dotnet.preferCSharpExtension": false,
+    "dotnet.defaultSolution": "CSharp/TfsCmdlets.sln"
 }

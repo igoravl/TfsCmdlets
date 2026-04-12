@@ -29,8 +29,13 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
         public object Node { get; set; } = @"\**";
     }
 
-    [CmdletController(typeof(ClassificationNode), CustomBaseClass = typeof(GetClassificationNodeController))]
-    partial class GetIterationController { 
-        // See GetClassificationNodeController
+    [CmdletController(typeof(ClassificationNode), Client = typeof(IWorkItemTrackingHttpClient))]
+    partial class GetIterationController
+    {
+        [Import]
+        private INodeUtil NodeUtil { get; set; }
+
+        protected override IEnumerable Run()
+            => ClassificationNodeHelper.GetNodes(Node, StructureGroup, Project, NodeUtil, Client, Logger);
     }
 }

@@ -61,4 +61,31 @@ Describe (($MyInvocation.MyCommand.Name -split '\.')[-3]) {
             $repository | Should -BeOfType 'Microsoft.TeamFoundation.SourceControl.WebApi.GitRepository'
         }
     }
+
+    Context 'Get deleted' {
+        # Get-TfsGitRepository
+        # [[-Repository] <Object>]
+        # -Deleted
+        # [-Project <Object>]
+        # [-Collection <Object>]
+        # [-Server <Object>] [<CommonParameters>]
+
+        It 'Should return deleted repositories from recycle bin' {
+            $repository = Get-TfsGitRepository -Repository 'PUL-Deleted' -Deleted -Project $tfsProject
+            $repository.Name | Should -Be 'PUL-Deleted'
+            $repository | Should -BeOfType 'Microsoft.TeamFoundation.SourceControl.WebApi.GitDeletedRepository'
+        }
+
+        It 'Should support wildcards for deleted repositories' {
+            $repositories = Get-TfsGitRepository -Repository 'PUL-*' -Deleted -Project $tfsProject
+            $repositories.Name | Should -Contain 'PUL-Deleted'
+            $repositories | Should -BeOfType 'Microsoft.TeamFoundation.SourceControl.WebApi.GitDeletedRepository'
+        }
+
+        It 'Should return all deleted repositories when no name specified' {
+            $repositories = Get-TfsGitRepository -Deleted -Project $tfsProject
+            $repositories | Should -Not -BeNullOrEmpty
+            $repositories | Should -BeOfType 'Microsoft.TeamFoundation.SourceControl.WebApi.GitDeletedRepository'
+        }
+    }
 }

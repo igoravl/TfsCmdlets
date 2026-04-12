@@ -72,7 +72,7 @@ namespace TfsCmdlets.Cmdlets.WorkItem.AreasIterations
             var result = Client.UpdateClassificationNodeAsync(patch, tp.Name, structureGroup, nodeToSet.RelativePath.Substring(1))
                 .GetResult($"Error setting dates on iteration '{nodeToSet.FullPath}'");
 
-            yield return new ClassificationNode(result, tp.Name, Client);
+            yield return new ClassificationNode(result, tp.Name);
         }
     }
 }

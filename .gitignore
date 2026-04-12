@@ -215,9 +215,15 @@ TfsCmdlets.PSDesktop.xml
 
 CSharp/.idea/**
 
+# Verify files
+
+*.received.*
+*.received/
+
 # Miscellaneous files
 
 CSharp/*/Generated/**
 Docs/AzDO-Security-Actions.csv
 **/testResults.xml
 PS/_Tests/coverage.xml
+CSharp/**/Old/**

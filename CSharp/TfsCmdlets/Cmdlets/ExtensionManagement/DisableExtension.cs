@@ -1,4 +1,3 @@
-using System.Management.Automation;
 using Microsoft.VisualStudio.Services.ExtensionManagement.WebApi;
 
 namespace TfsCmdlets.Cmdlets.ExtensionManagement

@@ -188,47 +188,4 @@ namespace TfsCmdlets.Cmdlets.TestManagement
             yield return (passthru == "Original") ? plan : Data.GetItem<TestPlan>(new { Plan = opInfo.destinationTestPlan });
         }
     }
-
-    [CmdletController(typeof(TestPlan), Client=typeof(ITestPlanHttpClient))]
-    partial class GetTestPlanController
-    {
-        protected override IEnumerable Run()
-        {
-            var testPlan = Parameters.Get<object>(nameof(GetTestPlan.TestPlan));
-            var owner = Parameters.Get<string>(nameof(GetTestPlan.Owner));
-            var planDetails = !Parameters.Get<bool>(nameof(GetTestPlan.NoPlanDetails));
-            var active = Parameters.Get<bool>(nameof(GetTestPlan.Active));
-
-            while (true) switch (testPlan)
-                {
-                    case TestPlan plan:
-                        {
-                            yield return plan;
-                            yield break;
-                        }
-                    case int i:
-                        {
-                            var tp = Data.GetProject();
-                            yield return Client.GetTestPlanByIdAsync(tp.Id, i)
-                                .GetResult($"Error getting test plan '{i}'");
-                            yield break;
-                        }
-                    case string s:
-                        {
-                            var tp = Data.GetProject();
-                            foreach (var plan in Client.GetTestPlansAsync(tp.Id, owner, null, planDetails, active)
-                                .GetResult($"Error getting test plans '{testPlan}'")
-                                .Where(plan => plan.Name.IsLike(s)))
-                            {
-                                yield return plan;
-                            }
-                            yield break;
-                        }
-                    default:
-                        {
-                            throw new ArgumentException($"Invalid or non-existent test plan '{testPlan}'");
-                        }
-                }
-        }
-    }
 }

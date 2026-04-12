@@ -23,7 +23,7 @@ Properties {
     $ModuleBinDir = Join-Path $ModuleDir 'bin'
 
     # Assembly generation
-    $TargetFrameworks = @{Desktop = 'net471'; Core = 'netcoreapp3.1' }
+    $TargetFrameworks = @{Desktop = 'net472'; Core = 'netcoreapp3.1' }
 
     # Module generation
     $ModuleManifestPath = Join-Path $ModuleDir 'TfsCmdlets.psd1'
@@ -236,6 +236,7 @@ Task UpdateModuleManifest {
 Task UnitTests -PreCondition { -not $SkipTests } {
 
     Remove-Item $OutDir/TfsCmdlets.Tests.UnitTests.log -Force -ErrorAction SilentlyContinue
+    Exec { dotnet test $SolutionDir/TfsCmdlets.SourceGenerators.UnitTests/TfsCmdlets.SourceGenerators.UnitTests.csproj --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.SourceGenerators.UnitTests.trx" }
     #Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
 }
 
@@ -244,7 +245,8 @@ Task AllTests -PreCondition { -not $SkipTests } {
     Push-Location $PSTestsDir
 
     $outputLevel =if($isCi) { "Detailed" } else { "Minimal" }
-
+    $pesterCmd = "Import-Module Pester -MinimumVersion 5.0.0; Get-Module Pester; Invoke-Pester -CI -Output $outputLevel -ExcludeTagFilter {0}, 'Server'"
+    
     try {
         Write-Output ' == PowerShell Core =='
         if ($PesterMinVersion) {
