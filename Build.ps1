@@ -30,7 +30,7 @@ $script:DependencyVersions = @{
         'powershell-yaml'  = $null
         'ps1xmlgen'        = $null
         'PlatyPS'          = $null
-        'Pester'           = @{ MinimumVersion = '5.0' }
+        'Pester'           = @{ RequiredVersion = '6.0.0-rc1'; AllowPrerelease = $true }
     }
 }
 
@@ -122,11 +122,15 @@ Function Install-PsModule($Module, $Version) {
     Write-Verbose "Restoring module $Module"
 
     $minVersion = if ($Version -is [hashtable]) { $Version['MinimumVersion'] } else { $null }
-    $exactVersion = if ($Version -is [hashtable]) { $null } else { $Version }
+    $exactVersion = if ($Version -is [hashtable]) { $Version['RequiredVersion'] } else { $Version }
+    $allowPrerelease = ($Version -is [hashtable]) -and $Version['AllowPrerelease']
 
     $existing = Get-Module $Module -ListAvailable | Sort-Object Version -Descending | Select-Object -First 1
     if ($existing) {
-        if ($exactVersion -and $existing.Version -ne [version]$exactVersion) { <# fall through to install #> }
+        $existingVersion = $existing.Version.ToString()
+        if ($existing.PrivateData.PSData.Prerelease) { $existingVersion = "$existingVersion-$($existing.PrivateData.PSData.Prerelease)" }
+
+        if ($exactVersion -and $existingVersion -ne $exactVersion) { <# fall through to install #> }
         elseif ($minVersion -and $existing.Version -lt [version]$minVersion) { <# fall through to install #> }
         else {
             Write-Verbose "PowerShell module $Module found; Skipping..."
@@ -140,8 +144,9 @@ Function Install-PsModule($Module, $Version) {
     }
 
     $installArgs = @{ Name = $Module; Scope = 'CurrentUser'; Force = $true; AllowClobber = $true }
-    if ($exactVersion)  { $installArgs['RequiredVersion'] = $exactVersion }
-    if ($minVersion)    { $installArgs['MinimumVersion']  = $minVersion }
+    if ($exactVersion)     { $installArgs['RequiredVersion'] = $exactVersion }
+    if ($minVersion)       { $installArgs['MinimumVersion']  = $minVersion }
+    if ($allowPrerelease)  { $installArgs['AllowPrerelease'] = $true }
     Install-Module @installArgs | Write-Verbose
 }
 
@@ -200,6 +205,8 @@ try {
 
     $pesterSpec = $script:DependencyVersions.PsModules['Pester']
     $pesterMinVersion = if ($pesterSpec -is [hashtable]) { $pesterSpec['MinimumVersion'] } else { $null }
+    $pesterRequiredVersion = if ($pesterSpec -is [hashtable]) { $pesterSpec['RequiredVersion'] } else { $pesterSpec }
+    $pesterAllowPrerelease = ($pesterSpec -is [hashtable]) -and $pesterSpec['AllowPrerelease']
 
     Invoke-Psake -Nologo -BuildFile $psakeScript -TaskList $Targets -Verbose:$IsVerbose -ErrorAction SilentlyContinue `
         -Parameters @{
@@ -215,7 +222,9 @@ try {
         SkipReleaseNotes  = $SkipReleaseNotes.IsPresent
         Incremental       = $Incremental.IsPresent
         IsCI              = $isCI
-        PesterMinVersion  = $pesterMinVersion
+        PesterMinVersion      = $pesterMinVersion
+        PesterRequiredVersion = $pesterRequiredVersion
+        PesterAllowPrerelease = $pesterAllowPrerelease
     }
 
     Write-Verbose "=== END PSAKE ==="

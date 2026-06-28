@@ -57,6 +57,8 @@ Properties {
 
     # Test dependencies
     $PesterMinVersion = $null
+    $PesterRequiredVersion = $null
+    $PesterAllowPrerelease = $false
 }
 
 Task Rebuild -Depends Clean, Build {
@@ -247,7 +249,10 @@ Task AllTests -PreCondition { -not $SkipTests } {
 
     try {
         Write-Output ' == PowerShell Core =='
-        if ($PesterMinVersion) {
+        if ($PesterRequiredVersion) {
+            $allowPrereleaseArg = if ($PesterAllowPrerelease) { '-AllowPrerelease' } else { '' }
+            Exec { pwsh.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$version = `$_.Version.ToString(); if (`$_.PrivateData.PSData.Prerelease) { `$version = `$version + '-' + `$_.PrivateData.PSData.Prerelease }; `$version -eq '$PesterRequiredVersion' })) { Install-Module Pester -RequiredVersion $PesterRequiredVersion $allowPrereleaseArg -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
+        } elseif ($PesterMinVersion) {
             Exec { pwsh.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$_.Version -ge [version]'$PesterMinVersion' })) { Install-Module Pester -MinimumVersion $PesterMinVersion -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
         }
         Exec { pwsh.exe -NonInteractive -NoLogo -Command "`$cfg = New-PesterConfiguration; `$cfg.Run.Exit = `$true; `$cfg.TestResult.Enabled = `$true; `$cfg.Output.Verbosity = '$outputLevel'; `$cfg.Filter.ExcludeTag = @('Desktop', 'Server'); Invoke-Pester -Configuration `$cfg" }
@@ -255,7 +260,10 @@ Task AllTests -PreCondition { -not $SkipTests } {
         Move-Item 'coverage.xml' -Destination $OutDir/Coverage-Pester-Core.xml -Force
     
         Write-Output ' == PowerShell Desktop =='
-        if ($PesterMinVersion) {
+        if ($PesterRequiredVersion) {
+            $allowPrereleaseArg = if ($PesterAllowPrerelease) { '-AllowPrerelease' } else { '' }
+            Exec { powershell.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$version = `$_.Version.ToString(); if (`$_.PrivateData.PSData.Prerelease) { `$version = `$version + '-' + `$_.PrivateData.PSData.Prerelease }; `$version -eq '$PesterRequiredVersion' })) { Install-Module Pester -RequiredVersion $PesterRequiredVersion $allowPrereleaseArg -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
+        } elseif ($PesterMinVersion) {
             Exec { powershell.exe -NonInteractive -NoLogo -Command "if (-not (Get-Module Pester -ListAvailable | Where-Object { `$_.Version -ge [version]'$PesterMinVersion' })) { Install-Module Pester -MinimumVersion $PesterMinVersion -Force -Scope CurrentUser -SkipPublisherCheck -AllowClobber }" }
         }
         Exec { powershell.exe -NonInteractive -NoLogo -Command "`$cfg = New-PesterConfiguration; `$cfg.Run.Exit = `$true; `$cfg.TestResult.Enabled = `$true; `$cfg.Output.Verbosity = '$outputLevel'; `$cfg.Filter.ExcludeTag = @('Core', 'Server'); Invoke-Pester -Configuration `$cfg" }
