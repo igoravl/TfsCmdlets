@@ -30,7 +30,7 @@ $script:DependencyVersions = @{
         'powershell-yaml'  = $null
         'ps1xmlgen'        = $null
         'PlatyPS'          = $null
-        'Pester'           = @{ RequiredVersion = '6.0.0-rc1'; AllowPrerelease = $true }
+        'Pester'           = @{ RequiredVersion = '6.0.0-rc4'; AllowPrerelease = $true }
     }
 }
 
