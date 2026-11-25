@@ -94,6 +94,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.Linking
                    }
                 };
 
+                if (!PowerShell.ShouldProcess($"Work item {sourceWi.Id}", $"Add '{linkType}' link to work item {targetWi.Id}"))
+                    return null;
+
                 var result = Client.UpdateWorkItemAsync(patch, (int)sourceWi.Id, 
                         bypassRules: BypassRules, 
                         suppressNotifications: SuppressNotifications)

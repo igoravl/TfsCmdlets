@@ -52,6 +52,9 @@ namespace TfsCmdlets.Cmdlets.WorkItem.WorkItemType
                 throw new InvalidOperationException($"Work item types can only be imported into team projects based on XML Process Templates. Team Project '{tp.Name}' uses the {process.Type} process template '{process.Name}'.");
             }
 
+            if (!PowerShell.ShouldProcess($"Team project '{tp.Name}'", "Import work item type definition"))
+                return null;
+
             Store.ImportWorkItemType(tp.Name, xml);
 
             return null;

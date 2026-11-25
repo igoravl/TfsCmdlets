@@ -56,9 +56,10 @@ namespace TfsCmdlets.Cmdlets.TeamProject
                 }
             }
 
-            if (Has_Description)
+            var tp = Has_Description ? Data.GetProject() : null;
+
+            if (Has_Description && PowerShell.ShouldProcess(tp, $"Set team project description to '{Description}'"))
             {
-                var tp = Data.GetProject();
                 var tpInfo = new WebApiTeamProject() { Description = Description };
 
                 var result = AsyncAwaiter.Wait(Client.UpdateProject(tp.Id, tpInfo), "Error updating team project description");

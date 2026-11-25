@@ -131,8 +131,18 @@ namespace TfsCmdlets.Cmdlets.RestApi
         [Import]
         private IRestApiService RestApiService { get; set; }
 
+        private static readonly string[] SafeHttpMethods = { "GET", "HEAD", "OPTIONS" };
+
         protected override IEnumerable Run()
         {
+            var effectiveMethod = GetEffectiveMethod(Path, Method);
+
+            if (!SafeHttpMethods.Contains(effectiveMethod?.Trim(), StringComparer.OrdinalIgnoreCase) &&
+                !PowerShell.ShouldProcess(Collection, $"Invoke REST API: {effectiveMethod} {Path}"))
+            {
+                yield break;
+            }
+
             var task = RestApiService.InvokeTemplateAsync(
                 connection: Collection, 
                 apiTemplate: Path, 
@@ -193,7 +203,21 @@ namespace TfsCmdlets.Cmdlets.RestApi
             }
         }
 
-        private bool IsHttpMethod(string method)
+        // Mirrors the logic in RestApiServiceImpl.InvokeTemplateAsync, where a method
+        // prefixed to the API template (e.g. 'POST https://...') overrides -Method.
+        internal static string GetEffectiveMethod(string apiTemplate, string method)
+        {
+            if (apiTemplate != null && apiTemplate.Contains(" "))
+            {
+                var token = apiTemplate.Split(' ')[0];
+
+                if (IsHttpMethod(token)) return token;
+            }
+
+            return method;
+        }
+
+        private static bool IsHttpMethod(string method)
         {
             try
             {
