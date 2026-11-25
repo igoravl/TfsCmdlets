@@ -97,6 +97,7 @@ namespace TfsCmdlets.Services.Impl
             server = null;
 
             try { server = CreateConnection(ClientScope.Server, overridingParameters); }
+            catch (ArgumentException ex) when (ex.ParamName == "Server") { throw; }
             catch { }
 
             return server != null;
@@ -176,6 +177,11 @@ namespace TfsCmdlets.Services.Impl
                         }
                     case string s when !string.IsNullOrEmpty(s) && !Uri.IsWellFormedUriString(s, UriKind.Absolute):
                         {
+                            if (scope == ClientScope.Server)
+                            {
+                                throw new ArgumentException("The server must be specified as an absolute URL.", "Server");
+                            }
+
                             if (TryGetServer(out var server) && !server.IsHosted)
                             {
                                 throw new NotImplementedException("Connecting to an on-premises collection by name is not yet supported.");

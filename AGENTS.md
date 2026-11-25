@@ -178,6 +178,8 @@ out/                       # Build output (generated, not committed)
 
 ## PR guidelines
 
+- Prefer Conventional Commits (`type(scope): description`, e.g. `fix(work-item): handle query paths`).
+- Prefer Conventional Branches (`type/short-description`, e.g. `fix/query-paths`), unless the environment manages branch names.
 - Run `./Build.ps1 -Configuration Debug -Targets Build` locally before pushing.
 - Ensure all unit tests pass.
 - Keep cmdlet naming consistent with PowerShell Approved Verbs.

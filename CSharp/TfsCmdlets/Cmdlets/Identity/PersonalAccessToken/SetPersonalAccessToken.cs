@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
     /// Edits the properties of an existing personal access token (PAT).
     /// </summary>
     /// <remarks>
-    /// This command updates the metadata of a token (display name, scope, expiration date)
+    /// This command updates the scope or expiration date of a token
     /// without regenerating its value. To regenerate a token, use Update-TfsPersonalAccessToken.
     /// The token must be valid (not revoked) to be updated.
     /// </remarks>
