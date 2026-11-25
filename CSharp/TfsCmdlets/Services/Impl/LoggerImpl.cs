@@ -33,22 +33,7 @@ namespace TfsCmdlets.Services.Impl
 
             try
             {
-                string details;
-
-                try
-                {
-                    details = ex.ToJsonString(false);
-                }
-                catch
-                {
-                    details = ex.ToString();
-                }
-
-                Log($"Detailed Error:\n{details})");
-            }
-            catch
-            {
-                // Logging must never prevent the error from being reported
+                Log($"Detailed Error:\n{LogRedactor.DescribeException(ex)}");
             }
             finally
             {
@@ -72,16 +57,7 @@ namespace TfsCmdlets.Services.Impl
 
             foreach (var key in parameters.Keys.Where(key => !key.Equals("ParameterSetName")))
             {
-                object value;
-
-                try
-                {
-                    value = parameters[key];
-                }
-                catch
-                {
-                    value = "<unavailable>";
-                }
+                var value = parameters[key];
 
                 switch (value)
                 {
@@ -119,20 +95,23 @@ namespace TfsCmdlets.Services.Impl
                 parms[key] = value;
             }
 
-            string[] args;
+            string serialized;
 
             try
             {
-                args = LogRedactor.Serialize(parms)
+                serialized = LogRedactor.Serialize(parms);
+            }
+            catch (JsonException ex)
+            {
+                Log($"Running [{commandName}] (arguments omitted: they could not be safely serialized for logging - {ex.GetType().Name})");
+                return;
+            }
+
+            var args = serialized
                     .Replace("\":", "\" =")
                     .Replace(",\"", "; \"")
                     .Trim('{', '}')
                     .Split(';');
-            }
-            catch
-            {
-                args = parms.Keys.Select(k => $"\"{k}\" = <unavailable>").ToArray();
-            }
 
             Log($"Running [{commandName}] with {(hasParameterSetName ? $"parameter set '{parameterSetName}' and " : "")}" +
                 $"the following implicit and explicit arguments:\n{string.Join("\n", args)}");
@@ -169,17 +148,31 @@ namespace TfsCmdlets.Services.Impl
             "*Credential*", "*IssuedToken*", "*AccessToken*", "*SecureString*"
         };
 
-        private static readonly Regex _authSchemeRegex = new Regex(
-            @"\b(Bearer|Basic|Negotiate|NTLM)\s+[A-Za-z0-9+/._~\-]{16,}=*",
-            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+        // Query string parameter names commonly used to carry secrets, besides the generic sensitive name patterns
+        private static readonly string[] _sensitiveQueryNames = new[] { "sig", "code", "key", "auth", "pwd", "pass" };
+
+        private const RegexOptions _regexOptions = RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled;
+
+        // "Authorization: <scheme> <credentials>", "Proxy-Authorization=<credentials>", "Authorization\": \"<credentials>"
+        private static readonly Regex _authHeaderRegex = new Regex(
+            @"\b((?:Proxy-)?Authorization[""']?\s*[:=]\s*[""']?)(?:(Basic|Bearer|Negotiate|NTLM|Digest)\s+)?[^\s""',;]+",
+            _regexOptions);
+
+        // "Bearer <token>" anywhere in the message, regardless of the token length
+        private static readonly Regex _bearerRegex = new Regex(@"\b(Bearer)\s+(?!\*{5})[^\s""',;]+", _regexOptions);
+
+        // User information in URLs (scheme://user:password@host)
+        private static readonly Regex _urlUserInfoRegex = new Regex(@"\b([a-z][a-z0-9+.\-]*://)[^/\s:@""']+:[^/\s@""']*@", _regexOptions);
+
+        // Query string parameters (?name=value&name2=value2)
+        private static readonly Regex _queryParamRegex = new Regex(@"([?&])([^=&\s#""'?]+)=([^&\s#""']*)", _regexOptions);
 
         private static readonly JsonSerializerSettings _settings = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             ContractResolver = new RedactingContractResolver(),
-            Converters = new List<JsonConverter> { new RedactingConverter() },
-            Error = (_, e) => e.ErrorContext.Handled = true
+            Converters = new List<JsonConverter> { new RedactingConverter() }
         };
 
         internal static bool IsSensitiveName(string name)
@@ -223,14 +216,46 @@ namespace TfsCmdlets.Services.Impl
         {
             if (string.IsNullOrEmpty(message)) return message;
 
-            try
+            message = _authHeaderRegex.Replace(message, m =>
+                m.Groups[2].Success ? $"{m.Groups[1].Value}{m.Groups[2].Value} {RedactedValue}" : $"{m.Groups[1].Value}{RedactedValue}");
+            message = _bearerRegex.Replace(message, m => $"{m.Groups[1].Value} {RedactedValue}");
+            message = _urlUserInfoRegex.Replace(message, m => $"{m.Groups[1].Value}{RedactedValue}@");
+            message = _queryParamRegex.Replace(message, m =>
+                IsSensitiveQueryName(Uri.UnescapeDataString(m.Groups[2].Value))
+                    ? $"{m.Groups[1].Value}{m.Groups[2].Value}={RedactedValue}"
+                    : m.Value);
+
+            return message;
+        }
+
+        private static bool IsSensitiveQueryName(string name) =>
+            IsSensitiveName(name) || _sensitiveQueryNames.Any(n => n.Equals(name, StringComparison.OrdinalIgnoreCase));
+
+        /// <summary>
+        /// Describes an exception (and its inner exceptions) using only type, HResult, message and stack trace.
+        /// Exception objects are deliberately not serialized, since some of them (e.g. HTTP/REST exceptions)
+        /// carry request/response headers, bodies or other data that may contain secrets.
+        /// </summary>
+        internal static string DescribeException(Exception ex)
+        {
+            var sb = new StringBuilder();
+            var depth = 0;
+
+            for (var e = ex; e != null && depth < 10; e = e.InnerException, depth++)
             {
-                return _authSchemeRegex.Replace(message, m => $"{m.Groups[1].Value} {RedactedValue}");
+                if (depth > 0) sb.AppendLine("--- Inner exception ---");
+
+                sb.AppendLine($"{e.GetType().FullName} (HResult 0x{e.HResult:X8}): {e.Message}");
+
+                if (e is AggregateException agg && agg.InnerExceptions.Count > 1)
+                {
+                    sb.AppendLine($"(AggregateException with {agg.InnerExceptions.Count} inner exceptions; showing the first one)");
+                }
+
+                if (!string.IsNullOrEmpty(e.StackTrace)) sb.AppendLine(e.StackTrace);
             }
-            catch
-            {
-                return message;
-            }
+
+            return sb.ToString().TrimEnd();
         }
 
         internal static string Serialize(object value)
@@ -295,7 +320,15 @@ namespace TfsCmdlets.Services.Impl
                                     continue;
                                 }
                                 object propValue;
-                                try { propValue = prop.Value; } catch { propValue = null; }
+                                try
+                                {
+                                    propValue = prop.Value;
+                                }
+                                catch (GetValueException)
+                                {
+                                    writer.WriteValue("<omitted>");
+                                    continue;
+                                }
                                 serializer.Serialize(writer, propValue);
                             }
 

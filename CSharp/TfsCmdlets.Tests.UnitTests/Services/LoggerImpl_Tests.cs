@@ -113,21 +113,69 @@ namespace TfsCmdlets.Tests.UnitTests.Services
             Assert.Contains(Guid.Empty.ToString(), output);
         }
 
-        [Fact]
-        public void Log_Scrubs_Authorization_Tokens_From_Messages()
+        private static (LoggerImpl Logger, List<string> Output) CreateLogger()
         {
             var output = new List<string>();
             var ps = Substitute.For<IPowerShellService>();
             ps.IsVerbose.Returns(true);
             ps.When(p => p.WriteVerbose(Arg.Any<string>())).Do(c => output.Add(c.Arg<string>()));
+            return (new LoggerImpl(ps), output);
+        }
 
-            var logger = new LoggerImpl(ps);
-            logger.Log($"Header: Authorization: Bearer {Secret}");
-            logger.Log("Using the Basic process template");
+        [Theory]
+        [InlineData("Header: Authorization: Bearer {0}", "Authorization: Bearer *****")]
+        [InlineData("Authorization: Basic {0}", "Authorization: Basic *****")]
+        [InlineData("Proxy-Authorization={0}", "Proxy-Authorization=*****")]
+        [InlineData("token is Bearer {0}", "Bearer *****")]
+        [InlineData("GET https://dev.azure.com/org/_apis/x?api-version=7.1&access_token={0}&sig={0}", "?api-version=7.1&access_token=*****&sig=*****")]
+        [InlineData("GET https://someuser:{0}@dev.azure.com/org", "https://*****@dev.azure.com/org")]
+        public void Log_Scrubs_Secrets_From_Messages(string template, string expected)
+        {
+            var (logger, output) = CreateLogger();
 
-            Assert.DoesNotContain(Secret, output[0]);
-            Assert.Contains("Bearer *****", output[0]);
-            Assert.Contains("Basic process template", output[1]);
+            // Short secrets must be redacted too - no minimum length cutoff
+            foreach (var secret in new[] { Secret, "abc" })
+            {
+                output.Clear();
+                logger.Log(string.Format(template, secret));
+
+                Assert.DoesNotContain(secret, output[0].Substring(output[0].IndexOf("] ", output[0].IndexOf("] ") + 2) + 2));
+                Assert.Contains(expected, output[0]);
+            }
+        }
+
+        [Fact]
+        public void Log_Keeps_NonSensitive_Text()
+        {
+            var (logger, output) = CreateLogger();
+
+            logger.Log("Using the Basic process template; GET https://dev.azure.com/org/_apis/projects?api-version=7.1&$top=10");
+
+            Assert.Contains("Basic process template", output[0]);
+            Assert.Contains("?api-version=7.1&$top=10", output[0]);
+        }
+
+        [Fact]
+        public void LogError_Does_Not_Serialize_Exception_Data()
+        {
+            var ps = Substitute.For<IPowerShellService>();
+            ps.IsVerbose.Returns(true);
+            var output = new List<string>();
+            ps.When(p => p.WriteVerbose(Arg.Any<string>())).Do(c => output.Add(c.Arg<string>()));
+
+            var inner = new InvalidOperationException("inner failure");
+            inner.Data["RequestHeaders"] = $"X-Custom: {Secret}";
+            var ex = new Exception("outer failure", inner);
+            ex.Data["Body"] = Secret;
+
+            new LoggerImpl(ps).LogError(ex);
+
+            var log = string.Join("\n", output);
+            Assert.DoesNotContain(Secret, log);
+            Assert.Contains("System.InvalidOperationException", log);
+            Assert.Contains("outer failure", log);
+            Assert.Contains("inner failure", log);
+            ps.Received(1).WriteError(Arg.Is<ErrorRecord>(r => r.Exception == ex));
         }
     }
 }
