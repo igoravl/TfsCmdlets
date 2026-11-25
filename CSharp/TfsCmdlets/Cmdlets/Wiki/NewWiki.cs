@@ -47,26 +47,51 @@ namespace TfsCmdlets.Cmdlets.Wiki
     {
         protected override IEnumerable Run()
         {
-            var isProjectWiki = Parameters.Get<bool>(nameof(NewWiki.ProjectWiki));
-
             var createParams = new WikiCreateParametersV2()
             {
-                Name = Parameters.Get<string>(nameof(NewWiki.Wiki)),
-                Type = isProjectWiki ? WikiType.ProjectWiki : WikiType.CodeWiki,
+                Name = Wiki,
+                Type = ProjectWiki ? WikiType.ProjectWiki : WikiType.CodeWiki,
                 ProjectId = Project.Id
             };
 
-            if(createParams.Type == WikiType.CodeWiki)
+            var action = "Create project wiki";
+
+            if (createParams.Type == WikiType.CodeWiki)
             {
-                var repo = Data.GetItem<GitRepository>(new {
-                    Repository = Parameters.Get<object>(nameof(NewWiki.Repository)),
+                var repo = Data.GetItem<GitRepository>(new
+                {
+                    Repository,
                     Project
                 });
 
+                var branch = Has_Branch && !string.IsNullOrWhiteSpace(Branch) ? Branch : repo.DefaultBranch;
+
+                if (string.IsNullOrWhiteSpace(branch))
+                {
+                    throw new ArgumentException($"Repository '{repo.Name}' has no default branch. Specify a source branch with the -Branch parameter.", nameof(NewWiki.Branch));
+                }
+
+                const string branchPrefix = "refs/heads/";
+
+                if (branch.StartsWith(branchPrefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    branch = branch.Substring(branchPrefix.Length);
+                }
+
                 createParams.RepositoryId = repo.Id;
+                createParams.MappedPath = string.IsNullOrWhiteSpace(Path) ? "/" : Path;
+                createParams.Version = new GitVersionDescriptor
+                {
+                    Version = branch,
+                    VersionType = GitVersionType.Branch
+                };
+
+                action = $"Create code wiki '{Wiki}' from branch '{branch}' of repository '{repo.Name}'";
             }
 
-            yield return TaskExtensions.GetResult<WikiV2>(Client.CreateWikiAsync(createParams), "Error creating Wiki repository");
+            if (!PowerShell.ShouldProcess(Project, action)) yield break;
+
+            yield return Client.CreateWikiAsync(createParams).GetResult("Error creating Wiki repository");
         }
     }
 }
