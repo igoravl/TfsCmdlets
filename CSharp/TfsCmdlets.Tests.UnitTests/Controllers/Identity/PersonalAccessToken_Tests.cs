@@ -152,7 +152,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _parms.HasParameter("PersonalAccessToken").Returns(true);
             _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns("Admin-*");
             _parms.HasParameter("User").Returns(true);
-            _parms.Get<object>("User", Arg.Any<object>()).Returns("aad.descriptor");
+            _parms.Get<object>("User", Arg.Any<object>()).Returns(new SubjectDescriptor("aad", "descriptor"));
 
             _adminClient.ListPersonalAccessTokensAsync(
                     Arg.Any<Microsoft.VisualStudio.Services.Common.SubjectDescriptor>(),
@@ -301,7 +301,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
         private readonly ITokensHttpClient _client = Substitute.For<ITokensHttpClient>();
 
         [Fact]
-        public void Set_Token_Updates_DisplayName()
+        public void Set_Token_Updates_Scope()
         {
             // Arrange
             var tokenId = Guid.NewGuid();
@@ -314,22 +314,20 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             var updatedToken = new PatToken
             {
                 AuthorizationId = tokenId,
-                DisplayName = "NewName",
-                Scope = "vso.work"
+                DisplayName = "OldName",
+                Scope = "vso.code_write"
             };
 
             _parms.HasParameter("PersonalAccessToken").Returns(true);
             _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns(tokenId);
-            _parms.HasParameter("DisplayName").Returns(true);
-            _parms.Get<string>("DisplayName", Arg.Any<string>()).Returns("NewName");
-            _parms.HasParameter("Scope").Returns(false);
+            _parms.HasParameter("Scope").Returns(true);
+            _parms.Get<string[]>("Scope", Arg.Any<string[]>()).Returns(new[] { "vso.code_write" });
             _parms.HasParameter("ValidTo").Returns(false);
             _parms.HasParameter("AllOrganizations").Returns(false);
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 
-            _client.GetPatAsync(tokenId)
-                .Returns(Task.FromResult(new PatTokenResult { PatToken = currentToken, PatTokenError = SessionTokenError.None }));
+            _data.GetItems<PatToken>().Returns(new[] { currentToken });
 
             _client.UpdatePatAsync(Arg.Any<PatTokenUpdateRequest>())
                 .Returns(Task.FromResult(new PatTokenResult { PatToken = updatedToken, PatTokenError = SessionTokenError.None }));
@@ -344,7 +342,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             Assert.Single(results);
             Assert.Equal(updatedToken, results[0]);
             _client.Received().UpdatePatAsync(Arg.Is<PatTokenUpdateRequest>(r =>
-                r.DisplayName == "NewName" && r.AuthorizationId == tokenId));
+                r.Scope == "vso.code_write" && r.AuthorizationId == tokenId));
         }
 
         [Fact]
@@ -356,16 +354,14 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _parms.HasParameter("PersonalAccessToken").Returns(true);
             _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns(tokenId);
-            _parms.HasParameter("DisplayName").Returns(true);
-            _parms.Get<string>("DisplayName", Arg.Any<string>()).Returns("NewName");
-            _parms.HasParameter("Scope").Returns(false);
+            _parms.HasParameter("Scope").Returns(true);
+            _parms.Get<string[]>("Scope", Arg.Any<string[]>()).Returns(new[] { "vso.code_write" });
             _parms.HasParameter("ValidTo").Returns(false);
             _parms.HasParameter("AllOrganizations").Returns(false);
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(false);
 
-            _client.GetPatAsync(tokenId)
-                .Returns(Task.FromResult(new PatTokenResult { PatToken = currentToken, PatTokenError = SessionTokenError.None }));
+            _data.GetItems<PatToken>().Returns(new[] { currentToken });
 
             var controller = new SetPersonalAccessTokenController(
                 _powerShell, _data, _parms, _logger, _client);
@@ -376,6 +372,34 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             // Assert
             Assert.Empty(results);
             _client.DidNotReceive().UpdatePatAsync(Arg.Any<PatTokenUpdateRequest>());
+        }
+    }
+
+    public class RenamePersonalAccessToken_Tests
+    {
+        [Fact]
+        public void Rename_Token_Updates_DisplayName()
+        {
+            var tokenId = Guid.NewGuid();
+            var currentToken = new PatToken { AuthorizationId = tokenId, DisplayName = "OldName" };
+            var renamedToken = new PatToken { AuthorizationId = tokenId, DisplayName = "NewName" };
+            var powerShell = Substitute.For<IPowerShellService>();
+            var data = Substitute.For<IDataManager>();
+            var parms = Substitute.For<IParameterManager>();
+            var client = Substitute.For<ITokensHttpClient>();
+            parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns(tokenId);
+            parms.Get<string>("NewName", Arg.Any<string>()).Returns("NewName");
+            data.GetItems<PatToken>().Returns(new[] { currentToken });
+            powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
+            client.UpdatePatAsync(Arg.Any<PatTokenUpdateRequest>())
+                .Returns(Task.FromResult(new PatTokenResult { PatToken = renamedToken, PatTokenError = SessionTokenError.None }));
+            var controller = new RenamePersonalAccessTokenController(powerShell, data, parms, Substitute.For<ILogger>(), client);
+
+            var result = controller.InvokeCommand().Cast<PatToken>().Single();
+
+            Assert.Same(renamedToken, result);
+            client.Received().UpdatePatAsync(Arg.Is<PatTokenUpdateRequest>(r =>
+                r.AuthorizationId == tokenId && r.DisplayName == "NewName"));
         }
     }
 
@@ -408,14 +432,11 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _parms.HasParameter("PersonalAccessToken").Returns(true);
             _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns(tokenId);
-            _parms.HasParameter("Scope").Returns(false);
-            _parms.HasParameter("ValidTo").Returns(false);
-            _parms.HasParameter("AllOrganizations").Returns(false);
+            _parms.Get<bool>("Force", Arg.Any<bool>()).Returns(true);
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 
-            _client.GetPatAsync(tokenId)
-                .Returns(Task.FromResult(new PatTokenResult { PatToken = currentToken, PatTokenError = SessionTokenError.None }));
+            _data.GetItems<PatToken>().Returns(new[] { currentToken });
 
             _client.RevokeAsync(tokenId).Returns(Task.CompletedTask);
 
@@ -437,7 +458,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
         }
 
         [Fact]
-        public void Regenerate_Token_Overrides_Scope_When_Specified()
+        public void Regenerate_Token_Without_Confirmation_Does_Not_Revoke()
         {
             // Arrange
             var tokenId = Guid.NewGuid();
@@ -448,22 +469,11 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
                 Scope = "vso.work",
                 ValidTo = DateTime.UtcNow.AddDays(30)
             };
-            var newToken = new PatToken { AuthorizationId = Guid.NewGuid(), DisplayName = "MyToken", Scope = "vso.code_write" };
-
             _parms.HasParameter("PersonalAccessToken").Returns(true);
             _parms.Get<object>("PersonalAccessToken", Arg.Any<object>()).Returns(tokenId);
-            _parms.HasParameter("Scope").Returns(true);
-            _parms.Get<string>("Scope", Arg.Any<string>()).Returns("vso.code_write");
-            _parms.HasParameter("ValidTo").Returns(false);
-            _parms.HasParameter("AllOrganizations").Returns(false);
-
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
-
-            _client.GetPatAsync(tokenId)
-                .Returns(Task.FromResult(new PatTokenResult { PatToken = currentToken, PatTokenError = SessionTokenError.None }));
-            _client.RevokeAsync(tokenId).Returns(Task.CompletedTask);
-            _client.CreatePatAsync(Arg.Any<PatTokenCreateRequest>())
-                .Returns(Task.FromResult(new PatTokenResult { PatToken = newToken, PatTokenError = SessionTokenError.None }));
+            _powerShell.ShouldContinue(Arg.Any<string>()).Returns(false);
+            _data.GetItems<PatToken>().Returns(new[] { currentToken });
 
             var controller = new UpdatePersonalAccessTokenController(
                 _powerShell, _data, _parms, _logger, _client);
@@ -472,8 +482,10 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             var results = controller.InvokeCommand().Cast<object>().ToList();
 
             // Assert
-            Assert.Single(results);
-            _client.Received().CreatePatAsync(Arg.Is<PatTokenCreateRequest>(r => r.Scope == "vso.code_write"));
+            Assert.Empty(results);
+            _powerShell.Received().ShouldContinue(Arg.Any<string>());
+            _client.DidNotReceive().RevokeAsync(Arg.Any<Guid>());
+            _client.DidNotReceive().CreatePatAsync(Arg.Any<PatTokenCreateRequest>());
         }
     }
 
@@ -500,6 +512,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 
+            _data.GetItems<PatToken>().Returns(new[] { new PatToken { AuthorizationId = tokenId, DisplayName = "MyToken" } });
             _client.RevokeAsync(tokenId).Returns(Task.CompletedTask);
 
             var controller = new RemovePersonalAccessTokenController(
@@ -527,6 +540,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
             _powerShell.ShouldContinue(Arg.Any<string>()).Returns(false); // User says no
+            _data.GetItems<PatToken>().Returns(new[] { new PatToken { AuthorizationId = tokenId, DisplayName = "MyToken" } });
 
             var controller = new RemovePersonalAccessTokenController(
                 _adminClient, _powerShell, _data, _parms, _logger, _client);
@@ -536,6 +550,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             // Assert
             Assert.Empty(results);
+            _powerShell.Received().ShouldContinue(Arg.Any<string>());
             _client.DidNotReceive().RevokeAsync(Arg.Any<Guid>());
         }
 
@@ -552,6 +567,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
             _parms.Get<bool>("Force", Arg.Any<bool>()).Returns(true);
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(false);
+            _data.GetItems<PatToken>().Returns(new[] { new PatToken { AuthorizationId = tokenId, DisplayName = "MyToken" } });
 
             var controller = new RemovePersonalAccessTokenController(
                 _adminClient, _powerShell, _data, _parms, _logger, _client);
@@ -580,6 +596,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Identity
 
             _powerShell.ShouldProcess(Arg.Any<string>(), Arg.Any<string>()).Returns(true);
 
+            _data.GetItems<PatToken>().Returns(new[] { new PatToken { AuthorizationId = tokenId, DisplayName = "MyToken" } });
             _adminClient.RevokeAuthorizationsAsync(
                 Arg.Any<IEnumerable<TokenAdminRevocation>>())
                 .Returns(Task.CompletedTask);

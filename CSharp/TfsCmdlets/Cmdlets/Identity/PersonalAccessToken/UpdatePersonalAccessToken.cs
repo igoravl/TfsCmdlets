@@ -8,7 +8,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
     /// </summary>
     /// <remarks>
     /// This command revokes the existing token and creates a new one with the same 
-    /// (or overridden) properties. The new token string is only available at creation time.
+    /// properties. The new token string is only available at creation time.
     /// The old token will stop working immediately after this command completes.
     /// </remarks>
     [TfsCmdlet(CmdletScope.Collection, HostedOnly = true,
@@ -58,7 +58,7 @@ namespace TfsCmdlets.Cmdlets.Identity.PersonalAccessToken
                 Client.RevokeAsync(authorizationId)
                     .Wait("Error revoking personal access token");
 
-                // Create new token with same or overridden properties
+                // Create new token with the same properties
                 var request = new PatTokenCreateRequest
                 {
                     DisplayName = item.DisplayName,

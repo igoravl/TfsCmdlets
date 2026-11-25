@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [2.11.1] - 2026-11-25
+
+### Fixed
+
+- Prevented a stack overflow when a server is specified without an absolute URL; an error now identifies the invalid server argument.
+- Corrected the documentation for setting and regenerating personal access tokens.
+
 ## [2.11.0] - 2026-04-09
 
 ### Added
@@ -15,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `Uninstall-TfsShell` — Removes Azure DevOps Shell shortcuts and Windows Terminal profile fragments. Supports selective removal via the `-Target` parameter.
 - `Get-TfsPersonalAccessToken` — Lists or gets Personal Access Tokens (PATs) for the current user (by name, ID, or wildcard). Administrators can list tokens of another user by specifying the `-User` parameter, which uses the Token Admin API.
 - `New-TfsPersonalAccessToken` — Creates a new PAT with the specified display name, scope, and validity period. Supports `-AllOrganizations` for organization-agnostic tokens.
-- `Set-TfsPersonalAccessToken` — Updates properties (display name, scope, validity, all-organizations flag) of an existing PAT.
+- `Set-TfsPersonalAccessToken` — Updates properties (scope, validity, all-organizations flag) of an existing PAT.
 - `Update-TfsPersonalAccessToken` — Regenerates (rotates) a PAT by revoking and recreating it, preserving its scope and settings.
 - `Remove-TfsPersonalAccessToken` — Revokes a PAT. Administrators can revoke another user's tokens by specifying the `-User` parameter.
 - `Rename-TfsPersonalAccessToken` — Updates the display name of an existing PAT without changing its scope or expiration date.
