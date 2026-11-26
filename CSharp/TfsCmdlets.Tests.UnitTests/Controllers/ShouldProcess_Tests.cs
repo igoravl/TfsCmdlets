@@ -55,6 +55,8 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers
         [InlineData("/_apis/projects", "delete")]
         [InlineData("POST /_apis/projects", "GET")]
         [InlineData("PATCH https://dev.azure.com/{organization}/_apis/projects", "GET")]
+        [InlineData("OPTIONS /_apis/projects", "POST")]
+        [InlineData("HEAD /_apis/projects", "POST")]
         public void InvokeRestApi_NonSafe_Method_Is_Not_Sent_When_ShouldProcess_Is_False(string path, string method)
         {
             var restApi = SetupRestApi(path, method);
@@ -69,7 +71,7 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers
         [Theory]
         [InlineData("/_apis/projects", "GET")]
         [InlineData("/_apis/projects", "head")]
-        [InlineData("OPTIONS /_apis/projects", "POST")]
+        [InlineData("/_apis/projects", "OPTIONS")]
         public void InvokeRestApi_Safe_Method_Is_Sent_Without_ShouldProcess(string path, string method)
         {
             var restApi = SetupRestApi(path, method);

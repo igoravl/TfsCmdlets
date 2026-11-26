@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using System.Net.Http;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
@@ -203,31 +202,11 @@ namespace TfsCmdlets.Cmdlets.RestApi
             }
         }
 
-        // Mirrors the logic in RestApiServiceImpl.InvokeTemplateAsync, where a method
-        // prefixed to the API template (e.g. 'POST https://...') overrides -Method.
         internal static string GetEffectiveMethod(string apiTemplate, string method)
         {
-            if (apiTemplate != null && apiTemplate.Contains(" "))
-            {
-                var token = apiTemplate.Split(' ')[0];
-
-                if (IsHttpMethod(token)) return token;
-            }
-
-            return method;
-        }
-
-        private static bool IsHttpMethod(string method)
-        {
-            try
-            {
-                var m = new HttpMethod(method);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return RestApiMethodParser.TryParseMethodPrefix(apiTemplate, out var templateMethod, out _)
+                ? templateMethod
+                : method;
         }
     }
 }
