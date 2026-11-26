@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Roslyn confirmation-safety warnings in the source-generator project for missing `ShouldProcess` calls, discarded confirmation results, and mismatched `SupportsShouldProcess` metadata.
+
 ## [2.11.0] - 2026-04-09
 
 ### Added
