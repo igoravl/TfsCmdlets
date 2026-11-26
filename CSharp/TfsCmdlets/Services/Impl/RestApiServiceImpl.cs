@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Services.Search.WebApi.Contracts;
 using Microsoft.VisualStudio.Services.WebApi;
 using TfsCmdlets.HttpClients;
 using TfsCmdlets.Models;
+using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Services.Impl
 {
@@ -31,17 +32,10 @@ namespace TfsCmdlets.Services.Impl
             Func<Models.Team> team,
             string customServiceHost)
         {
-            // Checks whether the HTTP method is included in the API template
-
-            if (apiTemplate.Contains(" "))
+            if (RestApiMethodParser.TryParseMethodPrefix(apiTemplate, out var templateMethod, out var remainingTemplate))
             {
-                var tokens = apiTemplate.Split(' ');
-
-                if (IsHttpMethod(tokens[0]))
-                {
-                    method = tokens[0];
-                    apiTemplate = apiTemplate.Substring(tokens[0].Length + 1).Trim();
-                }
+                method = templateMethod;
+                apiTemplate = remainingTemplate;
             }
 
             apiTemplate = apiTemplate.Replace("https://{instance}/{connection}/", "http://tfs/");
@@ -242,12 +236,6 @@ namespace TfsCmdlets.Services.Impl
                     additionalHeaders,
                     queryParameters,
                     apiVersion);
-        }
-
-        private bool IsHttpMethod(string method)
-        {
-            const string methods = "|GET|POST|PUT|PATCH|DELETE|";
-            return methods.Contains($"|{method.ToUpperInvariant()}|");
         }
 
         [ImportingConstructor]

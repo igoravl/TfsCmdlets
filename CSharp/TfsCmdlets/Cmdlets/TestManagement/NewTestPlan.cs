@@ -62,6 +62,9 @@ namespace TfsCmdlets.Cmdlets.TestManagement
             var startDate = Parameters.Get<DateTime>(nameof(NewTestPlan.StartDate));
             var endDate = Parameters.Get<DateTime>(nameof(NewTestPlan.EndDate));
 
+            if (!PowerShell.ShouldProcess(Project, $"Create test plan '{testPlan}'"))
+                yield break;
+
             WebApiIdentityRef ownerRef = null;
 
             if (owner != null)

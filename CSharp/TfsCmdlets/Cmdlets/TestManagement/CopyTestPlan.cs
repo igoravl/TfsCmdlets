@@ -166,6 +166,9 @@ namespace TfsCmdlets.Cmdlets.TestManagement
                 }
             };
 
+            if (!PowerShell.ShouldProcess($"Test plan '{plan.Name}' (project '{tp.Name}')", $"Copy test plan to project '{destTp.Name}' as '{newName}'"))
+                yield break;
+
             var result = Client.CloneTestPlanAsync(cloneParams, tp.Name, deepClone)
                 .GetResult($"Error cloning test plan '{plan.Name}' to '{destTp.Name}'");
 

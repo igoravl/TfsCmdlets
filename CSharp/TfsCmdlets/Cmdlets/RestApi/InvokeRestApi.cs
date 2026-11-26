@@ -1,5 +1,4 @@
 using System.Management.Automation;
-using System.Net.Http;
 using TfsCmdlets.Util;
 
 namespace TfsCmdlets.Cmdlets.RestApi
@@ -131,8 +130,18 @@ namespace TfsCmdlets.Cmdlets.RestApi
         [Import]
         private IRestApiService RestApiService { get; set; }
 
+        private static readonly string[] SafeHttpMethods = { "GET", "HEAD", "OPTIONS" };
+
         protected override IEnumerable Run()
         {
+            var effectiveMethod = GetEffectiveMethod(Path, Method);
+
+            if (!SafeHttpMethods.Contains(effectiveMethod?.Trim(), StringComparer.OrdinalIgnoreCase) &&
+                !PowerShell.ShouldProcess(Collection, $"Invoke REST API: {effectiveMethod} {Path}"))
+            {
+                yield break;
+            }
+
             var task = RestApiService.InvokeTemplateAsync(
                 connection: Collection, 
                 apiTemplate: Path, 
@@ -193,17 +202,11 @@ namespace TfsCmdlets.Cmdlets.RestApi
             }
         }
 
-        private bool IsHttpMethod(string method)
+        internal static string GetEffectiveMethod(string apiTemplate, string method)
         {
-            try
-            {
-                var m = new HttpMethod(method);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            return RestApiMethodParser.TryParseMethodPrefix(apiTemplate, out var templateMethod, out _)
+                ? templateMethod
+                : method;
         }
     }
 }

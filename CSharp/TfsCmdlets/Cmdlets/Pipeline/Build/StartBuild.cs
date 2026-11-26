@@ -23,6 +23,9 @@ namespace TfsCmdlets.Cmdlets.Pipeline.Build
         {
             var definition = GetItem<BuildDefinitionReference>();
 
+            if (!PowerShell.ShouldProcess(Project, $"Queue build for pipeline '{definition.Name}'"))
+                yield break;
+
             yield return Client.QueueBuildAsync(project: Project.Name, definitionId: null, build: new WebApiBuild
             {
                 Definition = definition
