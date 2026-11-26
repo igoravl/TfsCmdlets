@@ -87,6 +87,20 @@ namespace TfsCmdlets.Cmdlets.Artifact
                 {
                     case Guid g:
                         {
+                            var packageVersion = Client.GetPackageVersionAsync(
+                                    project: projectId,
+                                    feedId: feedId,
+                                    packageId: packageId,
+                                    packageVersionId: g.ToString(),
+                                    isListed: IncludeDelisted ? null : true,
+                                    isDeleted: IncludeDeleted ? null : false)
+                                .GetResult($"Error getting artifact version '{g}'");
+
+                            if ((!IncludeDeleted && packageVersion.IsDeleted) ||
+                                (!IncludeDelisted && !packageVersion.IsListed))
+                                break;
+
+                            yield return packageVersion;
                             break;
                         }
                     case string s when s.IsWildcard():
@@ -94,7 +108,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
                             yield return Client.GetPackageVersionsAsync(
                                     project: projectId, 
                                     feedId: feedId, 
-                                    packageId: package.Id.ToString(),
+                                    packageId: packageId,
                                     isDeleted: IncludeDeleted? null: false,
                                     isListed: IncludeDelisted? null: true)
                                 .GetResult($"Error getting artifact version(s) '{s}'")
@@ -103,6 +117,25 @@ namespace TfsCmdlets.Cmdlets.Artifact
                         }
                     case string s:
                         {
+                            var versions = Client.GetPackageVersionsAsync(
+                                    project: projectId,
+                                    feedId: feedId,
+                                    packageId: packageId,
+                                    isDeleted: IncludeDeleted ? null : false,
+                                    isListed: IncludeDelisted ? null : true)
+                                .GetResult($"Error getting artifact version '{s}'")
+                                .Where(pv =>
+                                    s.Equals(pv.Version, StringComparison.OrdinalIgnoreCase) ||
+                                    s.Equals(pv.NormalizedVersion, StringComparison.OrdinalIgnoreCase))
+                                .ToList();
+
+                            if (versions.Count == 0)
+                            {
+                                Logger.LogError(new ArgumentException($"Invalid or non-existent artifact version '{s}'"));
+                                break;
+                            }
+
+                            yield return versions;
                             break;
                         }
                     default:
