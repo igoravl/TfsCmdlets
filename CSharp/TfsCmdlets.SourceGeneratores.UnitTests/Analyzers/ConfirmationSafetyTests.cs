@@ -162,6 +162,19 @@ public class ConfirmationSafetyTests
     }
 
     [Fact]
+    public async Task ReportsDiscardedConditionalAccessResults()
+    {
+        var diagnostics = await AnalyzeAsync(Source("Get", "SupportsShouldProcess = true", """
+            if (!PowerShell.ShouldProcess("item", "write")) return;
+            PowerShell?.ShouldProcess("item", "write");
+            _ = PowerShell?.ShouldContinue("continue?");
+            """));
+
+        Assert.Equal(2, diagnostics.Length);
+        Assert.All(diagnostics, diagnostic => Assert.Equal("TFS007", diagnostic.Id));
+    }
+
+    [Fact]
     public async Task ReportsExplicitDiscard()
         => Assert.Equal("TFS007", Assert.Single(await AnalyzeAsync(Source("New", "",
             """_ = PowerShell.ShouldProcess("item", "write"); Write();"""))).Id);
@@ -199,9 +212,67 @@ public class ConfirmationSafetyTests
     [Fact]
     public async Task RecognizesCustomControllerName()
     {
-        var source = Source("New", """CustomControllerName = "CustomController" """, "Write();")
+        var source = Source("New", """CustomControllerName = "Custom" """, "Write();")
             .Replace("class NewItemController", "class CustomController");
         Assert.Equal("TFS006", Assert.Single(await AnalyzeAsync(source)).Id);
+    }
+
+    [Fact]
+    public async Task PairsControllerAndCmdletInMappedNamespaces()
+    {
+        const string source = """
+            namespace Example.Cmdlets.WorkItem.Field
+            {
+                [TfsCmdlets.Cmdlets.TfsCmdlet]
+                partial class NewItem { }
+            }
+            namespace Example.Controllers.WorkItem.Field
+            {
+                partial class NewItemController : Example.ControllerBase
+                {
+                    protected override void Run() { Write(); }
+                    private void Write() { }
+                }
+            }
+            """;
+        Assert.Equal("TFS006", Assert.Single(await AnalyzeAsync(source)).Id);
+    }
+
+    [Fact]
+    public async Task RecognizesConfirmationInInheritedGenericControllerHelper()
+    {
+        var source = Source("New", "", "if (!Confirm()) return; Write();")
+            .Replace(": ControllerBase", ": GenericControllerBase<string>") + """
+            namespace Example
+            {
+                abstract class GenericControllerBase<T> : ControllerBase
+                {
+                    protected bool Confirm() => PowerShell.ShouldProcess("item", "write");
+                }
+            }
+            """;
+        Assert.Empty(await AnalyzeAsync(source));
+    }
+
+    [Fact]
+    public async Task DiagnosesGenericInheritedConfirmationHelperResults()
+    {
+        var helper = """
+            namespace Example
+            {
+                abstract class GenericControllerBase<T> : ControllerBase
+                {
+                    protected bool Confirm() => PowerShell.ShouldProcess("item", "write");
+                }
+            }
+            """;
+        var discardedResult = Source("New", "", "Confirm();")
+            .Replace(": ControllerBase", ": GenericControllerBase<string>");
+        Assert.Equal("TFS007", Assert.Single(await AnalyzeAsync(discardedResult, helper)).Id);
+
+        var unsupportedGuard = Source("Get", "", "if (!Confirm()) return; Write();")
+            .Replace(": ControllerBase", ": GenericControllerBase<string>");
+        Assert.Equal("TFS008", Assert.Single(await AnalyzeAsync(unsupportedGuard, helper)).Id);
     }
 
     [Fact]

@@ -70,14 +70,31 @@ namespace TfsCmdlets.SourceGenerators.Analyzers
             CompilationAnalysisContext context, INamedTypeSymbol controller,
             ConcurrentDictionary<ISymbol, ConcurrentDictionary<ISymbol, byte>> calls)
         {
-            var cmdlet = controller.ContainingNamespace.GetTypeMembers().FirstOrDefault(type =>
+            var controllerNamespace = controller.ContainingNamespace.ToDisplayString();
+            var cmdletNamespace = controllerNamespace.Replace(".Controllers.", ".Cmdlets.");
+            if (controllerNamespace.EndsWith(".Controllers"))
             {
-                var attribute = GetCmdletAttribute(type);
-                if (attribute == null) return false;
-                var customName = attribute.NamedArguments
-                    .FirstOrDefault(pair => pair.Key == "CustomControllerName").Value.Value as string;
-                return controller.Name == (string.IsNullOrEmpty(customName) ? type.Name + "Controller" : customName);
-            });
+                cmdletNamespace = controllerNamespace.Substring(
+                    0, controllerNamespace.Length - ".Controllers".Length) + ".Cmdlets";
+            }
+            var candidateNamespaces = new[] { controllerNamespace, cmdletNamespace }.Distinct();
+            var cmdlet = candidateNamespaces
+                .SelectMany(namespaceName => GetTypesInNamespace(
+                    context.Compilation.GlobalNamespace, namespaceName))
+                .FirstOrDefault(type =>
+                {
+                    var typeNamespace = type.ContainingNamespace.ToDisplayString();
+                    if (typeNamespace != controllerNamespace && typeNamespace != cmdletNamespace) return false;
+
+                    var attribute = GetCmdletAttribute(type);
+                    if (attribute == null) return false;
+                    var customName = attribute.NamedArguments
+                        .FirstOrDefault(pair => pair.Key == "CustomControllerName").Value.Value as string;
+                    var expectedControllerName = string.IsNullOrEmpty(customName)
+                        ? type.Name + "Controller"
+                        : customName + "Controller";
+                    return controller.Name == expectedControllerName;
+                });
             if (cmdlet == null) return;
 
             var run = FindMethod(controller, "Run");
@@ -96,6 +113,21 @@ namespace TfsCmdlets.SourceGenerators.Analyzers
                     ? DiagnosticDescriptors.ControllerMustCallShouldProcess
                     : DiagnosticDescriptors.ConfirmationSupportMustBeEnabled,
                 location, controller.Name));
+        }
+
+        private static IEnumerable<INamedTypeSymbol> GetTypesInNamespace(
+            INamespaceSymbol root, string namespaceName)
+        {
+            var current = root;
+            if (!string.IsNullOrEmpty(namespaceName))
+            {
+                foreach (var segment in namespaceName.Split('.'))
+                {
+                    current = current.GetNamespaceMembers().FirstOrDefault(item => item.Name == segment);
+                    if (current == null) yield break;
+                }
+            }
+            foreach (var type in current.GetTypeMembers()) yield return type;
         }
 
         private static AttributeData GetCmdletAttribute(INamedTypeSymbol type)
@@ -137,7 +169,8 @@ namespace TfsCmdlets.SourceGenerators.Analyzers
         {
             for (var current = controller; current != null; current = current.BaseType)
             {
-                if (SymbolEqualityComparer.Default.Equals(method.ContainingType, current)) return true;
+                if (SymbolEqualityComparer.Default.Equals(
+                    method.ContainingType.OriginalDefinition, current.OriginalDefinition)) return true;
             }
             return false;
         }
@@ -186,8 +219,21 @@ namespace TfsCmdlets.SourceGenerators.Analyzers
             if (confirmationName == null) return;
 
             IOperation result = invocation;
-            while (result.Parent is IConversionOperation || result.Parent is IParenthesizedOperation)
-                result = result.Parent;
+            while (true)
+            {
+                if (result.Parent is IConversionOperation || result.Parent is IParenthesizedOperation)
+                {
+                    result = result.Parent;
+                    continue;
+                }
+                if (result.Parent is IConditionalAccessOperation conditionalAccess &&
+                    conditionalAccess.WhenNotNull == result)
+                {
+                    result = conditionalAccess;
+                    continue;
+                }
+                break;
+            }
 
             if (result.Parent is IExpressionStatementOperation ||
                 (result.Parent is ISimpleAssignmentOperation assignment && assignment.Target is IDiscardOperation))
