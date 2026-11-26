@@ -21,8 +21,14 @@ namespace TfsCmdlets.SourceGenerators
             Logger = new Logger(GeneratorName);
 
             Logger.Log($"=== Initializing generator ===");
-            Logger.Log($"=== Path : {GetType().Assembly.Location}) ===");
-            Logger.Log($"=== Built: {(new FileInfo(GetType().Assembly.Location)).LastWriteTime} ===");
+            var assemblyLocation = GetType().Assembly.Location;
+            Logger.Log($"=== Path : {assemblyLocation}) ===");
+
+            // Assembly.Location is empty when the compiler loads generators from memory (newer .NET SDKs)
+            if (!string.IsNullOrEmpty(assemblyLocation))
+            {
+                Logger.Log($"=== Built: {(new FileInfo(assemblyLocation)).LastWriteTime} ===");
+            }
 
             context.RegisterForSyntaxNotifications(() =>
             {

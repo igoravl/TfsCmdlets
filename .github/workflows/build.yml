@@ -44,6 +44,8 @@ jobs:
         with:
           files: |
             out\TestResults-Pester*.xml
+          trx_files: |
+            out\TestResults-*.trx
       - name: Publish Nuget
         uses: actions/upload-artifact@v7
         with:
