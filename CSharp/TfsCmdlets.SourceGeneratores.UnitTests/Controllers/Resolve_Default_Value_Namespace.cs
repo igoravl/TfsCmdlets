@@ -1,97 +1,95 @@
-﻿using Microsoft.CodeAnalysis.Text;
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using TfsCmdlets.SourceGenerators.Generators.Controllers;
 using Xunit;
-using VerifyCS = TfsCmdlets.SourceGenerators.UnitTests.CSharpSourceGeneratorVerifier<TfsCmdlets.SourceGenerators.Generators.Controllers.ControllerGenerator>;
 
 namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
 {
     public class Resolve_Default_Value_Namespace
     {
         [Fact]
-        public async Task Can_Resolve_Enum_Namespaces()
+        public void Fully_Qualifies_Enum_Type_And_Default_Value()
         {
-            var code = """
-                using Microsoft.TeamFoundation.WorkItemTracking.WebApi;
-                using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+            const string source = """
+                using System;
+
+                namespace TfsCmdlets
+                {
+                    public enum CmdletScope { None, Collection }
+
+                    [AttributeUsage(AttributeTargets.Class)]
+                    public sealed class TfsCmdletAttribute : Attribute
+                    {
+                        public TfsCmdletAttribute(CmdletScope scope) { }
+                        public Type OutputType { get; set; }
+                    }
+
+                    [AttributeUsage(AttributeTargets.Class)]
+                    public sealed class CmdletControllerAttribute : Attribute
+                    {
+                        public CmdletControllerAttribute(Type dataType) { }
+                    }
+
+                    [AttributeUsage(AttributeTargets.Property)]
+                    public sealed class ParameterAttribute : Attribute { }
+                }
+
+                namespace TfsCmdlets.Controllers
+                {
+                    public class ControllerBase
+                    {
+                        protected virtual void CacheParameters() { }
+                    }
+                }
+
+                namespace Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models
+                {
+                    public enum FieldType { String }
+                    public sealed class WorkItemField { }
+                }
 
                 namespace TfsCmdlets.Cmdlets.WorkItem.Field
                 {
-                    /// <summary>
-                    /// Gets information from one or more process templates.
-                    /// </summary>
+                    using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+
                     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WorkItemField))]
-                    partial class NewWorkItemField
+                    public partial class NewWorkItemField
                     {
-                        /// <summary>
-                        /// Specifies the type of the field.
-                        /// </summary>
                         [Parameter]
                         public FieldType Type { get; set; } = FieldType.String;
                     }
                 }
+
+                namespace TfsCmdlets.Controllers.WorkItem.Field
+                {
+                    using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+
+                    [CmdletController(typeof(WorkItemField))]
+                    public partial class NewWorkItemFieldController { }
+                }
                 """;
 
-            var generated = """
-                namespace TfsCmdlets.Cmdlets.WorkItem.Field
-                {
-                    internal partial class NewWorkItemFieldController: ControllerBase
-                    {
-                        // Type
-                        protected bool Has_Type { get; set; }
-                        protected Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType Type { get; set; }
+            var trustedAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") as string
+                ?? throw new InvalidOperationException("The runtime did not provide trusted platform assemblies.");
+            var references = trustedAssemblies
+                .Split(Path.PathSeparator)
+                .Select(path => MetadataReference.CreateFromFile(path));
+            var compilation = CSharpCompilation.Create(
+                "GeneratorTests",
+                new[] { CSharpSyntaxTree.ParseText(source) },
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            GeneratorDriver driver = CSharpGeneratorDriver.Create(new ControllerGenerator());
 
-                        // Passthru
-                        protected bool Has_Passthru {get;set;} // => Parameters.HasParameter("Passthru");
-                        protected bool Passthru {get;set;} // => _Passthru; // Parameters.Get<bool>("Passthru");
+            driver = driver.RunGenerators(compilation);
 
-                        // Collection
-                        protected bool Has_Collection => Parameters.HasParameter("Collection");
-                        protected Models.Connection Collection => Data.GetCollection();
+            var generated = Assert.Single(driver.GetRunResult().GeneratedTrees).GetText().ToString();
 
-                        // Server
-                        protected bool Has_Server => Parameters.HasParameter("Server");
-                        protected Models.Connection Server => Data.GetServer();
-
-                        // ParameterSetName
-                        protected bool Has_ParameterSetName {get;set;}
-                        protected string ParameterSetName {get;set;}
-
-
-                        protected override void CacheParameters()
-                        {
-                            // Field
-                            Has_Field = Parameters.HasParameter("Field");
-                            Field = Parameters.Get<string>("Field");
-
-                            // ReferenceName
-                            Has_ReferenceName = Parameters.HasParameter("ReferenceName");
-                            ReferenceName = Parameters.Get<string>("ReferenceName");
-
-                            // Description
-                            Has_Description = Parameters.HasParameter("Description");
-                            Description = Parameters.Get<string>("Description");
-
-                            // Type
-                            Has_Type = Parameters.HasParameter("Type");
-                            Type = Parameters.Get<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType>("Type", FieldType.String);
-                """;
-
-            await new VerifyCS.Test
-            {
-                TestState =
-                {
-                    Sources = { code },
-                    GeneratedSources =
-                    {
-                        (typeof(ControllerGenerator), "NewWorkItemFieldController.cs", SourceText.From(generated, Encoding.UTF8, SourceHashAlgorithm.Sha256)),
-                    },
-                },
-            }.RunAsync();
+            Assert.Contains("Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType Type", generated);
+            Assert.Contains("Parameters.Get<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType>(\"Type\", FieldType.String)", generated);
         }
     }
 }

@@ -235,8 +235,29 @@ Task UpdateModuleManifest {
 
 Task UnitTests -PreCondition { -not $SkipTests } {
 
-    Remove-Item $OutDir/TfsCmdlets.Tests.UnitTests.log -Force -ErrorAction SilentlyContinue
-    #Exec { dotnet test $SolutionDir/TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj -f $TargetFrameworks.Core --filter "Platform!=Desktop&Platform!=Core" --logger:"console;verbosity=detailed" --logger "trx;LogFileName=$OutDir/TfsCmdlets.Tests.UnitTests.trx" > $OutDir/TfsCmdlets.Tests.UnitTests.log }
+    # Test projects target net8.0 / net8.0-windows, so no -f switch (TargetFrameworks.Core is the module's netcoreapp3.1)
+    $testProjects = @(
+        'TfsCmdlets.Tests.UnitTests/TfsCmdlets.Tests.UnitTests.csproj'
+        'TfsCmdlets.SourceGeneratores.UnitTests/TfsCmdlets.SourceGenerators.UnitTests.csproj'
+    )
+
+    $failedProjects = @()
+
+    foreach ($testProject in $testProjects) {
+        $projectName = [System.IO.Path]::GetFileNameWithoutExtension($testProject)
+        Remove-Item (Join-Path $OutDir "TestResults-$projectName.trx") -Force -ErrorAction SilentlyContinue
+
+        try {
+            Exec { dotnet test (Join-Path $SolutionDir $testProject) -c $Configuration --logger "console;verbosity=normal" --logger "trx;LogFileName=TestResults-$projectName.trx" --results-directory $OutDir }
+        }
+        catch {
+            $failedProjects += $projectName
+        }
+    }
+
+    if ($failedProjects) {
+        throw "Unit tests failed: $($failedProjects -join ', ')"
+    }
 }
 
 Task AllTests -PreCondition { -not $SkipTests } {
