@@ -5,7 +5,10 @@ using System.Linq;
 using System.Management.Automation;
 using System.Net;
 using System.Security;
+using System.Dynamic;
 using NSubstitute;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TfsCmdlets.Services;
 using TfsCmdlets.Services.Impl;
 using Xunit;
@@ -97,6 +100,49 @@ namespace TfsCmdlets.Tests.UnitTests.Services
         }
 
         [Fact]
+        public void LogParameters_Redacts_Renamed_Sensitive_Clr_Properties()
+        {
+            var output = LogParameters(new Dictionary<string, object>
+            {
+                ["Options"] = new RenamedSecret { Password = Secret }
+            });
+
+            Assert.DoesNotContain(Secret, output);
+            Assert.Contains("value", output);
+            Assert.Contains("*****", output);
+        }
+
+        [Fact]
+        public void LogParameters_Redacts_Generic_Dictionaries_And_Json_Tokens_Recursively()
+        {
+            IDictionary<string, object> expando = new ExpandoObject();
+            expando["Password"] = Secret;
+            expando["Nested"] = new object[]
+            {
+                new Dictionary<string, object> { ["Authorization"] = $"Bearer {Secret}" }
+            };
+
+            var json = JObject.Parse($$"""
+                {
+                  "Nested": [
+                    { "Password": "{{Secret}}" },
+                    { "Authorization": "Bearer {{Secret}}" }
+                  ]
+                }
+                """);
+
+            var output = LogParameters(new Dictionary<string, object>
+            {
+                ["Expando"] = expando,
+                ["Json"] = json
+            });
+
+            Assert.DoesNotContain(Secret, output);
+            Assert.Contains("Password", output);
+            Assert.Contains("Authorization", output);
+        }
+
+        [Fact]
         public void LogParameters_Keeps_NonSensitive_Values()
         {
             var output = LogParameters(new Dictionary<string, object>
@@ -176,6 +222,27 @@ namespace TfsCmdlets.Tests.UnitTests.Services
             Assert.Contains("outer failure", log);
             Assert.Contains("inner failure", log);
             ps.Received(1).WriteError(Arg.Is<ErrorRecord>(r => r.Exception == ex));
+        }
+
+        [Theory]
+        [InlineData("Authorization: Bearer\t{0}")]
+        [InlineData("""{"Authorization":"Bearer\\t{0}"}""")]
+        public void LogError_Redacts_Authorization_With_Actual_And_JsonEscaped_Whitespace(string template)
+        {
+            var ps = Substitute.For<IPowerShellService>();
+            ps.IsVerbose.Returns(true);
+            var output = new List<string>();
+            ps.When(p => p.WriteVerbose(Arg.Any<string>())).Do(c => output.Add(c.Arg<string>()));
+
+            new LoggerImpl(ps).LogError(new Exception(string.Format(template, Secret)));
+
+            Assert.DoesNotContain(Secret, string.Join("\n", output));
+        }
+
+        private sealed class RenamedSecret
+        {
+            [JsonProperty("value")]
+            public string Password { get; set; }
         }
     }
 }

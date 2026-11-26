@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.Services.Common;
 using Microsoft.VisualStudio.Services.WebApi;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace TfsCmdlets.Services.Impl
@@ -155,11 +156,13 @@ namespace TfsCmdlets.Services.Impl
 
         // "Authorization: <scheme> <credentials>", "Proxy-Authorization=<credentials>", "Authorization\": \"<credentials>"
         private static readonly Regex _authHeaderRegex = new Regex(
-            @"\b((?:Proxy-)?Authorization[""']?\s*[:=]\s*[""']?)(?:(Basic|Bearer|Negotiate|NTLM|Digest)\s+)?[^\s""',;]+",
+            @"\b((?:Proxy-)?Authorization[""']?\s*[:=]\s*[""']?)(?:(Basic|Bearer|Negotiate|NTLM|Digest)(?:\s|\\[trn]|\\u00(?:09|0a|0d))+)?[^\s""',;]+",
             _regexOptions);
 
         // "Bearer <token>" anywhere in the message, regardless of the token length
-        private static readonly Regex _bearerRegex = new Regex(@"\b(Bearer)\s+(?!\*{5})[^\s""',;]+", _regexOptions);
+        private static readonly Regex _bearerRegex = new Regex(
+            @"\b(Bearer)(?:\s|\\[trn]|\\u00(?:09|0a|0d))+(?!\*{5})[^\s""',;]+",
+            _regexOptions);
 
         // User information in URLs (scheme://user:password@host)
         private static readonly Regex _urlUserInfoRegex = new Regex(@"\b([a-z][a-z0-9+.\-]*://)[^/\s:@""']+:[^/\s@""']*@", _regexOptions);
@@ -263,13 +266,21 @@ namespace TfsCmdlets.Services.Impl
             return JsonConvert.SerializeObject(value, _settings);
         }
 
+        private static bool IsGenericDictionary(Type type) =>
+            type.GetInterfaces().Any(i =>
+                i.IsGenericType &&
+                (i.GetGenericTypeDefinition() == typeof(IDictionary<,>) ||
+                 i.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>)));
+
         private class RedactingContractResolver : DefaultContractResolver
         {
             protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
             {
                 var property = base.CreateProperty(member, memberSerialization);
 
-                if (IsSensitiveName(property.PropertyName) || IsSensitiveType(property.PropertyType))
+                if (IsSensitiveName(member.Name) ||
+                    IsSensitiveName(property.PropertyName) ||
+                    IsSensitiveType(property.PropertyType))
                 {
                     property.PropertyType = typeof(string);
                     property.ValueProvider = new RedactedValueProvider();
@@ -296,7 +307,9 @@ namespace TfsCmdlets.Services.Impl
             public override bool CanConvert(Type objectType) =>
                 IsSensitiveType(objectType) ||
                 typeof(IDictionary).IsAssignableFrom(objectType) ||
-                typeof(PSObject).IsAssignableFrom(objectType);
+                IsGenericDictionary(objectType) ||
+                typeof(PSObject).IsAssignableFrom(objectType) ||
+                typeof(JToken).IsAssignableFrom(objectType);
 
             public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
             {
@@ -340,6 +353,33 @@ namespace TfsCmdlets.Services.Impl
                             serializer.Serialize(writer, pso.BaseObject);
                             break;
                         }
+                    case JObject obj:
+                        {
+                            writer.WriteStartObject();
+                            foreach (var property in obj.Properties())
+                            {
+                                writer.WritePropertyName(property.Name);
+                                if (IsSensitiveName(property.Name))
+                                    writer.WriteValue(RedactedValue);
+                                else
+                                    serializer.Serialize(writer, property.Value);
+                            }
+                            writer.WriteEndObject();
+                            break;
+                        }
+                    case JArray array:
+                        {
+                            writer.WriteStartArray();
+                            foreach (var item in array)
+                                serializer.Serialize(writer, item);
+                            writer.WriteEndArray();
+                            break;
+                        }
+                    case JValue jvalue:
+                        {
+                            jvalue.WriteTo(writer);
+                            break;
+                        }
                     case { } when IsSensitiveType(value.GetType()):
                         {
                             writer.WriteValue(RedactedValue);
@@ -362,6 +402,28 @@ namespace TfsCmdlets.Services.Impl
                                 {
                                     serializer.Serialize(writer, entry.Value);
                                 }
+                            }
+
+                            writer.WriteEndObject();
+                            break;
+                        }
+                    case IEnumerable entries when IsGenericDictionary(value.GetType()):
+                        {
+                            writer.WriteStartObject();
+
+                            foreach (var entry in entries)
+                            {
+                                if (entry == null) continue;
+
+                                var entryType = entry.GetType();
+                                var key = Convert.ToString(entryType.GetProperty("Key")?.GetValue(entry)) ?? string.Empty;
+                                var entryValue = entryType.GetProperty("Value")?.GetValue(entry);
+                                writer.WritePropertyName(key);
+
+                                if (IsSensitiveName(key))
+                                    writer.WriteValue(RedactedValue);
+                                else
+                                    serializer.Serialize(writer, entryValue);
                             }
 
                             writer.WriteEndObject();
