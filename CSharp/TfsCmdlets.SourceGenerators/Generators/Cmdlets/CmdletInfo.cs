@@ -55,14 +55,15 @@ namespace TfsCmdlets.SourceGenerators.Generators.Cmdlets
             GenerateProperties();
         }
 
-        private bool SetSupportsShouldProcess(INamedTypeSymbol cmdlet)
+        internal static bool SetSupportsShouldProcess(INamedTypeSymbol cmdlet)
         {
             if(cmdlet.HasAttributeNamedValue("TfsCmdletAttribute", "SupportsShouldProcess"))
             {
                 return cmdlet.GetAttributeNamedValue<bool>("TfsCmdletAttribute", "SupportsShouldProcess");
             }
 
-            return (Verb != "Get") && (Verb != "Test") && (Verb != "Search") && (Verb != "Connect") && (Verb != "Disconnect");
+            var verb = cmdlet.Name.Substring(0, cmdlet.Name.FindIndex(char.IsUpper, 1));
+            return (verb != "Get") && (verb != "Test") && (verb != "Search") && (verb != "Connect") && (verb != "Disconnect");
         }
 
         private void GenerateProperties()

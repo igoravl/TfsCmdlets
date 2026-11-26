@@ -2,6 +2,37 @@
 
 This document describes the mandatory patterns for implementing confirmation support in TfsCmdlets cmdlets.
 
+## Compile-time diagnostics
+
+The SourceGenerators assembly also supplies these Roslyn safety analyzers:
+
+| ID | Warning |
+|---|---|
+| `TFS006` | A controller whose cmdlet enables `SupportsShouldProcess` has no reachable `ShouldProcess` call from `Run`. |
+| `TFS007` | A `ShouldProcess` or `ShouldContinue` return value is discarded, either as a statement or with `_ =`. |
+| `TFS008` | A controller calls `ShouldProcess`, but its cmdlet does not enable `SupportsShouldProcess` (explicitly or by generator default). |
+
+`TFS006` and `TFS008` use the same confirmation defaults as the cmdlet generator,
+including explicit overrides and `CustomControllerName`. They follow direct calls
+to controller/base-class helpers and local functions across partial declarations;
+unused helpers and lambdas do not count as guards. Calls are resolved semantically
+to `IPowerShellService` or `PSCmdlet`, not just matched by method name.
+
+These are warning-level review aids, not proof that every write is protected.
+They do not establish control-flow dominance, evaluate guard conditions, follow
+delegates or external service helpers, or infer whether a deletion is irreversible.
+Continue to test that declining confirmation performs zero writes and that
+`-Force` never bypasses `ShouldProcess`. For intentional non-mutating commands or
+external guard helpers, use a narrowly scoped suppression with a justification.
+Do not add a dummy guard to silence a warning.
+
+Projects can promote a diagnostic to an error in `.editorconfig`, for example:
+
+```ini
+[*.cs]
+dotnet_diagnostic.TFS006.severity = error
+```
+
 ## Rule: All mutation cmdlets must support ShouldProcess
 
 Every cmdlet that modifies state (verbs like `New`, `Set`, `Remove`, `Enable`, `Disable`, `Update`, `Rename`, `Import`, `Move`, etc.) **must** declare `SupportsShouldProcess = true` in its `[TfsCmdlet]` attribute. This enables `-WhatIf` and `-Confirm` support automatically.

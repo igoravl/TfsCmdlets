@@ -41,5 +41,29 @@ namespace TfsCmdlets.SourceGenerators
             "CodeGen",
             DiagnosticSeverity.Error,
             true);
+
+        internal static DiagnosticDescriptor ControllerMustCallShouldProcess { get; } = new DiagnosticDescriptor(
+            "TFS006",
+            "Controller must call ShouldProcess",
+            "Controller '{0}' advertises confirmation support but Run has no reachable ShouldProcess call",
+            "Safety",
+            DiagnosticSeverity.Warning,
+            true);
+
+        internal static DiagnosticDescriptor ConfirmationResultMustBeUsed { get; } = new DiagnosticDescriptor(
+            "TFS007",
+            "Confirmation result must not be discarded",
+            "Use the result of '{0}' to prevent the operation when confirmation is declined",
+            "Safety",
+            DiagnosticSeverity.Warning,
+            true);
+
+        internal static DiagnosticDescriptor ConfirmationSupportMustBeEnabled { get; } = new DiagnosticDescriptor(
+            "TFS008",
+            "ShouldProcess requires confirmation support",
+            "Controller '{0}' calls ShouldProcess but its cmdlet does not enable SupportsShouldProcess",
+            "Safety",
+            DiagnosticSeverity.Warning,
+            true);
     }
 }
