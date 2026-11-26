@@ -87,7 +87,7 @@ namespace TfsCmdlets.Cmdlets.Artifact
                 {
                     case Guid g:
                         {
-                            yield return Client.GetPackageVersionAsync(
+                            var packageVersion = Client.GetPackageVersionAsync(
                                     project: projectId,
                                     feedId: feedId,
                                     packageId: packageId,
@@ -95,6 +95,12 @@ namespace TfsCmdlets.Cmdlets.Artifact
                                     isListed: IncludeDelisted ? null : true,
                                     isDeleted: IncludeDeleted ? null : false)
                                 .GetResult($"Error getting artifact version '{g}'");
+
+                            if ((!IncludeDeleted && packageVersion.IsDeleted) ||
+                                (!IncludeDelisted && !packageVersion.IsListed))
+                                break;
+
+                            yield return packageVersion;
                             break;
                         }
                     case string s when s.IsWildcard():

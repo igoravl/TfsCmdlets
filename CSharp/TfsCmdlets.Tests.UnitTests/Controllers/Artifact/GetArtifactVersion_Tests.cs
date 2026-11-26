@@ -36,10 +36,12 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Artifact
             _data.GetItem<Feed>(Arg.Any<object>()).Returns(new Feed { Name = "MyFeed" });
         }
 
-        private GetArtifactVersionController CreateController(object version)
+        private GetArtifactVersionController CreateController(object version, bool includeDeleted = false, bool includeDelisted = false)
         {
             _parms.HasParameter("Version").Returns(true);
             _parms.Get<object>("Version", Arg.Any<object>()).Returns(version);
+            _parms.Get<bool>("IncludeDeleted", Arg.Any<bool>()).Returns(includeDeleted);
+            _parms.Get<bool>("IncludeDelisted", Arg.Any<bool>()).Returns(includeDelisted);
             return new GetArtifactVersionController(_powerShell, _data, _parms, _logger, _client);
         }
 
@@ -107,6 +109,42 @@ namespace TfsCmdlets.Tests.UnitTests.Controllers.Artifact
 
             Assert.Single(results);
             Assert.Same(expected, results[0]);
+        }
+
+        [Fact]
+        public void Guid_Version_Does_Not_Return_Deleted_Version_Without_IncludeDeleted()
+        {
+            var versionId = Guid.NewGuid();
+            var deleted = new PackageVersion { Id = versionId, Version = "3.0.0", IsDeleted = true };
+
+            _client.GetPackageVersionAsync(
+                    Arg.Any<string>(), FeedId, _package.Id.ToString(), versionId.ToString(),
+                    Arg.Any<bool?>(), Arg.Any<bool?>(), Arg.Any<bool?>(),
+                    Arg.Any<object>(), Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult(deleted));
+
+            var results = Flatten(CreateController(versionId.ToString()).InvokeCommand().Cast<object>());
+
+            Assert.Empty(results);
+        }
+
+        [Fact]
+        public void Guid_Version_Returns_Deleted_Version_With_IncludeDeleted()
+        {
+            var versionId = Guid.NewGuid();
+            var deleted = new PackageVersion { Id = versionId, Version = "3.0.0", IsDeleted = true };
+
+            _client.GetPackageVersionAsync(
+                    Arg.Any<string>(), FeedId, _package.Id.ToString(), versionId.ToString(),
+                    Arg.Any<bool?>(), Arg.Any<bool?>(), Arg.Any<bool?>(),
+                    Arg.Any<object>(), Arg.Any<CancellationToken>())
+                .Returns(Task.FromResult(deleted));
+
+            var results = Flatten(CreateController(versionId.ToString(), includeDeleted: true)
+                .InvokeCommand().Cast<object>());
+
+            Assert.Single(results);
+            Assert.Same(deleted, results[0]);
         }
     }
 }
