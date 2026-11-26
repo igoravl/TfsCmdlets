@@ -27,6 +27,19 @@ namespace TfsCmdlets.Cmdlets.Shell
     [CmdletController]
     partial class UninstallShellController
     {
+        private IUninstallShellFileSystem _fileSystem = new UninstallShellFileSystem();
+
+        internal UninstallShellController(
+            IPowerShellService powerShell,
+            IDataManager data,
+            IParameterManager parameters,
+            ILogger logger,
+            IUninstallShellFileSystem fileSystem)
+            : base(powerShell, data, parameters, logger)
+        {
+            _fileSystem = fileSystem;
+        }
+
         private static readonly string[] ShortcutNames = {
             "Azure DevOps Shell.lnk",
             "Azure DevOps Shell (Core).lnk"
@@ -34,7 +47,7 @@ namespace TfsCmdlets.Cmdlets.Shell
 
         protected override IEnumerable Run()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!_fileSystem.IsWindows)
             {
                 Logger.LogWarn("Uninstall-TfsShell is only supported on Windows.");
                 yield break;
@@ -43,7 +56,7 @@ namespace TfsCmdlets.Cmdlets.Shell
             if (Target.HasFlag(ShellTarget.StartMenu))
             {
                 var startMenuDir = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.StartMenu),
+                    _fileSystem.GetFolderPath(Environment.SpecialFolder.StartMenu),
                     "Programs", "TfsCmdlets");
 
                 RemoveShortcut(startMenuDir, "Start Menu");
@@ -51,7 +64,7 @@ namespace TfsCmdlets.Cmdlets.Shell
 
             if (Target.HasFlag(ShellTarget.Desktop))
             {
-                var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                var desktopPath = _fileSystem.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                 RemoveShortcut(desktopPath, "Desktop");
             }
 
@@ -69,7 +82,7 @@ namespace TfsCmdlets.Cmdlets.Shell
             {
                 var shortcutPath = Path.Combine(folder, shortcutFile);
 
-                if (!File.Exists(shortcutPath))
+                if (!_fileSystem.FileExists(shortcutPath))
                 {
                     Logger.Log($"No {locationName} shortcut found at {shortcutPath}. Skipping.");
                     continue;
@@ -80,7 +93,7 @@ namespace TfsCmdlets.Cmdlets.Shell
 
                 try
                 {
-                    File.Delete(shortcutPath);
+                    _fileSystem.DeleteFile(shortcutPath);
                     Logger.Log($"Removed {locationName} shortcut: {shortcutPath}");
                 }
                 catch (Exception ex)
@@ -92,15 +105,15 @@ namespace TfsCmdlets.Cmdlets.Shell
             // Clean up the folder if now empty (e.g. Start Menu subfolder)
             try
             {
-                if (Directory.Exists(folder) && Directory.GetFileSystemEntries(folder).Length == 0)
-                    Directory.Delete(folder);
+                if (_fileSystem.DirectoryExists(folder) && _fileSystem.GetFileSystemEntries(folder).Length == 0)
+                    _fileSystem.DeleteDirectory(folder);
             }
             catch { /* ignore cleanup failures */ }
         }
 
         private void RemoveTerminalFragments()
         {
-            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var localAppData = _fileSystem.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             var candidatePaths = new[]
             {
@@ -110,17 +123,17 @@ namespace TfsCmdlets.Cmdlets.Shell
 
             foreach (var fragmentDir in candidatePaths)
             {
-                if (!Directory.Exists(fragmentDir))
+                if (!_fileSystem.DirectoryExists(fragmentDir))
                     continue;
 
-                foreach (var file in Directory.GetFiles(fragmentDir, "AzureDevOpsShell-*.json"))
+                foreach (var file in _fileSystem.GetFiles(fragmentDir, "AzureDevOpsShell-*.json"))
                 {
                     if (!PowerShell.ShouldProcess(file, "Remove Windows Terminal profile fragment"))
                         continue;
 
                     try
                     {
-                        File.Delete(file);
+                        _fileSystem.DeleteFile(file);
                         Logger.Log($"Removed Windows Terminal fragment: {file}");
                     }
                     catch (Exception ex)
@@ -132,13 +145,44 @@ namespace TfsCmdlets.Cmdlets.Shell
                 // Clean up directory if empty
                 try
                 {
-                    if (Directory.Exists(fragmentDir) && Directory.GetFileSystemEntries(fragmentDir).Length == 0)
+                    if (_fileSystem.DirectoryExists(fragmentDir) && _fileSystem.GetFileSystemEntries(fragmentDir).Length == 0)
                     {
-                        Directory.Delete(fragmentDir);
+                        _fileSystem.DeleteDirectory(fragmentDir);
                     }
                 }
                 catch { /* ignore */ }
             }
         }
+    }
+
+    internal interface IUninstallShellFileSystem
+    {
+        bool IsWindows { get; }
+        string GetFolderPath(Environment.SpecialFolder folder);
+        bool FileExists(string path);
+        void DeleteFile(string path);
+        bool DirectoryExists(string path);
+        string[] GetFileSystemEntries(string path);
+        void DeleteDirectory(string path);
+        string[] GetFiles(string path, string searchPattern);
+    }
+
+    internal sealed class UninstallShellFileSystem : IUninstallShellFileSystem
+    {
+        public bool IsWindows => RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+
+        public string GetFolderPath(Environment.SpecialFolder folder) => Environment.GetFolderPath(folder);
+
+        public bool FileExists(string path) => File.Exists(path);
+
+        public void DeleteFile(string path) => File.Delete(path);
+
+        public bool DirectoryExists(string path) => Directory.Exists(path);
+
+        public string[] GetFileSystemEntries(string path) => Directory.GetFileSystemEntries(path);
+
+        public void DeleteDirectory(string path) => Directory.Delete(path);
+
+        public string[] GetFiles(string path, string searchPattern) => Directory.GetFiles(path, searchPattern);
     }
 }

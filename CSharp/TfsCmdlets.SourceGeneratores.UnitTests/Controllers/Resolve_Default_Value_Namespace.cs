@@ -15,6 +15,9 @@ namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
         {
             const string source = """
                 using System;
+                using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
+                using TfsCmdlets;
+                using System.Composition;
 
                 namespace TfsCmdlets
                 {
@@ -35,14 +38,40 @@ namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
 
                     [AttributeUsage(AttributeTargets.Property)]
                     public sealed class ParameterAttribute : Attribute { }
+
+                    public interface IParameterManager
+                    {
+                        bool HasParameter(string name);
+                        T Get<T>(string name, T defaultValue = default);
+                    }
+
+                    public interface IDataManager
+                    {
+                        Models.Connection GetServer();
+                        Models.Connection GetCollection();
+                    }
                 }
 
                 namespace TfsCmdlets.Controllers
                 {
                     public class ControllerBase
                     {
+                        protected TfsCmdlets.IDataManager Data { get; }
+                        protected TfsCmdlets.IParameterManager Parameters { get; }
+                        public virtual Type DataType => GetType();
                         protected virtual void CacheParameters() { }
                     }
+                }
+
+                namespace System.Composition
+                {
+                    [AttributeUsage(AttributeTargets.Constructor)]
+                    public sealed class ImportingConstructorAttribute : Attribute { }
+                }
+
+                namespace TfsCmdlets.Models
+                {
+                    public sealed class Connection { }
                 }
 
                 namespace Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models
@@ -53,8 +82,6 @@ namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
 
                 namespace TfsCmdlets.Cmdlets.WorkItem.Field
                 {
-                    using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-
                     [TfsCmdlet(CmdletScope.Collection, OutputType = typeof(WorkItemField))]
                     public partial class NewWorkItemField
                     {
@@ -65,10 +92,8 @@ namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
 
                 namespace TfsCmdlets.Controllers.WorkItem.Field
                 {
-                    using Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models;
-
                     [CmdletController(typeof(WorkItemField))]
-                    public partial class NewWorkItemFieldController { }
+                    internal partial class NewWorkItemFieldController { }
                 }
                 """;
 
@@ -83,13 +108,19 @@ namespace TfsCmdlets.SourceGenerators.UnitTests.Controllers
                 references,
                 new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
             GeneratorDriver driver = CSharpGeneratorDriver.Create(new ControllerGenerator());
-
-            driver = driver.RunGenerators(compilation);
+            driver = driver.RunGeneratorsAndUpdateCompilation(
+                compilation,
+                out var outputCompilation,
+                out _);
 
             var generated = Assert.Single(driver.GetRunResult().GeneratedTrees).GetText().ToString();
 
             Assert.Contains("Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType Type", generated);
             Assert.Contains("Parameters.Get<Microsoft.TeamFoundation.WorkItemTracking.WebApi.Models.FieldType>(\"Type\", FieldType.String)", generated);
+            var errors = outputCompilation.GetDiagnostics()
+                .Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+                .ToArray();
+            Assert.True(errors.Length == 0, string.Join(Environment.NewLine, errors.Select(error => error.ToString())));
         }
     }
 }
