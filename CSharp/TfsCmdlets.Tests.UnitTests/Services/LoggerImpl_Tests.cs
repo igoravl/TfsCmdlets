@@ -226,7 +226,7 @@ namespace TfsCmdlets.Tests.UnitTests.Services
 
         [Theory]
         [InlineData("Authorization: Bearer\t{0}")]
-        [InlineData("""{"Authorization":"Bearer\\t{0}"}""")]
+        [InlineData("""{"Authorization":"Bearer\t{0}"}""")]
         public void LogError_Redacts_Authorization_With_Actual_And_JsonEscaped_Whitespace(string template)
         {
             var ps = Substitute.For<IPowerShellService>();
